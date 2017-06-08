@@ -1,0 +1,202 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+	<script type="text/javascript">
+		jquery(document).ready(function(){  //这个就是传说的ready
+			jquery(".str_t tr:even").addClass("alt");
+		});
+</script>
+	#{stockControl.queryBatchDetailsFind()}
+	<td valign="top">
+		<div class="right_c">
+			<div class="r_title">
+				<div class="r_t_l">加工&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/inOut/StockRecord.seam">库存</a>&#160;&gt;&#160;&#160;<font size="3">库存批次详细信息</font>
+				</div>
+			</div>
+			<div class="str_box">
+				<table width="100%" cellpadding="0" cellspacing="0" class="str_t">
+					<tr>
+						<td valign="middle" class="str_td">批次编号：</td>
+						<td valign="middle" class="str_text">
+							<h:outputText value="#{stockControl.goodsBatch.goodsBatchId}" />
+						</td>
+						<td class="str_td">物料名称：</td>
+						<td class="str_text">
+							<h:outputText value="#{stockControl.goodsBatch.goodsInfoId.name}" />
+						</td>
+					</tr>
+					<tr>
+						<td valign="middle" class="str_td">物料规格：</td>
+						<td valign="middle" class="str_text">
+							<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo eq 1}">
+								<s:fragment rendered="#{stockControl.goodsBatch.unitInfoId ge 7 and stockControl.goodsBatch.unitInfoId le 11}">
+									#{sessionTake.harvestUnit eq 1? '斤':'公斤（kg）'}
+								</s:fragment>
+								<s:fragment rendered="#{stockControl.goodsBatch.unitInfoId lt 7 or stockControl.goodsBatch.unitInfoId gt 11}">
+									#{stockControl.getGoodsUnitName(stockControl.goodsBatch.unitInfoId)}
+								</s:fragment>
+							</s:fragment>
+							<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo ne 1}">
+								#{stockControl.goodsBatch.goodsInfoId.netContent}#{stockControl.getGoodsUnitName(stockControl.goodsBatch.unitInfoId)}
+								<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.packSpec ne null and stockControl.goodsBatch.goodsInfoId.packSpec ne ''}">
+									/#{stockControl.goodsBatch.goodsInfoId.packSpec}
+								</s:fragment>
+							</s:fragment>
+						</td>
+						<td class="str_td">保质期：</td>
+						<td class="str_text">
+							<h:outputText value="#{stockControl.goodsBatch.expirationDate} 天" />
+						</td>
+					</tr>
+					<tr>
+						<td valign="middle" class="str_td">初始库存：</td>
+						<td valign="middle" class="str_text">
+							<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo eq 1}">
+								<h:outputText rendered="#{stockControl.goodsBatch.unitInfoId ge 7 and stockControl.goodsBatch.unitInfoId le 11}" >
+	                               	<h:outputText value="#{stringUtil.changeFloatMe(stockControl.goodsBatch.goodsNum,3)}" rendered="#{sessionTake.harvestUnit eq 1}">
+	                               		<f:convertNumber pattern="#.###"/>
+	                               	</h:outputText>
+	                               	<h:outputText value="#{stockControl.goodsBatch.goodsNum}" rendered="#{sessionTake.harvestUnit ne 1}"><f:convertNumber pattern="#.###"/></h:outputText>
+		                    	</h:outputText>
+			                    <h:outputText value="#{unitStranfer.outStranfer(stockControl.goodsBatch.unitInfoId,stockControl.goodsBatch.goodsNum)}" rendered="#{stockControl.goodsBatch.unitInfoId lt 7 or stockControl.goodsBatch.unitInfoId gt 11}" >
+			                    	<f:convertNumber pattern="#.###"/>
+			                    </h:outputText>
+		                	</s:fragment>
+			                <s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo ne 1}">
+			                	<h:outputText value="#{stockControl.goodsBatch.goodsCount}" ><f:convertNumber pattern="#.###"/></h:outputText>
+			                </s:fragment>
+						</td>
+						<td class="str_td">实际库存：</td>
+						<td class="str_text">
+							<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo eq 1}">
+								<h:outputText rendered="#{stockControl.goodsBatch.unitInfoId ge 7 and stockControl.goodsBatch.unitInfoId le 11}" >
+	                               	<h:outputText value="#{stringUtil.changeFloatMe(stockControl.goodsBatch.goodsCount,3)}" rendered="#{sessionTake.harvestUnit eq 1}">
+	                               		<f:convertNumber pattern="#.###"/>
+	                               	</h:outputText>
+	                               	<h:outputText value="#{stockControl.goodsBatch.goodsCount}" rendered="#{sessionTake.harvestUnit ne 1}"><f:convertNumber pattern="#.###"/></h:outputText>
+		                    	</h:outputText>
+			                    <h:outputText value="#{unitStranfer.outStranfer(stockControl.goodsBatch.unitInfoId,stockControl.goodsBatch.goodsCount)}" rendered="#{stockControl.goodsBatch.unitInfoId lt 7 or stockControl.goodsBatch.unitInfoId gt 11}" >
+			                    	<f:convertNumber pattern="#.###"/>
+			                    </h:outputText>
+		                	</s:fragment>
+			                <s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo ne 1}">
+			                	<h:outputText value="#{stockControl.goodsBatch.goodsCount}" ><f:convertNumber pattern="#.###"/></h:outputText>
+			                </s:fragment>
+						</td>
+					</tr>
+				</table>
+				<div class="clear"></div>
+				<div class="tree_dis" style="margin-top: 15px;">
+					<h:form id="stockControlFrom">
+						<a:commandLink id="refreshShow"  reRender="showPanel"></a:commandLink>
+					</h:form>
+					<div class="box2">
+						<div>
+							<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+								<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b2" style="border-top:1px solid #ddd;">
+									<tr>
+										<td class="tree_th" width="5%">ID</td>
+										<td class="tree_th" width="15%">记录编号</td>
+										<td class="tree_th" width="12%">类型</td>
+										<td class="tree_th" width="15%">所属基地</td>
+										<td class="tree_th" width="15%">所属库房</td>
+										<td class="tree_th" width="8%">单位规格</td>
+										<td class="tree_th" width="7%">数量</td>										
+										<td class="tree_th" width="13%">经办人</td>
+										<td class="tree_th" width="10%">操作时间</td>
+									</tr>
+								</table>
+								<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b">
+									<a:repeat value="#{stockControl.goodsPalletChangeRecordList}" var="_gpcr" rowKeyVar="_index">
+										<tr class="cm_nottt #{_index % 2 == 0 ? 'alt' : ''}">
+											<td height="48" width="5%" align="center">#{_gpcr.goodsPalletChangeRecord}</td>
+											<td width="15%" align="center">#{_gpcr.storageChangeFormId.name}</td>
+											<td width="12%" align="center">#{publicStorageHome.getStorageChangeTypeName(_gpcr.storageChangeFormId.storageChangeTypeId.storageChangeTypeId,_gpcr.storageChangeFormId.storageType)}</td>
+											<td width="15%" align="center"><h:outputText value="#{_gpcr.storageRoomId.storageLocation.baseId.name}"></h:outputText></td>
+											<td width="15%" align="center"><h:outputText value="#{_gpcr.storageChangeFormId.storageRoom.name}"></h:outputText></td>																						
+											<td width="8%" align="center">
+												<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo eq 1}">
+													#{stockControl.getGoodsUnitName(_gpcr.goodsBatchId.unitInfoId)}
+												</s:fragment>
+												<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo ne 1}">
+													#{_gpcr.goodsBatchId.goodsInfoId.netContent}#{stockControl.getGoodsUnitName(_gpcr.goodsBatchId.unitInfoId)}
+													<s:fragment rendered="#{_gpcr.goodsBatchId.goodsInfoId.packSpec ne null and _gpcr.goodsBatchId.goodsInfoId.packSpec ne ''}">
+														/#{_gpcr.goodsBatchId.goodsInfoId.packSpec}
+													</s:fragment>
+												</s:fragment>											
+											</td>
+											<td width="7%" align="center">											
+												<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo eq 1}">
+													<h:outputText value="#{unitStranfer.outStranfer(stockControl.goodsBatch.unitInfoId,_gpcr.goodsNum)}"><f:convertNumber pattern="#.###"/></h:outputText>
+												</s:fragment>
+												<s:fragment rendered="#{stockControl.goodsBatch.goodsInfoId.goodsTypeInfo ne 1}">
+													<h:outputText value="#{_gpcr.goodsNum}"><f:convertNumber pattern="#.###"/></h:outputText>
+												</s:fragment>												
+											</td>
+											<td width="13%" align="center">#{_gpcr.operater.name}</td>
+											<td width="10%" align="center"><h:outputText value="#{_gpcr.insertTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></td>
+										</tr>
+									</a:repeat>
+								</table>
+								<s:fragment rendered="#{stockControl.totalRows > 100}">
+									<h:form id="pageFrom">
+										<table style="height:30px; margin:20px auto 0 auto;" cellpadding="0" cellspacing="0">
+											<tr>
+												<s:fragment rendered="#{!stockControl.hasPreviousPage }">
+													<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+												</s:fragment>
+												<s:fragment rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}">
+													<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+													<td class="td_t_b">
+														<a:commandLink style="color:#333333;" id="firstPage" action="#{stockControl.batchDetailPageFind(1)}" rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}" reRender="showPanel">首页</a:commandLink>
+													</td>
+													<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+														<a:commandLink styleClass="no_n" id="previousPage" action="#{stockControl.batchDetailPageFind(stockControl.previousPage)}" rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}" reRender="showPanel">&lt;</a:commandLink>
+													</td>
+												</s:fragment>
+												<a:repeat var="_page" value="#{stockControl.showPageList}" rowKeyVar="_index">
+													<td class="td_t_b #{stockControl.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq stockControl.page ? 'onp' : ''}">
+														<a:commandLink id="thisPage" action="#{stockControl.batchDetailPageFind(_page)}" reRender="showPanel">#{_page}</a:commandLink>
+													</td>
+												</a:repeat>
+												<s:fragment rendered="#{stockControl.hasNextPage}">
+													<td class="td_t_b td_t_t">
+														<a:commandLink styleClass="no_d"  id="nextPage" action="#{stockControl.batchDetailPageFind(stockControl.nextPage)}" rendered="#{stockControl.hasNextPage and stockControl.totalPages > 1}" reRender="showPanel">&gt;</a:commandLink>
+													</td>
+													<td class="td_t_b td_t_t">
+														<a:commandLink style="color:#333333;"  id="lastPage" action="#{stockControl.batchDetailPageFind(stockControl.totalPages)}" rendered="#{stockControl.hasNextPage and stockControl.totalPages > 1}" reRender="showPanel">尾页</a:commandLink>
+													</td>
+												</s:fragment>
+												<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{stockControl.totalPages}页</td>
+												<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+											</tr>
+										</table>
+									</h:form>
+								</s:fragment>
+							</rich:panel>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+				<div class="ckd_button" style="text-align:center;">
+					<s:button view="/inOut/StockRecordDetail.seam?goodsInfoId=#{stockControl.goodsInfoId}&amp;pageNum=#{stockControl.pageNum}&amp;goodsLevelId=#{stockControl.goodsLevelId}&amp;goodsInfoType=#{stockControl.goodsInfoType}" value="返回" styleClass="btn btn-default" id="bn_left6" style="margin-left:10px" propagation="none">
+					</s:button>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</td>
+</ui:define>
+</ui:composition>

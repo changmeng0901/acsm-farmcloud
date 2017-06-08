@@ -1,0 +1,349 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">	
+ 	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/skinBlue.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/aerialphoto/MaterialLibrary.css" />
+    
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/aerialphoto/MaterialLibrary.js"></script>
+
+<style>
+
+</style>
+	#{aerialVideoGroupHome.searchAerialVideoList()}
+	<div style="background:url(../asset/images/growth/zwleft_04.png) repeat; width:100%; height:100%; position:absolute; z-index:1684; display:none;" id="login1"></div>
+	<div style="background:url(../asset/images/bg_png.png) repeat; width:100%; height:100%; position:absolute; z-index:1684; display:none;" id="videoLogin">
+		<div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" /></div>
+		<div id="ossfile" style="margin-top:20px;"></div> 
+	</div>
+        	<td valign="top">
+            <div class="material_main">
+                <!-- 素材库右侧 -->
+                <div class="material_content pl30 pr30">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt"><a href="#">精准营销</a><span>&gt;</span><strong>航拍</strong></div>
+                        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+                            <ul class="resumeList clear">
+                                <li>
+                                    <a href="AerialVideoGroupEdit.seam"><img src="#{request.contextPath}/asset/images/panorama/panorama_icon1.png"/><span>航拍视频列表</span></a>
+                                </li>
+                                <li class="cur">
+                                    <a href="AerialVideoList.seam"><img src="#{request.contextPath}/asset/images/panorama/panorama_icon2.png" /><span>素材库</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                   
+                    <div class="panorama_material mt20 mb20">
+                    	<div class="panorama_material_header clear">
+                        	<s:div id="videoListSize"><p class="text_title fl">已有视频素材<span>#{aerialVideoGroupHome.aerialVideoList.size()}</span>个</p></s:div>
+                        	<input type="hidden" value="" id="aerialFileUrl" />
+                        	<input type="hidden" value="" id="aerialFileName" />
+                        	<div id="container">
+                            	<button id="selectfiles" type="button" class="btn btn-primary fr">上传视频</button>
+                            	<a style="display: none"  id="postfiles" href="javascript:void(0);" class='btn' onclick="apply(3);"></a> 
+								<a style="display: none"  id="callback"  href="javascript:void(0);" class='btn' onclick="callback();"></a>
+                            </div>
+                        </div>
+                         <s:div id="videoList">
+                        <div class="panorama_material_body"></div>
+                    	<!-- 无数据 -->
+                    	<s:fragment rendered="#{empty aerialVideoGroupHome.aerialVideoList}">
+                        <div class="material_nodata">
+                            <p class="nodata_text">
+                            	<img src="#{request.contextPath}/asset/images/aerialphoto/MaterialLibrary_icon1.png" /><br/>
+                                	您还未上传视频！
+                            </p>
+                        </div>
+                        </s:fragment>
+                        <!-- 有数据 -->
+                        <s:fragment rendered="#{not empty aerialVideoGroupHome.aerialVideoList}">
+                        <div class="material_data">
+                        	<ul class="material_list clear">                       		
+                        		<a4j:repeat value="#{aerialVideoGroupHome.aerialVideoList}" var="_aerial">
+	                            	<li class="m_item">
+	                                	<div class="panorama_li">
+	                                    	<div class="pano_pos">
+	                                        	<div class="icon_block">
+	                                            	<p class="icon_view">
+	                                                    <span onclick="preview(this,'#{_aerial.fileFold}','#{_aerial.thumbnailImageUrl}','#{_aerial.videoFlag}')">
+	                                                        <img src="#{request.contextPath}/asset/images/panorama/MaterialLibrary_icon2.png" />预览
+	                                                    </span>
+	                                                </p>
+	                                                <p class="icon_name">
+	                                                    <span onclick="oRename(this,'.text_name','.text_ipt')">
+	                                                        <img src="#{request.contextPath}/asset/images/panorama/MaterialLibrary_icon3.png" />重命名
+	                                                    </span>
+	                                                </p>
+	                                                <p class="icon_delt">
+	                                                    <span onclick="deleteItem(this,'.m_item','#{_aerial.videoFlag}','#{_aerial.aerialVideoId}')">
+	                                                        <img src="#{request.contextPath}/asset/images/panorama/MaterialLibrary_icon4.png" />删除
+	                                                    </span>
+	                                                </p>
+	                                            </div>
+	                                        </div>
+	                                        <div class="pano_locus">
+	                                        	<div class="text_locus" data-target="#LocusModal" data-toggle="modal" onclick="uploadTrack('#{_aerial.trackList}','#{_aerial.aerialVideoId}')">上传轨迹</div>
+	                                        </div>
+	                                    	<p class="pano_hd">
+	                                    		<s:fragment rendered="#{not empty _aerial.thumbnailImageUrl}"><img src="#{_aerial.thumbnailImageUrl}" /></s:fragment>
+	                                        	<s:fragment rendered="#{empty _aerial.thumbnailImageUrl}"><img src="#{request.contextPath}/asset/images/aerialphoto/mov_default.png" /></s:fragment>
+	                                        </p>
+	                                        <div class="pano_bd">
+	                                        	<i class="icon_qj" title="查看全景" style="display:none;"></i>
+	                                            <p class="text_name" title="#{_aerial.aerialName}">#{_aerial.aerialName}</p>
+	                                            <input type="text" class="text_ipt" value="" onblur="saveVideoName('#{_aerial.aerialVideoId}',this)"/>
+	                                        </div>
+	                                    </div>
+	                                </li>
+                                </a4j:repeat>                                                              
+                            </ul>
+                        </div>
+                        </s:fragment>
+                        </s:div>
+                        <!-- 有数据 -->
+                    </div>
+                     
+                </div>
+                <!-- 素材库右侧 -->
+            </div>   
+            <!-- (4)轨迹管理模态框 -->
+            <h:form id="trackFile" name="trackFile"  enctype="multipart/form-data">
+            	<h:inputHidden value="#{aerialVideoGroupHome.aerialVideoId}" id="hidAerialVideoId"/>
+				<div class="modal fade" id="LocusModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog pano_dialog locus_dialog">
+						<div class="modal-content">
+						    <div class="modal-header clear">
+						        <h4 class="modal-title fl">轨迹管理</h4>
+						        <i class="i_close" data-dismiss="modal"></i>
+						    </div>
+						    <div class="modal-body modal_body">
+						        <div class="nodata_tip" style="display:none;" id="nodata_tip">
+						        	<img src="#{request.contextPath}/asset/images/aerialphoto/MaterialLibrary_nodata.png" />
+						            <p>您还未上传轨迹！</p>
+						            <div class="sm_file_btn locus_file_btn">上传轨迹
+						            	<s:fileUpload id="trackUrl" styleClass="sm_file"
+											size="40" accept="SRT"
+											contentType="SRT"
+											fileName="#{aerialVideoGroupHome.trackFileName}"
+											onchange="previewImage(this.value);"
+											data="#{aerialVideoGroupHome.trackFile}">
+										</s:fileUpload>
+						            </div>
+						            <div id="showFileName" style="margin-top:10px;"></div>
+						        </div>
+						        <div style="padding-top:40px;" id="data_tip">
+						            <div class="fileImg" style="float:none; margin: 0 auto;">
+						                <div class="pos-ab-icos">
+						                	<span class="edit-bn" title="编辑" onclick="jquery('#trackFile\\:trackUrl').click();">
+							                    
+											</span>
+						                    <span class="line-bn"></span>
+						                    <a class="delete-bn" href="javascript:delTrack();" title="删除"></a>
+						                </div>
+						                <img src="#{request.contextPath}/asset/images/aerialphoto/srt_default.png" />
+						            </div>
+						            <p style="width:50%; height:30px; line-height:30px; margin:0 auto; word-break:break-all; text-align:center; overflow:hidden;" id="showEditFileName"></p>
+						        </div>
+						    </div>
+						    <div class="modal-footer">
+						    	<h:inputHidden value="#{aerialVideoGroupHome.operType}" id="videoOperType"/>
+						        <h:commandButton id="insertImages"  styleClass="btn btn-primary" action="#{aerialVideoGroupHome.uploadTrack()}" onclick="if(!submitFile()){return false;};" value="保存"/>
+						        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</h:form>
+			<!-- (1)轨迹管理模态框 -->
+			<div>
+			
+				<table width="700" cellpadding="0" cellspacing="0" id="video_div" style="display:none;position: absolute; top:10%;left:20%;">
+			      	<tr>
+			      		<td valign="top" class="videobox" style="width:auto; z-index:9999; position:relative; height: 572px;">
+   							<div id="hlsdiv">
+                              </div>
+   							<div id="player">                           
+                              <div class="video" id="HLSPlayer">
+                              <script type="text/javascript">
+                              var vID        = "hlsdiv"; 
+                              var vWidth     = "100%";                //播放器宽度设置
+                              var vHeight    = 572;                   //播放器宽度设置
+                              var vPlayer    = "#{request.contextPath}/document/player.swf"; //播放器文件
+                              var vHLSset    = "#{request.contextPath}/document/HLS.swf";             //HLS配置
+                              var vPic       = "#{request.contextPath}/asset/images/iphone/videosImg.jpg";    //视频缩略图
+                              var vCssurl    = "#{request.contextPath}/asset/css/mini.css";     //移动端CSS应用文件
+                              var  vHLSurl    = "";
+                              //-->
+                              </script> 
+                              <script type="text/javascript" src="#{request.contextPath}/asset/js/hls.min.js"></script>
+                              </div>
+                          </div>
+                          <div style="z-index: 9999;     position: absolute;float: right;top: -20px;right: -25px;">
+				             	<a style="color:#3badfd; text-decoration:underline;" href="#" onclick="closeVideo()"><img src="#{request.contextPath}/asset/images/cose.png"></img></a>
+				          </div>
+			            </td>
+			      </tr>
+			     </table>
+			</div>
+			<a4j:status id="ajaxStatus" forceId="true" onstart="jquery('#login').show()" onstop="jquery('#login').hide()" />
+			<a4j:form id="formid" >
+				<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+				<a4j:jsFunction  eventsQueue="mainQueue" name="addAerialVideo" action="#{aerialVideoGroupHome.addAerialVideo()}" reRender="videoList,videoListSize" >
+					<a4j:actionparam name="videoUrl" assignTo="#{aerialVideoGroupHome.videoUrl}"/>
+					<a4j:actionparam name="videoName" assignTo="#{aerialVideoGroupHome.name}"/>
+				</a4j:jsFunction>
+				<a4j:jsFunction status="ajaxStatus" eventsQueue="mainQueue" name="delAerialVideo" action="#{aerialVideoGroupHome.delAerialVideo()}" reRender="videoList,videoListSize" >
+					<a4j:actionparam name="aerialVideoId" assignTo="#{aerialVideoGroupHome.aerialVideoId}"/>
+				</a4j:jsFunction>
+				<a4j:jsFunction eventsQueue="mainQueue" name="renameAerialVideo" action="#{aerialVideoGroupHome.renameAerialVideo()}" reRender="videoList,videoListSize" >
+					<a4j:actionparam name="aerialVideoId" assignTo="#{aerialVideoGroupHome.aerialVideoId}"/>
+					<a4j:actionparam name="videoName" assignTo="#{aerialVideoGroupHome.name}"/>
+				</a4j:jsFunction>
+			</a4j:form>
+            </td>  
+      <script type="text/javascript">
+		//<![CDATA[
+           var oss_url = "#{dataDicConstant.getOssUrl()}";
+
+		//]]>
+       </script>      
+     <script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.2.6.pack.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/map/aerialVideoUpload.js"></script>  
+	<script type="text/javascript">
+	//<![CDATA[
+		//(6)点击重命名按钮点击事件
+		function oRename(obj,oTxt,oInput){
+			jQuery(obj).parents(".m_item").find( oTxt ).hide();
+			jQuery(obj).parents(".m_item").find( oInput ).val(jQuery(obj).parents(".m_item").find( oTxt ).html());
+			jQuery(obj).parents(".m_item").find( oInput ).show();
+			jQuery(obj).parents(".m_item").find( oInput ).focus();
+		}
+		//(7)删除事件
+		function deleteItem(obj,oParent,status,id){
+			if(status=="false"){
+				alert("该视频格式转换中，不能删除！");
+			}else{
+				//该视频展示中，删除后将从分组中去掉，并且清空全部浏览量、点赞数、评论，并不能还原，确定删除？
+				var r=confirm("该视频展示中，删除后将从分组中去掉，并不能还原，确定删除？");   
+				if(r==true){
+					//jQuery( obj ).parents( oParent ).remove();
+					delAerialVideo(id);
+					return true;
+				}else{
+					return false;   
+				}	
+			}
+		}
+		function preview(obj,videoUrl,img,status){
+			if(status=="false"){
+				alert("该视频格式转换中，不能预览！");
+				return false;   
+			}else{
+				vPic=img;
+				if(img=""){
+					vPic= "#{request.contextPath}/asset/images/iphone/videosImg.jpg";    //视频缩略图
+				}				
+				vHLSurl=videoUrl;
+				window.a.init();
+				jquery("#login1").show();
+				jquery("#video_div").show();
+			}
+		}
+		function closeVideo() {
+			jquery("#hlsdiv").html("");
+			jquery('#login1').hide();
+			jquery("#video_div").hide();
+		}
+		function saveVideoName(id,obj){
+			var name=jQuery(obj).val();
+			if(name==""){
+				alert("视频名称不能为空");
+				jQuery(obj).focus();
+			}else{
+				renameAerialVideo(id,name);
+			}
+		}
+		function apply(obj){
+			jquery("#videoLogin").show();
+			var entId='#{sessionTake.getEnterpriseInfoId()}';
+			set_upload_param(uploader1, '', false,obj,entId);
+		}
+	
+		function callback(){
+			jquery("#videoLogin").hide();
+			var url=jquery("#aerialFileUrl").val();
+			var name=jquery("#aerialFileName").val();
+			addAerialVideo(url,name);
+		}
+		function uploadTrack(trackList,videoId){
+			jquery("#trackFile\\:trackUrl").val("");
+			jquery("#showFileName").html("");
+			jquery("#showEditFileName").html("");	
+			jquery("#trackFile\\:hidAerialVideoId").val(videoId);
+			if(trackList==""){
+				jquery("#nodata_tip").show();
+				jquery("#data_tip").hide();
+			}else{
+				jquery("#nodata_tip").hide();
+				jquery("#data_tip").show();
+			}
+		}
+		function previewImage(fileName){	
+			var fileType=fileName.substring(fileName.lastIndexOf("."));	
+			if(fileType!=".SRT"){
+				alert("上传文件格式错误！");
+				jQuery("#trackFile\\:trackUrl").val("");
+			}else{
+				jquery("#showFileName").html(fileName);
+				jquery("#showEditFileName").html(fileName);		
+				
+			}
+		}
+
+		function delTrack(){
+			jquery("#trackFile\\:trackUrl").val("");
+			jquery("#showFileName").html("");
+			jquery("#showEditFileName").html("");	
+			jquery("#nodata_tip").show();
+			jquery("#data_tip").hide();
+		}
+		function submitFile(){			
+			//删除时上传内容为空，所以先不判断
+			/* var fileName = jQuery("#trackFile\\:trackUrl").val();
+			if (fileName == null || fileName == '') {
+				alert("请选择上传文件！");
+				return false;
+			}else {
+				 var msg = fileName.substring(fileName.lastIndexOf("."), fileName.length);
+				 if (msg != ".SRT") {		
+					 alert("上传文件格式不正确！");	 
+					 return false;					
+				}
+			} */
+			//编辑视频
+			if(jquery("#data_tip").css("display")=="block"){
+				jquery("#trackFile\\:videoOperType").val("edit");
+			}else{
+				jquery("#trackFile\\:videoOperType").val("");
+			}			
+			jquery('#login').show();
+			return true;			
+		}		
+	
+	//]]>
+	</script>
+
+</ui:define>
+
+</ui:composition>

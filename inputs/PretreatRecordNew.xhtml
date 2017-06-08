@@ -1,0 +1,202 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+<!-- 公共Style开始 -->
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<style>
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:220px;}
+/*搜索小图标*/
+    input[type=text].form-control {
+    height: 34px;
+    line-height: 20px;
+    padding: 6px 30px;
+    box-sizing: border-box;
+    font-family: '微软雅黑';
+    color:'#ababab';
+    background:  url('#{request.contextPath}/asset/images/cjsearch_bg.png') 8px center no-repeat;
+}
+/*搜索小图标*/
+</style>
+<!-- 公共Style结束 -->
+<!-- 新增Style开始 -->
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap/bootstrap-select.min.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap/bootstrap-datetimepicker.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap/skinBlue.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/style.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/inventory/InventoryFile.css" />
+<!-- 新增Style结束 -->
+<!-- 初始化开始 -->
+#{pretreatRecordList.queryPretreatRecordInit()}
+<!-- 初始化结束-->
+<td valign="top" width="100%">
+	<div class="right_c">
+		<!-- 公用头部 开始 -->
+                	<div class="r_title clear" style="margin-bottom: 30px;">
+                    	<div class="r_t_l fl">生产管理&#160;&gt;&#160;&#160;<font size="3">初加工</font></div>
+                    </div>
+		<!-- 公用头部 结束 -->
+		<!-- 新增模块开始 -->
+		
+		               <div class="inbentory_search_wap" >
+                    	<!-- 库存档案搜索头部 -->
+                       	<div class="search_header clear">
+                                <div class="clear" style="position:relative; padding-right:125px;">
+                                    <div class="search_selected fl">
+                                        <dl style="width:340px;" class="se_selt180 fl">
+                                            <dd class="inline_block bootSelt180">
+                                                <input id = "plantName" type="text" style="width:250px;font-size:12px;" value="请输入作物名称" class="form-control mr5 fl" />
+                                                <input id = "searchButton" type="button" value="搜索" class="btn btn-primary"  onclick="searchChange()" />
+                                            </dd>
+                                        </dl>
+                                        <a class="fr" style="position:absolute; right:17px;font-size:12px; bottom:5px; margin-top:8px; width:90px;" href="/inputs/PretreatRecordAddNew.seam"><input type="button" value="添加加工记录" class="btn btn-primary" style="padding:11px 9px; text-align: center; line-height: 2px;" /></a>
+                                    </div>
+                                </div>
+                     	</div>
+                            <!-- 列表 -->
+                            <h:panelGroup id="pretreatRecordShow">
+                     		<h:inputHidden value="#{pretreatRecordList.selectPageNum}" id="thisPageId"/>
+                            <table class="inventory_modal_table mt20" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8eff1">
+                            	<tr>
+                                	<th>作物名称</th>
+                                    <th>加工方法</th>
+                                    <th>加工设备</th>
+                                    <th>加工图片</th>
+                                    <th>加工工艺</th>
+                                    <th>操作人</th>
+                                    <th>时间</th>
+                                    <th>操作</th>
+                                </tr>  
+                                <a:repeat value="#{pretreatRecordList.preRecordList}" var="_prl" rowKeyVar="_index">                                                            
+                                <tr class="odd" style="border-bottom:1px solid #e8eff1">
+                                	<td>#{_prl[1]}</td>
+                           			<td>#{_prl[2]}</td>
+                           			<td>#{_prl[3]}</td>
+                           			<td>
+                           				<h:panelGroup rendered="#{_prl[4] ne null}" ><!-- BUG修改图片为空不显示 -->
+                           				<div class="pic" >
+                           					<img src="#{_prl[4]}" alt="" style="width:25px;height:19px"/>
+                           				</div>
+                           				</h:panelGroup>
+                           			</td>
+                           			<td>#{_prl[5]}</td>
+                           			<td>#{_prl[6]}</td>
+                           			<td>#{_prl[7]} - #{_prl[8]} </td>
+                                    <td>
+                                       <s:link propagation="none" view="/inputs/PretreatRecordSeeNew.xhtml" styleclass="list_view"  id="detailId" title="查看" >
+										<f:param name="preRecordId" value="#{_prl[0]}" />		
+										<img src="#{request.contextPath}/asset/images/stock/commons/tableIco_view2.png" />
+									   </s:link>
+                           			   <s:link propagation="none" view="/inputs/PretreatRecordAddNew.xhtml" styleclass="list_edit"  id="editId" title="编辑" >
+										<f:param name="preRecordId" value="#{_prl[0]}" />
+										<f:param name="addOrUpdate" value="update" />
+										<img src="#{request.contextPath}/asset/images/stock/commons/tableIco_edit2.png" />
+									   </s:link>                       		
+                            		   <a id="#{_prl[0]}" class="icon_link del" title="删除" href='javascript:;' onclick='delPretreatRecord(this)'><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_delect2.png" /></a> 
+                                    </td>
+                                </tr>
+                                </a:repeat> 
+                            </table> 
+                        <div class="pageModel_wap" style="padding:50px 0 30px;">
+						<h:form id="pageFrom" rendered="#{null ne pretreatRecordList.preRecordList and pretreatRecordList.preRecordList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!pretreatRecordList.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{pretreatRecordList.hasPreviousPage and pretreatRecordList.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" onclick="queryByPage(1)" rendered="#{pretreatRecordList.hasPreviousPage and pretreatRecordList.totalPages > 1}" >首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" onclick="queryByPage(#{pretreatRecordList.prePageNum})"  >&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{pretreatRecordList.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le pretreatRecordList.totalPages}">
+											<td class="td_t_b #{pretreatRecordList.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq pretreatRecordList.selectPageNum ? 'onp' : ''}" >
+												<a:commandLink id="thisPage"  onclick="queryByPage(#{_page})"  >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{pretreatRecordList.flag}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryByPage(#{pretreatRecordList.nextPageNum})" rendered="#{pretreatRecordList.hasNextPage and pretreatRecordList.totalPages > 1}" >&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryByPage(#{pretreatRecordList.totalPages})" rendered="#{pretreatRecordList.hasNextPage and pretreatRecordList.totalPages > 1}" >尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{pretreatRecordList.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+						<h:inputHidden value="#{pretreatRecordList.plantName}" id = "plantNameHId"/>
+					</div> 
+					</h:panelGroup>
+                        <!-- 库存档案搜索列表 -->
+                    </div>
+		
+		
+		<!-- 新增模块结束 -->
+		<div class="clear"></div>
+	</div>
+</td>
+<!-- ajax开始 -->
+<a:form>
+	<!-- 搜索 -->
+	<a:jsFunction name="searchByPlantName" action="#{pretreatRecordList.queryByPlantName()}" reRender="pretreatRecordShow" >
+		<a:actionparam name="plantName" assignTo="#{pretreatRecordList.plantName}"/>
+	</a:jsFunction>
+	<!-- 删除 -->
+	<a:jsFunction name="deletePretreatRecord" action="#{pretreatRecordList.deletePretreatRecordById()}" reRender="pretreatRecordShow" >
+		<a:actionparam name="pretreatRecordId" assignTo="#{pretreatRecordList.preRecordId}"/>
+		<a:actionparam name="plantName" assignTo="#{pretreatRecordList.plantName}"/>
+		<a:actionparam name="selectPageNum" assignTo="#{pretreatRecordList.selectPageNum}"/>
+	</a:jsFunction>
+	<!--分页 -->
+	<a:jsFunction name="getPreRecordByPage" action="#{pretreatRecordList.queryByPlantNameAndPage()}" reRender="pretreatRecordShow" >
+		<a:actionparam name="selectPageNum" assignTo="#{pretreatRecordList.selectPageNum}"/>
+		<a:actionparam name="plantName" assignTo="#{pretreatRecordList.plantName}"/>
+	</a:jsFunction>
+</a:form>
+<!-- ajax结束 -->
+<!-- 新增javascript开始 -->
+<script type="text/javascript" src="#{request.contextPath}/asset/js/commons/jquery-1.10.2.min.js"></script>
+<!--[if IE 8]>
+<script type="text/javascript" src="{request.contextPath}/asset/js/bootstrap/respond.js"></script>
+<![endif]-->
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/PretreatRecord.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap/icheck.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/inventory/InventoryFile.js"></script>
+<!-- 新增javascript结束-->
+<!-- <script type="text/javascript">
+//<![CDATA[
+	//刷新
+	function refreshAction(data){
+		jquery(".selectpicker").selectpicker();
+		if(searchName != ""){
+			jquery("#goodsName").val(searchName);
+		}
+		document.getElementById("stockControlFrom:refreshShow").onclick();
+	}	
+//]]>
+</script> -->
+</ui:define>
+</ui:composition>

@@ -1,0 +1,549 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template_inventory.xhtml">
+
+	<ui:define name="body">
+	#{updateStorageHome.auditInit()}
+		<script src="#{request.contextPath}/asset/js/common-acsm.js"/>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/inout/StorageProcessing.css" />
+		<td valign="top">
+			<div class="right_c" style="min-height: 30px; padding: 20px 0;">
+				<!-- 面包屑导航 开始 -->
+				<div class="pl30 pr30">
+					<div class="r_title clear" style="margin-top: 0;">
+						<div class="r_t_l fl">
+							<span>加工</span><em>&gt;</em><span>库存</span><em>&gt;</em><font
+								size="3">入库处理</font>
+						</div>
+					</div>
+				</div>
+				<!-- 面包屑导航 结束 -->
+				<!-- 入库处理内容 开始 -->
+				<div class="storage-process-wap mt10">
+					<div class="storage-ttl">
+						<h2>原料出库信息</h2>
+						<div class="SpreadOut-btn fl">展开</div>
+					</div>
+					<div class="storage-slidedown ylckxx-slidedown"
+						style="display: none;">
+						<i class="down-sign"></i>
+						<div class="pl30 pr30 mt20">
+							<table class="ze_table" width="100%" cellpadding="0"
+								cellspacing="0" style="margin-top: 20px;" id="tbr1">
+								<tr>
+									<td class="tree_th" width="5%">ID</td>
+									<td class="tree_th" width="2%"></td>
+									<td class="tree_th" width="10%">批次编号</td>
+									<td class="tree_th" width="10%">物料名称</td>
+									<td class="tree_th" width="10%">来源</td>
+									<td class="tree_th" width="10%">等级</td>
+									<td class="tree_th" width="5%">数量</td>
+									<td class="tree_th" width="10%">规格</td>
+									<td class="tree_th" width="5%">单价</td>
+									<td class="tree_th" width="10%">小计</td>
+								</tr>
+								<a:repeat value="#{updateStorageHome.pickGoodsBatchList}"
+									var="_gpcr" rowKeyVar="_index" id="xx">
+									<tr class="cm_nottt #{_index % 2 == 0 ? 'alt' : ''}">
+										<td height="48" width="5%" align="center">#{_gpcr.goodsBatchId}</td>
+										<td>
+										</td>
+										<td width="10%" align="center">
+											<h:inputHidden id="shangpinid#{_index}" value="#{updateStorageHome.getProductInfo(_gpcr.goodsInfoId)}" />
+											#{_gpcr.batchCode}
+										</td>
+										<td width="10%" align="center" id="wuliaoname#{_index}">#{_gpcr.name}</td>
+										<td width="10%" align="center"><h:outputText value="--"
+												rendered="#{null eq _gpcr.tunnelName}" /> <h:outputText
+												value="#{ _gpcr.tunnelName}" rendered="#{null ne  _gpcr.tunnelName}" /></td>
+										<td width="10%" align="center">
+										 	<h:outputText value="--" rendered="#{null eq  _gpcr.goodsLevelName}" />
+										 	<h:outputText value="#{ _gpcr.goodsLevelName}" rendered="#{null ne  _gpcr.goodsLevelName}" /></td>
+										<td width="5%" align="center">
+												<h:outputText value="#{ _gpcr.goodsNum}"> <f:convertNumber pattern="#.###" /> </h:outputText>
+										</td>
+										<td width="10%" align="center"> <h:outputText value="#{updateStorageHome.getUnitName(_gpcr.goodsUnit)}"> <f:convertNumber pattern="#.###" /> </h:outputText></td>
+										<td width="5%" align="center">￥<h:outputText value="#{_gpcr.price}"> <f:convertNumber pattern="#0.00" /> </h:outputText>
+										</td>
+										<td width="10%" align="center">￥ 
+												<h:outputText value="#{ _gpcr.sumPrice}"> <f:convertNumber pattern="#0.00" /> </h:outputText>
+										</td>
+									</tr>
+								</a:repeat>
+							</table>
+						</div>
+					</div>
+				</div>
+				<h:form id="saveFrom">
+				<div class="storage-process-wap mt30">
+					<div class="storage-ttl">
+						<h2>商品入库</h2>
+					</div>
+					<div class="storage-slidedown" style="border: none;">
+						<div class="pl30 pr30">
+							<table class="messageTable" width="100%" cellpadding="0"
+								cellspacing="0" style="margin: 10px 0 10px; font-size: 14px;">
+								<tr>
+									<td class="pr10" align="right" width="100">仓库 :</td>
+									<td width="190"><span class="bootSelt-190"> 
+										<h:selectOneMenu styleClass="selectpicker" value="#{updateStorageHome.roomId}"  id="roomId">
+											<s:selectItems var="_storage" value="#{updateStorageHome.proRoomList}" label="#{_storage.name}" itemValue="#{_storage.storageRoomId}" />
+										</h:selectOneMenu>
+									</span></td>
+									<td class="pr10" align="right" width="100">类型 :</td>
+									<td width="190"><span class="bootSelt-190"> 
+										<h:selectOneMenu styleClass="selectpicker" id="psTypeId" value="#{updateStorageHome.psTypeId}" immediate="true" onchange="showProductList(this.value);">
+											<s:selectItems value="#{updateStorageHome.proStorageTypeList}" var="_type" itemValue="#{_type.id}" label="#{_type.name}"/>
+										</h:selectOneMenu>
+									</span></td>
+									<td class="pr10" align="right" width="100">经办人 :</td>
+									<td><span class="bootSelt-190"> 
+										<h:selectOneMenu styleClass="selectpicker b1" id="farmInfoId" value="#{updateStorageHome.farmInfoId}">
+											<s:selectItems var="_attn" value="#{updateStorageHome.proFarmInfoList}" label="#{_attn[1]}" itemValue="#{_attn[0]}" />
+										</h:selectOneMenu>
+									</span></td>
+								</tr>
+								<tr>
+									<td class="pr10" align="right">入库时间 :</td>
+									<td><span class="bootData21">
+											<div class="input-append date form_datetime" style="position: relative;width:190px;">
+												<input id="inStorageTime" size="22" type="text" value="#{updateStorageHome.inStorageTime}" readonly="readonly"></input>
+												<span class="add-on"><i class="icon-th"></i></span>
+											</div>
+									</span></td>
+									<td class="pr10" align="right">操作人 :</td>
+									<td>#{sessionTake.nickname}</td>
+									<td class="pr10" align="right">操作时间 :</td>
+									<td>#{dateUtil.getCurrentTime('yyyy-MM-dd HH:mm')}</td>
+								</tr>
+								<tr>
+									<td class="pr10" align="right"
+										style="vertical-align: top; line-height: 34px;">备注 :</td>
+									<td colspan="2">
+										<h:inputTextarea cols="85" value="#{updateStorageHome.notice}" id="notice" style="resize:none;height:60px" styleClass="form-control nw300"></h:inputTextarea>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="pl30 pr30 mt20">
+							<h:panelGroup id="harListId">
+							<table class="ze_table" width="100%" cellpadding="0"
+								cellspacing="0" style="margin-top: 20px;" id="tbr">
+								<tr class="alt">
+									<td height="4" width="5"><img src="../asset/images/table_d_40.jpg"
+										height="4" width="5" /></td>
+									<td colspan="9"
+										style="border-top: 1px solid #e1e1e1; background: #f0f5fb;"></td>
+									<td height="4" width="5"><img src="../asset/images/table_d_43.jpg"
+										height="4" width="5" /></td>
+								</tr>
+								<tr class="">
+									<th class="ze_bg ze_bt_le" height="4" width="5"></th>
+									<th class="ze_bg" width="8%">商品编号</th>
+									<th class="ze_bg" width="10%">商品名称</th>
+									<th class="ze_bg" width="10%">来源</th>
+									<th class="ze_bg" width="12%">净含量 单位规格/包装规格</th>
+									<th class="ze_bg" width="12%">入库量</th>
+									<th class="ze_bg" width="12%">保质期(天)</th>
+									<th class="ze_bg" width="12%">商品单价</th>
+									<th class="ze_bg" width="12%">小计</th>
+									<th class="ze_bg" width="12%">操作</th>
+									<th class="ze_bg" width="12%"></th>
+									<th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+								</tr>
+								<a:repeat value="#{updateStorageHome.storageGoodsInOutList}"
+									var="_sgio" rowKeyVar="_index" id="bb">
+									<tr class="cm_nottt #{_index % 2 == 0 ? 'alt' : ''}" id="repeattr#{_index}">
+										<td class="ze_bg ze_bt_le" height="4" width="5"></td>
+										<td height="48" width="8%" align="center">#{_sgio[0]}
+											<h:inputHidden value="#{_sgio[9]}" id="yuanliaoid#{_index}"/>
+											<h:inputHidden value="#{_sgio[14]}" id="goodsbatchid#{_index}"/>
+										</td>
+										<td height="48" width="10%" align="center">
+											<h:selectOneMenu styleClass="selectpicker" value="#{_sgio[5]}"  id="goodsName" onchange="changeGoodsInfo1(#{_index});">
+												<s:selectItems var="_goodsName" value="#{updateStorageHome.getGoodsName(_index)}" 
+													label="#{_goodsName[0]}" 
+													itemValue="#{_goodsName[2]}"/>
+											</h:selectOneMenu>	
+											
+										</td>
+										<td height="48" width="10%" align="center">#{_sgio[6]}</td>
+										<td height="48" width="12%" align="center">
+											<h:panelGroup rendered="#{_sgio[4] eq '' or _sgio[4] eq null}">
+											#{_sgio[2]}#{_sgio[3]}
+											</h:panelGroup>
+											<h:panelGroup rendered="#{_sgio[4] ne '' and _sgio[4] ne null}">
+											#{_sgio[2]}#{_sgio[3]}/#{_sgio[4]}
+											</h:panelGroup>
+										</td>
+										<td height="48" width="12%" align="center">
+											<h:inputText class="form-control _number" 
+											onchange="updateMaoNum(this.value,this.id,#{_index});" 
+											style="width: 50%; text-align: center;" id="numMaober#{_index}" 
+											type="text" value="#{_sgio[12]}"/>
+										</td>
+										<td height="48" width="12%" align="center">
+											<h:inputText class="form-control _expire" 
+												onchange="updateExpirationDate(this.value, this.id,#{_index});" 
+												style="width: 50%; text-align: center;" id="baozhiqi#{_index}" 
+												type="text" value="#{_sgio[7]}"/>
+										</td>
+										<td height="48" width="12%" align="center">￥
+											<h:inputText styleClass="form-control"
+												onchange="updatePrice(this.value,this.id,#{_index});" 
+												style="width: 50%; text-align: center;" id="goodsPrice#{_index}" 
+											 value="#{_sgio[8]}"/>
+										</td>
+										<td height="48" width="12%" align="center" >￥
+												<span id="totalGoodsPrice#{_index}">0.00</span>
+										</td>
+										<td height="48" width="12%" align="center" >
+											<a href="javascript:void(0);" onclick="additional1(#{_index});">添加</a>
+											<a href="javascript:void(0);" onclick="delProduct(#{_index});">删除</a>
+										</td>
+										<td class="ze_bg ze_bt_ri" height="4" width="5"></td>
+									</tr>
+								</a:repeat>
+							</table>
+							</h:panelGroup>
+						</div>
+						 <div style="padding:50px 0;" class="mes_mailBtn">
+<!-- 							<h:inputHidden id="storageRoomIdHidden" value="#{repertoryChange.roomId}"/> -->
+<!-- 							<h:inputHidden id="storageTypeHidden" value="#{repertoryChange.psTypeId}"/> -->
+							<h:inputHidden id="storageDateHidden" value="#{updateStorageHome.inStorageTime}"/>
+<!-- 							<h:inputHidden id="commentHidden" value="#{repertoryChange.notice}"/> -->
+<!-- 							<h:inputHidden id="operaterHidden" value="#{repertoryChange.farmInfoId}"/> -->
+						 	<a:commandButton id="save" value="提交" styleClass="btn btn-primary" onclick="if(!submitSave())return false;" action="#{updateStorageHome.saveInOutGoods}"/>
+                          	&#160;
+							<s:button view="/inOut/UpdateOutStorage.xhtml" value="返回" styleClass="btn btn-default">
+								<f:param name="baseId" value="#{updateStorageHome.baseId}"></f:param>
+								<f:param name="storageRoomId" value="#{updateStorageHome.storageRoomId}"></f:param>
+								<f:param name="comment" value="#{updateStorageHome.comment}"></f:param>
+								<f:param name="operater" value="#{updateStorageHome.operater}"></f:param>
+								<f:param name="storageDate" value="#{updateStorageHome.storageDate}"></f:param>
+								<f:param name="storageType" value="#{updateStorageHome.storageType}"></f:param>
+							</s:button>
+                        </div>
+					</div>
+				</div>
+			</h:form>
+				<!-- 入库处理内容 结束 -->
+			</div>
+		</td>
+<a:form>
+	<a:jsFunction name="additional" reRender="harListId" action="#{updateStorageHome.addItional}" data="#{updateStorageHome.index}" oncomplete="jisuan(data);">
+		 <a:actionparam name="priceArr" assignTo="#{updateStorageHome.priceArr}" />
+		 <a:actionparam name="expireArr" assignTo="#{updateStorageHome.expireArr}" />
+		 <a:actionparam name="countArr" assignTo="#{updateStorageHome.countArr}" />
+		 <a:actionparam name="index"   assignTo="#{updateStorageHome.index}"/>    
+		 <a:actionparam name="goodsInfoId" assignTo="#{updateStorageHome.newGoodsInfoId}" />  
+		 <a:actionparam name="goodsBatchId" assignTo="#{updateStorageHome.goodsBatchId}" />             
+	</a:jsFunction>
+	<a:jsFunction name="delOneProduct" reRender="harListId" action="#{updateStorageHome.delOneProduct}" data="#{updateStorageHome.index}" oncomplete="jisuan(data);">
+		 <a:actionparam name="priceArr" assignTo="#{updateStorageHome.priceArr}" />
+		 <a:actionparam name="expireArr" assignTo="#{updateStorageHome.expireArr}" />
+		 <a:actionparam name="countArr" assignTo="#{updateStorageHome.countArr}" />
+		 <a:actionparam name="index"   assignTo="#{updateStorageHome.index}"/>                  
+	</a:jsFunction>
+	<a:jsFunction name="changeGoodsInfo" reRender="harListId" action="#{updateStorageHome.changeGoodsInfo}" data="#{updateStorageHome.index}" oncomplete="jisuan(data);">
+		 <a:actionparam name="index"   assignTo="#{updateStorageHome.index}"/>
+		 <a:actionparam name="goodsInfoId"   assignTo="#{updateStorageHome.newGoodsInfoId}"/> 
+		  <a:actionparam name="goodsBatchId" assignTo="#{updateStorageHome.goodsBatchId}" />                     
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript">
+//<![CDATA[
+jQuery = jQuery.noConflict();
+jQuery(function(){
+	
+	// 时间控件 开始
+	jQuery(".form_datetime").datetimepicker({
+		format: "yyyy-mm-dd hh:ii",  /* 控制显示格式，默认为空，显示小时分钟 */
+		autoclose: true,
+		weekStart: 1,
+		language:  'zh-CN',
+		/* startView: 3,
+		minView: 2,
+		maxView: 2, */		
+		pickerPosition: "bottom-left"
+	});
+	
+	// 下拉框 开始
+	jQuery('.selectpicker').selectpicker();
+	
+	// 表格模板隔行换色 开始 
+	jQuery('.tableModel tbody tr').mouseover(function(){
+		jQuery(this).addClass('hover');
+	});
+	jQuery('.tableModel tbody tr').mouseout(function(){
+		jQuery(this).removeClass('hover');
+	});	
+	
+	jQuery('input[type=text]').focus(function(){  //文本框获取焦点失去焦点变化
+		var txt_value = jQuery(this).val();
+		if( txt_value == this.defaultValue ){
+			jQuery(this).val(txt_value);	
+			jQuery(this).css('color','#323232');
+		}	
+	});	
+	jQuery('input[type=text]').blur(function(){
+		var txt_value = jQuery(this).val();
+		if( txt_value == "" ){
+			jQuery(this).val(this.defaultValue);	
+			jQuery(this).css('color','#323232');
+		}	
+	});	
+	
+	jQuery(".ze_table tr,.tr_tab_b tr").not(".nottt").mouseover(function(){  
+	//如果鼠标移到class为stripe的表格的tr上时，执行函数
+	jQuery(this).addClass("over");})
+	jQuery(".ze_table tr,.tr_tab_b tr").not(".nottt").mouseout(function(){  //给这行添加class值为over，并且当鼠标一出该行时执行函数
+	jQuery(this).removeClass("over");})  //移除该行的class
+	jQuery(".ze_table tr:even,.tr_tab_b tr:even").not(".nottt").addClass("alt");
+	//给class为stripe的表格的偶数行添加class值为alt
+	
+	jQuery('.SpreadOut-btn').on('click',function(){  //判断原来出库信息， 展开或收起
+		if(jQuery(this).hasClass('slide-down')){
+			jQuery(this).removeClass('slide-down');	
+			jQuery(this).html('展开');
+			jQuery('.ylckxx-slidedown').slideUp();
+		}else{
+			jQuery(this).addClass('slide-down');	
+			jQuery(this).html('收起');
+			jQuery('.ylckxx-slidedown').slideDown();  
+		}	
+	});
+
+});
+
+//商品入库 验证
+function submitSave(){
+	var storageDate = jquery("#inStorageTime").val();
+	if(!storageDate){
+		alert("请选择入库时间");
+		return false;
+	}
+	var rukuliang = new Array();
+	jquery("._number").each(function(i,e){
+		rukuliang[i] = this.value;
+		} 
+	)
+	for(var k=0; k<rukuliang.length; k++){
+		if(rukuliang[k] == 0.0){
+			alert("入库量不能为0");
+			return false;
+		}
+	}
+	var baozhiqi = new Array();
+	jquery("._expire").each(function(i,e){
+		baozhiqi[i] = this.value;
+		} 
+	)
+	for(var k=0; k<baozhiqi.length; k++){
+		if(baozhiqi[k] == 0.0){
+			alert("保质期不能为0");
+			return false;
+		}
+	}
+	var leng = jquery("#tbr").find("tr").length-2;
+	var leng1 = jquery("#tbr1").find("tr").length-1;
+	var noProduct = "";
+	for(var i=0; i<leng1; i++){
+		var shangpinid = jquery('#xx\\:' + i +'\\:shangpinid').val();
+		var shangpin="";
+		var deleted="";
+		if(shangpinid!=""){
+			var arr=shangpinid.split("@@");
+			shangpin=arr[0];
+			deleted=arr[1];
+		}
+		var wuliaoname = jquery('#wuliaoname' + i).text();
+		if(shangpin == null || shangpin == "" || deleted == '1'){
+			noProduct += wuliaoname + ',';
+		}
+	}
+	noProduct = noProduct.substr(0,noProduct.length-1);
+	if(noProduct != "" && noProduct.length > 0){
+		alert("商品信息中没有查询到" + noProduct + "原料构成的商品，请在商品信息中添加后操作！");
+		return false;
+	}
+	var commentArea = jquery("#saveFrom\\:notice").val();
+	if(commentArea.length >500){
+		alert("备注过长！不可以超过500个字符！");
+		return false;
+	}
+	var roomId = jquery('select[name="roomId"]').val();
+    if ("org.jboss.seam.ui.NoSelectionConverter.noSelectionValue" == roomId){
+    	alert("请选择库房....");
+		return false;
+	}
+    var psTypeId = jquery('select[name="psTypeId"]').val();
+    if ("org.jboss.seam.ui.NoSelectionConverter.noSelectionValue" == psTypeId){
+    	alert("请选择入库类型....");
+		return false;
+	}
+	var farmInfoId = jquery("#farmInfoId").val();
+
+	
+	jquery("#saveFrom\\:storageRoomIdHidden").val(roomId);
+	jquery("#saveFrom\\:storageTypeHidden").val(psTypeId);
+	jquery("#saveFrom\\:storageDateHidden").val(storageDate);
+	jquery("#saveFrom\\:commentHidden").val(commentArea); 
+	if(farmInfoId == ''){
+		alert("经办人不能为空!");
+		return false;
+	}else{
+		jquery("#saveFrom\\:operaterHidden").val(farmInfoId);
+	}
+	return true;
+}
+
+function updatePrice(value,id,index){
+	var v = jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').val();
+	if(v == null || v == ""){
+		jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').val(parseFloat(0).toFixed(1));
+		jquery("#totalGoodsPrice"+index).text(Number(0).toFixed(2));
+	}
+	if(isNaN(v)){
+		alert("单价必须为数字！");
+		jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').val(parseFloat(0).toFixed(1));
+		jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').focus();
+		jquery("#totalGoodsPrice"+index).text(Number(0).toFixed(2));
+	}else{
+		if(v < 0){
+			alert("单价不可以小于0！");
+			jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').val(parseFloat(0).toFixed(1));
+			jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').focus();
+			jquery("#totalGoodsPrice"+index).text(Number(0).toFixed(2));
+		}else{
+			var price = jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').val();
+			var count = jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').val();
+			jquery("#totalGoodsPrice"+index).text(Number(price * count).toFixed(2)); 
+		}
+	}
+	var danjia = jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').val();
+}
+
+function updateMaoNum(value,id,index){
+	var v = jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').val();
+	if(v == null || v == ""){
+		jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').val(parseFloat(0).toFixed(1));
+		jquery("#totalGoodsPrice"+index).text(Number(0).toFixed(2));
+	}
+	if(isNaN(v)){
+		alert("必须填入数字！");
+		jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').val(parseFloat(0).toFixed(1));
+		jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').focus();
+		jquery("#totalGoodsPrice"+index).text(Number(0).toFixed(2));
+	}else{
+		if(v < 0){
+			alert("商品数量必须大于0！");
+			jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').val(parseFloat(0).toFixed(1));
+			jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').focus();
+			jquery("#totalGoodsPrice"+index).text(Number(0).toFixed(2));
+		}else{
+			var price = jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').val();
+			var count = jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').val();
+			jquery("#totalGoodsPrice"+index).text(Number(price * count).toFixed(2));
+		}
+	}
+	var rukuliang = jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').val();
+}
+
+function delProduct(index){
+	var leng = jquery("#tbr").find("tr").length-2;
+	var yuanliaoid = jquery('#saveFrom\\:bb\\:' + index +'\\:yuanliaoid').val();
+	var flag = 0;
+	for(var k=0; k<leng; k++){
+		var newYuanliaoid = jquery('#saveFrom\\:bb\\:' + k +'\\:yuanliaoid').val();
+		if(yuanliaoid == newYuanliaoid){
+			flag += 1;
+		}
+	}
+	if(flag <= 1){
+		alert("该商品不可以删除！");
+		return;
+	}
+	if(confirm('确定删除吗？')){
+		var priceArr = ""; 
+		var countArr = ""; 
+		var expireArr = "";
+		for(var i=0; i<leng; i++){
+			var price = jquery('#saveFrom\\:bb\\:' + i +'\\:goodsPrice').val();
+			var count = jquery('#saveFrom\\:bb\\:' + i +'\\:numMaober').val();
+			var expire = jquery('#saveFrom\\:bb\\:' + i +'\\:baozhiqi').val();
+			priceArr += price + '|';
+			countArr += count + '|';
+			expireArr += expire + '|';
+		}
+		delOneProduct(priceArr,expireArr,countArr,index);
+	}	
+}
+
+function updateExpirationDate(value,id,index){
+	var v = jquery('#saveFrom\\:bb\\:' + index +'\\:baozhiqi').val();
+	if(jquery.REGEX_TYPES.digital.test(v)){
+    	if (v.length > 4) {
+			alert("保质期不能大于4位数字...");
+			jquery('#saveFrom\\:bb\\:' + index +'\\:baozhiqi').val(1);
+			jquery('#saveFrom\\:bb\\:' + index +'\\:baozhiqi').focus();
+		} else {
+		}
+	}else {
+		alert("保质期只能为正整数...");
+		jquery('#saveFrom\\:bb\\:' + index +'\\:baozhiqi').val(1);
+		jquery('#saveFrom\\:bb\\:' + index +'\\:baozhiqi').focus();
+	}
+	var baozhiqi = jquery('#saveFrom\\:bb\\:' + index +'\\:baozhiqi').val();
+}
+
+function additional1(index){
+	var leng = jquery("#tbr").find("tr").length-2;
+	var priceArr = ""; 
+	var countArr = ""; 
+	var expireArr = "";
+	for(var i=0; i<leng; i++){
+		var price = jquery('#saveFrom\\:bb\\:' + i +'\\:goodsPrice').val();
+		var count = jquery('#saveFrom\\:bb\\:' + i +'\\:numMaober').val();
+		var expire = jquery('#saveFrom\\:bb\\:' + i +'\\:baozhiqi').val();
+		priceArr += price + '|';
+		countArr += count + '|';
+		expireArr += expire + '|';
+	}
+	var rukuliang = jquery('#saveFrom\\:bb\\:' + index +'\\:numMaober').val();
+	var baozhiqi = jquery('#saveFrom\\:bb\\:' + index +'\\:baozhiqi').val();
+	var danjia = jquery('#saveFrom\\:bb\\:' + index +'\\:goodsPrice').val();
+	var goodsInfoId = jquery("#saveFrom\\:bb\\:" + index + "\\:goodsName").val();
+	var goodsBatchId=jquery("#saveFrom\\:bb\\:" + index + "\\:goodsbatchid").val();
+	additional(priceArr,expireArr,countArr,index,goodsInfoId,goodsBatchId);
+}
+
+function changeGoodsInfo1(index){
+	var goodsInfoId = jquery("#saveFrom\\:bb\\:" + index + "\\:goodsName").val();
+	var goodsBatchId=jquery("#saveFrom\\:bb\\:" + index + "\\:goodsbatchid").val();
+	changeGoodsInfo(index,goodsInfoId,goodsBatchId);
+}
+
+function jisuan(data){
+	jQuery('.selectpicker').selectpicker();
+	var leng = jquery("#tbr").find("tr").length-2;
+	for(var i=0; i<leng; i++){
+		var price = jquery('#saveFrom\\:bb\\:' + i +'\\:goodsPrice').val();
+		var count = jquery('#saveFrom\\:bb\\:' + i +'\\:numMaober').val();
+		jquery("#totalGoodsPrice"+i).text(Number(price * count).toFixed(2));
+	}
+}
+//]]>
+
+
+</script>
+</ui:define>
+</ui:composition>

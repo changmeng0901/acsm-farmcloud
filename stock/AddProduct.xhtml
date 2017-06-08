@@ -1,0 +1,337 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	>
+	<style>
+	</style>
+	  <!--添加物料内容-->
+    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog material_dialog">
+	     <rich:panel id="addCommo" style="margin:0; border:none; padding: 0;">
+	        <div class="modal-header clear">
+	            <h4 class="modal-title fl">新增商品</h4>
+	            <i class="i_close" onClick="closeProductModal()"></i>
+	        </div>
+	        <h:inputHidden value="#{addProductHome.enterpriseInfoId}" id="enterpriseId_product"/>
+	        <h:inputHidden value="#{addProductHome.baseId}" id="baseId_product"/>
+	        <h:inputHidden value="#{addProductHome.levelId}" id="levelId_product"/>
+	         <h:inputHidden value="#{addProductHome.userId}" id="userId_product"/>
+	         <h:form id="productInfo" enctype="multipart/form-data">
+	        <div class="modal-body modal_body" style="padding-bottom:20px;">
+	        	<table class="edit_infor_table" cellpadding="0" style="width:100%;margin:20px auto;">
+	                <tr>
+	                    <td class="td_lt" style="width:100px;">商品名称</td>
+	                    <td class="td_rt" style="width:260px;">
+	                        <h:inputText value="#{addProductHome.productName}" styleClass="form-control w220 fl" id="productName"/>
+	                        <span class="star_red">*</span>
+	                    </td>
+	                    <td class="td_lt" style="width:100px;">商品类型</td>
+	                    <td class="td_rt">
+	                        <div class="inline_block bootSelt220 fl">
+	                            <select class="selectpicker" id="productType">
+	                                <option value="-1">请选择</option>
+	                                <a:repeat value="#{addProductHome.productTypeList}" var="ptl">
+										<option value="#{ptl.value}" >#{ptl.label}</option>
+									</a:repeat>
+	                            </select>
+	                        </div>
+	                        <span class="star_red">*</span>
+	                    </td>
+	                </tr>
+	                 <tr>
+	                    <td class="td_lt" style="width:100px;">原价</td>
+	                    <td class="td_rt" style="width:260px;">
+	                       <h:inputText value="#{addProductHome.productPrice}" styleClass="form-control w220 fl" id="productPrice"/>
+	                        <span style="float:left;padding-right: 2px;line-height:34px;">元</span>
+	                        <span class="star_red">*</span>
+	                    </td>
+	                    <td class="td_lt">存储类型</td>
+	                    <td class="td_rt">
+	                        <div class="inline_block bootSelt220 fl">
+	                            <select class="selectpicker" id="storeType">
+	                                <option value="-1">请选择</option>
+	                                 <a:repeat value="#{addProductHome.storeTypeList}" var="stl">
+										<option value="#{stl.goodsStorageTypeId}" >#{stl.name}</option>
+									</a:repeat>
+	                            </select>
+	                        </div>                                        
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td class="td_lt">保质期</td>
+	                    <td class="td_rt">
+	                         <h:inputText value="#{addProductHome.shelfLife}" styleClass="form-control w220 fl" id="productShelfLife"/>
+	                        <span style="float:left;padding-left:2px;line-height:34px;">天</span>
+	                        <span class="star_red">*</span>
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td class="td_lt">商品规格</td>
+	                    <td class="td_rt" colspan="3">
+	                     <h:inputText value="#{addProductHome.netContent}" styleClass="form-control fl mr5" id="productnetContent" style="width:80px;"/>
+	                        <div class="inline_block bootSelt80 fl">
+	                            <select class="selectpicker" id="commSpec">
+	                                <option value="-1">请选择</option>
+	                                <a:repeat value="#{addProductHome.specList}" var="spec">
+										<option value="#{spec.id}" >#{spec.name}</option>
+									</a:repeat>
+	                            </select>
+	                        </div>
+	                        <span style="float:left;padding:0 2px;line-height:34px;">/</span>
+	                         <h:inputText value="#{addProductHome.packSpec}" styleClass="form-control fl mr5" id="productpackSpec" style="width:80px;"/>
+	                        <span class="star_red">(净含量 单位规格/包装规格)*</span>
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td class="td_lt" style="vertical-align:top">商品图片</td>
+	                    <td class="td_rt" colspan="3">
+	                        <h:inputHidden  id="pictureUrl2" value=""/>
+	                        <iframe src="#{request.contextPath}/stock/CommoPicUp.seam" id="commframe" class="fl" name="commframe" frameBorder="0" scrolling="no" width="600" onLoad="" ></iframe>
+	                    </td>
+	                </tr>
+	            </table>
+	        	<div style="padding:10px 0; font-size:15px; border-bottom:1px solid #ddd;">商品构成</div>
+	            <!--搜索-->
+	            <div class="search_header mb10 clear">
+	                <div class="search_selected clear">
+	                        	<table width="100%" cellpadding="0" cellspacing="0" class="shangpin_table">
+	                                <tr>
+	                                	<td style="font-size: 14px; width:80px; text-align:center; padding-left:0px;">构成添加</td>
+	                                    <td width="230">
+	                               		<select id="productGoods" class="selectpicker" data-live-search="true" onchange="">
+	                               			<a:repeat value="#{addProductHome.goodsInfoLists}" var="obj">
+												<option value="#{obj.goodsInfoId}" >#{obj.goodsTypeInfo==1 ?'原料' : ''}#{obj.goodsTypeInfo==3 ?'商品' : ''}#{obj.goodsTypeInfo==4 ?'辅料' : ''}#{obj.goodsTypeInfo==5 ?'投入品' : ''}#{obj.goodsTypeInfo!=5 &amp;&amp; obj.goodsTypeInfo!=4 &amp;&amp; obj.goodsTypeInfo!=3 &amp;&amp; obj.goodsTypeInfo!=1  ?'其他物料' : ''}-#{obj.name}-#{obj.netContent gt 0? obj.netContent :''}#{productInfoHome.unitName(obj.goodsUnit)}#{obj.packSpec.trim()!=null &amp;&amp; obj.packSpec.trim()!=''?'/':''}#{obj.packSpec}</option>
+											</a:repeat>
+	                               		</select>
+	                                    </td>
+	                                    <td width="78" align="left">
+	                                    <h:inputHidden value="#{addProductHome.goodsInfo}" id="productGoodsId"></h:inputHidden>
+	                                     <button type="button" class="btn btn-success"   onclick="inGoodsId()">添加</button>
+	                                    </td>
+	                                    <td>
+	                                    	(添加构成后，订单理货您可以匹配到履历，可以使用预采库，库存管理可以计算损耗率等，让您体验更方便快捷！)
+	                                    </td>
+	                                </tr>
+	                            </table>
+	                </div>
+	            </div>
+	            <!--物料列表-->
+	            <h:panelGroup id="productChangelist">
+					<table class="tableModel thead" id="productChangeTab" width="100%" cellpadding="0" cellspacing="0" style="margin-left:0px;margin-bottom:10px;">
+			      		<thead>
+			      			<tr>
+			      				<th style="display:none">物料id</th>
+			      				<th width="20%">名称</th>
+			      				<th width="20%">等级</th>
+			      				<th width="20%">规格</th>
+			      				<th width="20%">数量</th>
+			      				<th >操作</th>
+			      			</tr>
+			      		</thead>
+			      		<tbody id="productBody">
+			      		 <a:repeat value="#{addProductHome.productGoodsList}" var="goods" rowKeyVar="_index">
+			      		 	<tr name='productTr'>
+			      		 	<td style='display:none'>#{goods[0]}</td>
+			      		 	<td>#{goods[1]}</td>
+			      		 	<td>
+			      		 	<s:fragment rendered="#{goods[3] ne null}">
+			      		 		<select class='selectpicker'>
+			      		 			<a:repeat value="#{goods[3]}" var="_level" rowKeyVar="_row">
+				      		 			<s:fragment rendered="#{goods[2] eq _level[0]}">
+				      		 				<option value='#{_level[0]}' selected="selected">#{_level[1]}</option>
+				      		 			</s:fragment>
+				      		 			<s:fragment rendered="#{goods[2] ne _level[0]}">
+				      		 				<option value='#{_level[0]}'>#{_level[1]}</option>
+				      		 			</s:fragment>
+			      		 			</a:repeat>
+			      		 		</select>
+			      		 	</s:fragment>
+			      		 	<s:fragment rendered="#{goods[3] eq null}">
+			      		 		无
+			      		 	</s:fragment>
+			      		 	</td>
+			      		 	<td>#{goods[4]}</td>
+			      		 	<td><input type='text' name='product_num' style='text-align:center; vertical-align:middle' value='#{goods[5]}'/></td>
+			      		 	<td ><a href='#' onclick='' class='list_delete' style='color:black;'></a></td>
+			      		 	</tr>
+			      		 </a:repeat>
+			      		</tbody>
+			      	</table>
+			      	</h:panelGroup>
+	            <!--物料等级-->
+	        </div>
+	       </h:form>
+	        <div class="modal-footer">
+	            <button type="button" class="btn btn-primary"  onclick="productCheckSubmit()" id="productSubBut">提交</button>
+	            <button type="button" class="btn btn-default" onclick="closeProductModal()">返回</button>
+	        </div>
+	        </rich:panel>
+    </div>
+    </div>
+     <a:form>
+		<a:jsFunction name="initProductAddModel" action="#{addProductHome.initProductAddModel()}"  reRender="addCommo" oncomplete="showAddProduct()">
+			<a:actionparam name="enterpriseInfoId" assignTo="#{addProductHome.enterpriseInfoId}"/>
+			<a:actionparam name="baseId" assignTo="#{addProductHome.baseId}"/>
+			<a:actionparam name="levelId" assignTo="#{addProductHome.levelId}"/>
+			<a:actionparam name="userId" assignTo="#{addProductHome.userId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="saveProduct"  action="#{addProductHome.saveProduct()}" data="#{addProductHome.message}"  oncomplete="productCheckSubmitComplete(data)">
+			<a:actionparam name="name" assignTo="#{addProductHome.productName}"/>
+			<a:actionparam name="productType" assignTo="#{addProductHome.productType}"/>
+			<a:actionparam name="storeType" assignTo="#{addProductHome.storeType}"/>
+			<a:actionparam name="productPrice" assignTo="#{addProductHome.productPrice}"/>
+			<a:actionparam name="shelfLife" assignTo="#{addProductHome.shelfLife}"/>
+			<a:actionparam name="netContent" assignTo="#{addProductHome.netContent}"/>
+			<a:actionparam name="unit" assignTo="#{addProductHome.unit}"/>
+			<a:actionparam name="packSpec" assignTo="#{addProductHome.packSpec}"/>
+			<a:actionparam name="json" assignTo="#{addProductHome.goodsJson}"/>
+			<a:actionparam name="picture" assignTo="#{addProductHome.packingImagesUrl}"/>
+			<a:actionparam name="enterpriseInfoId" assignTo="#{addProductHome.enterpriseInfoId}"/>
+			<a:actionparam name="baseId" assignTo="#{addProductHome.baseId}"/>
+			<a:actionparam name="levelId" assignTo="#{addProductHome.levelId}"/>
+			<a:actionparam name="userId" assignTo="#{addProductHome.userId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="addGoodsInfo"  action="#{addProductHome.addGoodsInfo()}" reRender="productChangelist" data="#{addProductHome.message}"  oncomplete="productChangeComple(data)">
+			<a:actionparam name="goodsInfo" assignTo="#{addProductHome.goodsInfo}"/>
+			<a:actionparam name="goodsJson" assignTo="#{addProductHome.goodsJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="delProductGoods"  action="#{addProductHome.delProductGoods()}" reRender="productChangelist" oncomplete="initSelectper()">
+			<a:actionparam name="productGoodsId" assignTo="#{addProductHome.productGoodsId}"/>
+		</a:jsFunction>
+	</a:form>
+	<script>
+	//<![CDATA[
+	function showAddProduct(){
+		$('.selectpicker').selectpicker();
+		$("#goodsModel").modal("hide");
+		$("#productSubBut").attr("disabled",false);
+		$("#productModal").modal("show");
+	}
+	function closeProductModal(){
+		$("#productModal").modal("hide");
+		$("#goodsModel").modal("show");
+	}
+	//添加商品构成
+	function inGoodsId(){
+		var id = $("#productGoods").val();
+		var json = getProductListJson();
+		addGoodsInfo(id,json);
+	}
+	//商品等级添加回调
+	function productChangeComple(data){
+		$('.selectpicker').selectpicker(); 
+		if(data=="重复！请选择辅料！"||data=="重复！请选择其他半成品！"||data=="重复！请选择辅料！"||data=="只能选择一种辅料！"||data=="请选择半成品！"||data=="请选择辅料！"||data=="无可选择物料请添加！"){
+			alert(data);
+		}else{
+			$("#productChangeTab").find(".list_delete").click(function(){
+				var id = $(this).parent().parent().find("td:first-child").html();
+				delProductGoods(id);
+		    });
+		}
+	}
+	//遍历商品构成列表
+	function getProductListJson(){
+		 var levelJson='{"productList":[';
+		  $("#productChangeTab").find("tr[name=productTr]").each(function(i){
+			  var firstTd = $(this).find("td:first-child");
+			  var secondInner = firstTd.next().html();
+			  var thirdInner;
+			  if(firstTd.next().next().find("select").size()>0){
+				  thirdInner = firstTd.next().next().find("select").val();
+			  }else{
+				  thirdInner = firstTd.next().next().html();
+			  }
+			  var fouthInner = firstTd.next().next().next().html();
+			  var fiveInner = firstTd.next().next().next().next().find("input").val();
+			  levelJson +='{"productGoodsId":"'+firstTd.html()+'","productName":"'+secondInner+'","level":"'+thirdInner+'","createTime":"'+fouthInner+'","num":"'+fiveInner+'"},';
+		  });
+		  levelJson+="]}";
+		  return levelJson;
+	}
+	
+
+
+	function initSelectper(){
+		$('.selectpicker').selectpicker(); 
+	}
+
+	//新增商品提交按钮
+	function productCheckSubmit(){
+		   var name = document.getElementById("productInfo:productName").value;
+		   var productType = $("#productType").val();
+		   var productPrice = document.getElementById("productInfo:productPrice").value;//原价
+		   var storeType = $("#storeType").val();
+		   var shelfLife = $("#productInfo\\:productShelfLife").val();
+		   var netContent=document.getElementById("productInfo:productnetContent").value;  
+		   var unit = $("#commSpec").val();
+		   var packSpec=document.getElementById("productInfo:productpackSpec").value;
+		   var json = getProductListJson();
+		   var picture = $('#commframe').contents().find('#loginLogoUrlByte_p').attr("src");
+		   var enterpriseInfoId = $("#enterpriseId_product").val();
+			var baseId = $("#baseId_product").val();
+			var levelId = $("#levelId_product").val();
+			var userId = $("#userId_product").val();
+			if(name.trim() == ""){
+			   alert("请输入商品名称");
+			   return ;
+			}
+			if(productType =="-1"){
+				alert("请选择商品类型");
+				return;
+			}
+			if(productPrice==""){
+				  alert("请输入商品原价");
+				   return;
+			}else if(isNaN(productPrice)){
+				 alert("原价只能位数字");
+				   return ;
+				}
+			if(storeType =="-1"){
+				alert("请选择存储类型");
+				return;
+			}
+			if(shelfLife==""){
+				  alert("请输入保质期");
+				   return;
+			}else if(isNaN(shelfLife)){
+				 alert("保质期只能位数字");
+				   return ;
+				}
+			if(unit =="-1"){
+				alert("请选择单位规格");
+				return;
+			}
+			if( isNaN(netContent) && ""!=netContent){
+	        	   alert("净含量只能是数字");
+	        	   return;
+		       }
+			if(json=='{"productList":[]}'){
+				alert("商品构成不能为空");
+				return;
+			}
+			$("#productBody").find("input[name='product_num']").each(function(){
+				if(isNaN($(this).val())){
+					alert("商品数量只能为数字");
+					return;
+				}
+			})
+			$("#productSubBut").attr("disabled",true);
+			 saveProduct(name,productType,storeType,productPrice,shelfLife,netContent,unit,packSpec,json,picture,enterpriseInfoId,baseId,levelId,userId);
+	}
+
+	function productCheckSubmitComplete(data){
+		if(data!="ok"){
+			alert(data);
+		}else{
+			var inStockType = $("#inStockType").attr("myInStockTypeId");
+			findByPage(3,inStockType,1,"",1);
+			closeProductModal();
+		}
+	}
+	//]]>
+	</script>
+</ui:composition>

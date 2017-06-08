@@ -1,0 +1,615 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<style>
+	.form-control{
+			float:left;
+		}
+	 .messages {
+    color: #ff0000;
+    height: 20px;
+    margin: -46px auto 0 200px;
+    padding-top: 0;
+    position: relative;
+    width: 500px;
+}
+	.all_w01{width: 395px;}
+	.ts_div2{width:240px; height: 125px; border: 1px solid #81C5E9; margin: 0px auto; padding: 0 15px 15px;  background: url(#{request.contextPath}/asset/images/tck_bg_14.jpg) #ffffff repeat-x scroll center top;}
+	.dr-mpnl-shadow{background:none;}
+	.dr-mpnl-pnl{background:none; border:none;}
+	.dr-mpnl-pnl-b{padding:0;}
+	.dr-mpnl-shadow{top:0; left:0;}
+	.rich-picklist-source-items{margin:0;}
+	.ui-selectmenu{*float:left;}
+	/*自适应圆角投影*/
+	.round_shade_box{width:1px; height:1px; font-size:0; display:none; _background:white; _border:1px solid #cccccc;}
+	.round_shade_top{margin:0 12px 0 10px; background:url(#{request.contextPath}/asset/images/zxx_round_shade.png) repeat-x -20px -40px; _background:white; zoom:1;}
+	.round_shade_topleft{width:11px; height:10px; background:url(#{request.contextPath}/asset/images/zxx_round_shade.png) no-repeat 0 0; _background:none; float:left; margin-left:-11px; position:relative;}
+	.round_shade_topright{width:12px; height:10px; background:url(#{request.contextPath}/asset/images/zxx_round_shade.png) no-repeat -29px 0; _background:none; float:right; margin-right:-12px; position:relative;}
+	.round_shade_centerleft{background:url(#{request.contextPath}/asset/images/zxx_round_shade.png) no-repeat 0 -1580px; _background:none;}
+	.round_shade_centerright{background:url(#{request.contextPath}/asset/images/zxx_round_shade.png) no-repeat right -80px; _background:none;}
+	.round_shade_center{font-size:14px; margin:0 12px 0 10px; padding:10px; background:white; letter-spacing:1px; line-height:1.5;}
+	.round_shade_bottom{margin:0 12px 0 11px; background:url(#{request.contextPath}/asset/images/zxx_round_shade.png) repeat-x -20px bottom; _background:white; zoom:1;}
+	.round_shade_bottomleft{width:11px; height:10px; background:url(#{request.contextPath}/asset/images/zxx_round_shade.png) no-repeat 0 -30px; _background:none; float:left; margin-left:-11px; position:relative;}
+	.round_shade_bottomright{width:12px; height:10px; background:url(#{request.contextPath}/asset/images/zxx_round_shade.png) no-repeat -29px -30px; _background:none; float:right; margin-right:-12px; position:relative;}
+	.round_shade_top:after,.round_shade_bottom:after,.zxx_zoom_box:after{display:block; content:"."; height:0; clear:both; overflow:hidden; visibility:hidden;}
+	/*自适应圆角投影结束*/
+	</style>
+	<script  type="text/javascript">
+	//<![CDATA[
+	function BtHide(id){var Div = document.getElementById(id);if(Div){Div.style.display="none"}}
+	function BtShow(id){var Div = document.getElementById(id);if(Div){Div.style.display="block"}}
+	
+	function BtPopload(showId){//蒙版生成div+iframe
+		jquery("#insert").attr("disabled",false);
+		jquery("#insert2").attr("disabled",false);
+		var h = Math.max(document.documentElement.scrollHeight,document.documentElement.clientHeight) + 'px';
+		var w = document.documentElement.scrollWidth + 'px';
+		var popCss = "background:#000;opacity:0.3;filter:alpha(opacity=30);position:absolute;left:0;top:0;overflow:hidden;"
+		var exsit = document.getElementById("popBox");
+		if (!exsit) {
+			pop_Box = document.createElement("div");pop_Box.id = "popBox";
+			document.getElementsByTagName("body")[0].appendChild(pop_Box);
+			pop_Box.style.cssText = popCss;pop_Box.style.zIndex = "10";
+			pop_Box.style.height = h;pop_Box.style.width = w;
+			
+			pop_Iframe = document.createElement("iframe");pop_Iframe.id = "popIframe";
+			document.getElementsByTagName("body")[0].appendChild(pop_Iframe);	
+			pop_Iframe.style.cssText = popCss;pop_Iframe.style.zIndex = "9";
+			pop_Iframe.style.height = h;pop_Iframe.style.width = (parseInt(w)-5)+"px";
+		}
+		BtShow("popIframe");BtShow("popBox");BtShow(showId);
+		pop_Win = document.getElementById(showId);
+		pop_Win.style.position = "absolute";
+		pop_Win.style.zIndex = "11";
+		pop_Win.style.top = document.documentElement.scrollTop+document.documentElement.clientHeight/2-pop_Win.offsetHeight/2+ 'px';
+		pop_Win.style.left = (document.documentElement.clientWidth/2-pop_Win.offsetWidth/2) + 'px';
+	}
+	
+	function BtPopShow(Bid,Did) { 
+		var UploadBtn = document.getElementById(Bid);
+		if (UploadBtn){UploadBtn.onclick = function() {clearAll();BtPopload(Did);return false;}}
+	}
+	function BtPopHide(Bid,Did) { 
+		var UploadBtn = document.getElementById(Bid);
+		if (UploadBtn){UploadBtn.onclick = function() {BtHide(Did);BtHide("popBox");BtHide("popIframe");return false;}}	
+	}
+	function BtPopShow2(Bid,Did) { 
+		var UploadBtn = document.getElementById(Bid);
+		if (UploadBtn){UploadBtn.onclick = function() {
+			clearAll2();
+			jquery("#fatherRfidTypeId").val(jquery('#user\\:plantingPattern option:selected').val());
+			jquery("#fatherRfidTypeName").text(jquery('#user\\:plantingPattern option:selected').text());
+			BtPopload(Did);
+			return false;
+			}
+		}
+	}
+	function BtPopHide2(Bid,Did) { 
+		var UploadBtn = document.getElementById(Bid);
+		if (UploadBtn){UploadBtn.onclick = function() {BtHide(Did);BtHide("popBox");BtHide("popIframe");return false;}}	
+	}
+	function clearAll(){
+		document.getElementById("name").value = "";
+		document.getElementById("content").value = "";
+	}
+	function clearAll2(){
+		document.getElementById("name2").value = "";
+		document.getElementById("content2").value = "";
+	}
+	function insertAr(){
+		jquery("#insert").attr("disabled",true);
+		var name = jquery("#name").val(); 
+		var content = jquery("#content").val(); 
+		if(name == null){
+			document.getElementById("spanValue").innerHTML = "名称不能为空";
+    		jquery("#myModal").modal('show');
+    		return false;
+		}
+		insertArInfo(name,content);
+	}
+	function insertAr2(){
+		jquery("#insert2").attr("disabled",true);
+		var name = jquery("#name2").val(); 
+		var content = jquery("#content2").val(); 
+		var fatherRfidTypeId = jquery("#fatherRfidTypeId").val(); 
+		if(name == null){
+			document.getElementById("spanValue").innerHTML = "名称不能为空";
+    		jquery("#myModal").modal('show');
+    		return false;
+		}
+		insertArInfo2(name,content,fatherRfidTypeId);
+	}
+	
+	function aritInfoAll(data){
+		if(data == "0"){
+			checkComplete();
+			return false;
+		}
+		
+		jquery("#user\\:plantingPattern").val(data);
+		jquery('.selectpicker').selectpicker();
+		//jquery("#user\\:plantingPattern").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery("#user\\:rfidTypeId").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery("#user\\:employeeInfoId").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery("#user\\:tunnelInfoId").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery(".rich-calendar-input").addClass("r_c_text_date");
+		//jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+	    jquery('#close').click();
+	}
+
+	function aritInfoAll2(data){
+		if(data == "0"){
+			checkComplete();
+			return false;
+		}
+		
+		jquery("#user\\:rfidTypeId").val(data);
+		jquery('.selectpicker').selectpicker();
+		//jquery("#user\\:rfidTypeId").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery("#user\\:plantingPattern").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery("#user\\:employeeInfoId").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery("#user\\:tunnelInfoId").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery(".rich-calendar-input").addClass("r_c_text_date");
+		//jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+	    jquery('#close2').click();
+	}
+
+	function checkComplete(){
+		   document.getElementById("spanValue").innerHTML = "已添加过操作类型，请重新添加！";
+		   jquery("#myModal").modal('show');
+		   jquery("#login").hide();
+	}
+	jquery(function(){
+		jquery('.photo001').hover(function(){
+			jquery(this).find('.dkzzedit007').show();
+		 },function(){
+			 jquery(this).find('.dkzzedit007').hide();
+		 })
+		})
+	function checkSubmit(){
+		 var realPlantId = document.getElementById("tunnelInfoId").value; 
+		   if(realPlantId ==null || realPlantId == ""){
+				document.getElementById("productMsg").innerHTML = "区域不能为空域！";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+		   document.getElementById("user:realPlantId").value = realPlantId;
+		var optime = document.getElementById("user:operatingTime").value;
+		if(optime == ""){
+			document.getElementById("productMsg").innerHTML = "操作日期不能为空！";
+			jquery("#myModal").modal('show');
+	      return false;
+		}
+		var urlString = "";
+		var idString = "";
+		jquery("#myframe").contents().find(".plant_imgbd").each(function(index,domEle){
+			urlString += jquery("#myframe").contents().find("#plant"+index).attr('src') + ",";
+			idString += jquery("#myframe").contents().find("#plant"+index).attr('aa') + ",";
+		});
+		jquery("#user\\:urlString").val(urlString);
+		jquery("#user\\:idString").val(idString);
+	}
+	//]]>
+	</script>
+	<td valign="top" width="210" style=" border-right:1px solid #e1e4eb;">
+                <div class="left_c2">
+                	<ul class="lt_c_ul">
+                	<li><a href="#{request.contextPath}/map/CompanyList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/enterpriseInfoMation_03.png"/>&#160;公司信息</a></li>
+                		<li><a href="#{request.contextPath}/map/FarmList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/jichu_03.png"/>&#160;基地信息</a></li>
+                		
+						<li><a href="#{request.contextPath}/map/FarmerInfoManageList.seam" ><img class="tbimg"  src="#{request.contextPath}/asset/images/renyuan.png"/>&#160;人员管理</a></li>
+                		<li><a href="#{request.contextPath}/map/InstrumentInfoList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/jixie.png"/>&#160;农机管理</a></li>
+                		<li>
+                        	<a href="#{request.contextPath}/map/PartitionList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/dikuai.png"/>&#160;地块信息</a>
+                        </li>
+                          <li>
+                        	<a href="#{request.contextPath}/archive/PlantInfoList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/plant_21.png"/>&#160;种植信息</a>
+                        </li>
+                    	 <ui:fragment rendered="#{s:hasRole('harvest')}">
+                        <li><a href="#{request.contextPath}/harvest/PreHarvestList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/yucai.png"/>&#160;预采信息</a></li>
+                    		<li><a href="#{request.contextPath}/realplant/RealPlantList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/caishou.png"/>&#160;采收记录</a></li>
+                    	</ui:fragment>
+                         
+                         <li><a href="#{request.contextPath}/farming/AmAgriculturalInfoList.seam" class="fon_07"><strong><img class="tbimg"  src="#{request.contextPath}/asset/images/far_jilu_21.png"/>&#160;农事记录</strong></a></li>
+                    </ul>
+                    <ul class="lt_c_ul2">
+                    	<li><s:link propagation="none"  view="/contract/MemberInfoListOne.xhtml"><img src="#{request.contextPath}/asset/images/biao_03.png" width="10" height="10" />&#160;客户管理</s:link></li>
+                    	<li><s:link propagation="none"  view="/contract/ContractList.xhtml"><img src="#{request.contextPath}/asset/images/hetong.png" width="12" height="12" />&#160;合同管理</s:link></li>
+                    </ul>
+                	<div class="clear"></div>
+                </div>
+            </td>
+		<td valign="top">
+		<h:form id="user" >
+						<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+                <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="工作 ">
+                    	</s:link>&#160;&gt;&#160;&#160;<font size="3">农事记录</font><div id="mesDiv" class="messages"></div></div>
+                    </div>
+				<!--入库订单列表开始-->
+				<div class="all_d3">
+				<!-- #{amAgriculturalInfoHome.methods()} -->
+						<s:div styleClass="all_da all_w01" rendered="#{amRemindedHtiHome.baseId ne null and amRemindedHtiHome.baseId ne 0}">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">基地名称：</td>
+                                    <td>
+                                       <h:outputText value="#{baseHome.getBaseEdit(amAgriculturalInfoHome.baseId)}" id="bName"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </s:div>
+						<div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">区域：</td>
+                                    <td>
+										<h:inputHidden id="realPlantId" value="#{amAgriculturalInfoHome.realPlantId}"  />
+										<select  style="display: none;" id="tunnelInfoId" class="selectpicker" data-live-search="true">
+										    <a:repeat value="#{amAgriculturalInfoHome.getRealPlantList()}" var="_rp">
+										    	<h:panelGroup rendered="#{amAgriculturalInfoHome.realPlantId eq _rp.realPlantId}">
+										    		<option value="#{_rp.realPlantId}" selected="selected">#{_rp.tunnelInfoId.tunnelName}--#{_rp.breedBreedId.plant.name}</option>
+										    	</h:panelGroup>
+										    	<h:panelGroup rendered="#{amAgriculturalInfoHome.realPlantId ne _rp.realPlantId}">
+										    		<option value="#{_rp.realPlantId}" >#{_rp.tunnelInfoId.tunnelName}--#{_rp.breedBreedId.plant.name}</option>
+										    	</h:panelGroup>
+										    </a:repeat>
+										</select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                         <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">操作人：</td>
+                                    <td>
+										<h:selectOneMenu styleClass="selectpicker" immediate="true" id="employeeInfoId" value="#{amAgriculturalInfoHome.instance.employeeInfoId}" style="display:none;width:146px;" >
+											<s:selectItems value="#{amAgriculturalInfoHome.getFarmerInfoList()}" var="var" label="#{var.name}"/>
+											<s:convertEntity />
+										</h:selectOneMenu>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">操作类型：</td>
+                                    <td>
+                                    	<h:panelGroup id="arit">
+										<h:selectOneMenu  styleClass="selectpicker" id="plantingPattern" style="width:146px;"  value="#{amAgriculturalInfoHome.aritIdInfo}" valueChangeListener="#{amAgriculturalInfoHome.getrfidByF}">
+											<s:selectItems value="#{amAgriculturalInfoHome.getARTList()}" var="var" label="#{var.name}" itemValue="#{var.id}"/>
+											<a:support event="onchange" reRender="farit" eventsQueue="default" ajaxSingle="true" bypassUpdates="true"  oncomplete="jquery('.selectpicker').selectpicker();"/>
+										</h:selectOneMenu>
+										</h:panelGroup>
+                                    </td>
+                                    <td>
+                                    	<a href="javascript:void(0);" id="open" ><img src="../asset/images/six_03.png" /></a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">操作类别：</td>
+                                    <td>
+                                    	<h:panelGroup id="farit">
+										<h:selectOneMenu  styleClass="selectpicker" id="rfidTypeId" style="width:146px;"  value="#{amAgriculturalInfoHome.aritIdInfo2}" >
+											<s:selectItems value="#{amAgriculturalInfoHome.rfidList}" var="var" label="#{var.name}" itemValue="#{var.id}"/>
+										</h:selectOneMenu>
+										</h:panelGroup>
+                                    </td>
+                                    <td>
+                                    	<a href="javascript:void(0);" id="open2" ><img src="../asset/images/six_03.png" /></a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">操作时间：</td>
+                                    <td>
+                                    	 <div class="input-append date form_datetime " >
+								    <h:inputText  id="operatingTime" styleClass="new_time" value="#{amAgriculturalInfoHome.instance.operatingTime}">
+								    <f:convertDateTime  pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+								    </h:inputText>
+								    <span class="add-on"><i class="icon-th"></i></span>
+								    </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">结束时间：</td>
+                                    <td>
+                                     <div class="input-append date form_datetime " >
+								    <h:inputText  id="endTime" styleClass="new_time" value="#{amAgriculturalInfoHome.instance.endTime}">
+								    <f:convertDateTime  pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+								    </h:inputText>
+								    <span class="add-on"><i class="icon-th"></i></span>
+								    </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">是否显示：</td>
+                                    <td>
+										<h:selectBooleanCheckbox id="areShow" value="#{amAgriculturalInfoHome.instance.areShow}" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="all_da all_w01" style="width:760px;">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">上传照片：</td>
+                                    <td>
+                                    	<iframe src="#{request.contextPath}/farming/AgriculturalImagesEdit.seam?aaiId=#{amAgriculturalInfoHome.instance.id}" id="myframe" name="myframe" frameBorder="0" scrolling="no" width="650" onLoad="iFrameHeight()" ></iframe>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                       
+                         <div class="all_da all_w01" style="width:724px;">
+                        	<table>
+                                <tr>
+								<td class="all_te">备注：</td>
+								<td>
+									<h:inputTextarea id="description" styleClass="form-control nw420" rows="3" value="#{amAgriculturalInfoHome.instance.description}" />
+	                            </td>
+	                            
+								</tr>
+								<tr>
+									<td colspan="2" height="35"></td>
+								</tr>
+                            </table>
+                        </div>
+                        <h:inputHidden id="urlString" value="#{amAgriculturalInfoHome.urlString}" />
+                        <h:inputHidden id="idString" value="#{amAgriculturalInfoHome.idString}" />
+				</div>
+				<table width="215px;" class="r_c_table" cellpadding="0" cellspacing="0">
+                      <tr>
+						<td class="r_c_td"></td>
+						<td>
+							<h:commandButton id="persist" styleClass="btn btn-primary"  value="提交" action="#{amAgriculturalInfoHome.persist}" rendered="#{!amAgriculturalInfoHome.managed}" onclick="return checkSubmit();" />
+			            	<h:commandButton id="update" styleClass="btn btn-primary"  value="提交" action="#{amAgriculturalInfoHome.update}" rendered="#{amAgriculturalInfoHome.managed}" onclick="return checkSubmit();" />
+			    			&#160;<s:link view="/farming/AmAgriculturalInfoList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px">
+			    			<f:param name="baseId" value="#{amAgriculturalInfoHome.baseId}"/>
+			    			<f:param name="pageNum" value="#{amAgriculturalInfoHome.pageNum}"/>
+			    			</s:link>
+                        </td>
+					</tr>
+				</table>
+				<!--入库订单列表结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div class="clear"></div>
+                
+                                <script type="text/javascript" src="#{request.contextPath}/asset/js/form/superfish.js"></script>
+                                
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/form/supersubs.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/form/hoverIntent.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.flot.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/form/customInput.jquery.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.dataTables.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.treeview.js"></script>
+				
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.tipsy.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.wysiwyg.js"></script>
+                
+              <script  type="text/javascript">
+				//<![CDATA[
+				
+				 function iFrameHeight() {
+					 var ifm= document.getElementById("myframe");
+					 var subWeb = document.frames ? document.frames["myframe"].document : ifm.contentDocument;
+					 if(ifm != null && subWeb != null) {
+					 	ifm.height = subWeb.body.scrollHeight;
+					 }
+				} 
+				//]]>
+				</script>
+				</h:form>
+				
+	           		<h:panelGroup id="aritInfo">
+		              <table class="pop" id="pop" width="530" height="270" cellpadding="0" cellspacing="0">
+		                	<tr>
+		                    	<td><img src="../asset/images/left_top.png" width="9" height="8" /></td>
+		                        <td width="100%" height="8" style="background:url(../asset/images/top_cen.png) repeat-x;"></td>
+		                        <td><img src="../asset/images/right_top.png" width="9" height="8" /></td>
+		                    </tr>
+		                	<tr>
+		                    	<td width="9" height="100%" style="background:url(../asset/images/left_cen.png) repeat-y;"></td>
+		                        <td class="pop_td" valign="top">
+		                        	<table width="100%" cellpadding="0" cellspacing="0">
+		                            	<tr>
+		                                	<td align="left" width="19" height="17" class="tcdbor"><img src="../asset/images/tck_12.jpg" width="19" height="17" /></td>
+		                                    <td align="left" class="tcdbor tcdtext">添加操作类型</td>
+		                                    <td align="right" class="tcdbor"><a href="#" id="close"><img src="../asset/images/close_12.jpg" width="17" height="17" /></a></td>
+		                            	</tr>
+		                              </table>  
+		                              <table cellpadding="0" cellspacing="0" style=" margin:15px auto 0 auto;"> 
+		                                <tr>
+		                                    <td class="tck_text">名称：</td>
+		                                    <td align="left" class="tckinput" style="width: 190px;">
+		                                    	<h:inputText styleClass="form-control nw221" id="name" value=""/>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="tck_text">描述：</td>
+		                                    <td align="left" class="tckinput" style="width: 190px;">
+		                                    	<h:inputTextarea  styleClass="form-control nw400" rows="3" id="content" value=""/>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                	<td colspan="3" align="center" style="height: 50px;">
+		                                		<a href="javascript:void(0);" id="insert" onclick="insertAr();" class="btn btn-primary">保存</a>&#160;&#160;
+		                                		<a href="javascript:void(0);" id="closetow" class="btn btn-default">取消</a>
+		                                	</td>
+		                                </tr>
+		                                
+		                                
+		                            </table>
+		                            
+		                        </td>
+		                        <td width="9" height="100%" style="background:url(../asset/images/right_cen.png) repeat-y;"></td>
+		                    </tr>
+		                	<tr>
+		                    	<td width="9" height="8"><img src="../asset/images/left_bot.png" width="9" height="8" /></td>
+		                        <td width="100%" height="8" style="background:url(../asset/images/bot_cen.png) repeat-x;"></td>
+		                        <td width="9" height="8"><img src="../asset/images/right_bot.png" width="9" height="8" /></td>
+		                    </tr>
+		                </table>
+		                </h:panelGroup>
+		                <h:panelGroup id="aritInfo2">
+			              <table class="pop" id="pop2" width="600" height="270" cellpadding="0" cellspacing="0">
+			                	<tr>
+			                    	<td><img src="../asset/images/left_top.png" width="9" height="8" /></td>
+			                        <td width="100%" height="8" style="background:url(../asset/images/top_cen.png) repeat-x;"></td>
+			                        <td><img src="../asset/images/right_top.png" width="9" height="8" /></td>
+			                    </tr>
+			                	<tr>
+			                    	<td width="9" height="100%" style="background:url(../asset/images/left_cen.png) repeat-y;"></td>
+			                        <td class="pop_td" valign="top">
+			                        	<table width="100%" cellpadding="0" cellspacing="0">
+			                            	<tr>
+			                                	<td align="left" width="19" height="17" class="tcdbor"><img src="../asset/images/tck_12.jpg" width="19" height="17" /></td>
+			                                    <td align="left" class="tcdbor tcdtext">添加操作类别</td>
+			                                    <td align="right" class="tcdbor"><a href="#" id="close2"><img src="../asset/images/close_12.jpg" width="17" height="17" /></a></td>
+			                            	</tr>
+			                              </table>  
+			                              <table cellpadding="0" cellspacing="0" style=" margin:15px auto 0 auto;"> 
+			                              	 <tr>
+			                                    <td class="tck_text">操作类型：</td>
+			                                    <td align="left" class="tckinput" style="width: 190px;">
+			                                    	<h:inputHidden value="" id="fatherRfidTypeId"/>
+			                                    	<div id="fatherRfidTypeName" style="font-size: 16px;"></div>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td class="tck_text">名称：</td>
+			                                    <td align="left" class="tckinput" style="width: 190px;">
+			                                    	<h:inputText styleClass="form-control nw221" id="name2" value=""/>
+			                                    </td>
+			                                </tr>
+			                                
+			                                <tr>
+			                                    <td class="tck_text">描述：</td>
+			                                    <td align="left" class="tckinput" style="width: 190px;">
+			                                    	<h:inputTextarea  styleClass="form-control nw400" rows="3" id="content2" value=""/>
+			                                    </td>
+			                                    
+			                                </tr>
+			                                <tr>
+			                                	<td colspan="3" align="center" style="height: 50px;">
+			                                		<a href="javascript:void(0);" id="insert2" onclick="insertAr2();" class="btn btn-primary">保存</a>&#160;&#160;
+			                                		<a href="javascript:void(0);" id="closetow2" class="btn btn-default">取消</a>
+			                                	</td>
+			                                </tr>
+			                                
+			                            </table>
+			                            
+			                        </td>
+			                        <td width="9" height="100%" style="background:url(../asset/images/right_cen.png) repeat-y;"></td>
+			                    </tr>
+			                	<tr>
+			                    	<td width="9" height="8"><img src="../asset/images/left_bot.png" width="9" height="8" /></td>
+			                        <td width="100%" height="8" style="background:url(../asset/images/bot_cen.png) repeat-x;"></td>
+			                        <td width="9" height="8"><img src="../asset/images/right_bot.png" width="9" height="8" /></td>
+			                    </tr>
+			                </table>
+			                </h:panelGroup>
+		                <a:form>
+				  			<a:queue requestDelay="10" ignoreDupResponses="true"/>
+					  		<a:jsFunction name="insertArInfo" action="#{amAgriculturalInfoHome.insertArInfo}" reRender="arit,farit" data="#{amAgriculturalInfoHome.aritId}" oncomplete="aritInfoAll(data);">
+					  			<a:actionparam name="name" assignTo="#{amAgriculturalInfoHome.name}"/>
+								<a:actionparam name="content" assignTo="#{amAgriculturalInfoHome.content}"/>
+							</a:jsFunction>
+							<a:jsFunction name="insertArInfo2" action="#{amAgriculturalInfoHome.insertArInfo2}" reRender="farit" data="#{amAgriculturalInfoHome.aritId2}" oncomplete="aritInfoAll2(data);">
+					  			<a:actionparam name="name2" assignTo="#{amAgriculturalInfoHome.name2}"/>
+								<a:actionparam name="content2" assignTo="#{amAgriculturalInfoHome.content2}"/>
+								<a:actionparam name="fatherRfidTypeId" assignTo="#{amAgriculturalInfoHome.fatherRfidTypeId}"/>
+							</a:jsFunction>
+						</a:form>
+			            <script type="text/javascript">
+							BtPopShow("open","pop");
+							BtPopHide("close","pop");
+							BtPopHide("closetow","pop");
+						</script>
+						<script type="text/javascript">
+							BtPopShow2("open2","pop2");
+							BtPopHide2("close2","pop2");
+							BtPopHide2("closetow2","pop2");
+						</script>
+				<script type="text/javascript">
+				jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd hh:ii",
+			    autoclose: true,
+			    
+				 weekStart: 1,
+				  //startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+			    
+			    pickerPosition: "bottom-left"
+			    });
+			    
+			  window.onload = function () {
+			    jquery('.selectpicker').selectpicker();
+			  };
+			</script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/new/jquery.js"></script>		
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+	<script type="text/javascript">
+	jq = jQuery.noConflict();
+	jq(document).ready(function(){
+		jq('input').iCheck({
+	    checkboxClass: 'icheckbox_minimal-blue',
+	    radioClass: 'iradio_minimal-blue',
+	    increaseArea: '20%' // optional
+	  });
+	  });
+	</script>
+           	</td> 
+	</ui:define>
+
+</ui:composition>

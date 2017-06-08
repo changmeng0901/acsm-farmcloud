@@ -1,0 +1,211 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+			<link href="#{request.contextPath}/asset/css/message/Inbox.css" rel="stylesheet" />
+	<td valign="top">
+            <!-- right_c 开始 -->
+            <div class="right_c" style="min-height:30px;">
+                <div class="r_title clear" style="margin-top:0; padding-top:20px;">
+                    <div class="r_t_l fl"><a href="#{request.contextPath}#{sessionTake.urlTemp}">个人主页</a>&#160;&gt;&#160;&#160;<font size="3">发件箱</font></div>
+                    <div class="fr" style="margin-bottom:-1px;">
+                        <ul class="cm_resumeList clear">
+                            <li>
+                            	<s:link view="/message/ReceiptList.xhtml"><img src="#{request.contextPath}/asset/images/message/sjx_ico01.png" style="margin-top:12px;" /><span>收件箱</span></s:link>
+                            </li>
+                            <li>
+                                <s:link view="/message/SiteNewsList.xhtml" styleClass="borderBt"><img src="#{request.contextPath}/asset/images/message/sjx_ico02.png" /><span>发件箱</span></s:link>
+                                
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 发件箱搜索 开始 -->
+                <div class="mt20 mb20 clear">
+                    <span class="fl" style="width:350px;">
+                    	<h:form class="public-search" id="search">
+                        <span class="octicon-search02" style="top:11px;"></span>
+                        <h:inputText styleClass="form-control nw300 srarchfont" style="text-indent:0px;width:350px;"  value="请输入查询内容" onchange="mySearch()"/>
+                        <h:inputHidden value="#{siteNewsList.searchParam}" id="para" />
+                        </h:form>
+                    </span>
+                    <s:link styleClass="btn btn-success fr"  value="写信息" view="/message/SiteNewsEdit.xhtml" propagation="none">
+                    </s:link>
+                </div>
+                <!-- 发件箱搜索 结束 -->
+                <!-- 发件箱内容 开始 -->
+                <div class="InboxCon">
+                	<ul class="InboxList">
+                		<ui:repeat value="#{siteNewsList.resultList}" var="_siteNews" rendered="#{not empty siteNewsList.resultList}" rowKeyVar="_index">
+                    	<li class="InboxLi">
+                        	<table width="100%" cellpadding="0" cellspacing="0">
+                            	<tr>
+                                	<td width="80%" height="40" class="Inbox_messTtl">
+                                	    <h:panelGroup rendered="#{_siteNews.yorNread eq 1 }" >
+	                                        <span class="unusualIco"></span>
+	                                        <span class="unusualPho">
+		                                        <img class="zhezhao" src="#{request.contextPath}/asset/images/message/sjx_ico05.png" />
+	                                            <h:panelGroup rendered="#{_siteNews.insertUser.imageUrl ne '' and _siteNews.insertUser.imageUrl ne null}" >
+	                                                 <img class="picture" src="#{_siteNews.insertUser.imageUrl}" />
+	                                            </h:panelGroup>
+	                                            <h:panelGroup rendered="#{_siteNews.insertUser.imageUrl eq '' or _siteNews.insertUser.imageUrl eq null}" >
+	                                            	<img class="picture" src="#{request.contextPath}/asset/images/message/sjx_test01.jpg" />
+	                                            </h:panelGroup>
+                                       
+                                      		</span>
+                                        </h:panelGroup>
+                                        <h:panelGroup rendered="#{_siteNews.yorNread eq 2 }" >
+	                                        <span class="usualIco"></span>
+	                                        <span class="usualPho">
+		                                        <img class="zhezhao" src="#{request.contextPath}/asset/images/message/sjx_ico04.png" />
+	                                            <h:panelGroup rendered="#{_siteNews.insertUser.imageUrl ne '' and _siteNews.insertUser.imageUrl ne null}" >
+	                                                 <img class="picture" src="#{_siteNews.insertUser.imageUrl}" />
+	                                            </h:panelGroup>
+	                                            <h:panelGroup rendered="#{_siteNews.insertUser.imageUrl eq '' or _siteNews.insertUser.imageUrl eq null}" >
+	                                            	<img class="picture" src="#{request.contextPath}/asset/images/message/sjx_test01.jpg" />
+	                                            </h:panelGroup>
+                                      	    </span>
+                                        </h:panelGroup>
+                                         <s:link propagation="none" includePageParams="none" view="/#{empty from ? 'message/SiteNews' : from}.xhtml" styleClass="messTxt"  id="siteNewsViewId" >
+										【#{goodsInfoConstant.getMessageTypelabel(_siteNews.dataDicId)}】#{_siteNews.title}
+										<f:param name="siteNewsId" value="#{_siteNews.id}" />
+										</s:link>&#160;   
+                                    </td>
+                                    <td width="20%" align="right" valign="top" class="Inbox_messTime">
+                                    	<s:link styleClass="delete" propagation="none"  view="/message/SiteNewsEdit.xhtml"   title="删除"   action="#{siteNewsHome.remove}" onclick="return confirm('确定删除吗？');" id="breedDelete" rendered="#{empty from}">
+		                             	<img src="#{request.contextPath}/asset/images/message/delpng.png" />
+		                                <f:param name="siteNewsId" value="#{_siteNews.id}" />
+		                                </s:link>
+                                    	<span class="timeDate">
+	                                    	<h:outputText value="#{_siteNews.insertTime}">
+												<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+										    </h:outputText>
+									    </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </li>
+                        </ui:repeat>
+                    </ul>
+                </div>
+              
+                <!-- 发件箱内容 结束 -->
+            </div>
+              <!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty siteNewsList.resultList}"> 
+			                <s:decorate rendered="#{!siteNewsList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{siteNewsList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{siteNewsList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/message/SiteNewsList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/message/SiteNewsList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{siteNewsList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{siteNewsList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{siteNewsList.previousExists or _index >0 ?'td_t_t':''} #{_page eq siteNewsList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/message/SiteNewsList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{siteNewsList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/message/SiteNewsList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{siteNewsList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/message/SiteNewsList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{siteNewsList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{siteNewsList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                              <td><s:link view="#{sessionTake.urlTemp}" styleClass="btn btn-default" value="返回"  >
+		    					</s:link></td>
+                    	</s:div>
+                    	<s:div rendered="#{empty siteNewsList.resultList}">
+                    	<td><s:link view="#{sessionTake.urlTemp}" styleClass="btn btn-default" value="返回"  >
+		    					</s:link></td> 
+                    	</s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+            <!-- right_c 结束 -->
+
+            </td>   
+<a4j:form>
+    <a4j:jsFunction name="searchme" action="#{siteNewsList.searchMe}">
+   		<a4j:actionparam name="searchParam" assignTo="#{siteNewsList.searchParam}"/>
+   </a4j:jsFunction>
+   <a4j:jsFunction name="pushMsg" action="#{siteNewsHome.pushMsgToApp()}">
+		<a4j:actionparam name="newsId" assignTo="#{siteNewsHome.newsId}"/>
+   </a4j:jsFunction>
+</a4j:form>
+<script type="text/javascript">
+var pushFlag=#{siteNewsHome.pushFlag};
+var siteNewsId='#{siteNewsHome.newsId}';
+if(pushFlag){
+	pushMsg(siteNewsId);
+}
+jQuery = jQuery.noConflict();
+jQuery(function(){
+	jQuery(".ModuleSettings_wel").css("margin-top","-10px");
+	if(jquery('#search\\:para').val() !=""){
+		jquery('.srarchfont').val(jquery('#search\\:para').val());
+	}
+	//文本控制
+	jQuery(function(){
+		jQuery('.srarchfont').focus(function(){
+			var txt_value = jQuery(this).val();
+			if(txt_value==this.defaultValue){
+				jQuery(this).val("");	
+			};	
+		});
+		jQuery('.srarchfont').blur(function(){
+			var txt_value = jQuery(this).val();
+			if(txt_value==""){
+				jQuery(this).val(this.defaultValue);	
+			};	
+		});	
+	})
+	
+	//收件箱列表消息点击删除
+	jQuery('.Inbox_messTime .delete').click(function(){
+		jQuery(this).parents('.InboxLi').remove();	
+	});
+
+});
+
+</script>
+<script type="text/javascript">
+function mySearch(){
+	if(jquery('.srarchfont').val() !="请输入查询内容"){
+		searchme(jquery('.srarchfont').val());
+	}
+}
+</script>
+	</ui:define>
+
+</ui:composition>

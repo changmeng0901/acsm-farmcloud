@@ -1,0 +1,769 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/settings/EnterpriseSettings.css" />
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/EnterpriseLeftMenu.js"></script>
+    
+	 <!-- Modal -->
+	<div aria-hidden="false" aria-labelledby="mySubmitModalLabel" role="dialog" tabindex="-1" id="mySubmitModal" class="modal fade in w600na" style="display: none;width:310px;top:15%;">
+	  <div class="modal-dialog" style="width:310px;">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title" id="mySubmitModalLabel">提示框</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<p style="text-align:center;"><img src="#{request.contextPath}/asset/images/farmingIco20_1.png" alt="" /></p>
+	       	<p style="text-align:center;" id="spanValue">
+	       		您是否希望将历史编号统一为现有编号规则？
+			</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="submitCode('Y')">替换</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="submitCode('N')">不替换</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<!---#{codeInfoHome.getCodeInfoList()}-->
+		<link href="#{request.contextPath}/asset/css/dictionary/ziduangl.css" rel="stylesheet" />
+		<td valign="top">
+                <div class="inbentory_file_main">
+                <!--左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_rkgl"></i>基础设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/user/UpdateEnterpriseSettings.seam?enterpriseId=#{sessionTake.enterpriseInfoId}','_self')" >
+                            	<i class="icon_sed"></i>企业设置                   	
+                            </li>
+                            <!-- 管理版和以前的版本（标准、白金...)显示 -->
+                            <h:panelGroup rendered="#{sessionTake.nowVersionService.basicService.basicServiceId==10 or sessionTake.nowVersionService.basicService.serviceType eq 1}">
+                            	<li class="sed_item" onclick="window.open('#{request.contextPath}/user/ModuleSettings.seam','_self')" ><i class="icon_sed"></i>模块配置</li>
+                            </h:panelGroup>
+                            <li class="sed_item sed_cur" onclick="window.open('#{request.contextPath}/dictionary/DataDicinfoList.seam','_self')" ><i class="icon_sed"></i>字段管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/user/EnterpriseCommunityList.seam','_self')" ><i class="icon_sed"></i>角色管理</li>
+                            <s:fragment rendered="#{enterpriseInfoHome.enterpriseInfo.govState}">
+	                        	<li class="sed_item" onclick="window.open('#{request.contextPath}/user/AuditInformationList.seam','_self')" ><i class="icon_sed"></i>审核信息</li>
+	                        </s:fragment>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/system/RecycleInfoList_1.seam','_self')" ><i class="icon_sed"></i>回收站</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_ckgl"></i>生产管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <h:panelGroup rendered="#{s:hasRole('certification')}">
+                            	<li class="sed_item" onclick="window.open('#{request.contextPath}/map/CertificationList.seam','_self')" ><i class="icon_sed"></i>认证信息</li>
+                            </h:panelGroup>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/message/TunnelGroupList.seam','_self')" ><i class="icon_sed"></i>分组管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/InputsInfoList.seam?goodsTypeInfoId=5','_self')" ><i class="icon_sed"></i>投入品信息</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_zkgl"></i>销售管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/GoodsInfoList.seam','_self')"><i class="icon_sed"></i>物料信息</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/ProductInfoList.seam','_self')" ><i class="icon_sed"></i>商品信息</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pdgl"></i>硬件管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/device/DeviceList.seam','_self')"><i class="icon_sed"></i>设备管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/device/VideoList.seam','_self')" ><i class="icon_sed"></i>视频管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/farming/AmRfidInfoList.seam','_self')" ><i class="icon_sed"></i>RFID卡管理</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!--左侧二级导航 -->
+				<!--右侧 -->
+                <div class="inbentory_content">
+                <div class="right_c clear" style="min-height:30px;">
+                	<div class="r_title clear">
+                    	<div class="r_t_l"><font size="3">字段管理</font></div>
+                    </div>
+                </div>   
+				
+                <!-- 字段管理 开始 -->
+                <div class="base-navTabsWap mt20 pr30">
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                        <li class="ml30 nongji"><a href="#nongji" role="tab" data-toggle="tab">农机</a></li>
+                        <li class="nongshi"><a href="#nongshi" role="tab" data-toggle="tab">农事</a></li>
+                        <li class="kufang"><a href="#kufang" role="tab" data-toggle="tab">库存</a></li>
+                        <li class="wuliao"><a href="#wuliao" role="tab" data-toggle="tab">物料</a></li>
+                        <li class="shangpin"><a href="#shangpin" role="tab" data-toggle="tab">商品</a></li>
+                        <li class="dikuai"><a href="#dikuai" role="tab" data-toggle="tab">地块</a></li>
+                        <li class="yangzhi"><a href="#yangzhi" role="tab" data-toggle="tab">养殖</a></li>
+                        <li class="kehu"><a href="#kehu" role="tab" data-toggle="tab">客户</a></li>
+                        <!-- <li class="tourupin"><a href="#tourupin" role="tab" data-toggle="tab">投入品</a></li> -->
+                        <li class="peisong"><a href="#peisong" role="tab" data-toggle="tab">配送</a></li>
+                        <li class="cardsInfo"><a href="#cardsInfo" role="tab" data-toggle="tab">卡管理</a></li>
+                        <li class="viewinfo"><a href="#viewinfo" role="tab" data-toggle="tab">显示</a></li>
+                        <li class="codeinfo"><a href="#codeinfo" role="tab" data-toggle="tab">编码规则设置</a></li>
+                        <h:inputHidden id="allType" value="#{dataDicinfoList.myType}" />
+                    </ul>
+                    <div class="tab-content">
+                    	<!-- 农机选项卡内容 开始 -->
+                        <div class="tab-pane active clear" id="nongji">                      
+                        <div class="base-navTabsCon">
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5" /></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">农机字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <ui:repeat value="#{dataDicinfoList.resultList}" var="_data" rowKeyVar="_index">
+                            
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">#{_data.name}</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/dictionary/DicMachineryList.seam?dicId=#{_data.dataDicId}"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>   
+                             </ui:repeat>                     
+                            </tbody>
+                            </table>
+                            <!-- 农机搜索和表格 结束 -->
+                        </div>
+                        </div>
+                        <!-- 农机选项卡内容 结束 -->
+                        <!-- 农事选项卡内容 开始 -->
+                        <div class="tab-pane" id="nongshi">
+                        <div class="base-navTabsCon">
+                        	<!-- 农事搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">农事字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">操作类型</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/farming/AmRfidInfoTypeChildList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>                          
+                            </tbody>
+                            </table>
+                            <!-- 农事搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 农事选项卡内容 结束 -->
+                        <!-- 库存选项卡内容 开始 -->
+                        <div class="tab-pane" id="kufang">
+                        <div class="base-navTabsCon">
+                        	<!-- 库存搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">库存字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">仓库类型</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/storage/StorageTypeList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                            <tr class="">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">存储地点</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/storage/StorageLocationList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">库房管理</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/storage/StorageRoomList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">入库类型</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/storage/InStorageTypeList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">出库类型</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/storage/OutStorageTypeList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">物料类型</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/storage/GoodsInfoTypeList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            </tbody>
+                            </table>
+                            <!-- 库存搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 库存选项卡内容 结束 -->
+                        <!-- 物料选项卡内容 开始 -->
+                        <div class="tab-pane" id="wuliao">
+                        <div class="base-navTabsCon">
+                        	<!-- 物料搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">物料字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">单位规格</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/dictionary/UnitInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">存储类型</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/product/GoodsStorageTypeList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>     
+                            </tbody>
+                            </table>
+                            <!-- 物料搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 物料选项卡内容 结束 -->
+                        <!-- 商品选项卡内容 开始 -->
+                        <div class="tab-pane" id="shangpin">
+                        <div class="base-navTabsCon">
+                        	<!-- 商品搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">商品字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">商品类型</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/product/ProductTypeList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>                         
+                            </tbody>
+                            </table>
+                            <!-- 商品搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 商品选项卡内容 结束 -->
+                        <!-- 地块选项卡内容 开始 -->
+                        <div class="tab-pane" id="dikuai">
+                        <div class="base-navTabsCon">
+                        	<!-- 地块搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">地块字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <ui:repeat value="#{dataDicinfoList.plotList}" var="_plo" rowKeyVar="_index">
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">#{_plo.name}</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/dictionary/DicMachineryList.seam?dicId=#{_plo.dataDicId}"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                            </ui:repeat>                     
+                            </tbody>
+                            </table>
+                            <!-- 地块搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 养殖选项卡内容 结束 -->
+                         <!-- 养殖选项卡内容 开始 -->
+                        <div class="tab-pane" id="yangzhi">
+                        <div class="base-navTabsCon">
+                        	<!-- 养殖搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                             <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">养殖字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">兽药信息</td>     
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/livestock/VeterinaryMedicineInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">饲料信息</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/livestock/AnimalFeedInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">疫苗信息</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/livestock/VaccineInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            
+                            </tbody>
+                            </table>
+                            <!-- 养殖搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 养殖选项卡内容 结束 -->
+                        
+                         <!-- 客户选项卡内容 开始 -->
+                        <div class="tab-pane" id="kehu">
+                        <div class="base-navTabsCon">
+                        	<!-- 客户搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                             <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">客户字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">客户类型</td>     
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/orderManage/MemberTypeList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">客户来源</td>                  		
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/orderManage/MemberSourceList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            </tbody>
+                            </table>
+                            <!-- 养殖搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 养殖选项卡内容 结束 -->
+                        <!-- 投入品选项卡内容 开始 -->
+                        <div class="tab-pane" id="tourupin">
+                        <div class="base-navTabsCon">
+                            <!-- 投入品搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">投入品字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">投入品</td>                          
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/agricultural/InputsInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                            </tbody>
+                            </table>
+                            <!-- 投入品搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 投入品选项卡内容 结束 -->
+                        
+                         <!-- 配送选项卡内容 开始 -->
+                        <div class="tab-pane" id="peisong">
+                        <div class="base-navTabsCon">
+                            <!-- 配送搜索和表格 开始 -->
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <th class="ze_bg" width="50%">配送字段分类</th>
+                                <th class="ze_bg" width="50%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">司机信息</td>                          
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/transport/DriverInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                             <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">车辆信息</td>                          
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/transport/CarInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                             <tr class="alt">
+                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+                                <td class="ze_bg2">路线信息</td>                          
+                                <td class="ze_bg2">
+                                <a href="#{request.contextPath}/transport/RouteInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+                                </td>
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr>  
+                            </tbody>
+                            </table>
+                            <!-- 配送搜索和表格 结束 -->
+                        </div> 
+                        </div>
+                        <!-- 配送选项卡内容 结束 -->
+                        
+						<!-- 卡管理选项卡内容 开始 -->
+						<div class="tab-pane" id="cardsInfo">
+							<div class="base-navTabsCon">
+								<!-- 卡管理搜索和表格 开始 -->
+								<table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+									<tbody>
+										<tr class="alt">
+											<td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+											<td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+											<td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+										</tr>
+										<tr class="">
+											<th class="ze_bg ze_bt_le" height="4" width="5"></th>
+											<th class="ze_bg" width="50%">卡管理字段分类</th>
+											<th class="ze_bg" width="50%">操作</th>
+											<th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+										</tr>
+										<tr class="alt">
+											<td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+											<td class="ze_bg2">卡类型信息</td>                          
+											<td class="ze_bg2">
+												<a href="#{request.contextPath}/card/CardCategoryList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+											</td>
+											<td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+										</tr>  
+									</tbody>
+								</table>
+								<!-- 卡管理搜索和表格 结束 -->
+							</div> 
+						</div>
+                        <!-- 卡管理选项卡内容 结束 -->
+                        <!-- 显示选项卡内容 开始 -->
+                        <div class="tab-pane" id="viewinfo">
+                        	<div class="base-navTabsCon">
+								<!-- 显示搜索和表格 开始 -->
+								<table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+									<tbody>
+										<tr class="alt">
+											<td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+											<td colspan="2" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+											<td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+										</tr>
+										<tr class="">
+											<th class="ze_bg ze_bt_le" height="4" width="5"></th>
+											<th class="ze_bg" width="50%">显示字段分类</th>
+											<th class="ze_bg" width="50%">操作</th>
+											<th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+										</tr>
+										<tr class="alt">
+											<td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+											<td class="ze_bg2">地图模块</td>                          
+											<td class="ze_bg2">
+												<a href="#{request.contextPath}/map/PageShowInfoList.seam"><img src="#{request.contextPath}/asset/images/dictionary/list-link01.png" /></a>
+											</td>
+											<td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+										</tr>  
+									</tbody>
+								</table>
+								<!-- 显示搜索和表格 结束 -->
+							</div>
+                        </div>
+                        <!-- 显示选项卡内容 开始 -->
+                        <!-- 编码规则设置选项卡内容 开始 -->
+                        <div class="tab-pane" id="codeinfo">
+                        	<div class="base-navTabsCon">
+								<!-- 显示搜索和表格 开始 -->
+								<h:panelGroup id="codeInfoList">
+								<table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+									<tbody>
+										<tr class="alt">
+											<td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+											<td colspan="3" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+											<td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+										</tr>
+										<tr class="">
+											<th class="ze_bg ze_bt_le" height="4" width="5"></th>
+											<th class="ze_bg" width="35%">编号分类</th>
+											<th class="ze_bg" width="35%">当前编号</th>
+											<th class="ze_bg" width="30%">操作</th>
+											<th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+										</tr>
+										
+										<a:repeat var="_codeinfo" value="#{codeInfoHome.codeList}" rowKeyVar="_index">
+											<tr class="alt">
+												<td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+												<td class="ze_bg2">#{_codeinfo[1]}</td>
+												<td class="ze_bg2">
+													#{_codeinfo[2]}<s:fragment rendered="#{_codeinfo[6] eq 1}">#{codeInfoHome.getEnterpriseCode()}</s:fragment><s:fragment rendered="#{_codeinfo[6] ne 1}">#{_codeinfo[3]}</s:fragment><s:fragment rendered="#{_codeinfo[4] eq 1}">#{codeInfoHome.currentTime}</s:fragment>#{_codeinfo[5]}
+												</td>                          
+												<td class="ze_bg2">
+													<s:link propagation="none"  view="/code/CodeInfoEdit.xhtml" styleClass="list_edit" id="codeInfoEdit"  title="编辑">
+						                                <f:param name="codeInfoCodeInfoId" value="#{_codeinfo[0]}" />
+													</s:link>
+													<a href="javascript:confirmRecover(#{_codeinfo[0]});" title="恢复默认" style="margin-left: 8px;"><img src="#{request.contextPath}/asset/images/huifu.png" /></a>													
+												</td>
+												<td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+											</tr>  
+										</a:repeat>
+										
+									</tbody>
+								</table>
+								</h:panelGroup>
+								<!-- 显示搜索和表格 结束 -->
+							</div>
+                        </div>
+                        <!--  编码规则设置内容 开始 -->
+                    </div>
+                </div>
+                <!-- 字段管理 结束 -->
+                <a:form>
+                	<a:queue  ignoreDupResponses="true"/>
+				 	<a:jsFunction name="recoverCode"  action="#{codeInfoHome.recoverCode()}" reRender="codeInfoList" oncomplete="callbackRecover();">
+		           		<a:actionparam name="codeInfoCodeInfoId" assignTo="#{codeInfoHome.codeInfoCodeInfoId}"/>
+		           		<a:actionparam name="replaceFlag" assignTo="#{codeInfoHome.replaceFlag}"/>
+			   		</a:jsFunction>
+				</a:form> 
+				</div>
+				</div>
+            </td>    
+            <script type="text/javascript">
+jQuery = jQuery.noConflict();
+jQuery(function(){
+	 
+	//隔行换色
+	jQuery(".ze_table tr,.tr_tab_b tr").not(".nottt").mouseover(function(){  //如果鼠标移到class为stripe的表格的tr上时，执行函数
+		jQuery(this).addClass("over");
+	})
+	jQuery(".ze_table tr,.tr_tab_b tr").not(".nottt").mouseout(function(){  //给这行添加class值为over，并且当鼠标一出该行时执行函数
+		jQuery(this).removeClass("over");
+	})  //移除该行的class
+	jQuery(".ze_table tr:even,.tr_tab_b tr:even").not(".nottt").addClass("alt");
+	
+});
+</script>
+ <script type="text/javascript">
+ jquery(document).ready(function(){
+	 jquery('.nongji').attr('class','nongji ml30');
+	 jquery('.nongshi').attr('class','nongshi');
+	 jquery('.kufang').attr('class','kufang');
+	 jquery('.wuliao').attr('class','wuliao');
+	 jquery('.shangpin').attr('class','shangpin');
+	 jquery('.dikuai').attr('class','dikuai');
+	 jquery('.yangzhi').attr('class','yangzhi');
+	 jquery('.kehu').attr('class','kehu');
+     jquery('.tourupin').attr('class','tourupin');
+     jquery('.peisong').attr('class','peisong');
+     jquery('.cardsInfo').attr('class','cardsInfo');
+     jquery('.viewinfo').attr('class','viewinfo');
+     
+	 jquery('#nongji').attr('class','tab-pane clear');
+	 jquery('#nongshi').attr('class','tab-pane');
+	 jquery('#kufang').attr('class','tab-pane');
+	 jquery('#wuliao').attr('class','tab-pane');
+	 jquery('#shangpin').attr('class','tab-pane');
+	 jquery('#dikuai').attr('class','tab-pane');
+	 jquery('#yangzhi').attr('class','tab-pane');
+	 jquery('#kehu').attr('class','tab-pane');
+	 jquery('#peisong').attr('class','tab-pane');
+     jquery('#tourupin').attr('class','tab-pane');
+     jquery('#cardsInfo').attr('class','tab-pane');
+     jquery('#viewinfo').attr('class','tab-pane');
+     jquery('#codeinfo').attr('class','tab-pane');
+	 	if(jquery('#allType').val()==''){
+	 		jquery('.nongji').attr('class','active nongji ml30');
+			jquery('#nongji').attr('class','tab-pane clear active');
+	 	}
+	 	if(jquery('#allType').val()=='nongji'){
+	 		jquery('.nongji').attr('class','active nongji ml30');
+			jquery('#nongji').attr('class','tab-pane clear active');
+		}
+		if(jquery('#allType').val()=='nongshi'){
+	 		jquery('.nongshi').attr('class','active nongshi');
+	 		 jquery('#nongshi').attr('class','tab-pane active');
+		}
+		if(jquery('#allType').val()=='kufang'){
+	 		jquery('.kufang').attr('class','active kufang');
+	 		jquery('#kufang').attr('class','tab-pane active');
+		 		
+		}
+		if(jquery('#allType').val()=='wuliao'){
+	 		jquery('.wuliao').attr('class','active wuliao');
+	 		jquery('#wuliao').attr('class','tab-pane active');
+		}
+		if(jquery('#allType').val()=='shangpin'){
+	 		jquery('.shangpin').attr('class','active shangpin');
+	 		jquery('#shangpin').attr('class','tab-pane active');
+		}
+		if(jquery('#allType').val()=='dikuai'){
+	 		jquery('.dikuai').attr('class','active dikuai');
+	 		jquery('#dikuai').attr('class','tab-pane active');
+		 		
+		}
+		if(jquery('#allType').val()=='yangzhi'){
+	 		jquery('.yangzhi').attr('class','active yangzhi');
+	 		jquery('#yangzhi').attr('class','tab-pane active');
+		 		
+		}
+		if(jquery('#allType').val()=='kehu'){
+	 		jquery('.kehu').attr('class','active kehu');
+	 		jquery('#kehu').attr('class','tab-pane active');
+		 		
+		}
+        if(jquery('#allType').val()=='tourupin'){
+            jquery('.tourupin').attr('class','active dikuai');
+            jquery('#tourupin').attr('class','tab-pane active');
+                
+       }
+        if(jquery('#allType').val()=='peisong'){
+	 		jquery('.peisong').attr('class','active peisong');
+	 		jquery('#peisong').attr('class','tab-pane active');
+		 		
+		}
+        if(jquery('#allType').val()=='cardsInfo'){
+	 		jquery('.cardsInfo').attr('class','active cardsInfo');
+	 		jquery('#cardsInfo').attr('class','tab-pane active');
+		 		
+		}
+        if(jquery('#allType').val()=='viewinfo'){
+	 		jquery('.viewinfo').attr('class','active viewinfo');
+	 		jquery('#viewinfo').attr('class','tab-pane active');
+		 		
+		}
+        if(jquery('#allType').val()=='codeinfo'){
+	 		jquery('.codeinfo').attr('class','active viewinfo');
+	 		jquery('#codeinfo').attr('class','tab-pane active');
+		 		
+		}
+	  });
+ 	var reCode="";
+ 	function confirmRecover(codeId){
+		if(confirm("恢复默认规则操作将会使您的编号规则恢复到最开始格式，确认恢复编号规则为默认规则？")){
+			reCode=codeId;
+			jquery("#mySubmitModal").modal('show');	
+		}
+ 	 }
+    function submitCode(replaceFlag){
+   	 	jquery("#login").show();
+   	    recoverCode(reCode,replaceFlag);
+    }
+    function callbackRecover(){
+    	jquery("#login").hide();
+    }
+ </script>
+	</ui:define>
+
+</ui:composition>

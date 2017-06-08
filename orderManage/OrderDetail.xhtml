@@ -1,0 +1,956 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	#{orderOperate.OrderDetailInit()}
+	<style>
+		div#menu .helpSeleHd{ float:left; overflow:hidden; width:60px; height:24px; line-height:24px; padding:0 20px 0 5px; background:url(#{request.contextPath}/asset/images/sitIco2.png) no-repeat 50px 12px; color:#cfe3fe;}
+		div#menu .siteSeleHd { width: 84px;}
+		.r_title{ font-size: 14px; color:#525252;}
+		.cm_resumeList{}
+		.cm_resumeList li{ float:left;}
+		.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'微软雅黑';}
+		.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+		.cm_resumeList li img{ float:left; margin-top:16px;}
+		.cm_resumeList li span{ float:left; text-indent:10px;}
+		.borderBt{ border-bottom:2px solid #33aedc;}
+		.borderBt02{ border-bottom:1px solid #cbcbcb;}
+		.W_addresses_list .addrItems .addr_hd .name{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+	</style>
+	<td valign="top" >
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%; padding:20px 30px;">
+			    <div class="breadNav_wap clear">
+			        <div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam">订单管理</a><span>&gt;</span><strong>下单管理</strong></div>
+			        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+			            <ul class="resumeList clear">
+			            	<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+			                <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                            </h:panelGroup>
+			            </ul>
+			        </div>
+			    </div>
+			    <div class="singleManage_con">
+			    	
+			    		<h2 class="titleH2 fl mr10">收货人信息 </h2>  
+			    		
+			    		<div class="search-header" style="margin:0 0 15px;">
+			            <div class="search-header-lt">
+			                <div class="public-search"><span class="octicon-search02"></span>
+			                	<input id="addressSearch" type="text" value="请输入收货人姓名/联系方式/收货地址" onfocus="if(this.value=='请输入收货人姓名/联系方式/收货地址'){this.value=''}" onblur="if(this.value==''){this.value='请输入收货人姓名/联系方式/收货地址'}" class="form-control srarchfont" style="width:300px;"></input>
+			                </div>
+			                <button id="memberButton" class="btn btn-primary" type="button" onclick="addressFindAction();">搜索</button>
+			            </div>
+			        	</div>
+			    		<s:div id="deliverAddressDiv">
+				        <table class="W_addresses mb20" cellpadding="0" cellspacing="0" style="margin-left:40px;">
+					        <tr>
+					            <td>
+					            	<div id="addressDiv" style="">
+					            	<div class="W_addresses_list">
+					            		<a:repeat value="#{orderOperate.deliverAddressesList}" var="_deliverAddress">
+						                	<div class="addrItems">
+						                    	<div class="inner #{_deliverAddress.deliverAddressId == orderOperate.deliverAddressId ? 'innerCur' : ''}" onclick="defaultAddressAction(#{_deliverAddress.deliverAddressId});">
+						                        	<div class="addr_hd">
+														<span class="name" title="#{_deliverAddress.consignee}" style=" font-weight:bold;">#{_deliverAddress.consignee}&#160;&#160;</span><span class="phone" title="#{_deliverAddress.phone}">#{_deliverAddress.phone}</span>
+						                            </div>
+						                            <div class="addr_bd">
+						                            	<span class="street">#{_deliverAddress.address}</span>
+						                            </div>
+						                            <i class="curmarker"></i>
+						                        </div>
+						                        <div class="addr_toolbar">
+						                            <a class="revise" href="javascript:void(0);" onclick="addressAction(2, #{_deliverAddress.deliverAddressId}, '#{_deliverAddress.consignee}', '#{_deliverAddress.phone}', '#{_deliverAddress.address}');">修改</a>
+					                            	<a class="delete" href="javascript:void(0);" onclick="deleteAddress(#{_deliverAddress.deliverAddressId});">删除</a>
+						                        </div>
+						                    </div>
+					                    </a:repeat>
+					                </div>
+					                <a class="add_newAddresses" href="javascript:void(0);" onclick="addressAction(1, 0, '', '', '');"><span></span></a>
+					                </div>
+					            </td>
+					        </tr>
+					       <tr>
+					       <td>
+						   <table class="pageModel" >
+						   		<tbody>
+									<tr>
+										<td>
+											<s:span rendered="#{orderOperate.address_max_page > 1}">
+												<a href="javascript:void(0);" class="page_prev" onclick="operatePageAction(1);">首页</a>
+											</s:span>
+											<s:span styleClass="pagePrve" rendered="#{orderOperate.address_page - 1 gt 0 and orderOperate.address_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="operatePageAction(#{orderOperate.address_page - 1});">&lt;&lt;</a>
+											</s:span>
+											<a:repeat value="#{orderOperate.address_show_page_list}" var="_da_page" rowKeyVar="_da_index">
+												<span class="page_num #{_da_page == orderOperate.address_page ? 'page_Cur' : ''}">
+													<a href="javascript:void(0);" onclick="operatePageAction(#{_da_page});">#{_da_page}</a>
+												</span>
+											</a:repeat>
+											<s:span styleClass="page_next" rendered="#{orderOperate.address_page lt orderOperate.address_max_page and orderOperate.address_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="operatePageAction(#{orderOperate.address_page + 1});">&gt;&gt;</a>
+											</s:span>
+											<s:span rendered="#{orderOperate.address_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="operatePageAction(#{orderOperate.address_max_page});">尾页</a>
+											</s:span>
+											<span >
+												<span class="pageCount" style="border-right:0"><a>共#{orderOperate.address_max_page}页</a></span>
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							</td>
+					       </tr> 
+				        </table>
+			    	</s:div>
+			    	
+			    	<h2 class="titleH2">配送时间</h2>
+			        <div class="delivery_time mb20">
+			        	<span class="text">配送时间：</span>
+			            <span class="search-datetime">
+			                <div class="input-append date form_datetime" style="position:relative;" >
+			                	<input size="26" type="text" value="#{orderOperate.defaultTime}" style="width:100%;color:#aaa;padding:6px 10px;line-height:20px;box-sizing:border-box;" readonly="readonly" id="deliverTime"/>
+			                	<span class="add-on" style="position:absolute;right:10px;top:10px;"><i class="icon-th" style="margin:0;"></i></span>
+			                </div>
+			            </span>
+			            <ul class="timeRadio_list">
+			                <li class="fl">
+			                    <input type="radio" class="iRadio" name="dataAllot" value="0" checked="checked" id="dataAllot0"/><label class="iRadioLable" style="width:auto; max-width:auto;">全天</label>
+			                </li>
+			                <li class="fl">
+			                    <input type="radio" class="iRadio" name="dataAllot" value="1" id="dataAllot1"/><label class="iRadioLable" style="width:auto; max-width:auto;">上午</label>
+			                </li>
+			                <li class="fl">
+			                    <input type="radio" class="iRadio" name="dataAllot" value="2" id="dataAllot2"/><label class="iRadioLable" style="width:auto; max-width:auto;">下午</label>
+			                </li>
+			                <li class="fl">
+			                    <input type="radio" class="iRadio" name="dataAllot" value="3" id="dataAllot3"/><label class="iRadioLable" style="width:auto; max-width:auto;">晚上</label>
+			                </li>
+			            </ul>  
+			        </div>
+			        
+			        <!-- 使用红包 开始 -->
+			        <h:outputText value="" rendered="#{orderOperate.coupons.size() gt 0 and orderOperate.ues ne 1}">
+                    <h2 class="titleH2">使用红包</h2>
+                    <div class="mb20">
+                    	<a4j:repeat value='#{orderOperate.coupons}' var="_cou" rowKeyVar="_index">
+                        <div class="a_voucher">
+                        	<input type="hidden" value="#{_cou[0]}" name="couponId" id="couponId_#{_index}"/>
+                        	<span class="v_bg"></span>
+                            <span class="v_hook"></span>
+                            <div class="a_voucher_lt">
+                            	<input type="hidden" value="#{_cou[2]}" name="couNum" id="couNum_#{_index}"/>
+                            	<h:outputText rendered="#{_cou[2] ne '' and _cou[2] ne null}" >
+                            	<p class="p_txt1">消费满#{_cou[2]}元可以使用！</p>
+                            	</h:outputText>
+                                <p class="p_txt2">有效期：#{_cou[4]}</p>
+                            </div>
+                            <div class="a_voucher_rt">
+                            	<span class="v_line"></span>
+                            	<input type="hidden" value="#{_cou[1]}" name="couponPrice" id="couponPrice_#{_index}"/>
+                                <p class="p_txt3">#{_cou[1]}<span>元</span></p>
+                            </div>
+                        </div>
+                        </a4j:repeat>
+                        
+                    </div>
+			        </h:outputText>
+			    	<h2 class="titleH2">付款方式</h2>
+			        <div class="payMethod">
+			            <p class="timeRadio_list">
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModel" id="payRadio0" onclick="payControl(0);" value="0" checked="checked"/><label class="iRadioLable" style="width:auto; max-width:auto;">货到付款</label><i style="float:left; width:90px;"></i>
+			                </span>
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModelDetail" value="2" id="payRadio2"/><label class="iRadioLable" style="width:auto; max-width:auto;">现金支付</label>
+			                </span>
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModelDetail" value="3" id="payRadio3"/><label class="iRadioLable" style="width:auto; max-width:auto;">POS支付</label>
+			                </span>
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModelDetail" value="4" id="payRadio4"/><label class="iRadioLable" style="width:auto; max-width:auto;">支票支付</label>
+			                </span>
+			                </p>
+			                <p class="timeRadio_list">
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModel" value="9" id="payRadio9" onclick="payControl(9);"/><label class="iRadioLable" style="width:auto; max-width:auto;">转账</label>
+			                </span>
+		                </p>
+		                <p class="timeRadio_list">
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModel" value="10" id="payRadio10" onclick="payControl(10);"/><label class="iRadioLable" style="width:auto; max-width:auto;">礼品支付</label>
+			                </span>
+		                </p>
+		                <p class="timeRadio_list">
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModel" value="11" id="payRadio11" onclick="payControl(11);"/><label class="iRadioLable" style="width:auto; max-width:auto;">预付款</label>
+			                </span>
+		                </p>
+		                <p class="timeRadio_list">
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModel" value="12" id="payRadio12" onclick="payControl(12);"/><label class="iRadioLable" style="width:auto; max-width:auto;">周期付款</label>
+			                </span>
+			            </p>   
+			        </div>
+			    	<h2 class="titleH2">填写备注</h2>
+			        <div class="fillIn_notes">
+			             <textarea class="form-control" id="orderRemark"></textarea>
+			             <p class="tip">提示客户：我们会努力按照您指示的时间配送，但因天气、交通等各类因素影响，您的订单有可能会有延误的现象！</p>
+			        </div>
+			    	<h2 class="titleH2">商品清单</h2>
+			        <div class="listGoods_con">
+						<table class="tableModel ablt" width="100%" cellpadding="0" cellspacing="0" >
+							<thead>
+				                <tr>
+				                	<th width="5%">序号</th>
+				                    <th width="20%">商品</th>
+				                    <th width="10%">规格</th>
+				                    <th width="10%">原价</th>
+				                    <th width="10%">单价</th>
+				                    <th width="10%">数量</th>
+				                    <th width="5%">折扣</th>
+				                    <th width="10%">小计</th>
+									<th width="20%">备注</th>
+				                </tr>
+			                </thead>
+						</table>
+						<div class="listGoods_height" id="showProductDiv">
+				            <table id="orderProductTable" class="tableModel aclr" width="100%" cellpadding="0" cellspacing="0" style="border-radius:0;">
+				                <tbody>
+				                	<a:repeat value="#{orderOperate.orderProductList}" var="_product" rowKeyVar="_opIndex">
+				                		<tr class="odd" id="orderProductTr#{_product.cartCode}_#{_opIndex}">
+						                    <td width="5%">#{_opIndex + 1}</td>
+						                    <td width="20%">#{_product.productName}</td>
+						                    <td width="10%">#{_product.productUnit}</td>
+						                    <td width="10%">¥<span class="num_spyj"><h:outputText value="#{_product.originalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="10%">¥<span class="num_spdj2"><h:outputText value="#{_product.price}"  ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="10%" id="productNum#{_product.cartCode}_#{_opIndex}">#{_product.productNum}</td>
+						                    <td width="5%" id="discount#{_product.cartCode}_#{_opIndex}">#{_product.discount}</td>
+						                    <td width="10%" id="totalPrice#{_product.cartCode}_#{_opIndex}">
+						                    	<s:span styleClass="num_dpzj" rendered="#{_product.sellType == orderConstant.getCartProductGeneral()}">
+						                    		¥<h:outputText value="#{_product.totalPrice}"><f:convertNumber pattern="#0.00"/></h:outputText>
+						                    	</s:span>
+						                    	<s:span styleClass="num_dpzj" rendered="#{_product.sellType == orderConstant.getCartProductGift()}">
+						                    		<h:outputText value="赠品"></h:outputText>
+						                    	</s:span>
+					                    	</td>
+						                    <td width="20%"><a  title="#{_product.remark}"  href="javascript:void(0);" style="display:inline-block; max-width:80px; overflow:hidden; white-space: nowrap;">#{_product.remark}</a></td>
+						                </tr>
+				                	</a:repeat>
+			                	</tbody>
+							</table>
+						</div>
+						<div class="atlr mb20" >
+	                        <div class="listGoods_total">
+	                        	<ul>
+	                            	<li class="listGoods_li1">共<span class="num" id="sumNum">0</span>件商品</li>
+	                                <li class="listGoods_li2">商品总额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num" id="productTotal">0</span></p></li>
+	                                <li class="listGoods_li2" id="coupon" style="display:none;" >红包金额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">-¥</span><span class="num" id="couponPrice"><h:outputText id="couPrice" value="" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+	                                <li class="listGoods_li2">礼品卡金额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">-¥</span><span class="num" id="cardPrice"><h:outputText value="#{orderOperate.cardTotalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+	                                <li class="listGoods_li2">折扣金额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">-¥</span><span class="num" id="discountPrice"><h:outputText id="discountPrice" value="#{orderOperate.discountPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+	                                <li class="listGoods_li4">
+	                                    <div class="fr">
+	                                        <span class="fl">运费：</span>
+	                                        <span class="codeEle fl">+¥</span>
+	                                        <span class="ml5 fr"><input type="text" class="form-control" id="freightAccount" value="0"  onkeyup="clearNoNum(2, this); modifyFreight(this.value);"/></span>
+	                                    </div>
+	                                </li>
+									<li class="listGoods_li3">
+	                                	<div class="fr">
+	                                    	<span class="fl">当前余额为：</span>
+	                                        <span class="fl codeEle" style="line-height:36px;">¥</span>
+	                                        <span class="fl num" style="line-height:36px;">#{orderOperate.memberInfo.balance}</span>
+	                                        <span class="itemsCheckbox">
+	                                            <input type="checkbox" class="iCheckbox" name="useBalance" id="useBalance" />
+	                                        </span>
+	                                        <span class="fl">使用余额：</span>
+	                                        <span class="fl" style="width:83px;"><span class="codeEle">-&nbsp;¥</span><label class="fr ml5" id="balanceAccount">0</label></span>
+	                                    </div>
+	                                </li>
+	                            </ul>
+	                        </div>
+	                        <div class="listGoods_li5 clear">
+	                        	<div class="fr">
+	                        	<h:outputText rendered="#{orderOperate.memberInfo.balance gt 0}" >
+	                        	<span id="prompt" class="fl" style="margin-right: 20px;color:red;"><img src="#{request.contextPath}/asset/images/ico_errorTip.png" style="margin-right: 5px;"/>提示：您还有#{orderOperate.memberInfo.balance}元余额还未使用</span>
+	                        	</h:outputText>
+	                        	<span class="fl">应付总额：</span>
+	                            <span class="codeEle fl">¥</span>
+	                            <span class="num fl" id="totalAccount">0</span>
+	                            </div>
+	                        </div>
+			            </div>
+			            <h:form id="submitOrder" enctype="multipart/form-data">
+				            <div>
+				            	<h:inputHidden id="deliverTimeHidden" value="#{orderOperate.deliverTime}" />
+				            	<h:inputHidden id="dataAllotHidden" value="#{orderOperate.dataAllot}" />
+				            	<h:inputHidden id="payModelHidden" value="#{orderOperate.payModel}" />
+				            	<h:inputHidden id="orderRemarkHidden" value="#{orderOperate.orderRemark}" />
+				            	<h:inputHidden id="deliverAccountHidden" value="#{orderOperate.deliverAccount}" />
+				            	<h:inputHidden id="productAccountHidden" value="#{orderOperate.productAccount}" />
+				            	<h:inputHidden id="totalAccountHidden" value="#{orderOperate.totalAccount}" />
+				            	<h:inputHidden id="payAccountHidden" value="#{orderOperate.payAccount}" />
+				            	<h:inputHidden id="balanceFlagHidden" value="#{orderOperate.balanceFlag}" />
+				            	<h:inputHidden id="userCouponsId" value="#{orderOperate.userCouponId}" />
+				            	<h:inputHidden id="pdOrder" value="#{orderOperate.pdOrder}" />
+				            	<h:inputHidden id="special" value="#{orderOperate.special}" />
+				            	<h:inputHidden id="discount" value="#{orderOperate.discount}" />
+				            	<h:inputHidden id="discountPrice" value="#{orderOperate.discountPrice}" />
+				            	<h:inputHidden id="subtractPrice" value="#{orderOperate.subtractPrice}" />
+				            	<input type="button" class="btn btn-primary fr ml5" onclick="checkGoodBatch();" value="提交订单" />
+								<h:commandButton styleClass="btn btn-primary fr ml5" style="display:none;" onclick="if(!saveAction()){return false;};" id="next" action="#{orderOperate.submitOrder}" value="提交订单"/>
+				            	<s:button view="/orderManage/OrderProduct.xhtml" styleClass="btn btn-default fr" value="上一步"></s:button>
+				            </div>
+			            </h:form>
+			        </div>
+			    </div>
+			</div>
+			
+			<div class="modal fade" id="addressControlDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width:560px; position:absolute; left:50%; margin-left:-280px; top:50%; margin-top:-197px; margin-bottom:0;">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"></button>
+			        <h4 class="modal-title revisionGrxx" id="addressTitle"></h4>
+			    </div>
+			    <div class="modal-body" style="padding:30px 0 20px;">
+			        <table class="modelTable" width="100%" cellpadding="0" cellspacing="0">
+			            <tr>
+			                <td class="pr10" width="110" align="right"><i class="starColor">*</i>收货人</td>
+			                <td width="466">
+			                    <span class="bootText220" >
+			                    <input type="text" class="form-control" id="consignee"/>
+			                    </span> 
+			                </td>
+			            </tr>
+			            <tr>
+			                <td class="pr10" width="110" align="right"><i class="starColor">*</i>联系方式</td>
+			                <td>
+			                	<span class="bootText220" >
+			                    <input type="text" class="form-control" id="phone"/>
+			                    </span> 
+			                    <span style="color: red">&#160;&#160;(添加多个联系方式请用","隔开)</span>
+			                </td>
+			            </tr>
+			            <tr>
+			                <td class="pr10" align="right"><i class="starColor">*</i>工作地址</td>
+			                <td>
+			                    <span class="bootTextarea290" >
+			                    <textarea class="form-control area_textarea" id="address" onkeyup="addressVerify(this);"></textarea>
+			                    </span> 
+			                </td>
+			            </tr>
+			        </table>    
+			    </div>
+			    <div class="modal-footer">
+			        <a id="saveAddress" class="btn btn-success" href="javascript:void(0);" onclick="saveAddress();">添加并使用</a>
+			        <a id="modifyAddress" class="btn btn-success" href="javascript:void(0);" onclick="updateAddress();">修改</a>
+			        <a class="btn btn-default" href="javascript:void(0);" onclick="addressControl(2);">取消</a>
+			    </div>
+			</div>
+			</div>
+			</div>
+			
+			<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na" style="display: none;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="messageTitle">提示</h4>
+						</div>
+						<div class="modal-body">
+							<span id="messageValue"></span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</td>
+	
+	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="choiceAddress" action="#{orderOperate.choiceAddress}" reRender="deliverAddressDiv" data="#{orderOperate.deliverAddressId}" oncomplete="addressComplete(data);">
+			<a:actionparam name="operateDeliverAddressId" assignTo="#{orderOperate.operateDeliverAddressId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="addDeliverAddress" action="#{orderOperate.addDeliverAddress}" reRender="deliverAddressDiv" data="#{orderOperate.deliverAddressId}" oncomplete="addressComplete(data);">
+			<a:actionparam name="consignee" assignTo="#{orderOperate.consignee}"/>
+			<a:actionparam name="phone" assignTo="#{orderOperate.phone}"/>
+			<a:actionparam name="address" assignTo="#{orderOperate.address}"/>
+		</a:jsFunction>
+		<a:jsFunction name="amodifyAddress" action="#{orderOperate.modifyAddress}" reRender="deliverAddressDiv" data="#{orderOperate.deliverAddressId}" oncomplete="addressComplete(data);">
+			<a:actionparam name="operateDeliverAddressId" assignTo="#{orderOperate.operateDeliverAddressId}"/>
+			<a:actionparam name="consignee" assignTo="#{orderOperate.consignee}"/>
+			<a:actionparam name="phone" assignTo="#{orderOperate.phone}"/>
+			<a:actionparam name="address" assignTo="#{orderOperate.address}"/>
+		</a:jsFunction>
+		<a:jsFunction name="removeAddress" action="#{orderOperate.removeAddress}" reRender="deliverAddressDiv" data="#{orderOperate.deliverAddressId}" oncomplete="addressComplete(data);">
+			<a:actionparam name="operateDeliverAddressId" assignTo="#{orderOperate.operateDeliverAddressId}"/>
+		</a:jsFunction>
+		
+		<a:jsFunction name="checkGoodBatchs" action="#{orderOperate.checkProduct()}" data="#{orderOperate.showMessage}" oncomplete="checkGoodBatchHuidiao(data);">
+		</a:jsFunction>
+		
+		<a:jsFunction name="addressPageAction" action="#{orderOperate.gainDeliverAddressFind}" reRender="deliverAddressDiv" oncomplete="addressPageHuidiao();"   >
+			<a:actionparam name="addressPage" assignTo="#{orderOperate.address_page}"/>
+			<a:actionparam name="addressSearch" assignTo="#{orderOperate.addressSearch}"/>
+		</a:jsFunction>
+		
+		<a:jsFunction name="addressFind" action="#{orderOperate.gainDeliverAddressFind}" reRender="deliverAddressDiv" oncomplete="addressPageHuidiao();"   >
+			<a:actionparam name="addressPage" assignTo="#{orderOperate.address_page}"/>
+			<a:actionparam name="addressSearch" assignTo="#{orderOperate.addressSearch}"/>
+		</a:jsFunction>
+	</a:form>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		jQuery = jQuery.noConflict();
+
+		var addressId;
+		var operateId;
+
+		var productAllTotal = 0;
+		var deliverAccount = 0;
+		var totalAccount = 0;
+		var payAccount = 0;
+
+		//地址长度验证
+		function addressVerify(obj){
+			if (obj.value.length > 200) {
+				obj.value = obj.value.substr(0, 200);
+			}
+		}
+
+		//验证 1数量 2金额
+		function clearNoNum(type, obj){
+			if (type == 1) {
+				obj.value = obj.value.replace(/[^\d]/,"");  //清除“数字”和“.”以外的字符  
+			} else {
+				obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+				obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+				obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+				obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+			}
+		}
+
+		function hasPrompt(){
+			if(jQuery('#useBalance').is(':checked')){
+				jQuery('#prompt').hide();
+			}else{
+				jQuery('#prompt').show();
+			}
+		}
+		
+		jQuery(function(){
+			jQuery('.selectpicker').selectpicker();  // 下拉框控件
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+			//时间控件
+			jQuery(".form_datetime").datetimepicker({
+				format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+				autoclose: true,
+				weekStart: 1,
+				language:  'zh-CN',	
+				minView:2,
+				pickerPosition: "bottom-left"
+			});
+			tidyJs();
+			var dwidth = document.body.clientWidth;
+			if( dwidth >1050 ){
+				jQuery('#addressDiv').css('width','1050px')
+			}else{
+				jQuery('#addressDiv').css('width','800px')
+			}
+		});
+
+		jQuery(document).ready(function() { 
+			addressId = '#{orderOperate.deliverAddressId}';
+			var deliverTime = '#{orderOperate.deliverTime}';
+			var dataAllot = '#{orderOperate.dataAllot}';
+			var payModel = '#{orderOperate.payModel}';
+			var orderRemark = '#{orderOperate.orderRemark}';
+			var deliverAccount = '#{orderOperate.deliverAccount}';
+			var balanceFlag = '#{orderOperate.balanceFlag}';
+
+			jQuery("#dataAllot" + dataAllot).iCheck("check");
+
+			if (payModel == 2 || payModel == 3 || payModel == 4 || payModel == 11 || payModel == 12) {
+				jQuery("#payRadio2").iCheck("enable");
+				jQuery("#payRadio3").iCheck("enable");
+				jQuery("#payRadio4").iCheck("enable");
+				jQuery("#payRadio0").iCheck("check");
+				jQuery("#payRadio" + payModel).iCheck("check");
+			} else {
+				jQuery("#payRadio2").iCheck("disable");
+				jQuery("#payRadio3").iCheck("disable");
+				jQuery("#payRadio4").iCheck("disable");
+				jQuery("#payRadio" + payModel).iCheck("check");
+			}
+
+			jQuery("#orderRemark").val(orderRemark);
+			jQuery("#freightAccount").val(deliverAccount);
+			if (balanceFlag == 'true') {
+				jQuery("#useBalance").iCheck("check");
+			} else {
+				jQuery("#useBalance").iCheck("uncheck");
+			}
+
+			var sumNum = 0;
+			var productTotal = 0;
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productNum = jQuery("#productNum" + productId).text();
+					var productIdArr = productId.split("_");
+					var discount = jQuery("#discount" + productId).text();
+					
+					var totalPrice = 0;
+					if (productIdArr[1] == 1) {
+						totalPrice = jQuery("#totalPrice" + productId).text();
+						totalPrice = totalPrice.replace("¥", "");
+						totalPrice = totalPrice.replace("￥", "");
+					}
+					sumNum += Number(productNum);
+					productTotal += Number(totalPrice);
+				}
+			});
+			jQuery("#sumNum").html(sumNum.toFixed(2));
+			jQuery("#productTotal").html(productTotal.toFixed(2));
+
+			var productTotal = jQuery("#productTotal").text();
+			var freightAccount = jQuery("#freightAccount").val();
+			var balance = 0;
+			var useBalanceFlag = document.getElementById("useBalance").checked;
+			if (useBalanceFlag) {
+				var balance = '#{orderOperate.memberInfo.balance}';
+			}
+			var cou = 0;
+			if(jQuery('.a_voucher').hasClass('cur')){
+				cou = jQuery(".a_voucher.cur").find('input[name=couponPrice]').val();
+			}
+			if(cou==''){
+				cou=0;
+			}
+			calculateAccount(productTotal, freightAccount, balance,cou);
+			
+			var showMessage = '#{orderOperate.showMessage}';
+			var showMessageCount = '#{orderOperate.showMessageCount}';
+			if (showMessage != '' && showMessage != null && Number(showMessageCount) == 1) {
+				jQuery("#messageValue").html(showMessage);
+				jQuery("#messageDiv").modal('show');
+			}
+
+			jQuery(window).resize(function(){
+				var addressWidth = document.body.clientWidth;
+				if( addressWidth >1050 ){
+					jQuery('#addressDiv').css('width','1050px')
+				}else{
+					jQuery('#addressDiv').css('width','800px')
+				}
+			});
+		}); 
+
+		//订单提交验证
+		function saveAction(){
+			if(addressId==0 || addressId==''){
+				jQuery("#messageValue").html("请添加配送地址！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			var deliverTime = jQuery("#deliverTime").val();
+			if (deliverTime == null || deliverTime == '') {
+				jQuery("#messageValue").html("请选择配送日期");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			var dataAllot = jQuery('input[name="dataAllot"]:checked').val();
+			var payModel = jQuery('input[name="payModel"]:checked').val();
+			if (payModel == 0) {
+				payModel = jQuery('input[name="payModelDetail"]:checked').val();
+			}
+			var orderRemark = jQuery("#orderRemark").val();
+			if (orderRemark.length > 200) {
+				jQuery("#messageValue").html("订单备注需少于200字！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			var useBalanceFlag = document.getElementById("useBalance").checked;
+
+			jQuery("#submitOrder\\:deliverTimeHidden").val(deliverTime);
+			jQuery("#submitOrder\\:dataAllotHidden").val(dataAllot);
+			jQuery("#submitOrder\\:payModelHidden").val(payModel);
+			jQuery("#submitOrder\\:orderRemarkHidden").val(orderRemark);
+			jQuery("#submitOrder\\:deliverAccountHidden").val(deliverAccount);
+			jQuery("#submitOrder\\:productAccountHidden").val(productAllTotal);
+			jQuery("#submitOrder\\:totalAccountHidden").val(totalAccount);
+			jQuery("#submitOrder\\:payAccountHidden").val(payAccount);
+			jQuery("#submitOrder\\:balanceFlagHidden").val(useBalanceFlag);
+
+			if(jQuery('.a_voucher').hasClass('cur')){
+				jQuery("#submitOrder\\:userCouponsId").val(jQuery(".a_voucher.cur").find('input[name=couponId]').val());
+			}
+
+			return true;
+		}
+
+		//设为默认配送地址
+		function defaultAddressAction(deliverAddressId){
+			choiceAddress(Number(deliverAddressId));
+		}
+
+		//配送地址面板操作 1打开 2关闭 
+		function addressControl(type){
+			if (type == 1) {
+				jQuery("#addressControlDiv").modal('show');
+			} else {
+				jQuery("#addressControlDiv").modal('hide');
+			}
+		}
+
+		//地址操作回调
+		function addressComplete(data){
+			addressId = data;
+			addressControl(2);
+
+			addressPageHuidiao();
+		}
+
+		//配送地址操作类型
+		function addressAction(type, deliverAddressId, consignee, phone, address){
+			operateId = deliverAddressId;
+			jQuery("#consignee").val(consignee);
+			jQuery("#phone").val(phone);
+			jQuery("#address").val(address);
+			if (type == 1) {
+				jQuery("#addressTitle").html("添加配送地址");
+				jQuery("#saveAddress").css("display", "");
+				jQuery("#modifyAddress").css("display", "none");
+			} else {
+				jQuery("#addressTitle").html("修改配送地址");
+				jQuery("#saveAddress").css("display", "none");
+				jQuery("#modifyAddress").css("display", "");
+			}
+			addressControl(1);
+		}
+
+		//添加配送地址
+		function saveAddress(){
+			var consignee = jQuery("#consignee").val();
+			var phone = jQuery("#phone").val();
+			var address = jQuery("#address").val();
+			var flag = true;
+			if (jQuery.trim(consignee) == '') {
+				jQuery("#messageValue").html("请填写收货人姓名！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}
+			if (jQuery.trim(phone) == '') {
+				jQuery("#messageValue").html("请填写收货人联系方式！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}else{
+				var reg = /^[\d-+,，]{0,50}$/;
+	             if (reg.test(phone) == false && phone.length<=50) {
+	                   jQuery("#messageValue").html("联系方式只支持数字,逗号,加号,中划线！");
+	                       jQuery("#messageDiv").modal('show');
+	                       flag = false;
+	             }else if(reg.test(phone) == false && phone.length>50){
+	            	 jQuery("#messageValue").html("联系方式最长输入50位！");
+                     jQuery("#messageDiv").modal('show');
+                     flag = false;
+		         }
+			}
+			if (jQuery.trim(address) == '') {
+				jQuery("#messageValue").html("请填写工作地址！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}
+			if (flag == true) {
+				addDeliverAddress(consignee, phone, address);
+			}
+		}
+
+		//修改配送地址
+		function updateAddress(){
+			var consignee = jQuery("#consignee").val();
+			var phone = jQuery("#phone").val();
+			var address = jQuery("#address").val();
+			var flag = true;
+			if (jQuery.trim(consignee) == '') {
+				jQuery("#messageValue").html("请填写收货人姓名！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}
+			if (jQuery.trim(phone) == '') {
+				jQuery("#messageValue").html("请填写收货人联系方式！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}else{
+				var reg = /^[\d-+,，]{0,50}$/;
+	             if (reg.test(phone) == false && phone.length<=50) {
+	                   jQuery("#messageValue").html("联系方式只支持数字,逗号,加号,中划线！");
+	                       jQuery("#messageDiv").modal('show');
+	                       flag = false;
+	             }else if(reg.test(phone) == false && phone.length>50){
+	            	 jQuery("#messageValue").html("联系方式最长输入50位！");
+                    jQuery("#messageDiv").modal('show');
+                    flag = false;
+		         }
+			}
+			if (jQuery.trim(address) == '') {
+				jQuery("#messageValue").html("请填写工作地址！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}
+			if (flag == true) {
+				amodifyAddress(Number(operateId), consignee, phone, address);
+			}
+		}
+		
+		//删除配送地址
+		function deleteAddress(deliverAddressId){
+			removeAddress(Number(deliverAddressId));
+		}
+
+		//修改运费
+		function modifyFreight(freightAccount){
+			var productTotal = jQuery("#productTotal").text();
+			var balance = 0;
+			var useBalanceFlag = document.getElementById("useBalance").checked;
+			if (useBalanceFlag) {
+				balance = '#{orderOperate.memberInfo.balance}';
+			}
+			if(balance==''){
+				balance = 0;
+			}
+			var cou = 0;
+			if(jQuery('.a_voucher').hasClass('cur')){
+				cou = jQuery(".a_voucher.cur").find('input[name=couponPrice]').val();
+			}
+			if(cou==''){
+				cou=0;
+			}
+			calculateAccount(productTotal, freightAccount, balance,cou);
+		}
+
+		//计算金额 商品金额-运费-用户余额
+		function calculateAccount(productTotal, freightAccount, balance,cou){
+			productAllTotal = Number(productTotal).toFixed(2);
+			deliverAccount = Number(freightAccount).toFixed(2);
+			var cardPrice = jQuery("#cardPrice").text();
+			var discountPrice = jQuery('#discountPrice').text();
+			productTotal = Number(productTotal) - Number(cardPrice) - Number(discountPrice);
+			if (productTotal < 0) {
+				productTotal = 0;
+			}
+			if (Number(productTotal) + Number(freightAccount) > Number(balance) + Number(cou)) {
+				var payableAccount = Number(productTotal) + Number(freightAccount) - Number(balance) - Number(cou);
+				jQuery("#balanceAccount").html(Number(balance).toFixed(2));
+				jQuery("#totalAccount").html(payableAccount.toFixed(2));
+
+				payAccount = Number(balance);
+				totalAccount = payableAccount.toFixed(2);
+			} else {
+				var balanceAccount = Number(productTotal) + Number(freightAccount) - Number(cou);
+				if(balanceAccount<0){
+					balanceAccount=0;
+				}
+				jQuery("#balanceAccount").html(balanceAccount.toFixed(2));
+				jQuery("#totalAccount").html(0);
+				payAccount = balanceAccount;
+				totalAccount = 0;
+			}
+		}
+
+		function checkGoodBatch(){
+			checkGoodBatchs();
+		}
+
+		function checkGoodBatchHuidiao(date){
+			if(date == ''){
+				jQuery('#submitOrder\\:next').click();
+			}else{
+				if (confirm(date+'不存在库存批次，无法自动出库，是否继续？')) {  
+					jQuery('#submitOrder\\:next').click();
+				}
+			}
+		}
+		
+		
+		//封装公共初始化js 
+		function tidyJs(){
+			//单选和复选控件
+			jQuery('input[class=iCheckbox]').iCheck({
+				checkboxClass: 'icheckbox_minimal-blue',
+			}); 
+			jQuery('input[class=iRadio]').iCheck({
+				radioClass: 'iradio_minimal-blue',
+			});
+
+			jQuery('.tableModel tbody tr').mouseover(function(){  // 表格模板隔行换色
+				jQuery(this).addClass('hover');
+			});
+			jQuery('.tableModel tbody tr').mouseout(function(){
+				jQuery(this).removeClass('hover');
+			});	
+
+			jQuery('.W_addresses_list .inner').mouseover(function(){  //收货人地址点击和滑过的状态
+				jQuery(this).addClass('addrHv').siblings().removeClass('addrHv');	
+			});	
+			jQuery('.W_addresses_list .inner').mouseout(function(){
+				jQuery(this).removeClass('addrHv');	
+			});	
+
+			//支付单选按钮
+			jQuery("input[name='payModel']").on('ifClicked', function(){
+				var payRadioId = this.id.replace("payRadio", "");
+				if (payRadioId == 0) {//货到付款
+					jQuery("#payRadio2").iCheck("enable");
+					jQuery("#payRadio3").iCheck("enable");
+					jQuery("#payRadio4").iCheck("enable");
+					jQuery("#useBalance").iCheck("enable");
+					jQuery("#payRadio2").iCheck("check");
+				} else if (payRadioId == 10) {//礼品赠送
+					jQuery("#payRadio2").iCheck("disable");
+					jQuery("#payRadio3").iCheck("disable");
+					jQuery("#payRadio4").iCheck("disable");
+					jQuery("#useBalance").iCheck("uncheck");
+					jQuery("#useBalance").iCheck("disable");
+				}else {//非货到付款 礼品赠送 
+					jQuery("#payRadio2").iCheck("disable");
+					jQuery("#payRadio3").iCheck("disable");
+					jQuery("#payRadio4").iCheck("disable");
+					jQuery("#useBalance").iCheck("enable");
+				}
+				var productTotal = jQuery("#productTotal").text();
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				var cou = 0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery(".a_voucher.cur").find('input[name=couponPrice]').val();
+				}
+				if(cou==''){
+					cou=0;
+				}
+				calculateAccount(productTotal, freightAccount, balance,cou);
+			});
+
+			jQuery("input[name='useBalance']:checkbox").on('ifChanged', function(){
+				hasPrompt();
+				var productTotal = jQuery("#productTotal").text();
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				if (this.checked) {
+					var balance = '#{orderOperate.memberInfo.balance}';
+				}
+				var cou = 0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery(".a_voucher.cur").find('input[name=couponPrice]').val();
+				}
+				if(cou==''){
+					cou=0;
+				}
+				calculateAccount(productTotal, freightAccount, balance,cou);
+			});
+		}
+		//红包券的点击效果
+		jQuery('.a_voucher').click(function(){
+			jQuery(this).find('input[name=couponId]');
+			var productTotal = jQuery("#productTotal").text();
+			var freightAccount = jQuery("#freightAccount").val();
+			var discountPrice = jQuery("#discountPrice").text();
+			
+			var balance = 0;
+			if (document.getElementById("useBalance").checked) {
+				balance = '#{orderOperate.memberInfo.balance}';
+			}
+			
+			var aaa = jQuery(this).find('input[name=couNum]').val();
+			if(aaa==''){
+				aaa=0;
+			}
+			
+			if(Number(productTotal) - Number(discountPrice) >=Number(aaa)){
+				if(jQuery(this).hasClass('cur')){
+					jQuery(this).removeClass('cur');
+				}else{
+					jQuery(this).addClass('cur').siblings().removeClass('cur');	
+				}
+				if(jQuery(this).hasClass('cur')){
+					var cou = jQuery(this).find('input[name=couponPrice]').val();
+					if(cou==''){
+						cou=0;
+					}
+					jQuery("#couPrice").html(Number(cou).toFixed(2));
+					jQuery("#coupon").show();
+					calculateAccount(productTotal, freightAccount, balance,cou);
+				}else{
+					jQuery("#couPrice").html(0);
+					jQuery("#coupon").hide();
+					var cou = 0;
+					calculateAccount(productTotal, freightAccount, balance,cou);
+				}
+			}else{
+				jQuery("#messageValue").html("订单需要满"+aaa +"元可以使用！");
+				jQuery("#messageDiv").modal('show');
+			}
+		});
+		//订单配送地址切换分页
+		function operatePageAction(page){
+			var mess = jQuery("#addressSearch").val();
+			if(mess == '请输入收货人姓名/联系方式/收货地址'){
+				mess="";
+			}
+			addressPageAction(page,mess);
+		}
+		//配送地址切换分页回调
+		function addressPageHuidiao(){
+			var dwidth = document.body.clientWidth;
+			if( dwidth >1050 ){
+				jQuery('#addressDiv').css('width','1050px')
+			}else{
+				jQuery('#addressDiv').css('width','800px')
+			}
+		}
+
+		function addressFindAction(){
+			var mess = jQuery("#addressSearch").val();
+			if(mess == '请输入收货人姓名/联系方式/收货地址'){
+				mess="";
+			}
+			addressFind(1,mess)
+		}
+		
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

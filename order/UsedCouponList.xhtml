@@ -1,0 +1,164 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+    <link rel="stylesheet" href="#{request.contextPath}/asset/css/order/CustomerInfor.css" type="text/css" />
+    
+      <td valign="top">
+            <div class="right_c" style="min-height:30px; padding-bottom:15px; padding-top:15px;">
+            	<!-- 面包屑导航 开始 -->
+                <div class="breadNav_wap mb15 clear">
+                    <div class="breadNav_lt">采销存&gt;订单管理&gt;红包管理&gt;<strong>领取记录</strong></div>
+                    <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+                        <ul class="resumeList clear">
+                            <li>
+	                            <a href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg" /><span>订单管理</span></a>
+	                        </li>
+	                        <li>
+	                    		<a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                    		<a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <li class="cur">
+                                <a class="borderBt" href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <dl class="claim_total mb15 clear">
+                	<dd class="c_items"><i class="c_icon iconc1"></i>已领取:#{usedCouponList.resultList.size()}张</dd>
+                    <dd class="c_items"><i class="c_icon iconc2"></i>已使用:#{usedCouponList.useCount}张</dd>
+                    <dd class="c_items"><i class="c_icon iconc3"></i>已过期:#{usedCouponList.overdueCount}张</dd>
+                </dl>
+                <!-- 红包领取记录数据表格 -->
+                <table class="tableModel" width="100%" cellpadding="0" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th width="5%">序号</th>
+                        <th width="20%">面额</th>
+                        <th width="20%">客户名称</th>
+                        <th width="20%">订单编号</th>  
+                        <th width="20%">使用时间</th> 
+                        <th width="15%">操作</th>     
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <a4j:repeat value="#{usedCouponList.resultList}" var="_used" rendered="#{not empty usedCouponList.resultList}" rowKeyVar="_index">
+                    <tr class="odd">
+                        <td>#{_index+1}</td> 
+                        <td>#{_used.couponId.price}元</td>
+                        <td>
+                        	<h:panelGroup rendered="#{_used.memberInfoId.realname==null || _used.memberInfoId.realname==''}">
+                        		#{_used.memberInfoId.phone}
+                        	</h:panelGroup>
+                        	<h:panelGroup rendered="#{_used.memberInfoId.realname!=null &amp;&amp; _used.memberInfoId.realname!=''}">
+                        		#{_used.memberInfoId.realname}
+                        	</h:panelGroup>
+                        </td>
+                        <td>
+                        	<h:panelGroup rendered="#{_used.orderInfoId==null || _used.orderInfoId==''}">
+                        		-
+                        	</h:panelGroup>
+                        	<h:panelGroup rendered="#{_used.orderInfoId!=null &amp;&amp; _used.orderInfoId!=''}">
+                        		#{_used.orderInfoId.orderCode}
+                        	</h:panelGroup>
+                        </td>
+                        <td>
+                        	<h:panelGroup rendered="#{_used.usedTime==null || _used.usedTime==''}">
+                        		-
+                        	</h:panelGroup>
+                        	<h:panelGroup rendered="#{_used.usedTime!=null &amp;&amp; _used.usedTime!=''}">
+	                        	<h:outputText value="#{_used.usedTime}" >
+	                        		<f:convertDateTime pattern="yyyy/MM/dd HH:mm" timeZone="GMT+8"/>   
+	                        	</h:outputText>
+                        	</h:panelGroup>
+                        </td>
+                        <td>
+                        	<h:panelGroup rendered="#{!s:hasRole('order') || _used.orderInfoId==null  || _used.orderInfoId==''}">
+                        		-
+                        	</h:panelGroup>
+                        	<h:panelGroup rendered="#{s:hasRole('order')}">
+	                        	<h:panelGroup rendered="#{_used.orderInfoId!=null &amp;&amp; _used.orderInfoId!=''}">
+		                        	<a class="mr5" href="/orderManage/OrderView.seam?orderInfoId=#{_used.orderInfoId.orderInfoId}" title="查看"><img width="16" height="15" src="../asset/images/orderManage/table_ico100.png"/></a>
+	                        	</h:panelGroup>
+                        	</h:panelGroup>
+                        </td>
+                    </tr>
+                    </a4j:repeat>
+                   
+                    </tbody>
+                </table>
+                <!-- 分页  -->
+                <div class="pageModel_wap">
+                <!--翻页开始-->
+				<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                   	<tr>
+                   		<s:div rendered="#{not empty usedCouponList.resultList}">
+		                	<s:decorate rendered="#{!usedCouponList.previousExists }">
+		                		<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+		                	</s:decorate>
+		                	<s:decorate rendered="#{usedCouponList.previousExists }">
+		                		<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+		                	</s:decorate>
+			                <s:decorate rendered="#{usedCouponList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/order/UsedCouponList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            	<f:param name="msg" value="" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/order/UsedCouponList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{usedCouponList.previousFirstResult}"/>&lt;
+		                            	<f:param name="msg" value="" />
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					       <a4j:repeat var="_page" value="#{usedCouponList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{usedCouponList.previousExists or _index >0 ?'td_t_t':''} #{_page eq usedCouponList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/order/UsedCouponList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{usedCouponList.nextExists}">
+                           		<td class="td_t_b td_t_t">
+                            		<s:link propagation="none"  view="/order/UsedCouponList.xhtml"   styleClass="no_d" >
+		                            	<f:param name="pageNum" value="#{usedCouponList.nextFirstResult}" />&gt;
+		                            	<f:param name="msg" value="" />
+                            		</s:link>
+								</td>
+		                        <td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/order/UsedCouponList.xhtml" >尾页
+										<f:param name="pageNum" value="#{usedCouponList.PAGE_COUNT}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{usedCouponList.PAGE_COUNT}页</td>
+                        	<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</s:div>
+                    	<td>
+                             <s:button view="/order/CouponList.seam" styleClass="btn btn-default" value="返回" >
+          					</s:button>
+                        </td>
+                	</tr>
+                </table>
+				<!--翻页结束-->
+                </div>
+                <!-- 分页结束 -->
+            </div>
+            </td> 
+	</ui:define>
+
+</ui:composition>

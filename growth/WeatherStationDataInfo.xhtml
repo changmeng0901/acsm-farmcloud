@@ -1,0 +1,758 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/iframeTemplate.xhtml"
+                xmlns:a="http://richfaces.org/a4j">
+	<ui:define name="body">
+	
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/monitoring/css/growth.css" />
+	      <link href="#{request.contextPath}/asset/css/bootstrap3.min.css" rel="stylesheet"/>
+		<link rel="stylesheet" type="text/css" media="screen" href="#{request.contextPath}/asset/css/bootstrap-select.min.css"/>
+		<script type="text/javascript" src="#{request.contextPath}/asset/new/bootstrap.min.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/new/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/monitoring/js/monitor_theme.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/monitoring/js/highcharts-data.js"></script> 
+		<script type="text/javascript" src="#{request.contextPath}/asset/monitoring/js/highcharts-more.js"></script>
+		<style>
+		html{ height:100%; padding:0;margin:0;}
+body,a,p,strong,ul,ol,li,div,input,form,table,tbody,thead,tfoot,th,tr,td,u,b,i,s,font,dl,dt,dd,em,sup,sub{ margin:0; padding:0;}
+body { font-size:12px; color:#323232; font-family:"微软雅黑"; height:100%; line-height:normal; margin:0;  padding:0;}
+h1,h2,h3,h4,h5,h6{ margin:0; padding:0;}
+h1,.h1,h2,.h2,h3,.h3{margin-top:20px;margin-bottom:10px}
+textarea{font-size:12px; padding:0; margin:0;}
+a{text-decoration:none;}
+a:link, a:visited, a:hover, a:active, a:focus { text-decoration:none; outline:none; -moz-outline:none; outline-offset:0; outline:none;}
+a{blr:expression(this.onFocus=this.blur());}
+			.r_title {
+				margin-top:0;
+			    padding-top: 0;
+			    height: 70px;
+			}
+			.jk_select2 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 230px;
+			}
+			.temperature {
+			    background: url("#{request.contextPath}/asset/images/weather/tianqi_img07.png") no-repeat scroll right 14px rgba(0, 0, 0, 0);
+			    display: inline-block;
+			    font-family: "微软雅黑";
+			    font-size: 80px;
+			    height: 108px;
+			    line-height: 108px;
+			    padding-right: 12px;
+			}
+			.today-airQuality-list td{ width:12.5%;}
+		</style>
+	#{weatherStationDataInfo.baseClick()} 
+	<div class="main-qxz-wap clear">
+        	<!-- 气象站头部 开始 -->
+            <div class="r_title clear" style="height:50px; padding-top:20px;">
+                <div class="r_titleLt fl clear">
+                    <h2 class="fl" style="font-size:16px; margin:0;">气象站</h2>
+                </div>
+            </div>
+            <!-- 气象站头部 结束 -->
+            <!-- 气象站内容 开始 -->
+            <s:div id="refreshStationInfo">
+            	<script>jQuery('.selectpicker').selectpicker();	</script>
+	            <table class="weatherStation-table" width="100%" cellpadding="0" cellspacing="0">
+	            	<tr>
+	                	<td class="main-qxz-lt">
+	                    <div class="clear">
+	                    <strong class="weatherStation-sn">气象站SN:</strong>
+	                    <span class="jk_select2" style="padding-left:10px;">
+	                    <select class="selectpicker" id="stationDevice" onchange="deviceChange(this.value);"> 
+	                    	<a:repeat value="#{weatherStationDataInfo.devices}" var="device" >
+	                    		 <option value="#{device.id}|#{device.sn}">#{device.sn}</option>
+	                    	</a:repeat>
+	                    </select> 
+	                    </span>
+	                    </div>
+	                    <table class="today-weather-table" cellpadding="0" cellspacing="0">
+	                    	<tr>
+	                        	<td width="182" align="right" style="padding-right:22px; box-sizing:border-box">
+	                        		<ui:fragment rendered="#{weatherStationDataInfo.weatherForecastData.dayNight == 'd'}">
+	                            		<img src="#{request.contextPath}/asset/images/weather/day/#{weatherStationDataInfo.weatherForecastData.meteorologyTypeStr}.png" width="108" height="108" />
+	                                </ui:fragment>
+	                                <ui:fragment rendered="#{weatherStationDataInfo.weatherForecastData.dayNight == 'n'}">
+	                            		<img src="#{request.contextPath}/asset/images/weather/night/#{weatherStationDataInfo.weatherForecastData.meteorologyTypeStr}.png" width="108" height="108" />
+	                                </ui:fragment>
+	                        	</td> 
+	                            <td>
+	                            <span class="temperature" style="margin-top:30px;">
+	                            <h:outputText value="#{weatherStationDataInfo.weatherStationsData.airTemp > 60?'—':weatherStationDataInfo.weatherStationsData.airTemp}" >
+								     <f:convertNumber pattern="#"/>
+								 </h:outputText>
+	                            </span>
+	                            </td>
+	                            <td align="left"><span class="today-daytime">#{weatherStationDataInfo.weatherForecastData.dayHigh}&deg;°</span><span class="today-night">#{weatherStationDataInfo.weatherForecastData.dayLow}&deg;°</span></td>
+	                        </tr>
+	                    </table>
+	                    </td> 
+	                    <td class="main-qxz-rt">
+	                    	<div class="today-airQuality">
+	                        	<table class="today-airQuality-table">
+	                            	<tr>
+	                                	<td width="50%" height="102">
+	                                    	<table class="today-airQuality-auto">
+	                                        	<tr>
+	                                            	<td width="100" align="center"><img src="#{request.contextPath}/asset/images/ico_qxzIco4.png" /></td>
+	                                                <td><span class="airQuality-text" style="display:block; width:100%;">空气湿度</span><br/><em class="airQuality-num">#{weatherStationDataInfo.weatherStationsData.airHumidity == -100 or weatherStationDataInfo.weatherStationsData.airHumidity == null?"—":weatherStationDataInfo.weatherStationsData.airHumidity}%</em></td>
+	                                            </tr>
+	                                        </table>
+	                                    </td>
+	                                    <td width="50%">
+	                                    	<table class="today-airQuality-auto">
+	                                        	<tr>
+	                                            	<td width="100" align="center"><img src="#{request.contextPath}/asset/images/ico_qxzIco5.png" /></td>
+	                                                <td>
+	                                                <span class="airQuality-text">光照</span><em class="airQuality-num">
+	                                                <h:outputText value="#{weatherStationDataInfo.weatherStationsData.illumination == -100 or weatherStationDataInfo.weatherStationsData.illumination == null?'—':weatherStationDataInfo.weatherStationsData.illumination}" >
+								                    	<f:convertNumber pattern="#.#"/>
+								                    </h:outputText>
+	                                                lux</em><br />
+	                                                <div style="display:inline-block;">
+	                                                <span class="airQuality-text">辐射</span><em class="airQuality-num" style="line-height:30px;">
+	                                                <h:outputText value="#{weatherStationDataInfo.weatherStationsData.solarRadiation == -100 or weatherStationDataInfo.weatherStationsData.solarRadiation == null?'—':weatherStationDataInfo.weatherStationsData.solarRadiation}" >
+								                    	<f:convertNumber pattern="#.#"/>
+								                    </h:outputText>
+	                                                w/㎡&sup2;</em>
+	                                                </div>
+	                                                </td>
+	                                            </tr>
+	                                        </table>
+	                                    </td>
+	                                </tr>
+	                                <tr>
+	                                	<td width="50%" height="102">
+	                                    	<table class="today-airQuality-auto">
+	                                        	<tr>
+	                                            	<td width="100" align="center"><img src="#{request.contextPath}/asset/images/ico_qxzIco6.png" /></td>
+	                                                <td><span class="airQuality-text" style="display:block; width:100%;">土壤温度</span><br/><em class="airQuality-num">
+	                                                <h:outputText value="#{weatherStationDataInfo.weatherStationsData.soilTemp == -100 or weatherStationDataInfo.weatherStationsData.soilTemp == null or weatherStationDataInfo.weatherStationsData.soilTemp > 60?'—':weatherStationDataInfo.weatherStationsData.soilTemp}" >
+	                                                	<f:convertNumber pattern="#.#"/>
+	                                                </h:outputText>
+	                                                °C</em>
+	                                                </td>
+	                                            </tr>
+	                                        </table>
+	                                    </td>
+	                                    <td width="50%">
+	                                    	<table class="today-airQuality-auto">
+	                                        	<tr>
+	                                            	<td width="100" align="center"><img src="#{request.contextPath}/asset/images/ico_qxzIco7.png" /></td>
+	                                                <td><span class="airQuality-text" style="display:block; width:100%;">土壤水分</span><br/><em class="airQuality-num">
+	                                                <h:outputText value="#{weatherStationDataInfo.weatherStationsData.soilHumidity == -100 or weatherStationDataInfo.weatherStationsData.soilHumidity == null?'—':weatherStationDataInfo.weatherStationsData.soilHumidity}">
+	                                                	<f:convertNumber pattern="#.#"/>
+	                                                </h:outputText>
+	                                                %</em></td>
+	                                            </tr>
+	                                        </table>
+	                                    </td>
+	                                </tr>
+	                            </table>
+	                        </div>
+	                    </td>
+	                </tr>
+	            </table>
+	            <table class="today-airQuality-list" width="100%" cellpadding="0" cellspacing="0">
+            	<tr>
+                	<td height="122" align="center"><img src="#{request.contextPath}/asset/images/img_qxzImg2.png" /><br /><span class="today-airQuality-tip">风力<em class="today-airTxt">#{weatherStationDataInfo.weatherStationsData.windVelocityStr == null?"无":weatherStationDataInfo.weatherStationsData.windVelocityStr}</em></span></td>
+                    <td height="122" align="center"><img src="#{request.contextPath}/asset/images/img_qxzImg3.png" /><br /><span class="today-airQuality-tip">风向<em class="today-airTxt">#{weatherStationDataInfo.weatherStationsData.windDirectionStr == null?"无":weatherStationDataInfo.weatherStationsData.windDirectionStr}</em></span></td>
+                    <td height="122" align="center"><img src="#{request.contextPath}/asset/images/img_qxzImg4.png" /><br /><span class="today-airQuality-tip">降水量<em class="today-airNum">
+                    <h:outputText value="#{weatherStationDataInfo.weatherStationsData.rainfall == null or weatherStationDataInfo.weatherStationsData.rainfall ==-100?'—':weatherStationDataInfo.weatherStationsData.rainfall}" >
+                    	<f:convertNumber pattern="#.#"/>
+                    </h:outputText>mm
+                    </em></span></td>
+                    <td height="122" align="center"><img src="#{request.contextPath}/asset/images/img_qxzImg5.png" /><br /><span class="today-airQuality-tip">露点<em class="today-airNum">
+                    <h:outputText value="#{weatherStationDataInfo.weatherStationsData.dewPoint == null or weatherStationDataInfo.weatherStationsData.dewPoint ==-100?'—':weatherStationDataInfo.weatherStationsData.dewPoint}" >
+                    	<f:convertNumber pattern="#.#"/>
+                    </h:outputText>%
+                    </em></span></td>
+                    <td height="122" align="center"><img src="#{request.contextPath}/asset/images/img_qxzImg6.png" /><br /><span class="today-airQuality-tip">二氧化碳<em class="today-airNum">
+                    <h:outputText value="#{weatherStationDataInfo.weatherStationsData.co2== null or weatherStationDataInfo.weatherStationsData.co2==-100?'—':weatherStationDataInfo.weatherStationsData.co2}" >
+                    	<f:convertNumber pattern="#.#"/>
+                    </h:outputText>ppm
+                    </em></span></td>
+                    <td height="122" align="center"><img src="#{request.contextPath}/asset/images/img_qxzImg7.png" /><br /><span class="today-airQuality-tip">气压<em class="today-airNum">
+                    <h:outputText value="#{weatherStationDataInfo.weatherStationsData.atmosphericPressure == null or weatherStationDataInfo.weatherStationsData.atmosphericPressure == -100?'—':weatherStationDataInfo.weatherStationsData.atmosphericPressure}" >
+                    	<f:convertNumber pattern="#.#"/>
+                    </h:outputText>hPa
+                    </em></span></td>
+                    <td height="122" align="center"><img src="#{request.contextPath}/asset/images/img_phmg.png" /><br /><span class="today-airQuality-tip">PH<em class="today-airNum">
+                    <h:outputText value="#{weatherStationDataInfo.weatherStationsData.soilPh == null or weatherStationDataInfo.weatherStationsData.soilPh == -100?'—':weatherStationDataInfo.weatherStationsData.soilPh}" >
+                    	<f:convertNumber pattern="#.#"/>
+                    </h:outputText>
+                    </em></span></td>
+                    <td height="122" align="center"><img src="#{request.contextPath}/asset/images/img_ecImg.png" /><br /><span class="today-airQuality-tip">EC<em class="today-airNum">
+                    <h:outputText value="#{weatherStationDataInfo.weatherStationsData.soilEc == null or weatherStationDataInfo.weatherStationsData.soilEc == -100?'—':weatherStationDataInfo.weatherStationsData.soilEc}" >
+                    	<f:convertNumber pattern="#.#"/>
+                    </h:outputText>mS/cm
+                    </em></span></td>
+                </tr> 
+            </table> 
+            </s:div>
+            <!-- 气象站内容 结束 -->
+            <!-- 温度 开始 -->
+            <h3 class="his_temperatureHd clear" style="margin:20px auto;">环境实况</h3>
+            <div class="r_title clear" style="border:none;">
+                <div class="r_titleLt fl clear"> 
+                    <span class="jk_select">
+                    <select class="selectpicker"  id="selectConditionId" multiple="multiple" onchange="conditionChange(-1);"> 
+                    	<a:repeat value="#{weatherStationDataInfo.getStationDeviceList()}" var="_device">
+	                    	<option value="#{_device[0]}">#{_device[1]}</option> 
+                    	</a:repeat>
+                    </select> 
+                    </span> 
+                </div>
+                <ul class="ul_tabList">
+                    <li class="cur" id="day"><a href="javascript:void(0);" onclick="conditionChange(0);">当天</a><span>|</span></li>  
+                    <li id="week"><a href="javascript:void(0);" onclick="conditionChange(1);">一周</a><span>|</span></li> 
+                    <li id="month"><a href="javascript:void(0);" onclick="conditionChange(2);">一月</a><span>|</span></li> 
+                    <li id="year"><a href="javascript:void(0);" onclick="conditionChange(3);">一年</a></li> 
+                </ul>
+            </div> 
+            <div id="container_wenshiSk" style="position:relative; margin-top:20px; top:0; z-index:2; min-width:940px; min-height:300px; overflow:hidden;"></div>                   
+            <div style="overflow:hidden;">
+                <p class="his_moreCon"><span>气象观测方法-气温：气温是地面气象观测规定高度上的空气温度温度温度</span><a href="javascript:showIframeMode('myModal_temperature');">更多>></a></p>
+            </div>
+            <!-- 温度 结束 -->
+            <!-- 风力风向 开始 -->
+            <h3 class="his_temperatureHd clear" style="margin:20px auto;">风力风向</h3>
+            <div class="clear" style="margin-top:20px;">
+                <table width="100%">
+                <tr>
+                <td width="70%" style="padding-right:50px;">
+                <div id="container_windLt" style="position:relative; float:left; min-width:600px; min-height:300px;"></div>
+                </td>
+                <td width="30%">
+	                <div id="container_windRt" style="position:relative; float:right; min-width:280px; min-height:300px; "></div>          
+	                <s:div id="directionScaleId" >  
+		                <table id="freq" border="0" cellspacing="0" cellpadding="0" style="display:none;width:0px;height:0px;"> 
+		                	<tr>
+								<th colspan="" class="hdr">Table of Frequencies (percent)</th>
+							</tr>
+		                	<tr class="windLegend"> 
+		                    	<th class="freq">Direction</th>  
+		                    	<a:repeat value="#{weatherStationDataInfo.windLegend}" var="_winds">
+								    <th class="freq"><h:outputText value="#{_winds}" />级风</th>  
+								</a:repeat>  	
+		                    </tr>
+		                    <ui:repeat value="#{weatherStationDataInfo.winddOrder}" var="_windd">
+				       			<tr>
+				       				<th class="dir"><h:outputText value="#{_windd}"/></th>
+				            		<ui:repeat value="#{weatherStationDataInfo.mapDirecitonScaleList.get(_windd)}" var="_arrValue" rendered="#{not empty weatherStationDataInfo.mapDirecitonScaleList.get(_windd)}">
+				            			<th class="data"><h:outputText  value="#{_arrValue}"/></th> 
+						            </ui:repeat> 
+						            <ui:repeat value="#{weatherStationDataInfo.windLegend}" var="_winds" rendered="#{empty weatherStationDataInfo.mapDirecitonScaleList.get(_windd)}">
+				            			<th class="data">0</th>      
+						            </ui:repeat>       
+				             	</tr>
+				           	</ui:repeat>	
+		                </table>
+               		</s:div> 
+                </td>
+                </tr>
+                </table>               
+            </div>
+            <div class="clear" style="overflow:hidden;">
+                <p class="his_moreCon"><span>气象观测方法-风：风是空气的水平运动，是一个用方向（风向）（风向）</span><a href="javascript:showIframeMode('myModal_theWind');">更多>></a></p>
+            </div>
+            <!-- 风力风向 结束 -->
+            <!-- 降水量 开始 -->
+            <h3 class="his_temperatureHd clear" style="margin:20px auto;">降水量</h3>
+            <div class="r_title clear" style="border:none;">
+                <ul class="ul_tabList">
+                    <li class="cur"><a href="javascript:void(0);" onclick="getRainFallLine(2);">过去30天</a><span>|</span></li>
+                    <li><a href="javascript:void(0);" onclick="getRainFallLine(3);">过去12个月</a></li>
+                </ul>
+            </div>             
+            <div id="container_rainMonth" style="position:relative; margin-top:20px; min-width:940px; min-height:300px;"></div>
+            <div class="clear" style="overflow:hidden;">
+                <p class="his_moreCon"><span>什么是降水量？：从天空降落到地面上的液态或固态（经融化后）水水水水水</span><a href="javascript:showIframeMode('myModal_theRain');" >更多>></a></p>
+            </div>
+            <!-- 降水量 结束 -->
+        </div>
+        <!-- 主体内容 右侧整体板块 结束 -->
+       <br/>
+	<a:form> 
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="showEnvironmentline" action="#{weatherStationDataInfo.showEnvironmentline}" data="#{weatherStationDataInfo.result}" oncomplete="refreshLine(data);"> 
+			<a:actionparam name="selectIds" assignTo="#{weatherStationDataInfo.selectIds}"/>
+			<a:actionparam name="searchType" assignTo="#{weatherStationDataInfo.searchType}"/>
+		</a:jsFunction>	
+		<a:jsFunction name="changeStationDevice" action="#{weatherStationDataInfo.changeStationDevice}" data="#{weatherStationDataInfo.allResult}" reRender="directionScaleId,refreshStationInfo" oncomplete="refreshAllLine(data);"> 
+			<a:actionparam name="deviceId" assignTo="#{weatherStationDataInfo.deviceId}"/>
+			<a:actionparam name="deviceSn" assignTo="#{weatherStationDataInfo.deviceSn}"/>  
+		</a:jsFunction>
+		<a:jsFunction name="getRainFallLine" action="#{weatherStationDataInfo.getRainFallLine}" data="#{weatherStationDataInfo.result}" oncomplete="refreshRainFallLine(data);"> 
+			<a:actionparam name="searchType" assignTo="#{weatherStationDataInfo.searchType}"/>
+		</a:jsFunction>
+	</a:form> 
+	
+<script type="text/javascript"> 
+//<![CDATA[ 
+    var swithLeftType = 1;
+    var searchType = 0;
+    var nodata = "<img src='#{request.contextPath}/asset/images/weather/nodata.png'  width='108' height='108' style = 'position: absolute;left: 50%;top:50%;margin-left: -54px;margin-top:-54px;'/>";
+    
+	jQuery(document).ready(function(){
+		jQuery('.selectpicker').selectpicker();		
+        getHeight(); 
+		swithLeftWidth();  
+		var oClictWid = jQuery(window).width();
+		if(oClictWid < 1002){
+			jQuery('.header_wp01').css({ position : 'fixed' ,zIndex : 200});
+			jQuery('.main_wp').css({ paddingTop : 60 });
+		}else{
+			jQuery('.header_wp01').css({ position : 'inherit' });
+			jQuery('.main_wp').css({ paddingTop : 0 });
+		}
+
+		//默认设备
+		if(jQuery("#stationDevice").val() != null){
+			deviceChange(jQuery("#stationDevice").val());
+			jQuery("#selectConditionId").val(eval("[0]"));  
+			jQuery('#selectConditionId').selectpicker('render');
+		}
+		
+    });
+	
+	/* 左侧菜单 折叠按钮点击事件 */
+	jQuery('.foldBtn img').click(function(){
+		if(jQuery('.mainLt_wp').parent('td').is(':hidden')){
+			jQuery(this).parent('.foldBtn').css({ left : '216px'});
+			jQuery('.mainLt_wp').parent('td').show();
+			swithLeftType = 1;
+		}else{
+			jQuery(this).parent('.foldBtn').css({ left : 0});
+			jQuery('.mainLt_wp').parent('td').hide();
+			swithLeftType = 2;
+		};
+		swithLeftWidth();   //一刷新8就出问题，按钮伸缩不了
+		shuaxin(); 
+	});	
+	
+	//当天、周、月、年点击切换当前状态
+	jQuery('.ul_tabList li').click(function(){
+		jQuery(this).addClass('cur').siblings().removeClass('cur');	
+	});
+	
+
+	/* 获取屏幕高度 */ 
+	function getHeight(){ 
+		var oClictHei = jQuery(window).height();
+		var oClictWid = jQuery(window).width();
+		var mainQxzwap = jQuery('.main-qxz-wap').height();  
+		var hHead = jQuery('.header_wp01').height();
+		var hLeftMainHd = jQuery('.leftMainHd').height();
+		//jQuery('.foldBtn').css({height:mainQxzwap-16,top : hHead});
+		//jQuery('.leftMainBd').css({height:mainQxzwap-hLeftMainHd-24});
+		//parent.jQuery("#treeDemo").css({height:mainQxzwap-hLeftMainHd-24}); 
+		//main-qxz-rt 居左的距离，也随浏览器变化而变化 
+		var growthWid = jQuery('.today-airQuality-list').width();
+		var tdLength = jQuery('.today-airQuality-list td').length;
+		var otdEqualWid = growthWid / tdLength;
+		jQuery('.today-airQuality-list td').css({width : otdEqualWid});
+		var airQulTdWid = jQuery('.today-airQuality-list td').width();
+		var airQulMl = ( airQulTdWid - 70 )/2;
+		jQuery('.today-airQuality').css({'marginLeft':airQulMl})
+		if(oClictWid > 1600){
+			jQuery('.today-airQuality-list img').css({width : 90 , height : 90});
+		}else{
+			jQuery('.today-airQuality-list img').css({width : 70 , height : 70});
+		}
+	};
+	
+
+
+	function swithLeftWidth(){ 
+		var windowWidth = jQuery(window).width();
+		if(swithLeftType == 1){ 
+			if(windowWidth < 1002){  
+				jQuery('#container_wenshiSk').css( { height : 300 ,width: 940});
+				jQuery('#container_rainMonth').css( { height : 300,width : 940});  
+				jQuery('#container_windLt').css( { height : 300 ,width : 600} );
+				jQuery('#container_windRt').css( { height : 300, width : 280} );
+			}else{
+				var showCharHeight = (windowWidth - 60) * 0.3;
+				jQuery('#container_wenshiSk').css( { height : showCharHeight ,width: windowWidth  - 60});
+				jQuery('#container_rainMonth').css( { height : showCharHeight ,width: windowWidth  - 60});
+				jQuery('#container_windLt').css( { height : showCharHeight ,width : (windowWidth - 60-50)*0.67} );
+				jQuery('#container_windRt').css( { height : showCharHeight, width : (windowWidth  - 60-50)*0.3} );
+			}
+		}else{
+			var showCharHeight = ( windowWidth - 60 ) * 0.3;
+			jQuery('#container_wenshiSk').css( { height : showCharHeight ,width: windowWidth - 60});
+			jQuery('#container_rainMonth').css( { height : showCharHeight ,width: windowWidth - 60});
+			jQuery('#container_windLt').css( { height : showCharHeight ,width : (windowWidth - 60-50)*0.67} );
+			jQuery('#container_windRt').css( { height : showCharHeight, width : (windowWidth - 60-50)*0.3} );
+		}  
+		return false; 
+	}
+
+//改变设备
+function deviceChange(val){
+	if(val != ""){
+		var idAndSn = val.split("|");
+		changeStationDevice(idAndSn[0],idAndSn[1]);
+	}
+}
+
+
+//选择显示曲线图
+function conditionChange(type){  
+	var tagId;
+	if (type == 0) {tagId = '#day';}
+	if (type == 1) {tagId = '#week';}
+	if (type == 2) {tagId = '#month';}
+	if (type == 3) {tagId = '#year';}
+	jQuery(tagId).addClass('cur'); 
+	jQuery(tagId).siblings().removeClass('cur');	
+	var ids = jQuery("#selectConditionId").val();
+	if(type > -1){
+		searchType = type;
+	}
+	if(ids != null){
+		showEnvironmentline(ids+"",searchType);  
+	}else{
+		jQuery("#container_wenshiSk").html("");
+		jQuery("#container_wenshiSk").append(nodata);
+	} 
+}
+
+
+jQuery(window).resize(function(e) {
+	//refreshAllLine(refreshData);
+	getHeight();
+	var oClictWid = jQuery(window).width();
+	if(oClictWid < 1002){
+		jQuery('.header_wp01').css({ position : 'fixed' ,zIndex : 200});
+		jQuery('.main_wp').css({ paddingTop : 60 });
+	}else{
+		jQuery('.header_wp01').css({ position : 'inherit' });
+		jQuery('.main_wp').css({ paddingTop : 0 });
+	}
+	swithLeftWidth();
+	return false;
+});  
+ 
+
+//刷新环境实况数据
+function refreshLine(data){ 
+	data = typeof(data)=='string'?eval("("+data+")"):data;
+	jQuery('#container_wenshiSk').highcharts({
+		chart: {
+            type: 'spline'
+        },
+		title: {
+            text: '',
+            x: -20 //center
+        },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: data.environLine.xAxis,
+        yAxis: data.environLine.yAxis,
+        tooltip: {
+            shared: true 
+        }, 
+        lang: {
+            noData: "暂无数据!"
+        },noData: {
+            style: {    
+                fontWeight: 'bold',     
+                fontSize: '15px', 
+                color: '#FFFFFF'        
+            }
+        },
+        legend: {
+            layout: 'horizontal',
+            align: 'center',
+            verticalAlign: 'bottom',
+            itemStyle: {
+                color: "#32c3fd",
+                fontSize: "12px",
+                fontWeight: "bold"
+            }
+        },
+        plotOptions: { 
+        	series: { 
+        		connectNulls: true //连接数据为null的前后点 
+        	} 
+        }, 
+        series: data.environLine.series, 
+        exporting: {
+            enabled: false
+        },
+        credits:{
+            enabled:false // 禁用版权信息
+        },
+        colors: "#32c3fd,#90ed7d,#ffb577,#ff85a2,#8085e9,#f15c80,#e4d354,#8085e8,#8d4653,#91e8e1".split(",")
+    });
+}
+
+//风力风向左侧柱状图
+function refreshWindScaleLine(data){
+	data = typeof(data)=='string'?eval("("+data+")"):data;
+	jQuery('#container_windLt').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '' 
+        },
+        subtitle: { 
+            text: ''
+        },
+        xAxis: data.windScaleLine.xAxis,
+        yAxis: {
+        	allowDecimals: false, 
+            min: 0,
+            title: {
+                text: ''
+            },
+            tickPositions:data.windScaleLine.tickPositions
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                		 '<td style="padding:0"><b>{point.y:.0f} 次</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        lang: {
+            noData: "暂无数据!"
+        },noData: {
+            style: {    
+                fontWeight: 'bold',     
+                fontSize: '15px', 
+                color: '#FFFFFF'        
+            }
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        exporting: {
+            enabled: false
+        },
+        credits:{
+            enabled:false // 禁用版权信息
+        },
+        series: data.windScaleLine.series,
+		colors: "#88f179,#fcb472,#8085e9,#df5775".split(",")
+    });
+}
+
+
+//极地风向右侧图
+function refreshwindRt(){  
+	//风力风向右侧极性风向图
+	jQuery("#container_windRt").html("");
+	jQuery('#container_windRt').highcharts({ 
+    	data: {
+	    	table: 'freq',
+	    	startRow: 1,
+	    	endRow: 17,
+	    	endColumn: 7
+	    },
+	    chart: {
+	        polar: true,
+	        type: 'column'
+	    },
+	    title: {
+	        text: ''
+	    },
+	    subtitle: {
+	    	text: ''
+	    },
+	    pane: {
+	    	size: '85%'
+	    },
+	    legend: {
+	    	reversed: true,
+	    	align: 'right',
+	    	verticalAlign: 'top',
+			x:10000,
+	    	y: 100,
+	    	layout: 'vertical'
+	    },
+	    lang: {
+            noData: "暂无数据!"
+        },noData: {
+            style: {    
+                fontWeight: 'bold',     
+                fontSize: '15px', 
+                color: '#FFFFFF'        
+            }
+        },
+	    xAxis: {
+	    	tickmarkPlacement: 'on'
+	    },
+	    yAxis: {
+	        min: 0,
+	        endOnTick: false,
+	        showLastLabel: true, 
+	        title: {
+	        	text: ''
+	        },
+	        labels: {
+	        	formatter: function () {
+	        		return this.value + '%';
+	        	}
+	        }
+	    },
+	    tooltip: {
+	    	valueSuffix: '%',
+	    	followPointer: true
+	    },
+	    plotOptions: {
+	        series: {
+	        	stacking: 'normal',
+	        	shadow: false,
+	        	groupPadding: 0,
+	        	pointPlacement: 'on'
+	        }
+	    },
+	    exporting: {
+            enabled: false
+        },
+        credits:{
+            enabled:false // 禁用版权信息
+        },
+	    colors: "#88f179,#fcb472,#8085e9,#df5775".split(",")
+	});
+}
+
+//刷新降水量
+function refreshRainFallLine(data){
+	data = typeof(data)=='string'?eval("("+data+")"):data;
+	jQuery('#container_rainMonth').highcharts({
+        chart: {
+            zoomType: 'xy'
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: data.rainFallObj.xAxis, 
+        yAxis: [ { 
+            title: {
+                text: '',
+                style: {
+                    color: '#fff'
+                }
+            },
+            labels: {
+                format: '{value} mm',
+                style: {
+                    color: '#fff'
+                }
+            },
+            tickPositions:data.rainFallObj.tickPositions
+        }],
+        tooltip: {
+            shared: true,
+            backgroundColor:'#000000',
+            style: {    
+                fontWeight: 'bold',     
+                fontSize: '12px', 
+                color: '#FFFFFF'        
+            }
+        },
+        plotOptions: {
+        	column: {
+        		pointWidth:20 
+	        }
+        }, 
+        lang: {
+            noData: "暂无数据!"
+        },noData: {
+            style: {    
+                fontWeight: 'bold',     
+                fontSize: '15px', 
+                color: '#FFFFFF'        
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 50,
+            verticalAlign: 'top',
+            y: 10,
+            floating: true,
+            backgroundColor: 'transparent',
+            itemStyle: {
+                color: "#fff",
+                fontSize: "12px",
+                fontWeight: "normal"
+            }
+        },
+        series: [{
+            name: '降水量',
+            color: '#30e8f9',
+            type: 'column',
+            data: data.rainFallObj.rainFall,
+            tooltip: {
+                valueSuffix: ' mm'
+            }
+        }, {
+            name: '累积降水量',
+            color: '#dddaeb',
+            type: 'spline',
+            data: data.rainFallObj.rainFallSum,
+            tooltip: {
+                valueSuffix: ' mm'
+            }
+        }], 
+        exporting: {
+            enabled: false
+        },
+        credits:{
+            enabled:false // 禁用版权信息
+        }
+    });
+}
+
+//刷新全部图
+var refreshData; 
+function refreshAllLine(data){ 
+	refreshData = data; 
+	data = eval("("+data+")");
+	jQuery("#stationDevice").val(data.stationDevice);  
+	jQuery('#stationDevice').selectpicker('render'); 
+	refreshLine(data); 
+	refreshRainFallLine(data);
+	if(data.windScaleLine.series.length > 0){
+		refreshWindScaleLine(data);
+		refreshwindRt(); 
+	}else{
+		jQuery('#container_windLt').empty();
+		jQuery('#container_windLt').append(nodata);
+		jQuery('#container_windRt').empty(); 
+		jQuery('#container_windRt').append(nodata);
+	} 
+	
+}
+
+function showIframeMode(id){  
+	 parent.jQuery('#'+id).modal('show');
+	 parent.jQuery('body').css('padding-right',0);
+}
+//]]> 
+</script>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,129 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_img.xhtml">
+
+<ui:define name="body">
+      <style>
+		body {    font-size: 14px;
+	    color: #000;
+	    font-family:"微软雅黑"; height:100%;
+	    line-height: 150%;
+	    margin: 0;
+	    padding: 0;
+	}
+	a:focus {
+	    outline:none;
+	    -moz-outline:none;
+	} 
+	html{ height:100%;}
+	h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form, img, p,input {
+	    border: medium none;
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	}
+	a{text-decoration:none;}
+	.file-block{
+		position:relative;
+		width:140px;
+		height:33px;
+		overflow:hidden;
+		}
+	.file-block img{
+		width:100%;
+		min-height:100%;
+		}
+      .file-block .flie-btn{
+     	position:absolute;
+     	left:50%;
+     	top:50%;
+     	z-index:2;
+      	width:140px;
+      	height:33px;
+      	line-height:28px;
+      	margin:-17px 0 0 -70px;
+      	border-radius:4px;
+      	box-sizing:border-box;
+      	font-size:14px;
+      	text-align:center;
+      	color:#333;
+      	cursor:pointer;
+      	}
+      .file-block .flie-btn	.logoUrl{
+      	position:absolute;
+      	left:0;
+      	top:0;
+      	z-index:5;
+      	width:100%;
+      	height:100%;
+      	font-size:20px;
+      	cursor:pointer;
+      	opacity:0;
+      	filter:alpha(opacity=0);
+      	}
+      </style>
+
+	<script  type="text/javascript">
+	//<![CDATA[
+	
+	  function previewImage(id,file){
+            	jquery("#inputsImages\\:insertImages").click();
+		 	 jquery(window.parent.document).find("#login").show();
+		 	 	
+      }
+	  jquery(function() {  
+      	jquery(window.parent.document).find("#login").hide();
+      });  
+
+	//]]>
+	</script>
+    <h:form id="inputsImages" styleClass="edit" enctype="multipart/form-data">
+		<div class="file-block">
+		<span id="urlId" style="display:none;" name="#{panoramaHome.musicUrlName}">#{panoramaHome.musicUrl}</span>
+		   	<span class="flie-btn" onclick="return much();">
+			<img src="/asset/images/map/upload.png" width="140px" height="33px"/>
+			   	<s:fileUpload id="logoUrl" styleClass="logoUrl"
+					size="40" accept="image/png,image/jpeg,image/gif"
+					contentType="image/png,image/jpeg,image/gif"
+					fileName="#{panoramaHome.musicUrlName}"
+					onchange="previewImage('musicUrl_id',this);"
+					data="#{panoramaHome.musicUrlByte}">
+				</s:fileUpload>
+			</span>
+		</div>
+		<h:commandButton id="insertImages"  styleClass="edit_save" action="#{panoramaHome.musicUpload}" style="display:none;" />
+    </h:form>
+    <iframe id="myfarme" src="###" ></iframe>
+      <iframe id="myfarmeLo" src="###" ></iframe>
+<script language="javascript" type="text/javascript">  
+//<![CDATA[
+        jquery(function() {
+        	var errMsg="#{panoramaHome.errorMsg}";
+            if(errMsg!=""){
+            	jquery(window.parent.document).find('#my_music .upload p').text(errMsg);
+            }else if(jquery('#urlId').text()!=''){
+            	jquery(window.parent.document).find('#my_music .upload p').text("点击文件上传选择文件，请上传小于3M的mp3文件，最多可以上传五首歌曲");
+            	document.getElementById('myfarme').src="#{request.contextPath}/map/IframeBridge.html?content="+encodeURI(jquery('#urlId').text());
+            }			
+        });  
+        
+		function much(){
+			if(jquery(window.parent.document).find('#my_music').find('.library_list li').length<5){
+				return true;
+			}else{
+				alert('最多只能上传5首音乐！');
+				return false;
+			}
+		}
+//]]>
+    </script>
+</ui:define>
+
+</ui:composition>

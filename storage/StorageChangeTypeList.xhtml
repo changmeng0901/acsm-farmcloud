@@ -1,0 +1,144 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">出入库类型 (#{empty storageChangeTypeList.resultList ? 0 : (storageChangeTypeList.paginated ? storageChangeTypeList.resultCount : storageChangeTypeList.resultList.size)})</f:facet>
+    <div class="results" id="storageChangeTypeList">
+
+    <h:outputText value="没有数据"
+               rendered="#{empty storageChangeTypeList.resultList}"/>
+
+    <rich:dataTable id="storageChangeTypeList"
+                var="_storageChangeType"
+              value="#{storageChangeTypeList.resultList}"
+           rendered="#{not empty storageChangeTypeList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeTypeList}"/>
+                    <ui:param name="propertyLabel" value="ID"/>
+                    <ui:param name="propertyPath" value="storageChangeType.storageChangeTypeId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeType.storageChangeTypeId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeTypeList}"/>
+                    <ui:param name="propertyLabel" value="出库类型"/>
+                    <ui:param name="propertyPath" value="storageChangeType.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeType.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeTypeList}"/>
+                    <ui:param name="propertyLabel" value="编号"/>
+                    <ui:param name="propertyPath" value="storageChangeType.sn"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeType.sn}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeTypeList}"/>
+                    <ui:param name="propertyLabel" value="描述"/>
+                    <ui:param name="propertyPath" value="storageChangeType.description"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeType.description}"/>
+        </h:column>
+        
+       
+      
+        <rich:column styleClass="action">
+            <f:facet name="header">操作</f:facet>
+            <s:link view="/storage/#{empty from ? 'StorageChangeType' : from}.xhtml"
+                   value="#{empty from ? '查看' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="storageChangeTypeViewId">
+                <f:param name="storageChangeTypeStorageChangeTypeId"
+                        value="#{_storageChangeType.storageChangeTypeId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/storage/StorageChangeTypeEdit.xhtml"
+                   value="编辑"
+             propagation="none"
+                      id="storageChangeTypeEdit"
+                rendered="#{empty from}">
+                <f:param name="storageChangeTypeStorageChangeTypeId"
+                        value="#{_storageChangeType.storageChangeTypeId}"/>
+            </s:link>
+            
+            #{' '}
+            <s:link propagation="none"  view="/storage/StorageChangeTypeEdit.xhtml" 
+		            action="#{storageChangeTypeHome.remove}" value="删除"
+		             onclick="return confirm('确定删除');" immediate="true" id="Delete">
+		             <f:param name="storageChangeTypeStorageChangeTypeId" value="#{_storageChangeType.storageChangeTypeId}" />
+			</s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link propagation="none"  view="/storage/StorageChangeTypeList.xhtml"
+            rendered="#{storageChangeTypeList.previousExists}"
+               value="首页"
+                  id="firstPage">
+          <f:param name="pageNum" value="0"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/storage/StorageChangeTypeList.xhtml"
+            rendered="#{storageChangeTypeList.previousExists}"
+               value="上一页"
+                  id="previousPage">
+            <f:param name="pageNum"
+                    value="#{storageChangeTypeList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/storage/StorageChangeTypeList.xhtml"
+            rendered="#{storageChangeTypeList.nextExists}"
+               value="下一页 "
+                  id="nextPage">
+            <f:param name="pageNum"
+                    value="#{storageChangeTypeList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/storage/StorageChangeTypeList.xhtml"
+            rendered="#{storageChangeTypeList.nextExists}"
+               value="末页 "
+                  id="lastPage">
+            <f:param name="pageNum" 
+                    value="#{storageChangeTypeList.lastFirstResult}"/>
+        </s:link>
+	共#{storageChangeTypeList.PAGE_COUNT}页 &#160;共#{storageChangeTypeList.RESULT_COUNT}条记录 
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/storage/StorageChangeTypeEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="添加">
+            <f:param name="storageChangeTypeStorageChangeTypeId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

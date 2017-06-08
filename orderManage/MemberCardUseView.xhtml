@@ -1,0 +1,375 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	#{memberCardUseView.memberCardUseInit()}
+	<style>
+		.tableFixed_scroll{border: 0}
+		.tableFixed_scroll td a {color: #646464;}
+	</style>
+	
+	<style type="text/css">
+	.allOrder_items{ margin-bottom:15px; padding-left:8px; border:1px solid #dedede; border-radius:5px; box-sizing:2px 2px 3px #eae9e9; box-shadow:2px 2px 3px #eae9e9; font-size:12px;}
+	.allOrder_items .itemsCon{ padding:10px 15px; border-radius:0 3px 3px 0; background:#fff;}
+	.allOrder_items:hover .itemsCon{ background:#f7faff;}
+	.allOrder_items .itemsHd{ height:28px; line-height:28px; margin-bottom:10px;}
+	.allOrder_items .itemsHd .orderNum{ margin-right:10px; font-size:14px; font-weight:bold; color:#1f1f1f;}
+	.allOrder_items .itemsHd .orderPrint{ padding-left:20px; background:url(../images/table_ico103.png) no-repeat left center; font-size:12px; color:#64c273;}
+	.allOrder_items .itemsBd td{ padding:5px 0 5px 20px; color:#302f2f;}
+	.allOrder_items .itemsBd .tdLine{ border-right:1px solid #dedede;}
+	.allOrder_items .itemsBd .explain{ display:inline-block; color:#7c8c90;}
+	.allOrder_items .itemsBd .statues{ float:left; display:inline-block; height:20px; line-height:20px; padding:7px 10px 7px 20px; background:url(../images/order_ico100.jpg) no-repeat 0 center; font-size:13px; font-weight:bold;}
+	.allOrder_items .itemsBd .btnsSet{ display:inline-block; height:20px; padding:7px 10px;}
+	.allOrder_items .itemsBd .mg_icon{ display:inline-block; width:18px; height:18px; vertical-align:top; margin:1px 5px 1px 0;}
+	.bgWar{ background:#feb797;}
+	.bgWar2{ background:#fed095;}
+	.bgSuc{ background:#b9ddba;}
+	.bgPrim{ background:#95c2fd;}
+	.bgPrim2{ background:#a8b9ee;}
+	.bgDanger{ background:#eea8c6;}
+	.bgWar .statues{ color:#eeab4d;}
+	.bgSuc .statues{ color:#5bb85d;}
+	.onp{ color:#0099db;}
+</style>
+	<td valign="top" >
+		<div class="right_c clear">
+            <div class="breadNav_wap clear">
+            	<s:fragment rendered="#{memberCardUseView.pageType eq '2'}">
+					<div class="breadNav_lt">采销存<span style="padding:0 5px;">&gt;</span>订单管理<span style="padding:0 5px;">&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam?orderStatus=#{orderStatus}"><strong>客户信息</strong></a></div>
+                    <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+	                    <ul class="resumeList clear">
+	                    	<li>
+	                            <a href="#{request.contextPath}/contract/PurchaseMemberList.seam"><img src="../asset/images/orderManage/qykh_btn.png" /><span>供应商企业</span></a>
+	                        </li>
+	                        <li>
+	                    		<a href="#{request.contextPath}/contract/DemandMemberList.seam"><img src="../asset/images/orderManage/qykh_btn.png" /><span>需求商企业</span></a>
+	                        </li>
+	                        <li>
+	                    		<a class="borderBt" href="#{request.contextPath}/order/OrderMemberList.seam"><img src="../asset/images/orderManage/ddkh_btn.png" /><span>订单客户</span></a>
+	                        </li>
+	                    </ul>
+	                </div>
+				</s:fragment>
+				<s:fragment rendered="#{memberCardUseView.pageType ne '2'}">
+					<div class="breadNav_lt">采销存<span style="padding:0 5px;">&gt;</span>订单管理<span style="padding:0 5px;">&gt;</span><a href="#{request.contextPath}/order/MemberInfoListOne.seam">客户信息</a><span>&gt;</span><strong>会员卡使用信息</strong></div>
+					<div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+						<ul class="resumeList clear">
+							<li>
+	                            <a href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+			                <li>
+	                            <a class="borderBt" href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+						</ul>
+					</div>
+				</s:fragment>
+			</div>
+			<div class="subhead">会员卡信息</div>  
+			
+			<h:outputText value=""  rendered="#{memberCardUseView.memberCard.cardsInfo.cardCategory.giftType eq null or memberCardUseView.memberCard.cardsInfo.cardCategory.giftType eq 1}">
+			<div class="memberShip">
+                <div class="slid_r"></div>
+                <div class="useCard">
+                    <div class="toubu">
+                        <div class="left_t">
+                            <img src="../asset/images/orderManage/card.jpg" alt="" style="margin-right:5px; margin-top:-2px;"/>
+                            #{memberCardUseView.memberCard.cardsInfo.cardCode}
+                        </div>
+                        <div class="right_t">
+                          	  剩余<i>#{memberCardUseView.memberCard.deliverNum+memberCardUseView.memberCard.cardsInfo.deliverChangeNum}</i>次配送
+                        </div>
+                    </div>
+                    <div class="bgSlid"></div>
+                    <div class="name" style="width:278px; overflow:hidden; margin:0 auto;" title="#{memberCardUseView.memberCard.cardsInfo.cardCategory.name}">
+                        #{memberCardUseView.memberCard.cardsInfo.cardCategory.name}
+                    </div>
+                    <div class="money">
+                        <span style="margin-right:10px;">#{cardConstant.getCardTypeLabel(memberCardUseView.memberCard.cardsInfo.cardType)}</span>
+                        <span>金额：  <b class="ff5">￥</b><b class="ff5">#{memberCardUseView.memberCard.cardsInfo.cardCategory.amount}</b></span>
+                    </div>
+                    <div class="dateTime">使用日期：<span>#{memberCardUseView.useDate}</span></div>
+                    <div class="state">
+                        <img src="../asset/images/orderManage/state.jpg" alt=""/>
+                        <b class="cardState">卡状态：</b>#{cardConstant.getCardStatusLabel(memberCardUseView.memberCard.cardsInfo.cardStatus)}
+                    </div>
+                </div>
+                <div class="useTable">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th width="20%">编号</th>
+                            <th width="20%">商品</th>
+                            <th width="20%">规格</th>
+                            <th width="20%">单价</th> 
+                            <th width="20%">剩余数量</th>      
+                        </tr>
+                        </thead>
+                    </table>
+                    <div class="tableFixed_scroll" id="niceScrollDiv" style="height:140px;">
+                        <table  width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            	<a:repeat value="#{memberCardUseView.surplusProductList}" var="_sp">
+                            		<tr>
+		                                <td width="20%">#{_sp.productCode}</td> 
+		                                <td width="20%"><a href="javascript:void(0);" title="#{_sp.productInfo.name}">#{_sp.productInfo.name}</a></td>
+		                                <td width="20%">#{_sp.productUnit}</td>
+		                                <td width="20%">¥<h:outputText value="#{_sp.price}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+		                                <td width="20%">#{_sp.productNum}</td>
+		                            </tr> 
+                            	</a:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="total">商品总额：<b class="total_v">¥<h:outputText value="#{memberCardUseView.totalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></b></div>
+                </div>           
+        	</div>
+        	</h:outputText>
+        	
+        	<h:outputText rendered="#{memberCardUseView.memberCard.cardsInfo.cardCategory.giftType eq 0}" >
+        	<div class="allOrder_items bgSuc">
+                    <div class="itemsCon">
+                        <div class="itemsHd">
+                            <p class="orderNum fl" style="font-size:16px;">#{memberCardUseView.memberCard.cardsInfo.cardCategory.name}</p>
+                        </div>
+                        <div class="itemsBd">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="30%" style="padding-left:0;">
+                                    	<img class="mg_icon" src="../asset/images/orderManage/UseVIP_ico1.png" />
+                                    	<span class="explain">会员卡编号：</span>#{memberCardUseView.memberCard.cardsInfo.cardCode}
+                                    </td>
+                                    <td width="30%">
+                                    	<img class="mg_icon" src="../asset/images/orderManage/icon_weight1.png" />
+                                    	<span class="explain">单次可用重量：</span>#{memberCardUseView.memberCard.cardsInfo.cardCategory.weight}+#{memberCardUseView.memberCard.cardsInfo.cardCategory.fluctuations}（g）
+                                    </td>
+                                    <td width="40%"><span class="explain">
+                                    	<img class="mg_icon" src="../asset/images/orderManage/UseVIP_ico3.png" />
+                                    	使用日期：</span>#{memberCardUseView.useDate}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-left:0;">
+                                    	<img class="mg_icon" src="../asset/images/orderManage/UseVIP_ico4.png" />
+                                    	<span class="explain">会员卡类型：</span>#{cardConstant.getCardTypeLabel(memberCardUseView.memberCard.cardsInfo.cardType)}
+                                    </td>
+                                    <td>
+                                    	<img class="mg_icon" src="../asset/images/orderManage/UseVIP_ico5.png" />
+                                    	<span class="explain">剩余配送：</span><font style="font-size:16px; color:#ff5000;">#{memberCardUseView.memberCard.deliverNum+memberCardUseView.memberCard.cardsInfo.deliverChangeNum}</font>次
+                                    </td>
+                                    <td>
+                                    	<img class="mg_icon" src="../asset/images/orderManage/UseVIP_ico6.png" />
+                                    	<span class="explain">卡状态：</span>#{cardConstant.getCardStatusLabel(memberCardUseView.memberCard.cardsInfo.cardStatus)}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        	</h:outputText>
+        	
+			<div class="subhead">使用记录（<i style="color: #d40001; font-style:normal;">#{memberCardUseView.orderInfoList.size()}</i>）</div>
+			<s:div id="showOrderDiv">
+				<a:repeat value="#{memberCardUseView.showOrderInfoList}" var="_order">
+					<div class="recordList">
+						<s:div styleClass="more" rendered="#{memberCardUseView.ocpMap.get(_order.orderCode).size() > 2}">
+							<a href="javascript:void(0);" onclick="moreAction('#{_order.orderCode}');">更多>></a>
+						</s:div>
+						<div class="recordList_l">
+							<div class="recordList_t">
+								<img src="../asset/images/orderManage/cardList.png" alt=""/>
+								<span class="bianhao">#{_order.orderCode}</span>
+							</div>
+							<div class="dateTime">
+								<h:outputText value="#{_order.insertTime}">
+			        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy/MM/dd HH:mm" />
+			        			</h:outputText>
+							</div>
+							<div class="order">#{orderConstant.getOrderStatusLabel(_order.orderStatus)}</div>
+						</div>
+						<div class="recordList_r">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<thead>
+				                    <tr>
+				                        <th width="20%">编号</th>
+				                        <th width="20%">商品</th>
+				                        <th width="20%">规格</th>
+				                        <th width="20%">单价</th> 
+				                        <th width="20%">已使用数量</th>      
+				                    </tr>
+								</thead>
+								<tbody>
+									<a:repeat value="#{memberCardUseView.ocpMap.get(_order.orderCode)}" var="_ocp" rowKeyVar="_ocpIndex">
+										<s:fragment rendered="#{_ocpIndex lt 2}">
+											<tr>
+						                        <td width="20%">#{_ocpIndex + 1}</td>
+						                        <h:outputText value="" rendered="#{_ocp.cardInfo.cardCategory.giftType eq null or _ocp.cardInfo.cardCategory.giftType eq 1}" >
+							                        <td width="20%"><a href="javascript:void(0);" title="#{_ocp.surplusProduct.productName}">#{_ocp.surplusProduct.productName}</a></td>
+							                        <td width="20%">#{_ocp.surplusProduct.productUnit}</td>
+						                        </h:outputText>
+						                        <h:outputText value="" rendered="#{_ocp.cardInfo.cardCategory.giftType eq 0}" >
+							                        <td width="20%"><a href="javascript:void(0);" title="#{_ocp.orderProduct.productName}">#{_ocp.orderProduct.productName}</a></td>
+							                        <td width="20%">#{_ocp.orderProduct.productUnit}</td>
+						                        </h:outputText>
+						                        <td width="20%">¥<h:outputText value="#{_ocp.productPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+						                        <td width="20%">#{_ocp.productNum}</td>
+						                    </tr>
+										</s:fragment>
+									</a:repeat>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</a:repeat>
+				
+				<table class="fenye">
+					<tr>
+						<td>
+							<table class="pageModel" style="margin: 0;">
+								<tbody>
+									<tr>
+										<td>
+											<s:span rendered="#{memberCardUseView.order_max_page > 1}">
+												<a href="javascript:void(0);" class="page_prev" onclick="gainResultListAction(1);">首页</a>
+											</s:span>
+											<s:span styleClass="pagePrve" rendered="#{memberCardUseView.order_current_page - 1 gt 0 and memberCardUseView.order_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="gainResultListAction(#{memberCardUseView.order_current_page - 1});">&lt;&lt;</a>
+											</s:span>
+											<a:repeat value="#{memberCardUseView.order_show_page_list}" var="_order_page" rowKeyVar="_order_index">
+												<span class="page_num #{_order_page == memberCardUseView.order_current_page ? 'page_Cur' : ''}">
+													<a href="javascript:void(0);" onclick="gainResultListAction(#{_order_page});">#{_order_page}</a>
+												</span>
+											</a:repeat>
+											<s:span styleClass="page_next" rendered="#{memberCardUseView.order_current_page + 1 lt memberCardUseView.order_max_page and memberCardUseView.order_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="gainResultListAction(#{memberCardUseView.order_current_page + 1});">&gt;&gt;</a>
+											</s:span>
+											<s:span rendered="#{memberCardUseView.order_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="gainResultListAction(#{memberCardUseView.order_max_page});">尾页</a>
+											</s:span>
+											<span >
+												<span class="pageCount" style="border-right:0"><a>共#{memberCardUseView.order_max_page}页</a></span>
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+						<td style="padding-left:20px;">
+							<s:button view="/orderManage/MemberInfoView.seam" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px">
+			       				<f:param name="memberInfoId" value="#{memberCardUseView.memberCard.memberInfo.memberInfoId}" />
+			       				<f:param name="pageType" value="#{memberCardUseView.pageType}" />
+			       			</s:button>
+						</td>
+					</tr>
+				</table>
+			</s:div>
+		</div>
+		
+		<div class="modal fade" id="moreDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog kuanDu">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel" style="font-size:14px;">使用记录</h4>
+					</div>
+					<div class="modal-body" style="padding:15px 40px;">
+						<div style="height:200px; overflow:auto;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<thead>
+									<tr>
+										<th width="20%">编号</th>
+										<th width="20%">商品</th>
+										<th width="20%">规格</th>
+										<th width="20%">单价</th> 
+										<th width="20%">已使用数量</th>      
+									</tr>
+								</thead>
+							</table>
+							<s:div id="showOcpDiv">
+								<div class="tableFixed_scroll" id="ocpScroll" style="height:100%; overflow:hidden;">
+									<table  width="100%" cellpadding="0" cellspacing="0">
+										<tbody>
+											<a:repeat value="#{memberCardUseView.showOcpList}" var="_showOcp" rowKeyVar="_showOcpIndex">
+												<tr>
+							                        <td width="20%">#{_showOcpIndex + 1}</td>
+							                        <h:outputText value="" rendered="#{_showOcp.cardInfo.cardCategory.giftType eq null or _showOcp.cardInfo.cardCategory.giftType eq 1}" >
+								                        <td width="20%"><a href="javascript:void(0);" title="#{_showOcp.surplusProduct.productName}">#{_showOcp.surplusProduct.productName}</a></td>
+								                        <td width="20%">#{_showOcp.surplusProduct.productUnit}</td>
+							                        </h:outputText>
+							                        <h:outputText value="" rendered="#{_showOcp.cardInfo.cardCategory.giftType eq 0}" >
+								                        <td width="20%"><a href="javascript:void(0);" title="#{_showOcp.orderProduct.productName}">#{_showOcp.orderProduct.productName}</a></td>
+								                        <td width="20%">#{_showOcp.orderProduct.productUnit}</td>
+							                        </h:outputText>
+							                        <td width="20%">¥<h:outputText value="#{_showOcp.productPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+							                        <td width="20%">#{_showOcp.productNum}</td>
+							                    </tr>
+											</a:repeat>
+										</tbody>
+									</table>
+								</div>
+							</s:div>
+						</div>
+					</div>
+					<div class="modal-footer" style="margin-top:10px;">
+						<button type="button" class="btn btn-default" onclick="moreDivControl(2);">返回</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</td> 
+	
+	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="gainResultList" action="#{memberCardUseView.gainResultList}" reRender="showOrderDiv">
+			<a:actionparam name="operatePage" assignTo="#{memberCardUseView.order_current_page}"/>
+		</a:jsFunction>
+		<a:jsFunction name="moreFind" action="#{memberCardUseView.moreFind}" reRender="showOcpDiv" oncomplete="moreDivControl(1);">
+			<a:actionparam name="orderCode" assignTo="#{memberCardUseView.orderCode}"/>
+		</a:jsFunction>
+	</a:form>
+	
+	<script type="text/javascript">
+	//<![CDATA[
+		
+		//订单使用卡商品详情--更多
+		function moreAction(orderCode){
+			moreFind(orderCode);
+		}
+
+		//详情div控制
+		function moreDivControl(type){
+			if (type == 1) {
+				//jQuery("#ocpScroll").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false});
+				jQuery("#moreDiv").modal('show');
+			} else {
+				jQuery("#moreDiv").modal('hide');
+			}
+		}
+	
+		//分页
+		function gainResultListAction(page){
+			gainResultList(Number(page));
+		}
+	
+		jQuery(function(){
+			jQuery("#niceScrollDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+		});
+
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,223 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich" 
+	xmlns:a="http://richfaces.org/a4j" 
+	template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+	<script type="text/javascript">
+		jquery(document).ready(function(){  //这个就是传说的ready
+			jquery(".str_t tr:even").addClass("alt");
+		});
+</script>
+	#{inOutStorageRecordHome.queryDetailsFind()}
+	<td valign="top">
+		<div class="right_c">
+			<div class="r_title">
+				<div class="r_t_l">加工&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/inOut/StockRecord.seam">库存</a>&#160;&gt;&#160;&#160;<font size="3">流水详细信息</font></div>
+				</div>
+				<div class="str_box">
+					<table width="100%" cellpadding="0" cellspacing="0" class="str_t">
+						<tr>
+							<td valign="middle" class="str_td">出入库编号：</td>
+							<td valign="middle" class="str_text">
+								<h:outputText value="#{inOutStorageRecordHome.storageChangeForm.name}" />
+							</td>
+							<td class="str_td">出入库类型：</td>
+							<td class="str_text">
+								<!-- <h:outputText value="#{storageInfoConstant.getAllStorageTypeLabel(inOutStorageRecordHome.storageChangeForm.storageChangeTypeId.storageChangeTypeId)}" /> -->
+								<h:outputText value="#{inOutStorageRecordList.getStorageTypeName(inOutStorageRecordHome.storageChangeForm.storageChangeTypeId.storageChangeTypeId,inOutStorageRecordHome.storageChangeForm.storageType)}" />
+							</td>
+						</tr>
+						<tr>
+							<td valign="middle" class="str_td">存储库房：</td>
+							<td valign="middle" class="str_text">
+								<h:outputText value="#{inOutStorageRecordHome.storageChangeForm.storageRoom.name}" />
+							</td>
+							<td class="str_td">经办人：</td>
+							<td class="str_text">
+								<h:outputText rendered="#{inOutStorageRecordHome.storageChangeForm.operater.name eq null}">
+								系统自动操作
+								</h:outputText>
+								<h:outputText rendered="#{inOutStorageRecordHome.storageChangeForm.operater.name ne null}">
+								<h:outputText value="#{inOutStorageRecordHome.storageChangeForm.operater.name}" />
+								</h:outputText>
+								
+							</td>
+						</tr>
+						<tr>
+							<td valign="middle" class="str_td">出入库日期：</td>
+							<td valign="middle" class="str_text">
+								<h:outputText value="#{inOutStorageRecordHome.storageChangeForm.insertTime}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText>
+							</td>
+							<s:fragment rendered="#{inOutStorageRecordHome.storageChangeForm.purchaseMemberInfoId ne null}">
+								<td valign="middle" class="str_td">供应商：</td>
+								<td valign="middle" class="str_text">
+									<h:outputText value="#{inOutStorageRecordHome.findPurchaseMember(inOutStorageRecordHome.storageChangeForm.purchaseMemberInfoId)}"></h:outputText>
+								</td>
+							</s:fragment>
+							<s:fragment  rendered="#{inOutStorageRecordHome.storageChangeForm.storageChangeTypeId.storageChangeTypeId eq storageInfoConstant.getBreakageOutStorageType()}">
+								<td class="str_td">报损时间：</td>
+								<td class="str_text">
+									<h:outputText value="#{inOutStorageRecordHome.storageChangeForm.breakageTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText>
+								</td>
+							</s:fragment>
+						</tr>
+						<tr>
+							<s:fragment  rendered="#{inOutStorageRecordHome.storageChangeForm.storageChangeTypeId.storageChangeTypeId ne 23}">
+								<td class="str_td">备注：</td>
+								<td class="str_text" colspan="3">
+									<h:outputText value="#{inOutStorageRecordHome.storageChangeForm.comment}" />
+								</td>
+							</s:fragment>
+						</tr>
+					</table>
+					<div class="clear"></div>
+					<div class="tree_dis" style="margin-top: 15px;">
+						<h:form id="stockControlFrom">
+							<a:commandLink id="refreshShow"  reRender="showPanel"></a:commandLink>
+						</h:form>
+						<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+							<div class="box2">
+							<div>
+								<s:div>
+									<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b2" style="border-top:1px solid #ddd;">
+										<tr>
+											<td class="tree_th" width="5%">ID</td>
+											<td class="tree_th" width="10%">批次编号</td>
+											<td class="tree_th" width="10%">物料名称</td>
+											<td class="tree_th" width="10%">来源</td>
+											<td class="tree_th" width="10%">等级</td>
+											<h:outputText rendered="#{(inOutStorageRecordHome.storageChangeForm.storageType eq 1)and (inOutStorageRecordHome.type eq 1 or inOutStorageRecordHome.type eq 3)}">
+												<td class="tree_th" width="10%">入库总重量(kg)</td>
+											</h:outputText>
+											<h:outputText rendered="#{(inOutStorageRecordHome.storageChangeForm.storageType eq 2) and (inOutStorageRecordHome.type eq 1 or inOutStorageRecordHome.type eq 3)}">
+												<td class="tree_th" width="10%">出库总重量(kg)</td>
+											</h:outputText>
+											<td class="tree_th" width="10%">保质期</td>
+											<s:fragment  rendered="#{inOutStorageRecordHome.storageChangeForm.storageChangeTypeId.storageChangeTypeId eq storageInfoConstant.getBreakageOutStorageType()}">
+												<td class="tree_th" width="15%">报损原因</td>
+											</s:fragment>
+											<td class="tree_th" width="5%">数量</td>
+											<td class="tree_th" width="10%">规格</td>
+											<td class="tree_th" width="5%">单价</td>
+											<td class="tree_th" width="10%">小计</td>
+										</tr>
+									</table>
+									<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b">
+										<a:repeat value="#{inOutStorageRecordHome.storageDetaiList}" var="_gpcr" rowKeyVar="_index">
+											<tr class="cm_nottt #{_index % 2 == 0 ? 'alt' : ''}">
+												<td height="48" width="5%" align="center">#{_gpcr[0]}</td>
+												<td width="10%" align="center">#{_gpcr[1]}</td>											
+												<td width="10%" align="center">#{_gpcr[2]}</td>
+												<td width="10%" align="center">
+													<h:outputText rendered="#{_gpcr[14] != 11}">
+														<h:outputText value="--" rendered="#{null eq _gpcr[13]}"/>
+														<h:outputText value="#{ _gpcr[13]}" rendered="#{null ne  _gpcr[13]}"/> 
+													</h:outputText>
+													<h:outputText rendered="#{_gpcr[14] == 11}">
+														<h:outputText value="--" rendered="#{null eq _gpcr[15]}"/>
+														<h:outputText value="#{ _gpcr[15]}" rendered="#{null ne  _gpcr[15]}"/> 
+													</h:outputText>
+												</td>											
+												<td width="10%" align="center">
+													<h:outputText value="--" rendered="#{null eq  _gpcr[12]}"/>
+													<h:outputText value="#{ _gpcr[12]}" rendered="#{null ne  _gpcr[12]}"/> 
+												</td>
+												<h:outputText rendered="#{ inOutStorageRecordHome.type eq 1 or inOutStorageRecordHome.type eq 3}">
+												<td width="10%" align="center">#{_gpcr[16]}kg</td>
+												</h:outputText>
+												<td width="10%" align="center">#{_gpcr[3]}天</td>
+												<s:fragment  rendered="#{inOutStorageRecordHome.storageChangeForm.storageChangeTypeId.storageChangeTypeId eq storageInfoConstant.getBreakageOutStorageType()}">
+													<td width="15%" align="center">#{_gpcr[4]}</td>
+												</s:fragment>
+												<td width="5%" align="center">
+													<s:fragment rendered="#{_gpcr[8] eq 1}">
+														<h:outputText value="#{unitStranfer.outStranfer(_gpcr[7],_gpcr[5])}"><f:convertNumber pattern="#.###"/></h:outputText>
+													</s:fragment>
+													<s:fragment rendered="#{_gpcr[8] ne 1}">
+														<h:outputText value="#{_gpcr[5]}"><f:convertNumber pattern="#.###"/></h:outputText>
+													</s:fragment>
+												</td>
+												<td width="10%" align="center">		
+													<s:fragment rendered="#{_gpcr[8] eq 1}">
+														#{_gpcr[6]}
+													</s:fragment>
+													<s:fragment rendered="#{_gpcr[8] ne 1}">
+														#{_gpcr[10]}#{_gpcr[6]}
+														<s:fragment rendered="#{_gpcr[11] ne null and _gpcr[11] ne ''}">
+															/#{_gpcr[11]}
+														</s:fragment>
+													</s:fragment>
+												</td>
+												<td width="5%" align="center">￥<h:outputText value="#{_gpcr[9]}"><f:convertNumber pattern="#0.00"/></h:outputText></td>
+												<td width="10%" align="center">￥											
+													<s:fragment rendered="#{_gpcr[8] eq 1}">
+														<h:outputText value="#{unitStranfer.outStranfer(_gpcr[7],_gpcr[5]) * _gpcr[9]}"><f:convertNumber pattern="#0.00"/></h:outputText>
+													</s:fragment>
+													<s:fragment rendered="#{_gpcr[8] ne 1}">													
+														<h:outputText value="#{_gpcr[5] * _gpcr[9]}"><f:convertNumber pattern="#0.00"/></h:outputText>
+													</s:fragment>
+												</td>
+											</tr>
+										</a:repeat>										
+									</table>
+								</s:div>
+								
+									<s:fragment rendered="#{inOutStorageRecordHome.totalRows > 100}">
+										<h:form id="pageFrom">
+											<table style="height:30px; margin:20px auto 0 auto;" cellpadding="0" cellspacing="0">
+												<tr>
+													<s:fragment rendered="#{!inOutStorageRecordHome.hasPreviousPage }">
+														<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+													</s:fragment>
+													<s:fragment rendered="#{inOutStorageRecordHome.hasPreviousPage and inOutStorageRecordHome.totalPages > 1}">
+														<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+														<td class="td_t_b">
+															<a:commandLink style="color:#333333;" id="firstPage" action="#{inOutStorageRecordHome.detailPageFind(1)}" rendered="#{inOutStorageRecordHome.hasPreviousPage and inOutStorageRecordHome.totalPages > 1}" reRender="showPanel">首页</a:commandLink>
+														</td>
+														<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+															<a:commandLink styleClass="no_n" id="previousPage" action="#{inOutStorageRecordHome.detailPageFind(inOutStorageRecordHome.previousPage)}" rendered="#{inOutStorageRecordHome.hasPreviousPage and inOutStorageRecordHome.totalPages > 1}" reRender="showPanel">&lt;</a:commandLink>
+														</td>
+													</s:fragment>
+													<a:repeat var="_page" value="#{inOutStorageRecordHome.showPageList}" rowKeyVar="_index">
+														<td class="td_t_b #{inOutStorageRecordHome.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq inOutStorageRecordHome.page ? 'onp' : ''}">
+															<a:commandLink id="thisPage" action="#{inOutStorageRecordHome.detailPageFind(_page)}" reRender="showPanel">#{_page}</a:commandLink>
+														</td>
+													</a:repeat>
+													<s:fragment rendered="#{inOutStorageRecordHome.hasNextPage}">
+														<td class="td_t_b td_t_t">
+															<a:commandLink styleClass="no_d"  id="nextPage" action="#{inOutStorageRecordHome.detailPageFind(inOutStorageRecordHome.nextPage)}" rendered="#{inOutStorageRecordHome.hasNextPage and inOutStorageRecordHome.totalPages > 1}" reRender="showPanel">&gt;</a:commandLink>
+														</td>
+														<td class="td_t_b td_t_t">
+															<a:commandLink style="color:#333333;"  id="lastPage" action="#{inOutStorageRecordHome.detailPageFind(inOutStorageRecordHome.totalPages)}" rendered="#{inOutStorageRecordHome.hasNextPage and inOutStorageRecordHome.totalPages > 1}" reRender="showPanel">尾页</a:commandLink>
+														</td>
+													</s:fragment>
+													<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{inOutStorageRecordHome.totalPages}页</td>
+													<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+												</tr>
+											</table>
+										</h:form>
+									</s:fragment>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="clear"></div>
+						</rich:panel>
+					</div>
+					<div class="clear"></div>
+					<div class="ckd_button" style="text-align:center;">
+						<input type="button" onclick="history.go(-1);" value="返回" class="btn btn-default" id="bn_left6" style="margin-left:10px">
+						</input>
+					</div> 
+				</div>
+				<div class="clear"></div>
+			</div>
+		</td>
+	</ui:define>
+</ui:composition>

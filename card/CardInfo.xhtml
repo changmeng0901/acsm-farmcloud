@@ -1,0 +1,287 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<style type="text/css">
+		.tableFixed_scroll{border: 0}
+		.tableFixed_scroll td a {color: #646464;}
+	</style>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	#{cardsInfoHome.CardUseInit()}
+		<script type="text/javascript">
+			jquery(document).ready(function(){
+				jquery(".str_t tr:even").addClass("alt");
+			});
+		</script>
+		<td valign="top">
+			<div class="right_c">
+				<div class="r_title">
+					<div class="r_t_l">采销存&gt;<span style="padding:0 5px;"></span>订单管理&gt;<span style="padding:0 5px;"></span><font size="3" style="float:none;">会员卡管理</font></div>
+                    <div class="fr" style="margin-bottom:-1px;">
+	                    <ul class="cm_resumeList clear">
+	                    	<li>
+	                            <a href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg" /><span>订单管理</span></a>
+	                        </li>
+	                        <li>
+	                    		<a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                    		<a class="borderBt" href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                           </h:panelGroup>
+	                    </ul>
+	                </div>
+                </div>
+				<div class="str_box">
+					<table width="100%" cellpadding="0" cellspacing="0" class="str_t">
+						<tr>
+							<td valign="middle" class="str_td">卡编号：</td>
+							<td valign="middle" class="str_text"><h:outputText value="#{cardsInfoHome.instance.cardCode}" /></td>
+							<td class="str_td">卡种类：</td>
+							<td class="str_text">
+								<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '2'}" value="储值卡" />
+								<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '1' and cardsInfoHome.instance.cardCategory.giftType eq 0}" value="宅配卡" />
+								<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '1' and (cardsInfoHome.instance.cardCategory.giftType eq null or cardsInfoHome.instance.cardCategory.giftType eq 1)}" value="商品卡" />
+							</td>
+						</tr>
+						<tr>
+							<td valign="middle" class="str_td">卡类型：</td>
+							<td valign="middle" class="str_text"><h:outputText value="#{cardsInfoHome.instance.cardCategory.name}" /></td>
+							<td class="str_td">
+								<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '1'}">	配送次数：</h:outputText>
+								<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '2'}">	有效期：</h:outputText>
+							</td>
+							<td class="str_text">
+								<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '1'}" value="#{cardsInfoHome.instance.cardCategory.deliverNum+cardsInfoHome.instance.deliverChangeNum}" ></h:outputText><h:outputText rendered="#{cardsInfoHome.instance.cardType eq '1'}">次</h:outputText>
+								<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '2'}" value="#{cardsInfoHome.instance.cardCategory.expiryDate+cardsInfoHome.instance.expiryChangeNum}" ></h:outputText><h:outputText rendered="#{cardsInfoHome.instance.cardType eq '2'}">月</h:outputText>
+							</td>
+						</tr>
+						<tr>
+							<td valign="middle"  class="str_td">卡状态：</td>
+							<td valign="middle"  class="str_text"><h:outputText value="#{cardConstant.getCardStatusLabel(cardsInfoHome.instance.cardStatus)}" /></td>
+							<td class="str_td">卡金额：</td>
+							<td class="str_text"><h:outputText value="#{cardsInfoHome.instance.amount}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+						</tr>
+						<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '1' and (cardsInfoHome.instance.cardCategory.giftType eq 1 or cardsInfoHome.instance.cardCategory.giftType eq null )}" >
+						<tr>
+							<td valign="middle"  class="str_td">有效期：</td>
+							<td valign="middle"  class="str_text" colspan="3"><h:outputText value="#{cardsInfoHome.instance.cardCategory.expiryDate+cardsInfoHome.instance.expiryChangeNum}" />月</td>
+						</tr>
+						</h:outputText>
+						
+						<h:outputText rendered="#{cardsInfoHome.instance.cardType eq '1' and cardsInfoHome.instance.cardCategory.giftType eq 0}" >
+						<tr>
+							<td valign="middle"  class="str_td">单次可用重量：</td>
+							<td valign="middle"  class="str_text"><h:outputText value="#{cardsInfoHome.instance.cardCategory.weight}" />+<h:outputText value="#{cardsInfoHome.instance.cardCategory.fluctuations}" />g</td>
+							<td class="str_td">有效期：</td>
+							<td class="str_text" ><h:outputText value="#{cardsInfoHome.instance.cardCategory.expiryDate+cardsInfoHome.instance.expiryChangeNum}" />月</td>
+						</tr>
+						</h:outputText>
+						
+						<tr>
+							<td class="str_td">描述：</td>
+							<td class="str_text" colspan="3"><h:outputText value="#{cardsInfoHome.instance.remark}" /></td>
+						</tr>
+					</table>
+					
+				</div>
+				<div class="clear"></div>
+				<div class="subhead">使用记录（<i style="color: #d40001; font-style:normal;">#{cardsInfoHome.orderInfoList.size()}</i>）</div>
+			<s:div id="showOrderDiv">
+				<a:repeat value="#{cardsInfoHome.showOrderInfoList}" var="_order">
+					<div class="recordList">
+						<s:div styleClass="more" rendered="#{cardsInfoHome.ocpMap.get(_order.orderCode).size() > 2}">
+							<a href="javascript:void(0);" onclick="moreAction('#{_order.orderCode}');">更多>></a>
+						</s:div>
+						<div class="recordList_l">
+							<div class="recordList_t">
+								<img src="../asset/images/orderManage/cardList.png" alt=""/>
+								<span class="bianhao">#{_order.orderCode}</span>
+							</div>
+							<div class="dateTime">
+								<h:outputText value="#{_order.insertTime}">
+			        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy/MM/dd HH:mm" />
+			        			</h:outputText>
+							</div>
+							<div class="order">#{orderConstant.getOrderStatusLabel(_order.orderStatus)}</div>
+						</div>
+						<div class="recordList_r">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<thead>
+				                    <tr>
+				                        <th width="20%">编号</th>
+				                        <th width="20%">商品</th>
+				                        <th width="20%">规格</th>
+				                        <th width="20%">单价</th> 
+				                        <th width="20%">已使用数量</th>      
+				                    </tr>
+								</thead>
+								<tbody>
+									<a:repeat value="#{cardsInfoHome.ocpMap.get(_order.orderCode)}" var="_ocp" rowKeyVar="_ocpIndex">
+										<s:fragment rendered="#{_ocpIndex lt 2}">
+											<tr>
+						                        <td width="20%">#{_ocpIndex + 1}</td>
+						                        <h:outputText value="" rendered="#{_ocp.cardInfo.cardCategory.giftType eq null or _ocp.cardInfo.cardCategory.giftType eq 1}" >
+							                        <td width="20%"><a href="javascript:void(0);" title="#{_ocp.surplusProduct.productName}">#{_ocp.surplusProduct.productName}</a></td>
+							                        <td width="20%">#{_ocp.surplusProduct.productUnit}</td>
+						                        </h:outputText>
+						                        <h:outputText value="" rendered="#{_ocp.cardInfo.cardCategory.giftType eq 0}">
+							                        <td width="20%"><a href="javascript:void(0);" title="#{_ocp.orderProduct.productName}">#{_ocp.orderProduct.productName}</a></td>
+							                        <td width="20%">#{_ocp.orderProduct.productUnit}</td>
+						                        </h:outputText>
+						                        <td width="20%">¥<h:outputText value="#{_ocp.productPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+						                        
+						                        <td width="20%">#{_ocp.productNum}</td>
+						                    </tr>
+										</s:fragment>
+									</a:repeat>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</a:repeat>
+				
+				<table class="fenye">
+					<tr>
+						<td>
+							<table class="pageModel" style="margin: 0;">
+								<tbody>
+									<tr>
+										<td>
+											<s:span rendered="#{cardsInfoHome.order_max_page > 1}">
+												<a href="javascript:void(0);" class="page_prev" onclick="gainResultListAction(1);">首页</a>
+											</s:span>
+											<s:span styleClass="pagePrve" rendered="#{cardsInfoHome.order_current_page - 1 gt 0 and cardsInfoHome.order_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="gainResultListAction(#{cardsInfoHome.order_current_page - 1});">&lt;&lt;</a>
+											</s:span>
+											<a:repeat value="#{cardsInfoHome.order_show_page_list}" var="_order_page" rowKeyVar="_order_index">
+												<span class="page_num #{_order_page == cardsInfoHome.order_current_page ? 'page_Cur' : ''}">
+													<a href="javascript:void(0);" onclick="gainResultListAction(#{_order_page});">#{_order_page}</a>
+												</span>
+											</a:repeat>
+											<s:span styleClass="page_next" rendered="#{cardsInfoHome.order_current_page + 1 lt cardsInfoHome.order_max_page and cardsInfoHome.order_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="gainResultListAction(#{cardsInfoHome.order_current_page + 1});">&gt;&gt;</a>
+											</s:span>
+											<s:span rendered="#{cardsInfoHome.order_max_page gt 1}">
+												<a href="javascript:void(0);" onclick="gainResultListAction(#{cardsInfoHome.order_max_page});">尾页</a>
+											</s:span>
+											<span >
+												<span class="pageCount" style="border-right:0"><a>共#{cardsInfoHome.order_max_page}页</a></span>
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+						<td>
+							<s:button view="/card/CardInfoList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" >
+								<f:param name="pageNum" value="#{cardsInfoHome.pageNum}" />
+								<f:param name="cardType" value="0" />
+							</s:button>
+						</td>
+					</tr>
+				</table>
+			</s:div>
+			</div>
+					<div class="modal fade" id="moreDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog kuanDu">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel" style="font-size:14px;">使用记录</h4>
+					</div>
+					<div class="modal-body" style="padding:15px 40px;">
+						<div style="height:200px; overflow:auto;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<thead>
+									<tr>
+										<th width="20%">编号</th>
+										<th width="20%">商品</th>
+										<th width="20%">规格</th>
+										<th width="20%">单价</th> 
+										<th width="20%">已使用数量</th>      
+									</tr>
+								</thead>
+							</table>
+							<s:div id="showOcpDiv">
+								<div class="tableFixed_scroll" id="ocpScroll" style="height:100%; overflow:hidden;">
+									<table  width="100%" cellpadding="0" cellspacing="0">
+										<tbody>
+											<a:repeat value="#{cardsInfoHome.showOcpList}" var="_showOcp" rowKeyVar="_showOcpIndex">
+												<tr>
+							                        <td width="20%">#{_showOcpIndex + 1}</td>
+							                        <h:outputText value="" rendered="#{_showOcp.cardInfo.cardCategory.giftType eq null or _showOcp.cardInfo.cardCategory.giftType eq 1}" >
+								                        <td width="20%"><a href="javascript:void(0);" title="#{_showOcp.surplusProduct.productName}">#{_showOcp.surplusProduct.productName}</a></td>
+							                        	<td width="20%">#{_showOcp.surplusProduct.productUnit}</td>
+							                        </h:outputText>
+							                        <h:outputText value="" rendered="#{_showOcp.cardInfo.cardCategory.giftType eq 0}">
+								                        <td width="20%"><a href="javascript:void(0);" title="#{_showOcp.orderProduct.productName}">#{_showOcp.orderProduct.productName}</a></td>
+							                       		<td width="20%">#{_showOcp.orderProduct.productUnit}</td>
+							                        </h:outputText>
+							                        <td width="20%">¥<h:outputText value="#{_showOcp.productPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+							                        <td width="20%">#{_showOcp.productNum}</td>
+							                    </tr>
+											</a:repeat>
+										</tbody>
+									</table>
+								</div>
+							</s:div>
+						</div>
+					</div>
+					<div class="modal-footer" style="margin-top:10px;">
+						<button type="button" class="btn btn-default" onclick="moreDivControl(2);">返回</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		</td>
+		<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="gainResultList" action="#{cardsInfoHome.gainResultList}" reRender="showOrderDiv">
+			<a:actionparam name="operatePage" assignTo="#{cardsInfoHome.order_current_page}"/>
+		</a:jsFunction>
+		<a:jsFunction name="moreFind" action="#{cardsInfoHome.moreFind}" reRender="showOcpDiv" oncomplete="moreDivControl(1);">
+			<a:actionparam name="orderCode" assignTo="#{cardsInfoHome.orderCode}"/>
+		</a:jsFunction>
+	</a:form>
+	
+	<script type="text/javascript">
+	//<![CDATA[
+		
+		//订单使用卡商品详情--更多
+		function moreAction(orderCode){
+			moreFind(orderCode);
+		}
+		//详情div控制
+		function moreDivControl(type){
+			if (type == 1) {
+				//jQuery("#ocpScroll").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false});
+				jQuery("#moreDiv").modal('show');
+			} else {
+				jQuery("#moreDiv").modal('hide');
+			}
+		}
+		//分页
+		function gainResultListAction(page){
+			gainResultList(Number(page));
+		}
+	
+	//]]>
+	</script>
+	</ui:define>
+
+</ui:composition>

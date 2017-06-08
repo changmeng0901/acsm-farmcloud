@@ -1,0 +1,353 @@
+﻿<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/stock/InventoryFile.css"/>
+<style>
+.name{display:inline-block;max-width:85px;height:20px; line-height:20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+.inline_block .bootstrap-select.btn-group .dropdown-menu.inner{ height:200px;}
+.dropdown-menu.inner{height:auto!important}
+/* .ckclass .dropdown-menu.inner{height:230px!important} */
+.dropdown-menu.inner{max-height:230px!important}
+</style>
+	#{inventorylist.InventoryFileInit()}
+            <td valign="top">
+            <div class="inbentory_file_main">
+            	<!-- 库存左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first1 in_cur">
+                            <a href="javascript:;" onclick="window.open('#{request.contextPath}/stock/InventoryFile.seam','_self')" ><i class="icon_L icon_kcda"></i>库存档案</a>
+                        </strong>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_rkgl"></i>入库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item sed_item" onclick="window.open('#{request.contextPath}/stock/InStorageList.seam','_self')" ><i class="icon_sed"></i>入库明细</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/InStockAdd.seam','_self')"><i class="icon_sed"></i>入库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_ckgl"></i>出库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/OutStorageList.seam','_self')"><i class="icon_sed"></i>出库明细</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/OutStorage.seam','_self')"><i class="icon_sed"></i>出库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_zkgl"></i>在库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/ExpireWarning.seam','_self')"><i class="icon_sed"></i>过期预警</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/AllocationRecord.seam','_self')"><i class="icon_sed"></i>调拨记录</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/AllocationBill.seam','_self')"><i class="icon_sed"></i>调拨单</li>
+                        	<h:panelGroup rendered="#{sessionTake.tempType eq 9}">
+							<li class="sed_item" onclick="window.open('#{request.contextPath}/stock/StorageRecord.seam','_self')"><i class="icon_sed"></i>贮藏记录</li>
+							</h:panelGroup>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pdgl"></i>盘点管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/InventoryRecord.seam','_self')"><i class="icon_sed"></i>盘点记录</li>
+                            <li class="sed_item" onclick="window.open('#{stockUtil.getInventoryNoBatch(sessionTake.enterpriseInfoId) ? '/stock/InventoryBillAll.seam' : '/stock/InventoryBill.seam'}','_self')"><i class="icon_sed"></i>盘点单</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 库存左侧二级导航 -->
+                <!-- 库存档案右侧 -->
+                <div class="inbentory_content">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt" style="margin-left:20px;"><a href="#">采销存</a><span>&gt;</span><strong>库存档案</strong></div>
+                    </div>
+                    <div class="inbentory_search_wap">
+                    	<!-- 库存档案搜索头部 -->
+                    	<div class="search_header clear">
+                            <div class="search_selected fl">
+                             <dl style="width:265px;" class="se_selt180 fl ckclass">
+                                    <dt style="width:80px;">物料类型</dt>
+                                    <dd class="inline_block bootSelt180">
+                                        <h:selectOneMenu styleClass="selectpicker"  value="#{inventorylist.goodsType}" id="goodsType" onchange="selectChange()">
+                                           <f:selectItem itemLabel="请选择" itemValue="-1" ></f:selectItem>
+                                                <s:selectItems value="#{inventorylist.initGoodsType()}" var="_sc"  label="#{_sc.id eq 3?'商品':_sc.name}" itemValue="#{_sc.id}" > 
+                                                </s:selectItems>
+                                         </h:selectOneMenu>
+                                    </dd>
+                                </dl>
+                                <dl style="width:265px;" class="se_selt180 fl ckclass">
+                                    <dt style="width:80px;">仓库</dt>
+                                    <dd class="inline_block bootSelt180">
+                                       <!--   <h:selectOneMenu styleClass="selectpicker"  value="#{inventorylist.storageRoom}" id="storageRoom" onchange="changeStorageRoom()">
+                                           <f:selectItem itemLabel="请选择" itemValue="-1" ></f:selectItem>
+                                                <s:selectItems value="#{inventorylist.initStorageRoomList()}" var="_room"  label="#{_room[1]}" itemValue="#{_room[0]}" > 
+                                                </s:selectItems>
+                                         </h:selectOneMenu> -->
+                                         <rich:panel id="roomPanel" style="margin:0; border:none; padding: 0;">
+                                          <select class="selectpicker"  id="storageRoom"  onchange="changeStorageRoom()">
+                                        		<option selected="selected" value="-1">全部</option>
+                                    			<a:repeat value="#{inventorylist.initStorageRoomList()}" var="_room">
+	                                    			<s:fragment rendered="#{inventorylist.storageRoom eq _room[0]}">
+	                                    				<option value="#{_room[0]}" selected="selected">#{_room[1]}</option>
+	                                    			</s:fragment>
+	                                    			<s:fragment rendered="#{inventorylist.storageRoom ne _room[0]}">
+	                                    				<option value="#{_room[0]}" >#{_room[1]}</option>
+	                                    			</s:fragment>
+                                    			</a:repeat>
+                                        </select>
+                                        </rich:panel>
+                                    </dd>
+                                </dl>
+                                
+                               
+                            </div>
+                            <div class="search_selected fl">
+                                <dl style="width:265px;" class="se_selt180 fl ckclass">
+                                    <dt style="width:80px;">经办人</dt>
+                                    <dd class="inline_block bootSelt180">
+                                        <select class="selectpicker"  id="operator" style="display: none;" onchange="selectChange()">
+                                        		<option selected="selected" value="-1">全部</option>
+                                    		<a:repeat value="#{inventorylist.initOperatorListInOut()}" var="_operater">
+                                    			<s:fragment rendered="#{inventorylist.operator eq _operater[0]}">
+                                    				<option value="#{_operater[0]}" selected="selected">#{_operater[1]}</option>
+                                    			</s:fragment>
+                                    			<s:fragment rendered="#{inventorylist.operator ne _operater[0]}">
+                                    				<option value="#{_operater[0]}" >#{_operater[1]}</option>
+                                    			</s:fragment>
+                                    		</a:repeat>
+                                        </select>
+                                    </dd>
+                                </dl>
+                                <dl style="width:265px;" class="se_selt180 fl ckclass">
+                                    <dt style="width:80px;">来源</dt>
+                                    <dd class="inline_block bootSelt180">
+                                        <select class="selectpicker"  id="goodsSource" style="display: none;"  onchange="selectChange()">
+                                            	<option selected="selected" value="-1">全部</option>
+                                    		<a:repeat value="#{inventorylist.initgetGoodsSourceList()}" var="_goodssource">
+                                    			<s:fragment rendered="#{inventorylist.goodsSource eq _goodssource[0]}">
+                                    				<option value="#{_goodssource[0]}" selected="selected">#{_goodssource[1]}</option>
+                                    			</s:fragment>
+                                    			<s:fragment rendered="#{inventorylist.goodsSource ne _goodssource[0]}">
+                                    				<option value="#{_goodssource[0]}" >#{_goodssource[1]}</option>
+                                    			</s:fragment>
+                                    		</a:repeat>
+                                        </select>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="search_selected clear">
+                                <dl style="width:340px;" class="se_selt180">
+                                    <dt style="width:80px;">搜索</dt>
+                                    <dd class="inline_block bootSelt180">
+                                        <input type="text" style="width:180px;font-size:12px;" value="物料名称/物料编号" class="form-control mr5 fl" id="code"/>
+                                        <input type="button" onclick="selectChange()" value="搜索" class="btn btn-primary" id="searchButton"/>
+                                    </dd>
+                                </dl>
+                           		 <div class="fr" style="margin-top:8px;"> 
+                           		<rich:panel id="exp" style="margin:0; border:none; padding: 0;">
+                        			<s:link   view="/stock/InventoryFile.xhtml" action="#{inventorylist.exportExcel()}" >
+                        				<f:param name="storageRoom" value="#{inventorylist.storageRoom}"/>
+                        				<f:param name="goodsType" value="#{inventorylist.goodsType}"/>
+                        				<f:param name="operator" value="#{inventorylist.operator}"/>
+                        				<f:param name="goodsSource" value="#{inventorylist.goodsSource}"/>
+                        				<f:param name="batchCode" value="#{inventorylist.batchCode}"/>
+                        				<f:param name="selectSearch" value="#{inventorylist.selectSearch}"/>
+                        				<f:param name="selectSearch" value="#{inventorylist.selectSearch}"/>
+                        				<img src="#{request.contextPath}/asset/images/stock/commons/icon_exportExcel.jpg"  /> 
+									</s:link>
+								</rich:panel>
+								</div> 
+                            </div>
+                        </div>
+                        <!-- 库存档案搜索列表 -->
+                         <rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+                         <h:inputHidden value="#{inventorylist.pageNum}" id="thisPageId"/>
+                        <table class="inventory_modal_table mt20" width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<th>序号</th>
+                                <th>物料编号</th>
+                                <th>物料名称</th>
+                                <th>物料规格</th>
+                                <th>物料等级</th>
+                                <th>仓库</th>
+                                <th>库存数量</th>
+                                <th>冻结数量</th>
+                                <th>可销售数量</th>
+                                <th>操作</th>
+                            </tr>
+                        <a:repeat value="#{inventorylist.resultList}" var="_if" rowKeyVar="_index">
+                            <tr class="odd">
+                            	<td>#{_index+1}</td>
+                                <td>#{_if[1]}</td>
+                                <td>#{_if[2]}</td>
+                                <td>
+									#{stringUtil.getGoodsSpec(sessionTake.harvestUnit,_if[3],_if[7],_if[8],_if[9],_if[6])}
+								</td>
+                                <td>
+                                	<s:fragment rendered="#{_if[3] eq 1 or _if[3] eq 7}">
+	                                	<h:outputText value="--" rendered="#{null eq _if[10]}"/>
+										<h:outputText value="#{_if[10]}" rendered="#{null ne _if[10]}"/>
+									</s:fragment>
+									<s:fragment rendered="#{_if[3] ne 1 and _if[3] ne 7}">
+	                                	<h:outputText value="--" />
+									</s:fragment>
+                                </td>
+                                <td><span title="#{_if[11]}" class="name">#{_if[11]}</span></td>
+                                <td>
+		                            <h:outputText value="#{unitStranfer.stockNumInTranferByEnterprise(sessionTake.harvestUnit,_if[3],_if[13],_if[4])}" >
+		                            	<f:convertNumber pattern="#####.###"/>
+		                            </h:outputText>
+								</td>
+                                <td>
+							        <h:outputText value="#{unitStranfer.stockNumInTranferByEnterprise(sessionTake.harvestUnit,_if[3],_if[13],_if[5])}" >
+		                            	<f:convertNumber pattern="#####.###"/>
+		                            </h:outputText>
+                                </td>
+                                <td>
+							        <h:outputText value="#{unitStranfer.stockNumInTranferByEnterprise(sessionTake.harvestUnit,_if[3],_if[13],_if[12])}" >
+		                            	<f:convertNumber pattern="#####.###"/>
+		                            </h:outputText>	
+								</td>
+                                <td>
+                                	 <s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}" view="/stock/InventoryDetail.xhtml" styleClass="list_view"  id="detailId" title="查看">
+                                	 	<f:param name="goodsInfoId" value="#{_if[0]}" />
+                                	 	<f:param name="goodsLevelId" value="#{_if[14]}" />
+                                	 	<f:param name="storageRoom" value="#{inventorylist.storageRoom}" />
+                                	 	<f:param name="goodsType" value="#{inventorylist.goodsType}" />
+                                	 	<f:param name="operator" value="#{inventorylist.operator}" />
+                                	 	<f:param name="goodsSource" value="#{inventorylist.goodsSource}" />
+                                	 	<f:param name="batchCode" value="#{inventorylist.batchCode}" />
+                                	 	<f:param name="pageNum" value="#{inventorylist.pageNum}"/>
+                                	 </s:link>
+                                </td>
+                            </tr>
+                            </a:repeat>
+                        </table>
+                       
+                         <div class="pageModel_wap" style="padding:50px 0 30px;">
+                           <h:form id="pageFrom" rendered="#{null ne inventorylist.resultList and inventorylist.resultList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!inventorylist.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{inventorylist.hasPreviousPage and inventorylist.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{inventorylist.hasPreviousPage and inventorylist.totalPages > 1}" >首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{inventorylist.previousPage})"  >&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{inventorylist.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le inventorylist.totalPages}">
+											<td class="td_t_b #{inventorylist.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq inventorylist.pageNum ? 'onp' : ''}" >
+												<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{inventorylist.hasNextPageFlag}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{inventorylist.nextPage})" rendered="#{inventorylist.hasNextPageFlag and inventorylist.totalPages > 1}" >&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{inventorylist.totalPages})" rendered="#{inventorylist.hasNextPageFlag and inventorylist.totalPages > 1}" >尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{inventorylist.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+                        </div> 
+                        </rich:panel>
+                        <!-- 库存档案搜索列表 -->
+                    </div>
+                </div>
+                <!-- 库存档案右侧 -->
+            </div>   
+            </td>    
+
+
+<a:form>
+	<a:jsFunction name="queryByStorageRoomId" action="#{inventorylist.queryByStorageRoomId()}"  data="#{inventorylist.goodsType}" reRender="showPanel,exp" oncomplete="refreshGoodType(data);" >
+		<a:actionparam name="storageRoom" assignTo="#{inventorylist.storageRoom}"/>
+		<a:actionparam name="goodsType" assignTo="#{inventorylist.goodsType}"/>
+		<a:actionparam name="operator" assignTo="#{inventorylist.operator}"/>
+		<a:actionparam name="goodsSource" assignTo="#{inventorylist.goodsSource}"/>
+		<a:actionparam name="batchCode" assignTo="#{inventorylist.batchCode}"/>
+		<a:actionparam name="selectSearch" assignTo="#{inventorylist.selectSearch}"/>
+	</a:jsFunction>
+	<a:jsFunction name="queryResultFind" action="#{inventorylist.queryResultFind()}"  reRender="showPanel,exp,roomPanel" oncomplete="windowHeight()" >
+		<a:actionparam name="storageRoom" assignTo="#{inventorylist.storageRoom}"/>
+		<a:actionparam name="goodsType" assignTo="#{inventorylist.goodsType}"/>
+		<a:actionparam name="operator" assignTo="#{inventorylist.operator}"/>
+		<a:actionparam name="goodsSource" assignTo="#{inventorylist.goodsSource}"/>
+		<a:actionparam name="batchCode" assignTo="#{inventorylist.batchCode}"/>
+		<a:actionparam name="selectSearch" assignTo="#{inventorylist.selectSearch}"/>
+	</a:jsFunction>
+	<a:jsFunction name="exportExcel" action="#{inventorylist.exportExcel()}"   >
+		<a:actionparam name="storageRoom" assignTo="#{inventorylist.storageRoom}"/>
+		<a:actionparam name="goodsType" assignTo="#{inventorylist.goodsType}"/>
+		<a:actionparam name="operator" assignTo="#{inventorylist.operator}"/>
+		<a:actionparam name="goodsSource" assignTo="#{inventorylist.goodsSource}"/>
+		<a:actionparam name="batchCode" assignTo="#{inventorylist.batchCode}"/>
+		<a:actionparam name="pageNum" assignTo="#{inventorylist.pageNum}"/>
+		<a:actionparam name="selectSearch" assignTo="#{inventorylist.selectSearch}"/>
+	</a:jsFunction>
+	<a:jsFunction name="getInfoByPage" action="#{inventorylist.getInfoByPage()}"  reRender="showPanel,exp"  oncomplete="windowHeight()">
+		<a:actionparam name="storageRoom" assignTo="#{inventorylist.storageRoom}"/>
+		<a:actionparam name="goodsType" assignTo="#{inventorylist.goodsType}"/>
+		<a:actionparam name="operator" assignTo="#{inventorylist.operator}"/>
+		<a:actionparam name="goodsSource" assignTo="#{inventorylist.goodsSource}"/>
+		<a:actionparam name="batchCode" assignTo="#{inventorylist.batchCode}"/>
+		<a:actionparam name="pageNum" assignTo="#{inventorylist.pageNum}"/>
+		<a:actionparam name="selectSearch" assignTo="#{inventorylist.selectSearch}"/>
+	</a:jsFunction>
+</a:form>
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryFile.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryMain.js"></script>
+<script type="text/javascript">
+ $(function(){
+	var searchStr ="#{inventorylist.batchCode}";
+	if(searchStr != "" ){
+		$("#code").val(searchStr);
+	}
+	//回车搜索事件
+	$("#code").keydown(function(e){
+		if(e.keyCode==13){
+			jquery('#searchButton').trigger("click");
+		}
+	}); 
+	sessionStorage.clear();
+
+	// (1)获取焦点和失去焦点状态
+    $('#code').focus(function(){
+        var txt_value = $(this).val();
+        if(txt_value=="物料名称/物料编号"){
+            $(this).val("");    
+        };  
+    });
+    $('#code').blur(function(){
+        var txt_value = $(this).val();
+        if(txt_value==""){
+            $(this).val('物料名称/物料编号'); 
+        };  
+    }); 
+}); 
+</script>
+</ui:define>
+</ui:composition>
+

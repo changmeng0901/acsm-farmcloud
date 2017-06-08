@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>农场展示</title>
+		<script src="js/jquery-1.10.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script>
+		<script type="text/javascript">
+		xc_zoomSet = false;	
+		</script>
+		<script src="js/map_base_functions.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/map_controller.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+		* {
+	margin: 0px;
+	padding: 0px;
+}
+
+body,
+html {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+.map_content {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.map_content * {
+	list-style: outside none;
+}
+#map-canvas {
+	width: 100%;
+	height: 100%;
+}
+
+		</style>
+	</head>
+
+	<body>
+		<div class="map_content" style="width:100%;height: 100%;">
+			<div id="map-canvas"></div>
+			<!--pop-->
+			<p class="mengb">
+				<!--灰色蒙版层-->
+			</p>
+			<span id="map_loading"></span>
+		</div>
+		<script type="text/javascript">
+			function idleFirst(){
+				 $("#map-canvas .gm-style-cc").hide();
+				 $("#map-canvas  [title='点击以在 Google 地图上查看此区域']").hide(); 
+			}
+
+			function idleDoSomething(){
+				calc();
+				point = projection.fromLatLngToContainerPixel(centerMarker.getPosition()); 
+				centerMarker.setMap(null);
+				point.x-=screen_x;
+				point.y-=screen_y;
+				var latlng = projection.fromContainerPixelToLatLng(point);
+	        	map.setCenter(latlng);
+			}
+			var screen_x,screen_y;
+			function calc(){
+				try{
+					var po = window.parent.jQuery(".cirle-block").position();
+					var poleft = po.left;
+					var potop = po.top;
+					var width = window.parent.jQuery(".area-bg2").width();
+					var height = window.parent.jQuery(".area-bg2").height();
+					var pointwidth = window.parent.jQuery(".cirle-block").width();
+					var pointheight = window.parent.jQuery(".cirle-block").height();
+					poleft += pointwidth/2;
+					potop += pointheight/2;
+					screen_x = poleft-width/2;
+					screen_y = potop-height/2;
+				}catch(e){
+					 screen_x = 0;
+					 screen_y = 0;
+				}
+			}
+
+			function resetsize(){
+				google.maps.event.trigger(map, 'resize');
+				}
+			window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) {
+			       console.log("错误信息：" , errorMessage);
+			       console.log("出错文件：" , scriptURI);
+			       console.log("出错行号：" , lineNumber);
+			       console.log("出错列号：" , columnNumber);
+			       console.log("错误详情：" , errorObj);
+			    }
+		</script>
+	</body>
+
+</html>

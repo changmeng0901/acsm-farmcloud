@@ -1,0 +1,1804 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">   
+    <ui:define name="foot">
+		<!-- 选择基地 开始 -->
+		<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+		<!-- 选择基地 结束 -->  
+	</ui:define>
+	
+<ui:define name="body">
+<td valign="top">
+<!-- #{resumeHome.work()} 
+#{resumeExamineHome.getResumeStatus()}
+-->
+  <link  href="#{request.contextPath}/asset/css/lsll.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/printPop.css"/>
+  <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+  <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/record/usedResume.css"/>
+  <script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+  <!-- Modal -->
+
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal3" class="modal fade in w600na" style="display: none;">
+	<div class="modal-dialog" style="width: 600px;">
+		<div class="modal-content">
+			<div class="modal-header">
+       			 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        		<h4 class="modal-title" id="myModalLabel">提示框</h4>
+      		</div>
+      		<div class="modal-body">
+       			<span id="productMsg">*号部分为必填项！</span>
+	        </div>
+      		<div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      		</div>
+    	</div>
+	</div>
+</div>
+<div class="maturity_block" style="display:none;z-index:201;">
+	<p class="tip_pic"><img src="/asset/images/map/maturity_ico2.png" /></p>
+	<p class="tip_txt1">您尚未购买此服务，如果您想使用<br />请拨打<font>400-8199-586</font></p>
+	<p class="tip_txt1"><a class="know_btn" onclick="closeLook()" style="cursor: pointer;">知道了</a></p>
+</div>
+<div class="black_op50" style="display:none;z-index:200;"></div>
+<div style="width:100%;">
+	<div class="right_c clear">
+    <!-- 公用头部 开始 -->
+    	<div class="r_title clear">
+			<div class="r_t_l fl">精准营销&#160;&gt;&#160;&#160;履历&#160;&gt;&#160;&#160;<font size="3">使用履历</font></div>
+           	<div class="fr" style="margin-bottom:-1px;">
+               	<ul class="cm_resumeList clear">
+		               	<h:panelGroup rendered="#{param.source==1}">
+		                   	<li>
+	                       	<a href="#{request.contextPath}/record/ProductBaseInfoList.seam?lvliType=1&amp;source=#{param.source}"><img src="#{request.contextPath}/asset/images/cm_lsllIco01.jpg"/><span>履历设计</span></a>
+	                       </li>
+	                       <li>
+	                       	<a href="#{request.contextPath}/record/ProductBaseInfoList.seam?lvliType=2"><img src="#{request.contextPath}/asset/images/lvliyl-ico1.jpg"/><span>履历预览</span></a>
+	                       </li>
+                       </h:panelGroup>
+		                <h:panelGroup rendered="#{param.source==2}">
+		                    <li>
+		                    	<a  href="#{request.contextPath}/resume/NewPhoneModelInfoList.seam"><img src="../asset/images/resume/icon6.png" /><span>履历列表</span></a>
+		                    </li>
+		                </h:panelGroup>
+                       <li>
+                       	<a href="#" class="borderBt" ><img src="#{request.contextPath}/asset/images/cm_lsllIco02.jpg" /><span>履历制作</span></a>
+                       </li>
+                       <li>
+	                    	<a href="#{request.contextPath}/record/ResumeTracing.seam?source=#{param.source}" ><img src="#{request.contextPath}/asset/images/cm_lsllIco05.png" /><span>履历追溯</span></a>
+	                    </li>
+				</ul>
+			</div>
+		</div>
+		<!-- 公用头部 结束 -->
+        <!-- 使用履历内容 开始 -->
+        <table width="100%" cellpadding="0" cellspacing="0">
+        	<tr>
+            	<td  valign="top">
+                	<div class="cm_resumeLt pr20 pt20">
+                    	<!-- 使用履历内容 左侧 开始 -->
+                        <h:form id="search">
+                        	<div class="cm_resumeLtTp clear">
+                            	<div class="col-lg-6 fl" style="padding-left:0;">
+                                	<div class="input-group iptSeletAuto">
+                                    	<select class="selectpicker" id="searchType" name="searchType">
+	                                    	<option value="-1">全部</option>
+	                                      	<h:panelGroup rendered="#{sessionTake.print eq 1}">
+	                                        	<option value="1">打印</option>
+	                                      	</h:panelGroup>
+	                                      	<h:panelGroup rendered="#{sessionTake.correspond eq 1}">
+	                                        	<option value="2">对应</option>
+	                                        	<option value="3">批次</option>
+	                                      	</h:panelGroup>
+                                        </select>
+                                        <div class="public-search" style="margin-left:-1px;cursor:pointer;width:330px;">
+                                        	<span class="octicon-search02" onclick="jquery('.searchBut').trigger('click');"></span>
+                                        	<input type="text" onfocus="objFocus(this)" onblur="objBlur(this)" id="searchInfo"  name="searchInfo" class="form-control srarchfont" value="请输入搜索条件" style="width:250px;" />
+                                        	<h:commandButton value="搜索" styleClass="btn btn-primary ml10" action="/record/UsedResume.xhtml" style="float: left;"/>
+                                        </div>
+									</div>
+								</div>
+                                <div class="cm_btn02 fr">
+                                	<h:panelGroup rendered="#{resumeHome.ei.scanUse==1 &amp;&amp; s:hasRole('resume_make')}">	
+                                    	<button type="button" onclick="gourl()" class="btn btn-default">批量匹配</button>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+	                                	<h:panelGroup rendered="#{sessionTake.correspond eq 1}">
+	                                    	<button type="button" onclick="return checkSelBase(1);" class="btn btn-default ml10">对应</button>
+	                                    </h:panelGroup>
+	                                    <h:panelGroup rendered="#{sessionTake.print eq 1 and s:hasRole('resume_edit')}">
+	                                        <button type="button" class="btn btn-primary ml10"  onclick="return checkSelBase(2);">打印</button>
+	                                    </h:panelGroup>
+									</h:panelGroup>
+                                    <h:panelGroup rendered="#{resumeHome.valueAdded.resumeService==-1 || resumeHome.valueAdded.resumeService==0 || resumeHome.valueAdded.resumeService==2}">
+										<h:panelGroup rendered="#{sessionTake.correspond eq 1}">
+	                                    	<button type="button" onclick="noLook()" class="btn btn-default ml10">对应</button>
+										</h:panelGroup>
+	                                    <h:panelGroup rendered="#{sessionTake.print eq 1 and s:hasRole('resume_edit')}">
+	                                    	<button type="button" class="btn btn-primary ml10"  onclick="noLook()">打印</button>
+	                                    </h:panelGroup>
+									</h:panelGroup>
+								</div>
+							</div>
+						</h:form>
+						<a4j:outputPanel id="refreshT">
+                        	<div class="cm_resumeLtBt mt20 clear">
+                            	<div class="cm_resumeMore">
+                                	<h2>履历使用记录</h2>
+                                </div>
+                                <!-- 对应与打印内容1 开始 -->
+                                <table width="100%" class="cm_printTab">
+                                	<tbody>
+                                    	<a4j:repeat var="var" value="#{resumeHome.objList}" rowKeyVar="_row">
+                                        	<ui:fragment rendered="#{_row==0}">
+	                                        	<tr>
+		                                        	<td colspan="5" class="cm_printDate" style="background-color: white;border-bottom: 1px solid #d8e6ec;color: #888;line-height: 18px;padding: 5px;text-indent: 8px;">
+		                                        		<img src="#{request.contextPath}/asset/images/cm_lsllIco02.png" />#{var[2]}
+		                                        	</td>
+	                                        	</tr>
+                                        	</ui:fragment>
+                                        	<ui:fragment rendered="#{var[2] ne resumeHome.objList[_row-1][2] &amp;&amp; _row!=0}">
+	                                        	<tr>
+		                                        	<td colspan="5" class="cm_printDate" style="background-color: white;border-bottom: 1px solid #d8e6ec;color: #888;line-height: 18px;padding: 5px;text-indent: 8px;">
+		                                        		<img src="#{request.contextPath}/asset/images/cm_lsllIco02.png" />#{var[2]}
+		                                        	</td>	
+	                                        	</tr>
+                                        	</ui:fragment>
+                                        	<tr>
+                                            	<td width="15%" valign="middle">
+                                                	<ui:fragment rendered="#{var[4]==1}">
+	                                                	<span class="fl mt2 pl10 pr5"><img width="16" height="16" src="#{request.contextPath}/asset/images/cm_lsllIco03.png"/></span>
+	                                                    <span class="fl">打印</span>
+													</ui:fragment>
+													<ui:fragment rendered="#{var[4]==2}">
+														<span class="fl mt2 pl10 pr5"><img width="16" height="16" src="#{request.contextPath}/asset/images/cm_lsllIco04.png"/></span>
+	                                                    <span class="fl">对应</span>  
+                                                    </ui:fragment>                                              
+                                                </td>
+                                                <td width="25%"><span>#{var[3]}</span></td>
+                                                <td width="10%"><span><h:outputText value="#{var[0]}" >
+                                                <f:convertNumber pattern="#"/>
+                                                </h:outputText> 张</span></td>
+                                                <td width="40%"><s:span rendered="#{var[4]==2}">批次  #{var[24]}#{var[25]}  编号#{var[26]}-#{var[27]}</s:span></td>
+                                                <td width="10%">
+	                                            	<s:span rendered="#{var[4]==2}">
+	                                                	<h:panelGroup rendered="#{var[30] != 2 }">
+		                                                	<h:panelGroup rendered="#{resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+		                                                		<s:link propagation="none"  view="/record/UsedResume.xhtml" style="padding-right:10px" styleClass="fr" action="#{resumeHome.downloadQR}" title="下载" >
+									                             	<f:param name="myUrl" value="#{dataDicConstant.getOldDomainNameUrl()}/ys/#{var[24]}#{var[25]}#{resumeHome.formartNumber2(var[26])}"/>
+									                                <img src="#{request.contextPath}/asset/images/downewm.png" ></img>
+																</s:link>
+															</h:panelGroup>
+	                                                		<h:panelGroup rendered="#{s:hasRole('resume_edit')  &amp;&amp; resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+		                                                		<a href="#"  onclick="if(!edit('#{var[24]}#{var[25]}','#{var[6]}',#{var[7]},#{var[8]},#{var[9]},#{var[5]},'#{var[10]}','#{var[11]}','#{var[12]}','#{var[13]}','#{var[14]}','#{var[15]}',#{var[16]},'#{var[19]}','#{var[20]}','#{var[18]}','#{var[22]}','#{var[23]}','#{var[28]}','#{var[30]}','#{var[33]}','#{var[35]}','#{var[36]}','#{var[37]}','#{var[38]}')) return false;" class="fr pr10 pl10">
+			                                                    	<img src="#{request.contextPath}/asset/images/02_60.png" width="16" height="15" />
+			                                                    </a>
+			                                                </h:panelGroup>
+			                                                <h:panelGroup rendered="#{s:hasRole('resume_show')}">
+			                                                 	<a style="display:none" href="#"   onclick="look('#{var[6]}',#{var[7]},#{var[8]},#{var[9]},#{var[5]},'#{var[10]}','#{var[11]}','#{var[12]}','#{var[13]}','#{var[14]}','#{var[15]}',#{var[16]},'#{var[3]}','#{var[19]}','#{var[20]}','#{var[18]}','#{var[22]}','#{var[23]}')" class="fr">
+			                                                 		<img src="#{request.contextPath}/asset/images/02_63.png" width="16" height="15" />
+			                                                 	</a>
+			                                                 	<h:panelGroup rendered="#{resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+				                                                	<a href="#{dataDicConstant.getOldDomainNameUrl()}/ys/#{var[24]}#{var[25]}#{resumeHome.formartNumber2(var[26])}" class="fr" target="_blank"  >
+				                                                		<img src="#{request.contextPath}/asset/images/02_63.png" width="16" height="15" />
+				                                                	</a>
+				                                                </h:panelGroup>
+				                                                <h:panelGroup rendered="#{resumeHome.valueAdded.resumeService==-1 || resumeHome.valueAdded.resumeService==0 || resumeHome.valueAdded.resumeService==2}">
+				                                                	<a href="#{dataDicConstant.getOldDomainNameUrl()}/ys/#{var[24]}#{var[25]}#{resumeHome.formartNumber2(var[26])}" class="fr" target="_blank"  style="padding-right:10px">
+				                                                		<img src="#{request.contextPath}/asset/images/02_63.png" width="16" height="15" />
+				                                                	</a>
+				                                                </h:panelGroup>
+			                                                </h:panelGroup>
+	                                                	</h:panelGroup>
+                                                		<h:panelGroup rendered="#{var[30] == 2}">
+	                                                		<h:panelGroup rendered="#{s:hasRole('resume_edit')  &amp;&amp; resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+		                                                		<a href="#"  onclick="if(!edit('#{var[24]}#{var[25]}','#{var[6]}',#{var[7]},#{var[8]},#{var[9]},#{var[5]},'#{var[10]}','#{var[11]}','#{var[12]}','#{var[13]}','#{var[14]}','#{var[15]}',#{var[16]},'#{var[19]}','#{var[20]}','#{var[18]}','#{var[22]}','#{var[23]}','#{var[28]}','#{var[30]}','#{var[33]}','#{var[35]}','#{var[36]}','#{var[37]}','#{var[38]}')) return false;" class="fr pr10 pl10">
+			                                                    	<img src="#{request.contextPath}/asset/images/02_60.png" width="16" height="15" />
+			                                                    </a>
+			                                                </h:panelGroup>
+			                                                <h:panelGroup rendered="#{s:hasRole('resume_show')}">
+			                                                	<a href="#{newProductRecordHome.zdy}#{var[29]}" class="fr" target="_blank"  >
+			                                                		<img src="#{request.contextPath}/asset/images/02_63.png" width="16" height="15" />
+			                                                	</a>
+			                                                </h:panelGroup>
+	                                                	</h:panelGroup>
+	                                                 </s:span>
+	                                                 <s:span rendered="#{var[4]==1}">
+	                                                 	<h:panelGroup rendered="#{resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+		                                                   	<s:link propagation="none"  view="/record/UsedResume.xhtml" style="padding-right:10px" styleClass="fr" action="#{resumeHome.downloadQR}" title="下载" >
+								                            	<f:param name="myUrl" value="#{dataDicConstant.getOldDomainNameUrl()}/ys/#{resumeHome.jump(var[5])}"/>
+								                                <img src="#{request.contextPath}/asset/images/downewm.png" ></img>
+															</s:link>
+														</h:panelGroup>
+		                                                <h:panelGroup rendered="#{s:hasRole('resume_edit')   &amp;&amp; resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+			                                            	<a href="#" style="display:none" onclick="edit_p('#{var[6]}',#{var[7]},'#{var[21]}','#{var[9]}',#{var[5]},'#{var[10]}','#{var[11]}','#{var[12]}','#{var[13]}','#{var[14]}','#{var[15]}',#{var[16]},'#{var[19]}','#{var[20]}','#{var[18]}','#{var[22]}','#{var[23]}','#{var[28]}')" class="fr pr10 pl10">
+			                                             		<img src="#{request.contextPath}/asset/images/02_60.png" width="16" height="15" />
+			                                             	</a>
+														</h:panelGroup>
+			                                            <h:panelGroup rendered="#{s:hasRole('resume_show')}">
+		                                                	<a href="#" style="display:none;padding-right:10px" onclick="look_p('#{var[6]}',#{var[7]},'#{var[21]}','#{var[9]}',#{var[5]},'#{var[10]}','#{var[11]}','#{var[12]}','#{var[13]}','#{var[14]}','#{var[15]}',#{var[16]},'#{var[3]}','#{var[19]}','#{var[20]}','#{var[18]}','#{var[22]}','#{var[23]}')" class="fr">
+		                                                 		<img src="#{request.contextPath}/asset/images/02_63.png" width="16" height="15" />
+		                                                 	</a>
+		                                                	<s:link view="/jump.xhtml" style="padding-right:10px" styleClass="fr" target="_blank"  propagation="none" includePageParams="false">
+			                                                	<f:param name="skinSn" value="#{resumeHome.jump(var[5])}"/>
+			                                                	<img src="#{request.contextPath}/asset/images/02_63.png" width="16" height="15" />
+		                                                	</s:link>
+		                                                </h:panelGroup>
+	                                                 </s:span>
+												</td>
+                                            </tr>
+                                        </a4j:repeat>
+									</tbody>
+								</table>
+								<div class="farming_nodata" style="#{empty resumeHome.objList?'':'display:none'}">
+                                	<div class="warning_noData">
+                                    	<em>很遗憾，没有任何履历信息</em>
+                                    	<p>完整的履历信息，不仅是在宣传我们的企业文化，追溯蔬菜的种植过程，更为重要的是搭建了我们和消费者之间信任的桥梁，还有转发和会员加入的功能哦，快从创建模板开始吧！</p>
+                                    </div>
+								</div>
+                                <!-- 对应与打印内容1 结束 -->
+							</div>
+                                <!-- 分页 开始 -->
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    			<tr>
+                    				<ui:fragment rendered="#{not empty resumeHome.objList}">
+			                			<ui:fragment rendered="#{!resumeHome.previousExists }">
+			                				<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                			</ui:fragment>
+			                 			<ui:fragment rendered="#{resumeHome.previousExists }">
+			                				<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                			</ui:fragment>
+			                			<ui:fragment rendered="#{resumeHome.previousExists }">
+	                            			<td class="td_t_b">
+		                            			<s:link propagation="none"  view="/record/UsedResume.xhtml" >首页
+		                            				<f:param name="pageNum" value="0" />
+		                            			</s:link>
+	                            			</td>
+	                            			<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            			<s:link propagation="none"  view="/record/UsedResume.xhtml"  styleClass="no_n" >
+		                            				<f:param name="pageNum" value="#{resumeHome.previousFirstResult}"/>&lt;
+		                            			</s:link>
+	                            			</td>
+	                        			</ui:fragment>
+					       				<a4j:repeat var="_page" value="#{resumeHome.pageList}" rowKeyVar="_index">
+											<td class="td_t_b #{resumeHome.previousExists or _index >0 ?'td_t_t':''} #{_page eq resumeHome.pageNum?'onp':''}">
+												<s:link propagation="none"  view="/record/UsedResume.xhtml" value="#{_page}" id="previousPage">
+													<f:param name="pageNum" value="#{_page}" />
+												</s:link>
+											</td>
+										</a4j:repeat>
+										<ui:fragment rendered="#{resumeHome.nextExists}">
+                            				<td class="td_t_b td_t_t">
+	                            				<s:link propagation="none"  view="/record/UsedResume.xhtml"   styleClass="no_d" >
+	                            					<f:param name="pageNum" value="#{resumeHome.nextFirstResult}" />&gt;
+	                            				</s:link>
+                            				</td>
+                            				<td class="td_t_b td_t_t">
+								 				<s:link propagation="none"  view="/record/UsedResume.xhtml" >尾页
+								 					<f:param name="pageNum" value="#{resumeHome.PAGE_COUNT}" />
+								 				</s:link>
+											</td>
+										</ui:fragment>
+										<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{resumeHome.PAGE_COUNT}页</td>
+                            			<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                            		</ui:fragment>
+                    			</tr>
+                    		</table>
+                    	</a4j:outputPanel>
+                        <!-- 分页 结束 -->
+					<!-- 使用履历内容 左侧 结束 -->
+					</div>
+				</td>
+                <td valign="top" style="width:300px;">
+                	<div class="cm_resumeRt pt20" style="width:300px;">
+                    	<!-- 使用履历内容 右侧 开始 -->
+                        <a4j:outputPanel id="refreshT2">
+                        <!-- #{resumeHome.work1()} -->
+                        	<h:panelGroup rendered="#{sessionTake.correspond eq 1}">
+                            	<div class="cm_resumeRtTp">
+                                	<div class="cm_resumeMore2 clear">
+                                    	<h2>生成批次</h2>
+                                        <h:panelGroup rendered="#{resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">                                       
+                                        	<s:link view="/record/BatchRecordList.xhtml" onclick="return checkBase(this)">更多
+                                        		<f:param name="baseId" value="#{resumeHome.baseId}"></f:param>
+                                        		<f:param name="source" value="#{param.source}"></f:param>
+                                        	</s:link>
+                                        </h:panelGroup>
+                                    </div>
+                                    <div class="cm_llTotal clear">
+                                        <span class="fl"><font>剩余</font><b class="colorYell fl font20">#{resumeHome.surplus}</b><font>张</font> </span>
+                                        <h:panelGroup rendered="#{s:hasRole('resume_edit')}">
+                                        	 <h:panelGroup rendered="#{resumeHome.ei.resumeState!=1 and ((resumeHome.ei.govState and resumeExamineHome.resumeFlag!='2' and resumeExamineHome.entState!='2') or(resumeHome.ei.govState eq false))}">
+	                                        	<s:link view="/record/BatchRecord.xhtml" onclick="return checkSelect(4);" style="padding:6px 10px; font-family:'微软雅黑';display: #{s:hasRole('create_resume')?'hidden':'none'}" styleClass="btn btn-success fr" id="button" >
+	                                        		生成履历
+	                                        		<f:param name="baseId" value="#{resumeHome.baseId}"></f:param>
+	                                        		<f:param name="source" value="#{param.source}"></f:param>
+	                                        	</s:link>
+                                        	</h:panelGroup>
+                                        	<h:panelGroup rendered="#{resumeHome.ei.resumeState==1}">
+	                                        	<a  style="padding:6px 10px; font-family:'微软雅黑';display: #{s:hasRole('create_resume')?'hidden':'none'}" class="btn btn-success fr" id="button" >
+	                                        		正在生成中
+	                                        	</a>
+                                        	</h:panelGroup>
+                                    	</h:panelGroup>
+                                    </div>
+                                    <div class="p_ltrb">
+                                        <table width="100%" class="cm_buildTab">
+                                        	<tbody>
+                                            	<a4j:repeat var="var" value="#{resumeHome.batchList}">
+                                                	<tr>
+	                                                    <td width="25%"><span>#{var[4]}#{var[5]}</span></td>
+	                                                    <td width="25%"><span class="colorBlu">#{var[1]}张</span></td>
+	                                                    <td width="25%"><span class="colorBlu">剩余#{var[6] lt 0 ? 0:var[6]}张</span></td>
+	                                                    <td width="25%">
+	                                   					 	<h:panelGroup rendered="#{resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+		                                                    	<h:panelGroup rendered="#{s:hasRole('resume_exp')}">
+								                                	<s:link propagation="none" styleClass="fr pr10 pl10"  view="/record/BatchRecordList.xhtml"  action="#{batchRecordHome.exportExcel}" title="导出" >
+									                                	<img src="#{request.contextPath}/asset/images/cm_lsllIco08.png" />
+									                                	<f:param name="bid" value="#{var[0]}" />
+								                                    </s:link>    
+		                                   					 	</h:panelGroup>
+		                                   					 	<h:panelGroup rendered="#{s:hasRole('resume_show')}">
+			                                                        <s:link styleClass="fr" view="/record/BdCustomNumberList.xhtml" propagation="none" includePageParams="false">
+				                                                        <f:param name="batchId" value="#{var[0]}"></f:param>
+				                                                        <f:param name="from" value="UsedResume"/>
+				                                                        <f:param name="pageNum_" value="#{pageNum}"/>
+				                                                        <f:param name="source" value="#{param.source}"/>
+				                                                        <img src="#{request.contextPath}/asset/images/cjsearch_bg.png" />
+			                                                        </s:link>
+		                                                      	</h:panelGroup>
+															</h:panelGroup>
+														</td>
+													</tr>
+												</a4j:repeat>
+                                            </tbody>
+                                        </table>
+                                    </div>
+								</div>
+							</h:panelGroup>
+						</a4j:outputPanel>
+                        <!-- #{resumeHome.work2()} -->
+						<h:panelGroup rendered="#{sessionTake.custom eq 1}">
+                        	<div class="cm_resumeRtBt mt20">
+                            	<div class="cm_resumeMore2 clear">
+                                	<h2>自定义履历</h2>
+                                    <s:link view="/record/ProductBaseInfoList.xhtml"><f:param name="tab" value="tab"></f:param><f:param name="source" value="#{param.source}"></f:param>更多</s:link>
+                                </div>
+                                <div class="p_ltrb">
+                                	<table width="100%" class="cm_definedTab">
+                                    	<tbody>
+                                        	<a4j:repeat var="var" value="#{resumeHome.customList}">
+                                            	<tr>
+                                                	<td width="80%"><span class="colorBlu">#{var[1]}</span></td>
+                                                    <td width="20%">
+                                                   		<h:panelGroup rendered="#{s:hasRole('resume_exp')  &amp;&amp; resumeHome.valueAdded.resumeService!=-1 &amp;&amp; resumeHome.valueAdded.resumeService!=0 &amp;&amp; resumeHome.valueAdded.resumeService!=2}">
+	                                                        <s:link styleClass="fr pr10 pl10"  action="#{newProductRecordHome.downloadQR}" propagation="none" includePageParams="false">
+																<f:param name="productRecordProductInfoId" value="#{var[0]}"/>
+																<img src="#{request.contextPath}/asset/images/cm_lsllIco08.png" />
+															</s:link>
+														</h:panelGroup>
+														<h:panelGroup rendered="#{s:hasRole('resume_show')}">
+	                                                        <s:link styleClass="fr" view="/record/CustomBackWard.xhtml"  propagation="none" includePageParams="false">
+		                                                        <f:param name="productRecordProductInfoId" value="#{var[0]}"/>
+		                                                        <f:param name="editfrom" value="UsedResume"></f:param>
+		                                                        <f:param name="pageNum" value="#{pageNum}"/>
+		                                                        <f:param name="source" value="#{param.source}"/>
+		                                                        <img src="#{request.contextPath}/asset/images/cjsearch_bg.png" />
+                                                       		</s:link>
+                                                        </h:panelGroup>
+                                                    </td>
+                                                </tr>
+                                             </a4j:repeat>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</h:panelGroup>
+                        <!-- 使用履历内容 右侧 结束 -->
+					</div>
+				</td>
+			</tr>
+		</table>
+        <!-- 使用履历内容 结束 -->
+	</div><!--right_c结束-->
+</div>
+     <!-- #{resumeHome.work3()} -->     
+
+<div class="modal fade" id="lv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<a4j:form id="lvform" ajaxSubmit="true" >	 
+    	<div class="modal-dialog">
+        	<div class="modal-content">
+            	<div class="modal-header">
+                	<button type="button" class="close" data-dismiss="modal"> </button>
+                    <h4 class="modal-title font14" id="myModalLabel">对应履历</h4>
+                </div>
+                <h:panelGroup id="lvPanel">
+                <div class="modal-body"  style="padding-bottom:0;height: 340px;overflow: auto;">
+                	<table class="farmingMageTab_jl">
+                    	<tr>
+                        	<td width="60" align="right">履历类型</td>
+                            <td width="245" style="padding-left:15px;">
+                            	<div class="sw170">
+							        <select style="display: none;" class="selectpicker" id="resumeType1" name="resumeType" onchange="resumeTypeChange(this.value)">
+	                                	<option value="1">模板履历</option>
+	                                	<option value="2">自定义履历</option>
+	                                	<option value="3">养殖履历</option>
+								</select>     
+								</div>
+							</td>
+                            <td width="60" align="right">对应履历</td>
+                            <td width="200" style="padding-left:15px;">
+                            	<div class="sw170 lvlimc-selt" id="lvformprid2">
+                  					<select  class="selectpicker lvformpr2" id="lvform:pr2" name="pr2" data-live-search="true" style="width:146px;display:none;" onchange="changePrt(this.value)"  >
+				                  		<a4j:repeat value="#{resumeHome.prList}" var="var">
+					                  		<h:panelGroup rendered="#{var[3] eq 2 and var[4] ne null and var[4] ne ''}">
+					                  			<option value="#{var[0]}">#{var[2]}&#160;#{var[1]}-#{var[6]}</option>
+					                  		</h:panelGroup>
+					                  		<h:panelGroup rendered="#{var[3] eq 2 and (var[4] eq null or var[4] eq '')}">
+					                  			<option value="#{var[0]}">#{var[2]}&#160;#{var[1]}-#{var[6]}</option>
+					                  		</h:panelGroup>
+					                  		<h:panelGroup rendered="#{var[3] ne 2}">
+					                  			<option value="#{var[0]}">#{var[2]}&#160;#{var[1]}-#{var[5]}</option>
+					                  		</h:panelGroup>
+				                  		</a4j:repeat>
+									</select>
+								</div>
+								<div class="sw170" id="lvformprid3" style="display:none;">
+                  					<select  class="selectpicker lvformpr2" id="lvform:pr3" name="pr3" data-live-search="true" style="width:146px;display:none;" onchange="changePrt(this.value)"  >
+				                  		<a4j:repeat value="#{resumeHome.prCustomList}" var="var">
+				                  			<option value="#{var[0]}">#{var[1]}</option>
+				                  		</a4j:repeat>
+									</select>
+								</div>
+								<div class="sw170" id="lvformprid4" style="display:none;">
+									<select  class="selectpicker lvformpr2" id="lvform:pr4" name="pr4" data-live-search="true" style="width:146px;display:none;" >
+                                 		<a4j:repeat value="#{resumeHome.animalList}" var="var">
+												<option value="#{var[0]}">#{var[2]}&#160;#{var[1]}</option>
+										</a4j:repeat>
+                             		</select>
+								</div>
+							</td>
+						</tr>
+						<tr>
+                        	<td width="60" align="right">印刷批次</td>
+                            <td width="245" style="padding-left:15px;">
+                            	<input type="hidden" value="" id="need" name="need"/>
+                               	<div class="sw170">
+                       				<select class="selectpicker" id="batchId" name="batchId" style="width:146px;display:none;"  onchange="changeStart(this)" >
+										<a4j:repeat value="#{resumeHome.bcbList}" var="var" >
+											<option style="#{var[2]==2?'display:none;':''}" value="#{var[0]}">#{var[1]}</option>
+										</a4j:repeat> 
+									</select>
+								</div>
+							</td>
+                            <td width="60" align="right">对应编号</td>
+                            <td width="200" style="padding-left:15px;">
+                            	<h:inputText value="#{resumeHome.start_}" id="start_" styleClass="form-control fl" style="width:85px;"/>
+                                <span class="fl" style="padding:0 2px;">—</span>
+                                <h:inputText value="#{resumeHome.end_}" id="end_" styleClass="form-control fl" style="width:85px;"/> 
+                            </td>
+						</tr>
+                        <tr>
+                        	<td width="60" align="right" class="plantC">包装人</td>
+                            <td width="245" style="padding-left:15px;" class="plantC">
+                            	<select style="display: none;" class="selectpicker" id="farmer_id" name="farmer_id">
+                                	<option value="-1">请选择</option>
+                                    <a4j:repeat value="#{resumeHome.farmerList}" var="var" >
+										<option value="#{var[0]}">#{var[1]}</option>
+									</a4j:repeat> 
+                                </select>
+                            </td>
+                            <td width="60" align="right" class="plantC">包装时间</td>
+                            <td width="200" style="padding-left:15px;" class="plantC">
+                            	<div class="input-append date form_datetime land_testDate" >
+                                	<input size="26" type="text" value="" readonly="readonly" id="lvform:packtime_1InputDate" name="lvform:packtime_1InputDate" autocomplete="off"/>
+                                   	<span class="add-on"><i class="icon-th"></i></span>
+                                </div>
+                            </td>
+                            <td width="60" align="right" class="animalC" style="display:none;">排酸时间</td>
+                            <td width="242" style="padding-left:15px;display:none;" class="animalC">
+                            	 <div class="input-append date form_datetime land_testDate" >
+	                            	<input size="26" type="text" value="" readonly="readonly"  autocomplete="off"  id="acidTime" name="acidTime2"/>
+	                            	<span class="add-on"><i class="icon-th"></i></span>
+	                            </div>
+							</td>
+							<td width="60" align="right" class="animalC" style="display:none;">排酸温度</td>
+                         	<td width="210" style="padding-left:15px;display:none;" class="animalC">
+                         		<input class="form-control fl" type="text" style="width:175px;" id="acidTemp" name="acidTemp"/><span class="fl" style="padding:0 5px;">℃</span>
+                         	</td>
+						</tr>
+						<tr>
+							<td width="60" align="right" class="animalC" style="display:none;">冷冻出库</td>
+                            <td width="210" style="padding-left:15px;display:none;" class="animalC">
+	                            <div class="input-append date form_datetime land_testDate" >
+	                            	<input size="26" type="text" value="" readonly="readonly" id="frozenOutTime" name="frozenOutTime" autocomplete="off"/>
+	                            	<span class="add-on"><i class="icon-th"></i></span>
+	                            </div>
+                            </td>
+                             <td width="60" align="right" class="animalC" style="display:none;">出售部位</td>
+                         	<td width="210" style="padding-left:15px;display:none;" class="animalC">
+                         		<input class="form-control fl" type="text" style="width:190px;" id="saleSite" name="saleSite"/>
+                         	</td>
+						</tr>
+						<tr>
+                            <td width="60" align="right" class="plantC" >包装图片</td>
+                         	<td width="210" style="padding-left:15px;display:none;" class="plantC" colspan="3">
+	                        	<iframe srcs="#{request.contextPath}/record/PackingImages.seam?packId=null" id="myframPic2" name="myframPic2" frameBorder="0" scrolling="no" height="150" width="460" />
+                         	</td>
+                         	
+						</tr>
+					</table>
+                    <h2 class="extraMessage plantC">附加信息</h2>
+                    <div class="farmingMageTab_fjxx">
+                    	<table class="farmingMageTab_jl">
+                        	<tr>
+								<td width="60" height="34" align="right">订单编号</td>
+                                <td width="245" style="padding-left:15px;">
+                                <h:panelGroup id="orderIds">
+									<select style="display: none;" class="selectpicker" id="order_id" name="order_id">
+                                    	<option value="-1">请选择</option>
+                                       	<a4j:repeat value="#{resumeHome.orderList}" var="var" >
+											<option value="#{var[0]}">#{var[1]}&#160;#{var[2]}</option>
+										</a4j:repeat>
+                                    </select>
+                                </h:panelGroup>
+                                </td>
+                                <td width="60" height="34" align="right">采收时间
+	                                <input type="hidden" value="" id="harvest_type" name="harvest_type"/>
+	                                <input type="hidden" value="" id="old_id" name="old_id"/>
+                                </td>
+                                <td width="200" style="padding-left:15px;">
+                                	<div class="caishou_date fl">
+                                    	<div class="input-append date form_datetime land_testDate " >
+                                       		<input size="26" type="text" value="" readonly="readonly" id="lvform:harvesttime_1InputDate"  name="lvform:harvesttime_1InputDate" autocomplete="off"/>
+                                       		<span class="add-on"><i class="icon-th"></i></span>
+                                       	</div>
+                                       	<div class="caishou_selt sw171">
+											<select style="display: none;" class="selectpicker" id="prt_id" name="prt_id" onchange="resetVal(this)">
+	                                       		<a4j:repeat var="var" value="#{resumeHome.prtStr}">
+	                                          		<option value="#{var[0]}" aa="#{var[2]}"  bb="#{var[3]}"  cc="#{var[4]}">#{stringUtil.showTime2(var[1])}</option>
+	                                          	</a4j:repeat>
+	                                       	</select>
+                                       	</div>
+                                   	</div>
+									<input  class="farmingInputs_add5 " type="button" id="farmingInputs_add5"/>
+								</td>
+							</tr>
+							<tr>
+                            	<td width="60" align="right">预冷时间</td>
+                                <td width="245" style="padding-left:15px;">
+                                	<div class="input-append date form_datetime land_testDate" >
+                                   		<input size="26" type="text" value="" readonly="readonly"  id="lvform:precool_1InputDate" name="lvform:precool_1InputDate" autocomplete="off"/>
+                                   		<span class="add-on"><i class="icon-th"></i></span>
+                                   	</div>
+                                </td>
+                                <td width="60" align="right">检测日期</td>
+                                <td width="200" style="padding-left:15px;">
+                                	<div class="test1">
+                                   		<div class="input-append date form_datetime land_testDate" >
+		                                   <input size="26" type="text" value="" readonly="readonly" id="lvform:testtime_1InputDate" name="lvform:testtime_1InputDate" autocomplete="off"/>
+		                                   <span class="add-on"><i class="icon-th"></i></span>
+										</div>
+                                   	</div>
+                                   	<div class="test2 sw171"  style="width:150px">
+                                   		<select id="detection" class="selectpicker" name="detection"></select>
+                                   	</div>
+                                  	<input  class="farmingInputs_add55 test2 " type="button" id="farmingInputs_add55" style="cursor: default;"/>
+                                  	<input type="hidden" name="detection_type" id="detection_type_1"  />
+								</td>
+							</tr>
+                            <tr class="test1">
+                            	<td width="60" align="right">检测机构 </td>
+                               	<td width="245" style="padding-left:15px;">
+                                	<h:inputText value="#{resumeHome.testorg_}" id="testorg_" styleClass="form-control fl" style="width:188px"/>
+								</td>
+                                <td width="60" align="right">检测种类 </td>
+                                <td width="200" style="padding-left:15px;">
+                                	<h:inputText value="#{resumeHome.testtype_}" id="testtype_" styleClass="form-control fl" style="width:188px"/>
+                                </td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<script type="text/javascript">
+					jquery('.selectpicker').selectpicker();
+					showHideMesg();
+				</script>
+				</h:panelGroup>				
+				<div class="modal-footer">
+					<h:inputHidden value="#{resumeHome.packId}" id="packId"/>
+					<h:inputHidden value="#{resumeHome.selBaseId}" id="selBaseId"/>
+					<a4j:commandButton eventsQueue="mainQueue" id="but_" reRender="refreshT,refreshT2" onclick="if(!customOneSubmit())return false;this.disabled=true;" value="保存" styleClass="btn btn-success" action="#{resumeHome.editList}" data="#{resumeHome.reeditStr}" oncomplete="if(data==''){jquery('#lv').modal('hide');refresh();this.disabled=false;}else{alert(data);this.disabled=false;}"/>
+                    <h:outputLink value="#" onclick="jquery('#lv').modal('hide');refresh(); return false;" styleClass="btn btn-default">返回</h:outputLink>
+                </div>
+			</div>
+		</div>
+	</a4j:form>
+</div>
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<a4j:form id="printForm" >
+		<div class="modal-dialog">
+        	<div class="modal-content">
+            	<div class="modal-header">
+                	<button type="button" class="close" data-dismiss="modal"> </button>
+                    <h4 class="modal-title font14" id="myModalLabel">打印履历</h4>
+                </div>
+                <h:panelGroup id="printPanel">
+                <div class="modal-body" style="padding-bottom:0;height: 340px;overflow: auto;">
+                	<table class="farmingMageTab_jl">
+                    	<tr>
+                    		<td width="60" align="right">履历类型</td>
+                         	<td width="210" style="padding-left:15px;">
+								<select style="display: none;" class="selectpicker" id="use_type2" name="use_type2" onchange="useType(this.value)">
+                                	<option value="1">种植履历</option>
+                                	<option value="2">养殖履历</option>
+								</select>                             	</td>
+                        	<td width="60" align="right" class="plantC">履历名称</td>
+                       		<td width="242" style="padding-left:15px;" class="plantC">
+                         		<input type="hidden" value="" name="edit_id" id="edit_id" />
+                         		<div class="lvlimc-selt">
+                         			<select style="display: none;"  data-live-search="true" class="selectpicker" id="pr_id2" name="pr_id2" onchange="changePrt2(this.value)">
+                                 		<a4j:repeat value="#{resumeHome.prList}" var="var">
+											<h:panelGroup rendered="#{var[3] eq 2 and var[4] ne null and var[4] ne ''}">
+												<option value="#{var[0]}">#{var[2]}&#160;#{var[1]}-#{var[6]}</option>
+											</h:panelGroup>
+											<h:panelGroup rendered="#{var[3] eq 2 and (var[4] eq null or var[4] eq '')}">
+												<option value="#{var[0]}">#{var[2]}&#160;#{var[1]}-#{var[6]}</option>
+											</h:panelGroup>
+											<h:panelGroup rendered="#{var[3] ne 2}">
+												<option value="#{var[0]}">#{var[2]}&#160;#{var[1]}-#{var[5]}</option>
+											</h:panelGroup>
+										</a4j:repeat>
+                             		</select>
+								</div>
+							</td>
+							<td width="60" align="right" class="animalC" style="display:none;">履历名称</td>
+                       		<td width="242" style="padding-left:15px;display:none;" class="animalC">
+                         		<div class="lvlimc-selt">
+                         			<select style="display: none;"  data-live-search="true" class="selectpicker" id="ani_id2" name="ani_id2">
+                                 		<a4j:repeat value="#{resumeHome.animalList}" var="var">
+												<option value="#{var[0]}">#{var[2]}&#160;#{var[1]}</option>
+										</a4j:repeat>
+                             		</select>
+								</div>
+							</td>
+						</tr>
+                        <tr>
+                         	<td width="60" align="right">打印数量</td>
+                         	<td width="210" style="padding-left:15px;">
+                         		<input class="form-control fl" type="text" style="width:100px;" id="printCount2" name="printCount2"/><span class="fl" style="padding:0 5px;">张</span>
+                         	</td>
+                        	<td width="60" align="right" class="plantC">包装人</td>
+                            <td width="242" style="padding-left:15px;" class="plantC">
+                            	<select style="display: none;" class="selectpicker" id="farmer_id2" name="farmer_id2">
+                                	<option value="-1">请选择</option>
+                                	<a4j:repeat value="#{resumeHome.farmerList}" var="var" >
+										<option value="#{var[0]}">#{var[1]}</option>
+									</a4j:repeat> 
+								</select>
+							</td>
+							<td width="60" align="right" class="animalC" style="display:none;">排酸时间</td>
+                            <td width="242" style="padding-left:15px;display:none;" class="animalC">
+                            	 <div class="input-append date form_datetime land_testDate" >
+	                            	<input size="26" type="text" value="" readonly="readonly"  autocomplete="off"  id="acidTime2" name="acidTime2"/>
+	                            	<span class="add-on"><i class="icon-th"></i></span>
+	                            </div>
+							</td>
+						</tr>
+						<tr>
+							<td width="60" align="right" class="plantC">包装时间</td>
+                            <td width="210" style="padding-left:15px;" class="plantC">
+	                            <div class="input-append date form_datetime land_testDate" >
+	                            	<input size="26" type="text" value="" readonly="readonly" id="packingTime2" name="packingTime2" autocomplete="off"/>
+	                            	<span class="add-on"><i class="icon-th"></i></span>
+	                            </div>
+                            </td>
+                            <td width="60" align="right" class="animalC" style="display:none;">排酸温度</td>
+                         	<td width="210" style="padding-left:15px;display:none;" class="animalC">
+                         		<input class="form-control fl" type="text" style="width:175px;" id="acidTemp2" name="acidTemp2"/><span class="fl" style="padding:0 5px;">℃</span>
+                         	</td>
+                         	<td width="60" align="right" class="animalC" style="display:none;">冷冻出库</td>
+                            <td width="210" style="padding-left:15px;display:none;" class="animalC">
+	                            <div class="input-append date form_datetime land_testDate" >
+	                            	<input size="26" type="text" value="" readonly="readonly" id="frozenOutTime2" name="frozenOutTime2" autocomplete="off"/>
+	                            	<span class="add-on"><i class="icon-th"></i></span>
+	                            </div>
+                            </td>
+						</tr>
+						<tr>
+                            <td width="60" align="right" class="animalC" style="display:none;">出售部位</td>
+                         	<td width="210" style="padding-left:15px;display:none;" class="animalC">
+                         		<input class="form-control fl" type="text" style="width:190px;" id="saleSite2" name="saleSite2"/>
+                         	</td>
+						</tr>
+						<tr>
+                            <td width="60" align="right" class="plantC" >包装图片</td>
+                         	<td width="210" style="padding-left:15px;display:none;" class="plantC" colspan="3">
+	                        	<iframe srcs="#{request.contextPath}/record/PackingImages.seam?packId=null" id="myframPic" name="myframPic" frameBorder="0" scrolling="no" height="150" width="460" />
+                         	</td>
+                         	
+						</tr>
+					</table>
+					<h2 class="extraMessage plantC">附加信息</h2>
+                    <div class="farmingMageTab_fjxx">
+                     	<table class="farmingMageTab_jl">
+                     		<tr>
+                         		<td width="60" height="34" align="right">订单编号</td>
+                             	<td width="242" style="padding-left:15px;">
+                         		<h:panelGroup id="orderIds2">
+                             		<select style="display: none;" class="selectpicker" id="order_id2" name="order_id2"  >
+                                        <option value="-1">请选择</option>
+                                        <a4j:repeat value="#{resumeHome.orderList}" var="var" >
+											<option value="#{var[0]}">#{var[1]}&#160;#{var[2]}</option>
+										</a4j:repeat>
+                                    </select>
+                                </h:panelGroup>
+                                </td>
+                                <td width="60" height="34" align="right" >采收时间
+                                    <input type="hidden" value="" id="harvest_type2" name="harvest_type"/>
+                                    <input type="hidden" value="" id="old_id2" name="old_id"/>
+                                </td>
+                                <td width="210" style="padding-left:15px;">
+                             		<div class="caishou_date fl">
+			                            <div class="input-append date form_datetime land_testDate" >
+				                            <input size="16" type="text" value="" id="harvest_time2" name="harvest_time2" readonly="readonly" />
+				                            <span class="add-on"><i class="icon-th"></i></span>
+			                            </div>
+                                 		<div class="caishou_selt sw171">
+                                 			<select style="display: none;" class="selectpicker" id="prt_id2" name="prt_id2"  onchange="resetVal2(this)">
+                                     	 		<a4j:repeat var="var" value="#{resumeHome.prtStr}">
+				                                    <option value="#{var[0]}" aa="#{var[2]}"  bb="#{var[3]}"  cc="#{var[4]}">#{stringUtil.showTime2(var[1])}</option>
+				                            	</a4j:repeat>
+                                 			</select>
+                                 		</div>
+                             		</div>
+                             		<input  class="farmingInputs_add5 " type="button" id="farmingInputs_add52"/>
+                             	</td>
+                         	</tr>
+                         	<tr>
+                         		<td width="60" align="right">预冷时间</td>
+                             	<td width="242" style="padding-left:15px;">
+                             		<div class="input-append date form_datetime land_testDate" >
+	                             		<input size="16" type="text" value="" readonly="readonly" id="precool_time2" name="precool_time2"/>
+	                             		<span class="add-on"><i class="icon-th"></i></span>
+                             		</div>
+                            	</td>
+                             	<td width="60" align="right">检测日期</td>
+                             	<td width="210" style="padding-left:15px;">
+                             		<div class="test1">
+                             			<div class="input-append date form_datetime land_testDate" >
+				                            <input size="16" type="text" value="" readonly="readonly" id="testtime2" name="testtime2"/>
+				                            <span class="add-on"><i class="icon-th"></i></span>
+				                    	</div>
+                             		</div>
+                             		<div class="test2 sw171" style="width:150px">
+                             			<select id="detection_1" class="selectpicker" name="detection"></select>
+                             		</div>
+			                        <input  class="farmingInputs_add55 test2 " type="button" id="farmingInputs_add55" style="cursor: default;"/>
+			                    	<input type="hidden" name="detection_type" id="detection_type_2" />
+                             	</td>
+                         	</tr>
+                         	<tr class="test1">
+                         		<td width="60" align="right">检测机构 </td>
+                             	<td width="242" style="padding-left:15px;">
+                             		<input class="form-control fl" type="text" style="width:190px;" id="test_org2" name="test_org2"/>
+                             	</td>
+                             	<td width="60" align="right">检测种类 </td>
+                             	<td width="210" style="padding-left:15px;">
+                             		<input class="form-control fl" type="text" style="width:190px;" id="test_type2" name="test_type2"/>
+                             	</td>
+                         	</tr>
+                     	</table>
+                     </div>
+                 </div>
+                 </h:panelGroup>
+                 <div class="modal-footer">
+                 <h:inputHidden value="#{resumeHome.packId}" id="packId"/>
+                 <h:inputHidden value="#{resumeHome.selBaseId}" id="selBaseId"/>
+                 	<a4j:commandButton id="persist" reRender="refreshT" onclick="if(!checkPrint())return false;" styleClass="btn btn-primary" value="打印" action="#{resumeHome.saveInspectInfo}" data="#{resumeHome.delAddress}" oncomplete="putAddressComplete(data);" />
+                	<h:outputLink value="#" onclick="jquery('#myModal2').modal('hide'); return false;" styleClass="btn btn-default">返回</h:outputLink>
+            	</div>
+        	</div>
+    	</div>
+	</a4j:form>
+</div>
+
+<div class="modal fade" id="myModal2_look" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+        	<div class="modal-header">
+            	<button type="button" class="close" data-dismiss="modal"> </button>
+                <h4 class="modal-title font14" id="myModalLabel">打印履历</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:0;height: 340px;overflow: auto;">
+            	<table class="farmingMageTab_jl">
+                	<tr>
+                    	<td width="60" align="right">履历名称</td>
+                        <td width="242"  class="recordName_p" style="padding-left:15px;">
+                            
+                        </td>
+                        <td width="60" align="right">打印数量</td>
+                        <td width="193" id="printCount2_p" style="padding-left:15px;">
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td width="60" align="right">包装人</td>
+                        <td width="242"  id="farmer_id_look_p" style="padding-left:15px;">
+                        </td>
+                        <td width="60" align="right">包装时间</td>
+                        <td width="193" id="packtime_p" style="padding-left:15px;">
+                        </td>
+                    </tr>
+				</table>
+                <h2 class="extraMessage">附加信息</h2>
+                <div class="farmingMageTab_fjxx">
+                   	<table class="farmingMageTab_jl">
+						<tr>
+							<td width="60" height="34" align="right">订单编号</td>
+							<td width="242" id="order_id_p" style="padding-left:15px;"></td>
+							<td width="60" height="34" align="right">采收时间</td>
+							<td width="193" id="harvestime_p" style="padding-left:15px;"></td>
+						</tr>
+						<tr>
+							<td width="60" align="right">预冷时间</td>
+							<td width="242" id="precool_p" style="padding-left:15px;"></td>
+							<td width="60" align="right">检测日期</td>
+							<td width="193" id="testtime_p" style="padding-left:15px;"></td>
+						</tr>
+						<tr>
+							<td width="60" align="right">检测机构 </td>
+							<td width="242" id="test_org_p" style="padding-left:15px;"></td>
+							<td width="60" align="right">检测种类 </td>
+							<td width="193" id="test_type_p" style="padding-left:15px;"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+                <h:outputLink value="#" onclick="jquery('#myModal2_look').modal('hide'); return false;" styleClass="btn btn-default">返回</h:outputLink>
+			</div>
+		</div>
+	</div>
+</div>
+
+<a4j:form id="formid" >
+	<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+	<a4j:jsFunction name="changePrt" eventsQueue="mainQueue"  action="#{resumeHome.changePrt}" data="#{resumeHome.re_prt_str}" oncomplete="link2(data);" reRender="orderIds">
+		<a4j:actionparam name="param1" assignTo="#{resumeHome.param}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="changePrt2" eventsQueue="mainQueue"  action="#{resumeHome.changePrt}" data="#{resumeHome.re_prt_str}" oncomplete="link3(data);" reRender="orderIds2">
+		<a4j:actionparam name="param1" assignTo="#{resumeHome.param}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="orderInfo" eventsQueue="mainQueue"  action="#{resumeHome.orderInfo}" data="#{resumeHome.orderCode}" oncomplete="message(data)">
+		<a4j:actionparam name="orderInfoId" assignTo="#{resumeHome.orderInfoId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="startnumber" eventsQueue="mainQueue"  action="#{resumeHome.startNumber}" data="#{resumeHome.fromBatchNumber}" oncomplete="returnChangeStart(data)">
+		<a4j:actionparam name="fromBatchNumber" assignTo="#{resumeHome.fromBatchNumber}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="changeBaseinfo" eventsQueue="mainQueue"  action="#{resumeHome.work3()}" data="" oncomplete="checkSelect();" reRender="lvPanel,printPanel">
+		<a4j:actionparam name="selBaseId" assignTo="#{resumeHome.selBaseId}"/>
+	</a4j:jsFunction>
+</a4j:form>
+<script type="text/javascript">
+document.onkeydown=function(event){ 
+	e = event ? event :(window.event ? window.event : null); 
+	if(e.keyCode==13){ 
+    	if(document.activeElement.id=="searchInfo"){
+    		jquery(".searchBut").trigger("click");
+    	}
+    	e.keyCode=0;
+    	if (window.navigator.userAgent.indexOf("MSIE")==-1){
+    		e.preventDefault();
+    		return false;
+		}
+    	e.returnValue=false;				
+	} 
+}
+var searchType = '#{resumeHome.searchType}';
+if(searchType!=""){
+	jquery("#searchType").val(searchType);
+}
+var searchInfo = '#{resumeHome.searchInfo}';
+if(searchInfo=="" || searchInfo == null){
+	jquery("#searchInfo").val("请输入搜索条件");
+	jQuery("#searchInfo").css("color","#a8a8a8");
+}else if(searchInfo=="请输入搜索条件"){
+	jQuery("#searchInfo").css("color","#a8a8a8");
+}else{
+	jquery("#searchInfo").val(searchInfo);
+	jQuery("#searchInfo").css("color","#000");
+}
+
+function  objFocus(obj){
+	if(obj.value=="请输入搜索条件"){
+		obj.value="";
+		jQuery("#searchInfo").css("color","#000");
+	}
+} 
+function objBlur(obj){
+   if(obj.value==""){
+		obj.value="请输入搜索条件";
+		jQuery("#searchInfo").css("color","#a8a8a8");
+	}
+}
+
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+var de = '#{sessionTake.detectEnable}';
+function addMe(){
+	jquery(".extraMessage").next('.farmingMageTab_fjxx').hide();
+	jquery(".extraMessage").addClass('extraMessage2');
+	var v = jquery(".lvformpr2 option:eq(0)").attr("value");
+	jquery('.lvformpr2').selectpicker("val",v);
+	jquery(".lvformpr2").selectpicker("refresh");
+	var flag=true;
+	jquery('#batchId option').each(function(index){
+		if(jquery(this).css('display')!='none' && flag){
+			jquery("#batchId")[0].selectedIndex = index;
+			flag=false;
+		}
+	})
+	jquery("#batchId").selectpicker("refresh");
+	jquery("#farmer_id")[0].selectedIndex = 0;
+	jquery("#farmer_id").selectpicker("refresh");
+	jquery("#order_id")[0].selectedIndex = 0;
+	jquery("#order_id").selectpicker("refresh");
+	jquery("#need").val('');
+	jquery("#lvform\\:start_").val('');
+	jquery("#lvform\\:end_").val('');
+	jquery("#lvform\\:testorg_").val("");
+	jquery("#lvform\\:testtype_").val("");
+	jquery("#lvform input[type='text']").val("");
+	jquery("#farmingInputs_add52").removeClass('farmingInputs_add5Bg');
+	jquery("#farmingInputs_add52").prev('.caishou_date').children('.form_datetime').css('display','block');	
+	jquery("#farmingInputs_add52").prev('.caishou_date').children('.caishou_selt').css('display','none');
+	var d = new Date();
+	jquery("#lvform\\:packtime_1InputDate").val(d.format("yyyy-MM-dd hh:mm"));
+	jquery("#packingTime").val(d.format("yyyy-MM-dd hh:mm"));
+	jquery("#acidTime").val(d.format("yyyy-MM-dd hh:mm"));
+	jquery("#frozenOutTime").val(d.format("yyyy-MM-dd hh:mm"));
+	if(de==1){
+		jquery(".test1").hide();
+		jquery(".test2").show();
+	}else{
+		jquery(".test1").show();
+		jquery(".test2").hide();
+	}
+	changeStart(jquery('#batchId'));
+}
+
+function message(data){
+	document.getElementById("productMsg").innerHTML = "请前往【订单模块】全部订单中查找"+data+"并点击理货编辑该对应关系！";
+	jquery("#myModal3").modal('show');
+}
+
+function addMe2(){
+	jquery(".extraMessage").next('.farmingMageTab_fjxx').hide();
+	jquery(".extraMessage").addClass('extraMessage2');
+	var v = jquery("#pr_id2 option:eq(0)").attr("value");
+	jquery('#pr_id2').selectpicker("val",v);
+	jquery("#pr_id2").selectpicker("refresh");
+	jquery("#farmer_id2")[0].selectedIndex = 0;
+	jquery("#farmer_id2").selectpicker("refresh");
+	jquery("#order_id2")[0].selectedIndex = 0;
+	jquery("#order_id2").selectpicker("refresh");
+	jquery("#edit_id").val('');
+	jquery("#printForm input[type='text']").val("");
+	jquery("#farmingInputs_add52").removeClass('farmingInputs_add5Bg');
+	jquery("#farmingInputs_add52").prev('.caishou_date').children('.form_datetime').css('display','block');	
+	jquery("#farmingInputs_add52").prev('.caishou_date').children('.caishou_selt').css('display','none');
+	var d = new Date();
+	jquery("#packingTime2").val(d.format("yyyy-MM-dd hh:mm"));
+	jquery("#acidTime2").val(d.format("yyyy-MM-dd hh:mm"));
+	jquery("#frozenOutTime2").val(d.format("yyyy-MM-dd hh:mm"));
+	if(de==1){
+		jquery(".test1").hide();
+		jquery(".test2").show();
+	}else{
+		jquery(".test1").show();
+		jquery(".test2").hide();
+	}
+}
+            
+jquery(function(){
+	jquery('.srarchfont').focus(function(){
+		if(jquery(this).val()=="请输入搜索条件"){
+			jquery(this).val("");
+		}
+	}).blur(function(){
+		if(jquery(this).val()==""){
+	    	jquery(this).val("请输入搜索条件");
+		}
+	});
+	
+	getTipCenter();
+	function getTipCenter(){
+		var oMaturityW = jquery('.maturity_block').width();
+		var oMaturityH = jquery('.maturity_block').height();
+		jquery('.maturity_block').css({  //计算到期提示框垂直居中
+	    	'margin-left' : -(oMaturityW/2),
+			'margin-top'  : -(oMaturityH/2)
+	    });	
+	}	
+});
+
+var prid_ = "";
+var detection_value =-3;
+var valorder_id="";
+var valorder_id2="";
+function edit(batchObj,pminame,prid,start,end,id,a1,a2){
+	var rty = arguments[19];
+	var sId=arguments[20];
+	if(sId==1){
+		var orderId=arguments[13];
+		orderInfo(orderId);
+		return false;
+	}
+
+	if(rty==3){
+		jquery("#acidTemp").val(parseInt(arguments[22]));
+		jquery("#saleSite").val(arguments[24]);
+		document.getElementById("acidTime").value=arguments[21];
+		document.getElementById("frozenOutTime").value=arguments[23];
+	}
+//	if(rty == 1){
+//		rty = 1;
+//		jquery('#resumeType1').parent().attr("class","iradio_minimal-blue checked");
+//		jquery('#resumeType1').attr('checked','checked');
+//		jquery('#resumeType2').parent().attr("class","iradio_minimal-blue");
+//		jquery('#resumeType2').attr('checked',false);
+//	}else if(rty == 2){
+//		jquery('#resumeType2').parent().attr("class","iradio_minimal-blue checked");
+//		jquery('#resumeType2').attr('checked','checked');
+//		jquery('#resumeType1').parent().attr("class","iradio_minimal-blue");
+//		jquery('#resumeType1').attr('checked',false);
+//	}
+	jquery('#resumeType1').selectpicker('val',rty);
+	resumeTypeChange(rty);
+    			
+	var obj = jquery(".lvformpr2 option[value='"+prid+"']").length;
+	if(obj < 1){
+		document.getElementById("productMsg").innerHTML = "批次为 "+batchObj+" 的履历已作废!";
+		jquery("#myModal3").modal('show');
+		return false;
+	}else{
+    	if(arguments[18]!='')
+        	detection_value = arguments[18];
+        jquery(".extraMessage").next('.farmingMageTab_fjxx').hide();
+		jquery(".extraMessage").addClass('extraMessage2');
+		prid_ = prid;
+		jquery("#need").val(id);
+		jquery("#lvform\\:start_").val(start);
+		jquery("#lvform\\:end_").val(end);
+		jquery("#lvform\\:testorg_").val(a1.split(" ")[0]);
+		jquery("#lvform\\:testtype_").val(a2.split(" ")[0]);
+		document.getElementById("lvform:harvesttime_1InputDate").value=arguments[8];
+		document.getElementById("lvform:precool_1InputDate").value=arguments[9];
+		document.getElementById("lvform:testtime_1InputDate").value=arguments[10];
+		document.getElementById("lvform:packtime_1InputDate").value=arguments[11];
+		jquery("#batchId").attr('onchange','');
+		jquery("#batchId").selectpicker('val', arguments[12]);
+		jquery("#batchId").attr('onchange','changeStart(this)');
+        	//jquery("#order_id").selectpicker('val', -1);
+        if(arguments[13]==""){
+        	jquery("#order_id").selectpicker()
+        }else{
+        	jquery("#order_id").selectpicker('val', arguments[13]);
+            valorder_id=arguments[13];
+        }
+        if(arguments[14]==""){
+        	jquery("#farmer_id").selectpicker('val', -1);
+        }else{
+        	jquery("#farmer_id").selectpicker('val', arguments[14]);
+        }
+        if(jquery(".lvformpr2").val()==prid){
+        	if(arguments[15]==""){
+         		jquery("#lvform\\:harvesttime_1InputDate").val("");
+         		jquery("#farmingInputs_add5").removeClass('farmingInputs_add5Bg');
+     			jquery("#farmingInputs_add5").prev('.caishou_date').children('.form_datetime').css('display','block');	
+     			jquery("#farmingInputs_add5").prev('.caishou_date').children('.caishou_selt').css('display','none');
+         	}else{
+         		jquery("#prt_id").selectpicker("val",arguments[15]);
+         		jquery("#prt_id").selectpicker("refresh");
+         		jquery("#farmingInputs_add5").addClass('farmingInputs_add5Bg');
+     			jquery("#farmingInputs_add5").prev('.caishou_date').children('.form_datetime').css('display','none');	
+     			jquery("#farmingInputs_add5").prev('.caishou_date').children('.caishou_selt').css('display','block');
+         	}
+        }else{
+        	if(arguments[15]==""){
+        		jquery("#lvform\\:harvesttime_1InputDate").val("");
+            	jquery("#farmingInputs_add5").removeClass('farmingInputs_add5Bg');
+        		jquery("#farmingInputs_add5").prev('.caishou_date').children('.form_datetime').css('display','block');	
+        		jquery("#farmingInputs_add5").prev('.caishou_date').children('.caishou_selt').css('display','none');
+            }else{
+            	jquery("#old_id").val(arguments[15]);
+            	jquery("#farmingInputs_add5").addClass('farmingInputs_add5Bg');
+        		jquery("#farmingInputs_add5").prev('.caishou_date').children('.form_datetime').css('display','none');	
+        		jquery("#farmingInputs_add5").prev('.caishou_date').children('.caishou_selt').css('display','block');
+            }
+        }
+      	jquery('#myframPic2').attr('src','/record/PackingImages.seam?packId='+id);
+        jquery("#lvform\\:pmi2").selectpicker('val', pminame);
+        jquery(".lvformpr2").selectpicker('val', prid);
+        jquery('#lv').modal('show');
+        if(de==1||arguments[18]!=''){
+    	    jquery(".test1").hide();
+    		jquery(".test2").show();
+		}else{
+			jquery(".test1").show();
+			jquery(".test2").hide();
+		}
+		return true;
+	}
+	return false;
+}
+    		
+var detection_value_2 = -3;
+function edit_p(pminame,prid,start,end,id,a1,a2){
+	if(arguments[17]!="")
+    	detection_value_2 = arguments[17];
+	jquery(".extraMessage").next('.farmingMageTab_fjxx').hide();
+    jquery(".extraMessage").addClass('extraMessage2');
+    prid_ = prid;
+    jquery("#edit_id").val(id);
+    jquery("#printCount2").val(start);
+    jquery("#test_org2").val(a1.split(" ")[0]);
+    jquery("#test_type2").val(a2.split(" ")[0]);
+    document.getElementById("harvest_time2").value=arguments[7];
+    document.getElementById("precool_time2").value=arguments[8];
+    document.getElementById("testtime2").value=arguments[9];
+    document.getElementById("packingTime2").value=arguments[10];
+    	//jquery("#order_id2").selectpicker('val', -1);
+    if(arguments[12]==""){
+    	jquery("#order_id2").selectpicker()
+    }else{
+    	jquery("#order_id2").selectpicker('val', arguments[12]);
+    	valorder_id=arguments[12];			
+    }
+    
+    if(arguments[13]==""){
+    	jquery("#farmer_id2").selectpicker('val', -1);
+    }else{
+    	jquery("#farmer_id2").selectpicker('val', arguments[13]);
+	}
+    			
+	if(jquery("#pr_id2").val()==prid){
+    	if(arguments[14]==""){
+        	jquery("#harvest_time2").val("");
+        	jquery("#farmingInputs_add52").removeClass('farmingInputs_add5Bg');
+    		jquery("#farmingInputs_add52").prev('.caishou_date').children('.form_datetime').css('display','block');	
+    		jquery("#farmingInputs_add52").prev('.caishou_date').children('.caishou_selt').css('display','none');
+        }else{
+        	jquery("#prt_id2").selectpicker("val",arguments[14]);
+        	jquery("#prt_id2").selectpicker("refresh");
+        	jquery("#farmingInputs_add52").addClass('farmingInputs_add5Bg');
+    		jquery("#farmingInputs_add52").prev('.caishou_date').children('.form_datetime').css('display','none');	
+    		jquery("#farmingInputs_add52").prev('.caishou_date').children('.caishou_selt').css('display','block');
+        }
+    }else{
+    	if(arguments[14]==""){
+    		jquery("#harvest_time2").val("");
+        	jquery("#farmingInputs_add52").removeClass('farmingInputs_add5Bg');
+    		jquery("#farmingInputs_add52").prev('.caishou_date').children('.form_datetime').css('display','block');	
+    		jquery("#farmingInputs_add52").prev('.caishou_date').children('.caishou_selt').css('display','none');
+        }else{
+        	jquery("#old_id").val(arguments[14]);
+        	jquery("#farmingInputs_add52").addClass('farmingInputs_add5Bg');
+    		jquery("#farmingInputs_add52").prev('.caishou_date').children('.form_datetime').css('display','none');	
+    		jquery("#farmingInputs_add52").prev('.caishou_date').children('.caishou_selt').css('display','block');
+        }
+    }
+    if(de==1||arguments[17]!=''){
+		jquery(".test1").hide();
+		jquery(".test2").show();
+	}else{
+		jquery(".test1").show();
+		jquery(".test2").hide();
+	}
+	jquery("#pr_id2").selectpicker('val', prid);
+	jquery("#myModal2").modal('show');
+}
+    		
+function resetVal2(obj){
+	if(obj.selectedIndex==-1)
+    	return;
+	var a = obj.options[obj.selectedIndex].getAttribute("aa");
+   	var b = obj.options[obj.selectedIndex].getAttribute("bb");
+    var c = obj.options[obj.selectedIndex].getAttribute("cc");
+    if(a=="null")
+    	jquery("#test_type2").val("");
+    else
+    	jquery("#test_type2").val(a);
+	
+    if(b=="null")
+    	jquery("#test_org2").val("");
+    else
+    	jquery("#test_org2").val(b);
+	
+    if(c=="null"||c.length<8)
+    	jquery("#testtime2").val("");
+    else
+    	jquery("#testtime2").val(c.substring(0,16));
+}
+    		
+function resetVal(obj){
+	if(obj.selectedIndex==-1)
+    	return;
+    var a = obj.options[obj.selectedIndex].getAttribute("aa");
+    var b = obj.options[obj.selectedIndex].getAttribute("bb");
+    var c = obj.options[obj.selectedIndex].getAttribute("cc");
+    if(a=="null")
+    	jquery("#lvform\\:testtype_").val("");
+    else
+    	jquery("#lvform\\:testtype_").val(a);
+	
+    if(b=="null")
+    	jquery("#lvform\\:testorg_").val("");
+    else
+    	jquery("#lvform\\:testorg_").val(b);
+		
+    if(c=="null"||c.length<8)
+    	jquery("#lvform\\:testtime_1InputDate").val("");
+    else
+    	jquery("#lvform\\:testtime_1InputDate").val(c.substring(0,16));
+}
+    		
+function look(pminame,prid,start,end,id,a1,a2){
+	jquery(".extraMessage").next('.farmingMageTab_fjxx').hide();
+    jquery(".extraMessage").addClass('extraMessage2');
+    var v1 = jquery("#batchId option[value='"+arguments[11]+"']").html();
+    jquery(".batchId_look").html(v1);
+    var v2 = jquery("#lvform\\:pmi2 option[value='"+pminame+"']").html();
+    jquery(".modelName").html(v2);
+    jquery(".recordName").html(arguments[12]);
+    prid_ = prid;
+    jquery("#start_look").html(start);
+    jquery("#end_look").html(end);
+    jquery("#testorg_look").html(a1.split(" ")[0]);
+    jquery("#testtype_look").html(a2.split(" ")[0]);
+    document.getElementById("lvform_look:harvesttime_1InputDate").innerHTML=arguments[7];
+    document.getElementById("lvform_look:precool_1InputDate").innerHTML=arguments[8];
+    document.getElementById("lvform_look:testtime_1InputDate").innerHTML=arguments[9];
+    document.getElementById("lvform_look:packtime_1InputDate").innerHTML=arguments[10];
+    jquery("#farmer_id_look").html(arguments[16]);
+    jquery("#order_id_look").html(arguments[17]);
+    jquery("#lv_look").modal('show');
+}
+    		
+function look_p(pminame,prid,start,end,id,a1,a2){
+    jquery(".extraMessage").next('.farmingMageTab_fjxx').hide();
+    jquery(".extraMessage").addClass('extraMessage2');
+    jquery(".recordName_p").html(arguments[12]);
+    prid_ = prid;
+    jquery("#printCount2_p").html(start);
+    jquery("#test_org_p").html(a1.split(" ")[0]);
+    jquery("#test_type_p").html(a2.split(" ")[0]);
+    document.getElementById("harvestime_p").innerHTML=arguments[7];
+    document.getElementById("precool_p").innerHTML=arguments[8];
+    document.getElementById("testtime_p").innerHTML=arguments[9];
+    document.getElementById("packtime_p").innerHTML=arguments[10];
+    jquery("#farmer_id_look_p").html(arguments[16]);
+    jquery("#order_id_p").html(arguments[17]);
+    jquery("#myModal2_look").modal('show');
+}
+    		
+function link(data){
+    jquery(".lvformpr2").empty().append(data);
+    jquery('.lvformpr2').selectpicker('refresh');
+    if(prid_!=null&&prid_>0){
+    	jquery(".lvformpr2").val(prid_);
+    	prid_ = null;
+    }
+}
+    		
+function link2(data){
+    var str2 = data.split("__++");
+    data = str2[0];
+    jquery("#prt_id").empty().append(data);
+    var v = jquery("#old_id").val();
+    if(data.length>0){
+    	if(v!=""){
+    		jquery("#prt_id").selectpicker("val",v);
+    		jquery("#prt_id").selectpicker("refresh");
+    	}else{
+    		jquery("#prt_id")[0].selectedIndex = 0;
+    		jquery("#prt_id").selectpicker("refresh");
+    	}
+    }else{
+    	jquery("#prt_id").selectpicker("refresh");
+    }
+    jquery("#detection").empty().append(str2[1]).selectpicker("refresh");
+    if(jquery("#farmingInputs_add5").prev('.caishou_date').children('.form_datetime').css("display")=="none"){
+    	jquery("#prt_id").trigger("onchange");
+    }
+    			
+    if(detection_value>-3){
+    	var len = jquery("#detection option[value='"+detection_value+"']").length;
+    	if(len<1){
+        }else{
+    		jquery("#detection").selectpicker("val",detection_value);
+    	}
+    }
+    detection_value = -3;
+    jquery("#old_id").val("");
+    if(valorder_id!=""){
+    	jquery("#order_id").selectpicker()
+    	jquery("#order_id").selectpicker('val',valorder_id);
+    	valorder_id="";
+    }else{
+    	jquery("#order_id").selectpicker()
+    }
+}
+    		
+function link3(data){
+	var str2 = data.split("__++");
+    data = str2[0];
+    jquery("#prt_id2").empty().append(data);
+    var v = jquery("#old_id2").val();
+    if(data.length>0){
+    	if(v!=""){
+    		jquery("#prt_id2").selectpicker("val",v);
+    		jquery("#prt_id2").selectpicker("refresh");
+    	}else{
+    		jquery("#prt_id2")[0].selectedIndex = 0;
+    		jquery("#prt_id2").selectpicker("refresh");
+    	}
+    }else{
+    	jquery("#prt_id2").selectpicker("refresh");
+    }
+    jquery("#detection_1").empty().append(str2[1]).selectpicker("refresh");
+    if(jquery("#farmingInputs_add5").prev('.caishou_date').children('.form_datetime').css("display")=="none"){
+    	jquery("#prt_id").trigger("onchange");
+    }
+    			
+    if(detection_value_2>-3){
+    	var len = jquery("#detection_1 option[value='"+detection_value_2+"']").length;
+    	if(len<1){
+    	}else{
+    		jquery("#detection_1").selectpicker("val",detection_value_2);
+    	}
+    }
+    detection_value_2 = -3;
+    jquery("#old_id2").val("");
+    if(valorder_id2!=""){
+    	jquery("#order_id2").selectpicker()
+    	jquery("#order_id2").selectpicker('val',valorder_id2);
+    	valorder_id2="";
+    }else{
+    	jquery("#order_id2").selectpicker()
+    }
+}
+    		
+function checkPrint(){
+	if(jquery(".animalC").eq(0).css('display')=='none'){
+	    if(jquery("#farmingInputs_add52").prev('.caishou_date').children('.form_datetime').css("display")=="block"){
+	    	jquery("#harvest_type2").val(1);
+		}else{
+			jquery("#harvest_type2").val(2);
+		}
+	    var inputDate = document.getElementById("packingTime2").value;
+		if(inputDate == ""){
+			alert("请填写包装时间!") ;
+			jquery("#myModal").modal('show');
+			return false;
+		}
+		
+		if(jquery('#pr_id2').val()==null || jquery('#pr_id2').val()==""){
+			alert("履历名称不能为空!") ;
+			jquery("#myModal").modal('show');
+			return false;
+		}
+		
+		if(jquery("#testtime2").is(":visible")){
+	    	jquery("#detection_type_2").val(2);
+	    }else{
+	    	jquery("#detection_type_2").val(1);
+	    }
+
+		var src="";
+		jquery('#myframPic').contents().find('.plant_imgbd').each(function(){
+			src+=jquery(this).attr('src')+",";
+   		})
+   		if(src!=""){
+   			src=src.substring(0, src.length-1);
+   			jquery('#printForm\\:packId').val(src);
+       	}
+	}else{
+		if(jQuery('#use_type2').val()==2){
+			var text=/^(-|\+)?\d+$/;
+			var acidTemp2 = document.getElementById("acidTemp2").value;
+			if(acidTemp2 == "" || !text.test(acidTemp2) || parseInt(acidTemp2)>100 || parseInt(acidTemp2)<-100){
+				alert("请填写正确的排酸温度!") ;
+				jquery("#myModal").modal('show');
+				return false;
+			}
+
+			if(jquery('#ani_id2').val()==null || jquery('#ani_id2').val()==""){
+				alert("履历名称不能为空!") ;
+				jquery("#myModal").modal('show');
+				return false;
+			}
+			if(jquery('#saleSite2').val() == "" ||　jquery('#saleSite2').val().length>10){
+				alert("请填写出售部位且不能大于10个字!") ;
+				jquery("#myModal").modal('show');
+				return false;
+			}
+		}
+	}
+	return true;
+}
+    		
+function customOneSubmit(){
+    if(jquery("#farmingInputs_add5").prev('.caishou_date').children('.form_datetime').css("display")=="block"){
+    	jquery("#harvest_type").val(1);
+	}else{
+		jquery("#harvest_type").val(2);
+	}
+    			
+	var x = true;
+    var start = jquery("#lvform\\:start_").val();
+    var end = jquery("#lvform\\:end_").val();
+    start=parseInt(start);
+    end = parseInt(end);
+    var pid = jquery(".lvformpr2").val();
+    if(false){
+    	jquery(".prid").each(function(){
+    		if(jquery(this).attr("aa")==pid){
+    			alert("履历已存在!");
+    			x = false;
+    			return false;
+    		}
+    	});
+    }
+    if(isNaN(start)){
+    	alert("起始编码请填写整字!");
+    	jquery("#lvform\\:start_").focus();
+    	return false;
+    }
+    if(isNaN(end)){
+    	alert("结束编码请填写整字!");
+    	jquery("#lvform\\:end_").focus();
+    	return false;
+    }
+    if(start>end){
+    	alert("起始编码要小于结束编码!");
+    	jquery("#lvform\\:start_").focus();
+    	return false;
+    }
+    if(jquery("#lvform\\:testtime_1InputDate").is(":visible")){
+    	jquery("#detection_type_1").val(2);
+    	if(jquery('#lvform\\:testorg_').val()!="" && jquery('#lvform\\:testorg_').val().length>40){
+        	alert("检测机构不能大于40字！");
+        	return false;
+        }
+
+    	if(jquery('#lvform\\:testtype_').val()!="" && jquery('#lvform\\:testtype_').val().length>40){
+        	alert("检测内容不能大于40字！");
+        	return false;
+        }
+    }else{
+    	jquery("#detection_type_1").val(1);
+    }
+    if(jQuery('#resumeType1').val()==1){
+    	if(jquery('#lvform\\:pr2').val()==null || jquery('#lvform\\:pr2').val()==""){
+			alert("履历名称不能为空!") ;
+			jquery("#myModal").modal('show');
+			return false;
+		}
+   }
+
+    if(jQuery('#resumeType1').val()==2){
+    	if(jquery('#lvform\\:pr3').val()==null || jquery('#lvform\\:pr3').val()==""){
+			alert("履历名称不能为空!") ;
+			jquery("#myModal").modal('show');
+			return false;
+		}
+    }
+
+    if(jQuery('#resumeType1').val()==3){
+		var text=/^(-|\+)?\d+$/;
+		var acidTemp = document.getElementById("acidTemp").value;
+		if(acidTemp == "" || !text.test(acidTemp) || parseInt(acidTemp)>100 || parseInt(acidTemp)<-100){
+			alert("请填写正确的排酸温度!") ;
+			jquery("#myModal").modal('show');
+			return false;
+		}
+
+		if(jquery('#saleSite').val() == "" ||　jquery('#saleSite').val().length>10){
+			alert("请填写出售部位且不能大于10个字!") ;
+			jquery("#myModal").modal('show');
+			return false;
+		}
+
+		if(jquery('#lvform\\:pr4').val()==null || jquery('#lvform\\:pr4').val()==""){
+			alert("履历名称不能为空!") ;
+			jquery("#myModal").modal('show');
+			return false;
+		}
+		
+	}
+
+    var src="";
+	jquery('#myframPic2').contents().find('.plant_imgbd').each(function(){
+		src+=jquery(this).attr('src')+",";
+		})
+		if(src!=""){
+			src=src.substring(0, src.length-1);
+			jquery('#lvform\\:packId').val(src);
+   	}
+    
+    return true ;
+}
+    		
+function refresh(){}
+jquery("#lvform\\:start_").attr("autocomplete","off");
+jquery("#lvform\\:end_").attr("autocomplete","off");
+jquery(".rich-calendar-input").attr("class","form-control nw123");
+
+jquery(document).ready(function(){
+	jquery('input').iCheck({
+    	checkboxClass: 'icheckbox_minimal-blue',
+    	radioClass: 'iradio_minimal-blue',
+    	increaseArea: '20%' // optional
+	});
+
+	//jquery("input[name='resumeType']:radio").on("ifChecked", function(event){
+	//	resumeTypeChange(this.value);
+    //});
+    					
+	jquery("#farmingInputs_add5").click(function(){
+    	if(jquery(this).prev('.caishou_date').children('.form_datetime').is(':visible')){
+    		jquery("#lvform\\:testtype_").attr("aa",jquery("#lvform\\:testtype_").val());
+    		jquery("#lvform\\:testorg_").attr("aa",jquery("#lvform\\:testorg_").val());
+    		jquery("#lvform\\:testtime_1InputDate").attr("aa",jquery("#lvform\\:testtime_1InputDate").val());
+    		jquery("#prt_id").trigger("onchange");
+    		jquery(this).addClass('farmingInputs_add5Bg');
+    		jquery(this).prev('.caishou_date').children('.form_datetime').css('display','none');	
+    		jquery(this).prev('.caishou_date').children('.caishou_selt').css('display','block');	
+    	}else{
+    		jquery(this).removeClass('farmingInputs_add5Bg');
+    		jquery(this).prev('.caishou_date').children('.form_datetime').css('display','block');	
+    		jquery(this).prev('.caishou_date').children('.caishou_selt').css('display','none');	
+    		jquery("#lvform\\:testtype_").val(jquery("#lvform\\:testtype_").attr("aa"));
+    		jquery("#lvform\\:testorg_").val(jquery("#lvform\\:testorg_").attr("aa"));
+    		jquery("#lvform\\:testtime_1InputDate").val(jquery("#lvform\\:testtime_1InputDate").attr("aa"));
+    	}	
+    });
+    			 
+    jquery("#farmingInputs_add52").click(function(){
+		if(jquery(this).prev('.caishou_date').children('.form_datetime').is(':visible')){
+			jquery("#test_type2").attr("aa",jquery("#test_type2").val());
+			jquery("#test_org2").attr("aa",jquery("#test_org2").val());
+			jquery("#testtime2").attr("aa",jquery("#testtime2").val());
+			jquery("#prt_id2").trigger("onchange");
+			jquery(this).addClass('farmingInputs_add5Bg');
+			jquery(this).prev('.caishou_date').children('.form_datetime').css('display','none');	
+			jquery(this).prev('.caishou_date').children('.caishou_selt').css('display','block');	
+		}else{
+			jquery(this).removeClass('farmingInputs_add5Bg');
+			jquery(this).prev('.caishou_date').children('.form_datetime').css('display','block');	
+			jquery(this).prev('.caishou_date').children('.caishou_selt').css('display','none');	
+			jquery("#test_type2").val(jquery("#test_type2").attr("aa"));
+			jquery("#test_org2").val(jquery("#test_org2").attr("aa"));
+			jquery("#testtime2").val(jquery("#testtime2").attr("aa"));
+		}	
+	});
+    showHideMesg();
+});
+function showHideMesg(){
+	jquery(".land_testDate").datetimepicker({
+		format: "yyyy-mm-dd hh:ii",
+    	autoclose: true,
+    	weekStart: 1,
+    	language:  'zh-CN',
+    	pickerPosition: "bottom-left"
+    });    
+    jquery('.selectpicker').selectpicker();
+    /* 附加信息 */
+    jquery(".extraMessage").click(function(){
+    	if(jquery(this).next('.farmingMageTab_fjxx').is(':visible')){
+    		jquery(this).addClass('extraMessage2');
+    		jquery(this).next('.farmingMageTab_fjxx').slideUp(800);
+    	}else{
+    		jquery(this).removeClass('extraMessage2');
+    		jquery(this).next('.farmingMageTab_fjxx').slideDown(800);
+    	}	
+    });
+}	 
+Date.prototype.format = function(format){
+	var o = {
+    	"M+" : this.getMonth()+1, //month
+    	"d+" : this.getDate(),    //day
+    	"h+" : this.getHours(),   //hour
+    	"m+" : this.getMinutes(), //minute
+    	"s+" : this.getSeconds(), //second
+    	"q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+    	"S" : this.getMilliseconds() //millisecond
+    }
+
+    if(/(y+)/.test(format)){
+    	format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    }
+    		 	
+    for(var k in o){
+    	if(new RegExp("("+ k +")").test(format)){
+    		format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+    	}
+    }
+    return format;
+}
+    		 
+function putAddressComplete(obj){ 
+	if(obj == "false0"){
+    	alert("请填写打印数量!") ;
+    	jquery("#myModal").modal('show');
+    	return ;
+    }
+    if(obj=="false1"){
+    	alert("还没有物料信息,请先添加物料信息!") ;
+    	jquery("#myModal").modal('show');
+    	return ;
+    }
+    if(obj=="plantfalse"){
+    	alert("请先添加品种!") ;
+    	jquery("#myModal").modal('show');
+    	return ;
+    }
+    
+    jquery.getJSON("http://localhost:8086/newesmlpecom/chart/print?callback=?&param="+obj+"&type=1",function (data){}).done(function(){
+  	  		alert("打印成功") ;
+  	}).fail(function(){
+  		alert("打印失败") ;
+  	});
+   jquery('#myModal2').modal('hide');
+}
+
+//没有选择基地，则弹出基地选择框
+var reqType;
+function callBack(baseId){
+	jquery('#lvform\\:selBaseId').val(baseId);
+	jquery('#printForm\\:selBaseId').val(baseId);
+	changeBaseinfo(baseId);
+}
+function checkSelBase(obj){
+	reqType=obj;
+	if(obj != 4){
+        if(checkBaseModule(true)){
+        	checkSelect();
+        }
+	}
+}
+function checkSelect(){		  
+	if(reqType == 1){//对应
+		jquery('#myframPic2').attr('src',jquery('#myframPic2').attr('srcs'));
+		jquery('#resumeType1').selectpicker('val',1);
+		jquery('#lv').modal('show');
+		addMe();
+	}else if(reqType == 2){
+		jquery('#myframPic').attr('src',jquery('#myframPic').attr('srcs'));
+		jquery('#use_type2').selectpicker('val',1);
+		jquery('#myModal2').modal('show');
+		addMe2();
+	}
+	return true;
+}
+
+function  resumeTypeChange(val){
+	if(val == 1){
+		jquery('#lvformprid2').css('display','block');
+		jquery('#lvform\\:pr2').attr('name','pr2');
+		jquery('#lvformprid3').css('display','none');
+		jquery('#lvform\\:pr3').attr('name','xxx');
+		jquery('#lvformprid4').css('display','none');
+		jquery('#lvform\\:pr4').attr('name','xxx');
+		jquery('.plantC').each(function(){
+			jquery(this).css('display','');
+		})
+		jquery('.animalC').each(function(){
+			jquery(this).css('display','none');
+		})
+	}else if(val == 2){
+		jquery('#lvformprid3').css('display','block');
+		jquery('#lvform\\:pr3').attr('name','pr2');
+		jquery('#lvformprid2').css('display','none');
+		jquery('#lvform\\:pr2').attr('name','xxx');
+		jquery('#lvformprid4').css('display','none');
+		jquery('#lvform\\:pr4').attr('name','xxx');
+		jquery('.plantC').each(function(){
+			jquery(this).css('display','');
+		})
+		jquery('.animalC').each(function(){
+			jquery(this).css('display','none');
+		})
+	}else{
+		jquery('#lvformprid4').css('display','block');
+		jquery('#lvform\\:pr4').attr('name','pr2');
+		jquery('#lvformprid3').css('display','none');
+		jquery('#lvform\\:pr3').attr('name','xxx');
+		jquery('#lvformprid2').css('display','none');
+		jquery('#lvform\\:pr2').attr('name','xxx');
+		jquery('.animalC').each(function(){
+			jquery(this).css('display','');
+		})
+		jquery('.plantC').each(function(){
+			jquery(this).css('display','none');
+		})
+		jquery(".farmingMageTab_fjxx").each(function(){
+			if(jquery(this).css('display')=="block"){
+				jquery(this).css('display','none')
+			}
+		})
+	}
+}
+
+gourl = function(){
+	window.location.href="#{request.contextPath}/record/ScanMappingInfoList.seam";
+}
+
+function noLook(){
+	var resumeService="#{resumeHome.valueAdded.resumeService}";
+	if(resumeService==-1 || resumeService==0 || resumeService==2){
+    	jquery('.maturity_block').show();
+    	jquery('.black_op50').show();
+	}
+}
+
+function closeLook(){
+	jquery('.maturity_block').hide();
+	jquery('.black_op50').hide();	
+}
+
+//履历类型
+function useType(va){
+	if(va==2){
+		jquery('.animalC').each(function(){
+			jquery(this).css('display','');
+		})
+		jquery('.plantC').each(function(){
+			jquery(this).css('display','none');
+		})
+		jquery(".farmingMageTab_fjxx").each(function(){
+			if(jquery(this).css('display')=="block"){
+				jquery(this).css('display','none')
+			}
+		})
+	}else{
+		jquery('.plantC').each(function(){
+			jquery(this).css('display','');
+		})
+		jquery('.animalC').each(function(){
+			jquery(this).css('display','none');
+		})
+	}
+}
+
+function changeStart(obj){
+	var this_value=jquery(obj).find("[value='"+jquery(obj).val()+"']").text();
+	if(jquery(obj).find("[value='"+jquery(obj).val()+"']").text()==null || jquery(obj).find("[value='"+jquery(obj).val()+"']").text()==""){
+		alert("没有印刷批次可选择！");
+	}else{
+		startnumber(this_value);
+	}
+}
+
+function returnChangeStart(obj){
+	jquery('#lvform\\:start_').val(obj);
+}
+//]]>
+</script>
+</td> 
+</ui:define>
+</ui:composition>

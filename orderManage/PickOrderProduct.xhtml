@@ -1,0 +1,752 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/sort.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	#{orderOperate.pickOrderPorductInit()}
+	<style>
+		div#menu .helpSeleHd{ float:left; overflow:hidden; width:60px; height:24px; line-height:24px; padding:0 20px 0 5px; background:url(#{request.contextPath}/asset/images/sitIco2.png) no-repeat 50px 12px; color:#cfe3fe;}
+		div#menu .siteSeleHd { width: 84px;}
+		.r_title{ font-size: 14px; color:#525252;}
+		.cm_resumeList{}
+		.cm_resumeList li{ float:left;}
+		.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'微软雅黑';}
+		.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+		.cm_resumeList li img{ float:left; margin-top:16px;}
+		.cm_resumeList li span{ float:left; text-indent:10px;}
+		.borderBt{ border-bottom:2px solid #33aedc;}
+		.borderBt02{ border-bottom:1px solid #cbcbcb;}
+		
+		.choineUl{list-style: none; border-bottom: 1px solid #ddd;  padding-left: 0; margin-bottom: 0; list-style: none;height: 28px;}
+		.choineUl li{float: left;  margin-bottom:-1px;}
+		.choineUl li a{text-decoration: none; color: #555;padding: 5px 10px; display:inline-block;cursor: default;}
+		.choineUl li a.cur{background-color: #fff;border: 1px solid #ddd;border-bottom-color: transparent; border-radius: 5px 5px 0 0;}
+		
+		.qingdan-selt .bootstrap-select.btn-group .dropdown-menu{max-width:900px;}
+		
+		.add td{ width:150px; padding: 5px 0;}
+	    .add td img{vertical-align: top; margin-top: 1px; margin-right:3px;}
+	    .dot_bg{ background: url(../asset/images/orderManage/tiao.jpg) repeat-y 0 0; width: 180px; position: relative;}
+	    .circle{position: absolute; top:6px; left: -5px; width:12px; height: 16px; background: url(../asset/images/orderManage/circle.jpg); }
+	    .space{width: 3px; height: 6px; position: absolute; top:0; left: 0; background: #fff;}
+	    .space1{width: 3px; height: 6px; position: absolute; bottom:0; left: 0; background: #fff;}
+	    .tableModel thead th{min-width: 60px;}
+	    .tableModel tbody td{min-width: 60px;}
+	    .customMess_wap .items p.name {overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+	    
+	    .dropdown .dropdown-menu{ top:100%-; bottom:inherit-;}
+	    .bootstrap-select.btn-group .dropdown-menu.inner{height:90px;}
+	    .bootSelt170{display:inline-block;}
+	    .bootSelt170 .bootstrap-select{  width:170px;}
+		.bootSelt170 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){ width:170px;}
+		.bootSelt170 .bootstrap-select span{ font-size:12px; font-family:'微软雅黑';}
+		.bootSelt170 .bootstrap-select > .btn{ height:34px;}
+		.bootSelt170 .bootstrap-select.btn-group .dropdown-menu{ max-width:170px;}/* 下拉框最大宽度控制 */
+	</style>
+	
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModalYz" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	
+	<td valign="top" >
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%;">
+			    <div class="breadNav_wap clear">
+			        <div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam">订单管理</a><span>&gt;</span><strong>下单管理</strong></div>
+			        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+			            <ul class="resumeList clear">
+			            	<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+			                <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                            </h:panelGroup>
+			            </ul>
+			        </div>
+			    </div>
+			    <h:form id="submitOrderSearch" enctype="multipart/form-data">
+			    <div class="singleManage_con">
+			    <h:inputHidden value="#{orderOperate.orderInfoId}" id="editFlag"/>
+			    	<h2 class="titleH2">客户信息</h2>
+			        <div class="mb25 clear">
+			            <table style="font-size:14px;">
+			            <tr>
+			            <td width="70" align="left">客户姓名</td>
+			            <td><h:inputText id="namePick" class="form-control mt5" style="width:220px;margin-right:20px;" value="#{orderOperate.orderInfo.receiveName}" onchange="custNameChange()"/></td>
+			            <td width="70" align="left">采摘时间</td>
+			            <td> 
+							<div class="input-append date form_datetime " style="width:170px;">
+                            <h:inputText size="26" id="pickTimeId"  style="width:170px;" readonly="true" value="#{orderOperate.orderInfo.pickOrderTimeStr}" onchange="pickOrderTimeChange()">
+						    <f:convertDateTime pattern="yyyy-MM-dd hh:mm:ss"/>   
+						    </h:inputText>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    <h:inputHidden value="#{orderOperate.orderInfo.pickOrderTimeStr}"/>
+                            </div>
+						</td>
+			            </tr>
+			            </table>
+			        </div>
+			        
+			        <div class="mb25 clear">
+			    		<h2 class="titleH2 fl" style="width:70px;margin-bottom:0;">商品清单</h2>
+			    		<div class="fl qingdan-selt">
+							<select class="selectpicker" id="productInfoId" data-live-search="true">
+								<a:repeat value="#{orderOperate.showProductList}" var="_p">
+									<option value="#{_p.productInfoId}">#{_p.productName}-#{_p.goodsInfo.goodsSpec}</option>
+								</a:repeat>
+							</select>
+						</div>
+			    		<a class="btn btn-success fl mr15 ml15" href="javascript:void(0);" onclick="addProductCartAction();" style="display:inline;">添加商品</a>
+			    		<a class="btn btn-primary sortBtn" href="javascript:void(0);" onclick="sortControl(1);"  style="float:left; display:inline;"><img src="../asset/images/orderManage/singleManage_ico2.jpg" /> 排序</a>
+			        </div>
+			        <s:div styleClass="listGoods_con" id="productCartDiv">
+			        	<table class="tableModel ablt" width="100%" cellpadding="0" cellspacing="0">
+			                <thead>
+				                <tr>
+				                    <th width="5%"><span style="display:inline-block; line-height:40px;">序号</span></th>
+				                    <th width="10%">商品</th>
+				                    <th width="8%">规格</th>
+				                    <th width="15%">地块</th>
+				                    <th width="8%">采摘数量</th>
+				                    <th width="8%">采摘单价</th>
+				                    <th width="8%">小计</th>
+									<th width="15%">备注</th>
+				                    <th width="15%">操作</th>
+				                </tr>
+			                </thead>
+		                </table>
+		                <div class="listGoods_height" id="showProductDiv" >
+		                	<table id="orderProductTable" class="tableModel aclr" width="100%" cellpadding="0" cellspacing="0" style="border-radius:0;">
+				                <tbody>
+				                	<a:repeat value="#{orderOperate.orderProductList}" var="_orderProduct" rowKeyVar="_opIndex" id="aaa">
+				                		<tr class="odd" id="orderProductTr#{_orderProduct.cartCode}_#{_opIndex}">
+						                    <td width="5%">#{_opIndex + 1}</td>
+						                    <td width="10%"><a href="javascript:void(0);" title="#{_orderProduct.productCode}" id="productName#{_orderProduct.cartCode}_#{_opIndex}">#{_orderProduct.productName}</a></td>
+						                    <td width="8%">#{_orderProduct.productUnit}</td>
+						                    <td width="15%">
+						                    <div class="bootSelt170">
+						                    <input type="hidden" id="tunnerId#{_orderProduct.cartCode}_#{_opIndex}" value="#{_orderProduct.tunnelIds}"/>
+						                    <select class="selectpicker shou-tick dropdown" title="请选择" style="display: none;" multiple="multiple" id="breedId#{_orderProduct.cartCode}_#{_opIndex}" data-live-search="true" onchange="tunnelChange()">
+						                    	<a:repeat value="#{orderOperate.tunlist}" var="_obj">
+													<option value="#{_obj[0]}">#{_obj[1]}</option>
+												</a:repeat>
+											</select>
+											</div>
+						                    </td>
+						                    <td width="8%"> <span class="num_spdj"><input id="pickNum#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.productNum}" onkeyup="clearNoNum(2, this, event); calculates('#{_orderProduct.cartCode}_#{_opIndex}');" /></span> </td>
+						                    <td width="8%"><span class="num_spdj">¥<input id="productPrice#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.price}" onkeyup="clearNoNum(2, this, event); calculates('#{_orderProduct.cartCode}_#{_opIndex}');" /></span></td>
+						                    <td width="8%">
+						                    	<s:fragment rendered="#{_orderProduct.sellType == orderConstant.getCartProductGeneral()}">
+						                    		<span class="num_spdj">¥ <input id="packSum#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.totalPrice}" onkeyup="clearNoNum(2, this, event); calculates2(event);" /></span> 
+						                    	</s:fragment>
+						                    	<s:fragment rendered="#{_orderProduct.sellType != orderConstant.getCartProductGeneral()}">
+						                    		<span class="num_dpzj" id="productTotalPrice#{_orderProduct.cartCode}_#{_opIndex}">赠品</span>
+						                    	</s:fragment>
+					                    	</td>
+						                    <td width="15%"><span class="num_spbz" ><input id="remark#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.remark}"  aa="remark" onchange="commentChange()"/></span></td>
+						                    <td width="15%">
+						                    	<span class="delete">
+						                    		<a href="javascript:void(0);" onclick="removeProductAction('#{_opIndex}');">删除&#160;</a>
+						                    		<s:fragment rendered="#{_orderProduct.showGiftFlag == true}">
+						                    			<a href="javascript:void(0);" onclick="cartProductSettingAction('#{_orderProduct.cartCode}','#{_opIndex}');">设为赠品&#160;</a>
+						                    		</s:fragment>
+						                    	</span>
+					                    	</td>
+						                </tr>
+				                	</a:repeat>
+				                </tbody>
+			                </table>
+		                </div>
+		                <div class="atlr mb20" ><!-- style="min-width:1262px;" -->
+	                        <div class="listGoods_total">
+	                        	<em class="clearShopCart"><a href="javascript:void(0);" onclick="removeProductAction(-1);"><img src="../asset/images/orderManage/singleManage_ico3.jpg" />清空购物车</a></em>
+	                        	<h:inputHidden value="#{orderOperate.totalAccount}" id="aTotalPrice" />
+	                        	<ul>
+	                            	<li class="listGoods_li2">价格总计：<span class="codeEle">¥</span><span class="num" id="totalPrice">0.00</span></li>
+	                            </ul>
+	                        </div>
+                        </div>
+			            
+			            <div class="clear">
+			                	<h:inputHidden id="productHidden" value="#{orderOperate.orderProductJson}" />
+								<h:commandButton styleClass="btn btn-primary fr ml5" id="next" action="#{orderOperate.savePickOrderProduct}" value="提交订单" onclick="return saveAction();"/>
+								<s:button view="/orderManage/OrderOperateList.xhtml" propagation="end" styleClass="btn btn-default fr" value="返回" onclick="sessionStorage.clear();">
+				                	<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+				                </s:button>
+			            </div>
+			        </s:div>
+			    </div>
+			    </h:form>
+			</div>
+			
+			<div class="modal fade" id="sortDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width:670px; position:absolute; left:50%; margin-left:-335px; top:50%; margin-top:-234px; margin-bottom:0;">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"></button>
+			        <h4 class="modal-title revisionGrxx" id="myModalLabel">商品排序</h4>
+			    </div>
+			    <div class="modal-body" style="position:relative; padding:20px; max-height:350px; overflow:auto;">
+			    	<s:div styleClass="sp_px" id="sortProductDiv">
+			    		<div class="row">
+							<div class="col col-lg-6">
+								<div class="ordering-list select-list" tabindex="-1">
+									<div class="content with-handle">
+										<div class="scroll-box">
+											<ol id="list_dragselect" class="list ui-sortable ui-selectable">
+												<a4j:repeat value="#{orderOperate.orderProductList}" var="_sortPorduct" rowKeyVar="_index">
+													<li data-key="#{_index+1}" class="ui-selectee">#{_sortPorduct.productName}#{_sortPorduct.sellType == orderConstant.getCartProductGift() ? '-赠品' : ''}<input type="hidden" class="testClass" id="parIdObj_#{_index+1}" value="#{_sortPorduct.cartCode}_#{_index}" /></li>
+												</a4j:repeat>
+											</ol>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+			    	</s:div>
+			    </div>
+			    <div class="modal-footer">
+			        <a class="btn btn-success" href="javascript:void(0);" onclick="sortAction();">保存</a>
+			        <a class="btn btn-default" href="javascript:void(0);" onclick="sortControl(2);">取消</a>
+			    </div>
+			</div>
+			</div>
+			</div>
+			
+			<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na" style="display: none;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="messageTitle">提示</h4>
+						</div>
+						<div class="modal-body">
+							<span id="messageValue"></span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</td>
+	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="choiceMemberFind" action="#{orderOperate.choiceMemberFind}" reRender="memberInfoDiv,productCartDiv,memberCardDiv,historyOrderDiv" oncomplete="memberControl(2);">
+			<a:actionparam name="memberInfoId" assignTo="#{orderOperate.memberInfoId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="addProductCart" action="#{orderOperate.addPickProductCart}" reRender="productCartDiv,sortProductDiv" oncomplete="addProductComplate();">
+			<a:actionparam name="productId" assignTo="#{orderOperate.productId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="removeOrderProduct" action="#{orderOperate.removePickProduct}" reRender="productCartDiv,sortProductDiv" oncomplete="removeComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="sortPorduct" action="#{orderOperate.sortPickPorduct}" reRender="productCartDiv,sortProductDiv" oncomplete="calculateComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="cartProductSettings" action="#{orderOperate.pickProductSettings}" reRender="productCartDiv,sortProductDiv" oncomplete="removeComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="cartIndex" assignTo="#{orderOperate.cartIndex}"/>
+		</a:jsFunction>
+	</a:form>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/richwidgets-demo.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		
+		var level = '#{sessionTake.levelId}';
+		var adminFlag = '#{sessionTake.admin}';
+		var sellerMan = '#{sessionTake.sellerMan}';
+		var orderProductJson;
+		var pIds;
+		
+		//订单内容更多跳转
+		function moreOrderAction(mId){
+			window.open('#{request.contextPath}/orderManage/MemberInfoView.seam?memberInfoId=' + mId + '&pageNum=1');
+		}
+		
+		//设置商品销售类型默认
+		function cartProductSettingAction(cartCode,cartIndex){
+			joinResultJson();
+			cartProductSettings(cartCode, orderProductJson,cartIndex);
+		}
+
+		function words_deal(opRemark){ 
+			var curLength = opRemark.value.length;
+			if(curLength > 50){ 
+				var textVlaue = opRemark.value.substr(0,50); 
+				opRemark.value = textVlaue; 
+				document.getElementById("productMsg").innerHTML = "商品清单备注输入过长!";
+				jQuery("#myModalYz").modal('show');
+				return false;
+			}
+		}
+
+		//验证 1数量 2金额
+		function clearNoNum(type, obj, event){
+			var keyCode = event.keyCode;
+			var val=obj.value;
+			var temp;
+			if (type == 1) {
+				if (keyCode < 37 || keyCode > 40) {
+					if(!(keyCode >=48 && keyCode <=57)){
+						obj.value = obj.value.replace(/[^\d]/,"");  //清除“数字”和“.”以外的字符  
+					}
+					
+				}
+			} else {
+				if (keyCode < 37 || keyCode > 40) {
+					if(!(keyCode >=48 && keyCode <=57)){
+						obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+						obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+						obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+						obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+					}
+				}
+			}
+			//本地存储
+			joinResultJson();
+			sessionStorage.setItem("pickOrder_pickOrderJson", orderProductJson);
+			var editFlag = jQuery("#submitOrderSearch\\:editFlag").val();
+			if(editFlag == ""){
+				sessionStorage.setItem("pickOrder_editFlag", 0);
+			}else{
+				sessionStorage.setItem("pickOrder_editFlag", 1);
+			}
+		}
+
+		jQuery(function(){
+			if ((level == 3 && adminFlag == 'true') || sellerMan == 'true') {
+				jQuery("#farmerInfoTr").css("display", "");
+			} else {
+				jQuery("#farmerInfoTr").css("display", "none");
+			}
+			jQuery('.selectpicker').selectpicker();  // 下拉框控件
+			selectValue();
+			tidyJs();
+			calculates2();
+		});
+
+		//排序模块 控制
+		function sortControl(type){
+			if (type == 1) {
+				jQuery("#sortDiv").modal('show');
+			} else {
+				jQuery("#sortDiv").modal('hide');
+			}
+		}
+
+		//排序保存
+		function sortAction(){
+			var productId = "";
+			jQuery(".ui-selectee").each(function(index){
+				var dk = jQuery(this).attr("data-key");
+				var obj = jQuery("#parIdObj_"+dk).val();
+				productId += obj+",";
+			});
+			if (productId != null && productId != '') {
+				productId = productId.substring(0, productId.length - 1);
+			}
+			joinResultJson();
+			sortPorduct(productId, orderProductJson);
+		}
+
+		jQuery(document).ready(function() { 
+			var showMessage = '#{orderOperate.showMessage}';
+			var showMessageCount = '#{orderOperate.showMessageCount}';
+			if (showMessage != '' && showMessage != null && Number(showMessageCount) == 1) {
+				jQuery("#messageValue").html(showMessage);
+				jQuery("#messageDiv").modal('show');
+			}
+			jQuery("#productInfoId").attr("data-live-search","true");
+			jQuery('.selectpicker').selectpicker();  // 下拉框控件
+		}); 
+
+
+		//保存 下一步
+		function saveAction(){
+			var name = jQuery("#submitOrderSearch\\:namePick").val();
+			if(name.length>30){
+				document.getElementById("productMsg").innerHTML = "客户姓名输入过长!";
+				jQuery("#myModalYz").modal('show');
+				return false;
+			}
+			var mess=""
+			jQuery('input[aa=remark]').each(function(){
+				if(jQuery(this).val().length>50){
+					mess="error";
+				}
+			});
+			if(mess!=''){
+				document.getElementById("productMsg").innerHTML = "商品清单备注输入过长!";
+				jQuery("#myModalYz").modal('show');
+				mess="error";
+				return false;
+			}
+			joinResultJson();
+			jQuery("#submitOrderSearch\\:productHidden").val(orderProductJson);
+			return true;
+			
+		}
+
+		function saveComplete(){
+			window.location.href = "../orderManage/OrderDetail.seam";
+		}
+
+
+
+		//购物车删除单个商品
+		function removeProductAction(productId){
+			var flag=window.confirm("确定删除？");
+			if(flag){
+				joinResultJson();
+				removeOrderProduct(productId, orderProductJson);
+			}
+			
+		}
+
+		//计算价格
+		function calculates(event){
+			var sumProductNum = 0;
+			var orderPrice = 0;
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					if(productId == event){
+						var productNum = jQuery("#pickNum" + productId).val();
+						var productIdArr = productId.split("_");
+						var productPrice = 0;
+						if (productIdArr[1] == 1) {
+							productPrice = jQuery("#productPrice" + productId).val();
+						}
+						if (productNum == null || productNum == '') {
+							productNum = 1;
+						}
+						if (productPrice == null || productPrice == '') {
+							productPrice = 0;
+						}
+						var totalPrice = Number(productNum * productPrice).toFixed(2);
+						if (productIdArr[1] == 1) {
+							jQuery("#packSum"+ productId).val(totalPrice);
+						}else {
+							jQuery("#productTotalPrice" + productId).html("赠品");
+						}
+						jQuery("#submitOrderSearch\\:aTotalPrice").val(totalPrice);
+					}
+				}
+			});
+			calculates2();
+		}
+
+		//计算价格
+		function calculates2(event){
+			var orderPrice = 0;
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productIdArr = productId.split("_");
+					if (productIdArr[1] == 1) {
+						alert(jQuery("#packSum"+ productId).val());
+						orderPrice += Number(jQuery("#packSum"+ productId).val());
+					}
+				}
+			});
+			jQuery("#totalPrice").html(orderPrice.toFixed(2));
+			jQuery("#submitOrderSearch\\:aTotalPrice").val(orderPrice.toFixed(2));
+		}
+
+		//公共 计算价格总计
+		function calculates2(){
+			var orderPrice = 0;
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productIdArr = productId.split("_");
+					if (productIdArr[1] == 1) {
+						orderPrice += Number(jQuery("#packSum"+ productId).val());
+					}
+				}
+			});
+			jQuery("#totalPrice").html(orderPrice.toFixed(2));
+			jQuery("#submitOrderSearch\\:aTotalPrice").val(orderPrice.toFixed(2));
+		}
+
+		//拼接 保存购物车 json
+		function joinResultJson(){
+			var jsonStr = "[";
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productNum = jQuery("#pickNum" + productId).val();//数量
+					var productIdArr = productId.split("_");
+					var productPrice = jQuery("#productPrice" + productId).val();//单价
+					var tunner = jQuery("#breedId" + productId).val();//地块
+					var pickSum = jQuery("#packSum" + productId).val();//小计
+					var productPrice = 0;
+					if (productIdArr[1] == 1) {
+						productPrice = jQuery("#productPrice" + productId).val();
+					}
+					if (productNum == null || productNum == '') {
+						productNum = 0;
+					}
+					if (pickSum == null || pickSum == '') {
+						pickSum = 0;
+					}
+					var remark = jQuery("#remark" + productId).val();
+					jsonStr += "{";
+					jsonStr += "cartCode:" + productIdArr[0]+"_"+productIdArr[1];
+					jsonStr += ",productNum:" + productNum;
+					jsonStr += ",productPrice:" + productPrice;
+					jsonStr += ",pickSum:" + pickSum;
+					jsonStr += ",tunner:'"+ tunner+"'";
+					jsonStr += ",remark:'" + remark;
+					jsonStr += "'},";
+				}
+			});
+			if (jsonStr != "[") {
+				jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+			}
+			jsonStr += "]";
+			orderProductJson = jsonStr;
+		}
+
+		//加入购物车
+		function addProductCartAction(){
+			if(jQuery("#productInfoId").val() != null){
+				jQuery('.selectpicker').selectpicker();  // 下拉框控件
+				var productId = jQuery("#productInfoId").val();
+				joinResultJson();
+				addProductCart(Number(productId), orderProductJson);
+			}else{
+				jQuery("#messageValue").html("请正确选择商品！");
+				jQuery("#messageDiv").modal('show');
+			}
+		}
+		//商品添加回调
+		function addProductComplate(){
+			jQuery('.selectpicker').selectpicker();  // 下拉框控件
+			
+			selectValue();
+			tidyJs();
+			calculates2();
+			//本地存储
+			joinResultJson();
+			sessionStorage.setItem("pickOrder_pickOrderJson", orderProductJson);
+			var editFlag = jQuery("#submitOrderSearch\\:editFlag").val();
+			if(editFlag == ""){
+				sessionStorage.setItem("pickOrder_editFlag", 0);
+			}else{
+				sessionStorage.setItem("pickOrder_editFlag", 1);
+			}
+			mouseFocue();
+			
+		}
+		//下拉框选中
+		function selectValue(){
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var sele = jQuery("#tunnerId"+productId).val().split(",");
+			          jQuery("#breedId"+productId).selectpicker("val",sele)
+					jQuery("#breedId"+productId).selectpicker(); 
+				}
+			});
+		}
+
+		
+		//商品添加光标定位
+		function mouseFocue(){
+			var a=0;
+			jQuery("#orderProductTable tr").each(function(){
+				a++;
+			});
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productNum = jQuery("#productNum" + productId).val();
+					var productIdArr = productId.split("_");
+					if(productIdArr[2]==a-1){
+						document.getElementById("productNum"+productId).focus(); 
+					}
+				}
+			});
+
+		}
+		//删除商品回调
+		function removeComplate(){
+			jQuery('.selectpicker').selectpicker();  // 下拉框控件
+			selectValue();
+			tidyJs();
+			calculates2();
+		}
+
+		//排序商品回调
+		function calculateComplate(){
+			jQuery('.selectpicker').selectpicker();  // 下拉框控件
+			selectValue();
+			tidyJs();
+			calculates2();
+			sortControl(2);
+		}
+
+		//封装公共初始化js 
+		function tidyJs(){
+			jQuery('.tableModel tbody tr').mouseover(function(){  // 表格模板隔行换色
+				jQuery(this).addClass('hover');
+			});
+			jQuery('.tableModel tbody tr').mouseout(function(){
+				jQuery(this).removeClass('hover');
+			});	
+
+			jQuery("#memberSearch").focus(function(){  //文本框获取焦点失去焦点变化
+				var txt_value = jQuery(this).val();
+				if( txt_value == this.defaultValue ){
+					jQuery(this).val("");	
+				}	
+			});	
+			jQuery("#memberSearch").blur(function(){
+				var txt_value = jQuery(this).val();
+				if( txt_value == "" ){
+					jQuery(this).val(this.defaultValue);	
+				}	
+			});
+			jQuery('.customMess_wap .items').mouseover(function(){  //选择客户模态框里的选择客户信息滑过和点击状态
+				jQuery(this).addClass('itemsHv').siblings().removeClass('itemsHv');		
+			});
+			jQuery('.customMess_wap .items').mouseout(function(){
+				jQuery(this).removeClass('itemsHv');		
+			});
+			jQuery('.customMess_wap .items').click(function(){
+				var memberInfoId = jQuery(this).attr("id").replace("memberInfo", "");
+				joinResultJson();
+				choiceMemberFind(Number(memberInfoId), orderProductJson);
+			});
+
+			jQuery('#list_dragselect').orderingList({
+				dragSelect: true
+			});
+
+			jQuery(".btn-first").text("置顶");
+			jQuery(".btn-up").text("向上");
+			jQuery(".btn-down").text("向下");
+			jQuery(".btn-last").text("置底");        
+
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+		}
+
+		function sss(){
+			jQuery("#table1 tr td input ").val();
+		}
+jQuery(function(){
+	jQuery(".form_datetime").datetimepicker({
+		autoclose: true,
+		weekStart: 1,
+		language:  'zh-CN',	
+		pickerPosition: "bottom-left"
+	});
+	refreshPage();
+})
+	//本地存储
+	function custNameChange(){
+		var custName = jQuery("#submitOrderSearch\\:namePick").val();
+		sessionStorage.setItem("pickOrder_custName", custName);
+	}
+	function pickOrderTimeChange(){
+		var pickOrderTime = jQuery("#submitOrderSearch\\:pickTimeId").val();
+		sessionStorage.setItem("pickOrder_pickOrderTime", pickOrderTime);
+	}
+	function tunnelChange(){
+		//本地存储
+		joinResultJson();
+		sessionStorage.setItem("pickOrder_pickOrderJson", orderProductJson);
+		var editFlag = jQuery("#submitOrderSearch\\:editFlag").val();
+		if(editFlag == ""){
+			sessionStorage.setItem("pickOrder_editFlag", 0);
+		}else{
+			sessionStorage.setItem("pickOrder_editFlag", 1);
+		}
+	}
+	function commentChange(){
+		//本地存储
+		joinResultJson();
+		sessionStorage.setItem("pickOrder_pickOrderJson", orderProductJson);
+		var editFlag = jQuery("#submitOrderSearch\\:editFlag").val();
+		if(editFlag == ""){
+			sessionStorage.setItem("pickOrder_editFlag", 0);
+		}else{
+			sessionStorage.setItem("pickOrder_editFlag", 1);
+		}
+	}
+	function refreshPage(){
+		var custName = sessionStorage.getItem("pickOrder_custName");
+		var pickOrderTime = sessionStorage.getItem("pickOrder_pickOrderTime");
+		var orderProductJson = sessionStorage.getItem("pickOrder_pickOrderJson");
+		var editFlag = jQuery("#submitOrderSearch\\:editFlag").val();
+		var edtiFlagSession = sessionStorage.getItem("pickOrder_editFlag");
+		if(editFlag == "" && edtiFlagSession=="1"){
+
+		}else{
+			if(custName != null){
+				jQuery("#submitOrderSearch\\:namePick").val(custName);
+			}
+			if(pickOrderTime != null){
+				jQuery("#submitOrderSearch\\:pickTimeId").val(pickOrderTime);
+			}
+			if(orderProductJson != null){
+					addProductCart(0, orderProductJson);
+			}
+		}
+		
+	}
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

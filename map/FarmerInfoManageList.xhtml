@@ -1,0 +1,254 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+	<ui:define name="body">
+
+	<style>
+	.btn-group, .btn-group-vertical{margin-left: 4px;}
+	.tjqu_dl2 {
+    height: 227px;
+    overflow: hidden;
+	}
+	.tjan_05{
+		margin-top: -5px;
+	}
+	
+.farming_nodata{ overflow:hidden; background:#fcfcfc;}
+.warning_noData{ width:508px; padding-top:60px; margin:125px auto 220px; text-align:center; background:url(#{request.contextPath}/asset/images/renyuan2.png) no-repeat center top;}
+.warning_noData em{ font-style:normal; font-family:'微软雅黑'; font-size:18px; color:#333;}
+.warning_noData p{ line-height:26px; margin-top:24px; font-size:14px; font-family:'黑体'; color:#5c5c5c;}
+.cm_resumeList{}
+.cm_resumeList li{ float:left;}
+.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'宋体';}
+.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+.cm_resumeList li img{ float:left; margin-top:16px;}
+.cm_resumeList li span{ float:left; text-indent:10px;}
+.borderBt{ border-bottom:2px solid #33aedc;}
+.borderBt02{ border-bottom:1px solid #cbcbcb;}
+.enable_img{position: absolute;left: 2px;top: 1px;z-index: 6;width: 76px;height: 77px;
+}}
+	</style>
+	 <script type="text/javascript">
+  window.onload = function () {
+    jquery('.selectpicker').selectpicker();
+  };
+</script>
+		<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<td valign="top">               
+        <!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="spanValue">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="if(del()) return true;">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+		<div class="right_c">
+		            <div class="r_title">
+                    	<div class="r_t_l">数字农场<span style="padding:0 5px;">&gt;</span><font size="3">人员档案</font></div>
+                    	<div class="fr" style="margin-bottom:-1px;">
+                        <ul class="cm_resumeList clear">
+                        	<li>
+                                <a class="borderBt" href="#{request.contextPath}/map/FarmerInfoManageList.seam"><img src="#{request.contextPath}/asset/images/renyuan.png" /><span>人员管理</span></a>
+                            </li>
+                            <li>
+                                <a href="#{request.contextPath}/user/PositionsList.seam"><img src="#{request.contextPath}/asset/images/positions.png" /><span>#{sessionTake.tempType == 9 ? '部门管理':'职位管理'}</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    </div>
+                	<!--入库订单列表开始-->
+                <div class="ybp_02" style="padding-top:22px;">
+		       <div class="tjan_05" >
+                		<s:link id="obj1" styleClass="btn btn-success" rendered="#{s:hasRole('user_add')}" value="添加人员" propagation="none" view="/map/FarmerInfoEditManage.xhtml" onclick="if(!changeVal(id))return false;">
+            	          <f:param name="farmerInfoFarmerInfoId" />
+            	          <f:param name="baseId" value="#{farmerInfoHome.baseId}"/>
+                    	</s:link>
+               </div>
+		        <s:div styleClass="farming_nodata" style="display:none;">
+                  	<div class="warning_noData">
+                      	<em>很遗憾，没有任何人员信息</em>
+                        <p>完善的人员信息，可以帮助您梳理组织架构、掌握人员信息、考核工作效率、发现优秀人才，快来录入农场的人员信息吧！</p>
+                      </div>
+                </s:div>  
+                <!--最外层循环开始-->
+                <a4j:repeat value="#{farmerInfoHome.farTypetList}" var="_farmer"  rowKeyVar="_index">
+                    <s:div styleClass="hideDiv2" id="refreshDiv" rendered="#{sessionTake.levelId lt dataDicConstant.getUserLevelBase()?not empty farmerInfoHome.getFarmerInfoMe(_farmer.id):_farmer.id ne 2 and not empty farmerInfoHome.getFarmerInfoMe(_farmer.id)}">
+                         <div class="qu_title">
+                        	<table  cellpadding="0" cellspacing="0" style="float:left;">
+                            	<tr>
+                                	<td width="17" align="left"><img a="true" class="sj_142" style="cursor:pointer;" src="#{request.contextPath}/asset/images/sjj_down1.jpg" width="14" height="19" /></td>
+                                    <td align="left" style="padding-left:2px;">
+										<font class="qu_font">#{_farmer.name}&#160;(#{farmerInfoHome.getFarmerInfoMe(_farmer.id).size()}人)</font>
+									</td>
+                                </tr>
+                            </table> 
+                        </div>
+                        <div class="_idel2">
+                        <a4j:repeat value="#{farmerInfoHome.getFarmerInfoMe(_farmer.id)}" var="_farmerInfo2" rendered="#{not empty farmerInfoHome.getFarmerInfoMe(_farmer.id)}" rowKeyVar="_index">
+                        <dl class="tjqu_dl2" id="delDiv#{_farmerInfo2.farmerInfoId}">
+                        <s:decorate rendered="#{_farmerInfo2.iePitcure ne null and _farmerInfo2.iePitcure ne ''}">
+                            <dt class="tjqu_dt">
+                            	<s:link propagation="none"  view="/map/FarmerInfo.xhtml">
+                            	<f:param name="farmerInfoFarmerInfoId" value="#{_farmerInfo2.farmerInfoId}"/>
+                            	<f:param name="baseId" value="#{farmerInfoHome.baseId}"/>
+                            	<s:fragment rendered="#{null!=_farmerInfo2.userId and _farmerInfo2.userId.enable}">
+	                            	<i class="enable_img">
+			                        	<img src="#{request.contextPath}/asset/images/enabled_btn.png" />
+			                        </i>
+		                        </s:fragment>
+                            	<img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157"/>
+                                <img class="tjqu_a_img" src="#{_farmerInfo2.iePitcure}" width="144" height="144"/>
+                                
+                                </s:link>
+                                
+                                <a href="#{request.contextPath}/map/FarmerInfo.seam?farmerInfoFarmerInfoId=#{_farmerInfo2.farmerInfoId}&amp;addType=2" style="*position:relative; *z-index:900; cursor:pointer;" > 
+                                <div class="tjdd">
+                                	<a  onclick="isDel(#{_farmerInfo2.farmerInfoId})" style="#{s:hasRole('user_del')?'':'display:none;'}">
+                                    	<ul class="rr_llul">
+                                       <li class="rr_lli"><img src="#{request.contextPath}/asset/images/dele_15.jpg" width="17" height="14" /></li>
+                                   		</ul>
+                                    </a>
+                                </div>
+                                </a>
+                            </dt>
+                       </s:decorate>
+                       <s:decorate rendered="#{_farmerInfo2.iePitcure eq null or _farmerInfo2.iePitcure eq ''}">
+                            <dt class="tjqu_dt">
+                            	<s:link propagation="none"  view="/map/FarmerInfo.xhtml">
+                            	<f:param name="farmerInfoFarmerInfoId" value="#{_farmerInfo2.farmerInfoId}"/>
+                            	<f:param name="baseId" value="#{farmerInfoHome.baseId}"/>
+                            	<s:fragment rendered="#{null!=_farmerInfo2.userId and _farmerInfo2.userId.enable}">
+	                            	<i class="enable_img">
+			                        	<img src="#{request.contextPath}/asset/images/enabled_btn.png" />
+			                        </i>
+		                        </s:fragment>
+                            	<img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157"/>
+                                <img class="tjqu_a_img" src="#{request.contextPath}/asset/images/noPerson.jpg" width="144" height="144"/>
+                                </s:link>
+                                
+                                <a href="#{request.contextPath}/map/FarmerInfo.seam?farmerInfoFarmerInfoId=#{_farmerInfo2.farmerInfoId}&amp;addType=2" style="*position:relative; *z-index:900; cursor:pointer;" > 
+                                <div class="tjdd">
+                                	<a  onclick="isDel(#{_farmerInfo2.farmerInfoId})" style="#{s:hasRole('user_del')?'':'display:none;'}">
+                                    	<ul class="rr_llul">
+                                       <li class="rr_lli"><img src="#{request.contextPath}/asset/images/dele_15.jpg" width="17" height="14" /></li>
+                                   		</ul>
+                                    </a>
+                                </div>
+                                </a>
+                            </dt>
+                       </s:decorate>
+                            <dd class="tjqu_dd"><font class="ncgj">#{_farmer.name}</font><font>#{_farmerInfo2.positionsId.name}</font>&#160;<font>#{_farmerInfo2.name}</font></dd>
+                            <dd class="tjqu_2dd"><s:div rendered="#{_farmerInfo2.workAge ne null}"> 从业年限：&#160;#{_farmerInfo2.workAge}年</s:div></dd>
+                            <dd class="ncgj_dd">#{stringUtil.shortString(_farmerInfo2.description,25)}</dd>
+                        </dl>
+                        </a4j:repeat>
+                        </div>
+                     <div class="clear"></div>
+                    </s:div>    
+                    </a4j:repeat>
+                	<!--最外层循环结束-->
+                    </div>
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+</td>
+		<a4j:form>
+		<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+		
+	        <a4j:jsFunction name="deleteObj" action="#{farmerInfoHome.delete()}" oncomplete="remo()">
+	        <a4j:actionparam name="delId" assignTo="#{farmerInfoHome.delId}"/>
+	        </a4j:jsFunction>
+        </a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+jquery(document).ready(function(){
+    jquery(".sj_142").click(function(){
+      	if(jquery(this).attr("a")=="true"){
+      		jquery(this).attr("a","false");
+      		jquery(this).attr("src","../asset/images/sjj_right.jpg");
+    		jquery(this).closest(".hideDiv2").find("._idel2").hide();
+      	}else{
+      		jquery(this).attr("a","true");
+      		jquery(this).attr("src","../asset/images/sjj_down1.jpg");
+      		jquery(this).closest(".hideDiv2").find("._idel2").show();
+      	}
+      });
+
+})
+jquery(function(){
+ 	 var len = jquery(".hideDiv2").length;
+    if(len == 0){
+		jquery(".farming_nodata").show();
+    }
+	 jquery('.tjqu_dt').hover(function(){
+	  jquery(this).find('.tjdd').show();
+	 },function(){
+	  jquery(this).find('.tjdd').hide();
+	 })
+	})
+    var id = 0;
+	function isDel(xx){
+		id = xx;
+		document.getElementById("spanValue").innerHTML = "确定删除？";
+		jquery("#myModal").modal('show');
+    }
+		
+		function del(){
+			deleteObj(id);
+			jquery("#myModal").modal('hide');
+			return true;
+    	}
+		remo = function(){
+			jquery("#delDiv"+id).hide();
+    	}
+	  
+	  function changeVal(obj){
+			var objVal = jquery("#"+obj).text();
+			jquery("#Primary").text(objVal);
+			if(!jquery(".siteSelection").is(":visible")){
+				document.getElementById("topSpanValue").innerHTML = "请先添加基地！";
+				jquery("#topModel").modal('show');
+				return false;
+			}
+			return true;
+	  }
+	//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

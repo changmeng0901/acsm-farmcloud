@@ -1,0 +1,400 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/points/order.css" type="text/css" />
+
+<td valign="top">
+<!--#{pointsProductInfoHome.exchangeBegin()}-->
+   <!--右边开始-->
+   <div class="right_c clear">
+       <!-- 面包屑导航 开始 -->
+       <div class="r_title clear">
+           <div class="r_t_l fl"><font size="3">订单信息</font></div>
+       </div>
+       <!-- 面包屑导航 结束 -->
+       <!-- 内容 开始 -->
+           <h:panelGroup id="adressId">
+       <div class="clear" style="padding:0 20px;">
+           <div style="padding:20px 0;">配送地址</div>
+           <a4j:repeat value="#{pointsProductInfoHome.udaList}" var="_uda" rowKeyVar="_index">
+           <div class="addrItems">
+               <div class="inner #{_index==0 ? 'addrCur' : ''}">
+               		<h:inputHidden value="#{_uda.userDeliverAddressId}"  id="addId"/>
+                   <div class="addr_hd">
+                       <span class="mr10" style="font-weight:bold;">#{_uda.receiveName}</span><span>#{_uda.phone}</span>
+                   </div>
+                   <div class="addr_bd">
+                       <span class="mr5">#{_uda.provinceName}</span><span class="mr5">#{_uda.cityName}</span><span class="mr5">#{_uda.countyName}</span>
+                       <span>#{_uda.deliverAddress}</span>
+                   </div>
+                   <i class="curmarker"></i>
+               </div>
+               <div class="addr_toolbar">
+                   <a class="revise" onclick="editAddress('#{_uda.userDeliverAddressId}')">修改</a><a class="delete" onclick="deletedA('#{_uda.userDeliverAddressId}')">删除</a>
+               </div>
+           </div>
+           </a4j:repeat>
+           
+           <a class="add_newAddresses" onclick="add_newAddresses()"><span></span></a>
+       </div>
+       </h:panelGroup>
+       <div class="changeContent">
+           <table class="changeTable" width="100%" cellpadding="0" cellspcing="0">
+               <thead>
+                   <tr>
+                       <th class="pl20"><span>商品编号&nbsp;&nbsp;</span><span class="spbh">#{pointsProductInfoHome.instance.pointsProductInfoId}</span></th>
+                   		<h:inputHidden value="#{pointsProductInfoHome.instance.pointsProductInfoId}" id="spbhId"/>
+                   </tr>
+               </thead>
+           </table>
+           <table  width="100%" cellpadding="0" cellspcing="0" class="tableContent">
+               <tr>
+                   <td width="10%" style="text-align:center;">
+                   		<h:panelGroup rendered="#{pointsProductInfoHome.instance.productImages !=null &amp;&amp; pointsProductInfoHome.instance.productImages !=''}">                             
+                            	<img src="#{pointsProductInfoHome.instance.productImages.split(',')[0]}" width="50px" height="63px"/>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{pointsProductInfoHome.instance.productImages ==null || pointsProductInfoHome.instance.productImages ==''}">                             
+                            	<img src="#" width="50px" height="63px"/>
+                        </h:panelGroup>
+                   </td>
+                   <td width="25%" style="font-weight:bold;">#{pointsProductInfoHome.instance.name}#{pointsProductInfoHome.instance.productParams}</td>
+                   <td width="20%"><img src="#{request.contextPath}/asset/images/points/no1.png" class="pr5"/><span class="c64 pr5">兑换数量</span><span>#{param.num}</span></td>
+                   <td width="20%"><img src="#{request.contextPath}/asset/images/points/no2.png" class="pr5"/><span class="c64 pr5">总计</span><span style="color:#ff5000;">#{param.dhjf}</span></td>
+                   <td width="25%">
+                       <img src="#{request.contextPath}/asset/images/points/no3.png" class="pr5"/><span class="c64 pr5">收货人</span><span class="shr">刘德华</span> 
+                   </td>
+               </tr>
+           </table>
+       </div>
+       <div class="tfoot">
+           <p><span>目前积分：</span><span style="margin-right:60px;">#{pointsProductInfoHome.allPoints}积分</span> <span >-#{param.dhjf}积分</span></p>
+           <p><span>剩余积分：</span><span>#{param.allPoints-param.dhjf}积分</span></p>
+       </div>
+       <div class="total">
+           <span style="color:red;" class="nums">#{param.num}</span><span class="mr10" >件商品</span><span>总计</span><span  class="mr5 jf" style="color:red; font-size:16px; font-weight:bold;">#{param.dhjf}</span><span>积分</span>
+       </div>
+       <div style="text-align:right; padding:30px 0 40px 0;">
+       		<h:panelGroup rendered="#{param.pag==1}">
+       		           		<a href="#{request.contextPath}/points/PointsProductInfoList.seam" type="button" class="btn btn-default mr5">返回</a>
+       		</h:panelGroup>
+       		<h:panelGroup rendered="#{param.pag==2}">
+           		<a href="#{request.contextPath}/points/PointsProductInfo.seam?pointsProductInfoPointsProductInfoId=#{pointsProductInfoHome.instance.pointsProductInfoId}&amp;allPoints=#{pointsProductInfoHome.allPoints}" type="button" class="btn btn-default mr5">返回</a>
+       		</h:panelGroup>
+           <a  type="button" class="btn btn-primary" onclick="save()">提交订单</a>
+       </div>
+       <div class="mallFoot">
+           <table width="100%">
+               <tr>
+                   <td class="boederR firstTd">
+                        <a href="#{request.contextPath}/user/PointsTaskList.seam">
+                        <img src="#{request.contextPath}/asset/images/points/step1.png" />
+                        </a>
+                    </td>
+                    <td width="184" class="boederR center">
+                        <a href="#{request.contextPath}#{sessionTake.urlTemp}"><img src="#{request.contextPath}/asset/images/points/step2.png" /></a>
+                    </td>
+                    <td width="184" class="boederR center">
+                        <a href="#{request.contextPath}/points/ConvertPointsRecordList.seam"><img src="#{request.contextPath}/asset/images/points/step3.png" /></a>
+                    </td>
+                    <td class="lastTd">
+                        <a href=""><img src="#{request.contextPath}/asset/images/points/step4.png" /></a>
+                    </td>
+               </tr>
+           </table>
+       </div>
+       <!-- 内容 结束 -->
+   </div>
+   <!--右侧结束-->
+   <h:form id="saveRecord">
+   		<h:inputHidden value="#{pointsProductInfoHome.udaId}" id="udaId"/>
+   		<h:inputHidden value="#{pointsProductInfoHome.convertNum}" id="convertNum"/>
+   		<h:inputHidden value="#{pointsProductInfoHome.ppiId}" id="ppiId"/>
+   		<h:inputHidden value="#{pointsProductInfoHome.pointsNum}" id="pointsNum"/>
+   		<h:commandButton action="#{pointsProductInfoHome.saveRecord()}" styleClass="_but"/>
+   </h:form>
+   
+   
+   
+   <!-- 添加新地址模态框 开始 -->
+<h:panelGroup id="editAddressId">
+<div class="modal fade" id="addNewAddrModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:560px; position:absolute; left:50%; margin-left:-280px; top:50%; margin-top:-197px; margin-bottom:0;">
+<h:form id="address">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title revisionGrxx" id="myModalLabel">添加新地址<span class="c64">（*号为必填选项）</span></h4>
+    </div>
+    <div class="modal-body" style="padding:30px 0 20px;">
+        <table class="modelTable" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="pr10" width="110" align="right">收件人</td>
+                <td width="466">
+                    <span class="bootText220" >
+                    	<h:inputText value="#{pointsProductInfoHome.uda.receiveName}" styleClass="form-control" id="receiveName"/>
+                    </span> 
+                    <span class="star">*</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pr10" width="110" align="right">所在地区</td>
+                <td>
+                    <span class="bootText150" >
+                    	<h:selectOneMenu immediate="true" styleClass="selectpicker" value="#{pointsProductInfoHome.uda.province}" id="province" onchange="getCity();">
+							<s:selectItems value="#{pointsProductInfoHome.provinceList}" var="_pro" label="#{_pro[0]}" itemValue="#{_pro[1]}" escape="false"/>
+						</h:selectOneMenu>
+                    </span> 
+                    <span class="bootText150" >
+	                    <h:panelGroup id="cityPanel">
+		                  	<h:selectOneMenu immediate="true" styleClass="selectpicker" value="#{pointsProductInfoHome.uda.city}" id="city" onchange="getArea();">
+								<s:selectItems value="#{pointsProductInfoHome.cityList}" var="_city" label="#{_city[0]}" itemValue="#{_city[1]}" escape="false"/>
+							</h:selectOneMenu>
+						</h:panelGroup>
+                    </span> 
+                    <span class="bootText150" >
+	                    <h:panelGroup id="areaPanel">
+		                  	<h:selectOneMenu immediate="true" styleClass="selectpicker" value="#{pointsProductInfoHome.uda.county}" id="area">
+								<s:selectItems value="#{pointsProductInfoHome.areaList}" var="_area" label="#{_area[0]}" itemValue="#{_area[1]}" escape="false"/>
+							</h:selectOneMenu>
+						</h:panelGroup>
+                    </span> 
+                    <span class="star">*</span>
+                    <h:inputHidden value="#{pointsProductInfoHome.uda.province}" id="provinceId"/>
+                    <h:inputHidden value="#{pointsProductInfoHome.uda.city}" id="cityId"/>
+                    <h:inputHidden value="#{pointsProductInfoHome.uda.county}" id="areaId"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="pr10" align="right">街道地址</td>
+                <td>
+                    <span class="bootText350" >
+                    <h:inputText value="#{pointsProductInfoHome.uda.deliverAddress}" styleClass="form-control" id="deliverAddress" style="width:350px;"/>
+                    </span> 
+                    <span class="star">*</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pr10" align="right">邮政编码</td>
+                <td>
+                    <span class="bootText220" >
+                    	<h:inputText value="#{pointsProductInfoHome.uda.zipCode}" styleClass="form-control" id="zipCode"/>
+                    </span> 
+                </td>
+            </tr>
+            <tr>
+                <td class="pr10" align="right">联系方式</td>
+                <td>
+                    <span class="bootText220" >
+                    	<h:inputText value="#{pointsProductInfoHome.uda.phone}" styleClass="form-control" id="phone"/>
+                    </span> 
+                    <span class="star">*</span>
+                </td>
+            </tr>
+        </table>    
+    </div>
+    <div class="modal-footer">
+    	<a4j:commandButton id="saveBtn" styleClass="btn btn-success addre" reRender="adressId" value="保存" onclick="if(!saAddress()) return false;jquery('.addre').prop('disabled','true');" action="#{pointsProductInfoHome.saveAddress()}" oncomplete="reSaAddress()"/>
+        <a class="btn btn-default" data-dismiss="modal" href="#">返回</a>
+    </div>
+</div>
+</h:form>
+</div>
+</div>
+</h:panelGroup>
+<!-- 添加新地址模态框 结束 -->
+   
+<div class="modal fade" id="prompt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:560px; position:absolute; left:50%; margin-left:-280px; top:50%; margin-top:-197px; margin-bottom:0;">
+<div class="modal-content" style="height:185px;">
+<div class="modal-header" style="border-bottom:0; text-align:right;">
+   <span style="cursor : pointer;"><img src="#{request.contextPath}/asset/images/farmingIco16.jpg" onclick="jquery('#prompt').modal('hide');"></img></span>      
+</div>
+<p style=" text-align:center; margin-top:10px;">您当前拥有<span style="color: #ff5000; ">积分不足</span>以兑换该商品，</p>
+<p style=" text-align:center;">坚持完成<span style="color: #ff5000; ">每日任务</span>，早日兑换心仪商品哦！</p>
+    <div class="modal-footer" style="text-align:center; border-top:0;">
+ 		<a class="btn btn-primary"  href="#{request.contextPath}#{sessionTake.urlTemp}" style="color:#fff;">去做任务</a>
+        <a class="btn btn-default" data-dismiss="modal" href="#">我知道了</a>
+    </div>
+</div>
+</div>
+</div>
+   
+   
+<a4j:form>
+ 		<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+	    <a4j:jsFunction name="getCityArea" reRender="cityPanel,areaPanel" action="#{pointsProductInfoHome.getCityArea()}" oncomplete="huidiao()">
+	  		<a4j:actionparam name="provEn" assignTo="#{pointsProductInfoHome.provEn}"/>
+	    </a4j:jsFunction>
+	    <a4j:jsFunction name="getNameArea" reRender="areaPanel" action="#{pointsProductInfoHome.getNameArea()}" oncomplete="huidiao()">
+	  		<a4j:actionparam name="districtEn" assignTo="#{pointsProductInfoHome.districtEn}"/>
+	    </a4j:jsFunction>
+	    <a4j:jsFunction name="loadAddress" reRender="editAddressId" action="#{pointsProductInfoHome.loadAddress()}" oncomplete="editAddressHuidiao()">
+	  		<a4j:actionparam name="udaId" assignTo="#{pointsProductInfoHome.udaId}"/>
+	    </a4j:jsFunction>
+	    <a4j:jsFunction name="deletedAddress" reRender="adressId" action="#{pointsProductInfoHome.deletedAddress()}" oncomplete="reSaAddress()">
+	  		<a4j:actionparam name="udaId" assignTo="#{pointsProductInfoHome.udaId}"/>
+	    </a4j:jsFunction>
+	     <a4j:jsFunction name="saveTest" action="#{pointsProductInfoHome.saveTest()}" data="#{pointsProductInfoHome.testParam}" oncomplete="saveAll(data)">
+	  		<a4j:actionparam name="testProductPoints" assignTo="#{pointsProductInfoHome.testProductPoints}"/>
+	    </a4j:jsFunction>
+ </a4j:form>   
+   
+</td>  
+
+<script type="text/javascript">
+//<![CDATA[
+jquery(function(){
+	var spbh='000'+jquery('.spbh').text();
+	jquery('.spbh').text(spbh.substring(spbh.length-4,spbh.length));
+	
+	jquery('#address\\:province').selectpicker({noneSelectedText:"请选择省"});
+	jquery('#address\\:city').selectpicker({noneSelectedText:"请选择市"});
+	jquery('#address\\:area').selectpicker({noneSelectedText:"请选择县"});
+	jquery('.selectpicker').selectpicker();  // 下拉框控件
+
+	jquery('.shr').text(jquery('.addrCur .mr10').text());
+
+	jquery('.addrItems .inner').mouseover(function(){  //收货人地址点击和滑过的状态
+		jquery(this).addClass('addrHv').siblings().removeClass('addrHv');   
+    }); 
+	jquery('.addrItems .inner').mouseout(function(){
+		jquery(this).removeClass('addrHv'); 
+    }); 
+	jquery('.addrItems .inner').click(function(){  //点击设为默认--设置为默认地址
+		jquery(this).parents('.addrItems').find('.inner').addClass('addrCur');
+		jquery(this).parents('.addrItems').siblings().find('.inner').removeClass('addrCur');    
+		jquery('.shr').text(jquery(this).parents('.addrItems').find('.inner .mr10').text());
+    }); 
+
+});
+function getCity(){
+	var pro=document.getElementById("address:province").value;
+	if(pro!=''){
+		getCityArea(pro);
+	}
+}
+
+function getArea(){
+	var city=document.getElementById("address:city").value;
+	if(city!=''){
+		getNameArea(city);
+	}
+}
+
+function huidiao(){
+	jquery('.selectpicker').selectpicker();
+}
+
+function saAddress(){
+	if(jquery('#address\\:receiveName').val()=='' || jquery('#address\\:receiveName').val().length>10){
+		alert("您输入的收件人格式不正确，请重新填写！");
+		return false;
+	}
+
+	if(jquery('#address\\:area').val()==null){
+		alert("您输入的所在地区格式不正确，请重新填写！");
+		return false;
+	}
+
+	if(jquery('#address\\:deliverAddress').val()=='' || jquery('#address\\:deliverAddress').val().length>50){
+		alert("您输入的街道地址格式不正确，请重新填写！");
+		return false;
+	}
+
+
+	var zipCode= /^[0-9]*$/;
+	if(jquery('#address\\:zipCode').val()!='' && !zipCode.test(jquery('#address\\:zipCode').val())){
+		alert("您输入的邮政编码格式不正确，请重新填写！");
+		return false;
+	}
+	
+	var re= /^(13[0-9]|15[0-9]|18[0-9]|14[57]|17[0-9])[0-9]{8}$/;
+	if(!re.test(jquery('#address\\:phone').val())){
+		alert("您输入的联系方式格式不正确，请重新填写！");
+		return false;
+	}
+	jquery('#address\\:provinceId').val(jquery('#address\\:province').val());
+	jquery('#address\\:cityId').val(jquery('#address\\:city').val());
+	jquery('#address\\:areaId').val(jquery('#address\\:area').val());
+	
+	return true;
+}
+function reSaAddress(){
+	jquery('.addre').removeAttr('disabled');
+	jquery('#addNewAddrModal').modal('hide');
+	jquery('.shr').text(jquery('.addrCur .mr10').text());
+
+	jquery('.addrItems .inner').mouseover(function(){  //收货人地址点击和滑过的状态
+		jquery(this).addClass('addrHv').siblings().removeClass('addrHv');   
+    }); 
+	jquery('.addrItems .inner').mouseout(function(){
+		jquery(this).removeClass('addrHv'); 
+    }); 
+	jquery('.addrItems .inner').click(function(){  //点击设为默认--设置为默认地址
+		jquery(this).parents('.addrItems').find('.inner').addClass('addrCur');
+		jquery(this).parents('.addrItems').siblings().find('.inner').removeClass('addrCur');    
+		jquery('.shr').text(jquery(this).parents('.addrItems').find('.inner .mr10').text());
+    }); 
+}
+function add_newAddresses(){
+	
+	jquery('#address\\:receiveName').val('');
+	jquery('#address\\:province').selectpicker({noneSelectedText:"请选择省"});
+	jquery('#address\\:province').selectpicker('val','');
+	jquery('#address\\:city').selectpicker({noneSelectedText:"请选择市"});
+	jquery('#address\\:city').selectpicker('val','');
+	jquery('#address\\:area').selectpicker({noneSelectedText:"请选择县"});
+	jquery('#address\\:area').selectpicker('val','');
+	jquery('#address\\:deliverAddress').val('');
+	jquery('#address\\:zipCode').val('');
+	jquery('#address\\:phone').val('');
+	jquery('#addNewAddrModal').modal('show');
+}
+
+function editAddress(id){
+	loadAddress(id);
+}
+function deletedA(id){
+	if(confirm('确认删除配送信息？')){
+		deletedAddress(id)
+ 	}
+}
+function editAddressHuidiao(){
+	jquery('.selectpicker').selectpicker();
+	jquery('#addNewAddrModal').modal('show');
+	getCityArea(jquery('#address\\:provinceId').val());
+	getNameArea(jquery('#address\\:cityId').val());
+}
+function save(){
+	if(jquery('.addrCur input').val()==null || jquery('.addrCur input').val() ==""){
+		alert("配送地址不能为空！");
+	}else{
+		saveTest('#{pointsProductInfoHome.instance.productPoints}');
+	}
+}
+function saveAll(param){
+	if(param=='ok'){
+		jquery('#saveRecord\\:udaId').val(jquery('.addrCur input').val());
+		jquery('#saveRecord\\:convertNum').val(jquery('.nums').text());
+		jquery('#saveRecord\\:ppiId').val(jquery('#spbhId').val());
+		jquery('#saveRecord\\:pointsNum').val(jquery('.jf').text());
+		jquery('._but').click();
+	}else{
+		jquery('#prompt').modal('show');
+	}
+}
+//]]>
+</script>
+</ui:define>
+
+</ui:composition>

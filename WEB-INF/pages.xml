@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages login-view-id="/login.xhtml" no-conversation-view-id="/home.html"
+ xmlns="http://jboss.com/products/seam/pages"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+ <page view-id="*">
+  <navigation>
+   <rule if-outcome="#{identity.logout}">
+    <redirect view-id="/AutoOut.xhtml"/>
+   </rule>
+  </navigation>
+ </page>
+ <exception class="java.lang.IllegalStateException">
+  <redirect view-id="#{sessionTake.urlTemp}">
+  </redirect>
+ </exception>
+ <exception class="org.jboss.seam.framework.EntityNotFoundException">
+  <redirect view-id="/error.xhtml">
+   <message severity="warn">记录没有找到</message>
+  </redirect>
+ </exception>
+ <exception class="javax.persistence.EntityNotFoundException">
+  <redirect view-id="/error.xhtml">
+   <message severity="warn">记录没有找到</message>
+  </redirect>
+ </exception>
+ <exception class="javax.persistence.EntityExistsException">
+  <redirect view-id="/error.xhtml">
+   <message severity="warn">记录重复</message>
+  </redirect>
+ </exception>
+ <exception class="javax.persistence.OptimisticLockException">
+  <end-conversation/>
+  <redirect view-id="/error.xhtml">
+   <message severity="warn">其它用户修改了相同数据，请稍后重试</message>
+  </redirect>
+ </exception>
+ <exception class="org.jboss.seam.security.AuthorizationException">
+  <redirect view-id="/login.xhtml">
+   <message severity="error">你没有访问这个资源的权限</message>
+  </redirect>
+ </exception>
+ <exception class="org.jboss.seam.security.NotLoggedInException">
+  <redirect view-id="/login.xhtml">
+   <message severity="warn">#{messages['org.jboss.seam.NotLoggedIn']}</message>
+  </redirect>
+ </exception>
+ <exception class="javax.faces.application.ViewExpiredException">
+  <redirect view-id="/AutoOut.xhtml">
+   <message severity="warn">您的登录过期，请重新登录</message>
+  </redirect>
+ </exception>
+ <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace">
+  <redirect view-id="/login.xhtml">
+   <message severity="error"></message>
+  </redirect>
+ </exception>
+ <exception>
+  <redirect view-id="/error.xhtml">
+   <message severity="error">异常, 请重试</message>
+  </redirect>
+ </exception>
+</pages>

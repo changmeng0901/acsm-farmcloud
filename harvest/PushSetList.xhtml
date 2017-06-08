@@ -1,0 +1,394 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+<ui:define name="body">
+
+	<link href="#{request.contextPath}/asset/css/realplant/caishoujl.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/FarmingManage.css"/>
+
+<script type="text/javascript">
+jquery = jQuery.noConflict();
+  	jquery(function(){
+	  jquery('.selectpicker').selectpicker();
+	 });
+</script>
+ <style>
+  .r_t #topModel{width:600px;}
+  .r_t #topModel .modal-dialog{ width:600px;}
+  
+  .iCheck_ul{ margin-bottom:0;}
+  .iCheck_ul li{ width:100px;float:left;}
+  .iCheck_ul li label{ float:left; line-height:18px; margin-bottom:0;}
+  </style>
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="prompt2" class="modal fade in" style="display: none;">
+  <div class="modal-dialog" style="width:600px; margin:30px auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+<td valign="top">
+
+<!-- #{pushSetHome.begin()} -->
+<!-- #{pushSetList.begin()} -->
+				 <!-- right_c 开始 -->
+                 <div class="right_c" style="min-height:30px;">
+                 	<div class="r_title">
+                	<div class="r_t_l fl"><span>采销存</span><em>&gt;</em><span>质检</span><em>&gt;</em><font size="3">检测时间设定</font></div>
+                      
+                    </div>
+                    <div class="clear"></div> 
+                 	<div class="cm_queryWap clear">
+                    	<div class="cm_queryTtl" style="height:34px;">
+                        	<h:form style="float:left" styleClass="public-search fl"> 
+                            <span class="octicon-search02"></span>
+                            <h:inputText  class="form-control srarchfont fl" type="text" value="#{pushSetList.searchParam}" style="width:300px; height:34px;"/>
+                            <h:commandButton  id="search" styleClass="btn btn-primary" value="搜索" action="/harvest/PushSetList.xhtml">                                	
+							</h:commandButton>
+                            </h:form>
+                            <div class="farmmingAdd fr"> 
+                                <button class="btn btn-success fr" style="display: #{s:hasRole('check_time_control_add')?'block':'none'}"  onclick="isThere(#{pushSetList.baseId})">添加</button>
+                                <!-- Modal 添加采收记录弹窗 开始 -->
+                                             <a4j:form id="tian">
+                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"> </button>
+                                            <h4 class="modal-title font14" id="myModalLabel">检测时间设定</h4>
+                                            </div>
+                                            <div class="modal-body" style="padding-bottom:0;">
+                                                <table class="farmingMageTab_fjxx">
+                                                    <tr>
+                                                        <td width="60" align="right">所属类型</td>
+                                                        <td width="242" style="padding-left:15px;">
+														<select style="display: none;" class="selectpicker" id="plant_val" onchange="changebList()" name="plant_val" multiple="multiple" data-live-search="true">
+                                                                        <a4j:repeat value="#{pushSetHome.pList}" id="aj" var="var">
+                                                                        <option value="#{var.plantId}">#{var.name}</option>
+                                                                        </a4j:repeat>
+                                                                    </select>
+                                                         <h:inputHidden value="#{pushSetHome.planListval}" id="planListval" />
+                                                       
+                                                        </td>
+                                                       <td width="60" align="right">品种名称</td>
+                                                         <td width="193" style="padding-left:15px;">
+						                                    <h:panelGroup id="idObj" >
+						                                   		<select style="display: none;" class="selectpicker bree" id="breed_val" name="breed_val" multiple="multiple" data-live-search="true">
+                                                                        <a4j:repeat value="#{pushSetHome.bList}" var="var">
+                                                                        <option value="#{var.breedId}-#{var.plant.plantId}">#{var.name}</option>
+                                                                        </a4j:repeat>
+                                                                    </select>
+                                                                    <h:inputHidden value="#{pushSetHome.breedListval}" id="breedListval" />
+                                                                    <h:inputHidden value="#{pushSetHome.bListLength}" id="bListLengthId" />
+						                                     </h:panelGroup>
+						                                  </td>
+						                             </tr>
+						                             <tr>
+                                                     <td width="60" align="right">检测时间</td>
+                                                     <td colspan="3" style="padding-left:15px;">
+                                                     	<h:inputText  class="form-control fl ab1" style="width:120px;" value="#{pushSetHome.instance.testingTime}" />
+                                                     	<span style="display:inline-block; float:left; padding-left:5px;">天</span>
+                                                     	<ul class="iCheck_ul" style="float: left; margin-top:8px; margin-left:10px;">
+														    <li>
+														    	<input type="radio" value="1" class="iRadio" name="testRadio" checked="checked"/>
+														  		<label aa="1" class="#{pushSetHome.instance.harvestPeriod eq 1 ?'checked':''}" name="eResults" style="padding:0 15px 0 5px;">采收开始前</label>
+														  
+														    </li>
+														    <li>
+														    	<input type="radio" value="2" class="iRadio" name="testRadio"/>
+														    	<label aa="2" class="#{pushSetHome.instance.harvestPeriod eq 2 ?'checked':''}" name="eResults" style="padding:0 15px 0 5px;">采收开始后</label>
+														    	
+														    </li>
+														    <h:inputHidden id="inputsType" value="#{pushSetHome.instance.harvestPeriod}" />
+														</ul>
+                                                     </td>
+                                                     </tr>
+                                                     
+                                                </table>
+                                            </div>
+                                            <div class="modal-footer">
+						                     <a4j:commandButton styleClass="btn btn-primary jilubutton" action="#{pushSetHome.persist}" value="保存" onclick="if(!validation())return false;jquery('.jilubutton').prop('disabled','true');" oncomplete="jquery('.jilubutton').removeAttr('disabled');"></a4j:commandButton>
+						                         
+						                     <button type="button" onclick="goBack()" class="btn btn-default">返回</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                            </a4j:form>
+                                <!-- Modal 添加采收记录弹窗 结束 -->
+                            </div>
+                            
+                        </div>
+                       
+                        <div class="mt20">
+                            <table class="ze_table" width="100%" cellpadding="0" cellspacing="0" style="margin-top:0;">
+                            <tbody>
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                                <td colspan="5" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             	<th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                           
+                                <th class="ze_bg" width="10%">序号</th>
+                                <th class="ze_bg" width="23%">所属类型</th>
+                                <th class="ze_bg" width="23%">品种名称</th>
+                                <th class="ze_bg" width="23%">检测时间</th>
+                                <th class="ze_bg" width="21%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <a4j:repeat value="#{pushSetList.resultList}"  var="obj" rowKeyVar="_index">
+                                  <tr class="">
+	                                <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+	                                <td class="ze_bg2" >#{_index+1}</td>
+	                                <td class="ze_bg2">#{obj.plantId.name}</td>   
+	                                <td class="ze_bg2">#{obj.breedId.name}</td>
+	                                <ui:fragment rendered="#{obj.harvestPeriod==1}">
+	                               		<td class="ze_bg2">采收开始前：#{obj.testingTime}</td>	
+	                                </ui:fragment>
+	                                <ui:fragment rendered="#{obj.harvestPeriod==2}">
+	                               		<td class="ze_bg2">采收开始后：#{obj.testingTime}</td>	
+	                                </ui:fragment>
+	                                <td class="ze_bg2">
+		                                <s:link propagation="none" style="display: #{s:hasRole('check_time_control_show')?'hide':'none'}" includePageParams="none" view="/#{empty from ? 'harvest/PushSet' : from}.xhtml" styleClass="list_view"  id="pushSetId" title="查看">
+											<f:param name="pushSetId" value="#{obj.id}" />
+											<f:param name="pageNum" value="#{pushSetList.pageNum}" />
+										</s:link>&#160;
+		                                <s:link propagation="none" style="display: #{s:hasRole('check_time_control_edit')?'hide':'none'}" includePageParams="false" view="/harvest/PushSetEdit.xhtml" styleClass="list_edit" id="pushSetEdit" rendered="#{empty from}" title="编辑">
+		                                	<f:param name="pushSetId" value="#{obj.id}" />
+		                                	<f:param name="pageNum" value="#{pushSetList.pageNum}" />
+										</s:link>&#160;
+										<s:link propagation="none"  style="display: #{s:hasRole('check_time_control_del')?'hide':'none'}" view="/harvest/PushSetEdit.xhtml"   title="删除"  styleClass="list_delete" action="#{pushSetHome.remove}" onclick="return confirm('确定删除吗？');" id="pushSetDelete" rendered="#{empty from}">
+		                                	<f:param name="pushSetId" value="#{obj.id}" />
+		                                	<f:param name="pageNum" value="#{pushSetList.pageNum}" />
+		                                </s:link>
+                                	</td>
+                              		<td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            	</tr>          
+                                            
+                          </a4j:repeat>
+                            
+                            </tbody>
+                            </table>                        
+                        
+                         <!-- 分页 开始 -->
+                             <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty pushSetList.resultList}"> 
+			                <s:decorate rendered="#{!pushSetList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{pushSetList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{pushSetList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/harvest/PushSetList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/harvest/PushSetList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{pushSetList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{pushSetList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{pushSetList.previousExists or _index >0 ?'td_t_t':''} #{_page eq pushSetList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/harvest/PushSetList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{pushSetList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/harvest/PushSetList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{pushSetList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/harvest/PushSetList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{pushSetList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{pushSetList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</s:div>
+                    		<td>
+                             	<s:link view="/harvest/ProductionRunList.seam" styleClass="btn btn-default" value="返回"  >
+		    					</s:link>
+		    				</td>
+                    	</tr>
+                    </table>
+                                <!-- 分页 结束 -->
+                        
+                        </div>
+                    </div>
+                    <!-- 编辑采收记录集合模态框 开始 -->
+                     	<div style="height:30px; width:100%; padding-bottom:200px;"></div>
+                 </div>   
+                  
+            </td>   
+            
+
+ <a4j:form>
+         <a4j:jsFunction name="ajaxbList" action="#{pushSetHome.ajaxbList}"  reRender="idObj" oncomplete="huidiao()">
+      		<a4j:actionparam name="planListval" assignTo="#{pushSetHome.planListval}"/>
+        </a4j:jsFunction>
+ </a4j:form>
+ <a4j:form>
+         <a4j:jsFunction name="rebegin" action="#{pushSetHome.begin}"  reRender="idObj"  oncomplete="huidiao()">
+        </a4j:jsFunction>
+ </a4j:form>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/skinBlue.css"/>	
+<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+           //单选按钮控件
+	jquery('input[class=iRadio]').iCheck({
+		 radioClass: 'iradio_minimal-blue'
+	});
+
+	  
+           
+  function changebList(){
+	
+	var plant_val=jquery('#plant_val').val()+'';
+	ajaxbList(plant_val)
+	  }
+  function huidiao(){
+	  jquery('.selectpicker').selectpicker();
+	  jquery('.bree').parent().find('.pull-left').text('全部');
+	  
+	  }
+  window.onload = function () {
+    jquery('.selectpicker').selectpicker();
+  };
+  function goBack(){
+	  jquery("#myModal").modal("hide");
+ }
+ function validation(){
+	 if(jquery('#tian\\:bListLengthId').val()==0){
+		 var name="";
+		 jquery(".selected").contents().find(".text").each(function(){
+		 	name+=jquery(this).text()+",";
+		 });
+		 alert(name.substr(0,name.length-1)+"无小品种，请先添加小品种！");
+		 return false;
+	 }
+	 if(jquery('.ab1').val()==''){
+		 alert("检测时间不能为空！");
+		 return false;
+		 }
+	 jquery('#tian\\:planListval').val(jquery('#plant_val').val()+'');
+	 if(jquery('#breed_val').val()==null){
+		 jquery('#tian\\:breedListval').val(0);
+	 }else{
+		 jquery('#tian\\:breedListval').val(jquery('#breed_val').val()+'');
+	 }
+	 
+	 jquery("#tian\\:inputsType").val(jquery('.iCheck_ul').find('.checked').find('.iRadio').val());
+	return true;
+ }
+
+
+ 
+ var len = #{pushSetList.basicList.size()};
+  function isThere(basid){
+	  if(len == 0){
+			alert("请添加基地！");
+		}else if((basid==null || basid==0) && len != 1){
+			alert("请选择基地！");
+		}else{
+		  rebegin();
+		  jquery("#tian\\:inputsType").val(1);
+		  jquery('#tian\\:planListval').val('');
+		  jquery('#plant_val').val('');
+		  jquery('.selected').attr('class','');
+		  jquery('.pull-left').text('无可选择项目')
+		  jquery('.ab1').val(0);
+		  jquery('#myModal').modal('show');
+		}
+	  }
+ function ti(){
+	 jquery('.b1').attr("data-live-search","true");
+	 jquery('.selectpicker').selectpicker();
+	 jquery(".form_datetime").datetimepicker({
+		    format: "yyyy-mm-dd hh:ii",
+		    autoclose: true,
+			 weekStart: 1,
+			  //startDate: "2014-08-14 10:00",
+			 language:  'zh-CN',
+		    
+		    pickerPosition: "bottom-left"
+		    });
+	 }
+
+ Date.prototype.format = function(format)
+ {
+ 	var o = {
+ 	"M+" : this.getMonth()+1, //month
+ 	"d+" : this.getDate(),    //day
+ 	"h+" : this.getHours(),   //hour
+  	"m+" : this.getMinutes(), //minute
+ 	"s+" : this.getSeconds(), //second
+  	"q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+  	"S" : this.getMilliseconds() //millisecond
+ 	}
+
+ 	if(/(y+)/.test(format)) 
+ 	{
+ 		format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+ 	}
+ 	
+  	for(var k in o)
+ 	{
+ 		if(new RegExp("("+ k +")").test(format))
+ 		{
+  			format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+ 		}
+ 	}
+ 	return format;
+ }
+
+ 
+
+//]]>
+</script>
+<script type="text/javascript">
+				jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd hh:ii",
+			    autoclose: true,
+				 weekStart: 1,
+				// startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+			    
+			    pickerPosition: "bottom-left"
+			    });
+			    
+			  window.onload = function () {
+			    jquery('.selectpicker').selectpicker();
+			  };
+			</script>
+	</ui:define>
+
+</ui:composition>

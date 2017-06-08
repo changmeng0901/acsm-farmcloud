@@ -1,0 +1,193 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+	<ui:define name="body">
+		<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<td valign="top" width="210" style=" border-right:1px solid #e1e4eb;">
+    	<div class="left_c2">
+    		<ul class="lt_c_ul">
+	    		<li>
+	            	<a href="#{request.contextPath}/agricultural/InputsInfoList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/trp2.png"/>&#160;投入品信息</a>
+	            </li>
+	            <li>
+	            	<a href="#{request.contextPath}/agricultural/InputsRecordList.seam" class="fon_07" ><strong><img class="tbimg"  src="#{request.contextPath}/asset/images/far_jilu_21.png"/>&#160;投入品记录</strong></a>
+	            </li>
+	        </ul>
+    		<div class="clear"></div>
+    	</div>
+	</td>
+	<td valign="top" >
+		<div class="right_c">
+	    	<div class="r_title">
+	        	<div class="r_t_l"><font size="4">投入品记录</font></div>
+	        </div>
+			<br/>
+			<div class="z_r_ser">
+				<h:form id="storageTypeSearch">
+                    <table cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                <div class="public-search">   
+                                	<span class="octicon-search02"></span>
+                                	<h:inputHidden value="#{inputsRecordList.baseId}" id="baseHidden"/>
+                                	<h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="name" styleClass="form-control nw300 srarchfont" value="#{inputsRecordList.searchParam}"/>
+                                </div>
+                                
+                                	<h:commandButton id="search" styleClass="btn btn-primary" value="搜索" action="/agricultural/InputsRecordList.xhtml">                                	
+	                                </h:commandButton>
+                                </td>
+                           </tr>
+                       </table> 
+                    </h:form>                          
+			</div>
+			<!--添加按钮开始-->
+           	<div class="tjan_01">
+           		<s:link styleClass="btn btn-success" onclick="return checkSelectNew();" value="添加" view="/agricultural/InputsRecordEdit.xhtml" propagation="none">
+                    	<f:param name="inputsRecordId" />
+                    	<f:param name="baseId" value="#{inputsRecordList.baseId}"/>
+                    	<f:param name="pageNum" value="#{inputsRecordList.pageNum}"/>
+                    	</s:link>
+           	</div>
+			<!--添加按钮结束-->
+			<table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+            	<tr>
+            		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+            		<td colspan="5" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                    <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+            	</tr>
+            	<tr>
+            		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+            		<th class="ze_bg" width="20%">种植区域</th>
+            		<th class="ze_bg" width="20%">投入品名称</th>
+            		<th class="ze_bg" width="20%">投入品类型</th>
+            		<th class="ze_bg" width="20%">记录时间</th>
+            		<th class="ze_bg" width="20%">操作</th>
+                    <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+            	</tr>
+				<ui:repeat value="#{inputsRecordList.resultList}" var="_inputsRecord" rendered="#{not empty inputsRecordList.resultList}" rowKeyVar="_index">
+              		<tr>
+              			<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+              			<td class="ze_bg2"><h:outputText  value="#{_inputsRecord.realPlantId.tunnelInfoId.tunnelName}--#{_inputsRecord.realPlantId.breedBreedId.plant.name}" /></td>
+              			<td class="ze_bg2"><h:outputText  value="#{_inputsRecord.inputsInfoId.name}" /></td>
+              			<td class="ze_bg2">
+              			<h:outputText  rendered="#{_inputsRecord.inputsInfoId.inputsType eq 2}" value="农药"/>
+              			<h:outputText  rendered="#{_inputsRecord.inputsInfoId.inputsType eq 3}" value="肥料" />
+              			<h:outputText  rendered="#{_inputsRecord.inputsInfoId.inputsType eq 4}" value="其它" />
+              			</td>
+              			<td class="ze_bg2">
+                    		<h:outputText value="#{_inputsRecord.insertTime}">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+						    </h:outputText>
+						</td>
+              			<td class="ze_bg2">
+                      		<s:link propagation="none"  view="/#{empty from ? 'agricultural/InputsRecord' : from}.xhtml" styleClass="list_view"  id="breedViewId" title="查看">
+								<f:param name="inputsRecordId" value="#{_inputsRecord.id}" />
+								<f:param name="baseId" value="#{inputsRecordList.baseId}"/>
+								<f:param name="pageNum" value="#{inputsRecordList.pageNum}"/>
+							</s:link>&#160;
+                          	<s:link propagation="none" view="/agricultural/InputsRecordEdit.xhtml"     styleClass="list_edit" id="breedEdit" rendered="#{empty from}" title="编辑">
+                          		<f:param name="inputsRecordId" value="#{_inputsRecord.id}" />
+                          		<f:param name="baseId" value="#{inputsRecordList.baseId}"/>
+                          		<f:param name="pageNum" value="#{inputsRecordList.pageNum}"/>
+							</s:link>&#160;
+							<s:link propagation="none"  view="/agricultural/InputsRecordEdit.xhtml"   title="删除"  styleClass="list_delete" action="#{inputsRecordHome.remove}" onclick="return confirm('确定删除吗？');" id="breedDelete" rendered="#{empty from}">
+                          		<f:param name="inputsRecordId" value="#{_inputsRecord.id}" />
+                          		<f:param name="baseId" value="#{inputsRecordList.baseId}"/>
+                          		<f:param name="pageNum" value="#{inputsRecordList.pageNum}"/>
+                          	</s:link>
+                      	</td>
+                      	<td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+            		</tr>
+               	</ui:repeat>
+           	</table>
+            <!--翻页开始-->
+			<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+				<tr>
+			 		<s:div rendered="#{not empty inputsRecordList.resultList}"> 
+						<s:decorate rendered="#{!inputsRecordList.previousExists }">
+							<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+						</s:decorate>
+			 			<s:decorate rendered="#{inputsRecordList.previousExists }">
+							<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+						</s:decorate>
+						<s:decorate rendered="#{inputsRecordList.previousExists }">
+			          		<td class="td_t_b">
+			           			<s:link propagation="none"  view="/agricultural/InputsRecordList.xhtml" >首页
+			           				<f:param name="pageNum" value="0" />
+			           			</s:link>
+			          		</td>
+			          		<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+			                	<s:link propagation="none"  view="/agricultural/InputsRecordList.xhtml"  styleClass="no_n" >
+			                		<f:param name="pageNum" value="#{inputsRecordList.previousFirstResult}"/>&lt;
+			                	</s:link>
+			             	</td>
+			          	</s:decorate>
+			      		<a4j:repeat var="_page" value="#{inputsRecordList.pageList}" rowKeyVar="_index">
+							<td class="td_t_b #{inputsRecordList.previousExists or _index >0 ?'td_t_t':''} #{_page eq inputsRecordList.pageNum?'onp':''}">
+								<s:link propagation="none"  view="/agricultural/InputsRecordList.xhtml" value="#{_page}" id="previousPage">
+									<f:param name="pageNum" value="#{_page}" />
+								</s:link>
+							</td>
+						</a4j:repeat>
+						<s:decorate rendered="#{inputsRecordList.nextExists}">
+			             	<td class="td_t_b td_t_t">
+		                      	<s:link propagation="none"  view="/agricultural/InputsRecordList.xhtml"   styleClass="no_d" >
+		                      		<f:param name="pageNum" value="#{inputsRecordList.nextFirstResult}" />&gt;
+		                      	</s:link>
+			           		</td>
+			             	<td class="td_t_b td_t_t">
+								<s:link propagation="none"  view="/agricultural/InputsRecordList.xhtml" >尾页
+							 		<f:param name="pageNum" value="#{inputsRecordList.PAGE_COUNT}" />
+							 	</s:link>
+							</td>
+						</s:decorate>
+					<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{inputsRecordList.PAGE_COUNT}页</td>
+			        <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+				</s:div>
+			</tr>
+		</table>
+		<!--翻页结束-->
+		<div class="clear"></div>
+	</div><!--right_c结束-->
+</td>
+<script type="text/javascript">
+//<![CDATA[
+	window.onload = function () {
+	    jquery('.selectpicker').selectpicker();
+	  };
+
+	  jquery(document).ready(function(){
+			var v = document.getElementById("storageTypeSearch:name").value;
+			if(v == ""){
+				document.getElementById("storageTypeSearch:name").value = "请输入搜索条件";
+				}
+			});
+		//]]>
+			</script>
+</ui:define>
+
+</ui:composition>

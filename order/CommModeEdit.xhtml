@@ -1,0 +1,263 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="commMode" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{commModeHome.managed ? 'Edit' : 'Add'} Comm mode</f:facet>
+
+
+
+
+            <s:decorate id="commModeTypeField" template="../layout/edit.xhtml">
+                <ui:define name="label">Comm mode type</ui:define>
+                <h:inputText id="commModeType"
+                       required="true"
+                          value="#{commModeHome.instance.commModeType}">
+                    <a:support event="onblur" reRender="commModeTypeField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="childModeTypeField" template="../layout/edit.xhtml">
+                <ui:define name="label">Child mode type</ui:define>
+                <h:inputText id="childModeType"
+                       required="true"
+                          value="#{commModeHome.instance.childModeType}">
+                    <a:support event="onblur" reRender="childModeTypeField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="contentField" template="../layout/edit.xhtml">
+                <ui:define name="label">Content</ui:define>
+                <h:inputText id="content"
+                       required="true"
+                           size="100"
+                      maxlength="100"
+                          value="#{commModeHome.instance.content}">
+                    <a:support event="onblur" reRender="contentField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="insertTimeField" template="../layout/edit.xhtml">
+                <ui:define name="label">Insert time</ui:define>
+                <rich:calendar id="insertTime"
+                       required="true"
+                          value="#{commModeHome.instance.insertTime}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="userInfoIdField" template="../layout/edit.xhtml">
+                <ui:define name="label">User info id</ui:define>
+                <h:inputText id="userInfoId"
+                       required="true"
+                          value="#{commModeHome.instance.userInfoId}">
+                    <a:support event="onblur" reRender="userInfoIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="deletedField" template="../layout/edit.xhtml">
+                <ui:define name="label">Deleted</ui:define>
+                <h:selectBooleanCheckbox id="deleted"
+                                   required="true"
+                                      value="#{commModeHome.instance.deleted}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{commModeHome.persist}"
+                       disabled="#{!commModeHome.wired}"
+                       rendered="#{!commModeHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{commModeHome.update}"
+                       rendered="#{commModeHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{commModeHome.remove}"
+                      immediate="true"
+                       rendered="#{commModeHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/CommMode.xhtml"
+                rendered="#{commModeHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty commModeFrom ? 'CommModeList' : commModeFrom}.xhtml"
+                rendered="#{!commModeHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Member info *" labelClass="required">
+    <div class="association" id="memberInfoParent">
+
+        <h:outputText value="There is no memberInfo associated with this commMode."
+                   rendered="#{commModeHome.instance.memberInfo == null}"/>
+
+        <rich:dataTable var="_memberInfo"
+                   value="#{commModeHome.instance.memberInfo}"
+                rendered="#{commModeHome.instance.memberInfo != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="memberInfoTable">
+            <h:column>
+                <f:facet name="header">Member info id</f:facet>
+                <h:outputText value="#{_memberInfo.memberInfoId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Area area id</f:facet>
+                <h:outputText value="#{_memberInfo.area.areaId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">User info user info id</f:facet>
+                <h:outputText value="#{_memberInfo.userInfo.userInfoId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Company info company info id</f:facet>
+                <h:outputText value="#{_memberInfo.companyInfo.companyInfoId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Member level member level id</f:facet>
+                <h:outputText value="#{_memberInfo.memberLevel.memberLevelId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Member code</f:facet>
+                <h:outputText value="#{_memberInfo.memberCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Member type</f:facet>
+                <h:outputText value="#{_memberInfo.memberType}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_memberInfo.realName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name py</f:facet>
+                <h:outputText value="#{_memberInfo.realNamePy}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Nick name</f:facet>
+                <h:outputText value="#{_memberInfo.nickName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Icon</f:facet>
+                <h:outputText value="#{_memberInfo.icon}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Sex</f:facet>
+                <h:outputText value="#{_memberInfo.sex}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Birthday</f:facet>
+                <h:outputText value="#{_memberInfo.birthday}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Marriage state</f:facet>
+                <h:outputText value="#{_memberInfo.marriageState}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Income</f:facet>
+                <h:outputText value="#{_memberInfo.income}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Education</f:facet>
+                <h:outputText value="#{_memberInfo.education}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Id card</f:facet>
+                <h:outputText value="#{_memberInfo.idCard}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Home address</f:facet>
+                <h:outputText value="#{_memberInfo.homeAddress}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Home port</f:facet>
+                <h:outputText value="#{_memberInfo.homePort}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Balance</f:facet>
+                <h:outputText value="#{_memberInfo.balance}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Expend integral</f:facet>
+                <h:outputText value="#{_memberInfo.expendIntegral}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grade integral</f:facet>
+                <h:outputText value="#{_memberInfo.gradeIntegral}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Taboo</f:facet>
+                <h:outputText value="#{_memberInfo.taboo}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Hobby</f:facet>
+                <h:outputText value="#{_memberInfo.hobby}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Remark</f:facet>
+                <h:outputText value="#{_memberInfo.remark}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Member source</f:facet>
+                <h:outputText value="#{_memberInfo.memberSource}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Insert time</f:facet>
+                <h:outputText value="#{_memberInfo.insertTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Deleted</f:facet>
+                <h:outputText value="#{_memberInfo.deleted}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{commModeHome.instance.memberInfo != null ? 'changeParent' : 'selectParent'}" value="#{commModeHome.instance.memberInfo != null ? 'Change' : 'Select'} memberInfo"
+                       view="/MemberInfoList.xhtml">
+                <f:param name="from" value="CommModeEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

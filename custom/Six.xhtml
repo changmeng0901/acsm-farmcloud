@@ -1,0 +1,1162 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="#{sessionTake.loginStep==6?'/layout/template.xhtml':'/layout/template_custom.xhtml'}">
+
+<ui:define name="body">
+<style>
+.dr-mpnl-pnl{padding:0;}
+ .dr-mpnl-pnl-b{color:none;padding:0; font-family:"微软雅黑";}
+ .dr-insldr td{padding:0;}
+ .font_td{font-size:14px;}
+ .dr-insldr{width:255px!important;}
+ #healthShadowDiv{margin-top:-100px;}
+ #dangerShadowDiv{margin-top:-100px;}
+ #standardShadowDiv{margin-top:-100px;}
+ .dr-insldr-tip{padding:8px 2px 5px 2px; *padding:5px 2px 5px 2px;}
+ .ke-edit{height:70px!important;}
+ iframe.ke-edit-iframe,  iframe.ke-edit-textarea{height:70px!important;}
+ textarea.ke-edit-textarea{height:70px!important;}
+.rich-picklist-source-items{margin:0px;}
+.rich-picklist-target-items{margin:0px;}
+.rich-picklist-source-cell-active, .rich-picklist-target-cell-active{border:none;}
+</style>
+<!--右边开始--><!--#{newProductRecordHome.work()} -->
+<td valign="top" width="195" style=" border-right:1px solid #e1e4eb;">
+                <div style="width:165px; text-align:center; margin-top:35px;">
+                	<img src="#{request.contextPath}/asset/images/new_035.jpg" width="80" height="739" />
+                </div>
+            </td>
+            <td valign="top" width="100%">
+           
+                <div class="right_c" style="height:auto;">
+                	<div class="r_title">
+                    	<div class="r_t_l"><s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="工作 ">
+                    </s:link>&#160;&gt;&#160;&#160;<font size="3">履历管理</font></div>
+                    
+                    </div>
+                <table  class="bian" cellpadding="0" cellspacing="0" style="margin-top:15px; float:left;width:512px">
+                	<tr>
+                        <td class="phon_lc">编辑</td>
+                    </tr>
+                	<tr>
+                		<td>
+                            <!--模版信息开始-->
+                                <div class="bj_bg12" style="height:130px">
+                                    <table cellpadding="0" cellspacing="0" border="0" class="bj_bg_t" width="100%">
+                                     <tr>
+                                     <td>
+        							<a4j:repeat  value="#{newProductRecordHome.modelList}"  var="_obj" rowKeyVar="_index" rendered="#{!empty newProductRecordHome.modelList}" >                             
+        							<table width="50%" cellpadding="0" cellspacing="0" class="table_fl">
+                                                    <tr>
+                                                        <td width="30" valign="middle" align="center">
+                                                        <input type="radio" id="checkbox#{_obj.id}" name="aaaaa" checked="#{newProductRecordHome.pmi.id==_obj.id?'true':'false'}"
+                                                    	 onclick="getRfidType(#{_obj.id});cheset(this.value)" value="#{_obj.id}" />
+                                                        </td>
+                                                        <td class="mob" width="60">#{_obj.id==1?"模版2":"模版3"}#{_obj.id==1?"":_index}</td>
+                                                        <td width="165" height="100" align="left" valign="middle"><img src="${_obj.pageTopImageUrl}" width="165" height="100" /></td>
+                                                    </tr>
+                                            </table>
+                                    </a4j:repeat>
+                                    </td>
+        							 </tr>
+                                    </table>
+        <a4j:form>	
+        <a4j:jsFunction name="getRfidType" reRender="rTop,backG" action="#{newProductRecordHome.changeModel()}" oncomplete="rset();">
+            <a4j:actionparam name="param1"   assignTo="#{newProductRecordHome.str}"/>                  
+        </a4j:jsFunction>
+      	</a4j:form>
+      	<h:panelGroup id="modeljs">
+<script>
+var id ;
+cheset = function(obj){
+	id = obj
+}
+rset = function(){
+	document.getElementById("checkbox"+id).checked=true;
+}
+var c = "#{newProductRecordHome.pmi.id}";
+if(c!=""){
+	document.getElementById("checkbox"+c).checked=true;
+}
+</script>
+</h:panelGroup>
+                                <div class="clear"></div>
+                            </div>	
+        
+                            <!--模版信息结束-->
+                        </td>
+                	</tr>
+                	<tr>
+                		<td>
+                		<rich:modalPanel id="product" autosized="true" height="173" width="450" headerClass="modalHeader" >
+		<div class="tck_div">
+       <div class="tck_ti" >
+       <h:outputLink value="#"
+                onclick="#{rich:component('product')}.hide(); return false;">
+                    <img src="../images/close_17.jpg" width="20" height="20"/>
+                </h:outputLink>
+                </div>
+       <h:form id="productform" enctype="multipart/form-data">
+               	<table class="tck_table">
+                    <tr>
+                    	<td width="130" class="font_td" align="right">产品名称：</td>
+                        <td width="240"  >
+				  	 <h:inputText id="productName" styleClass="ge_file" required="true" size="20" maxlength="45" value="#{newProductRecordHome.instance.productName}">
+	                </h:inputText>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="right" class="font_td">英文名：</td>
+                        <td  >
+						  	   <h:inputText id="breedName" styleClass="ge_file" required="true" size="20" maxlength="45" value="#{newProductRecordHome.instance.breedEnglishName}">
+			                </h:inputText>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="right" class="font_td">种植信息：</td>
+                        <td  >
+                        <h:selectOneMenu immediate="true"
+						id="tunnel"  value="#{newProductRecordHome.instance.realPlant}"  required="true">
+						<s:selectItems value="#{newProductRecordHome.realPlantsList}" var="obj"
+							label="#{obj.tunnelInfoId.tunnelName}-#{obj.breedBreedId.name}"/>
+						<s:convertEntity />
+					</h:selectOneMenu>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td colspan="2" style="padding-left: 50px;" align="center" valign="bottom">
+                    	<a4j:commandButton value="保存" reRender="productInfo,productInfoView" oncomplete="#{rich:component('product')}.hide();"  image="../images/safe.jpg"   style="width:74px;height:26px"/>
+		                	&#160;<h:outputLink value="#"
+                onclick="#{rich:component('product')}.hide(); return false;"><img class="er_buttton" src="../images/button_17.jpg" width="74" height="26" />
+                </h:outputLink>
+                        </td>
+                    </tr>
+                </table>
+               
+       </h:form>
+       </div>
+   </rich:modalPanel>
+                            <!--产品信息开始-->
+                            <div class="blshw">
+                                    <div class="bl_title">
+                                     </div>
+                                <div class="bj_bg2">
+                                         <h:panelGroup id="productInfo">
+                                         <h:form> 
+                                                <table cellpadding="0" cellspacing="0" border="0" class="bj_bg_t01">
+                                                    <tr>
+                                                        <td class="bj_pro_tdl">
+															<rich:pickList  value="#{newProductRecordHome.roleResult}" copyAllControlLabel="全部选择"
+															sourceListWidth="180px"  targetListWidth="180px"  listsHeight="240px"  
+																removeAllControlLabel="全部清除" copyControlLabel="选择"		removeControlLabel="清除">
+																<f:selectItems value="#{newProductRecordHome.roleResult2}" />
+																<a4j:support event="onlistchanged"/>
+															</rich:pickList>
+													</td>
+                                                    </tr>
+                                                </table>
+                                          </h:form>
+                                          </h:panelGroup>
+                                     </div>      
+                                <div class="clear"></div>
+                            </div>	
+                            <!--产品信息结束-->
+                        </td>
+                	</tr>
+                	<tr>
+                		<td>
+                	<!--生长环境监测开始-->
+                	<rich:modalPanel id="health" autosized="true" headerClass="modalHeader"  style=" margin-top:-100px;">
+		<div class="tck_div" style="width:600px;">
+       <div class="tck_ti" >
+       <h:outputLink value="#"
+                onclick="#{rich:component('health')}.hide(); return false;">
+                    <img src="../images/close_17.jpg" width="20" height="20"/>
+                </h:outputLink>
+                </div>
+       <h:form id="healthform" enctype="multipart/form-data" >
+               	<table class="tck_table" style="width:600px; line-height:0px; padding:0px; margin-top:15px;">
+                    <tr>
+                    	<td class="font_td" width="130" height="20" align="left">农产环境洁净度</td>
+                        <td width="255"  >
+	               
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="left" class="font_td">空气(PM2.5)：</td>
+                        <td>
+			                <rich:inputNumberSlider value="#{newProductRecordHome.instance.productBaseInfoId.airPm}" />
+                        </td>
+                         <td>
+				  	    <rich:calendar  value="#{newProductRecordHome.instance.productBaseInfoId.airPmTime}"
+						datePattern="yyyy-MM-dd HH:mm" locale="en/US" >
+						</rich:calendar>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="left" class="font_td">土壤(超标提醒)：</td>
+                        <td >
+			                <rich:inputNumberSlider value="#{newProductRecordHome.instance.productBaseInfoId.soil}" />
+                        </td>
+                        <td>
+				  	    <rich:calendar  value="#{newProductRecordHome.instance.productBaseInfoId.soilTime}"
+						datePattern="yyyy-MM-dd HH:mm" locale="en/US" >
+						</rich:calendar>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="left" class="font_td">灌溉水源：</td>
+                        <td>
+			                <rich:inputNumberSlider value="#{newProductRecordHome.instance.productBaseInfoId.water}" />
+                        </td>
+                        <td>
+				  	    <rich:calendar  value="#{newProductRecordHome.instance.productBaseInfoId.waterTime}"
+						datePattern="yyyy-MM-dd HH:mm" locale="en/US" >
+						</rich:calendar>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="left" class="font_td">静态环境适宜度：</td>
+                        <td  >
+			                <rich:inputNumberSlider value="#{newProductRecordHome.instance.productBaseInfoId.environmentSuit}" />
+                        </td>
+                        <td>
+				  	    <rich:calendar  value="#{newProductRecordHome.instance.productBaseInfoId.environmentSuitTime}"
+						datePattern="yyyy-MM-dd HH:mm" locale="en/US" >
+						</rich:calendar>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="left" class="font_td">生长季环境适宜度：</td>
+                        <td >
+			                <rich:inputNumberSlider value="#{newProductRecordHome.instance.productBaseInfoId.seasonEnvSuit}" />
+                        </td>
+                        <td>
+				  	    <rich:calendar  value="#{newProductRecordHome.instance.productBaseInfoId.seasonEnvSuitTime}" 
+						datePattern="yyyy-MM-dd HH:mm" locale="en/US" >
+						</rich:calendar>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td colspan="3" align="center" valign="bottom">
+		          <a4j:commandButton value="添加" style="width:74px;height:26px" image="../images/safe.jpg"  
+		                	reRender="healthinfo,healthpreview"
+		                	oncomplete="#{rich:component('health')}.hide();"
+		                	/>
+		          &#160;
+		          <h:outputLink value="#" onclick="#{rich:component('health')}.hide(); return false;"><img class="er_buttton" src="../images/button_17.jpg" width="74" height="26" />
+                </h:outputLink>
+                        </td>
+                    </tr>
+                </table>
+               
+       </h:form>
+       </div>
+   </rich:modalPanel>
+   
+   <!-- 图片上传弹出框开始-->
+                	<rich:modalPanel id="env" autosized="true" headerClass="modalHeader"  style=" margin-top:-100px;">
+		<div class="tck_div" style="width:600px;">
+		
+       <div class="tck_ti">
+       <div style="float:left; font-size:14px; position:relative; left:-18px; color:#ffffff; font-weight:bold;">生长环境检测</div>
+       <h:outputLink value="#"
+                onclick="#{rich:component('env')}.hide(); return false;"  style="float:right;">
+                    <img src="../images/close_17.jpg" width="20" height="20"/>
+                </h:outputLink>
+                </div>
+       <h:form id="envform" enctype="multipart/form-data" >
+               	<table class="tck_table" style="width:600px; line-height:0px; padding:0px; margin-top:15px;">
+               	<tr><td height="20" style="font-size:13px; color:434343; font-weight:bold;">农场环境洁境度</td></tr>
+               	<tr>
+               	<td style="padding-bottom:12px;" id="envCStringTd">
+               	<script>
+               	fu1 = function(){
+               		document.getElementById("envform:envCString").value = editor.html();
+               		document.getElementById("envform:envHString").value = editor2.html();
+               	}
+               	</script>
+               		<h:inputTextarea  style="width:590px;height:50px" value="#{newProductRecordHome.instance.productBaseInfoId.envCString}" id="envCString"/>
+               	</td>
+               	</tr>
+                 <tr><td height="20" style="font-size:13px; color:434343; font-weight:bold;">生长环境健康度</td></tr>
+               	<tr>
+               	<td style="padding-bottom:12px;">
+               		<h:inputTextarea  style="width:590px;height:50px" value="#{newProductRecordHome.instance.productBaseInfoId.envHString}" id="envHString"/>
+               	</td>
+               	</tr>
+                    <tr>
+                    	<td colspan="3" align="center" valign="bottom">
+		          <a4j:commandButton value="保存" style="width:74px;height:26px" image="../images/safe.jpg"  
+		                	reRender="healthinfo,healthpreview" onclick="fu1()"
+		                	oncomplete="#{rich:component('env')}.hide();"
+		                	/>
+		          &#160;
+		          <h:outputLink value="#" onclick="#{rich:component('env')}.hide(); return false;"><img class="er_buttton" src="../images/button_17.jpg" width="74" height="26" />
+                </h:outputLink>
+                        </td>
+                    </tr>
+                </table>
+       </h:form>
+       </div>
+   </rich:modalPanel>
+   <!-- 图片上传弹出框结束 -->
+   
+                	<div class="blshw">
+                    	<div class="bl_title">
+                                         <ul>
+                                           <li class="blli">
+                                           <a4j:form >
+                                           <h:selectBooleanCheckbox id="envMonitorStatus"
+						 size="45" maxlength="45"
+						value="#{newProductRecordHome.instance.productBaseInfoId.envMonitorStatus}" >
+						<a4j:support event="onclick" reRender="healthinfohide,healthpreview"/>
+						</h:selectBooleanCheckbox>&#160;启用
+						</a4j:form></li>
+						        <li class="blli" style="margin-left:11px;">
+                                           <a4j:form >
+                                           <h:selectBooleanCheckbox id="envMonitorStatus"
+						 size="45" maxlength="45"
+						value="#{newProductRecordHome.instance.productBaseInfoId.envCleanliness}" >
+						<a4j:support event="onclick" ></a4j:support>
+						</h:selectBooleanCheckbox>&#160;自动获取数据
+						</a4j:form></li>
+                                           <li class="titli_03"><a href="#" onclick="#{rich:component('health')}.show();return false;"><img src="#{request.contextPath}/asset/images/bj_10.jpg" width="14" height="13" />&#160;编辑</a></li>
+                                        </ul>
+                         </div>
+                         <h:panelGroup id="healthinfohide" >
+                         <div class=" #{!newProductRecordHome.instance.productBaseInfoId.envMonitorStatus?'bj_lan':''}"></div> 
+                         </h:panelGroup>
+                         <h:panelGroup id="healthinfo">
+                    	<div class="bj_bg22">
+                    	
+                              <div class="bl_t_l_22">
+                              		<span style="float:left; font-size:14px;">农产环境洁净度</span>
+                              		<span style="float:right;"><a href="#" onclick="#{rich:component('env')}.show();editor.remove().create();editor2.remove().create();return false;" style="color:#267bcc; text-decoration:none;">查看详细</a></span>
+                              	</div>
+                                           
+                                        <table width="414" class="bj_bg_t02" cellpadding="0" cellspacing="0" border="0">
+            
+                                            <tr>
+                                                <td class="bl_t_l_te">空气(PM2.5)：</td>
+                                                <td valign="middle" align="center" class="bl_color">#{newProductRecordHome.instance.productBaseInfoId.airPm}</td>
+                                                <td align="center"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.airPmTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss"/>
+												</h:outputText></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="bl_t_l_te">土壤(超标提醒)：</td>
+                                                <td valign="middle" align="center" class="bl_color">#{newProductRecordHome.instance.productBaseInfoId.soil}</td>
+                                                <td align="center"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.soilTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss"/>
+												</h:outputText></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="bl_t_l_te">灌溉水源：</td>
+                                                <td valign="middle" align="center" class="bl_color">#{newProductRecordHome.instance.productBaseInfoId.water}</td>
+                                                <td align="center"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.waterTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss"/>
+												</h:outputText></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="bl_t_l_te">静态环境适宜度：</td>
+                                                <td valign="middle" align="center" class="bl_color">#{newProductRecordHome.instance.productBaseInfoId.environmentSuit}</td>
+                                                <td align="center"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.environmentSuitTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss"/>
+												</h:outputText></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="bl_t_l_te">生长季环境适宜度：</td>
+                                                <td valign="middle" align="center" class="bl_color">#{newProductRecordHome.instance.productBaseInfoId.seasonEnvSuit}</td>
+                                                <td align="center"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.seasonEnvSuitTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss"/>
+												</h:outputText></td>
+                                            </tr>
+
+                                        </table>
+                         </div>   
+                    	<div class="clear"></div>
+                    	</h:panelGroup>
+                    </div>	
+                	<!--生长环境监测结束-->
+                        </td>
+                	</tr>
+                	<tr>
+                		<td>
+                	<!--作物病害成熟度记录开始-->
+                	<rich:modalPanel id="danger" autosized="true"  width="597" headerClass="modalHeader" style=" margin-top:-100px;" >
+		<div class="tck_div" style="width:600px;">
+       <div class="tck_ti" >
+       <h:outputLink value="#"
+                onclick="#{rich:component('danger')}.hide(); return false;">
+                    <img src="../images/close_17.jpg" width="20" height="20"/>
+                </h:outputLink>
+                </div>
+       <h:form id="dangerform" enctype="multipart/form-data">
+               <table class="tck_table" style="width:600px;line-height:0px;padding:0px;">
+               
+                    <tr>
+                    	<td width="150" align="left" class="font_td">病虫害发生指数：</td>
+                        <td width="255">
+			                <rich:inputNumberSlider style="" value="#{newProductRecordHome.instance.productBaseInfoId.diseaseIndex}" />
+                        </td>
+                        <td width="210">
+						  	    <rich:calendar  value="#{newProductRecordHome.instance.productBaseInfoId.diseaseIndexTime}"
+								datePattern="yyyy-MM-dd HH:mm" locale="en/US" >
+								</rich:calendar>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="left" class="font_td">病虫害防治方法：</td>
+                        <td  colspan="2">
+                        <h:selectManyCheckbox immediate="true" value="#{newProductRecordHome.controlMethods}"  >
+							<f:selectItem itemValue="1" itemLabel="生物防治"></f:selectItem>
+							<f:selectItem itemValue="2" itemLabel="物理防治"></f:selectItem>
+							<f:selectItem itemValue="3" itemLabel="生物用药"></f:selectItem>
+							<f:selectItem itemValue="4" itemLabel="化学用药"></f:selectItem>
+						</h:selectManyCheckbox>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td align="left" class="font_td">采收自然成熟度：</td>
+                        <td  >
+			                <rich:inputNumberSlider value="#{newProductRecordHome.instance.productBaseInfoId.naturalMaturity}" />
+                        </td>
+                        <td >
+						  	    <rich:calendar  value="#{newProductRecordHome.instance.productBaseInfoId.naturalMaturityTime}"
+								datePattern="yyyy-MM-dd HH:mm" locale="en/US" >
+								</rich:calendar>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td colspan="3" align="center" valign="bottom">
+                    	<a4j:commandButton value="添加" style="width:74px;height:26px" image="../images/safe.jpg"  
+		                	reRender="dangerinfo,dangerpreview"
+		                	action = "#{newProductRecordHome.updateDanger()}"
+		                	oncomplete="#{rich:component('danger')}.hide();"
+		                	/>&#160;
+		                	<h:outputLink value="#"
+                onclick="#{rich:component('danger')}.hide(); return false;"><img class="er_buttton" src="../images/button_17.jpg" width="74" height="26" />
+                </h:outputLink>
+                        </td>
+                    </tr>
+                </table>
+               
+       </h:form>
+       </div>
+   </rich:modalPanel>
+   
+   <!-- 农事管理图片上传弹出框开始-->
+                	<rich:modalPanel id="disease" autosized="true" headerClass="modalHeader"  style=" margin-top:-100px;">
+		<div class="tck_div" style="width:600px;">
+       <div class="tck_ti">
+        <div style="float:left; font-size:14px; position:relative; left:-18px; color:#ffffff; font-weight:bold;">农作物采收自然成熟度</div>
+       <h:outputLink value="#"
+                onclick="#{rich:component('disease')}.hide(); return false;">
+                    <img src="../images/close_17.jpg" width="20" height="20"/>
+                </h:outputLink>
+                </div>
+       <h:form id="diseaseform" enctype="multipart/form-data" >
+               	<table class="tck_table" style="width:600px; line-height:0px; padding:0px; margin-top:15px;">
+               	<tr>
+               	<td>
+               		<script>
+               	fu4 = function(){
+               		document.getElementById("diseaseform:farmFecords").value = editor8.html();
+               	}
+               	</script>
+               		<h:inputTextarea  style="width:590px;height:50px" value="#{newProductRecordHome.instance.productBaseInfoId.farmFecords}" id="farmFecords"/>
+               	</td>
+               	</tr>
+                    <tr>
+                    	<td colspan="3" align="center" valign="bottom">
+		          <a4j:commandButton value="保存" style="width:74px;height:26px" image="../images/safe.jpg"  
+		                	reRender="healthinfo,healthpreview" onclick="fu4()"
+		                	oncomplete="#{rich:component('disease')}.hide();"
+		                	/>
+		          &#160;
+		          <h:outputLink value="#" onclick="#{rich:component('disease')}.hide(); return false;"><img class="er_buttton" src="../images/button_17.jpg" width="74" height="26" />
+                </h:outputLink>
+                        </td>
+                    </tr>
+                </table>
+               
+       </h:form>
+       </div>
+   </rich:modalPanel>
+   <!-- 认证管理图片上传弹出框结束 -->
+                	<div class="blshw">
+                    	<div class="bl_title">
+                             <ul>
+                               <li class="blli"><a4j:form ><h:selectBooleanCheckbox 
+						 size="45" maxlength="45"
+						value="#{newProductRecordHome.instance.productBaseInfoId.recordCropsStatus}" >
+						<a4j:support event="onclick" reRender="dangerinfohide,dangerpreview"></a4j:support>
+						</h:selectBooleanCheckbox>&#160;启用</a4j:form></li>
+						<li class="blli" style="margin-left:11px;">
+                                           <a4j:form >
+                                           <h:selectBooleanCheckbox id="cropMaturity"
+						 size="45" maxlength="45"
+						value="#{newProductRecordHome.instance.productBaseInfoId.cropMaturity}" >
+						<a4j:support event="onclick" ></a4j:support>
+						</h:selectBooleanCheckbox>&#160;自动获取数据
+						</a4j:form></li>
+                               <li class="titli_03"><a href="#" onclick="#{rich:component('danger')}.show();return false;"><img src="#{request.contextPath}/asset/images/bj_10.jpg" width="14" height="13" />&#160;编辑</a></li>
+                            </ul>
+                         </div>
+                         <h:panelGroup id="dangerinfohide" >
+                         <div class=" #{!newProductRecordHome.instance.productBaseInfoId.recordCropsStatus?'bj_lanew':''}"></div> 
+                         </h:panelGroup>
+                         <h:panelGroup id="dangerinfo">
+                    	<div class="bj_bgnew">
+                    	
+                                             <div class="bl_t_l_22">
+                              		
+                              		<span style="float:right;"><a href="#" onclick="#{rich:component('env')}.show();editor.remove().create();editor2.remove().create();return false;" style="color:#267bcc; text-decoration:none;">查看详细</a></span>
+                              	</div>
+                                            <table cellpadding="0" cellspacing="0" border="0" class="bj_bg_t05">
+											<tr>
+                                                <td class="bl_t_l_te">病虫害发生指数：</td>
+                                                <td valign="middle" align="center" class="bl_color">#{newProductRecordHome.instance.productBaseInfoId.diseaseIndex}</td>
+                                                <td  align="center"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.diseaseIndexTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText></td>
+                                            </tr>    
+											<tr>
+                                                <td class="bl_t_l_te">病虫害防治方法：</td>
+                                                <td colspan="2" valign="middle">
+                                                	<a4j:repeat rendered="#{not empty newProductRecordHome.controlMethods}" value="#{newProductRecordHome.controlMethods}" var="_var" rowKeyVar="_index">
+														<div class="fz_0#{_var}"></div>
+														 <div class="fz_1_1">
+														<h:outputText value="生物防治" rendered="#{_index+1 eq 1}"/>
+				                                     	<h:outputText value="物理防治" rendered="#{_index+1 eq 2}"/>
+				                                     	<h:outputText value="生物用药" rendered="#{_index+1 eq 3}"/>
+				                                     	<h:outputText value="化学用药" rendered="#{_index+1 eq 4}"/>
+				                                     	</div>
+				                                 </a4j:repeat>
+                                                </td>
+                                            </tr>                                             
+                
+											<tr>
+                                                <td width="132" class="bl_t_l_te">农作物采收自然成熟度：</td>
+                                                <td width="20" valign="middle" align="center" class="bl_color">#{newProductRecordHome.instance.productBaseInfoId.naturalMaturity}</td>
+                                                <td width="" align="center"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.naturalMaturityTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText></td>
+                                            </tr>                                             
+                
+                                            </table>
+                       </div>    
+                       </h:panelGroup>
+                    	<div class="clear"></div>
+                    </div>	
+				<!--作物病害成熟度记录结束-->
+                        </td>
+                	</tr>
+                	<tr>
+                		<td>
+   <!-- 农场管理图片上传弹出框结束 -->
+                            <!--农场管理监测开始-->
+                            <div class="blshw">
+                                <div class="bl_title" style="border-bottom:1px solid #BCDADC;">
+                                         <ul>
+                                           <li class="blli">农场管理检测</li>
+                                           <li class="blli">
+                                           <a4j:form ><h:selectBooleanCheckbox id="farmDetectStatus"
+						 size="45" maxlength="45"
+						value="#{newProductRecordHome.instance.productBaseInfoId.farmDetectStatus}" >
+						<a4j:support event="onclick" reRender="farmpreview"/>
+						</h:selectBooleanCheckbox>&#160;启用</a4j:form></li>
+                                        </ul>
+                                 </div>
+                                <div class="clear"></div>
+                            </div>	
+                        <!--农场管理监测结束-->
+                        </td>
+                	</tr>
+                	<tr>
+                		<td>
+                            <!--认证情况开始-->
+                          
+                            <div class="blshw">
+                                <div class="bl_title" style="border-bottom:1px solid #BCDADC;">
+                                         <ul>
+                                           <li class="blli">认证情况</li><li class="blli"><a4j:form ><h:selectBooleanCheckbox 
+						 size="45" maxlength="45"
+						value="#{newProductRecordHome.instance.productBaseInfoId.legalizeStatus}" >
+						<a4j:support event="onclick" reRender="standardpreview"/>
+						</h:selectBooleanCheckbox>&#160;启用</a4j:form></li>
+                                        </ul>
+                                 </div>
+                                <div class="clear"></div>
+                            </div>	
+                        <!--认证情况结束-->
+                        </td>
+                	</tr>
+                	<tr>
+                		<td>
+                	<!--农事记录和投入品管理开始-->
+                	<div class="blshw">
+                    	<div class="bl_title" style="border-bottom:1px solid #BCDADC;">
+                             <ul>
+                               <li class="blli">农事记录和投入品记录</li><li class="blli"><a4j:form ><h:selectBooleanCheckbox
+						 size="45" maxlength="45"
+						value="#{newProductRecordHome.instance.productBaseInfoId.fieldRecordStatus}" >
+						<a4j:support event="onclick" reRender="operatepreview"/>
+						</h:selectBooleanCheckbox>&#160;启用</a4j:form></li>
+                            </ul>
+                         </div>
+                    	<div class="clear"></div>
+                    </div>	
+				<!--农事记录和投入品管理结束-->
+                        </td>
+                	</tr>
+                </table>
+            <!--左侧编辑页面结束-->
+                
+            <!--右侧手机页面开始-->
+                        <!--==========手机页面开始============-->
+                   <div class="r_sj_div">
+                        <div class="phon_bg_22t">预览</div>
+                        <div class="phon_bg_2">
+                        	<div class="phon_div">
+                                    <div class="main" id="main">
+                                        <h:panelGroup id="rTop">
+                        <div style="width:320px; margin:0; padding:0;">
+                        <div class="top_bg" style=" position:relative; z-index:3; ">
+				        		<img src="#{newProductRecordHome.pmi.logoImageUrl}" width="320" height="53" />
+			        		</div>
+			        		<div  style=" position:relative; z-index:2; ">
+                       			<img src="#{newProductRecordHome.pmi.pageTopImageUrl}"  width="320" height="220" />
+                        	
+                        	</div>	
+                        	<div class="clear"></div>
+                        </div>
+                        </h:panelGroup>
+                                                
+                                                
+                                                 <!--产品信息开始-->
+                                                 <!--产品信息结束-->
+                                                 
+                                                  <!--生长环境开始-->
+                                                 <h:panelGroup id="healthpreview">
+                                                 <div style="#{!newProductRecordHome.instance.productBaseInfoId.envMonitorStatus?'display:none':'display:block'}">
+                                                <div class="title">履历数据:</div>
+                                                 <div class="bl_ock">
+                                                      <div class="title_2">
+                                                            <ul style="margin:0; padding:0;">
+                                                                <li style="float:left;">生长环境检测</li>
+                                                                <li class="grow_ex" style="float:right; font-weight:normal;"><a href="#">详细了解</a></li>
+                                                            </ul>    
+                                                      </div>
+                                                      <table class="grow_table" cellpadding="0" cellspacing="0" border="0">
+                                                         <tr>
+                                                             <td class="grow_01">农场环境洁境度</td>
+                                                             <td valign="middle">
+                                                                 
+                                                             </td>
+                                                             <td  class="cj_ex" align="right"></td>
+                                                         </tr>
+                                                         
+                                                         <tr>
+                                                             <td class="grow_02">空气(PM2.5)</td>
+                                                             <td valign="middle">
+                                                                 <div class="sche">
+                                         	 <img src="../asset/images/iphone/grow_03.jpg" width="110" height="10" />
+                                             <div class="sche_block01" style="margin-left:#{newProductRecordHome.instance.productBaseInfoId.airPm}px;">
+                                             	 <img src="../asset/images/iphone/se_block.png" width="13" height="18" />
+                                             </div>
+                                                                 </div>
+                                                             </td>
+                                                             <td class="cj_ex"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.airPmTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText>数据采集</td>
+                                                         </tr>
+                                                         
+                                                         <tr>
+                                                             <td class="grow_02">土壤(超标提醒)</td>
+                                                             <td valign="middle">
+                                                                <div class="sche">
+                                         	 <img src="../asset/images/iphone/grow_03.jpg" width="110" height="10" />
+                                             <div class="sche_block01" style="margin-left:#{newProductRecordHome.instance.productBaseInfoId.soil}px;">
+                                             	 <img src="../asset/images/iphone/se_block.png" width="13" height="18" />
+                                             </div>
+                                                                 </div>
+                                                             </td>
+                                                             <td class="cj_ex"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.soilTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText>数据采集</td>
+                                                         </tr>
+                                                         
+                                                         <tr>
+                                                             <td class="grow_02">灌溉水源</td>
+                                                             <td valign="middle">
+                                                                 <div class="sche">
+                                         	 <img src="../asset/images/iphone/grow_03.jpg" width="110" height="10" />
+                                             <div class="sche_block01" style="margin-left:#{newProductRecordHome.instance.productBaseInfoId.water}px;">
+                                             	 <img src="../asset/images/iphone/se_block.png" width="13" height="18" />
+                                             </div>
+                                                                 </div>
+                                                             </td>
+                                                             <td class="cj_ex"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.waterTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText>数据采集</td>
+                                                         </tr>
+                                                      </table>
+                                                    <!--生长环境健康度开始-->                              
+                                                      <table class="grow_table" cellpadding="0" cellspacing="0" border="0" style="margin-top:15px;">
+                                                         <tr>
+                                                             <td class="grow_01">生长环境健康度</td>
+                                                             <td valign="middle">&#160;</td>
+                                                             <td class="grow_ex" align="right"><a href="#">详细了解</a></td>
+                                                         </tr>
+                                                         
+                                                         <tr>
+                                                             <td class="grow_02">静态环境适宜度</td>
+                                                             <td valign="middle">
+                                                                 <div class="sche">
+                                         	 <img src="../asset/images/iphone/grow_03.jpg" width="110" height="10" />
+                                             <div class="sche_block01" style="margin-left:#{newProductRecordHome.instance.productBaseInfoId.environmentSuit}px;">
+                                             	 <img src="../asset/images/iphone/se_block.png" width="13" height="18" />
+                                             </div>
+                                                                 </div>
+                                                             </td>
+                                                             <td class="cj_ex"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.environmentSuitTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText>数据采集</td>
+                                                         </tr>
+                                                         
+                                                         <tr>
+                                                             <td class="grow_02">生长季环境适宜度</td>
+                                                             <td valign="middle">
+                                                                 <div class="sche">
+                                         	 <img src="../asset/images/iphone/grow_03.jpg" width="110" height="10" />
+                                             <div class="sche_block01" style="margin-left:#{newProductRecordHome.instance.productBaseInfoId.seasonEnvSuit}px;">
+                                             	 <img src="../asset/images/iphone/se_block.png" width="13" height="18" />
+                                             </div>
+                                                                 </div>
+                                                             </td>
+                                                             <td class="cj_ex"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.seasonEnvSuitTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText>数据采集</td>
+                                                         </tr>
+                                                      </table>
+                                                      
+                                                     <!--生长环境健康度结束-->
+                                                      
+                                                     <div class="clear"></div>
+                                                 </div>	
+                                                 </div>
+                                                 </h:panelGroup>
+                                                 <!--生长环境结束-->
+                                                 
+                                                 
+                                             <!--农场管理监测开始-->
+                                              <h:panelGroup id="farmpreview">  
+                                              <div style="#{!newProductRecordHome.instance.productBaseInfoId.farmDetectStatus?'display:none':'display:block'}">
+                                                      <div class="title_3" style="padding-left:15px;">
+                                                        农场管理监测
+                                                      </div>
+                                                          
+                                              <div class="bl_ock">
+                                                    
+                                                      <div class="far_div01">
+                                                              <div class="farmer">农场主</div>
+                                                              <div class="farmer_pic"><s:graphicImage value="#{newProductRecordHome.instance.farmerOwnInfoId.picture}" width="120" height="75" rendered="#{newProductRecordHome.instance.farmerOwnInfoId.picture ne null}">
+														<s:transformImageSize width="150" maintainRatio="true" />
+														</s:graphicImage></div>
+                                                              <div class="text02">
+                                                                    <div class="text_03">
+                                                                        <div class="text_04">
+                                                                        #{stringUtil.shortString(newProductRecordHome.instance.farmerOwnInfoId.description,65)}
+                                                                        </div>
+                                                                        <div class="text_05"><a href="#">农场主答疑</a></div>
+                                                                    
+                                                                    </div>
+                                                              </div>
+                                                              <div class="clear"></div>
+                                                      </div>
+                                                      
+                                                      <div class="far_div02">
+                                                              <div class="steward">农场管家</div>
+                                                              <div class="stew_01">
+                                                                    <div class="stew_02">
+                                                                        <div class="stew_03">
+                                                                        #{stringUtil.shortString(newProductRecordHome.instance.farmerInfo.description,30)}
+                                                                        </div>
+                                                                        <div class="text_06"><a href="#">农场管家答疑</a></div>
+                                                                    
+                                                                    </div>
+                                                              </div>
+                                                              <div class="steward_pic"><s:graphicImage value="#{newProductRecordHome.instance.farmerInfo.picture}" width="120" height="75" rendered="#{newProductRecordHome.instance.farmerInfo.picture ne null}">
+														<s:transformImageSize width="150" maintainRatio="true" />
+														</s:graphicImage></div>
+                                                              <div class="clear"></div>
+                                                      </div>
+                                                      
+                                                      
+                                                      
+                                                      <div class="far_div03">
+                                                              <div class="jd">农场监督</div>
+                                                             
+                                                              <div class="jd_pic"><s:graphicImage value="#{newProductRecordHome.instance.masterInfo.picture}" width="120" height="75" rendered="#{newProductRecordHome.instance.masterInfo.picture ne null}">
+														<s:transformImageSize width="150" maintainRatio="true" />
+														</s:graphicImage></div>
+                                                              <div class="jd_02">
+                                                                    <div class="jd_01">
+                                                                        <div class="jd_03">
+                                                                        #{stringUtil.shortString(newProductRecordHome.instance.masterInfo.description,15)}
+                                                                        </div>
+                                                                     
+                                                                        <div class="jd_04"><a href="#">农场监督答疑</a></div>
+                                                                </div>  
+                                                              </div>
+                                                             <div class="clear"></div>
+                                                      </div>
+                                                      <div class="clear"></div>
+                                                      
+                                            </div>    
+                                            </div>
+                                            </h:panelGroup>
+                                             <!--农场管理监测结束-->
+                                        
+                                                
+                                                
+                                                
+                                             <!--认证情况开始--> 
+                                             <h:panelGroup id="standardpreview">   
+                                             <div style="#{!newProductRecordHome.instance.productBaseInfoId.legalizeStatus?'display:none':'display:block'}">
+                                              <div class="bl_ock">     
+                                                
+                                                      <table class="grow_table" cellpadding="0" cellspacing="0" border="0">
+                                                         <tr>
+                                                             <td class="rz_01">认证情况</td>
+                                                             <td>&#160;</td>
+                                                             <td class="grow_ex" align="right"><a href="#">详细了解</a></td>
+                                                         </tr>
+                                                         
+                                                         <tr>
+                                                             <td class="rz_02">认证种类：</td>
+                                                             <td class="rz_03">
+                                                                 #{newProductRecordHome.instance.standardInfoId.legalizeType}
+                                                             </td>
+                                                             <td class="grow_ex" align="right"><a href="#">有机认证证书详情</a></td>
+                                                         </tr>
+                                                         
+                                                         <tr>
+                                                             <td class="rz_02">认证机构：</td>
+                                                             <td class="rz_03">
+                                                                #{newProductRecordHome.instance.standardInfoId.legalizeAgency}
+                                                             </td>
+                                                             <td align="right">&#160;</td>
+                                                         </tr>
+                                                         <tr>
+                                                             <td class="rz_02">认证时间：</td>
+                                                             <td class="rz_03">
+                                                                <h:outputText value="#{newProductRecordHome.instance.standardInfoId.legalizeTime}">
+											<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd"/>
+										</h:outputText>
+                                                             </td>
+                                                             <td>&#160;</td>
+                                                         </tr>
+                                                      </table>
+                                                      <div class="clear"></div>
+                                  </div>   
+                                  </div>
+                                  </h:panelGroup>
+                                                 <!--认证情况结束-->
+                        
+                        
+                                                    <!--病虫害发生指数开始-->    
+                                                     <h:panelGroup id="dangerpreview">       
+                                                     <div style="#{!newProductRecordHome.instance.productBaseInfoId.recordCropsStatus?'display:none':'display:block'}">
+                                                  <div class="bl_ock">       
+                                                      <table class="grow_table" cellpadding="0" cellspacing="0" border="0">
+                                                         <tr>
+                                                             <td class="grow_01">病虫害发生指数</td>
+                                                             <td valign="middle">
+                                                                 <div class="sche">
+                                         	 <img src="../asset/images/iphone/grow_03.jpg" width="110" height="10" />
+                                             <div class="sche_block02" style="margin-left:#{newProductRecordHome.instance.productBaseInfoId.diseaseIndex}px">
+                                             	 <img src="../asset/images/iphone/se_block.png" width="13" height="18" />
+                                             </div>
+                                                                 </div>
+                                                             </td>
+                                                             <td class="cj_ex"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.diseaseIndexTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText>数据采集</td>
+                                                         </tr>
+                                                         
+                                                         <tr>
+                                                             <td class="grow_01">病虫害防治方法</td>
+                                                             <td valign="middle">&#160;
+                                                                 
+                                                             </td>
+                                                             <td class="cj_ex"></td>
+                                                         </tr>
+                                                      </table>
+                                                      
+                                                    <div class="clear"></div>
+                                              </div>
+							                                                      
+                                                     <!--病虫害发生指数结束-->
+                                               <div class="bl_ock">   
+                                                    <div class="far_div">   
+                                                         <div class="fzff">
+                                                            <a4j:repeat rendered="#{not empty newProductRecordHome.controlMethods}" value="#{newProductRecordHome.controlMethods}" var="_var" rowKeyVar="_index">
+                                    <div class="fz_0#{_var}"></div>
+                                    <div class="fz_1">
+										<h:outputText value="生物防治" rendered="#{_index+1 eq 1}"/>
+                                     	<h:outputText value="物理防治" rendered="#{_index+1 eq 2}"/>
+                                     	<h:outputText value="生物用药" rendered="#{_index+1 eq 3}"/>
+                                     	<h:outputText value="化学用药" rendered="#{_index+1 eq 4}"/>
+									</div>
+                                 </a4j:repeat>
+                                                         
+                                                         <div class="fz_xq">详细了解</div>
+                                                         </div>
+                                                         
+                                                         
+                                                 </div>    
+                                            <!--作物成熟度结束--> 
+                                             
+                                                    <!--病虫害发生指数开始-->    
+                                                      <table class="grow_table02" cellpadding="0" cellspacing="0" border="0">
+                                                         <tr>
+                                                             <td class="cs_01">农作物采收自然成熟度</td>
+                                                             <td valign="middle">
+                                                                 <div class="sche">
+                                         	<img src="../asset/images/iphone/grow_03.jpg" width="110" height="10" />
+                                             <div class="sche_block02" style="margin-left:#{newProductRecordHome.instance.productBaseInfoId.naturalMaturity}px">
+                                             	 <img src="../asset/images/iphone/se_block.png" width="13" height="18" />
+                                             </div>
+                                                                 </div>
+                                                             </td>
+                                                             <td class="cs_ex"><h:outputText value="#{newProductRecordHome.instance.productBaseInfoId.naturalMaturityTime}">
+											<s:convertDateTime pattern="yyyy.MM.dd HH:mm" />
+										</h:outputText></td>
+                                                         </tr>
+                                                      </table>
+                                                      
+                                                    <div class="clear"></div>
+                                              </div>
+                                              </div>
+                                               </h:panelGroup>
+                                                     <!--病虫害发生指数结束-->
+                                                     
+                            
+                                             <!--农事记录和投入品开始--> 
+                                             <h:panelGroup id="operatepreview">
+                                             <div style="#{!newProductRecordHome.instance.productBaseInfoId.fieldRecordStatus?'display:none':'display:block'}">
+                                             <div class="bl_ock">
+                                                    <div class="far_div">
+                                                        <ul class="ns_ul">
+                                                            <li class="ns_01">农事记录和投入品记录</li>
+                                                            <li class="ns_ex"></li>
+                                                        </ul>
+                                                        
+                                                        <table class="nsjl" cellpadding="0" cellspacing="0" >
+                                                            <tr>
+                                                                <th width="40%">时间</th>
+                                                                <th width="15%">操作</th>
+                                                                <th width="15%">责任人</th>
+                                                                <th width="30%">说明</th>
+                                                            </tr>
+                                                            <a4j:repeat rendered="#{not empty newProductRecordHome.fieldRecordList}" value="#{newProductRecordHome.fieldRecordList}" var="_var" rowKeyVar="_index">
+                                	<tr>
+                                		<td><h:outputText value="#{_var.operationTime}">
+													<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm"/>
+												</h:outputText></td>
+                                        <td>#{_var.operationType}</td>
+                                        <td>#{_var.responsible}</td>
+                                        <td>#{_var.explanation}</td>
+                                	</tr>
+                                	</a4j:repeat>
+                                                        </table>
+                                                        
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                <div class="clear"></div>
+                                             </div>
+                                             </div>
+                                             </h:panelGroup>
+                                            <!--农事记录和投入品结束--> 
+                                           <!--加工配送记录开始-->
+                                            
+                                           <!--加工配送记录 结束-->  
+                                                          </div>                        
+                                                        </div>
+                                                </div>
+                                    </div>            
+					<!--=====手机页面结束===========-->
+            <!--右侧手机页面结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div style="width:100%; height:32px; text-align:center; margin-top:15px; margin-bottom:15px;">
+                <rich:modalPanel id="save">
+            	数据保存中.请稍候!
+            	</rich:modalPanel>
+            	<s:link propagation="none"   action="#{sessionTake.setWorkParam(1)}" view="/record/ProductBaseInfoList.xhtml" id="gopage"></s:link>
+                <s:link propagation="none"  view="/record/viewRecord.xhtml">
+                <f:param name="productRecordProductInfoId"/>
+                </s:link>        
+                <!-- #{iphoneHome.getRecordId()} -->
+            	<a4j:form>	
+        <a4j:jsFunction name="persist"  action="#{newProductRecordHome.save()}" oncomplete="goUrl1();">
+        </a4j:jsFunction>
+        </a4j:form>
+        <a4j:form>
+        <a4j:jsFunction name="updatee"  action="#{newProductRecordHome.update()}" oncomplete="goUrl1();" >
+        </a4j:jsFunction>
+      	</a4j:form>
+      			<s:link propagation="none"  rendered="#{sessionTake.getLoginStep() == 6}" view="/custom/Fourth.xhtml"  >
+            		<img  src="../asset/images/order/next_27.jpg"  />
+            	</s:link>&#160;
+            	<s:link propagation="none"  rendered="#{sessionTake.getLoginStep() != 6}" view="/custom/Fifth.xhtml"  >
+            		<img  src="../asset/images/order/next_27.jpg"  />
+            	</s:link>&#160;
+               	<ui:fragment  rendered="#{newProductRecordHome.instance.productInfoId==null}">
+               	<img onclick="checkadd(1);return false;" src="../asset/images/accomplish.jpg" style="margin-left:3px;cursor:pointer"/>
+               	</ui:fragment>
+               	&#160;
+               	<ui:fragment  rendered="#{newProductRecordHome.instance.productInfoId!=null}">
+               	<img onclick="checkadd(2);return false;" src="../asset/images/accomplish.jpg" style="margin-left:3px;cursor:pointer" />
+               	</ui:fragment>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/kindeditor.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/lang/zh_CN.js"></script>
+
+         <script>
+       //<![CDATA[
+       //编译器
+       var editor;
+		KindEditor.ready(function(K) {
+			editor = K.create('textarea[name="envform:envCString"]', {
+				resizeType : 1,
+				allowPreviewEmoticons : false,
+				allowImageUpload : true,
+				
+				items : [
+					'source','|','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+					'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist','image',
+					'insertunorderedlist']
+		});
+		});
+			var editor2;
+			KindEditor.ready(function(K) {
+				editor2 = K.create('textarea[name="envform:envHString"]', {
+					resizeType : 1,
+					allowPreviewEmoticons : false,
+					allowImageUpload : true,
+					
+					items : [
+						'source','|','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+						'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist','image',
+						'insertunorderedlist']
+			});
+			});
+			
+			var editor8;
+			KindEditor.ready(function(K) {
+				editor8 = K.create('textarea[name="diseaseform:farmFecords"]', {
+					resizeType : 1,
+					allowPreviewEmoticons : false,
+					allowImageUpload : true,
+					
+					items : [
+						'source','|','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+						'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist','image',
+						'insertunorderedlist']
+			});
+			});
+
+			
+       jquery(document).ready(function(){ 
+    	 if(document.body.clientWidth<=1010){
+    		   jquery(".top").css("min-width","1010px");
+               jquery(".content").css("min-width","1010px");
+			   document.getElementById("sc").setAttribute("href","#{request.contextPath}/asset/css/1024.css");
+			   jquery(".rich-picklist-list-content").css("width","150px");
+		       	 }else{
+       		jquery(".top").css("min-width","1334px");
+            jquery(".content").css("min-width","1334px");
+            document.getElementById("sc").setAttribute("href","#{request.contextPath}/asset/css/1028.css");
+       	 }
+			
+       });
+         window.onresize = function(){
+        	 if(document.body.clientWidth<=1010){
+        		 //jquery(".top").css("min-width","1010px");
+                 //jquery(".content").css("min-width","1010px");
+				 document.getElementById("sc").setAttribute("href","#{request.contextPath}/asset/css/1024.css");
+				 jquery(".rich-picklist-list-content").css("width","150px");
+        	 }else{
+        		 jquery(".top").css("min-width","1334px");
+                 jquery(".content").css("min-width","1334px");
+        		 document.getElementById("sc").setAttribute("href","#{request.contextPath}/asset/css/1028.css");
+        		 jquery(".rich-picklist-list-content").css("width","180px");
+        	 }
+         }
+       //]]>
+         jquery(".rich-calendar-input").addClass("ge_file");
+         addcla = function(){
+        	 jquery(".rich-calendar-input").addClass("ge_file");
+         }
+         checkadd = function(ind){
+			//if(thejQuery(".noneCodeClass").val()==''||thejQuery(".codeClass").find("span").html()!=''){
+			//	alert("履历编号填写有误");
+			//	return false;
+			//}
+			if(ind==1){
+				persist();
+			}else {
+				updatee();
+			}
+         }
+         
+         goUrl1 = function(){
+         	window.location.href=document.getElementById("gopage").href;
+             }
+                 function aaa (){
+			         thejQuery(".rich-color-picker-submit").html("应用");
+			         thejQuery(".rich-color-picker-cancel").html("取消");
+                 }
+         </script>
+         <h:panelGroup id="backG">
+            	<style>
+            	.main {
+            		background:#{newProductRecordHome.pmi.backgroundColor};
+            	}
+            	</style>
+            	<script>
+            	var backcolor = "#{newProductRecordHome.pmi.backgroundColor}";
+            	document.getElementById("main").style.background=backcolor;
+            	</script>
+          </h:panelGroup>
+                </div>
+                                <script type="text/javascript" src="#{request.contextPath}/asset/js/form/superfish.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/supersubs.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.dataTables.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.fancybox-1.3.4.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.filestyle.mini.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.treeview.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.tipsy.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/inline.js"></script>
+                
+            </td>    
+</ui:define>
+
+</ui:composition>

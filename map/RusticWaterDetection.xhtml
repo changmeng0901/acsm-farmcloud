@@ -1,0 +1,186 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+	<ui:define name="body">
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/map/farmInformation.css"/>
+    
+	<style>
+	.org_content td .add_pp{width: 100%; height:auto;}
+	.input-append.date .add-on i, .input-prepend.date .add-on i { margin-left:0px;}
+	</style>
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="imageYz" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="imageMessYz">*号部分为必填项！</span>
+        
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+#{rusticWaterDetectionHome.load()}
+	<td valign="top">              
+		<div class="right_c" style="min-height:30px; padding-bottom:15px; padding-top:15px;">
+        	<!-- 面包屑导航 开始 -->
+            <div class="r_title clear" style="margin-top:0;">
+                <div class="r_t_l fl"><span>数字农场</span><em>&gt;</em><span>基地档案</span><em>&gt;</em><font size="3">基地信息</font></div>   
+            </div>
+            <!-- 农场信息主体 开始 -->
+            <h4 class="addTitle">检测信息<span>Detection information</span></h4>
+            <h:form id="rw">
+	            <table class="org_content" width="100%" cellpading="0" cellspacing="0">
+	                <tr>
+	                    <td class="product_org">检测类型</td>
+	                    <td colspan="3">
+	                        <select  class="selectpicker" >
+	                            <option value="1">灌溉水</option>
+	                            <option value="2">土壤</option>
+	                            <option value="3">空气</option>
+	                            <option value="4">其他</option>
+	                        </select>
+	                        <h:inputHidden id="typeId" value="#{rusticWaterDetectionHome.instance.type}" />
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td class="product_org">检测单位</td>
+	                    <td colspan="3">
+	                        <h:inputText id="nameId" styleClass="form-control nw220" value="#{rusticWaterDetectionHome.instance.name}"/>
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td class="product_org">检测时间</td>
+	                    <td colspan="3">
+	                        <div class="input-append date form_datetime " >
+	                             <h:inputText  styleClass="new_time" value="#{rusticWaterDetectionHome.instance.testTime}" readonly="#{facesContext.renderResponse}"/>
+	                            <span class="add-on"><i class="icon-th"></i></span>
+	                        </div>
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td class="product_org" style="vertical-align:top;">检测图片</td>
+	                    <td colspan="3">
+	                        <div class="clear">
+	                            <div class="add_pp">
+	                                <iframe src="#{request.contextPath}/map/WaterImages.seam?rwdId=#{rusticWaterDetectionHome.instance.id==null ? 0 :rusticWaterDetectionHome.instance.id}" id="myframe" name="myframe" frameBorder="0" scrolling="no" onLoad="" style="width:100%; height:100%;"></iframe>
+	                            </div>
+	                        </div>
+	                        <p style="color:red; font-size:12px;">图片标准：276*77（像素）支持格式：jpg,gif,png,jpeg,bmp,3gp</p>
+	                      
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <td class="product_org" style="vertical-align:top;"> 结论 </td>
+	                    <td colspan="3">
+	                        <h:inputTextarea id="remarksId" styleClass="form-control nw450" rows="4" value="#{rusticWaterDetectionHome.instance.remarks}" />
+	                    </td>
+	                </tr>
+	            </table>  
+	            <!-- 按钮 -->
+	            <div class="addBtn">
+	              		<h:inputHidden value="#{rusticWaterDetectionHome.imgsUrl}" id="imgsUrl"/>
+	                    <h:commandButton value="提交" action="#{rusticWaterDetectionHome.persist}" styleClass="btn btn-primary mr15" onclick="if(!save())return false;" rendered="#{!rusticWaterDetectionHome.managed}"/>
+                    	<h:commandButton value="提交" action="#{rusticWaterDetectionHome.update}" styleClass="btn btn-primary mr15" onclick="if(!save())return false;" rendered="#{rusticWaterDetectionHome.managed}"/>
+	                    <s:button view="/map/FarmList.xhtml" styleClass="btn btn-default" value="返回" ></s:button>   
+	            </div>
+             </h:form>
+            <!-- 主体 结束 -->
+		</div>
+	</td> 
+		
+		
+<script>
+//<![CDATA[	
+	jquery(function(){
+		jquery('.selectpicker').selectpicker();
+		var typeval=jquery('#rw\\:typeId').val();
+		if(typeval==""){
+			typeval=1;
+		}
+		jquery('.selectpicker').selectpicker('val',typeval);
+		
+		if(jquery('#rw\\:nameId').val()==""){
+			jquery('#rw\\:nameId').val("请输入检测单位");
+		}
+		 
+		jquery('#rw\\:nameId').focus(function(){
+        	var txt_value = jquery(this).val();
+           	if(txt_value=="请输入检测单位"){
+           		jquery(this).val("");
+           
+           	};  
+       	});
+		jquery('#rw\\:nameId').blur(function(){
+        	var txt_value = jquery(this).val();
+           	if(txt_value==""){
+           		jquery(this).val("请输入检测单位");
+           	};  
+            
+       	}); 
+		
+		jquery(".form_datetime").datetimepicker({
+	        format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+	        autoclose: true,
+	        weekStart: 1,
+	        //startDate: "2014-08-14 10:00",
+	        language:  'zh-CN',
+	        startView: 3,
+	        minView: 2,
+	        maxView: 4,     
+	        pickerPosition: "bottom-left"
+		});  
+	});
+           
+	function save(){
+		jquery('#rw\\:typeId').val(jquery('.selectpicker').val());
+
+		var v="";
+		jquery('#rw\\:imgsUrl').val(v);
+		jquery("#myframe").contents().find(".plant_imgbd").each(function(){
+			v +=jquery(this).attr('src')+",";
+		})
+		if(v!=""){
+			v=v.substring(0, v.length);
+			jquery('#rw\\:imgsUrl').val(v);
+		}else{
+			alert("检测图片不能为空！");
+			return false;
+		}
+
+		if(jquery('#rw\\:nameId').val().length>50){
+			alert("检测单位字数不能超过50字！");
+			return false;
+		}
+
+		if(jquery('#rw\\:nameId').val().length>50){
+			alert("检测单位字数不能超过50字！");
+			return false;
+		}
+
+		if(jquery('#rw\\:remarksId').val().length>200){
+			alert("结论字数不能超过200字！");
+			return false;
+		}
+
+		return true;
+	}
+ //]]> 
+</script>
+	</ui:define>
+</ui:composition>

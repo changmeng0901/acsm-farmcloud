@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" /> 
+<meta name="format-detection" content="telephone=no" />
+<style>
+*{margin:0;padding:0;}
+</style>
+</head>
+<body class="cardadd_body">
+	<div class="upload_pictures" id="container">
+		<div id="selectfiles" class="fileBtn fr" style="width: 85px-;">
+			<img class="file_images" src="/asset/images/dpadd.jpg" style="width:100%;height:100%;"/>
+		</div>
+		<!--上传图片的存储及请求事件-->
+		<div id="ossfile1"></div>
+		<a style="display: none" id="postfiles1" href="javascript:void(0);" class='btn' onclick="apply(18);"></a>
+		<a style="display: none" id="callback" href="javascript:void(0);" class='btn' onclick="callback();"></a>
+		<input type="hidden" id="commentFileUrl" name="commentFileUrl" />
+		<input type="hidden" id="father_id" value="#{param.father_id}" />
+		
+		<!--上传图片的存储及请求事件-->
+	</div>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.10.2.min.js"></script>	
+<script type="text/javascript" src="#{request.contextPath}/asset/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+//#################################（上传图片--oss直传）
+var oss_url = "#{dataDicConstant.getOssUrl()}";
+var domain_url = "#{dataDicConstant.getDomainNameUrl()}";
+//发表评价图片上传
+var filters1 = {
+	mime_types : [ //允许上传图片和zip,rar文件以及视频文件
+    { 
+    	title : "Image files", 
+    	extensions : "jpg,jpeg,gif,png,bmp" 
+    },
+    ],
+    max_file_size : "5mb", //最大只能上传5mb的文件
+    prevent_duplicates : false //不允许选取重复文件
+};
+var ua =navigator.userAgent;
+var wechatInfo = ua.match(/MicroMessenger\/([\d\.]+)/i);
+if (/android/.test(ua.toLowerCase()) && wechatInfo && parseFloat(wechatInfo[1]) > 6.3 ) {
+	filters1 ={
+		 max_file_size : "5mb", //最大只能上传5mb的文件
+		 prevent_duplicates : false //不允许选取重复文件
+	}; 
+};
+
+
+function apply(obj){
+	var entId= '#{sessionTake.getEnterpriseInfoId()}';
+	set_upload_param(uploader1, '', false,obj,entId);
+	$(window.parent.document).find("#loading_box").show(); 
+};
+var uploaded_file_url = "";
+function callback() {
+	if(uploaded_file_url!=""){
+		window.parent.updateFatherPic($('#father_id').val(),uploaded_file_url)
+	}
+};
+//]]> 
+</script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/resume/memberPicUpload.js"></script>	
+
+</body>
+</html>

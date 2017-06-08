@@ -1,0 +1,138 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+<style>
+.ui-selectmenu{*position:static;}
+.sh_d_d{ width:100%; padding:10px 0; line-height:45px; font-family:"微软雅黑"; font-size:14px;}
+.sh_01{ height:45px; line-height:45px; float:left; text-align:left; margin-right:25px; display:inline-block;}
+.sh_02{ min-width: 150px; border-bottom:1px solid #373737; display: inline-block; height: 33px; *height: 30px; *line-height:33px;}
+.ts_div2{width:240px; height: 125px; border: 1px solid #81C5E9; margin: 0px auto; padding: 0 15px 15px;  background: url(#{request.contextPath}/asset/images/tck_bg_14.jpg) #ffffff repeat-x scroll center top;}
+.dr-mpnl-shadow{background:none;}
+.dr-mpnl-pnl{background:none; border:none;}
+.dr-mpnl-pnl-b{padding:0;}
+.dr-mpnl-shadow{top:0; left:0;}
+.rich-picklist-source-items{margin:0;}
+</style>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/harvest/yushougl.css"/>
+
+<!-- #{preHarvestHome.work2()} -->
+<td valign="top">
+        <!--右边开始-->
+        <div class="right_c clear">
+            <!-- 公用头部 开始 -->
+            <div class="r_title clear">
+                <div class="r_t_l fl"><span>采销存</span><em>&gt;</em><span>采收</span><em>&gt;</em><font size="3">预釆管理</font></div>
+				<div class="tabLink fr" style="margin:8px 0 0 5px;">
+                        	<s:link styleClass="link1" view="#{sessionTake.harvestParam eq 1?'/realplant/HarvestRecordsList.xhtml':'/realplant/RealPlantList.xhtml'}">采收记录</s:link>
+                        	<span class="line"></span><s:link styleClass="link2 cur" view="/harvest/PreHarvestList.xhtml">预采管理</s:link>
+                        </div>
+            </div>
+			
+            <!-- 公用头部 结束 -->
+            <!-- 预釆管理查看内容 开始 -->
+            <div class="record-stress" style="margin:10px 0;">
+            	<span class="record-people">入录人：#{preHarvestHome.instance.insertUser.nickname}</span>
+                <span class="record-time">入录时间：<h:outputText value="#{preHarvestHome.instance.insertTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+								    </h:outputText></span>
+                <span class="preMining-time">预采收时间：<h:outputText value="#{preHarvestHome.instance.preHarvestTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+								    </h:outputText></span>
+            </div>
+            <h:form id="preHarvestSearch">
+            <div class="search-header-lt" style="margin-bottom: 10px;">
+		          <div class="public-search">
+				       <h:inputText class="form-control mt5" id="preHarvestSearch"  value="#{preHarvestHome.preHarvestSearch}" style="width:240px;height:24px; line-height:22px; padding:0 5px; color:#b3b5b5; font-size:12px;" onfocus="if(this.value=='大棚名称/作物名称'){this.value=''}" onblur="if(this.value==''){this.value='大棚名称/作物名称'}" autocomplete="off"/>
+				 </div>
+					   <h:commandButton id="preHarvestCommand" styleClass="btn btn-primary mt5" style="height:24px; padding:0 10px;" action="/harvest/PreHarvest.xhtml" value="搜索"></h:commandButton>
+	        </div>
+            </h:form>
+            <div class="search-body clear">
+            	<table class="table-newTable" width="100%" cellpadding="0" cellspacing="0">
+                      <thead>
+                          <tr>
+                              <th width="8%">ID</th>
+                              <th width="16%">大棚</th>
+                              <th width="16%">作物名称</th>
+                              <th width="16%">等级</th>
+                              <th width="16%">未来一天总采收量</th>
+                              <th width="16%">未来一周总采收量</th>
+                              <th width="12%">单位</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <a:repeat value="#{preHarvestHome.myPhrList}" var="_obj" rowKeyVar="_index">
+                        <tr class="one #{_obj[0]==''?'borderNo':''}" style="">
+                           <td>#{_obj[9]}</td>
+                            <td >#{_obj[0]}</td>
+                            <td  class="borderRt">
+                            #{_obj[1]}
+                            </td>
+							 <td >#{_obj[8]}</td>
+                            <td>
+                            #{_obj[2]}
+                            </td>
+                            <td>
+                            #{_obj[3]}
+                            </td>
+                            <td>#{_obj[11]}</td>
+                        </tr>
+                        
+                        </a:repeat>
+                      </tbody>
+                      <tfoot>
+                      	<tr style="border-bottom:1px solid #f3f3f3;">
+                        	<td colspan="7" align="right">
+                                <span class="recoveryNum">可采收棚<em>#{preHarvestHome.harvestShed}</em>个</span>
+                                <span class="recoveryType">作物种类<em>#{preHarvestHome.harvestKind}</em>种</span>
+                            </td>
+                        </tr>
+                        <tr height="60">
+                        	<td colspan="7" align="right">
+                                <div class="allrecWeight">
+                                    <span>未来一天总采收量<em>#{preHarvestHome.unitNum1}</em></span><br />
+                                    <span>未来一周总采收量<em>#{preHarvestHome.unitNum2}</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                      </tfoot>
+                  </table>
+                  <table class="baseBtn" style="margin:40px auto;">
+                      <tr>
+                         <td>
+			            	<s:link view="/harvest/PreHarvestList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" >
+			            	<f:param name="baseId" value="#{preHarvestHome.baseId}"/>
+			            	<f:param name="pageNum" value="#{preHarvestHome.pageNum}"></f:param>
+			            	</s:link>
+                            </td>
+                      </tr>
+                  </table>
+            </div>
+            <!-- 预釆管理查看内容 结束 -->
+        </div>
+        <!--右侧结束-->
+        </td> 
+  <script type="text/javascript">      
+  jquery(document).ready(function(){
+        jquery('.siteSelection').mouseover(function(){
+        	jquery('.siteSeleBd').hide();
+		});
+	  jquery('.siteSelection').mouseout(function(){
+		  jquery('.siteSeleBd').hide();			
+		});
+		
+  });
+  </script>
+</ui:define>
+
+</ui:composition>

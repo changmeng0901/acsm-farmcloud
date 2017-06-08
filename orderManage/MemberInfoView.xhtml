@@ -1,0 +1,891 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>  
+
+	#{memberInfoView.memberViewInit()}
+	<style>
+		.customer-table{ border:1px solid #e2e2e2; font-size:12px;}
+		.customer-table td{ border-bottom:1px solid #e2e2e2; vertical-align:top;}
+		.customer-table .td-txt1{ line-height:22px; padding:9px 10px; box-sizing:border-box; background:#f0f5fb; font-weight:bold; text-align:right; color:#323232;}
+		.customer-table .td-txt2{ line-height:22px; padding:9px 10px; box-sizing:border-box; text-align:left; color:#646464;}
+		.customer-table .bor-rt{ border-right:1px solid #e2e2e2;}
+		.customer-pic img{ float:right; width:210px; height:210px; margin:20px;}
+		.mes_mailBtn{ text-align:center;}
+		.tableModel  tr td a{cursor:pointer;}
+		.xiaotub5 { background:  url("../asset/images/orderManage/icon.png") repeat  0 -112px; display: inline-block; height: 13px; width: 15px;}
+	    .xiaotub6 { background:  url("../asset/images/orderManage/icon.png") repeat  0 -131px; display: inline-block; height: 13px; width: 15px;}
+	    .stay{ margin-left:10px; padding-left:20px; background:url(../asset/images/orderManage/order_ico101.png) no-repeat 0 center; font-size:12px; color:#ff7427;}
+	    div#menu .helpSeleHd {width: 60px;}
+	    
+	    /*6.2添加  */
+	    .nw200{width:200px}
+	    #jymxModal .modal-dialog{width:80%;min-width:983px} 
+	    #jymxModal .modal-body td{padding:0;}
+	    #jymxModal .form_datetime input{width:140px}
+	    #jymxModal .bootstrap-select {width:150px}
+	    .font-blue{color:#428bca;cursor: pointer;}
+	</style>
+		
+	<td valign="top" >
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%; padding:20px 30px;">
+				<div class="breadNav_wap clear">
+					<s:fragment rendered="#{memberInfoView.backType eq '2'}">
+						<div class="breadNav_lt">采销存<span style="padding:0 5px;">&gt;</span><strong>客户管理</strong></div>
+	                    <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+		                    <ul class="resumeList clear">
+		                    	<li>
+		                            <a href="#{request.contextPath}/contract/PurchaseMemberList.seam"><img src="../asset/images/orderManage/qykh_btn.png" /><span>供应商企业</span></a>
+		                        </li>
+		                        <li>
+		                    		<a href="#{request.contextPath}/contract/DemandMemberList.seam"><img src="../asset/images/orderManage/qykh_btn.png" /><span>需求商企业</span></a>
+		                        </li>
+		                        <li>
+		                    		<a class="borderBt" href="#{request.contextPath}/order/OrderMemberList.seam"><img src="../asset/images/orderManage/ddkh_btn.png" /><span>订单客户</span></a>
+		                        </li>
+		                    </ul>
+		                </div>
+					</s:fragment>
+					<s:fragment rendered="#{memberInfoView.backType ne '2'}">
+						<div class="breadNav_lt">采销存<span style="padding:0 5px;">&gt;</span>订单管理<span style="padding:0 5px;">&gt;</span><strong>客户信息</strong></div>
+						<div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+							<ul class="resumeList clear">
+								<li>
+		                            <a href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+		                        </li>
+				                <li>
+		                            <a class="borderBt" href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+		                        </li>
+		                        <li>
+		                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+		                        </li>
+		                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+			                        <li >
+		                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+		                            </li>
+	                           </h:panelGroup>
+							</ul>
+						</div>
+					</s:fragment>
+				</div>
+				<div class="singleManage_con">
+					<div class="mt30">
+	                	<table class="customer-table" width="100%" cellpadding="0" cellspacing="0">
+	                    	<tr>
+	                        	<td class="td-txt1" width="12%" height="36">客户编码</td>
+	                            <td class="td-txt2" width="34%">#{memberInfoView.memberInfo.memberCode}</td>
+	                            <td class="td-txt1" width="12%">客户名称</td>
+	                            <td class="td-txt2 bor-rt" width="34%">#{memberInfoView.memberInfo.realname}</td>
+	                            <td class="customer-pic" rowspan="6" width="250">
+	                            	<img src="#{memberInfoView.memberInfo.icon eq null or memberInfoView.memberInfo.icon eq '' ? '../asset/images/mark_cus_pic.jpg' : memberInfoView.memberInfo.icon}"  width="150" height="180" />
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                        	<td class="td-txt1" height="36">客户类型</td>
+	                            <td class="td-txt2">#{memberInfoView.memberInfo.mType.name}</td>
+	                            <td class="td-txt1">客户来源</td>
+	                            <td class="td-txt2 bor-rt">#{memberInfoView.memberInfo.mSource.name}</td>
+	                        </tr>
+	                        <tr>
+	                        	<td class="td-txt1" height="36">客户类别</td>
+	                            <td class="td-txt2">
+	                            	<h:outputText value="个人" rendered="#{memberInfoView.memberInfo.memberType == 1}"/>
+	                        		<h:outputText value="企业代表" rendered="#{memberInfoView.memberInfo.memberType == 2}"/>
+	                            </td>
+	                            <td class="td-txt1">销<span class="space6"></span>售<span class="space6"></span>人</td>
+	                            <td class="td-txt2 bor-rt"><h:outputText value="#{memberInfoView.memberInfo.farmerInfoId.name}" rendered="#{!memberInfoView.memberInfo.farmerInfoId.deleted}"/></td>
+	                        </tr>
+	                        <tr>
+	                        	<td class="td-txt1">昵<span class="space24"></span>称</td>
+	                            <td class="td-txt2">#{memberInfoView.memberInfo.nickName}</td>
+	                            <td class="td-txt1">姓名拼音</td>
+	                            <td class="td-txt2 bor-rt">#{memberInfoView.memberInfo.realnamePy}</td>
+	                        </tr>
+	                        <tr>
+	                        	<td class="td-txt1">性<span class="space24"></span>别</td>
+	                            <td class="td-txt2">
+	                            	<h:outputText value="男" rendered="#{memberInfoView.memberInfo.sex == 1}"/>
+		                        	<h:outputText value="女" rendered="#{memberInfoView.memberInfo.sex == 2}"/>
+		                        	<h:outputText value="其他" rendered="#{memberInfoView.memberInfo.sex == 3}"/>
+	                            </td>
+	                            <td class="td-txt1">电<span class="space24"></span>话</td>
+	                            <td class="td-txt2 bor-rt">#{memberInfoView.memberInfo.phone}</td>
+	                        </tr>
+	                        <tr>
+	                        	<td class="td-txt1">出生日期</td>
+	                            <td class="td-txt2"><h:outputText value="#{memberInfoView.memberInfo.birthday}"/></td>
+	                            <td class="td-txt1">学<span class="space24"></span>历</td>
+	                            <td class="td-txt2 bor-rt">
+	                            	<h:outputText value="中专及以下" rendered="#{memberInfoView.memberInfo.education == 5}"/>
+		                        	<h:outputText value="大专" rendered="#{memberInfoView.memberInfo.education == 4}"/>
+		                        	<h:outputText value="本科" rendered="#{memberInfoView.memberInfo.education == 3}"/>
+		                        	<h:outputText value="硕士" rendered="#{memberInfoView.memberInfo.education == 2}"/>
+		                        	<h:outputText value="博士" rendered="#{memberInfoView.memberInfo.education == 1}"/>
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                        	<td class="td-txt1">身份证号码</td>
+	                            <td class="td-txt2">#{memberInfoView.memberInfo.idCard}</td>
+	                            <td class="td-txt1">账户余额</td>
+	                            <td class="td-txt2" colspan="2"><h:outputText value="#{memberInfoView.memberInfo.balance}" ><f:convertNumber pattern="#0.00"/></h:outputText>元<span class="ml15 font-blue" data-toggle="modal" data-target="#jymxModal">交易明细</span></td>
+	                        </tr>
+	                        <tr>
+	                        	<td class="td-txt1">婚姻状况</td>
+	                            <td class="td-txt2">
+	                            	<h:outputText value="已婚" rendered="#{memberInfoView.memberInfo.marriageState == true}"/>
+	                        		<h:outputText value="未婚" rendered="#{memberInfoView.memberInfo.marriageState == false}"/>
+	                            </td>
+	                            <td class="td-txt2"></td>
+	                            <td class="td-txt2" colspan="2"></td>
+	                        </tr>
+	                        <tr>
+	                            <td class="td-txt1">住宅地址</td>
+	                            <td class="td-txt2" colspan="4">#{memberInfoView.memberInfo.homeAddress}</td>
+	                        </tr>
+	                        <tr>
+	                            <td class="td-txt1">工作地址</td>
+	                            <td class="td-txt2" colspan="4">#{memberInfoView.memberInfo.workAddress}</td>
+	                        </tr>
+	                        <tr>
+	                            <td class="td-txt1">忌<span class="space24"></span>口</td>
+	                            <td class="td-txt2" colspan="4">#{memberInfoView.memberInfo.taboo}</td>
+	                        </tr>
+	                        <tr>
+	                            <td class="td-txt1">爱<span class="space24"></span>好</td>
+	                            <td class="td-txt2" colspan="4">#{memberInfoView.memberInfo.hobby}</td>
+	                        </tr>
+	                        <tr>
+	                            <td class="td-txt1">备<span class="space24"></span>注</td>
+	                            <td class="td-txt2" colspan="4">#{memberInfoView.memberInfo.remark}</td>
+	                        </tr>
+	                    </table>
+	                </div>
+	                
+	                <div class="footBox">
+						<ul class="nav nav-tabs ziti" role="tablist" id="myTab">
+							<li class="active">
+								<a href="#order_div" role="tab" data-toggle="tab">订单</a>
+							</li>
+							<li>
+								<a href="#deliverAddress_div" role="tab" data-toggle="tab">配送地址</a>
+							</li>
+							<li>
+								<a href="#member_card_div" role="tab" data-toggle="tab">会员卡绑定</a>
+							</li>
+							<li>
+								<a href="#coupon_div" role="tab" data-toggle="tab">红包</a>
+							</li>
+						</ul>
+						<div class="tab-content qiehuan">
+							<div class="tab-pane active mh15" id="order_div">
+								<s:div id="orderShow">
+									<div style="padding-bottom: 10px;">
+									<table cellpadding="0" cellspacing="0">
+										<tr>
+											<td>
+												<div class="public-search">   
+													<span class="octicon-search02"></span>
+													<h:inputText id="searchOrder" styleClass="form-control nw300 srarchfont" style="padding-left: 30px;" value="#{memberInfoView.searchOrder}"/>
+												</div>
+												<input type="button" id="searchOrderInfo" class="btn btn-primary" value="搜索" onclick="search(1);"/>
+											</td>
+										</tr>
+									</table> 
+									</div>
+									<table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+										<thead>
+											<tr>
+												<th style="width:15%">订单编号</th>
+												<th style="width:15%">收货人</th>
+												<th style="width:15%">订单金额</th>
+												<th style="width:15%">配送时间</th>
+												<th style="width:10%">付款方式</th>
+												<th style="width:10%">支付状态</th>
+												<th style="width:10%">订单状态</th>
+												<th style="width:10%">操作</th>
+											</tr>
+										</thead>
+										<tbody>
+											<a:repeat value="#{memberInfoView.orderInfoList}" var="_orderInfo">
+												<tr>
+													<td style="width:15%">#{_orderInfo.orderCode}</td>
+													<td style="width:15%">#{_orderInfo.receiveName}</td>
+													<td style="width:15%">￥<h:outputText value="#{_orderInfo.paymentAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+													<td style="width:15%">
+														<h:outputText value="#{_orderInfo.deliverTime}">
+									        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+									        			</h:outputText>
+									        			#{orderConstant.getDeliverPeriodLabel(_orderInfo.timeSlot)}
+													</td>
+													<td style="width:10%">#{orderConstant.getPayTypeLabel(_orderInfo.paymentMode)}</td>
+													<td style="width:10%">#{_orderInfo.paymentStatus == true ? "已支付" : "未支付"}</td>
+													<td style="width:10%">#{orderConstant.getOrderStatusLabel(_orderInfo.orderStatus)}</td>
+													<td style="width:10%">
+														<a href="#{request.contextPath}/orderManage/OrderView.seam?orderInfoId=#{_orderInfo.orderInfoId}&amp;orderStatus=0&amp;backType=#{memberInfoView.backType}" class="xiaotub1"></a>
+													</td>
+												</tr>
+											</a:repeat>
+										</tbody>
+									</table>
+									
+									<table class="pageModel" >
+										<tbody>
+											<tr>
+												<td>
+													<s:span rendered="#{memberInfoView.order_max_page > 1}">
+														<a href="javascript:void(0);" class="page_prev" onclick="operatePageAction(1,1);">首页</a>
+													</s:span>
+													<s:span styleClass="pagePrve" rendered="#{memberInfoView.order_current_page - 1 gt 0 and memberInfoView.order_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(1, #{memberInfoView.order_current_page - 1});">&lt;&lt;</a>
+													</s:span>
+													<a:repeat value="#{memberInfoView.order_show_page_list}" var="_order_page" rowKeyVar="_order_index">
+														<span class="page_num #{_order_page == memberInfoView.order_current_page ? 'page_Cur' : ''}">
+															<a href="javascript:void(0);" onclick="operatePageAction(1, #{_order_page});">#{_order_page}</a>
+														</span>
+													</a:repeat>
+													<s:span styleClass="page_next" rendered="#{memberInfoView.order_current_page lt memberInfoView.order_max_page and memberInfoView.order_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(1, #{memberInfoView.order_current_page + 1});">&gt;&gt;</a>
+													</s:span>
+													<s:span rendered="#{memberInfoView.order_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(1,#{memberInfoView.order_max_page});">尾页</a>
+													</s:span>
+													<span >
+														<span class="pageCount" style="border-right:0"><a>共#{memberInfoView.order_max_page}页</a></span>
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</s:div>
+							</div>
+							
+							<div class="tab-pane mh15" id="deliverAddress_div">
+								
+								<s:div id="daShow">
+									<div style="float:left; padding-bottom:10px;">
+									<table cellpadding="0" cellspacing="0">
+										<tr>
+											<td>
+												<div class="public-search">   
+													<span class="octicon-search02"></span>
+													<h:inputText id="searchAddress" styleClass="form-control nw300 srarchfont" style="padding-left: 30px;" value="#{memberInfoView.searchAddress}"/>
+												</div>
+												<input type="button" id="searchDeliverAddress" class="btn btn-primary" value="搜索" onclick="search(2);"/>
+											</td>
+											<td>
+											
+											</td>
+										</tr>
+									</table> 
+								</div>
+								<div style="text-align:right; padding-right:10px; padding-bottom:10px;">
+									<button type="button" class="btn btn-success" onclick="addressAction(1, 0, '', '', '');">添加</button>
+								</div>
+									<table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+										<thead>
+											<tr>
+												<th style="width:20%">收货人</th>
+												<th style="width:20%">联系方式</th>
+												<th style="width:50%">收货地址</th>
+												<th style="width:10%">操作</th>
+											</tr>
+										</thead>
+										<tbody>
+											<a:repeat value="#{memberInfoView.deliverAddressList}" var="_da">
+												<tr>
+													<td style="width:20%">#{_da.consignee}</td>
+													<td style="width:20%">#{_da.phone}</td>
+													<td style="width:50%">#{_da.address}</td>
+													<td style="width:10%">
+														<a href="" class="xiaotub2" onclick="addressAction(2, #{_da.deliverAddressId}, '#{_da.consignee}', '#{_da.phone}', '#{_da.address}');"></a>
+														<a href="" class="xiaotub3" onclick="delDeliverAddressAction(#{_da.deliverAddressId});"></a>
+													</td>
+												</tr>
+											</a:repeat>
+										</tbody>
+									</table>
+									
+									<table class="pageModel" >
+										<tbody>
+											<tr>
+												<td>
+													<s:span rendered="#{memberInfoView.deliver_address_max_page > 1}">
+														<a href="javascript:void(0);" class="page_prev" onclick="operatePageAction(2,1);">首页</a>
+													</s:span>
+													<s:span styleClass="pagePrve" rendered="#{memberInfoView.deliver_address_current_page - 1 gt 0 and memberInfoView.deliver_address_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(2, #{memberInfoView.deliver_address_current_page - 1});">&lt;&lt;</a>
+													</s:span>
+													<a:repeat value="#{memberInfoView.deliver_address_show_page_list}" var="_da_page" rowKeyVar="_da_index">
+														<span class="page_num #{_da_page == memberInfoView.deliver_address_current_page ? 'page_Cur' : ''}">
+															<a href="javascript:void(0);" onclick="operatePageAction(2, #{_da_page});">#{_da_page}</a>
+														</span>
+													</a:repeat>
+													<s:span styleClass="page_next" rendered="#{memberInfoView.deliver_address_current_page lt memberInfoView.deliver_address_max_page and memberInfoView.deliver_address_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(2, #{memberInfoView.deliver_address_current_page + 1});">&gt;&gt;</a>
+													</s:span>
+													<s:span rendered="#{memberInfoView.deliver_address_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(2,#{memberInfoView.deliver_address_max_page});">尾页</a>
+													</s:span>
+													<span >
+														<span class="pageCount" style="border-right:0"><a>共#{memberInfoView.deliver_address_max_page}页</a></span>
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</s:div>
+							</div>
+							
+							<div class="tab-pane mh15" id="member_card_div">
+								<s:div id="mcShow">
+									<div style="padding-bottom: 10px;">
+									<table cellpadding="0" cellspacing="0">
+										<tr>
+											<td>
+												<div class="public-search">   
+													<span class="octicon-search02"></span>
+													<h:inputText id="searchCard" styleClass="form-control nw300 srarchfont" style="padding-left: 30px;" value="#{memberInfoView.searchCard}"/>
+												</div>
+												<input type="button" id="searchMemberCard" class="btn btn-primary" value="搜索" onclick="search(3);"/>
+											</td>
+										</tr>
+									</table>
+									</div> 
+									<table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+										<thead>
+											<tr>
+							                    <th style="width:10%">会员卡编号</th>
+							                    <th style="width:10%">卡种类</th>
+							                    <th style="width:10%">卡类型</th>
+							                    <th style="width:10%">剩余配送次数</th>
+							                    <th style="width:10%">未使用商品数量</th>
+							                    <th style="width:10%">售出时间</th>
+							                    <th style="width:10%">使用日期</th>
+							                    <th style="width:10%">截止日期</th>
+							                    <th style="width:10%">卡状态</th>
+							                    <th style="width:10%">操作</th>
+							                </tr>
+										</thead>
+										<tbody>
+											<a:repeat value="#{memberInfoView.memberCardList}" var="_mc">
+												<tr>
+													<td style="width:10%">#{_mc.cardsInfo.cardCode}</td>
+													<td style="width:10%">#{cardConstant.getCardTypeLabel(_mc.cardsInfo.cardType)}</td>
+													<td style="width:10%">#{_mc.cardsInfo.cardCategory.name}</td>
+													<td style="width:10%">
+													<h:outputText value="" rendered="#{_mc.cardsInfo.cardType eq 1}">#{_mc.cardsInfo.deliverChangeNum + _mc.deliverNum}次</h:outputText>
+													<h:outputText value="" rendered="#{_mc.cardsInfo.cardType eq 2}" >-</h:outputText>
+													</td>
+													<td style="width:10%">#{_mc.remainNum}</td>
+													<td style="width:10%">
+														<h:outputText value="#{_mc.cardsInfo.saleTime}">
+									        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+									        			</h:outputText>
+													</td>
+													<td style="width:10%">
+														<h:outputText value="#{_mc.insertTime}">
+									        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+									        			</h:outputText>
+													</td>
+													<td style="width:10%">#{_mc.expiryMsg}
+														<h:outputText rendered="#{_mc.cardsInfo.expire}" >
+															<a class="stay" title="已过期" />
+														</h:outputText>
+														<h:outputText rendered="#{_mc.cardsInfo.recent eq 1}" >
+															<a class="stay" title="会员卡将于#{_mc.expiryMsg}过期" />
+														</h:outputText>
+													</td>
+													<td style="width:10%">#{cardConstant.getCardStatusLabel(_mc.cardsInfo.cardStatus)}</td>
+													<td style="width:10%">
+														<s:fragment rendered="#{_mc.cardsInfo.cardType == cardConstant.getGiftCardType()}">
+															<a href="#{request.contextPath}/orderManage/MemberCardUseView.seam?memberCardId=#{_mc.memberCardId}&amp;backType=#{memberInfoView.backType}" class="xiaotub1"></a>
+															<s:link view="/orderManage/MemberCardUseEdit.xhtml" styleClass="xiaotub2">
+																<f:param name="mcId" value="#{_mc.memberCardId}"></f:param>
+																<f:param name="memberInfoId" value="#{memberInfoView.memberInfoId}"></f:param>
+															</s:link>
+															<s:fragment rendered="#{_mc.orderCardFlag == false}">
+																<a href="" class="xiaotub3" onclick="delMemberCardAction(#{_mc.memberCardId});"></a>
+															</s:fragment>
+															<s:fragment rendered="#{_mc.cardsInfo.cardStatus == cardConstant.getAlreadyUseCardStatus()}">
+																<a href="" class="xiaotub5" onclick="cardFreezeDivControl(1, 1, #{_mc.memberCardId});"></a>
+															</s:fragment>
+															<s:fragment rendered="#{_mc.cardsInfo.cardStatus == cardConstant.getNotFreezeCardStatus()}">
+																<a href="" class="xiaotub6" onclick="cardFreezeDivControl(1, 2, #{_mc.memberCardId});"></a>
+															</s:fragment>
+														</s:fragment>
+													</td>
+												</tr>
+											</a:repeat>
+										</tbody>
+									</table>
+									
+									<table class="pageModel" >
+										<tbody>
+											<tr>
+												<td>
+													<s:span rendered="#{memberInfoView.member_card_max_page > 1}">
+														<a href="javascript:void(0);" class="page_prev" onclick="operatePageAction(3,1);">首页</a>
+													</s:span>
+													<s:span styleClass="pagePrve" rendered="#{memberInfoView.member_card_current_page - 1 gt 0 and memberInfoView.member_card_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(3, #{memberInfoView.member_card_current_page - 1});">&lt;&lt;</a>
+													</s:span>
+													<a:repeat value="#{memberInfoView.member_card_show_page_list}" var="_mc_page">
+														<span class="page_num #{_mc_page == memberInfoView.member_card_current_page ? 'page_Cur' : ''}">
+															<a href="javascript:void(0);" onclick="operatePageAction(3, #{_mc_page});">#{_mc_page}</a>
+														</span>
+													</a:repeat>
+													<s:span styleClass="page_next" rendered="#{memberInfoView.member_card_current_page lt memberInfoView.member_card_max_page and memberInfoView.member_card_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(3, #{memberInfoView.member_card_current_page + 1});">&gt;&gt;</a>
+													</s:span>
+													<s:span rendered="#{memberInfoView.member_card_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(3,#{memberInfoView.member_card_max_page});">尾页</a>
+													</s:span>
+													<span >
+														<span class="pageCount" style="border-right:0"><a>共#{memberInfoView.member_card_max_page}页</a></span>
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</s:div>
+							</div>
+							
+							<div class="tab-pane mh15" id="coupon_div">
+								<s:div id="couponShow">
+									<div style="padding-bottom: 10px;">
+									</div> 
+									<table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+										<thead>
+											<tr>
+							                    <th style="width:25%">面额</th>
+							                    <th style="width:25%">使用状态</th>
+							                    <th style="width:25%">使用定单</th>
+							                    <th style="width:25%">有效期</th>
+							                </tr>
+										</thead>
+										<tbody>
+											<a:repeat value="#{memberInfoView.coupons}" var="_cou">
+												<tr>
+													<td style="width:25%">#{_cou[1]}元</td>
+													<td style="width:25%">
+													<h:outputText value="" rendered="#{_cou[5] eq null or _cou[5] eq ''}">未使用</h:outputText>
+													<h:outputText value="" rendered="#{_cou[5] ne null and _cou[5] ne ''}">已使用</h:outputText>
+													</td>
+													<td style="width:25%">
+													<h:outputText value="" rendered="#{_cou[2] eq null or _cou[2] eq ''}">-</h:outputText>
+													<h:outputText value="" rendered="#{_cou[2] ne null and _cou[2] ne ''}">#{memberInfoView.getOrderCode(_cou[2])}</h:outputText>
+													</td>
+													<td style="width:25%">#{_cou[4]}</td>
+												</tr>
+											</a:repeat>
+										</tbody>
+									</table>
+								</s:div>
+							</div>
+							
+							<div class="footBtn">
+								<s:button view="/order/MemberInfoListOne.seam" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" rendered="#{memberInfoView.backType eq '2'}">
+		            				<f:param name="pageNum" value="#{memberInfoView.pageNum}" />
+		            				<f:param name="rankNum" value="#{memberInfoListOne.rankNum}" />
+		            			</s:button>
+		            			<s:button view="/order/OrderMemberList.seam" styleClass="btn btn-default" value="返回" style="margin-left:10px" rendered="#{memberInfoView.backType eq '3'}">
+		            				<f:param name="pageNum" value="#{memberInfoView.pageNum}" />
+		            				<f:param name="rankNum" value="#{memberInfoListOne.rankNum}" />
+		            			</s:button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="modal fade" id="daOperateDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content kuanD">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">配送地址信息</h4>
+						</div>
+						<div class="modal-body">
+							<table>
+				               <tbody>
+				                   <tr>
+				                       <td class="wr80">收件人姓名</td>
+				                       <td class="wp200"><input type="text" class="form-control nw200" value="" id="consignee"></input></td>
+				                       <td class="wr80">联系方式</td>
+				                       <td class="wp200"><input title="输入多个联系方式请以','隔开！" type="text" class="form-control nw200" value="" id="phone"></input></td>
+				                   </tr>
+				                   <tr>
+				                       <td class="wr80" >地址</td>
+				                       <td class="wp400" colspan="3"><textarea class="form-control area_textarea nw300" id="address" onkeyup="addressVerify(this);" style="margin-left: 15px;"></textarea></td>
+				                   </tr>
+				               </tbody>
+							</table> 
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" onclick="saveAddress();">提交</button>
+							<button type="button" class="btn btn-default" onclick="addressControl(2);">返回</button>
+						</div>
+					</div>
+				</div>
+		   	</div>
+		   	
+		   	<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na" style="display: none;z-index:11;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="messageTitle">提示</h4>
+						</div>
+						<div class="modal-body">
+							<span id="messageValue"></span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="modal fade" id="cardFreezeDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content kuanD">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">卡操作</h4>
+						</div>
+						<div class="modal-body">
+							<span id="freezeValue"></span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" onclick="changeCardFreezeAction();">确定</button>
+							<button type="button" class="btn btn-default" onclick="cardFreezeDivControl(2);">返回</button>
+						</div>
+					</div>
+				</div>
+		   	</div>
+			<!-- 交易明细弹窗 -->
+			<div class="modal fade" id="jymxModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">交易明细</h4>
+						</div>
+						<div class="modal-body">
+							<div id="daShow">
+									<div style="float:left; padding-bottom:10px;">
+									<table cellpadding="0" cellspacing="0">
+										<tbody>
+											<tr>
+												<td>
+													<div class="public-search">   
+														<span class="octicon-search02"></span><input id="searchAddress" type="text" name="searchAddress" value="" class="form-control nw200 srarchfont" style="padding-left: 30px;" placeholder="全部" />
+													</div>
+													<input type="button" id="" class="btn btn-primary" value="搜索" onclick="" style="padding:1px 16px;"/>
+												</td>
+											<td><span class="fl mr10 ml15 mt10">时间</span>
+												<div class="input-append date form_datetime fl">
+													<input size="26" type="text" value="2013-02-21 15:30" readonly="readonly" />
+													<span class="add-on"><i class="icon-th"></i></span>
+												</div>
+												<span class="fl mr5 ml5 mt10">--</span>
+												<div class="input-append date form_datetime fl">
+													<input size="26" type="text" value="2013-02-21 15:30" readonly="readonly" />
+													<span class="add-on"><i class="icon-th"></i></span>
+												</div>
+												<div class="clearfix"></div>
+											</td>
+											<td><span class="fl mr10 ml15 mt5">交易类型</span>
+												<select class="selectpicker fl">
+													<option>全部</option>
+													<option>全部</option>
+													<option>全部</option>
+												</select>
+											</td>
+										</tr>
+									</tbody></table> 
+								</div>
+								<div style="text-align:right; padding-right:10px; padding-bottom:10px;">
+									<button type="button" class="btn btn-primary">导出</button>
+								</div>
+									<table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+										<thead>
+											<tr>
+												<th width="50">序号</th>
+												<th width="15%">交易类型</th>
+												<th width="15%">交易金额</th>
+												<th width="15%">订单号</th>
+												<th>会员卡号</th>   
+												<th width="130">交易时间</th>
+												<th width="15%">交易后账户余额</th>
+											</tr>
+										</thead>
+										<tbody>
+												<tr>
+													<td>1</td>
+													<td>订单消费</td>
+													<td>-￥100.00</td>
+													<td>DD201705240001</td>
+													<td>DD201705240001</td>
+													<td>2017-05-24 12:20</td>
+													<td>8000.00</td>
+												</tr>
+												<tr>
+													<td>1</td>
+													<td>订单消费</td>
+													<td>-￥100.00</td>
+													<td>DD201705240001</td>
+													<td>DD201705240001</td>
+													<td>2017-05-24 12:20</td>
+													<td>8000.00</td>
+												</tr>
+												<tr>
+													<td>1</td>
+													<td>订单消费</td>
+													<td>-￥100.00</td>
+													<td>DD201705240001</td>
+													<td>DD201705240001</td>
+													<td>2017-05-24 12:20</td>
+													<td>8000.00</td>
+												</tr>
+												<tr>
+													<td>1</td>
+													<td>订单消费</td>
+													<td>-￥100.00</td>
+													<td>DD201705240001</td>
+													<td>DD201705240001</td>
+													<td>2017-05-24 12:20</td>
+													<td>8000.00</td>
+												</tr>
+												<tr>
+													<td>1</td>
+													<td>订单消费</td>
+													<td>-￥100.00</td>
+													<td>DD201705240001</td>
+													<td>DD201705240001</td>
+													<td>2017-05-24 12:20</td>
+													<td>8000.00</td>
+												</tr>
+										</tbody>
+									</table>
+									
+									<table class="pageModel">
+										<tbody>
+											<tr>
+												<td>
+														<span class="page_num page_Cur">
+															<a href="javascript:void(0);" onclick="operatePageAction(2, 1);">1</a>
+														</span>
+													<span>
+														<span class="pageCount" style="border-right:0"><a>共1页</a></span>
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</td>
+	
+	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="operatePageFind" action="#{memberInfoView.operatePageFind}" reRender="orderShow,daShow,mcShow,couponShow">
+			<a:actionparam name="pageType" assignTo="#{memberInfoView.page_type}"/>
+			<a:actionparam name="operatePage" assignTo="#{memberInfoView.operate_page}"/>
+		</a:jsFunction>
+		<a:jsFunction name="operateDeliverAddress" action="#{memberInfoView.operateDeliverAddress}" reRender="daShow" oncomplete="addressControl(2);">
+			<a:actionparam name="daId" assignTo="#{memberInfoView.daId}"/>
+			<a:actionparam name="consignee" assignTo="#{memberInfoView.consignee}"/>
+			<a:actionparam name="phone" assignTo="#{memberInfoView.phone}"/>
+			<a:actionparam name="address" assignTo="#{memberInfoView.address}"/>
+		</a:jsFunction>
+		<a:jsFunction name="delDeliverAddress" action="#{memberInfoView.delDeliverAddress}" reRender="daShow">
+			<a:actionparam name="daId" assignTo="#{memberInfoView.daId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="delMemberCard" action="#{memberInfoView.delMemberCard}" reRender="mcShow">
+			<a:actionparam name="mcId" assignTo="#{memberInfoView.mcId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="changeCardFreeze" action="#{memberInfoView.changeCardFreeze}" reRender="mcShow" oncomplete="cardFreezeDivControl(2);">
+			<a:actionparam name="mcId" assignTo="#{memberInfoView.mcId}"/>
+			<a:actionparam name="changeType" assignTo="#{memberInfoView.changeType}"/>
+		</a:jsFunction>
+		<a:jsFunction name="searchOrder" action="#{memberInfoView.searchFind}" reRender="orderShow">
+			<a:actionparam name="searchNum" assignTo="#{memberInfoView.searchNum}" />
+			<a:actionparam name="searchOrder" assignTo="#{memberInfoView.searchOrder}" />
+		</a:jsFunction>
+		<a:jsFunction name="searchAddress" action="#{memberInfoView.searchFind}" reRender="daShow">
+			<a:actionparam name="searchNum" assignTo="#{memberInfoView.searchNum}" />
+			<a:actionparam name="searchAddress" assignTo="#{memberInfoView.searchAddress}" />
+		</a:jsFunction>
+		<a:jsFunction name="seatchCard" action="#{memberInfoView.searchFind}" reRender="mcShow">
+			<a:actionparam name="searchNum" assignTo="#{memberInfoView.searchNum}" />
+			<a:actionparam name="searchCard" assignTo="#{memberInfoView.searchCard}" />
+		</a:jsFunction>
+		
+	</a:form>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	
+		var operateId;
+		var fType;
+	
+		jQuery(function(){
+			jQuery('.selectpicker').selectpicker(); //下拉菜单
+			jQuery(".form_datetime").datetimepicker({ //日历控件
+				format: "yyyy-mm-dd",
+				minView: "month",
+				autoclose: true,
+				weekStart: 1,
+				//startDate: "2014-08-14 10:00",
+				language: 'zh-CN',
+				pickerPosition: "bottom-left"
+			});
+		});
+
+		//搜索
+		function search(num){
+			if(num==1){
+				var orderVal=jQuery("#searchOrder").val();
+				searchOrder(num,jQuery.trim(orderVal));
+			}else if(num==2){
+				var addressVal=jQuery("#searchAddress").val();
+				searchAddress(num,jQuery.trim(addressVal));
+			}else if(num==3){
+				var cardVal=jQuery("#searchCard").val();
+				seatchCard(num,jQuery.trim(cardVal));
+			}
+		}
+
+		//分页
+		function operatePageAction(type, page){
+			showType = type;
+			operatePageFind(Number(type), Number(page));
+		}
+
+		//配送地址面板操作 1打开 2关闭 
+		function addressControl(type){
+			if (type == 1) {
+				jQuery("#daOperateDiv").modal('show');
+			} else {
+				jQuery("#daOperateDiv").modal('hide');
+			}
+		}
+
+		//配送地址操作类型
+		function addressAction(type, deliverAddressId, consignee, phone, address){
+			operateId = deliverAddressId;
+			jQuery("#consignee").val(consignee);
+			jQuery("#phone").val(phone);
+			jQuery("#address").val(address);
+			if (type == 1) {
+				jQuery("#addressTitle").html("添加配送地址");
+				jQuery("#saveAddress").css("display", "");
+				jQuery("#modifyAddress").css("display", "none");
+			} else {
+				jQuery("#addressTitle").html("修改配送地址");
+				jQuery("#saveAddress").css("display", "none");
+				jQuery("#modifyAddress").css("display", "");
+			}
+			addressControl(1);
+		}
+
+		//保存配送地址
+		function saveAddress(){
+			var consignee = jQuery("#consignee").val();
+			var phone = jQuery("#phone").val();
+			var address = jQuery("#address").val();
+			var flag = true;
+			if (jQuery.trim(consignee) == '') {
+				jQuery("#messageValue").html("请填写收货人姓名！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}
+			if (jQuery.trim(phone) == '') {
+				jQuery("#messageValue").html("请填写收货人联系方式！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}else {
+				var reg = /^[\d-+,，]{0,50}$/;
+	             if (reg.test(phone) == false && phone.length<=50) {
+	                   jQuery("#messageValue").html("联系方式只支持数字,逗号,加号,中划线！");
+	                       jQuery("#messageDiv").modal('show');
+	                       flag = false;
+	             }else if(reg.test(phone) == false && phone.length>50){
+	            	 jQuery("#messageValue").html("联系方式最长输入50位！");
+                    jQuery("#messageDiv").modal('show');
+                    flag = false;
+		         }
+			}
+			if (jQuery.trim(address) == '') {
+				jQuery("#messageValue").html("请填写工作地址！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}
+			if (flag == true) {
+				operateDeliverAddress(Number(operateId), consignee, phone, address);
+			}
+		}
+
+		//地址长度验证
+		function addressVerify(obj){
+			if (obj.value.length > 200) {
+				obj.value = obj.value.substr(0, 200);
+			}
+		}
+
+		//删除配送地址
+		function delDeliverAddressAction(id){
+			if (confirm("确定删除配送地址吗?")) {
+				delDeliverAddress(Number(id));
+			}
+		}
+
+		//删除会员卡绑定
+		function delMemberCardAction(id){
+			if (confirm("确定删除会员卡绑定吗?")) {
+				delMemberCard(Number(id));
+			}
+		}
+
+		//冻结div控制
+		function cardFreezeDivControl(type, freezeType, id){
+			operateId = id;
+			fType = freezeType;
+			if (type == 1) {
+				if (freezeType == 1) {
+					jQuery("#freezeValue").html("确定冻结此卡?");
+				} else {
+					jQuery("#freezeValue").html("确定解冻此卡?");
+				}
+				jQuery("#cardFreezeDiv").modal('show');
+			} else if (type == 2) {
+				jQuery("#cardFreezeDiv").modal('hide');
+			}
+		}
+
+		//会员卡冻结 解冻
+		function changeCardFreezeAction(){
+			changeCardFreeze(Number(operateId), Number(fType));
+		}
+		
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

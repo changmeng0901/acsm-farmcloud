@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib" contentType="text/html">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<!-- #{redPacketHome.begins()} -->
+<title>
+#{redPacketHome.dc.title}
+</title>
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/redPacket.css" type="text/css" />
+<script type="text/javascript" src="#{request.contextPath}/asset/new/jquery.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+<style>
+html,body{height:100%;}
+</style>
+</head>
+
+
+
+
+<body scroll="yes" >
+<div style="height: 100%; overflow-y: auto;-webkit-overflow-scrolling:touch;">
+	<div class="share_redEnvelope" style="display:#{redPacketHome.num==5?'block':'none'}">
+        <img class="farmRedEn_bg" src="#{request.contextPath}/asset/images/share.png" />
+        <div class="farmRedEn_bd4">
+            <div class="reward">
+               	 把红包分享给您的小伙伴，立得奖励呦<br></br>您将获得<span>#{redPacketHome.money}元</span>奖励呦
+            </div>
+            <div class="shareBtn" onclick="openfx()">立即分享</div>
+        </div>
+    </div>
+	<!-- 打开分享的红包  开始 -->
+    <div class="share_redEnvelope newShare" id="open_share_redpack" style="display:#{redPacketHome.num==null?'block':'none'}">
+        <div class="redBanner">
+             <h:panelGroup rendered="#{redPacketHome.dc.backgroundUrl!=null}">
+					 <img src="#{redPacketHome.dc.backgroundUrl}@572h_362w_1e_1c" style="height: 572px; width: 100%;"/>
+			</h:panelGroup>
+			 <h:panelGroup rendered="#{redPacketHome.dc.backgroundUrl==null}">
+				 <img src="#{request.contextPath}/asset/images/banner2.png" />
+			</h:panelGroup>
+            <div class="redLogo">
+                <h:panelGroup rendered="#{redPacketHome.dc.logoUrl!=null}">
+					<img class="logoImg" src="#{redPacketHome.dc.logoUrl}@74h_74w_1e_1c" style="height: 74px; width: 74px;"/>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{redPacketHome.dc.briefIntroduction!=null}">
+                <span class="redTitle" style="#{redPacketHome.dc.briefIntroduction==null || redPacketHome.dc.briefIntroduction==''?'display:none;':''}">#{redPacketHome.dc.briefIntroduction}</span>
+                </h:panelGroup>
+            </div>
+        </div>
+    	<div class="shawBd">
+            <div class="openShare">
+                <p class="btn_view" onclick="returnSource()"></p>
+                <input class="input_txt font14" type="text" id="phone" value="请输入手机号" />
+               <div class="openRed" onclick="openpack('#{redPacketHome.couId}','#{redPacketHome.prId}','#{redPacketHome.typeAorP}')">打开红包</div>
+            </div>  
+            <img src="#{request.contextPath}/asset/images/activityRule.png" alt="" class="rule"/> 
+            <ul class="ruleContent">
+                <li class="useR">
+                    #{redPacketHome.usageRule}
+                </li>
+            </ul>
+        </div>
+    </div>			
+    <!-- 本轮红包已抢完  开始 -->
+    <div class="share_redEnvelope" style="display:#{redPacketHome.num==4?'block':'none'}">
+    	<img class="farmRedEn_bg" src="#{request.contextPath}/asset/images/redEnvelope_img5.jpg" />
+        <div class="farmRedEn_bd2">
+        	<img class="farmRedEn_bg" src="#{request.contextPath}/asset/images/redEnvelope_img10.png" />
+            <div class="his_tip">
+            	<p class="p_txt1 font14">很遗憾！</p>
+                <img src="#{request.contextPath}/asset/images/redEnvelope_ico2.png" />
+                <p class="p_txt2 font12">本轮红包已经抢完了，<br />下次再来吧！</p>
+            </div>
+        </div>
+    </div>			
+    <!-- 老用户提示  开始 -->
+    <div class="share_redEnvelope" style="display:#{redPacketHome.num==2?'block':'none'}">
+    	<img class="farmRedEn_bg" src="#{request.contextPath}/asset/images/redEnvelope_img5.jpg" />
+        <div class="farmRedEn_bd2">
+        	<img class="farmRedEn_bg" src="#{request.contextPath}/asset/images/redEnvelope_img10.png" />
+            <div class="his_tip">
+               <p class="p_txt1 font14">您已经是我们的老朋友了！</p>
+                <img src="#{request.contextPath}/asset/images/redEnvelope_ico3.png" />
+                <p class="p_txt2 font12">可以点击右上角分享，<br />邀请更多新伙伴！</p>
+            </div>
+        </div>
+    </div>			
+    <!-- 红包过期  开始 -->
+    <div class="share_redEnvelope" style="display:#{redPacketHome.num==3?'block':'none'}">
+    	<img class="farmRedEn_bg" src="#{request.contextPath}/asset/images/redEnvelope_img5.jpg" />
+        <div class="farmRedEn_bd2">
+        	<img class="farmRedEn_bg" src="#{request.contextPath}/asset/images/redEnvelope_img10.png" />
+            <div class="his_tip" style="color:#aaa;">
+            	<p class="p_txt1 font14">不好意思！</p>
+                <img src="#{request.contextPath}/asset/images/redEnvelope_ico4.png" />
+                <p class="p_txt2 font12">您与本轮红包擦肩而过了<br />~下次记得早点来哦~</p>
+            </div>
+        </div>
+    </div>		
+    <!-- 红包金额  开始 -->
+    <div class="share_redEnvelope newShare npb" style="display:#{redPacketHome.num==1?'block':'none'}; background-color:#ffce18;">
+        <div class="redBanner">
+            <img src="#{request.contextPath}/asset/images/success.png" />
+            <div class="redLogo">
+                <h:panelGroup rendered="#{redPacketHome.dc.logoUrl!=null}">
+					<img class="logoImg" src="#{redPacketHome.dc.logoUrl}@74w_74h_1e.src" style="height: 74px; width: 74px;"/>
+				</h:panelGroup>
+                <span class="redTitle" style="#{redPacketHome.dc.briefIntroduction==null || redPacketHome.dc.briefIntroduction==''?'display:none;':''}">#{redPacketHome.dc.briefIntroduction}</span>
+            </div>
+            <p class="tel">#{redPacketHome.phone}</p>
+            <p class="money">#{redPacketHome.money}<span>元</span></p>
+            <p class="time">有效期至#{redPacketHome.validityPeriod}</p>
+            <p class="gain">恭喜您获得红包！</p>
+            <p class="account">红包已放入农场会员账号：#{redPacketHome.phone}</p>
+            <ui:fragment rendered="#{redPacketHome.productId !=''}">
+	            <a class="use" href="#{request.contextPath}/purchase/purchaseIndex.seam?product_id=#{redPacketHome.productId}&amp;enterprise_info_id=#{redPacketHome.enterpriseInfoId}">立即使用</a>
+            </ui:fragment>
+            <p class="question">
+            <h:panelGroup rendered="#{redPacketHome.dc.telPhone!=null}">
+            <span>?</span>如需使用，请<a href="tel:#{redPacketHome.dc.telPhone}">拨打电话使用</a>
+           	</h:panelGroup> 
+            </p>
+        </div>
+        <div class="useRule">
+            <img src="#{request.contextPath}/asset/images/deco.png"  class="deco"/>
+            <img src="#{request.contextPath}/asset/images/useRule.png" alt="" />
+            <div class="rules">
+                <p class="useR">#{redPacketHome.useRule}</p>
+            </div>
+        </div>
+    </div>			
+    <!-- 红包金额  结束 -->
+
+</div>	
+<div class="tck3 tck_modal" id="tck_modal_share">
+     <div class="share_block">
+     	<a class="tck_close know_btn" onclick="closefx()">我知道了</a>
+     </div>
+ </div>
+
+<a4j:form>
+	<a4j:jsFunction name="customer" action="#{redPacketHome.customer}" data="#{redPacketHome.returnCustomer}" oncomplete="returnPack(data)">
+		<a4j:actionparam name="phone" assignTo="#{redPacketHome.phone}"/>
+		<a4j:actionparam name="couId" assignTo="#{redPacketHome.couId}"/>
+		<a4j:actionparam name="prId" assignTo="#{redPacketHome.prId}"/>
+		<a4j:actionparam name="typeAorP" assignTo="#{redPacketHome.typeAorP}"/>
+	</a4j:jsFunction>
+</a4j:form>
+<script>
+//<![CDATA[
+    var pagenum='#{redPacketHome.num}';
+    var url = "#{dataDicConstant.getWxDomainNameUrl()}/weixinservice/farmeasy/adopter?callback=?&method=js_ticket";
+    var hb='#{redPacketHome.couId}';
+	var pr='#{redPacketHome.prId}';
+	var typeAorP='#{redPacketHome.typeAorP}';
+    var useBatch_='#{redPacketHome.useBatch}';
+    var myname='#{redPacketHome.shareName}';
+    var enName='#{redPacketHome.shareDescribe}';
+    enName=enName.replace(/<\/br\>/g,"\n")
+	var myurl = "#{dataDicConstant.getDomainNameUrl()}/RedPacket.seam?couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP="+typeAorP;
+	var imgUrl="#{dataDicConstant.getDomainNameUrl()}/asset/images/redEnvelope_img14.jpg";
+	var myurl2 = window.location.href.split("#")[0];
+	fenxiang(myname,enName,imgUrl,myurl);
+	function fenxiang(myname1,enName1,imgUrl1,myurl1){
+		jQuery.ajax({
+			url : url,
+			data : {url:myurl2},
+			dataType: 'jsonp',  
+			crossDomain: true,  
+			success: function (data) { 
+				var wNoncestr=data.noncestr;
+				var wTimestamp=data.timestamp;
+				var wsignature=data.signature;
+				
+				var appId = data.appid;
+						wx.config({      
+							debug:false,
+							appId:appId,
+							timestamp:wTimestamp,
+							nonceStr:wNoncestr,
+							signature:wsignature,
+							jsApiList: ['checkJsApi',
+										'onMenuShareTimeline',
+										'onMenuShareAppMessage',
+							            'onMenuShareQQ',
+							            'onMenuShareWeibo','startRecord'
+										]  });
+	
+						 //步骤四：通过ready接口处理成功验证    
+						    wx.ready(function(){            
+						    	wx.checkJsApi({                
+						            jsApiList: ['onMenuShareTimeline']
+						    		});
+						    	wx.onMenuShareTimeline({
+						    		title: myname1,
+									desc: enName1,
+									link: myurl1,
+									imgUrl: imgUrl1,
+									trigger: function(res) {// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+									},
+									success: function(res) {
+										if(pagenum==5){
+											window.location.href=myurl;
+										}
+									},
+									cancel: function(res) {
+									}
+								});
+						    	wx.onMenuShareAppMessage({
+						    		title: myname1,
+									desc: enName1,
+									link: myurl1,
+									imgUrl: imgUrl1,
+						    	      trigger: function (res) {
+						    	        // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+						    	      },
+						    	      success: function (res) {
+						    	    	  if(pagenum==5){
+												window.location.href=myurl;
+											}
+						    	      },
+						    	      cancel: function (res) {
+						    	      },
+						    	      fail: function (res) {
+						    	      }
+						    	    });
+						    	wx.onMenuShareQQ({
+						    		title: myname1,
+									desc: enName1,
+									link: myurl1,
+									imgUrl: imgUrl1,
+							          trigger: function (res) {
+							          },
+							          complete: function (res) {
+							          },
+							          success: function (res) {
+							        	  if(pagenum==5){
+												window.location.href=myurl;
+											}
+							          },
+							          cancel: function (res) {
+							          },
+							          fail: function (res) {
+							          }
+							        });
+							})
+							
+	    	},
+	    	error: function(XMLHttpRequest, textStatus, errorThrown){
+	    	}
+		})
+	}
+
+	function openfx(){
+		jQuery('#tck_modal_share').show();
+	}
+
+	function closefx(){
+		jQuery('#tck_modal_share').hide();
+	}
+
+	
+	jQuery(function() {
+
+		jQuery('.useR').each(function(){
+			var va=jQuery(this).text();
+			jQuery(this).text('');
+			jQuery(this).append(va);
+		})
+		
+		
+	// 文本框获取焦点和失去焦点状态变化
+    jQuery('input[type=text]').focus(function(){
+        var txt_val = this.defaultValue;
+        if( jQuery(this).val() == txt_val ){
+            jQuery(this).val('');
+        }
+        jQuery(this).css('color','#333')
+    });
+    jQuery('input[type=text]').blur(function(){
+        var txt_val = this.defaultValue;
+        if( jQuery(this).val() == '' ){
+            jQuery(this).val( this.defaultValue );
+            jQuery(this).css('color','#aaa')
+        }else{
+            jQuery(this).css('color','#333')
+        }
+    });
+	
+	jQuery('.share_redEnvelope').each(function(index, elem) {
+        jQuery(this).css('margin-left',-(jQuery(this).outerWidth()/2))
+    });
+
+
+	jQuery('.share_redEnvelope').each(function(index, elem) {
+        jQuery(this).css('margin-left',-(jQuery(this).outerWidth()/2))
+    });
+    jQuery('.newShare').each(function(index, elem) {
+        jQuery(this).css('margin','0 auto' );
+    });
+});
+
+
+function openpack(couId,prId,typ){
+	var reg =/^(13|15|17|18)[0-9]{9}$/;
+	if(jQuery('#phone').val()=='' || !reg.test(jQuery('#phone').val())){
+		alert("请输入正确的手机号！")
+	}else{
+		customer(jQuery('#phone').val(),couId,prId,typ);
+	}
+}
+
+function returnSource(){
+    if(typeAorP=="1"){
+        if(useBatch_!="" && useBatch_!=null){
+        	window.location.href="iphone.seam?useBatch="+useBatch_+"&prId="+pr;
+        }
+    }else if(typeAorP=="2"){
+    	if(useBatch_!="" && useBatch_!=null){
+    		window.location.href="animal.seam?useBatch="+useBatch_;
+        }
+    }else{
+    	window.location.href="Panorama.seam?gid="+pr;
+    }
+}
+
+
+function returnPack(obj){
+	var url="RedPacket.seam"
+	if(obj==2){
+		window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP="+typeAorP;
+	}else if(obj==3){
+		window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP="+typeAorP;
+	}else if(obj==4){
+		window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP="+typeAorP;
+	}else if(obj==5){
+		jQuery('#tck_modal1').hide()
+		jQuery('#tck_modal3').hide()
+	}else{
+		//window.location.href=url+"?num="+obj.split('_')[0]+"&typeAorP="+typeAorP+"&couId="+hb+"&prId="+pr+"&money="+obj.split('_')[1]+"&phone="+obj.split('_')[2]+"&validityPeriod="+obj.split('_')[3]+"&useRule="+obj.split('_')[4];
+		window.location.href=url+"?num="+obj.split('_')[0]+"&typeAorP="+typeAorP+"&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&phone="+obj.split('_')[1];
+	}
+}
+
+//]]>	
+</script>
+    
+</body>
+</f:view>

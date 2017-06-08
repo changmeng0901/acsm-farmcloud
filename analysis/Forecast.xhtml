@@ -1,0 +1,773 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_left.xhtml">
+
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+<style>
+.fakeContainer{
+	margin: 20px;
+    padding: 0px;
+    border: none;
+	min-width:950px;
+	height:500px;
+ 	overflow: hidden; 
+}
+.fx_tckli .icheckbox_minimal-blue{ margin:5px 5px 0 0;} 
+.lookAll .icheckbox_minimal-blue{ float:right; margin-top:12px;}
+.fxy_div{
+	margin: 15px 0 0;
+    position: relative;
+    width: 100%;
+    }
+    .div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+width: 200px;
+}
+/*选项卡*/
+		.zwudiv { border-bottom: 1px solid #DBDBDB;height: 36px;padding-left:31px;}
+		.zuowuul { float: left; height: 36px;}
+		.dk_list2 .current a {  color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff; background-color:#ffffff;position:relative; z-index:5;}
+		.dk_list2 .li2.current{ color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff;}
+		.dk_list2 {width:100% ;height:36px;   border-left:1px solid #ddd; }
+		.dk_list2 li {float:left;  border-right:1px solid #ddd; border-top:1px solid #ddd;}
+		.dk_list2 li a {display:block; width:101px; height:36px;  line-height:36px; text-align:center; font-size:14px;	color:#383838;}
+		.need_font{ line-height:50px; text-align: center; font-size:16px; color:#333;}
+</style>
+<script>
+//<![CDATA[
+function linkageeinfoid (data){
+	jquery("#binfoid").empty().append(data);
+	jquery('#binfoid').selectpicker('refresh');
+	jquery('#binfoid')[0].selectedIndex = 0;
+}
+
+function linkagebinfoid (data){
+	jquery("#pinfoid").empty().append(data);
+	jquery('#pinfoid').selectpicker('refresh');
+	jquery('#pinfoid')[0].selectedIndex = 0;
+}
+function usrnew(){
+	if(ftitle.style.display=='none'){
+		jquery("#searchStu").val(2);
+		ftitle.style.display='block'; 
+		gjbott2.style.backgroundImage='url(../asset/images/gjtop.jpg)';
+	}else{
+		jquery("#searchStu").val(1);
+		ftitle.style.display='none';
+		gjbott2.style.backgroundImage='url(../asset/images/gjbottom.jpg)';
+ 	}
+}
+var iframeWidth;
+var onLoadWidth
+jquery(document).ready(function(){  
+	iframeWidth = jquery(".zwudiv").width();
+	onLoadWidth = document.body.clientWidth;
+	jquery('#scroll1').css("width",(onLoadWidth-817)+ "px"); 
+	jquery('#scroll2').css("width",(onLoadWidth-817)+ "px"); 
+});
+jquery(window).resize(function(){
+   	var onLoadWidth = document.body.clientWidth;
+	jquery('#scroll1').css("width",(onLoadWidth-817)+ "px"); 
+	jquery('#scroll2').css("width",(onLoadWidth-817)+ "px"); 
+});
+
+che = function(obj,o){
+	if(o.getAttribute("aaa")=="false"){
+		o.setAttribute("aaa","true");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("b");
+		jquery("#"+o.id).addClass("a");
+	}else{
+		o.setAttribute("aaa","false");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("a");
+		jquery("#"+o.id).addClass("b");
+	}
+	checkChecked();
+}
+checkChecked =function(){
+	var obj = document.getElementById("forecast:allC")
+	if(obj.value=="false"){
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='forecast:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+				break;
+			}else if(i==check.length-1){
+				jquery("#b").attr("aaa","true");
+				document.getElementById("forecast:allC").value="true";
+				jquery("#b").removeClass("b");
+				jquery("#b").addClass("a");
+			}
+		}
+	}else{
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='forecast:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+			//}else if(i==check.length-1){
+				document.getElementById("forecast:allC").value="false";
+				jquery("#b").attr("aaa","false");
+				jquery("#b").removeClass("a");
+				jquery("#b").addClass("b");
+				break;
+			}
+		}
+	}
+	
+}
+
+checksub = function(){
+	var plantBeginTime = jq("#forecast\\:plantBeginTime").val();
+	var plantEndTime = jq("#forecast\\:plantEndTime").val();
+	if(plantBeginTime>plantEndTime){
+		alert("采收时间：结束时间不能小于开始时间");
+		return false;
+	}
+	var valueBeginTime = jq("#forecast\\:valueBeginTime").val();
+	var valueEndTime = jq("#forecast\\:valueEndTime").val();
+	if(valueBeginTime!=""&&valueEndTime!=""){
+		if(valueBeginTime>valueEndTime){
+			alert("定植时间：结束时间不能小于开始时间。请在高级搜索中设置");
+			return false;
+		}
+	}
+	if(document.getElementById("checkone")){
+		var str = "";
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC' || check[i].id=='envAll')
+				continue;
+			if(check[i].getAttribute("aaa")=="true"){
+				str+=check[i].value+"_";
+			}
+		}
+		if(str.length>1){
+			str = str.substring(0,str.length-1);
+		}
+		var item = jquery("#binfoid  option:selected").val(); 
+		var item2 = jquery("#pinfoid  option:selected").val(); 
+		if(jquery("#plantCheck").val()!=null)
+			jquery("#pIdString").val(jquery("#plantCheck").val().toString());
+		else
+			jquery("#pIdString").val("");
+		document.getElementById("forecast:check").value=str;
+	    document.getElementById("forecast:pInfoIdInfo").value=item2;
+	}
+	return true;
+}
+jquery(document).ready(function(){
+	jquery('#plantCheck').attr("multiple","multiple");
+	jquery('select:not(#plantCheck)').selectpicker();
+    jquery('#plantCheck').selectpicker({noneSelectedText:"全部"});
+    jquery('#plantCheck').selectpicker('deselectAll');
+	jquery('input').iCheck({
+	    checkboxClass: 'icheckbox_minimal-blue',
+	    radioClass: 'iradio_minimal-blue',
+	    increaseArea: '20%' // optional
+	  });
+
+	jquery("input[name='lookAll']").on("ifClicked", function(event){
+		if(jquery("#lookAll").attr("aa")=='a'){
+			jquery("#myFrame").contents().find("#fakeContainer1").hide();
+			jquery("#myFrame").contents().find("#fakeContainer").show();
+			jquery("#lookAll").attr("aa","b");
+		}else{
+			var a = jquery("#scroll1").width();
+			jquery("#myFrame").contents().find("#fakeContainer1").show();
+			jquery("#myFrame").contents().find("#fakeContainer").hide();
+			jquery("#lookAll").attr("aa","a");
+	 	}
+	});	
+	
+	jquery("#forecast\\:checkAll").on("ifClicked", function(event){
+		if (this.checked) {
+			jquery("input[name='checkBName']").iCheck("uncheck"); 
+		} else {
+			jquery("input[name='checkBName']").iCheck("check"); 
+		}
+	});
+	jquery("#envAll").on("ifClicked", function(event){
+		if (this.checked) {
+			jquery("input[name='cb']").iCheck("uncheck"); 
+			jquery("input[name='cb']").attr("aaa",false);
+		} else {
+			jquery("input[name='cb']").iCheck("check"); 
+			jquery("input[name='cb']").attr("aaa",true);
+		}
+	});
+	jquery("input[name='sex']:radio").on("ifChecked", function(event){
+		var type = this.value;
+		document.getElementById("forecast:ddId").value=type;
+	});
+	jquery("input[name='sexNew']:radio").on("ifChecked", function(event){
+		var type = this.value;
+		document.getElementById("forecast:apsType").value=type;
+	});
+	jquery("input[name='cb']").on("ifChanged", function(event){
+		if(!this.checked) {
+			jquery("#envAll").iCheck("uncheck"); 
+			jquery(this).attr("aaa",false);
+		}else{
+			jquery(this).attr("aaa",true);
+		}
+	});
+	
+	var plantStr = '#{forecastHome.pIdString}';
+	var checkStr = plantStr.split(",");
+	if(jquery("#plantCheck option").length!=checkStr.length)
+		jquery("#plantCheck").selectpicker("val",checkStr);
+	});
+	
+window.onload = function() 
+{
+	var ddId = document.getElementById("forecast:ddId").value;
+	var apsType = document.getElementById("forecast:apsType").value;
+	if(ddId != null){
+		jquery("#sex" + ddId).iCheck("check"); 
+	}
+	if(apsType != null){
+		jquery("#sex_nomales" + apsType).iCheck("check"); 
+	}
+	var idStr = "";
+	var obj = false;
+	jquery("input[name='cb']").each(function(){
+		var cbBoolean = jquery(this).attr("aaa");
+		//alert(jquery(this).attr("id"));
+		if(cbBoolean == "true"){
+			jquery(this).iCheck("check");
+			jquery(this).attr("aaa",true); 
+		}else{
+			obj = true;
+			jquery(this).iCheck("uncheck");
+			jquery(this).attr("aaa",false); 
+		}
+		if(obj){
+			jquery("#envAll").iCheck("uncheck"); 
+		}
+	});
+	if(jquery(".sFData").height()<459){
+		jquery(".sData").height(jquery(".sFData").height());
+	} 
+}
+//]]>
+</script>
+<style>
+.rich-calendar-exterior{line-height: 20px;}
+	.legendLabel {font-size: 13px;float: left;}
+	#xxx table{margin: 0 auto;}
+#reido1{width:20px; height:18px;  background:url(../asset/images/radio2.gif) no-repeat; display:block; float:right; margin-top:13px;}
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width: 100px;}
+
+</style>
+ <!--二级列表开始-->
+    <!--二级列表结束-->
+    
+	<!--右边开始-->
+            <td valign="top">
+                 <div class="right_c" style="min-height:30px;">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">种植产量查询</font></div>
+                    </div>
+                    <div class="clear"></div>
+                 </div>   
+				<!--分析页开始-->
+				<ui:fragment rendered="#{s:hasRole('yield_analyse_search')}">
+				
+				<h:form id="forecast">
+				<!-- #{forecastHome.login()} -->
+					<div class="fxy_title">
+                    	<ul class="fxy_ul">
+                            <li class="reili">
+                                <table cellpadding="0" cellspacing="0" style="float:left;">
+                                    <tr>
+                                        <td align="right" class="tpcc_font">采收时间：</td>
+                                         <td align="left" class="tc_strong" width="140">
+                                         	 <div class="input-append date form_datetime " >
+										    	<h:inputText  styleClass="new_time nw123" id="plantBeginTime" value="#{forecastHome.plantBeginTime}" onchange="timeChange()" readonly="#{facesContext.renderResponse}"/>
+										    	<span class="add-on"><i class="icon-th icon-th2"></i></span>
+										    </div>
+                                        </td>
+                                         <td>&#160;--&#160;</td>
+                                        <td align="left" class="tc_strong" width="140">
+                                             <div class="input-append date form_datetime " >
+										    	<h:inputText  styleClass="new_time nw123" id="plantEndTime" value="#{forecastHome.plantEndTime}" onchange="timeChange()" readonly="#{facesContext.renderResponse}"/>
+										    	<span class="add-on"><i class="icon-th icon-th2"></i></span>
+										    </div>
+                                        </td>
+                                        <input name="searchStu" id="searchStu" type="hidden"/>
+                                    </tr>
+                                </table>
+                              <ui:fragment rendered="#{s:hasRole('yield_analyse_exp')}">
+                            	 <div style="float:right;"> 
+                               		<s:link    view="/analysis/forecast.xhtml" action="#{forecastHome.exportExcel}" onclick="checkTime()"> 
+                               			<img src="../asset/images/fxdc.jpg" width="82" height="16" />
+                               		</s:link>
+                               	</div>
+                               </ui:fragment>
+                            </li>
+                             <li class="reili" style="height: 100%;">
+                                <table cellpadding="0" cellspacing="0" style="float:left;" >
+                                    <tr>
+                                        <td class="tpcc_font"> 
+                                        	<div class="fxy_div" >
+						                             <input type="hidden" id="pIdString" name="pIdString" ></input>
+						                            	<table cellpadding="0" cellspacing="0" style="float:left;">
+						<tr>
+							<td align="right" class="tpcc_font">选择作物：</td>
+							<td align="left" style="padding-left:4px;" id="male" class="six3" >
+								<div class="div200">
+				<select  id="plantCheck" name="plantCheck"  data-live-search="true">
+						<a:repeat value="#{forecastHome.plantList}" var="var">
+						<optgroup label="#{var}">
+							<a:repeat value="#{forecastHome.allPlant[var]}" var="_var">
+								<option value="#{_var.plantId}">#{_var.name}</option>
+							</a:repeat>
+						</optgroup>
+						</a:repeat>
+				</select>
+							</div>
+							</td>
+						</tr>
+					</table>	
+					                            <table cellpadding="0" cellspacing="0" style="float:right;">
+					                             	<tr>
+					                             		<td width="80" align="right"><a id="gjbott2" onclick="usrnew()" href="Javascript: void(0)">高级搜索</a></td>
+					                                	<td width="80" align="right">
+					                                		<h:commandButton  styleClass="btn btn-primary" value="搜索" onclick="return checksub()" />
+					                                	</td>
+					                                	<td width="80" align="right">
+					                                		<h:commandButton action="#{forecastHome.reset}" id="reset" styleClass="btn btn-default" value="重置"/>
+					                                	</td>					                               	
+					                                </tr>
+					                             </table>
+					                        </div>
+					                        <div id="fxy_ul02">
+					                        </div>
+                                        </td>
+                                        
+                                    </tr>
+                                </table>
+                              
+                            </li>
+                        </ul>
+                    	<div class="clear"></div>
+                    </div>
+                    <div id="ftitle" style="display: none;">
+                    	<ul>
+                            <li class="reili">
+                                <table cellpadding="0" cellspacing="0" style="float:left;">
+                                     <tr>
+                                        <td align="right" class="tpcc_font">定植时间：</td>
+                                        <td align="left" class="tc_strong" width="140">
+                                        	<div class="input-append date form_datetime " >
+										    	<h:inputText  styleClass="new_time nw123" id="valueBeginTime" value="#{forecastHome.valueBeginTime}" readonly="#{facesContext.renderResponse}"/>
+										    	<span class="add-on"><i class="icon-th icon-th2"></i></span>
+										    </div>
+                                        </td>
+                                        <td>&#160;--&#160;</td>
+                                        <td align="left" class="tc_strong" width="140">
+                                           <div class="input-append date form_datetime " >
+										    	<h:inputText  styleClass="new_time nw123" id="valueEndTime" value="#{forecastHome.valueEndTime}" readonly="#{facesContext.renderResponse}"/>
+										    	<span class="add-on"><i class="icon-th icon-th2"></i></span>
+										    </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </li>
+                            <li class="reili" >
+                                <table cellpadding="0" cellspacing="0" style="float:left;">
+                                    <tr>
+                                        <td align="right" class="tpcc_font">区域范围：</td>
+                                        <h:panelGroup rendered="#{sessionTake.getLevelId() eq 1}">
+	                                         <td align="left" class="tc_strong" width="140">
+	                                            <div style="margin-right:10px;">
+													<h:selectOneMenu immediate="true" id="einfoid" value="#{forecastHome.eInfoId}" valueChangeListener="#{forecastHome.getBInfoListByEntId}" styleClass="selectpicker">
+														<f:selectItem itemLabel="全部" itemValue="0" />
+														<s:selectItems value="#{commonHome.eInfoList}" var="einfo" label="#{einfo.name}" itemValue="#{einfo.id}"/>
+														<a:support event="onchange" eventsQueue="default" ajaxSingle="true" bypassUpdates="true" data="#{forecastHome.bInfoStr}" oncomplete="linkageeinfoid(data);getPinfoListByBId(#{forecastHome.bInfoId});"/>
+													</h:selectOneMenu>
+	                                             </div>
+	                                        </td>
+                                        </h:panelGroup>
+                                        <td align="left" class="tc_strong" width="145">
+                                            <div style="margin-right:10px;"><h:inputHidden name="pInfoIdInfo" value="#{forecastHome.pInfoId}" id="pInfoIdInfo"/>
+												<select name="pinfoid" id="pinfoid" class="selectpicker">
+													<option value="0">全部</option>
+													<a:repeat value="#{forecastHome.pInfoList}" var="pinfo">
+                                                   		<h:panelGroup rendered="#{forecastHome.pInfoId eq pinfo.id}">
+															<option value="#{pinfo.id}" selected="selected">#{pinfo.name}</option>
+														</h:panelGroup>
+														<h:panelGroup rendered="#{forecastHome.pInfoId ne pinfo.id}">
+															<option value="#{pinfo.id}" >#{pinfo.name}</option>
+														</h:panelGroup>
+                                                   	</a:repeat>
+												</select>
+                                             </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                             
+                            </li>
+                            <li class="reili" style="padding-bottom:5px;">
+                                <table cellpadding="0" cellspacing="0" style="float:left;" id="checkone" width="100%">
+                                    <tr>
+                                        <td align="right" class="tpcc_font" width="60">种植环境：<h:inputHidden name="check" value="#{forecastHome.check}" id="check"/></td>
+                                        <td align="left" style="padding-left:4px;">
+                                            <div class="lapc_div">
+			                                        <input type="checkbox" checked="checked" name="envAll" id="envAll"></input>
+			                                        <h:inputHidden id="allC" value="#{forecastHome.allC}"/>
+				                                <span class="s_pan">全选</span>
+                                            </div>
+                                            
+                                            <a:repeat  value="#{commonHome.petList}"  var="pet"   rowKeyVar="_index">
+				                            	<div class="lapc_div">
+					                                        <a href="javascript:void(0);" id="one#{_index}1" xx="one#{_index}" class="#{forecastHome.map[pet.id]} chccc"></a>
+					                                        <input type="checkbox" id="one#{_index}" name="cb" value="#{pet.id}" aaa="#{forecastHome.map2[pet.id]}" style="display:none;" />
+					                                <span class="s_pan">#{pet.name}</span>
+				                                </div>
+				                            </a:repeat>
+                                        </td>
+                                    </tr>
+                                </table>
+                             
+                            </li>
+                             <li class="reili" style="padding-top:0;">
+                                <table cellpadding="0" cellspacing="0" style="float:left;">
+                                    <tr>
+                                        <td align="right" class="tpcc_font">种植标准：<h:inputHidden value="#{forecastHome.ddId}" id="ddId"/></td>
+                                        <td align="left" style="padding-left:4px;" id="male">
+                                        	 <div  style="float:left;">
+                                        	 <input type="radio" value="0" name="sex" id="sex0" class="sex_nomale" checked="#{forecastHome.ddId eq 0?'checked':''}"/>
+                                        	 <label style="font-weight: 100; margin: 0 5px;" for="sex_nomale"  name="sex_nomale">全部</label></div>
+                                             <a:repeat value="#{commonHome.ddList}" var="dd" rowKeyVar="_index">
+                                             <div style="float:left;">
+                                             <input type="radio" value="#{dd.dataDicId}" name="sex" id="sex#{dd.dataDicId}"/>
+                                             <label style="font-weight: 100; margin: 0 5px;" for="sex_nomale#{_index}"  name="sex_nomale">#{dd.name}</label></div>
+                                             </a:repeat>
+                                        </td>
+                                   </tr>
+                                </table>
+                            </li>  
+                            <li class="reili" style="padding-top:0;">
+                            	<table cellpadding="0" cellspacing="0" style="float:left;">
+                                    <tr>
+                                        <td align="right" class="tpcc_font">种植类型：<h:inputHidden value="#{forecastHome.apsType}" id="apsType"/></td>
+                                        <td align="left" style="padding-left:4px;" id="males">
+                                        	<div style="float:left;">
+                                        	<input type="radio" value="0" name="sexNew" id="sex_nomales0" class="sex_nomale" checked="#{forecastHome.apsType eq 0?'checked':''}"/>
+                                        	<label style="font-weight: 100; margin: 0 5px;" for="sex_nomales0"  name="sex_nomales">全部</label>
+                                        	</div>
+                                            <div style="float:left;">
+                                            <input type="radio" value="1" name="sexNew" id="sex_nomales1" class="sex_nomale"/>
+                                            <label style="font-weight: 100; margin: 0 5px;" for="sex_nomales1"  name="sex_nomales">历史种植</label>
+                                            </div>
+                                        	<div style="float:left;">
+                                        	<input type="radio" value="2" name="sexNew" id="sex_nomales2" class="sex_nomale"/>
+                                        	<label style="font-weight: 100; margin: 0 5px;" for="sex_nomales2"  name="sex_nomales">实际种植</label>
+                                        	</div>
+                                        	<div style="float:left;">
+                                        	<input type="radio" value="3" name="sexNew" id="sex_nomales3" class="sex_nomale"/>
+                                        	<label style="font-weight: 100; margin: 0 5px;" for="sex_nomales3"  name="sex_nomales">计划种植</label>
+                                        	</div>
+                                        </td>
+                                   </tr>
+                                </table>
+                            </li>                     
+                        </ul>
+                    </div>
+                </h:form>
+				
+				</ui:fragment>
+				<ui:fragment rendered="#{!s:hasRole('yield_analyse_search') and s:hasRole('yield_analyse_exp')}">
+				  <div style="float:right;padding-top: 10px;margin-right:20px;"> 
+               		<s:link    view="/analysis/forecast.xhtml" action="#{forecastHome.exportExcel}" > 
+               			<img src="../asset/images/fxdc.jpg" width="82" height="16" />
+               		</s:link>
+           		  </div>
+				</ui:fragment>
+				<!--分析页结束-->
+                <div class="right_c">
+                <!--订单总量开始-->
+                    <div class="fxy_print3">
+                    	<ul>
+                        	<li class="fxy_pli03">
+                            	<table class="pli_table">
+                                	<tr>
+                                    	<td rowspan="2"><img class="pli_img" src="../asset/images/fxydk0_10.jpg" width="46" height="46" /></td>
+                                        <td class="pli_font01" height="23">地块数量</td>
+                                    </tr>
+                                    <tr>
+                                    	<td class="pli_font02" height="16"><h:outputText value="#{forecastHome.tiAll}"><f:convertNumber pattern="#0"/></h:outputText></td>
+                                    </tr>
+                                </table>
+                            </li>
+                            <li class="fxy_pli03">
+                            	<table class="pli_table">
+                                	<tr>
+                                    	<td rowspan="2"><img class="pli_img" src="../asset/images/fxydk0_08.jpg" width="46" height="46" /></td>
+                                        <td class="pli_font01" height="23">种植面积</td>
+                                    </tr>
+                                    <tr>
+                                    	<td class="pli_font02 " height="16"><h:outputText value="#{forecastHome.areaAll}"><f:convertNumber pattern="#0.00"/></h:outputText>亩</td>
+                                    </tr>
+                                </table>
+                            </li>
+                            <li class="fxy_pli03">
+                            	<table class="pli_table">
+                                	<tr>
+                                    	<td rowspan="2"><img class="pli_img" src="../asset/images/fxydk0_09.jpg" width="46" height="46" /></td>
+                                        <td class="pli_font01" height="23">预计产量</td>
+                                    </tr>
+                                    <tr>
+                                    	<td class="pli_font02 " height="16"><h:outputText value="#{forecastHome.yieldAll}"><f:convertNumber pattern="#0.00"/></h:outputText></td>
+                                    </tr>
+                                </table>
+                            </li>
+                            
+                    	</ul>
+                    </div>
+                    <!--订单总量结束-->
+
+<div class="zwudiv" >
+			<ul class="dk_list2">
+				<li class="targe1 current "><a onclick="chos(1)" href="javascript:"><font  color="#333">折线图</font></a></li>
+				<li class="targe2"><a onclick="chos(2)" href="javascript:"><font  color="#333">图表</font></a></li>
+			</ul>
+		</div>
+                    <!--折线图开始-->
+                    <div class="ybp_02" id="tar1">
+                        <div class="fxy_zxt" style="height:auto; margin-bottom:0;">
+                        <div class="need_font" >产量统计分析</div>
+                        	<div id="placeholder2" class="chart22"  style="width:100%;height:311px;"></div>
+                        	<div id="xxx" style="text-align: center;"></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <!--折线图结束-->
+                    
+                    
+                    
+                    <!--表格开始-->
+                    <div class="ybp_02" id="tar2" style="display:none">
+                        <div class="fxy_pzxs" style="margin-top:0;background:none;border-bottom:none">
+                        	<ul style="margin-bottom:0;">
+                                <li class="lookAll" style="float:right;#{forecastHome.realList eq '[]'?'display:none;':''}"><span style="float:right; text-indent:10px;">按月显示产量详情</span>
+                                <input type="checkbox" name="lookAll" id="lookAll" aa="a"></input></li>
+                            </ul>    
+                        </div>
+                        <iframe id="myFrame" src="Forecast2.seam" width="100%" height="600" style="min-width:950px;overflow: hidden;" frameborder="0">
+                
+               			</iframe>
+                       <div class="clear"></div>
+                    </div>
+                    <!--表格结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <br/>
+            </td>    
+    <!--右边结束-->
+     <a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="getPinfoListByBId" action="#{forecastHome.getPinfoListByBId}"  data="#{forecastHome.pInfoStr}" oncomplete="linkagebinfoid(data);">
+  			<a:actionparam name="bInfoId" assignTo="#{forecastHome.bInfoId}"/>
+		</a:jsFunction>
+		 <a:jsFunction name="bIdStringMethod" reRender="breedDiv2" action="#{forecastHome.bIdStringMethod()}" oncomplete="jquery('#login').hide();">
+           	<a:actionparam name="bIdString" assignTo="#{forecastHome.pIdString}"/>
+	   	</a:jsFunction>
+	   	<a:jsFunction name="changeTime"  action="#{forecastHome.changeTime()}" >
+	   		<a:actionparam name="plantBeginTime" assignTo="#{forecastHome.plantBeginTime}"/>
+           	<a:actionparam name="plantEndTime" assignTo="#{forecastHome.plantEndTime}"/>
+	   	</a:jsFunction>
+	</a:form>
+	 <script type="text/javascript">
+        jquery(".cm_xqbCon").css("width",(document.body.clientWidth- 349) +"px ");
+        jquery(window).resize(function(){
+			 var onLoadWidth = document.body.clientWidth;
+			 jquery(".cm_xqbCon").css("width",(document.body.clientWidth- 349)+"px ");
+		})
+	</script>
+	<script type="text/javascript">
+	</script>
+	
+	<script src="#{request.contextPath}/asset/js/jquery.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts-more.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/themes/highcharts-them.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/modules/no-data-to-display.js"></script>
+<script defer="defer">
+//<![CDATA[
+	jquery(".form_datetime").datetimepicker({
+    	format: "yyyy-mm",
+  		language:  'zh-CN',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 3,
+		minView: 3,
+		forceParse: 0,
+		pickerPosition: "bottom-left"
+	 });
+choseClass = function(){
+	this.className="city_nav city_hover";
+	if(document.getElementById('city_link').className=="fxy_tck city_hovers"){
+		document.getElementById('city_link').className=="fxy_tck";
+		checkBreed();
+	}else{
+		document.getElementById('city_link').className="fxy_tck city_hovers";
+	}
+	return false;
+}
+
+function chos(t){
+for(var i=1;i<=4;i++){
+	if(i==t){ 
+		jquery("#tar"+t).css("display", "block");
+		jquery(".targe"+t).addClass("current");
+	}else{
+		jquery("#tar"+i).css("display", "none");
+		jquery(".targe"+i).removeClass("current");
+	}
+}
+}
+cheAll = function(obj){
+	jquery("input[name='checkBName']").prop("checked", obj.checked);
+}
+function checkBreed(){
+	jquery("#login").show();
+	var s = "";
+	jquery("input[name='checkBName']:checked").each(function(){
+		s+=this.id+"_";		
+	});
+	bIdStringMethod(s);
+	document.getElementById('city_link').className='fxy_tck';
+	document.getElementById("fxy_ul02").style.display = "block";
+}
+jquery(document).ready(function(){ 
+	var str = "#{forecastHome.pIdString}";
+	if(str!=""){
+		var strs = str.split("_");
+		jquery("input[name='checkBName']").each(function(){
+			for(var i = 0;i<strs.length;i++){
+				if(jquery(this).attr("id")==strs[i]){
+					jquery(this).iCheck("check"); 
+				}
+			}	
+		});
+	}
+});
+jq = jQuery.noConflict();
+jq(function() {
+		var data = '#{forecastHome.str}';
+		data = eval("(" + data + ")");
+		jq('#placeholder2').highcharts({
+			chart: {
+	            type: 'spline',
+	            	backgroundColor: {
+	    			linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+	    			stops: [
+	    				[0, 'rgb(255, 255, 255)'],
+	    				[1, 'rgb(255, 255, 255)']
+	    			]
+	    		},
+	    		//borderWidth: 2,
+	    		//plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+	    		plotShadow: true,
+	    		//plotBorderWidth: 1
+	        },
+	        legend: {   
+	        	itemStyle: {
+				font: '9pt Trebuchet MS, Verdana, sans-serif',
+				color: 'black'
+
+				},
+				itemHoverStyle: {
+					color: '#039'
+				},
+				itemHiddenStyle: {
+					color: 'gray'
+				}
+	        },  
+	        lang: {
+	            noData: "暂无数据!"
+	        },
+	        noData: {
+	            style: {    
+	                fontWeight: 'bold',     
+	                fontSize: '15px',
+	                color: '#303030'        
+	            }
+	        },
+	        title: { text: '' },
+	        subtitle: {text: ''},
+	        credits:{enabled:false},
+	        xAxis: {
+	        	tickInterval:data.tickInterval,
+	        	 categories: data.categories,
+	        	 gridLineWidth: 0, //设置网格宽度为1 
+	        },
+	        yAxis: {
+	        	min: 0, 
+		        title: { text: '种植产量 (kg)' }, 
+		        allowDecimals:false,
+		        max: data.maxYData
+             },
+	        tooltip: {
+	            formatter: function() {
+	                    return '<b>'+ this.series.name +'</b><br/>'+
+	                    this.x +' '+ this.y + 'kg';
+	            }
+	        },
+	        series: data.resultSource
+	    });
+	}); 
+
+var searchStuObj = #{forecastHome.searchStu};
+if(searchStuObj == 2){
+	ftitle.style.display='block'; 
+	gjbott2.style.backgroundImage='url(../asset/images/gjtop.jpg)';
+}else{
+	ftitle.style.display='none';
+	gjbott2.style.backgroundImage='url(../asset/images/gjbottom.jpg)';
+}
+function timeChange(){
+	var plantBeginTime = jq("#forecast\\:plantBeginTime").val();
+	var plantEndTime = jq("#forecast\\:plantEndTime").val();
+	if(plantBeginTime>plantEndTime){
+		alert("采收时间：结束时间不能小于开始时间");
+		return false;
+	}
+	else{
+		changeTime(plantBeginTime,plantEndTime);
+	}
+}
+//导出时间判断
+function checkTime(){
+	var start = jquery("#forecast\\:plantBeginTime").val();
+	var end = jquery("#forecast\\:plantEndTime").val();
+	var beginDate = new Date(start);
+	var endDate = new Date(end);
+	var year = beginDate.getFullYear();
+	var month = beginDate.getMonth();
+	var oneYearLaterTime = new Date(start);
+	oneYearLaterTime.setFullYear((year+1), month);
+	if(endDate >= oneYearLaterTime){
+		alert("最多可以导出一年的数据，如想导出多年的数据，请分步导出！");
+	}
+}
+//]]>
+</script>
+</ui:define>
+
+</ui:composition>

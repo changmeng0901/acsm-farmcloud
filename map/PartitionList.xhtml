@@ -1,0 +1,716 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	 <style>
+	 .modal-open{overflow:visible}
+	 .qu_title{height:auto; overflow:hidden;}
+	             .cm_resumeList{}
+.cm_resumeList li{ float:left;}
+.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'宋体';}
+.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+.cm_resumeList li img{ float:left; margin-top:16px;}
+.cm_resumeList li span{ float:left; text-indent:10px;}
+.borderBt{ border-bottom:2px solid #33aedc;}
+.borderBt02{ border-bottom:1px solid #cbcbcb;}
+.r_title {
+    border-bottom: 1px solid #ddd;
+    height: 45px;
+    line-height: 45px;
+    margin-top: 22px;
+    position: relative;
+    width: 100%;
+    z-index: 2000;
+}
+.tjqu_dd {
+    font-size: 15px;
+    font-weight: bold;
+    max-height: 40px;
+    overflow: hidden;
+}
+div#menu .siteSelection{z-index: 200;}
+.td1{
+	width:35%;
+	text-align: right;
+    padding-right: 10px;
+    font-size:14px;
+}
+.add_table tr{
+	height:50px;
+}
+.td1 img{
+	padding-right:5px;
+}
+.td2{
+	width:75%;
+	font-size:14px;
+}
+.td2 input{
+	width:200px;
+}
+	 </style>
+       <td valign="top" name="partition">
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="spanValue">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick=" return false;">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="if(removeMthod()) return true;">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div aria-hidden="false" aria-labelledby="mySubmitModalLabel" role="dialog" tabindex="-1" id="mySubmitModal" class="modal fade in w600na" style="width:310px;z-index:1111;top:30%;">
+  <div class="modal-dialog" style="width:310px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="mySubmitModalLabel">提示</h4>
+      </div>
+      <div class="modal-body">
+      	<p style="text-align:center;margin-bottom: 10px;"><img src="#{request.contextPath}/asset/images/farmingIco20_1.png" alt="" /></p>
+       	<p style="text-align:center;line-height: 20px;" id="spanValue2">
+       		
+		</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="closeMsgModal()">知道了</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- #{partitionHome.methods()} -->
+<div class="modal fade" id="addPartitions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog kuandu" style="width:446px; margin:0; left:50%; margin-left:-223px; top:50%; margin-top:-180px; position: absolute;">
+				<div class="modal-content ">
+				<a4j:form id="form1">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel">添加分区</h4>
+					</div>
+					<div class="modal-body" style="padding-bottom: 30px;">	
+					
+					<input type="hidden" value="#{partitionHome.baseId}" name="add_base_id"/>		
+						<table width="100%" class="add_table">
+							<tr>
+								<td class="td1"><img src="#{request.contextPath}/asset/images/icon_ssfq2.png"/>分区名称</td>
+								<td class="td2"><input type="text" id="add_part_name" name="add_part_name" class="form-control"/></td>
+							</tr>
+							<tr>
+								<td class="td1"><img src="#{request.contextPath}/asset/images/icon_ssjd2.png"/>所属基地</td>
+								<td class="td2">#{partitionHome.baseName}</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer" style="text-align:center;">
+				        <a href="javascript:void(0);" class="" onclick="part_submit();"></a>
+				        <a4j:commandButton action="#{partitionHome.addPartitions()}" value="确定" styleClass="btn btn-primary" onclick="if(!part_submit())return false;" data="#{partitionHome.re_str}" oncomplete="reloadPage(data)"/>
+				        <a href="javascript:void(0);" class="btn btn-default" onclick="part_no();">返回</a>
+				    </div>
+				    </a4j:form>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function reloadPage(data){
+				if(data!=''){
+					alert(data);
+				}else {
+					location.reload();
+				}
+			}
+			function add_part(){
+				jquery("#add_part_name").val("");;
+				jquery("#addPartitions").modal('show');
+			}
+			function part_no(){
+				jquery("#addPartitions").modal('hide');
+			}
+			function part_submit(){
+				if(jquery("#add_part_name").val()==""){
+					alert("请填写分区名称！");
+					return false;
+				}
+				return true;
+			}
+		</script>
+<div class="modal fade" id="addTunnelInfos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog kuandu" style="width:446px; margin:0; left:50%; margin-left:-223px; top:50%; margin-top:-180px; position: absolute;">
+				<div class="modal-content ">
+				<a4j:form id="form2">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel">添加区域</h4>
+					</div>
+					<div class="modal-body" style="padding-bottom: 30px;">							
+						<input type="hidden" value="#{partitionHome.baseId}" name="add_base_id"/>
+						<input type="hidden" id="add_part_id" name="add_part_id"/>		
+						<table width="100%" class="add_table">
+							<tr>
+								<td class="td1"><img src="#{request.contextPath}/asset/images/icon_dkmc2.png"/>区域名称</td>
+								<td  class="td2"><input type="text" id="add_tunnel_name1" name="add_tunnel_name" class="form-control"/></td>
+							</tr>
+							<tr class="visible1">
+								<td class="td1"><img src="#{request.contextPath}/asset/images/icon_ssfq2.png"/>所属分区</td>
+								<td class="partitions_name1 td2"></td>
+							</tr>
+							<tr class="visible2">
+								<td class="td1"><img src="#{request.contextPath}/asset/images/icon_ssjd2.png"/>所属基地</td>
+								<td class="td2">#{partitionHome.baseName}</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer" style="text-align:center;">
+				        <a4j:commandButton action="#{partitionHome.addTunnelInfos()}" value="确定" styleClass="btn btn-primary" onclick="if(!tunnel_submit())return false;" data="#{partitionHome.re_str}" oncomplete="reloadPage(data)"/>
+				        <a href="javascript:void(0);" class="btn btn-default" onclick="tunnel_no()">返回</a>
+				    </div>
+				    </a4j:form>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function add_tunnel(id,name){
+				jquery("#add_part_name1").val("");
+				jquery("#add_part_id").val(id);
+				if(id==""){
+					jquery(".visible2").show();
+					jquery(".visible1").hide();
+				}else{
+					jquery(".visible1").show();
+					jquery(".visible2").hide();
+				}
+				jquery(".partitions_name1").html(name);
+				jquery("#addTunnelInfos").modal('show');
+			}
+			function tunnel_no(){
+				jquery("#addTunnelInfos").modal('hide');
+			}
+			function tunnel_submit(){
+				if(jquery("#add_tunnel_name1").val()==""){
+					alert("请填写区域名称！");
+					return false;
+				}
+				return true;
+			}
+		</script>
+		<div class="modal fade" id="addTunnelInfosNoPartitions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog kuandu" style="width:446px; margin:0; left:50%; margin-left:-223px; top:50%; margin-top:-180px; position: absolute;">
+				<div class="modal-content ">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel">添加地块</h4>
+					</div>
+					<div class="modal-body" style="padding-bottom: 30px;">							
+						
+					</div>
+					<div class="modal-footer">
+				        <a href="javascript:void(0);" class="btn btn-primary" onclick="submitFile();">确定</a>
+				        <a href="javascript:void(0);" class="btn btn-default" onclick="excelModelControl(2);">返回</a>
+				    </div>
+				</div>
+			</div>
+		</div>
+		<div class="right_c">
+				<div class="r_title clear" style="z-index: 1;">
+                	<div class="r_t_l fl">数字农场&#160;&gt;&#160;&#160;<font size="3">地块档案</font></div>
+                    	<ul class="cm_resumeList fr" style="margin-bottom:0;">
+                            	<li>
+                                	<a href="javascript:void(0)" disabled="true" class="borderBt" style="cursor:default;"><img src="../asset/images/qoe_03.png"/><span>地块信息</span></a>
+                                </li>
+                            	<li>
+                                	<a href="#{request.contextPath}/map/PartitionInfo.seam?baseId=#{sessionTake.baseModel.baseId}"><img src="../asset/images/qie_05.png" /><span>地块详情</span></a>
+                                </li>
+                        </ul>
+                </div>
+                <h:panelGroup id="partitionDiv" name="partitionPg">
+                <s:div styleClass="hideDiv3" rendered="#{not empty partitionHome.partitionList}">
+                	<div class="qu_title" style="margin-top:30px; padding:10px 0;">
+                       <div style="float:left;width:84%;"> 
+                       	<table cellpadding="0" cellspacing="0" style="float:left;">
+                            	<tr>
+                                	<td width="17" align="left"><img a="true" onclick="sj_1422Me()" class="sj_1422" style="cursor:pointer;" src="#{request.contextPath}/asset/images/sjj_down1.jpg" width="14" height="19" /></td>
+                                    <td align="left" style="padding-left:2px;">
+										<font class="qu_font">#{partitionHome.baseName}</font>
+									</td>
+									<td>
+									</td>
+                                </tr>
+                            </table> 
+                           <div class="new_fonts">
+                          				 总面积#{partitionHome.baseArea}亩，
+										种植面积<span id="allMuNumber"></span>亩，
+										 分区<span id="parNum"></span>个，#{partitionHome.petStr}
+										
+									
+							</div>		</div>
+                        <div style="float:right;width:180px;position:relative; z-index:0;text-align:right;">
+                        	<div class="public-search" style="float:right">
+	                        	<input type="button" class="btn btn-success" onclick="add_part()" value="添加分区" />
+							 	<span class="buttom_img" style="right:50px;left:auto;"></span>
+								<a href="#" onclick="sortMe(this)" class="btn btn-primary">排序</a>
+							</div>
+                        </div>
+                        </div><div class="clear"></div>
+                     <table cellSpacing="0" cellPadding="0" width="100%">
+                     	<tr>
+                     		<td valign="top">
+                    <div class="_baseInfo">
+                     <a4j:repeat value="#{partitionHome.partitionList}" rendered="#{not empty partitionHome.partitionList}" var="_partition" rowKeyVar="_index">
+                        <ul class="tjqu_dl" id="deleted2#{_partition.id}">
+                        <s:decorate rendered="#{not empty _partition.picture}">
+                            <li class="tjqu_dt">
+                            	<s:link propagation="none"  view="/map/MapPartitionEdit.seam">
+                            	<f:param name="partition_id" value="#{_partition.id}"/>
+                            	<img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157"/>
+                                <img src="#{_partition.picture}"  width="144" height="144" class="tjqu_a_img" />
+                                </s:link>
+                                <a  href="#{request.contextPath}/map/MapPartitionEdit.seam?partition_id=#{_partition.id}" style="*position:relative; *z-index:900; cursor:pointer;" >
+                                <div class="tjdd">
+                                    <ul class="rr_llul">
+                                        <li class="rr_lli"><a onclick="del2(#{_partition.id})"><img src="#{request.contextPath}/asset/images/dele_15.jpg" width="17" height="14" /></a></li>
+                                    </ul>
+                                </div>
+                                </a>
+                                <div class="tjdd"  style="position:relative; z-index:900; cursor:pointer; " onclick="urlFuc2(#{_partition.id})">
+                                	<div onclick="del2(#{_partition.id})"  style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/imgc.jpg" width="23" height="22" style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                </div>
+                            </li>
+                         </s:decorate>
+                         <s:decorate rendered="#{empty _partition.picture}">
+                            <li class="tjqu_dt">
+                            	<a href="#{request.contextPath}/map/MapPartitionEdit.seam?partition_id=#{_partition.id}" class="editurl">
+                            	<img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157"/>
+	                                <img src="#{request.contextPath}/asset/images/img_bg_03.png" data-src="#{request.contextPath}/asset/images/dikuai.jpg" width="144" height="144" class="tjqu_a_img" />
+                                </a>
+                                
+                                <div class="tjdd"  style="position:relative; z-index:900; cursor:pointer; " onclick="urlFuc2(#{_partition.id})">
+                                	<div onclick="del2(#{_partition.id})"  style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/imgc.jpg" width="23" height="22" style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                	<div onclick="urlFuc2(#{_partition.id})" style="background:#4095F2;width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/huaditu.png"  style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                </div>
+                            </li>
+                         </s:decorate>
+                            <li class="tjqu_dd" title="#{_partition.name}">#{_partition.name}</li>
+                            <li class="tjqu_dd1">总面积：#{_partition.muNumber}亩</li>
+                        </ul>
+                        <input type="hidden" id="allMu-#{_partition.id}" class="bbb" value="#{_partition.muNumber}"/>
+                     </a4j:repeat>
+                    
+                     </div>
+                     </td>
+                    </tr>
+                </table>
+                </s:div>
+                </h:panelGroup>
+                <div class="ybp_02" >
+                <h:panelGroup id="partitionDiv2">
+                    <a4j:repeat value="#{partitionHome.partitionList}" rendered="#{not empty partitionHome.partitionList}" var="_par" rowKeyVar="_indexPar">
+                        <!--东区开始-->
+                    <s:div id="delDiv#{_par.id}"  styleClass="hideDiv del_parts_#{_par.id}" >
+                        <input type="hidden" name="hId" value="#{_par.id}"/>
+                        <div class="qu_title" style="margin-top:20px;padding:10px 0;">
+                        <div style="float:left;width:84%;"> 
+                        	<table cellpadding="0" cellspacing="0">
+                            	<tr>
+                                	<td width="17" align="left"><img a="true" onclick="sj_141Me(#{_par.id})" class="sj_#{_par.id}" style="cursor:pointer;" src="#{request.contextPath}/asset/images/sjj_down1.jpg" width="14" height="19" /></td>
+                                    <td align="left" style="padding-left:2px;">
+										<font class="qu_font">#{_par.name}</font>
+										<font class="qu_jb">
+											分区面积#{_par.muNumber}亩，
+											种植面积<span id="muNumber#{_par.id}" class="muNumber#{_par.id}"></span>亩，
+											<a4j:repeat value="#{partitionHome.petMethod(_par.id)}" var="_numss" rowKeyVar="_indexNum">
+											#{_numss[0]}#{_numss[1]}个
+											<s:span rendered="#{_indexNum != (partitionHome.petMethod(_par.id).size() -1)}">，</s:span>
+											<s:span rendered="#{_indexNum == (partitionHome.petMethod(_par.id).size() - 1)}">。</s:span>
+											</a4j:repeat>
+										</font>
+										<input type="hidden" id="muNumber" name="muNumberName" class="mmm" value="#{_par.id}"/>
+									</td>
+                                </tr>
+                            </table> 
+                            </div>
+                            <div style="float:right;width:180px;position:relative; z-index:1;text-align:right;">
+                            <div class="public-search" style="float:right;">
+                            <input type="button" class="btn btn-success" onclick="add_tunnel(#{_par.id}, '#{_par.name}')" value="添加区域" />
+							 <span class="buttom_img" style="right:50px;left:auto;"></span>
+							<a href="#" onclick="sortMe2(this,#{_par.id})" class="btn btn-primary">排序</a>
+							</div>
+                       		</div>
+                        </div><div class="clear"></div>
+                        <div class="_idels#{_par.id}">
+                        <a4j:repeat value="#{collectionsUtil.toList4(_par.tunnelInfos)}"  var="_gti" rowKeyVar="_indexGti">
+                        	<ul class="tjqu_dl" id="deleted1#{_gti.tunnelInfoId}">
+                        	<s:decorate rendered="#{not empty _gti.staticPicture}">
+                            <li class="tjqu_dt">
+                            	<a class="parts_#{_par.id}"></a>
+                            	<a href="#{request.contextPath}/map/PartitionInfo.seam?tnnelId=#{_gti.tunnelInfoId}&amp;partId=#{_gti.partition.id}&amp;baseId=#{partitionHome.baseId}" class="editurl">
+                                    <img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157" />
+									<img class="tjqu_a_img" src="#{request.contextPath}/asset/images/img_bg_03.png" data-src="#{_gti.staticPicture}" width="144" height="144"/>
+								</a>	
+                                <div class="tjdd"  style="position:relative; z-index:900; cursor:pointer; " onclick="urlFuc(#{_gti.tunnelInfoId},#{_gti.partition.id})">
+                                	<div onclick="isDelTunnel(#{_gti.tunnelInfoId})"  style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/imgc.jpg" width="23" height="22" style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                </div>
+                            </li>
+                            </s:decorate>
+                            <s:decorate rendered="#{empty _gti.staticPicture}">
+                            <li class="tjqu_dt">
+                            	<a class="hovz editurl" href="#{request.contextPath}/map/PartitionInfo.seam?tnnelId=#{_gti.tunnelInfoId}&amp;partId=#{_gti.partition.id}&amp;baseId=#{partitionHome.baseId}" id="editurl">
+                                    <img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157"/>
+                                    <img class="tjqu_a_img" src="#{request.contextPath}/asset/images/img_bg_03.png" data-src="#{request.contextPath}/asset/images/dikuai.jpg" width="144" height="144"/>
+                                </a>
+                                <div class="tjdd"  style="position:relative; z-index:900; cursor:pointer; " onclick="urlFuc(#{_gti.tunnelInfoId},#{_gti.partition.id})">
+                                	<div onclick="isDelTunnel(#{_gti.tunnelInfoId})"  style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/imgc.jpg" width="23" height="22" style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                	<div onclick="toEdit(event,'#{request.contextPath}/map/MapGroupEdit.seam?group_id=#{_gti.tunnelInfoId}&amp;baseId=#{_gti.baseId}&amp;typ=2')" style="background:#4095F2;width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/huaditu.png" style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                </div>
+                            </li>
+                            </s:decorate>
+                            <li class="tjqu_dd" title="#{_gti.tunnelName}">#{_gti.tunnelName}</li>
+                            <li class="tjqu_dd1">总面积：#{_gti.muNumber}亩</li>
+                            <input type="hidden" id="muNumber-#{_par.id}-#{_gti.tunnelInfoId}" class="nnn" value="#{_gti.muNumber}"/>
+                            </ul>
+                          
+                        </a4j:repeat>
+                        
+                         </div>
+                         
+                        <div class="clear"></div>
+                    </s:div>
+                	<!--东区结束-->
+                     </a4j:repeat>
+                     </h:panelGroup>
+                </div>
+                <!--西区开始-->
+                    <div style="" class="hideDiv2">
+                         <div class="qu_title" style="margin-top:23px;padding:10px 0;">
+                         <div style="float:left;width:84%;"> 
+                        	<table  cellpadding="0" cellspacing="0" style="float:left;">
+                            	<tr>
+                                	<td width="17" align="left"><img a="true" onclick="sj_142Me()" class="sj_142" style="cursor:pointer;" src="#{request.contextPath}/asset/images/sjj_down1.jpg" width="14" height="19" /></td>
+                                    <td align="left" style="padding-left:2px;">
+										<font class="qu_font">未分区的区域</font>
+									</td>
+                                </tr>
+                            </table> 
+                            </div>
+                            <div style="float:right;width:80px;position:relative; z-index:1;">
+                            <div class="public-search" style="float:right;">
+                            <input type="button" class="btn btn-success" onclick="add_tunnel('', '')" value="添加区域" />
+							</div>
+                       		</div>
+                        </div>
+                        
+                        <div class="_idel22">
+                        <a4j:repeat value="#{partitionHome.tunnelList}" var="_tunnel" rendered="#{not empty partitionHome.tunnelList}" rowKeyVar="_index">
+                        <ul class="tjqu_dl" id="deleted1#{_tunnel.tunnelInfoId}">
+                        	<s:decorate rendered="#{not empty _tunnel.staticPicture}">
+                            <li class="tjqu_dt">
+                            	<a href="#{request.contextPath}/map/MapGroupEdit.seam?group_id=#{_tunnel.tunnelInfoId}">
+                                    <img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157" />
+                                    <img class="tjqu_a_img" src="#{_tunnel.staticPicture}" width="144" height="144"/>
+								</a>	
+                                
+                                <div class="tjdd"  style="position:relative; z-index:900; cursor:pointer; " onclick="urlFuc(#{_tunnel.tunnelInfoId})">
+                                	<div onclick="isDelTunnel(#{_tunnel.tunnelInfoId})"  style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/imgc.jpg" width="23" height="22" style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                	
+                                </div>
+                            </li>
+                            </s:decorate>
+                            <s:decorate rendered="#{empty _tunnel.staticPicture}">
+                            <li class="tjqu_dt">
+                            
+                            	<a class="hovz editurl" href="#{request.contextPath}/map/MapGroupEdit.seam?group_id=#{_tunnel.tunnelInfoId}&amp;baseId=#{_tunnel.baseId}&amp;typ=2" >
+                                    <img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157"/>
+                                    <img class="tjqu_a_img" src="#{request.contextPath}/asset/images/dikuai.jpg" width="144" height="144"/>
+                                </a>
+                                <div class="tjdd"  style="position:relative; z-index:900; cursor:pointer; " onclick="urlFuc(#{_tunnel.tunnelInfoId})">
+                                	<div onclick="isDelTunnel(#{_tunnel.tunnelInfoId})"  style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/imgc.jpg" width="23" height="22" style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                	<div onclick="toEdit(event,jquery(this).closest('li').find('.editurl').attr('href'))" style="background:#4095F2;width:23px; height:22px; position:relative; z-index:900; cursor:pointer; float:right; top:8px; right:8px;" >
+                                		<img src="#{request.contextPath}/asset/images/huaditu.png"  style="width:23px; height:22px; position:relative; z-index:900; cursor:pointer;" />
+                                	</div>
+                                </div>
+                            </li>
+                            </s:decorate>
+                            <li class="tjqu_dd" title="#{_tunnel.tunnelName}">#{_tunnel.tunnelName}</li>
+                            <li class="tjqu_dd1">总面积：#{_tunnel.muNumber}亩</li>
+                            </ul>
+                        </a4j:repeat>
+                        </div>
+                     <div class="clear"></div>
+                    </div>    
+                	<!--西区结束-->
+				<!--入库订单列表结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+         
+</td>
+		<a4j:form>
+	        <a4j:jsFunction name="deleteObj2" action="#{partitionHome.delete()}" oncomplete="fadeMe();reloadDel();jisuanMu();allMuMe();">
+	        <a4j:actionparam name="delId" assignTo="#{partitionHome.delId}"/>
+	        </a4j:jsFunction>
+	        <a4j:jsFunction name="deleteObj1" action="#{partitionHome.deleteTun()}" reRender="partitionDiv2" data="#{partitionHome.chongfu}" oncomplete="deleteResult(data);fadeMe();reloadDel();jisuanMu();">
+	        <a4j:actionparam name="delGtiId" assignTo="#{partitionHome.delGtiId}"/>
+	        <a4j:actionparam name="indexParObj" assignTo="#{partitionHome.indexPar}"/>
+	        </a4j:jsFunction>
+	        <a4j:jsFunction name="addPartitions" action="#{partitionHome.addPartitions()}"  oncomplete="fadeMe();reloadDel();jisuanMu();allMuMe();">
+	        	<a4j:actionparam name="param1" assignTo="#{partitionHome.add_base_id}"/>
+	        	<a4j:actionparam name="param2" assignTo="#{partitionHome.add_part_name}"/>
+	        </a4j:jsFunction>
+	        <a4j:jsFunction name="addTunnelInfos" action="#{partitionHome.addTunnelInfos()}"  oncomplete="fadeMe();reloadDel();jisuanMu();allMuMe();">
+	        	<a4j:actionparam name="param1" assignTo="#{partitionHome.add_base_id}"/>
+	        	<a4j:actionparam name="param2" assignTo="#{partitionHome.add_part_id}"/>
+	        	<a4j:actionparam name="param3" assignTo="#{partitionHome.add_part_name}"/>
+	        </a4j:jsFunction>
+        </a4j:form>
+		<script type="text/javascript">
+		//<![CDATA[
+		function toEdit(event,url){
+			window.location.href=url;
+			var event = event || window.event
+			stopEvent(event);
+		}
+		           
+		var level = #{sessionTake.levelId};
+		var baseListLen = #{sessionTake.baseModel.baseNum};
+		var baseId =  #{partitionHome.baseId};
+		function sortMe(obj1){
+				jquery(obj1).attr("href","#{request.contextPath}/map/Sorting.seam?typeId=1&paramId="+baseId);
+			}
+
+		function sortMe2(obj1,obj2){
+			jquery(obj1).attr("href","#{request.contextPath}/map/Sorting.seam?typeId=2&parObjId="+obj2+"&paramId="+baseId);
+			}
+		var lastAllMu = parseFloat(0);
+		function jisuanMu(){
+			var muNum = 0;
+			var strNum = "";
+			jquery(".mmm").each(function(){
+				strNum = strNum + this.value + "_";
+				//muNum = muNum + parseFloat(this.value);
+			});
+			var strNumSp = strNum.split("_");
+			//alert(strNum);
+			//alert(strNumSp.length);
+			var totalMuNum = 0;
+			var totalMuNum2 = 0;
+			for(var i = 0;i<(strNumSp.length - 1);i++){
+				var numobj1 = strNumSp[i];
+				jquery(".nnn").each(function(){
+					var idObj1 = this.id.split("-")[1];
+					//alert(this.length);
+					var idObj2 = this.value;
+					if(idObj1 == numobj1 && idObj2!=''){
+						totalMuNum = parseFloat(totalMuNum);
+						totalMuNum += parseFloat(idObj2);
+						totalMuNum2 = parseFloat(totalMuNum2);
+						totalMuNum2 += parseFloat(idObj2);
+					}
+				});
+				jquery("#muNumber" + numobj1).html(totalMuNum.toFixed(2));
+				totalMuNum = parseFloat(0);
+			}
+			lastAllMu = totalMuNum2;
+			jquery("#allMuNumber").html(lastAllMu.toFixed(2));
+			lastAllMu = parseFloat(0);
+		}
+
+		function initMe(){
+			 var parLen = jquery(".bbb").length;
+			 if(parLen == null || parLen == ""){
+				 parLen = 0;
+				 }
+			 jquery("#parNum").html(parLen);
+			}
+		 jquery(document).ready(function(){
+				 var baseName = "#{partitionHome.baseName}";
+		         jquery('.siteSeleHd').text(baseName);
+		        
+		    	 jquery("#selected0").hide();//隐藏基地下拉框中的“全部”
+			 		initMe();
+				    jisuanMu();
+				})
+				
+				 function sj_141Me(obj){
+				  	if(jquery(".sj_"+obj).attr("a")=="true"){
+				  		jquery(".sj_"+obj).attr("a","false");
+				  		jquery(".sj_"+obj).attr("src","../asset/images/sjj_right.jpg");
+						jquery("._idels"+obj).hide();
+				  	}else{
+				  		jquery(".sj_"+obj).attr("a","true");
+				  		jquery(".sj_"+obj).attr("src","../asset/images/sjj_down1.jpg");
+				  		jquery("._idels"+obj).show();
+				  	}
+				  }
+		  
+		      function sj_142Me(){
+		      	if(jquery(".sj_142").attr("a")=="true"){
+		      		jquery(".sj_142").attr("a","false");
+		      		jquery(".sj_142").attr("src","../asset/images/sjj_right.jpg");
+		    		jquery("._idel22").hide();
+		      	}else{
+		      		jquery(".sj_142").attr("a","true");
+		      		jquery(".sj_142").attr("src","../asset/images/sjj_down1.jpg");
+		      		jquery("._idel22").show();
+		      	}
+		      }
+
+
+			 function sj_1422Me(){
+	      	if(jquery(".sj_1422").attr("a")=="true"){
+	      		jquery(".sj_1422").attr("a","false");
+	      		jquery(".sj_1422").attr("src","../asset/images/sjj_right.jpg");
+	    		jquery("._baseInfo").hide();
+	      	}else{
+	      		jquery(".sj_1422").attr("a","true");
+	      		jquery(".sj_1422").attr("src","../asset/images/sjj_down1.jpg");
+	      		jquery("._baseInfo").show();
+	      	}
+	      }
+
+
+			function reloadDel(){
+			 jquery('.tjqu_dl').hover(function(){
+				  jquery(this).find('.tjdd').show();
+				 },function(){
+				  jquery(this).find('.tjdd').hide();
+				  
+				 })
+		 }
+		jquery(function(){
+			reloadDel();
+		})
+        var id2= 0;
+        var str1 = "";
+        var tId1 = 0;
+        var tStr = "";
+        var indexParObj = 0;
+		del2 = function(xx){
+			tId1 = "";
+			tStr = "";
+			if(jquery(".parts_"+xx).length>0){
+				str1 = "no";
+				document.getElementById("spanValue").innerHTML = "该分区已存在区域信息,请勿删除。";
+				jquery("#myModal").modal('show');
+				return false;
+			}else{
+				id2 = xx;
+				str1 = "ok";
+				document.getElementById("spanValue").innerHTML = "确定删除？";
+				jquery("#myModal").modal('show');
+			}
+    	}
+		isDelTunnel = function(tId){
+			id2 = "";
+			str1 = "";
+			tId1 = tId;
+			tStr = "ok";
+			document.getElementById("spanValue").innerHTML = "确定删除？";
+			jquery("#myModal").modal('show');
+		}
+		
+		function removeMthod(){
+			jquery("#myModal").modal('hide');
+			if(str1 == "ok"){
+				str1 = "";
+				deleteObj2(id2);
+				jquery("#deleted2"+id2).hide();
+				jquery(".del_parts_"+id2).hide();
+			}
+			if(tStr == "ok"){
+				tStr = "";
+				deleteObj1(tId1,indexParObj);
+				//jquery("#deleted1"+tId1).hide();
+			}
+			return true;
+ 	    }
+
+		function deleteResult(data){
+			if(data != ''){
+				jquery("#spanValue2").html(data);
+				jquery("#mySubmitModal").modal("show");
+			}
+		}
+		
+ 	    function urlFuc(idParam,partId){
+ 	 	    if(tStr != "ok"){
+ 	 	    	if(!partId)
+ 	 	    		partId = -1;
+ 	 	    	window.location.href="#{request.contextPath}/map/PartitionInfo.seam?tnnelId="+idParam+"&partId="+partId+"&baseId="+baseId;
+ 	 	    }
+ 	    }
+
+ 	   function urlFuc2(idParam){
+	 	    if(str1 != "ok" && str1 != "no"){
+	 	    	window.location.href="#{request.contextPath}/map/MapPartitionEdit.seam?partition_id=" + idParam;
+	 	    }
+	    }
+
+ 	  function allMuMe(){
+			var par = jquery("#parNum").html();
+			if(par > 0 ){
+				jquery("#parNum").html(par - 1);
+				}
+			}
+ 	 function stopEvent(event) {
+			if (event.stopPropagation) {
+				event.stopPropagation();
+				event.preventDefault();
+			} else {
+				event.returnValue = false;
+				event.cancelBubble = true;
+			}
+			return false;
+		}
+ 	//]]>
+		</script>
+		<script src="#{request.contextPath}/asset/js/jquery.lazyloadxt.js"></script>
+		<script type="text/javascript">
+		//<![CDATA[
+		
+
+		function fadeMe(){
+			jQuery("img").lazyLoadXT();
+		}
+		//]]>
+		</script>
+		
+		<script type="text/javascript">
+		  window.onload = function () {
+			  fadeMe();
+		    jquery('.selectpicker').selectpicker();
+		  };
+		</script>
+	</ui:define>
+
+</ui:composition>

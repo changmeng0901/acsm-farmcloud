@@ -1,0 +1,162 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+	
+	<ui:define name="body">
+	<link rel="stylesheet" href="#{request.contextPath}/asset/css/record/ResumeMatchOperation.css" type="text/css" />
+	
+	<!-- #{scanMappingInfoHome.beginEdit()} -->
+	<td valign="top">
+            <div class="right_c" style="min-height:30px; padding-bottom:20px; padding-top:20px;">
+                <!-- 面包屑导航 开始 -->
+                <div class="r_title clear" style="margin-top:0;">
+                    <div class="r_t_l fl">精准营销&#160;&gt;&#160;&#160;<span>履历</span><em>&gt;</em><font size="3">履历匹配操作</font></div>
+                </div>
+                <!-- 面包屑导航 结束 -->
+                <!-- 履历匹配操作内容 开始 -->
+                <div class="search-header">
+                	<div class="search-header-lt">
+                        <div class="public-search">
+                        	<span class="octicon-search02"></span>
+                        	<input type="text" class="form-control srarchfont" value="请输入履历编号/履历名称"/>
+                        </div>
+                        <button class="btn btn-primary" type="button" onclick="search()">搜索</button>
+                    </div>
+                </div>
+                <p class="mt20" style="height:20px; line-height:20px; color:#646464;">商品名称：<span style="color:#323232;">#{param.name}</span></p>
+                <h:panelGroup id="listId">
+                <table class="ze_table" width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;">
+                <tr class="alt">
+                    <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"/></td>
+                    <td colspan="4" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                    <td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"/></td>
+                </tr>
+                <tr class="">
+                 <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                    <th class="ze_bg" width="8%">序号</th>
+                    <th class="ze_bg" width="40%">履历编号</th>
+                    <th class="ze_bg" width="40%">对应履历</th>
+                    <th class="ze_bg" width="12%">操作</th>
+                    <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                </tr>
+                
+                <a4j:repeat  value="#{scanMappingInfoHome.editList}"  var="var"  rendered="#{not empty scanMappingInfoHome.editList}" rowKeyVar="_index">
+	               	<tr class="alt sfxs">
+	                    <td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+	                    <td class="ze_bg2">#{_index+1}</td>
+	                    <td class="ze_bg2 sfxs1">#{var[0]}</td>
+	                    <td class="ze_bg2 sfxs2">#{var[1]}</td>                  		
+	                    <td class="ze_bg2">
+	                    	<a title="编辑" onclick="openModal('#{var[0]}','#{var[2]}')" style="cursor: pointer;"><img width="18" height="18" src="#{request.contextPath}/asset/images/orderManage/table_ico101.png"/></a>
+	                    </td>
+	                    <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+	                </tr>  
+                </a4j:repeat>
+                </table>
+                </h:panelGroup>
+                <!-- 履历匹配操作内容 结束 -->
+                <div class="mes_mailBtn" style="padding:50px 0;">
+                	<s:button view="/record/ScanMappingInfoList.seam" styleClass="btn btn-default" value="返回"/>
+                </div>
+            </div>
+            
+                <!-- 创建角色模态框 开始 -->
+			<div class="modal fade" id="myModal_resumeDdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="position:fixed; left:50%; top:50%; width:450px; margin-left:-225px; margin-top:-147px; margin-bottom:0;">
+			<h:form id="edit">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"></button>
+			        <h4 class="modal-title" id="myModalLabel">#{param.name}</h4>
+			    </div>
+			    <div class="modal-body clear" style="padding:50px 0 30px;">
+			    	<table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0">
+			        	<tr>
+			            	<td class="pr10" width="110" align="right">履历编号</td>
+			                <td class="bh"></td>
+							<h:inputHidden value="#{scanMappingInfoHome.bjCode}" id="bjCode"/>
+			            </tr>
+			            <tr>
+			            	<td class="pr10" width="110" align="right">履历名称</td>
+			                <td width="262">
+			                	<span class="bootSelt-220">
+			                	<h:selectOneMenu immediate="true" styleClass="selectpicker" id="speciesId" style="width:146px;" value="#{scanMappingInfoHome.bjPrId}">
+									<s:selectItems value="#{scanMappingInfoHome.mateList}" var="var" label="#{var.plantName}" itemValue="#{var.productInfoId}" escape="false"/>
+								</h:selectOneMenu>
+			                    </span>
+			                </td>
+			            </tr>
+			        </table>     
+			    </div>
+			    <div class="modal-footer">
+			        <a4j:commandButton id="persist" value="提交" styleClass="btn btn-primary persist" action="#{scanMappingInfoHome.editMate}" reRender="listId"  onclick="jquery('.persist').prop('disabled','true');"  oncomplete="closeModal()"/>
+			        
+			        <a class="btn btn-default" data-dismiss="modal" href="juesegl.html">返回</a>
+			    </div>
+			</div>
+			</h:form>
+			</div>
+			</div>
+			<!--  创建角色模态框 结束 -->
+            
+            
+            </td>   
+            
+   <script>     
+   jquery('input[type=text]').focus(function(){
+		var txt_value = jquery(this).val();
+		if( txt_value == this.defaultValue ){
+			jquery(this).val("");	
+		}	
+	});	
+   jquery('input[type=text]').blur(function(){
+		var txt_value = jquery(this).val();
+		if( txt_value == "" ){
+			jquery(this).val(this.defaultValue);	
+		}	
+	});	
+
+   
+	function search(){
+		if(jquery('.srarchfont').val()!='请输入履历编号/履历名称'){
+			jquery('.sfxs').each(function(){
+				if(jquery(this).find('.sfxs1').text().indexOf(jquery('.srarchfont').val())==-1){
+					if(jquery(this).find('.sfxs2').text().indexOf(jquery('.srarchfont').val())==-1){
+		      			jquery(this).attr('style','display:none');
+		   			}else{
+		      			jquery(this).removeAttr('style');
+		    		}
+		  		}else{
+		       		jquery(this).removeAttr('style');
+		  		}
+
+			})
+		}else{
+			jquery('.sfxs').each(function(){
+				jquery(this).removeAttr('style');
+			})
+		}
+	}
+
+	function openModal(bh,id){
+		jquery('.selectpicker').selectpicker();	 
+		jquery('.bh').text(bh);
+		jquery('#edit\\:bjCode').val(bh);
+		jquery('#edit\\:speciesId').selectpicker('val',id);
+		jquery('#myModal_resumeDdit').modal('show');
+	}
+
+	function closeModal(){
+		jquery('.persist').removeAttr('disabled');
+		jquery('#myModal_resumeDdit').modal('hide');
+	}
+</script>
+	</ui:define>
+</ui:composition>

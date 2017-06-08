@@ -1,0 +1,1109 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+	<ui:define name="head_next">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/sort.css"/>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/panorama/PanoramaEdit.css"/>
+
+	</ui:define>
+	<ui:define name="body">
+	<td>
+	<!-- #{panoramaHome.init()} -->
+		
+		<div class="panorama_main">
+            	<!-- 四季田景左侧二级导航 -->
+                <div class="panorama_level_wap" style="#{panoramaHome.objList.size() gt 1?'':'display:none;width:0px;'}">
+                    <div class="panorama_level">
+                        <ol class="pano_second">
+                        	<a:repeat value="#{panoramaHome.objList}" var="var" >
+                        	<li class="sed_item #{var[0] == panoramaHome.krgId ?'sed_cur':''}">
+                                <a  href="/panorama/PanoramaEdit.seam?krgId=#{var[0]}">
+                                    <i class="i_icon"></i>
+                                    <p class="p_text">#{var[1]}</p>
+                                </a>
+                            </li>
+                           </a:repeat>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 四季田景左侧二级导航 -->
+                <!-- 四季田景右侧 -->
+                <div class="panorama_content pl30 pr30">
+                	<a4j:form ajaxSubmit="true" id="update">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt"><a href="#">精准营销</a><span>&gt;</span><strong>四季田景</strong></div>
+                        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+                            <ul class="resumeList clear">
+                                <li class="cur">
+                                    <a href="PanoramaEdit.seam"><img src="#{request.contextPath}/asset/images/panorama/panorama_icon1.png"/><span>四季田景列表</span></a>
+                                </li>
+                                <li>
+                                    <a href="MaterialLibrary.seam"><img src="#{request.contextPath}/asset/images/panorama/panorama_icon2.png" /><span>素材库</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="search_header mb10 clear" style="padding-right:150px;height:40px;">
+                        <div class="search_selected fl" style="#{panoramaHome.objList.size() eq 0?'display:none':''}">
+                            <dl style="width:500px;" class="se_selt180 fl">
+                                <dt style="width:100px;">四季田景名称</dt>
+                                <dd class="inline_block bootSelt180">
+                                	<input type="hidden" value="#{panoramaHome.krg.krpanosGroupId}" id="krg_group_id" name="krg_group_id" />
+                                    <input type="text" style="width:370px;" value="#{panoramaHome.krg.groupName}" id="krg_group_name" name="krg_group_name" class="form-control nojs" />
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="search_selected fl" style="#{panoramaHome.objList.size() eq 0?'display:none':''}">
+                            <dl style="width:140px;" class="se_selt180 fl">
+                                <dt style="width:100px;">服务中心展示</dt>
+                                <dd class="inline_block bootSelt180">
+                                	<div class="inline_block" style="padding-top:8px;">
+                                    	<h:selectBooleanCheckbox value="#{panoramaHome.krg_is_default}" id="krg_is_default" styleClass="iCheck" />
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="search_header_rt">
+                            <button type="button" data-target="#GroupModal" data-toggle="modal" class="btn btn-primary">创建分组</button>
+                        </div>
+                    </div>
+                    <!-- 编辑无数据 -->
+                    <div class="panorama_nodata" style="#{panoramaHome.objList.size() eq 0?'':'display:none'}">
+                    	<table cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td width="400">
+                                	<p class="p_text1">创建四季田景可以使用户身临其境般观察您的农场</p>
+                                    <p class="p_text2">还在等什么，赶快去创建吧！</p>
+                                </td>
+                                <td align="right">
+                                	<img src="#{request.contextPath}/asset/images/panorama/panorama_pic1.jpg" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- 编辑有数据 -->
+                    <div class="panorama_search_wap" style="#{panoramaHome.objList.size() gt 0?'':'display:none'}">
+                    	<div class="allSetting_wap mb15">
+                        	<div class="allSetting_hd clear">
+                            	<h3><img src="#{request.contextPath}/asset/images/panorama/panorama_icon4.png" />全景图</h3>
+                                <div class="fr">
+                                	<input type="button" class="btn btn-default sm_btn"  value="从素材库添加全景图" onclick="openList()"/>
+                                    <input type="button" class="btn btn-default sm_btn" onclick="jQuery('#commentPageNum').val('');jQuery('#comment_k4g_id').val('');jQuery('#commentSearch').val('请输入评论内容搜索');openComment_before()" value="管理评论" />
+                                    <input type="button" class="btn btn-default sm_btn" onclick="openSortModal()" value="排序" />
+                                </div>
+                            </div>
+                            <div class="panoPic_bd">
+                            	<table width="100%" cellpadding="0" cellspacing="0" id="sortTable">
+                                    <a4j:repeat value="#{panoramaHome.k4gList}" var="var">
+                                    	<tr class="pano_tr" objid="#{var[0]}" k4gid="#{var[6]}">
+                                    	<td width="100">
+                                    		<input type="hidden" value="#{var[8]}" id="hotspot#{var[0]}" name="hotspot#{var[0]}"/>
+                                        	<img class="pano_img" src="#{var[2]}/mobile_f.jpg@50w_50h_1e_1c.jpg" />
+                                        </td>
+                                        <td width="30%">
+                                        	<p class="pano_des" title="#{var[1]}">#{var[1]}</p>
+                                        	<input type="hidden" value="#{var[7]}" id="scene_introduction#{var[0]}" name="scene_introduction#{var[0]}"/>
+                                        </td>
+                                        <td>
+                                        	<span class="praise_num" title="点赞量"><img src="#{request.contextPath}/asset/images/panorama/panorama_praise.png" />#{var[4]}</span>
+                                            <span class="browse_num" title="浏览量"><img src="#{request.contextPath}/asset/images/panorama/panorama_browse.png" />#{var[3]}</span>
+                                        </td>
+                                        <td width="240">
+                                        	<span class="pano_btn" onclick="openHotspot(this)" >视角/热点</span>
+                                       		<span class="pano_btn" onclick="openIntroduction(this,#{var[0]})" >场景介绍</span>
+                                            <span class="pano_btn " onclick="jQuery('#comment_k4g_id').val(jQuery(this).closest('tr').attr('k4gid'));jQuery('#commentSearch').val('请输入评论内容搜索');openComment_before(this)">管理评论</span>
+                                            <span class="pano_btn" onclick="delTr(this)" >删除</span>
+                                        </td>
+                                    </tr>
+                                    </a4j:repeat>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="allSetting_wap mb15">
+                        	<div class="allSetting_hd clear">
+                            	<h3><img src="#{request.contextPath}/asset/images/panorama/panorama_icon3.png" />全景设置</h3>
+                            </div>
+                            <div class="panoSetting_bd">
+                            	<ul class="panoSetting_list clear">
+                                	<li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="为全景添加背景音乐">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_bjyy.png" />背景音乐：
+                                                <p class="text_name choose_music">#{panoramaHome.krg_bgm_name}</p>
+                                               	<input type="hidden" name="krg_bgm_id" id="krg_bgm_id" value="#{panoramaHome.krg_bgm_id}"/>
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_bgm_show}" id="krg_bgm_show" styleClass="iCheck" />启用
+                                                </div>
+                                                <span class="setting_btn #{panoramaHome.krg_bgm_show ? '' : 'hide'}" onclick="openMusicModal(jQuery('#selMusicUrl').val())">设置&gt;</span>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="打开全景时默认显示说一说">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_xspl.png" />显示评论：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_comment_show}" id="krg_comment_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="开场以小行星视角进入">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_xxxkc.png" />小行星视角开场：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_littleplanet_show}" id="krg_littleplanet_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="可以通过移动手机来浏览全景">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_sjtly.png" />手机陀螺仪：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_gyro_show}" id="krg_gyro_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="设置是否自动打开全景列表">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_cjxz.png" />场景选择：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_list_show}" id="krg_list_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item ">
+                                    	<dl data-toggle="tooltip" title="全景图会自动旋转一周，并切换至下一个场景">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_zdxz.png" />自动旋转：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_auto_show}" id="krg_auto_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item hide">
+                                    	<dl data-toggle="tooltip" title="是否显示全景图的拍摄地点(支持位置导航)">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_psdd.png" />拍摄地点：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_place_show}" id="krg_place_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="hide pano_item #{panoramaHome.krg_place_show ? '' : 'hide'}">
+                                    	<dl data-toggle="tooltip" title="是否显示基地的资源规划信息">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_zygh.png" />资源规划：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_asset_show}" id="krg_asset_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="为天空/地面添加一张遮罩图片，用来遮罩脚架" style="padding-right:170px;">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_tkzz.png" />天空/地面遮罩：
+                                            </dt>
+                                            <dd style="#{panoramaHome.krg_cover_show?'width:170px;':'width:110px;'}">
+                                            	<div class="star_using clear">
+                                            		<div class="fl mr10">
+                                                		<h:selectBooleanCheckbox value="#{panoramaHome.krg_cover_show}" id="krg_cover_show" styleClass="iCheck" />启用
+                                                    </div>
+                                                    <div class="fl mr10 cover_" style="#{panoramaHome.krg_cover_show?'':'display:none'}">
+                                                		<h:selectBooleanCheckbox value="#{panoramaHome.krg_cover_sky}" id="krg_cover_sky" styleClass="iCheck" />天空
+                                                    </div>
+                                                    <div class="fl cover_"  style="#{panoramaHome.krg_cover_show?'':'display:none'}">
+                                                		<h:selectBooleanCheckbox value="#{panoramaHome.krg_cover_ground}" id="krg_cover_ground" styleClass="iCheck" />地面
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="通过VR来浏览全景">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_VR.png" />VR：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_vr_show}" id="krg_vr_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="在全景图中展示企业LOGO">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_qyLOGO.png" />企业LOGO：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_logo_show}" id="krg_logo_show" styleClass="iCheck" />启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item ">
+                                    	<dl data-toggle="tooltip" title="展示您企业的名片信息">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_qymp.png" />企业名片：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_business_card_show}" id="krg_business_card_show" styleClass="iCheck" />启用
+                                                </div>
+                                                <span class="setting_btn #{panoramaHome.krg_business_card_show ? '' : 'hide'}"   data-target="#CardModal" data-toggle="modal" id="setCardBtn">设置&gt;</span>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl title="">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_weisc.png" />微商城：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_micro_shop_show}" id="krg_micro_shop_show" styleClass="iCheck" />启用
+                                                </div>
+                                                <span class="setting_btn #{panoramaHome.krg_micro_shop_show ? '' : 'hide'}" data-target="#micro_shop" onclick="jQuery()" data-toggle="modal">设置&gt;</span>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl title="">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_lingqyh.png" />领取优惠：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_join_show}" id="krg_join_show" styleClass="iCheck" />启用
+                                                </div>
+                                                <span class="setting_btn #{panoramaHome.krg_join_show ? '' : 'hide'}"  onclick="jquery('.moxie-shim').css({'width':'130px','height':'130px'});jquery('#sales_str').modal('show');" data-toggle="modal">设置&gt;</span>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl title="">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_gznc.png" />关注农场：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<h:selectBooleanCheckbox value="#{panoramaHome.krg_mark_show}" id="krg_mark_show" styleClass="iCheck" />启用
+                                                </div>
+                                                <span class="setting_btn #{panoramaHome.krg_mark_show ? '' : 'hide'}"  data-target="#join_str" data-toggle="modal">设置&gt;</span>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="allSetting_wap">
+                        	<div class="allSetting_hd clear">
+                            	<h3><img src="#{request.contextPath}/asset/images/panorama/panorama_icon5.png" />分享设置</h3>
+                            </div>
+                            <div class="shareSetting_bd">
+                            	<table width="100%" cellpadding="0" cellspacing="0">
+                                	<tr>
+                                    	<td width="50%">
+                                        	<dl class="set_dl">
+                                            	<dt class="set_dt">分享标题</dt>
+                                                <dd class="set_dd">
+                                                	<input type="text" class="form-control nojs" value="#{panoramaHome.krg_share_title}" id="krg_share_title" name="krg_share_title" maxlength="15" />
+                                                </dd>
+                                            </dl>
+                                        </td>
+                                        <td width="50%" rowspan="2">
+                                        	<div style="float:left;">
+	                                        	<div class="code_block">
+	                                            	<img src="#{request.contextPath}/GenerateCodeImage?gid=#{panoramaHome.krgId}&amp;type=3" />
+	                                            </div>
+	                                            <p class="text_share">分享链接</p>
+                                            </div>
+                                            <div style="margin-top: 0px;margin-left:25px;float:left;">
+                                            	<div class="code_block" style=" border:none;padding:0px;width:auto;">
+	                                            	<input type="hidden" name="krg_share_img_url" value="#{panoramaHome.krg_share_img_url}" id="krg_share_img_url"/>
+								            		<div class="sPicture" id="shareImgDiv" style="margin:0px;float:left;width:98px;height:98px;margin-right:5px;display:#{not empty panoramaHome.krg_share_img_url ?'':'none'};">
+					                                	<img class="fimg" src="#{panoramaHome.krg_share_img_url}" id="shareImg" width="98px" height="98px" />	                                	                                   
+					                                    <i class="delete" onclick="delShareImg();">
+					                                        <img class="fimg" src="#{request.contextPath}/asset/images/settings/fileImg_delet5.jpg"/>
+					                                    </i>
+					                                </div>
+					                                <div style="float:left;">
+														<div id="shareContainer" >
+											            <div class="imgFile_onload" id="selectSharefiles">
+											            </div>
+											            </div>
+										            </div>
+	                                            </div>
+	                                            <p class="text_share">分享图片</p>                                       
+                                            </div>
+                                            <dl class="set_dl" style="width:80%; padding-left:0; padding-right:120px;clear:both;">
+                                            	<dt class="set_dt" style="left:inherit; right:0;width:120px; padding-right:0; ">
+                                                	<a class="btn btn-default copy_link" onclick="copy_()">复制链接</a>
+                                                </dt>
+                                                <dd class="set_dd">
+                                                	<input type="text"  class="form-control nojs" id="copy_target" value="http://qj.farmeasy.cn/Panorama.seam?gid=#{panoramaHome.krgId}" style="width:100%;" />
+                                                </dd>
+                                            </dl>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td width="50%">
+                                        	<dl class="set_dl">
+                                            	<dt class="set_dt">分享描述</dt>
+                                                <dd class="set_dd">
+                                                	<textarea type="text" class="form-control textarea nojs" id="krg_share_describe" name="krg_share_describe">#{panoramaHome.krg_share_describe}</textarea>
+                                                </dd>
+                                            </dl>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="pt30 pb30" style="text-align:center;">
+                        	<input type="hidden" name="krg_deleted_list" id="krg_deleted_list"/>
+                        	<input type="hidden" name="krg_new_list" id="krg_new_list"/>
+                        	<input type="hidden" name="krg_music_str" value="#{panoramaHome.krg_music_str}" id="krg_music_str"/>
+                        	<input type="hidden" name="selMusicUrl" value="#{panoramaHome.selMusicUrl}" id="selMusicUrl"/>
+                        	<a class="btn btn-preview hide" href="#">预览</a>
+                            <a4j:commandButton status="ajaxStatus" styleClass="btn btn-primary" value="保存" onclick="if(!checksubmit())return false;" eventsQueue="mainQueue" style="cursor: pointer;" action="#{panoramaHome.updateKrg}" oncomplete="refresh_url()"/>
+                            <a class="btn btn-default " href="#" onclick="refresh_url()">取消</a>
+                             <a class="btn btn-default " href="javascript:;" onclick="DeleteGroup()">删除</a>
+                            <a4j:commandButton status="ajaxStatus" styleClass="btn btn-default deleteGroup hide" value="删除" eventsQueue="mainQueue" style="cursor: pointer;" action="#{panoramaHome.deleteKrpanosGroup()}" oncomplete="refresh_url()"/>
+                        </div>
+                    </div>
+                     <!-- 微商城地址 -->
+					<div class="modal fade" id="micro_shop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog pano_dialog group_dialog">
+					<div class="modal-content">
+					    <div class="modal-header clear">
+					        <h4 class="modal-title fl">微商城</h4>
+					        <i class="i_close" data-dismiss="modal"></i>
+					    </div>
+					    <div class="modal-body modal_body">
+					        <table class="edit_infor_table" cellpadding="0" cellspacing="0">
+					        	<tr>
+					            	<td class="td_lt" width="130">微商城链接</td>
+					                <td class="td_rt">
+					                	<input type="text" value="#{panoramaHome.krg_micro_shop_url}" id="krg_micro_shop_url" name="krg_micro_shop_url" class="form-control w400 nojs"/>
+					                </td>
+					            </tr>
+					        </table>
+					    </div>
+					    <div class="modal-footer">
+					        <input type="button" value="确定" class="btn btn-primary" onclick="checkMicroUrl()"/>
+					    </div>
+					</div>
+					</div>
+					</div>
+					 <!-- 领取优惠设置 -->
+					<div class="modal fade" id="sales_str" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog pano_dialog group_dialog">
+					<div class="modal-content">
+					    <div class="modal-header clear">
+					        <h4 class="modal-title fl">优惠活动</h4>
+					        <i class="i_close" data-dismiss="modal"></i>
+					    </div>
+					    <div class="modal-body modal_body" style="height:280px;">
+					        <table class="edit_infor_table" cellpadding="0" cellspacing="0" style="margin:auto;width:540px">
+					        	<tr>
+					            	<td class="td_lt" width="150" style="font-size:14px;">选择红包</td>
+					                <td class="td_rt">
+					                	<select name="krg_coupon_id" id="krg_coupon_id" >
+					                		<option value="-1">请选择</option>
+					                		<a4j:repeat value="#{panoramaHome.couponList}" var="var">
+					                			<option value="#{var.id}">#{var.name}</option>
+					                		</a4j:repeat>
+					                	</select>
+					                </td>
+					            </tr>
+					            <tr>
+					            	<td class="td_lt" width="150"  style="font-size:14px;">图片</td>
+					            	<td>
+					            		<input type="hidden" name="krg_coupon_url" value="#{panoramaHome.krg_coupon_url}" id="krg_coupon_url"/>
+					            		<div class="fPicture" id="couponDiv" style="float:left;display:#{not empty panoramaHome.krg_coupon_url ?'':'none'};">
+		                                	<img class="fimg" src="#{panoramaHome.krg_coupon_url}" id="loginSuccessByte_p" width="194" height="125" />	                                	                                   
+		                                    <i class="delete" onclick="delLogoImg();">
+		                                        <img class="fimg" src="#{request.contextPath}/asset/images/settings/fileImg_delet5.jpg"/>
+		                                    </i>
+		                                </div>
+		                                <div style="float:left;">
+											<div id="container" >
+								            <div class="filepic_btn filepic" id="selectfiles">
+								            </div>
+								            </div>
+							            </div>
+					            	</td>
+					            </tr>
+					            <tr>
+					            	<td class="td_lt" width="150"></td>
+					            	<td style="color:red;">
+					            			图片标准：230*115(像素)<br/>
+											支持格式:jpg,gif,png,jpeg,3gp
+					            	</td>
+					            </tr>
+					        </table>
+					    </div>
+					    <div class="modal-footer">
+					        <input type="button" value="确定" class="btn btn-primary" data-dismiss="modal"/>
+					    </div>
+					</div>
+					</div>
+					</div>
+                     <!-- 关注农场 -->
+					<div class="modal fade" id="join_str" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog pano_dialog group_dialog">
+					<div class="modal-content">
+					    <div class="modal-header clear">
+					        <h4 class="modal-title fl">关注农场</h4>
+					        <i class="i_close" data-dismiss="modal"></i>
+					    </div>
+					    <div class="modal-body modal_body">
+					        <table class="edit_infor_table" cellpadding="0" cellspacing="0">
+					        	<tr>
+					            	<td class="td_lt" width="150">显示电话</td>
+					                <td class="td_rt">
+					                	<input type="text" value="#{panoramaHome.krg_mark_str}" id="krg_mark_str"  name="krg_mark_str" class="form-control nojs" style="width:300px"/>
+					                </td>
+					            </tr>
+					        </table>
+					    </div>
+					    <div class="modal-footer">
+					        <input type="button" value="确定" class="btn btn-primary" data-dismiss="modal"/>
+					    </div>
+					</div>
+					</div>
+					</div>
+					<!-- (8)企业名片模态框 -->
+					<div class="modal fade" id="CardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="false">
+					<div class="modal-dialog pano_dialog card_dialog" style="margin-top:-300px;width:700px;margin-left:-350px">
+					<div class="modal-content">
+					    <div class="modal-header clear">
+					        <h4 class="modal-title fl">企业名片</h4>
+					        <i class="i_close" data-dismiss="modal"></i>
+					    </div>
+					    <div class="modal-body modal_body" >
+						    <table class="edit_infor_table" cellpadding="0" cellspacing="0" style="width:100%;margin: 20px auto 0px;">
+					        	<tr>
+					            	<td class="td_lt" width="70">企业名称</td>
+					                <td class="td_rt" width="260">
+					                	<input type="text" id="krg_business_name" value="#{panoramaHome.krg_business_name}" name="krg_business_name" class="form-control w220 nojs" />
+					                </td>
+					                <td class="td_lt" width="90">联系方式</td>
+					                <td class="td_rt">
+					                	<input type="text" id="krg_business_tel" value="#{panoramaHome.krg_business_tel}" name="krg_business_tel" class="form-control w220 nojs" />
+					                </td>
+					            </tr>
+					            <tr>
+					            	<td class="td_lt">邮<span class="inline_block two_12" style="width:24px;height:10px;"></span>箱</td>
+					                <td class="td_rt">
+					                	<input type="text" id="krg_business_email" value="#{panoramaHome.krg_business_email}" name="krg_business_email" class="form-control w220 nojs" />
+					                </td>
+					                <td class="td_lt">微<span class="inline_block two_12" style="width:24px;height:10px;"></span>博</td>
+					                <td class="td_rt">
+					                	<input type="text" id="krg_business_weibo" value="#{panoramaHome.krg_business_weibo}" name="krg_business_weibo" class="form-control w220 nojs" />
+					                </td>
+					            </tr>
+					            <tr>
+					            	<td class="td_lt">地<span class="inline_block two_12" style="width:24px;height:10px;"></span>址</td>
+					                <td class="td_rt" colspan="3">
+					                	<input type="text" id="krg_business_address" value="#{panoramaHome.krg_business_address}" name="krg_business_address" class="form-control w400 nojs" />
+					                </td>
+					            </tr>
+					            <tr>
+					            	<td class="td_lt">企业介绍</td>
+					                <td class="td_rt" colspan="3">
+					                     <textarea id="krg_business_card_introduce" style="display:none" name="krg_business_card_introduce" >#{panoramaHome.krg_business_card_introduce}</textarea>
+					                </td>
+					            </tr>
+				        </table>
+					    </div>
+					    <div class="modal-footer">
+					        <button type="button" class="btn btn-primary" onclick="checkBusinessCard();">保存</button>
+					        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					    </div>
+					</div>
+					</div>
+					</div>
+					<!-- (8)企业名片模态框 -->
+					<div class="modal fade" id="IntroductionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="false">
+					<div class="modal-dialog pano_dialog " style="margin-top:-300px;width:700px;margin-left:-350px">
+					<div class="modal-content">
+					    <div class="modal-header clear">
+					        <h4 class="modal-title fl">场景介绍</h4>
+					        <i class="i_close" data-dismiss="modal"></i>
+					    </div>
+					    <div class="modal-body modal_body" style="">
+					    	<input type="hidden" id="introduction_target" ></input>
+						    <textarea id="introduction" style="display:none" name="introduction" ></textarea>
+					    </div>
+					    <div class="modal-footer">
+					        <button type="button" class="btn btn-primary" onclick="saveIntroduction();">保存</button>
+					        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					    </div>
+					</div>
+					</div>
+					</div>
+                    <!-- 编辑有数据 -->
+                    </a4j:form>
+                </div>
+                <!-- 四季田景右侧 -->
+            </div>   
+            <!-- (1)创建分组模态框 -->
+			<div class="modal fade" id="GroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog pano_dialog group_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">创建分组</h4>
+			        <i class="i_close" data-dismiss="modal"></i>
+			    </div>
+			    <h:form id="add">
+			    <div class="modal-body modal_body">
+			        <table class="edit_infor_table" cellpadding="0" cellspacing="0">
+			        	<tr>
+			            	<td class="td_lt" width="130">四季田景名称</td>
+			                <td class="td_rt">
+			                	<h:inputText value="#{panoramaHome.groupName}" id="groupName" styleClass="form-control w400"/>
+			                </td>
+			            </tr>
+			        </table>
+			    </div>
+			    <div class="modal-footer">
+			        <h:commandButton action="#{panoramaHome.saveWithName()}" value="保存" styleClass="btn btn-primary" onclick="if(!checkSaveWithName())return false"/>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			    </div>
+			    </h:form>
+			</div>
+			</div>
+			</div>
+
+<!-- (2)创建分组保存提示模态框 -->
+			<div class="modal fade" id="deletdModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog pano_dialog save_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">提示</h4>
+			        <i class="i_close" data-dismiss="modal"></i>
+			    </div>
+			    <div class="modal-body modal_body">
+			        <p class="text_tip1">删除该全景则该全景图的点赞、评论、浏览量将全部清空，确定删除？</p>
+			        <input type="hidden" id="delete_obj_id" ></input>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" onclick="del_tip_yes();" >确定</button>
+			        <button type="button" class="btn btn-default" onclick="del_tip_no();">取消</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+
+
+<!-- (2)创建分组保存提示模态框 -->
+			<div class="modal fade" id="deletdGroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog pano_dialog save_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">提示</h4>
+			        <i class="i_close" data-dismiss="modal"></i>
+			    </div>
+			    <div class="modal-body modal_body">
+			        <p class="text_tip1">删除该分组将清空该分组下全景图的全部评论，浏览量、点赞数，确定删除？</p>
+			        <input type="hidden" id="delete_obj_id" ></input>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" onclick="DeleteGroup_next();" >确定</button>
+			        <button type="button" class="btn btn-default" onclick="jQuery('#deletdGroupModal').modal('hide');">取消</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+
+<!-- (2)删除评论确认对话框 -->
+			<div class="modal fade" style="z-index:2000" id="DeleteCommentCheck" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog pano_dialog save_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">提示</h4>
+			        <i class="i_close" data-dismiss="modal"></i>
+			    </div>
+			    <div class="modal-body modal_body">
+			        <p class="text_tip1"></p>
+			        <input type="hidden" id="delete_obj_id" ></input>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" id="DeleteCommentCheck_OK"  >确定</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+
+<!-- (2)创建分组保存提示模态框 -->
+			<div class="modal fade" id="SaveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog pano_dialog save_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">提示</h4>
+			        <i class="i_close" data-dismiss="modal"></i>
+			    </div>
+			    <div class="modal-body modal_body">
+			        <p class="text_tip1">您要保存对当前分组所做的更改吗？</p>
+			        <p class="text_tip2">如果不保存，您更改的内容将会丢失。</p>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">不保存</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+<!-- (3)从素材库添加全景图模态框 -->
+			<div class="modal fade" id="MaterialModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog pano_dialog material_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">从素材库添加全景</h4>
+			        <i class="i_close" data-dismiss="modal"></i>
+			    </div>
+			    <div class="modal-body modal_body">
+			    	<!--全选及搜索-->
+			        <div class="search_header clear" style="margin:0; padding:10px 20px; border-bottom:1px dashed #ddd;">
+			            <div class="search_selected fl">
+			                <dl style="width:60px;" class="se_selt180 fl">
+			                    <dd class="inline_block bootSelt180">
+			                        <div class="inline_block" style="padding-top:8px;">
+			                            <input class="iCheck" type="checkbox" allname="unchecked" name="allname"/>
+			                        </div>
+			                    </dd>
+			                    <dt style="width:40px;">全选</dt>
+			                </dl>
+			            </div>
+			            <div class="search_selected fl">
+			                <dl style="width:500px;" class="se_selt180 fl">
+			                    <dd class="inline_block bootSelt180">
+			                    	<div class="public-search fl">
+			                        	<span class="octicon-search02"></span>
+			                        	<input type="text" value="请输入全景图名称" class="form-control mr5 w200" id="searchName"/>
+			                        </div>
+			                        <button type="button" class="btn btn-primary fl" onclick="searchKrpanos()">搜索</button>
+			                    </dd>
+			                    <dt style="width:200px; padding-left:10px; text-align:left;">已选择<span style="font-size:14px; color:#ff8400;" id="total_krpano">-</span>个全景</dt>
+			                </dl>
+			            </div>
+			        </div>
+			        <!--搜索列表-->
+			        <ol class="panopic_list">
+			        <a4j:repeat var="var" value="#{panoramaHome.allList}">
+			        	<li class="li_item">
+			            	<dl class="dl_dl">
+			                	<dt class="dl_dt">
+			                    	 <input class="iCheck" type="checkbox" name="itemname" value="#{var[0]}"/>
+			                         <img class="m_panopic" src="#{var[1]}/mobile_f.jpg@50w_50h_1e_1c.jpg" />
+			                    </dt>
+			                    <dd class="dl_dd">
+			                    	<p class="text_name searchText">#{var[2]}</p>
+			                    </dd>
+			                </dl>
+			            </li>
+			        </a4j:repeat>
+			        </ol>
+			        <!--搜索列表-->
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" onclick="addOne();">确定</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+<!-- (4)评论管理模态框 -->
+			<div class="modal fade" id="CommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"  data-keyboard="false">
+			<div class="modal-dialog pano_dialog comment_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">评论管理</h4>
+			        <i class="i_close" data-dismiss="modal"></i>
+			    </div>
+			    <div class="modal-body modal_body" style="height:100%;min-height: 250px;">
+			    <input type="hidden" id="comment_k4g_id" />
+			    <s:div id="commentListPanel">
+			        <table class="edit_infor_table" cellpadding="0" cellspacing="0">
+			        	<tr class="item_tr">
+			            	<th width="320">
+			                	<div class="inline_block fl mr5 ml5" style="padding-top:8px;">
+			                        <input class="iCheck" type="checkbox" allaa="unchecked" />
+			                        <label class="pl5">全选</label>
+			                    </div>
+			                	<div class="public-search fl ml20 mr5">
+			                        <span class="octicon-search02"></span>
+			                        <input type="text" value="请输入评论内容搜索" id="commentSearch" class="form-control mr5 w200" />
+			                    </div>
+			                </th>
+			            	<th width="190">
+			                	<p class="text_th">评论人</p>
+			                </th>
+			            	<th width="170">
+			                	<p class="text_th">评论日期</p>
+			                </th>
+			            	<th>
+			                	<p class="text_th">
+			                		<span class="icon_delete" onclick="deleteMany_before()">批量删除</span>
+			                    </p>
+			                </th>                
+			            </tr>
+			            <a4j:repeat value="#{panoramaHome.commentList}" var="var">
+			        	<tr class="item_tr commentCheckbox">
+			            	<td>
+			                	<div class="inline_block fl mr5 mt5 ml5">
+			                        <input class="iCheck" type="checkbox" itembb="unchecked" value="#{var.id}"/>
+			                    </div>
+			                    <p class="text_name" title="#{stringUtil.urlDecoder(var.comment)}">#{stringUtil.urlDecoder(var.comment)}</p>
+			                </td>
+			                <td>
+			                	<ui:fragment rendered="#{empty var.userHead and false}">
+			                		<img class="people_pic" src="#{request.contextPath}/asset/panorama/skin/g.jpg" />
+			                	</ui:fragment>
+			                	<ui:fragment rendered="#{not empty var.userHead}">
+			                		<img class="people_pic" src="#{var.userHead}" />#{var.userName}
+			                	</ui:fragment>
+			                	
+			                </td>
+			                <td>#{stringUtil.showTime2(var.insertTime)} </td>
+			                <td>
+			                	<span class="icon_delete" onclick="deleteOne_before(#{var.id})">删除</span>
+			                </td>
+			            </tr>
+			            </a4j:repeat>
+			        </table>
+			        <input type="hidden" value="" id="commentPageNum"/>
+			        <div class="pageModel_wap" style="margin:20px 0 10px;">
+			                                        	<table cellspacing="0" cellpadding="0">
+			                                            	<tr>
+			                                                	<td>
+			                                                    	<div style="width:auto;">
+			                                                        	<table cellspacing="0" cellpadding="0" class="pageModel">
+			                                                                <tr>
+			                                                                    <td>
+				                                                                    <ui:fragment rendered="#{not empty panoramaHome.commentList}">
+				                                                                    	<ui:fragment rendered="#{panoramaHome.previousExists }">
+				                                                                    		<span class="page_num page_first">
+													                            				<a href="#" onclick="jump(0);return false;">首页</a>
+												                            				</span>
+												                           					<span class="page_num ">
+													                            				<a href="#" onclick="jump(#{panoramaHome.previousFirstResult});return false;" class="no_n">
+													                            				&lt;
+													                            				</a>
+													                           				</span>
+				                                                                    	</ui:fragment>
+				                                                                    	 <a4j:repeat var="_page" value="#{panoramaHome.pageList}" rowKeyVar="_index">
+																							<span class="page_num #{!panoramaHome.previousExists &amp;&amp; _index ==0 ?'page_first ':''} #{panoramaHome.pageNum==_page?'page_Cur':''}">
+																								<a href="#" onclick="jump(#{_page});return false;">
+																									#{_page}
+																								</a>
+																							</span>
+																						</a4j:repeat>
+																						<ui:fragment rendered="#{panoramaHome.nextExists}">
+																                            <span class="page_num ">
+																	                            <a href="#" class="no_d" onclick="jump(#{panoramaHome.nextFirstResult});return false;">
+																	                            &gt;
+																	                            </a>
+																                            </span>
+																                            <span class="page_num ">
+																								 <a href="#" onclick="jump(#{panoramaHome.PAGE_COUNT});return false;">
+																								 尾页
+																								 </a>
+																							</span>
+																						</ui:fragment>
+																						<span class="page_num page_last"><a>共#{panoramaHome.PAGE_COUNT}页</a></span>
+				                                                                    </ui:fragment>
+			                                                                    </td>
+			                                                                </tr>
+			                                                            </table>
+			                                                        </div>
+			                                                    </td>
+			                                                </tr>
+			                                            </table>
+			                                        </div>
+			        </s:div>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+<!-- (5)排序管理模态框 -->
+			<div class="modal fade" id="SortModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog pano_dialog sort_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">排序管理</h4>
+			        <i class="i_close" data-dismiss="modal"></i>
+			    </div>
+			    <div class="modal-body modal_body">
+			    
+			        <!--<div id="messageValue"></div>-->
+			        <div class="sp_px">
+			        <div class="ordering-list select-list" tabindex="-1">
+			            <div class="content with-handle">
+			                <div class="scroll-box">
+			                    <ol id="list_dragselect" class="list ui-sortable ui-selectable">
+			                    <a4j:repeat value="#{panoramaHome.k4gList}" var="var">
+			                    	<li class="ui-selectee" data-key="7"><img class="pano_pic" src="#{var[2]}/mobile_f.jpg@50w_50h_1e_1c.jpg" />#{var[1]}<input type="hidden" value="#{var[0]}"  name="krpanos_index" /></li>
+			                    </a4j:repeat>
+			                    </ol>
+			                </div>
+			            </div>
+			        </div>
+			        </div>
+			        
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="sortTr()">确定</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+<!-- (6)音乐设置模态框 -->
+			<div class="modal fade" id="MusicModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+			<div class="modal-dialog pano_dialog music_dialog">
+			<div class="modal-content">
+			    <div class="modal-header clear">
+			        <h4 class="modal-title fl">选择音乐</h4>
+			        <i class="i_close" data-dismiss="modal" onclick="stopAll()"></i>
+			    </div>
+			    <div class="modal-body modal_body">
+			        <ul class="nav nav-tabs" role="tablist" id="myTab">
+			            <li class="active">
+			            	<a href="#music_library" role="tab" data-toggle="tab">音乐库</a>
+			            </li>
+			            <li>
+			            	<a href="#my_music" role="tab" data-toggle="tab">我的音乐</a>
+			            </li>
+			        </ul>
+			        
+			        <div class="tab-content">
+			            <div class="tab-pane active" id="music_library">
+			            <!--音乐库pane-->
+			            	<div class="music_title clear">
+			                	<p class="text_rt">已选择：音乐1.mp3</p>
+			                	<input type="hidden" id="music_id"/>
+			                	<input type="hidden" id="music_name"/>
+			                </div>
+			                <ol class="library_list">
+			                <a4j:repeat value="#{panoramaHome.bgmList}" var="var">
+				                <h:panelGroup rendered="#{var.enterpriseInfoId==1}">
+				                	<li class="m_item "  objid="#{var.fileUrl}">
+				                    	<i class="icon_yy" onclick="MusicStatue(this,'m_cur','#{var.fileUrl}','#{var.name}')"></i>
+				                        <p class="text_name" onclick="MusicStatue(this,'m_cur','#{var.fileUrl}','#{var.name}')">#{var.name}</p>
+				                        <p class="icon_btn">
+				                        	<i class="i_on" onclick="AutoPlay(this,'.i_on')">
+				                            	<audio controls="controls" hidden="false" class="media_audio" loop="loop"  src="#{var.fileUrl}" />
+				                            </i>
+				                        </p>
+				                    </li>
+			                    </h:panelGroup>
+			                </a4j:repeat>
+			                </ol>
+			            <!--音乐库pane-->
+			            </div>
+			            <div class="tab-pane" id="my_music">
+			            <!--我的音乐pane-->
+			            	<div class="music_title clear">
+			            		<p style="float:left; color:#646464;font-size: 14px;">最多可以上传5首音乐，点击音乐右侧删除按钮可删除音乐。</p>
+			                	<p class="text_rt">已选择：音乐1.mp3</p>
+			                </div>
+			                <ol class="library_list">
+			                	<a4j:repeat value="#{panoramaHome.bgmList}" var="var">
+			                		<h:panelGroup rendered="#{var.enterpriseInfoId!=1}">
+					                	<li class="m_item "  objid="#{var.fileUrl}">
+					                    	<i class="icon_yy" onclick="MusicStatue(this,'m_cur','#{var.fileUrl}','#{var.name}')"></i>
+					                        <p class="text_name" onclick="MusicStatue(this,'m_cur','#{var.fileUrl}','#{var.name}')">#{var.name}</p>
+					                        <p class="icon_btn">
+					                        	<i class="i_on" onclick="AutoPlay(this,'.i_on')">
+					                            	<audio controls="controls" hidden="false" class="media_audio" loop="loop" src="#{var.fileUrl}" />
+					                            </i>
+					                            <i class="i_delete" onClick="DeleteMusic(this,'m_item')"></i>
+					                        </p>
+					                    </li>
+					                </h:panelGroup>
+				                </a4j:repeat>
+			                </ol>
+			                <div class="upload" style="position:static;">
+			                    <iframe  src="#{request.contextPath}/panorama/PanoramaMusic.seam" id="myframPic3" name="myframPic4" frameBorder="0" scrolling="no" height="33" width="140" onLoad="" ></iframe>			
+			                    <p class="txt" style="border-bottom:0;line-height:18px; margin-top:5px;">点击文件上传选择文件，请上传小于3M的mp3文件，最多可以上传五首歌曲</p>
+			                </div>
+			            <!--我的音乐pane-->
+			            </div>
+			        </div>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" onclick="music_ok()">确定</button>
+			        <button type="button" class="btn btn-default" onclick="music_no()">返回</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+			<iframe src="" id="krpano_iframe" frameborder="no" border="0" style="display:none;width:600px;height:600px;">
+		    </iframe>
+		    <div style="display:none" id="upload_progress">
+				<input type="hidden" value="" id="krpanoFileUrl" />
+				<div id="ossfile1"></div>
+				<a style="display: none" id="postfiles1" href="javascript:void(0);" class='btn' onclick="apply(6);"></a>
+				<a style="display: none" id="callback" href="javascript:void(0);" class='btn' onclick="callback();"></a>
+			</div>		
+			
+			<div style="display:none" id="upload_progress2">
+				<input type="hidden" value="" id="shareFileUrl" />
+				<div id="ossfile2"></div>
+				<a style="display: none" id="postfiles2" href="javascript:void(0);" class='btn' onclick="shareApply(6);"></a>
+				<a style="display: none" id="callback2" href="javascript:void(0);" class='btn' onclick="shareCallback();"></a>
+			</div>
+			
+			<!-- js开始 -->
+			<link href="#{request.contextPath}/asset/js/jquery-ui4.css" rel="stylesheet"/>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/jquery-ui5.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/ordering-list.js"></script>     
+			<!--[if IE 8]>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/map/respond.js"></script>
+			<![endif]-->
+			<script type="text/javascript">
+				var domainUrl = "#{dataDicConstant.getDomainNameUrl()}";
+				var ent_id = #{sessionTake.getEnterpriseInfoId()};
+				var workpath = "#{request.contextPath}";
+				var oss_url = "#{dataDicConstant.getOssUrl()}";
+			    var bucket_type ="#{dataDicConstant.getBucketType()}";
+			    var entId='#{sessionTake.getEnterpriseInfoId()}';
+			    var coupon_id = "#{panoramaHome.krg_coupon_id}";
+			    function aaa(e){
+			    	console.log(e);
+			    }
+			</script>
+			<link href="#{request.contextPath}/asset/css/skinBlue.css" rel="stylesheet"/>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/jquery.nicescroll.min.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/lib/plupload-2.1.2/js/moxie.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/lib/plupload-2.1.2/js/plupload.dev.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/PanoramaEdit.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/map/krpanoPicUpload.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/kindeditor.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/lang/zh_CN.js"></script>
+
+          <a4j:status id="ajaxStatus" forceId="true"  onstart="jQuery('#login').show()" onstop="jQuery('#login').hide()" />  
+          <div class="box_back" id="login" style="display:none">
+                      	 <div id="login2" style="width:250px; height:60px; margin:220px auto 0 auto;text-align:center">
+                      	 	<img src="../asset/images/loginda.gif" />
+                      	 	<p id="fileTips" style="display:none;height:20px;line-height:20px; text-align:center;color: white;width: 250px;font-size: 16px;">保存中!请等待页面刷新!</p>
+					  	 </div>
+					</div>
+					<style>
+						.box_back{background:url(../asset/images/bg_png3.png) repeat; position:absolute; z-index:101; display:none;}
+						.card_dialog .modal_body .ke-container {
+						    width: 570px;
+						    min-width: 570px;
+						    max-width: 570px;
+						    margin: 0;
+						    }
+					.filepic{
+						display: inline-block;
+						position: relative;
+						width: 130px;
+						height: 130px;
+						margin: 10px 10px 10px 0;
+						background: url(../asset/images/settings/fileImg_btn130.jpg) no-repeat;
+						vertical-align: top;
+						overflow: hidden;
+					}
+					.fPicture{
+						position: relative;
+						display: inline-block;
+						width: 130px;
+						height: 130px;
+						border: 1px solid #eaeaea;
+						box-sizing: border-box;
+						margin: 10px 10px 10px 0;
+						vertical-align: top;
+					}
+					.fPicture .fimg{
+						width: 100%;
+						height: 100%;
+					}
+					.fPicture .delete{
+						position: absolute;
+						right: 0;
+						top: 0;
+						display: none;
+						width: 34px;
+						height: 34px;
+						cursor: pointer;
+					}
+					.fPicture:hover .delete{
+						display: block;
+					}									
+					
+					</style>
+			<a4j:form id="formid" >
+				<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+				<a4j:jsFunction name="openComment"  eventsQueue="mainQueue"  action="#{panoramaHome.commentList}" reRender="commentListPanel" oncomplete="openComment_next()">
+				   <a4j:actionparam name="param1" assignTo="#{panoramaHome.comment_k4g_id}"/>
+				   <a4j:actionparam name="param2" assignTo="#{panoramaHome.comment_kg_id}"/>
+				   <a4j:actionparam name="param3" assignTo="#{panoramaHome.searchStr}"/>
+				   <a4j:actionparam name="param4" assignTo="#{panoramaHome.pageNum}"/>
+				</a4j:jsFunction>
+				<a4j:jsFunction name="deleteOneComment"  eventsQueue="mainQueue"  action="#{panoramaHome.deleteOneComment}" reRender="commentListPanel" oncomplete="openComment_next()">
+				   <a4j:actionparam name="param1" assignTo="#{panoramaHome.comment_k4g_id}"/>
+				   <a4j:actionparam name="param2" assignTo="#{panoramaHome.comment_kg_id}"/>
+				   <a4j:actionparam name="param3" assignTo="#{panoramaHome.searchStr}"/>
+				   <a4j:actionparam name="param4" assignTo="#{panoramaHome.deleteStr}"/>
+				   <a4j:actionparam name="param5" assignTo="#{panoramaHome.pageNum}"/>
+				</a4j:jsFunction>	
+				<a4j:jsFunction name="deleteManyComment"  eventsQueue="mainQueue"  action="#{panoramaHome.deleteManyComment}" reRender="commentListPanel" oncomplete="openComment_next()">
+				   <a4j:actionparam name="param1" assignTo="#{panoramaHome.comment_k4g_id}"/>
+				   <a4j:actionparam name="param2" assignTo="#{panoramaHome.comment_kg_id}"/>
+				   <a4j:actionparam name="param3" assignTo="#{panoramaHome.searchStr}"/>
+				   <a4j:actionparam name="param4" assignTo="#{panoramaHome.deleteStr}"/>
+				   <a4j:actionparam name="param5" assignTo="#{panoramaHome.pageNum}"/>
+				</a4j:jsFunction>
+			</a4j:form>		
+            </td>
+	</ui:define>
+</ui:composition>

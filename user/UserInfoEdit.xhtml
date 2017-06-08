@@ -1,0 +1,752 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+	<ui:define name="body">
+	<link href="#{request.contextPath}/asset/css/user/gerenShz.css" rel="stylesheet" />
+	<style>
+	/* 分页模板 */
+.pageModel{ margin:40px auto 0; border:1px solid #e1e1e1; border-radius:5px; border-collapse:separate; font-size:12px;}
+.pageModel span{ float:left; height:32px; line-height:32px; border-right:1px solid #e1e1e1;}
+.pageModel span:last-child{ border-right:none;}
+.pageModel .current{background:#f6f6f8; color:#9a9a9a; padding:0 13px;}
+.pageModel a{ display:block; padding:0 13px; color:#9a9a9a;}
+.pageModel a:hover{ text-decoration:none;}
+.pageModel .page_Cur a{ background:#f6f6f8; color:#0088d2;}
+.tab-content .tab-pane {
+	display: none
+}
+
+.tab-content .active {
+	display: block
+}
+
+.farming_nodata{ padding-top:200px;}
+.warning_noData{ position:relative; left:0; top:0; width:508px; padding-top:60px; margin:0 auto 220px; text-align:center; background:url(#{request.contextPath}/asset/images/farmingIco20.png) no-repeat center top;}
+.warning_noData em{ font-style:normal; font-family:'微软雅黑'; font-size:18px; color:#333;}
+	</style>
+<!-- #{userHome.myLastTime()} -->
+<!-- right_c 开始 -->
+        <td valign="top">
+            <!-- right_c 开始 -->
+            <div class="right_c" style="min-height:30px;">
+                <div class="r_title clear" style="margin-top:0; padding-top:20px;">
+                    <div class="r_t_l fl"><a href="#{request.contextPath}#{sessionTake.urlTemp}" style="color: #525252">个人主页</a>&#160;&gt;&#160;&#160;<font size="3">个人设置</font></div>
+                </div>
+                <!-- 个人设置 开始 -->
+	
+    <div class="mct20">
+        <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top" width="200">
+                <div class="grszLt pt20">
+					<h:form id="pict" enctype="multipart/form-data">
+						<span class="grszHeader"><img src="#{userHome.instance.imageUrl==null or userHome.instance.imageUrl eq ''?'../asset/images/welcome_noperson.png':userHome.instance.imageUrl}" id="imageUrl_id" width="190" height="190" /></span>
+						<span class="grszFile">修改头像
+							<s:fileUpload id="image" size="30"
+								accept="image/png,image/jpeg,image/gif"
+								contentType="image/png,image/jpeg,image/gif"
+								fileName="#{userHome.instance.imageUrlName}"
+								data="#{userHome.instance.imageUrlByte}" onchange="previewImage('imageUrl_id',this);">
+							</s:fileUpload>
+						</span>
+						<h:panelGroup id="headDown">
+						<ul class="grszCount">
+							<li class="grszCount_help">
+								<em>帮助了</em>
+								<p class="text"><span class="colorB">#{userHome.helpNum}</span>人</p>
+							</li>
+							<li class="grszCount_gain">
+								<em>收获了</em>
+								<p class="text"><span class="colorB">#{userHome.harvestNum}</span>赞</p>
+							</li>
+						</ul>
+						</h:panelGroup>
+						<div style="padding:15px 0; border-top:1px solid #dcdcdc; border-bottom:1px solid #dcdcdc;">
+							<p class="ageo_loginTime">上次登录时间：#{userHome.lastTime}</p>
+						</div>
+						<h:commandButton id="update" action="#{userHome.savePicture}"/>
+					</h:form>
+                </div>
+                </td>
+                <td valign="top">
+                <div class="grszRt clear">
+                    <!-- 个人信息头部 开始 -->
+                    <div class="grxxHt">
+                        <h3>个人信息</h3>
+                        <div class="fr" style="margin-top:13px; height:32px;">
+                            <a class="btn btn-default fl mr10" data-toggle="modal" data-target="#myModal" href="javascript:;">编辑</a>
+                            <a class="btn btn-default fl" data-toggle="modal" data-target="#myModalKey" sssshref="javascript:;">修改密码</a>
+                        </div>
+                    </div>
+                    <!-- 个人信息头部 结束 -->
+                    <!-- 个人信息中部 开始 -->
+                    <div class="grxxCt">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td class="border58" width="50%">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+										<tr>
+											<td width="94" align="center"><img src="#{request.contextPath}/asset/images/user/grsz_ico1.png" /></td>
+											<td width="120" align="left">用户名</td>
+											<td class="blongsTxt" align="left">#{userHome.instance.name}</td>
+										</tr>
+                                    </table>
+                                </td>
+                                <td class="border58" width="50%">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="94" align="center"><img src="#{request.contextPath}/asset/images/user/grsz_ico2.png" /></td>
+                                            <td width="120" align="left">角色</td>
+                                            <td class="blongsTxt" align="left">#{userHome.instance.levelId.name}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border58" width="50%">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="94" align="center"><img src="#{request.contextPath}/asset/images/user/grsz_ico3.png" /></td>
+                                            <td width="120" align="left">昵称</td>
+                                            <td class="blongsTxt" align="left">#{userHome.instance.nickname=='' ? '&#160;' : userHome.instance.nickname}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td class="border58" width="50%">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="94" align="center"><img src="#{request.contextPath}/asset/images/user/grsz_ico4.png" /></td>
+                                            <td width="120" align="left">年龄</td>
+                                            <td class="blongsTxt" align="left">#{userHome.instance.age==null ? '&#160;' : userHome.instance.age}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border58" width="50%">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="94" align="center"><img src="#{request.contextPath}/asset/images/user/grsz_ico5.png" /></td>
+                                            <td width="120" align="left">电话</td>
+                                            <td class="blongsTxt" align="left">#{userHome.instance.phone=='' ? '&#160;' : userHome.instance.phone}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td class="border58" width="50%">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="94" align="center"><img src="#{request.contextPath}/asset/images/user/grsz_ico6.png" /></td>
+                                            <td width="120" align="left">Email</td>
+                                            <td class="blongsTxt" align="left">#{userHome.instance.email=='' ? '&#160;' : userHome.instance.email}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border58" width="50%">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="94" align="center"><img src="#{request.contextPath}/asset/images/user/grsz_ico7.png" /></td>
+                                            <td width="120" align="left">所属企业</td>
+                                            <td class="blongsTxt" align="left">#{userHome.instance.enterpriseInfoId.name=='' ? '&#160;' : userHome.instance.enterpriseInfoId.name}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td class="border58" width="50%"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- 个人信息中部 结束 -->
+                    <!-- 我的互助问答 开始 -->
+                    <div class="grxxFt2">
+                    	<div class="grxxHt" style="border-bottom:0;">
+                            <h3>我的互助问答</h3>
+                        </div>
+                        
+                        <div class="MY_mutualAnswer">
+                            <ul class="nav nav-tabs" role="tablist" id="myTab">
+                              <li class="#{userHome.harOrhel!=2?'active':''}"><a href="#home" role="tab" data-toggle="tab" onclick="changeactive(1)">提问<span>#{userHome.helLengh}</span></a></li>
+                              <li class="#{userHome.harOrhel==2?'active':''}"><a href="#profile" role="tab" data-toggle="tab" onclick="changeactive(2)">回答<span>#{userHome.harLength}</span></a></li>
+                            </ul>
+                            <div class="tab-content">
+                            <!-- 提问问题内容 开始 -->
+                            <h:panelGroup id="helall">
+                            <div class="#{userHome.harOrhel!=2?'tab-pane active':'tab-pane'}" id="home">
+                            	<h:form id="helform">
+                                <div class="search_Category">
+                                    <span class="octicon-search02"></span>
+                                    <h:inputHidden value="#{userHome.harOrhel}" id="harOrhel"/>
+                                    <h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="helsearch" styleClass="form-control nw300 srarchfont" value="#{userHome.helsearch}"/>
+                                </div>
+                                </h:form>
+                                <s:div styleClass="farming_nodata" rendered="#{empty userHome.helList}">
+                                    	<div class="warning_noData">
+                                        	<em>您还没有提问问题!</em>
+                                        </div>
+                                 </s:div>
+                                <ul class="questionList">
+                                	<a:repeat var="var" value="#{userHome.helList}" rowKeyVar="_row">
+                                	 <li class="items">
+                                        <p><a href="#{dataDicConstant.getDomainNameUrl()}/farmeasy/bbs/qa/QaInfo.jsp?showAcceptMsg=0&amp;questionId=#{var.harmfulHelpInfoId}">#{var.description.length()>50?var.description.substring(0,50):var.description}</a></p>
+                                        <div class="WB_bottomInfo2" style="margin-right:15px;">
+                                            <div class="WB_bottomFrom2" style="margin-top:4px;">
+                                                <span>#{var.dataStr}</span>
+                                            </div>
+                                            <div class="WB_bottomAmount2 ml10">
+                                                <ul class="list">
+                                                    <li class="amountItems"><span class="link">浏览 #{var.visitNum}</span></li>
+                                                    <li class="amountItems"><span class="link">回答 #{var.replyNum}</span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="WB_bottomStatue2">
+                                                <ui:fragment rendered="#{var.hriAccept}">
+	                                                <span class="solve solve_success" rel="tooltip" data-placement="top" data-original-title="问题已解决" title="问题已解决" style="cursor: pointer;">
+	                                                	<img class="imgLink" src="#{request.contextPath}/asset/images/user/grsz_ico21.png" />
+	                                                </span>
+                                                </ui:fragment>
+                                                 <ui:fragment rendered="#{!var.hriAccept}">
+	                                                 <span class="solve solve_success" rel="tooltip" data-placement="top" data-original-title="问题已解决">
+	                                                	<img class="imgLink" src="#{request.contextPath}/asset/images/user/grsz_ico22.png" />
+	                                                 </span>
+                                                	 <span class="delate" onclick="deletehel('#{var.harmfulHelpInfoId}')">删除</span>
+                                                </ui:fragment>
+                                            </div>
+                                        </div>
+                                    </li>
+                                	</a:repeat>
+                                </ul>
+                                <!-- 分页 开始 -->
+                                
+                                <a:outputPanel id="refreshPage">
+                                <table class="pageModel" style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<ui:fragment rendered="#{not empty userHome.helList}">
+			                <ui:fragment rendered="#{!userHome.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </ui:fragment>
+			                 <ui:fragment rendered="#{userHome.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </ui:fragment>
+			                <ui:fragment rendered="#{userHome.previousExists }">
+	                            <td class="td_t_b">
+		                            <a href="#" onclick="jump(0);return false;">首页</a>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <a href="#" onclick="jump(#{userHome.previousFirstResult});return false;" class="no_n">
+		                            	&lt;
+		                            </a>
+	                            </td>
+	                        </ui:fragment>
+					       <a:repeat var="_page" value="#{userHome.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{userHome.previousExists or _index >0 ?'td_t_t':''} #{_page eq userHome.pageNum?'onp':''}">
+									<a href="#" onclick="jump(#{_page});return false;">
+										#{_page}
+									</a>
+								</td>
+							</a:repeat>
+							<ui:fragment rendered="#{userHome.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <a href="#" class="no_d" onclick="jump(#{userHome.nextFirstResult});return false;">
+	                            &gt;
+	                            </a>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <a href="#" onclick="jump(#{userHome.PAGE_COUNT});return false;">
+								 尾页
+								 </a>
+							</td>
+							</ui:fragment>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{userHome.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                            </ui:fragment>
+                    	</tr>
+                    </table>
+                    </a:outputPanel>
+                                <!-- 分页 结束 -->
+                            </div>
+                            </h:panelGroup>
+                            <!-- 提问问题内容 结束 -->
+                            <!-- 回答问题内容 开始 -->
+                             <h:panelGroup id="harall">
+                            <div class="#{userHome.harOrhel==2?'tab-pane active':'tab-pane'}" id="profile">
+                            	<h:form id="harform">
+                                <div class="search_Category">
+                                    <span class="octicon-search02"></span>
+                                    <h:inputHidden value="#{userHome.harOrhel}" id="harOrhel"/>
+                                    <h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="harsearch" styleClass="form-control nw300 srarchfont" value="#{userHome.harsearch}"/>
+                                </div>
+                                </h:form>
+                                <s:div styleClass="farming_nodata" rendered="#{empty userHome.harList}">
+                                    	<div class="warning_noData">
+                                        	<em>您还没有回答问题!</em>
+                                        </div>
+                                 </s:div>
+                                <ul class="replyList">
+                                <a:repeat var="var" value="#{userHome.harList}" rowKeyVar="_row">
+                                    <li class="items">
+                                        <div class="items_dl">
+                                        	<span class="items_ico"><img src="#{request.contextPath}/asset/images/user/grsz_img02.jpg" /></span>
+                                            <p class="text"><a style="color: #272727;" href="#{dataDicConstant.getDomainNameUrl()}/farmeasy/bbs/qa/QaInfo.jsp?showAcceptMsg=0&amp;questionId=#{var.harmfulHelpInfoId.harmfulHelpInfoId}">#{var.harmfulHelpInfoId.description.length()>50?var.harmfulHelpInfoId.description.substring(0,50):var.harmfulHelpInfoId.description}</a></p>
+                                            <table width="100%" cellpadding="0" cellspacing="0">
+                                            	<tr>
+                                                <td>
+                                                    <div class="wait_answer">
+                                                        <i class="arrowTop"><img src="#{request.contextPath}/asset/images/user/grsz_ico23.jpg" /></i>
+                                                        <p><a style="color: #272727;" href="#{dataDicConstant.getDomainNameUrl()}/farmeasy/bbs/qa/QaInfo.jsp?showAcceptMsg=0&amp;questionId=#{var.harmfulHelpInfoId.harmfulHelpInfoId}">#{var.description.length()>50?var.description.substring(0,50):var.description}</a></p>
+                                                    </div>
+                                                    <div class="WB_bottomInfo2">
+                                                        <div class="WB_bottomFrom2">
+                                                            <span>#{var.harmfulHelpInfoId.dataStr}</span>
+                                                        </div>
+                                                        <div class="WB_bottomAmount2 ml10">
+                                                            <ul class="list">
+                                                                <li class="amountItems"><span class="link">浏览  #{var.harmfulHelpInfoId.visitNum}</span></li>
+                                                                <li class="amountItems"><span class="link">回答 #{var.harmfulHelpInfoId.replyNum}</span></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td width="170" align="center">
+                                                    <div class="WB_bottomStatue2" style="float:none;">
+                                                        <ui:fragment rendered="#{var.accept}">
+			                                                <span class="solve solve_wait" rel="tooltip" data-placement="top" data-original-title="问题已解决" title="问题已解决" style="float:none;cursor: pointer;">
+			                                                	<img class="imgLink" src="#{request.contextPath}/asset/images/user/grsz_ico21.png" />
+			                                                </span>
+		                                                </ui:fragment>
+		                                                 <ui:fragment rendered="#{!var.accept}">
+		                                                	 <span class="delate" style="float:none;" onclick="deletehar('#{var.harmfulReplyInfoId}')">删除</span>
+		                                                </ui:fragment>
+                                                    </div>
+                                                </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </li>
+                                    </a:repeat>
+                                </ul>
+                                <!-- 分页 开始 -->
+                                
+                                <a:outputPanel id="refreshPage2">
+                                <table class="pageModel" style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+			                    	<tr>
+			                    	<ui:fragment rendered="#{not empty userHome.harList}">
+						                <ui:fragment rendered="#{!userHome.previousExists2 }">
+						                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+						                </ui:fragment>
+						                 <ui:fragment rendered="#{userHome.previousExists2 }">
+						                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+						                </ui:fragment>
+						                <ui:fragment rendered="#{userHome.previousExists2 }">
+				                            <td class="td_t_b">
+					                            <a href="#" onclick="jump2(0);return false;">首页</a>
+				                            </td>
+				                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+					                            <a href="#" onclick="jump2(#{userHome.previousFirstResult2});return false;" class="no_n">
+					                            	&lt;
+					                            </a>
+				                            </td>
+				                        </ui:fragment>
+								       <a:repeat var="_page" value="#{userHome.pageList2}" rowKeyVar="_index">
+											<td class="td_t_b #{userHome.previousExists2 or _index >0 ?'td_t_t':''} #{_page eq userHome.pageNum2?'onp':''}">
+												<a href="#" onclick="jump2(#{_page});return false;">
+													#{_page}
+												</a>
+											</td>
+										</a:repeat>
+										<ui:fragment rendered="#{userHome.nextExists2}">
+			                            <td class="td_t_b td_t_t">
+				                            <a href="#" class="no_d" onclick="jump2(#{userHome.nextFirstResult2});return false;">
+				                            &gt;
+				                            </a>
+			                            </td>
+			                            <td class="td_t_b td_t_t">
+											 <a href="#" onclick="jump2(#{userHome.PAGE_COUNT2});return false;">
+											 尾页
+											 </a>
+										</td>
+										</ui:fragment>
+										<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{userHome.PAGE_COUNT2}页</td>
+			                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+			                            </ui:fragment>
+			                    	</tr>
+			                    </table>
+                    		</a:outputPanel>
+                                <!-- 分页 结束 -->
+                            </div>
+                            </h:panelGroup>
+                            <!-- 回答问题内容 结束 -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 我的互助问答 结束 -->
+                </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 个人设置 结束 -->
+</div>
+<!-- right_c 结束 -->
+
+<!-- 修改个人信息模态框 开始 -->
+<h:form id="user">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:684px; position:fixed; left:50%; margin-left:-342px; top:50%; margin-top:-226px; margin-bottom:0;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"></button>
+        <h4 class="modal-title revisionGrxx" id="myModalLabel">修改个人信息</h4>
+    </div>
+    <div class="modal-body" style="padding:0;">
+    	<dl class="revisionBody">
+        	<dt><img class="icoGrxx" src="#{request.contextPath}/asset/images/user/grsz_ico9.png" /></dt>
+            <dd>
+            	<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:55px;">
+                	<tr>
+                    	<td width="100" align="right" class="pr10">姓名</td>
+                        <td>
+                        	<span class="bootSelt21">
+                            <h:inputText class="form-control" type="text" id="nickname" value="#{userHome.instance.nickname}" style="width:220px;"/>
+                            </span>
+                            <span class="feiImpor">*</span>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td width="100" align="right" class="pr10">年龄</td>
+                        <td>
+                        	<span class="bootSelt21">
+                            <h:inputText class="form-control" value="#{userHome.instance.age}" type="text" style="width:220px;"/>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td width="100" align="right" class="pr10">电话</td>
+                        <td>
+                        	<span class="bootSelt21">
+                            <h:inputText class="form-control" value="#{userHome.instance.phone}" id="phone" type="text" style="width:220px;"/>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td width="100" align="right" class="pr10">Email</td>
+                        <td>
+                        	<span class="bootSelt21">
+                            <h:inputText class="form-control" value="#{userHome.instance.email}" id="email" type="text" style="width:220px;"/>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+		<a:commandButton id="update"  styleClass="btn btn-success" value="提交" action="#{userHome.updateInfo}" onclick="if(!checkSubmit()) return false;" />
+        
+        <a class="btn btn-default" data-dismiss="modal" href="#">返回</a>
+    </div>
+</div>
+</div>
+</div>
+</h:form>
+<!-- 修改个人信息模态框 结束 -->
+<!-- 修改密码模态框 开始 -->
+<h:form id="userPassword">
+<div class="modal fade" id="myModalKey" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:684px; position:fixed; left:50%; margin-left:-342px; top:50%; margin-top:-226px; margin-bottom:0;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"></button>
+        <h4 class="modal-title revisionGrxx revisionKey" id="myModalLabel">修改密码</h4>
+    </div>
+    <div class="modal-body" style="padding:0;">
+    	<dl class="revisionBody">
+        	<dt><img class="icoKey" src="#{request.contextPath}/asset/images/user/grsz_ico10.png" /></dt>
+            <dd>
+            	<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:85px;">
+                    <tr>
+                    	<td width="100" align="right" class="pr10">旧密码</td>
+                        <td>
+                        	<span class="bootSelt21">
+                            <h:inputSecret class="form-control" id="lodpassword" value="#{userHome.lodpassword}" type="text" style="width:220px;" onblur="tunnName(this.value);"/>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td width="100" align="right" class="pr10">新密码</td>
+                        <td>
+                        	<span class="bootSelt21">
+                            <h:inputSecret class="form-control" id="newpassword" value="#{userHome.newpassword}" type="password" style="width:220px;"/>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td width="100" align="right" class="pr10">确认密码</td>
+                        <td>
+                        	<span class="bootSelt21">
+                            <h:inputSecret class="form-control" id="verify" type="password" value="#{userHome.verify}" style="width:220px;"/>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+       	<a:commandButton id="update"  styleClass="btn btn-success" value="提交" action="#{userHome.updatePwd}" onclick="if(!checkSubmitPassword()) return false;"/>
+       
+        <a class="btn btn-default" data-dismiss="modal" href="#">返回</a>
+    </div>
+</div>
+</div>
+</div>
+</h:form>
+
+<h:form>
+            <input type="hidden" value="#{userHome.pageNum}" id="pageNum" name="pageNum"/>
+            <a:commandButton  action="#{userHome.interactive()}" styleClass="but_" style="display:none" reRender="helall"/>
+            </h:form>
+            <h:form>
+            <input type="hidden" value="#{userHome.pageNum2}" id="pageNum2" name="pageNum2"/>
+            <a:commandButton  action="#{userHome.interactive()}" styleClass="but2_" style="display:none" reRender="harall" oncomplete="huidiao2()"/>
+            </h:form>
+
+</td>
+<!--  修改密码模态框 结束 -->
+ <a:form>
+	<a:jsFunction name="getTunnName" action="#{userHome.getTunnName}" data="#{userHome.sName}" oncomplete="putAddressComplete(data);">
+		<a:actionparam name="obj" assignTo="#{userHome.tName}"/>
+	</a:jsFunction>
+</a:form>
+<a:form>
+	<a:jsFunction name="deleteHel" action="#{userHome.deleteHel}" reRender="helall,headDown">
+		<a:actionparam name="helId" assignTo="#{userHome.helId}"/>
+	</a:jsFunction>
+</a:form>
+<a:form>
+	<a:jsFunction name="deleteHar" action="#{userHome.deleteHar}" reRender="harall,headDown" oncomplete="huiHar()">
+		<a:actionparam name="helId" assignTo="#{userHome.harId}"/>
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript">
+//<![CDATA[
+function tunnName(obj){
+		if(obj != null && obj != ""){
+			getTunnName(obj);
+		}
+	}
+function checkSubmitPassword(){
+	var lodpasswordField =  document.getElementById("userPassword:lodpassword").value;
+	var newpasswordField =  document.getElementById("userPassword:newpassword").value;
+	var verifyField = document.getElementById("userPassword:verify").value;
+	if(lodpasswordField==""){
+		alert("旧密码不能为空");
+		return false;
+	}
+	if(newpasswordField==""){
+		alert("新密码不能为空");
+		return false;
+	}
+	if(verifyField==""){
+		alert("新密码确认不能为空");
+		return false;
+	}
+	if(verifyField!=newpasswordField){
+		alert("新密码和确认密码不同");
+		return false;
+	}
+	if(verifyField==lodpasswordField){
+		alert("新密码和旧密码不能相同");
+		return false;
+	}
+	return true;
+}    
+
+function putAddressComplete(date){
+	if (date == "" || date=="undefined") {
+	}else{
+		document.getElementById("userPassword:lodpassword").value = "";
+	}
+}
+
+function previewImage(id,file){
+	var MAXWIDTH  = 0; 
+	var MAXHEIGHT = 0;
+	MAXWIDTH  = document.getElementById(id).offsetWidth; 
+	MAXHEIGHT = document.getElementById(id).offsetHeight;
+	var div = document.getElementById(id);
+	if (file.files && file.files[0]){
+		var img;
+		div.innerHTML = '<img class=imghead id='+id+'>';
+		img = document.getElementById(id);
+		img.onload = function(){
+	        var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+	        img.width  =  rect.width;
+	        img.height =  rect.height;
+	        img.style.marginTop = rect.top+'px';
+		}
+		var reader = new FileReader();
+		reader.onload = function(evt){
+			img.src = evt.target.result;
+		}
+		reader.readAsDataURL(file.files[0]);
+		jquery("#pict\\:update").click();
+  	}else{ //兼容IE
+    	var sFilter='filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
+		file.select();
+		var src = document.selection.createRange().text;
+		var img;
+    	div.innerHTML = '<img class=imghead id='+id+'>';
+        img = document.getElementById(id);
+        img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
+        var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+        status =('rect:'+rect.top+','+rect.left+','+rect.width+','+rect.height);
+        div.innerHTML = "<div class=divhead id='"+id+"' style='position:absolute; width:"+rect.width+"px;height:"+rect.height+"px;margin-top:"+rect.top+"px;"+sFilter+src+"\"'></div>";
+		jquery("#pict\\:update").click();
+
+    	}
+}
+
+function checkSubmit(){
+	   var nickname =  document.getElementById("user:nickname").value;
+  var phone =  document.getElementById("user:phone").value;
+  var email =  document.getElementById("user:email").value;
+  var emailReg = /^([a-z0-9A-Z]+[_-|\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\.)+[a-zA-Z]{2,}$/;
+	   if(nickname==""){
+		   alert("昵称不能为空")
+		   return false;
+	   }
+	   if(phone.length > 11){
+		   alert("电话号码格式不正确")
+		   return false;
+	   }
+	   if(email != "" && !emailReg.test(email)){
+		   alert("Email格式不正确")
+		   return false;
+	   }
+	   return true;
+}
+
+//]]>
+</script>
+<script type="text/javascript">
+jQuery = jQuery.noConflict();
+jQuery(function(){
+	if(jquery('#helform\\:helsearch').val() == ""){
+		jquery('#helform\\:helsearch').val("搜索当前类别");
+	}
+	if(jquery('#harform\\:harsearch').val() == ""){
+		jquery('#harform\\:harsearch').val("搜索当前类别");
+	}
+	if(jquery('.uComment').val() !='写点什么让大家了解你...'){
+		jquery('.form-control').attr('class','form-control');
+	}
+	var slidebarUl;	
+	//左侧提示 开始
+	jQuery('.left_cul > li').mouseover(function(){
+		jQuery(this).css('background','url(images/lef_hover2.jpg)');
+		slidebarUl = jQuery(this).find('ul.sidebarUl') ;
+		if(slidebarUl){
+			slidebarUl.show();	
+			slidebarUl.mouseout(function(){
+				jQuery(this).hide();	
+			});
+		}						
+	});	
+	jQuery('.left_cul > li').mouseout(function(){
+		if(slidebarUl){
+			slidebarUl.hide();
+		}
+		if(jQuery(this).hasClass('on')){
+			jQuery(this).css('background','url("images/lef_hover.jpg")');	
+		}else{
+			jQuery(this).css('background','url("images/lefbg.jpg") repeat-y');	
+		}		
+	});
+	
+	//文本域控制
+	jQuery('.uComment').focus(function(){
+		var txt_value = jQuery(this).val();
+		if(txt_value==this.defaultValue){
+			jQuery(this).val("");	
+		};	
+	});
+	jQuery('.uComment').blur(function(){
+		var txt_value = jQuery(this).val();
+		if(txt_value==""){
+			jQuery(this).val(this.defaultValue);	
+		};	
+	});	
+
+});
+function changeactive(num){
+	if(num==1){
+		jquery('#home').attr('class','tab-pane active');
+		jquery('#profile').attr('class','tab-pane');
+	}else{
+		jquery('#profile').attr('class','tab-pane active');
+		jquery('#home').attr('class','tab-pane');
+	}
+}
+function deletehel(helId){
+	if(confirm('您确认要删除您的提问么?')){
+		deleteHel(helId);
+ 		return true;
+ 	}
+ 	return false;
+}
+function deletehar(harId){
+	if(confirm('您确认要删除您的回答么？')){
+		deleteHar(harId);
+ 		return true;
+ 	}
+ 	return false;
+}
+
+function  objFocus(obj){
+	if(obj.id=='helform:helsearch'){
+		jquery('#helform\\:harOrhel').val(1);
+	}
+	if(obj.id=='harform:harsearch'){
+		jquery('#harform\\:harOrhel').val(2);
+	}
+	if(obj.value=="搜索当前类别"){
+			obj.value="";
+	}
+} 
+function objBlur(obj){
+   if(obj.value==""){
+		obj.value="搜索当前类别";
+	}
+}
+function jump(index){
+	jquery("#pageNum").val(index);
+	jquery(".but_").trigger("click");
+}
+function jump2(index){
+	jquery("#pageNum2").val(index);
+	jquery(".but2_").trigger("click");
+}
+function huidiao2(){
+	jquery('#profile').attr('class','tab-pane active');
+}
+
+function huiHar(){
+	jquery('#profile').attr('class','tab-pane active');
+}
+
+
+
+</script>
+
+			  
+			  
+	</ui:define>
+
+</ui:composition>

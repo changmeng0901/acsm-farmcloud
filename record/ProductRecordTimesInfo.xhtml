@@ -1,0 +1,119 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+<script type="text/javascript">
+function leginto(){  
+	var prcode = document.getElementById("usefrom:productCode");
+	var codeinfo = document.getElementById("usefrom:codeinfo");
+	var number = document.getElementById("usefrom:number");
+	var sum = document.getElementById("usefrom:mathNumber");
+	if(checkNumber(codeinfo)&amp;&amp;checkNumber(number)&amp;&amp;checkNumber(sum)){
+		var count = (prcode.value).length + (codeinfo.value).length + parseInt(sum.value);
+		if(count > 20){
+			alert("二维码位数大于20位,请从新添加尾号位数！");
+			var oInput = document.getElementById("usefrom:mathNumber");//获取该对象
+			oInput.value = ""; 
+			oInput.focus();//获得焦点
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+function checkNumber(obj){  
+    var reg = /^[0-9]+$/;  
+    if(obj.value!=""&amp;&amp;!reg.test(obj.value)){  
+        alert('只能输入数字！');  
+        obj.value = "";  
+        obj.focus();  
+        return false;  
+    }
+    return true;
+}  
+</script>
+	<div class="right_coment">
+<div class="con_top bg"></div>
+<div class="con_con">
+<!--板块1开始-->
+<div class="title_box">
+<a href="#"><strong>履历列表</strong></a>
+</div>
+<div class="box_con">
+<div class="bl_t_b">
+<!---二维码生成开始-->
+		<div class="er_bg">
+		<h:form id="usefrom" styleClass="edit" >
+				<table class="er_table">
+                	<tr>
+                    	<th colspan="3">生成二维码</th>
+                	</tr>
+                    <tr>
+                    	<td>产&#160;&#160;品&#160;&#160;&#160;&#160;名&#160;&#160;称：</td>
+                        <td><h:outputText value="#{productRecordHome.instance.productName}"/></td>
+                        <td></td>
+                    </tr>
+                    
+                    <tr>
+                    	<td>定&#160;&#160;植&#160;&#160;&#160;&#160;日&#160;&#160;期：</td>
+                        <td> <h:outputText value="#{productRecordHome.instance.plantTime}">
+								<s:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+							</h:outputText>
+						</td>
+						<td></td>
+                    </tr>
+                    
+                    <tr>
+                    	<td>棚&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;号：</td>
+                        <td><h:outputText value="#{productRecordHome.instance.tunnelInfo.tunnelInfoId}"/></td>
+                        <td></td>
+                    </tr>
+                    <h:inputHidden id="productCode" value="#{productRecordHome.instance.productCode}"/>
+                     <tr>
+                    	<td>批&#160;&#160;次&#160;&#160;&#160;&#160;编&#160;&#160;号：</td>
+                        <td><h:inputText id="codeinfo" value="#{productRecordTimesHome.codeinfo}" styleClass="er_input" maxlength="20"/></td>
+                        <td></td>
+                    </tr>
+                    
+                    <tr>
+                    	<td>生成二维码数：</td>
+                        <td><h:inputText id="number" value="#{productRecordTimesHome.number}" styleClass="er_input" maxlength="20"/></td>
+                        <td></td>
+                    </tr>
+                    
+                    <tr>
+                    	<td>二维码尾号位数：</td>
+                        <td><h:inputText id="mathNumber" value="#{productRecordTimesHome.mathNumber}" styleClass="er_input" maxlength="20"/></td>
+                        <td>位</td>
+                    </tr>
+                    <tr>
+                    	<td colspan="2" align="center" valign="bottom">
+                    		 <s:button view="/record/ProductRecordTimesList.xhtml" styleClass="er_buttton" id="create" value="返回" image="../images/button_17.jpg" width="74" height="26">
+									<f:param name="productInfoId" value="#{productRecordTimesListByPR.productRecordId}"/>
+							 </s:button>
+                        	<h:commandButton action="#{productRecordTimesHome.lodtow}" styleClass="er_buttton" id="save" value="下一步" onclick="return leginto();" image="../images/button_20.jpg" width="74" height="26">
+							 </h:commandButton>
+                        </td>
+                    </tr>
+                </table>
+	</h:form>
+         </div>
+<!---二维码生成结束-->
+</div>
+<!--板块1结束-->
+</div>
+</div>
+</div>
+<!--右板块结束-->
+
+</ui:define>
+
+</ui:composition>

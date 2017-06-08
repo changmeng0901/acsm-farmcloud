@@ -1,0 +1,1547 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new_model2.xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="#{request.contextPath}/asset/css/bootstrap-select.min.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/settings/EnterpriseSettings.css" />
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/EnterpriseLeftMenu.js"></script>
+
+	<style>
+
+	</style>
+	<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<td valign="top">
+		<div class="inbentory_file_main">
+                <!-- 企业设置左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_rkgl"></i>基础设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item sed_cur" onclick="window.open('#{request.contextPath}/user/UpdateEnterpriseSettings.seam?enterpriseId=#{sessionTake.enterpriseInfoId}','_self')" >
+                            	<i class="icon_sed"></i>企业设置                   	
+                            </li>
+                            <!-- 管理版和以前的版本（标准、白金...)显示 -->
+                            <h:panelGroup rendered="#{sessionTake.nowVersionService.basicService.basicServiceId==10 or sessionTake.nowVersionService.basicService.serviceType eq 1}">
+                            	<li class="sed_item" onclick="window.open('#{request.contextPath}/user/ModuleSettings.seam','_self')" ><i class="icon_sed"></i>模块配置</li>                          
+                            </h:panelGroup>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/dictionary/DataDicinfoList.seam','_self')" ><i class="icon_sed"></i>字段管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/user/EnterpriseCommunityList.seam','_self')" ><i class="icon_sed"></i>角色管理</li>
+                            <s:fragment rendered="#{enterpriseInfoHome.enterpriseInfo.govState}">
+	                        	<li class="sed_item" onclick="window.open('#{request.contextPath}/user/AuditInformationList.seam','_self')" ><i class="icon_sed"></i>审核信息</li>
+	                        </s:fragment>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/system/RecycleInfoList_1.seam','_self')" ><i class="icon_sed"></i>回收站</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_ckgl"></i>生产管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">                      	
+                            <h:panelGroup rendered="#{s:hasRole('certification')}">
+                            	<li class="sed_item" onclick="window.open('#{request.contextPath}/map/CertificationList.seam','_self')" ><i class="icon_sed"></i>认证信息</li>
+                            </h:panelGroup>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/message/TunnelGroupList.seam','_self')" ><i class="icon_sed"></i>分组管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/InputsInfoList.seam?goodsTypeInfoId=5','_self')" ><i class="icon_sed"></i>投入品信息</li>                           
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_zkgl"></i>销售管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/GoodsInfoList.seam','_self')"><i class="icon_sed"></i>物料信息</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/ProductInfoList.seam','_self')" ><i class="icon_sed"></i>商品信息</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pdgl"></i>硬件管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/device/DeviceList.seam','_self')"><i class="icon_sed"></i>设备管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/device/VideoList.seam','_self')" ><i class="icon_sed"></i>视频管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/farming/AmRfidInfoList.seam','_self')" ><i class="icon_sed"></i>RFID卡管理</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 企业设置左侧二级导航 -->
+<!-- 企业设置右侧 -->
+                <div class="inbentory_content">
+		<h:form id="user" enctype="multipart/form-data">
+				<h:inputHidden id="plantStr" name="plantStr" value="#{enterpriseSettingsHome.plantStr}" />
+                <h:inputHidden id="resumStr" name="resumStr" value="#{enterpriseSettingsHome.resumStr}" />
+                <h:inputHidden id="goodsStr" name="goodsStr" value="#{enterpriseSettingsHome.instance.goodsRating}" />
+                <h:inputHidden id="orderStr" name="orderStr" value="#{enterpriseSettingsHome.orderStr}" />
+               	<h:inputHidden id="pushStr" name="pushStr" value="#{enterpriseSettingsHome.pushStr}" />
+                <h:inputHidden id="detectEnable" name="detectEnable" value="#{enterpriseSettingsHome.instance.detectEnable}" />
+                <!-- <h:inputHidden id="harvestStorageEnable" name="harvestStorageEnable" value="#{enterpriseSettingsHome.instance.harvestStorageEnable}" /> -->
+                <input type="hidden" id="harvestObj" name="harvestObj" value="" />
+                <input type="hidden" id="harvestUnit" name="harvestUnit" value="" />
+                <input type="hidden" id="smsEnable" name="smsEnable" value="" />
+                 <h:inputHidden id="productListSource" name="productListSource" value="#{enterpriseSettingsHome.productListSource}" />
+                <h:inputHidden id="preProduct" name="preProduct" value="#{enterpriseSettingsHome.preProduct}" />
+                <h:inputHidden id="inputsAudit" name="inputsAudit" value="#{enterpriseSettingsHome.inputsAudit}" /><!-- 投入品审核启用，邱晨阳 -->
+                <h:inputHidden id="proFreeze" name="proFreeze" value="#{enterpriseSettingsHome.proFreeze}" />
+                <h:inputHidden id="freezeSelect" name="freezeSelect" value="#{enterpriseSettingsHome.freezeSelect}" />
+               	<h:inputHidden id="orderRepertory" name="orderRepertory" value="#{enterpriseSettingsHome.orderRepertory}" />
+                <h:inputHidden id="autoCreateMaterial" name="autoCreateMaterial" value="#{enterpriseSettingsHome.autoCreateMaterial}" />
+               	<h:inputHidden id="autoCreateCommodity" name="autoCreateCommodity" value="#{enterpriseSettingsHome.autoCreateCommodity}" />
+               	<h:inputHidden id="productStorageAudit" name="productStorageAudit" value="#{enterpriseSettingsHome.productStorageAudit}" />
+               	<h:inputHidden id="farmStr" name="farmStr" value="#{enterpriseSettingsHome.farmStr}" />
+               	<h:inputHidden id="harvestStr" name="harvestStr" value="#{enterpriseSettingsHome.harvestStr}" />
+               	<h:inputHidden id="loginSuccessLogoName" name="loginSuccessLogoName" value="#{enterpriseSettingsHome.loginSuccessLogoName}" />
+               	<h:inputHidden value="#{enterpriseSettingsHome.pickUsing}" id="pick_using"/>
+               	<h:inputHidden value="#{enterpriseSettingsHome.stockEchoFlag}" id="stockEchoFlagHidden"/>
+               	<h:inputHidden value="#{enterpriseSettingsHome.orderInventorySimplify}" id="orderInventorySimplify"/>
+               	<h:inputHidden value="#{enterpriseSettingsHome.instance.materialOutSorting}" id="materialOutSorting"/>
+               	<h:inputHidden value="#{enterpriseSettingsHome.instance.productOutSorting}" id="productOutSorting"/>
+               	<h:inputHidden value="#{enterpriseSettingsHome.productStore}" id="productStore"/>
+               	<h:inputHidden value="#{enterpriseSettingsHome.negativeInventory}" id="negativeInventory"/>
+               	<h:inputHidden value="#{enterpriseSettingsHome.instance.negativeInventoryType}" id="negativeInventoryType"/>
+               	<h:inputHidden value="#{enterpriseSettingsHome.inventoryNoBatchFlag}" id="inventoryNoBatchFlag"/>
+               	  
+                <div class="right_c" style="min-height:30px; padding-bottom:15px; padding-top:15px;">
+            	<!-- 面包屑导航 -->
+                <div class="breadNav_wap mb15 clear">
+                    <div class="breadNav_lt"><strong>企业设置</strong></div>
+                </div>
+                <!-- 企业设置 -->
+                <div class="settings_content">
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                        <li class="active"><a href="#Base" role="tab" data-toggle="tab"><i class="sicon icon_jcsz"></i>基础设置</a></li>
+                        <li><a href="#Farm" role="tab" data-toggle="tab"><i class="sicon icon_sznc"></i>数字农场</a></li>
+                        <li><a href="#Production" role="tab" data-toggle="tab"><i class="sicon icon_scgl"></i>生产管理</a></li>
+                        <li><a href="#Market" role="tab" data-toggle="tab"><i class="sicon icon_xsgl" id="toMartket"></i>销售管理</a></li>
+                        <li><a href="#Service" role="tab" data-toggle="tab"><i class="sicon icon_zzfw"></i>增值服务</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="Base">
+                        <!-- 基础设置cont -->
+                            <div class="base_main">
+                                <dl class="base_dl mb20">
+                                    <dt class="dl_dt">
+                                        <img src="#{request.contextPath}/asset/images/settings/qysettings_default1.png" />
+                                    </dt>
+                                    <dd class="dl_dd">
+                                        <strong class="text_stress ">头部LOGO 设置</strong>
+                                        <p class="text_depict">修改主页头部logo图片</p>
+                                    </dd>
+                                </dl>
+                                <div class="fPicture" style="display:#{not empty enterpriseSettingsHome.instance.loginSuccessUrlName ?'':'none'}">
+                                	<img class="fimg" src="#{enterpriseSettingsHome.instance.loginSuccessUrlName}" id="loginSuccessByte_p" width="194" height="125" />	                                	                                   
+                                    <i class="delete" onclick="delLogoImg();">
+                                        <img class="fimg" src="#{request.contextPath}/asset/images/settings/fileImg_delet5.jpg"/>
+                                    </i>
+                                </div>
+                                <div class="filepic">
+                                    <s:fileUpload id="loginSuccess" size="30" styleClass="upload"
+										accept="image/png,image/jpeg,image/gif"
+										contentType="image/png,image/jpeg,image/gif"
+										fileName="#{enterpriseSettingsHome.instance.loginSuccessUrlName}"
+										data="#{enterpriseSettingsHome.instance.loginSuccessByte}" onchange="previewImage('loginSuccessByte_p',this);">
+									</s:fileUpload>
+                                </div>
+                                <p class="text_norm mt5">图片标准：160x60（像素）支持格式：jpg,gif,png,jpeg,bmp,3gp</p>
+                            </div>
+                        <!-- 基础设置cont -->
+                        </div>
+                        <div class="tab-pane" id="Farm">
+                        <!-- 数字农场cont -->
+                            <div class="farmnum_main">
+                                <dl class="base_dl mb20">
+                                    <dt class="dl_dt">
+                                        <img src="#{request.contextPath}/asset/images/settings/qysettings_default2.png" />
+                                    </dt>
+                                    <dd class="dl_dd">
+                                        <strong class="text_stress ">地图字号调节</strong>
+                                        <p class="text_depict">为方便用户查看信息，可在此处设置地图字号</p>
+                                    </dd>
+                                </dl>
+                                <ol class="select_list">
+                                    <li class="sitem">
+                                        <p class="text_name">企业名称</p>
+                                        <div class="inline_block bootSelt180" style="float:left;">
+                                            <h:selectOneMenu  styleClass="selectpicker" value="#{enterpriseSettingsHome.instance.enterpriseSize}" id="eSize">
+												<f:selectItem itemLabel="19px&#160;&#160;&#160;&#160;&#160;" itemValue="1" />
+												<f:selectItem itemLabel="20px(默认)" itemValue="2" />
+												<f:selectItem itemLabel="21px&#160;&#160;&#160;&#160;&#160;" itemValue="3" />
+												<f:selectItem itemLabel="22px&#160;&#160;&#160;&#160;&#160;" itemValue="4" />
+												<f:selectItem itemLabel="23px&#160;&#160;&#160;&#160;&#160;" itemValue="5" />
+												<f:selectItem itemLabel="24px&#160;&#160;&#160;&#160;&#160;" itemValue="6" />
+											</h:selectOneMenu> 
+                                        </div>
+                                        <p class="text_name" style="margin-left:30px;">字体颜色</p>
+                                        <div class="inline_block bootSelt180" style="margin-top:7px;">
+                                            <rich:colorPicker colorMode="hex"
+												id="qymc_color"
+												value="#{enterpriseSettingsHome.instance.enterpriseFontColor}">
+											</rich:colorPicker>			
+											<font color="#FF0000" style="position: relative; margin-left: 10px; *margin-left: 10px; line-height: 0px;"></font>							
+                                        </div>
+                                    </li>
+                                    <li class="sitem">
+                                        <p class="text_name">分区名称</p>
+                                        <div class="inline_block bootSelt180" style="float:left;">
+                                            <h:selectOneMenu  styleClass="selectpicker" value="#{enterpriseSettingsHome.instance.partitionSize}" id="pSize">
+												<f:selectItem itemLabel="10px&#160;&#160;&#160;&#160;&#160;" itemValue="1" />
+												<f:selectItem itemLabel="11px(默认)" itemValue="2" />
+												<f:selectItem itemLabel="12px&#160;&#160;&#160;&#160;&#160;" itemValue="3" />
+												<f:selectItem itemLabel="13px&#160;&#160;&#160;&#160;&#160;" itemValue="4" />
+												<f:selectItem itemLabel="14px&#160;&#160;&#160;&#160;&#160;" itemValue="5" />
+												<f:selectItem itemLabel="15px&#160;&#160;&#160;&#160;&#160;" itemValue="6" />
+											</h:selectOneMenu>
+                                        </div>
+                                        <p class="text_name" style="margin-left:30px;">字体颜色</p>
+                                        <div class="inline_block bootSelt180" style="margin-top:7px;">
+                                            <rich:colorPicker colorMode="hex"
+												id="area_color"
+												value="#{enterpriseSettingsHome.instance.areaFontColor}">
+											</rich:colorPicker>											
+                                        </div>
+                                    </li>
+                                    <li class="sitem">
+                                        <p class="text_name">地块名称</p>
+                                        <div class="inline_block bootSelt180" style="float:left;">
+                                            <h:selectOneMenu  styleClass="selectpicker" value="#{enterpriseSettingsHome.instance.tunnelSize}" id="tSize">
+												<f:selectItem itemLabel="9px&#160;&#160;&#160;&#160;&#160;" itemValue="1" />
+												<f:selectItem itemLabel="10px(默认)" itemValue="2" />
+												<f:selectItem itemLabel="11px&#160;&#160;&#160;&#160;&#160;" itemValue="3" />
+												<f:selectItem itemLabel="12px&#160;&#160;&#160;&#160;&#160;" itemValue="4" />
+												<f:selectItem itemLabel="13px&#160;&#160;&#160;&#160;&#160;" itemValue="5" />
+												<f:selectItem itemLabel="14px&#160;&#160;&#160;&#160;&#160;" itemValue="6" />
+											</h:selectOneMenu> 
+                                        </div>
+                                        <p class="text_name" style="margin-left:30px;">字体颜色</p>
+                                        <div class="inline_block bootSelt180" style="margin-top:7px;">
+                                            <rich:colorPicker colorMode="hex"
+												id="tunnel_color"
+												value="#{enterpriseSettingsHome.instance.tunnelFontColor}">
+											</rich:colorPicker>											
+                                        </div>
+                                    </li>
+                                </ol>
+                            </div>
+                        <!-- 数字农场cont -->
+                        </div>
+                        <div class="tab-pane" id="Production">
+                        <!-- 生产管理cont -->
+                            <div class="product_main">
+                                <div class="prod_line clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 prod_line">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default3.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">种植模块设置</strong>
+                                            <p class="text_depict">设置企业的种植类型</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                    	<a:repeat value="#{enterpriseSettingsHome.ddList}" var="_var" rowKeyVar="_index">
+		                                	<p class="checkradio1"><input type="checkbox" name="iCheckPlant" id="checkPlant_#{_var.dataDicId}" class="#{enterpriseSettingsHome.plantStandardMap.get(_var.dataDicId) eq 'checked'?'aaa':'bbb'}"/><label>#{_var.name}</label></p>
+		                                </a:repeat>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default4.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">农事推送设置</strong>
+                                            <p class="text_depict">农场推送设置是否启用</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio1"><input type="radio" class="iRadio" name="pushname" id="push1" val="1"/><label>推送</label></p>
+                                        <p class="checkradio1"><input type="radio" class="iRadio" name="pushname" id="push0" val="0"/><label>不推送</label></p>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="prod_line clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12" style="">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default5.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">农事自定义设置</strong>
+                                            <p class="text_depict">设置添加农事的的字段，选择后在添加农事页面显示字段</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="agriculturalCheck" id="agriculturalCheck_1"/><label>农事计划</label></p>
+                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="agriculturalCheck" id="agriculturalCheck_2"/><label>其他成本</label></p>
+                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="agriculturalCheck" id="agriculturalCheck_3"/><label>环境</label></p>
+                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="agriculturalCheck" id="agriculturalCheck_4"/><label>工时</label></p>
+                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="agriculturalCheck" id="agriculturalCheck_5"/><label>操作人</label></p>
+                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="agriculturalCheck" id="agriculturalCheck_6"/><label>投入品</label></p>
+                                    </div>
+                                </div>
+                               <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default4.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">采收自定义设置</strong>
+                                            <p class="text_depict">设置添加采收的字段，选择后在添加采收页面展示</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                    	<p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_7"/><label>等级</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_8"/><label>单价</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_9"/><label>采收人</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_12"/><label>经办人</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_14"/><label>采收入库</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_13"/><label>采收出库</label></p>
+                                        
+                                   	 	<p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_1"/><label>采收部位</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_2"/><label>采收方法</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_3"/><label>车辆数</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_4"/><label>皮重</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_5"/><label>扣土量</label></p>
+                                        <p class="checkradio3"><input type="checkbox" class="iCheck" name="myHarvestCheck" id="myHarvestCheck_6"/><label>净菜重</label></p>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="prod_line clear">
+	                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+	                                    <dl class="base_dl mb20">
+	                                        <dt class="dl_dt">
+	                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default6.png" />
+	                                        </dt>
+	                                        <dd class="dl_dd">
+	                                            <strong class="text_stress ">采收模块设置</strong>
+	                                            <p class="text_depict">设置采收模块使用方法</p>
+	                                        </dd>
+	                                    </dl>
+	                                    <div class="clear">
+	                                        <p class="checkradio1"><input type="radio" class="iRadio" name="iRadio" id="easyHarvest" bb="1"/><label>简单采收</label></p>
+	                                        <p class="checkradio1"><input type="radio" class="iRadio" name="iRadio" id="hardHarvest" bb="2"/><label>高级采收</label></p>
+	                                    </div>
+	                                </div>
+	                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+	                                    <dl class="base_dl mb20">
+	                                        <dt class="dl_dt">
+	                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default7.png" />
+	                                        </dt>
+	                                        <dd class="dl_dd">
+	                                            <strong class="text_stress ">采收单位设置</strong>
+	                                            <p class="text_depict">设置采收录入单位，斤和公斤（KG）</p>
+	                                        </dd>
+	                                    </dl>
+	                                    <div class="clear">
+	                                        <p class="checkradio1"><input type="radio" class="iRadio" name="unitRadio" id="unitG" cc="1"/><label>斤</label></p>
+	                                        <p class="checkradio1"><input type="radio" class="iRadio" name="unitRadio" id="unitKg" cc="2"/><label>公斤（KG）</label></p>
+	                                    </div>
+	                                </div>
+                                
+                                </div>
+                                
+                                <div class="prod_line prod_rline0 clear">
+                                	<!-- <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+	                                    <dl class="base_dl mb20">
+	                                        <dt class="dl_dt">
+	                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default8.png" />
+	                                        </dt>
+	                                        <dd class="dl_dd">
+	                                            <strong class="text_stress ">采收入库选用</strong>
+	                                            <p class="text_depict">启用后，即可在添加采收时完成入库操作</p>
+	                                        </dd>
+	                                    </dl>
+	                                    <div class="clear">
+	                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="storageChe" id="storageChe"/><label>启用</label></p>
+	                                    </div>
+	                                </div> -->
+	                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+	                                    <dl class="base_dl mb20">
+	                                        <dt class="dl_dt">
+	                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default9.png" />
+	                                        </dt>
+	                                        <dd class="dl_dd">
+	                                            <strong class="text_stress ">预采库存设置</strong>
+	                                            <p class="text_depict">设置预采管理是否启用</p>
+	                                        </dd>
+	                                    </dl>
+	                                    <div class="clear">
+	                                        <p class="checkradio1"><input type="checkbox" name="iCheckPre" id="preCheck_1"/><label>启用</label></p>
+	                                    </div>
+	                                </div>
+	                                <!-- 投入品审核启用，邱晨阳 -->
+	                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+	                                    <dl class="base_dl mb20">
+	                                        <dt class="dl_dt">
+	                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default9.png" />
+	                                        </dt>
+	                                        <dd class="dl_dd">
+	                                            <strong class="text_stress ">投入品出库审核</strong>
+	                                            <p class="text_depict">启用后,可在投入品出库时进行提交审核，并由投入品管理员审核</p>
+	                                        </dd>
+	                                    </dl>
+	                                    <div class="clear">
+	                                        <p class="checkradio1"><input type="checkbox" name="iCheckInputsAudit" id="inputsAuditId"/><label>启用</label></p>
+	                                    </div>
+	                                </div>
+	                                <!-- 投入品审核启用，邱晨阳 -->
+                                </div>
+                            </div>
+                        <!-- 生产管理cont -->
+                        </div>
+                        <div class="tab-pane" id="Market">
+                        <!-- 销售管理cont -->
+                            <div class="market_main" style="overflow:inherit;">
+                                <div class="prod_line clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 prod_line">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default10.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">订单模块启用设置</strong>
+                                            <p class="text_depict">设置不同订单状态是否需要启用，选择后即为启用</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckOrder" id="orderCheck_1"/><label>订单待审核</label></p>
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckOrder" id="orderCheck_2"/><label>订单待处理</label></p>
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckOrder" id="orderCheck_5"/><label>订单理货中</label></p>
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckOrder" id="orderCheck_6"/><label>订单待发货</label></p>
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckOrder" id="orderCheck_7"/><label>订单配送中</label></p>
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckOrder" id="orderCheck_3"/><label>订单待退货</label></p>                                       
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default11.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">商品冻结时间设置</strong>
+                                            <p class="text_depict">设置商品冻结时间是否启用</p>
+                                        </dd>
+                                    </dl>
+                                    <div style="float:left;">
+                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="iCheckProFreeze" id="ProFreezeCheck_1"/><label>启用</label></p>
+                                    </div>
+                                    <div class="s-time bootSelt180" style="float:left;">
+                                    	<select class="selectpicker" id="timeId" onchange="selectChange(this.value);">
+                                    		<option value="0">请选择 </option>
+                                    		<option value="1">今天上午—今天晚上</option>
+                                    		<option value="2">今天下午—明天上午</option>
+                                    		<option value="3">今天晚上—明天下午</option>
+                                    		<option value="4">明天上午—明天晚上</option>
+                                    	</select>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="prod_line clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default12.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">订单发货自动出货</strong>
+                                            <p class="text_depict">启用后，订单发货将按时间降序自动生成出货记录</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio1"><input type="checkbox" name="iCheckRepertory" id="repertoryCheck"/><label>启用</label></p>
+                                    </div>                                    
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default13.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">采摘订单启用设置</strong>
+                                            <p class="text_depict">设置采摘订单是否启用</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio1"><input type="checkbox" name="pickCheck" id="pickCheck"/><label>启用</label></p>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="prod_line clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default14.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">商品快速入库审核</strong>
+                                            <p class="text_depict">启用后，可在原料出库时进行商品入库提交审核，并由商品库管理员审核！</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio1"><input type="checkbox" name="proAudit" id="proAudit"/><label>启用</label></p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default15.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">自动生成设置</strong>
+                                            <p class="text_depict">启动后，添加种植的作物不存在物料信息或商品信息时，可自动生成</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio1"><input type="checkbox" name="autoMate" id="autoMate"/><label>物料信息</label></p>
+                                        <p class="checkradio1"><input type="checkbox" name="autoCommo" id="autoCommo"/><label>商品信息</label></p>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="prod_line clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default16.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">商品入库列表来源</strong>
+                                            <p class="text_depict">设置商品入库列表来源</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio160"><input type="radio" class="iRadio" name="productSourceRadio" id="productInfo" cc="1"/><label>物料信息</label></p>
+                                        <p class="checkradio160"><input type="radio" class="iRadio" name="productSourceRadio" id="productOut" cc="2"/><label>原料出库记录</label></p>
+                                    </div>
+                                </div>
+                                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/stockEcho.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">库存表单记忆功能设置</strong>
+                                            <p class="text_depict">启动后，添加新表单时表单属性内容会读取上次保存的表单属性内容</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio1"><input type="checkbox" name="stockEcho" id="stockEcho"/><label>页面回显</label></p>
+                                    </div>
+                                </div>
+                                </div>
+                                <!-- <div style="display:none;"> -->
+                                <!-- 隐藏div开始 -->
+                                <div class="prod_line clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/jianhua.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">订单-库存流程简化</strong>
+                                            <p class="text_depict">启用后，订单发货可以自动生成订单所需商品的原料出库及商品入库</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                       <p class="checkradio1"><input type="checkbox" name="orderProcessSimp" id="orderProcessSimp"/><label>启用</label></p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/shangpin.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">商品自动出库顺序</strong>
+                                            <p class="text_depict">启用后，订单发货可以自动生成订单时的商品出库顺序</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                       <p class="checkradio160"><input type="radio" class="iRadio" name="shopSorting" id="shopTimeDesc" cc="1"/><label>按入库时间降序</label></p>
+                                       <p class="checkradio160"><input type="radio" class="iRadio" name="shopSorting" id="shopTimeAsc" cc="2"/><label>按入库时间升序</label></p>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="prod_line clear" id="orderHiddenDiv">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/yuanliao.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">原料自动出库顺序</strong>
+                                            <p class="text_depict">设定您原料自动出库时的出库批次顺序</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                       <p class="checkradio160"><input type="radio" class="iRadio" name="sorting" id="timeDesc" cc="1"/><label>按入库时间降序</label></p>
+                                       <p class="checkradio160"><input type="radio" class="iRadio" name="sorting" id="timeAsc" cc="2"/><label>按入库时间升序</label></p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/shangpinku.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">商品库隐藏设置</strong>
+                                            <p class="text_depict">设定是否隐藏商品库</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                       <p class="checkradio1"><input type="checkbox" name="shopRoom" id="shopRoom"/><label>启用</label></p>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="prod_line prod_rline0 clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/fukucun.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">负库存设置</strong>
+                                            <p class="text_depict">启用后，您选择的库存类型将会支持负库存操作</p>
+                                        </dd>
+                                    </dl>
+                                    <div style="float:left;">
+                                        <p class="checkradio1"><input type="checkbox" class="iCheck" name="enableInventory" id="enableInventory"/><label>启用</label></p>
+                                    </div>
+                                    <div class="s-time bootSelt180" style="float:left;">
+                                    	<select class="selectpicker" id="inventory" >
+                                    		<option value="1">商品库 </option>
+                                    		<option value="2">原料库</option>
+                                    	</select>
+                                    </div>
+                                </div>
+                                <!-- 盘点取消批次设置 -->
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/noBatch.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">盘点取消批次设置</strong>
+                                            <p class="text_depict">启用后盘点单不显示批次号，盘亏按照先进先出处理，盘盈生成新批次号！</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                       <p class="checkradio1"><input type="checkbox" name="noBatch" id="noBatch"/><label>启用</label></p>
+                                    </div>
+                                </div>
+                               	</div>
+                               	<!-- </div> --><!-- 隐藏div结束 -->
+                               	
+                            </div>
+                            
+                        <!-- 销售管理cont -->
+                        </div>
+                        <div class="tab-pane" id="Service">
+                        <!-- 增值服务cont -->
+                            <div class="market_main">
+                                <div class="prod_line clear">
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 prod_line">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default17.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">履历模块设置</strong>
+                                            <p class="text_depict">设置履历模块，是否支持打印模式，印刷模式及自定义履历</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckResum" id="resumCheck_2"/><label>打印</label></p>
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckResum" id="resumCheck_1"/><label>印刷</label></p>
+                                        <p class="checkradio160"><input type="checkbox" name="iCheckResum" id="resumCheck_3"/><label>自定义履历</label></p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                    <dl class="base_dl mb20">
+                                        <dt class="dl_dt">
+                                            <img src="#{request.contextPath}/asset/images/settings/qysettings_default18.png" />
+                                        </dt>
+                                        <dd class="dl_dd">
+                                            <strong class="text_stress ">短信报警设置</strong>
+                                            <p class="text_depict">启用后，报警内容会发送到抄送人的手机号码上</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear">
+                                        <p class="checkradio1"><input type="checkbox" name="smsChe" id="smsChe"/><label>推送</label></p>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        <!-- 增值服务cont -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 企业设置 -->                                                
+                 <div class="center_btns">
+                     <h:commandButton id="update" value="保存" styleClass="btn btn-primary mr5" action="#{enterpriseSettingsHome.updateMe}" onclick="return checkSubmit()"/>
+                 </div>
+            </div>
+                 <!-- right_c 结束 -->               
+                <div class="clear"></div>
+              </h:form>
+               </div>
+               <div class="modal fade" id="shelfModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog  pano_dialog landscape_dialog">
+				<div class="modal-content">
+				    <div class="modal-header clear">
+				        <h4 class="modal-title fl">消息</h4>
+				        <i class="i_close" data-dismiss="modal"></i>
+				    </div>
+				    <div class="modal-body modal_body" style="text-align:center; height:210px;">
+				        <img src="#{request.contextPath}/asset/images/purchase/shelfTip.png" style="margin: 25px 0 20px 0;"/>
+				        <p style="line-height: 24px;" id="orderMesg">
+				          我们发现您订单模块没有启用【订单待发货与【订单配送中】模块，<br/>
+				          这对访问您【一键购买】的消费者会产生误会，<br/>
+				          因此我们已经自动帮您启用该模块。
+				        </p>
+				    </div>
+				    <div class="modal-footer">
+				        <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+				        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+				    </div>
+				</div>
+				</div>
+				</div>
+				
+				<div class="modal fade" id="goodsLibrary" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog  pano_dialog landscape_dialog" style="width: 400px; height: 357px;">
+				<div class="modal-content">
+				    <div class="modal-header clear">
+				        <h4 class="modal-title fl">隐藏商品库提示</h4>
+				        <i class="i_close" data-dismiss="modal"></i>
+				    </div>
+				    <div class="modal-body modal_body" style="text-align:center; height:210px;height: 140px;">
+				        <img src="#{request.contextPath}/asset/images/purchase/shelfTip.png" style="margin: 25px 0 20px 0;"/>
+				        <p style="line-height: 24px;" id="orderMesg">
+				          	隐藏商品库，为避免数据误差，建议您将商品库存信息重置为<span style="color:#FF9933">0</span>！
+				        </p>
+				    </div>
+				    <div class="modal-footer" style="text-align: center;">
+				        <button type="button"  class="btn btn-primary" data-dismiss="modal">确定</button>
+				    </div>
+				</div>
+				</div>
+				</div>
+				
+              </div>
+            </td> 
+            <script type="text/javascript" src="#{request.contextPath}/asset/new/jquery.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/asset/new/bootstrap.min.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/new/bootstrap-select.min.js"></script>		
+			
+            <script type="text/javascript">
+          //<![CDATA[
+          var purchaseServiceFlag = "#{enterpriseSettingsHome.purchaseServiceFlag}";
+          function previewImage(id,file){
+	     	var MAXWIDTH  = 0; 
+	      	var MAXHEIGHT = 0;
+	    	 MAXWIDTH  = document.getElementById(id).offsetWidth; 
+	         MAXHEIGHT = document.getElementById(id).offsetHeight;
+            var div = document.getElementById(id);
+	      	if (file.files && file.files[0]){
+	          var img;
+	 	      div.innerHTML = '<img class=imghead id='+id+'>';
+	 	      img = document.getElementById(id);
+	          img.onload = function(){
+	            var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+	            img.width  =  rect.width;
+	            img.height =  rect.height;
+	//             img.style.marginLeft = rect.left+'px';
+	            img.style.marginTop = rect.top+'px';
+	          }
+	          var reader = new FileReader();
+	          reader.onload = function(evt){img.src = evt.target.result;}
+	          reader.readAsDataURL(file.files[0]);
+	       }else{ //兼容IE
+		        var sFilter='filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
+		        file.select();
+		        var src = document.selection.createRange().text;
+		        var img;
+			    	div.innerHTML = '<img class=imghead id='+id+'>';
+			           img = document.getElementById(id);
+			           img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
+			           var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+			           status =('rect:'+rect.top+','+rect.left+','+rect.width+','+rect.height);
+			           div.innerHTML = "<div class=divhead id='"+id+"' style='position:absolute; width:"+rect.width+"px;height:"+rect.height+"px;margin-top:"+rect.top+"px;"+sFilter+src+"\"'></div>";
+		  }
+		  jQuery(".fPicture").css("display","");
+    }
+
+	function selectChange(obj){
+		jQuery("#user\\:freezeSelect").val(obj);
+		jQuery("#freezeImgHid").css("display","");
+		jQuery("#freeze").html("您的商品冻结时间段已更改！");
+	}
+                
+	function clacImgZoomParam( maxWidth, maxHeight, width, height ){
+        var param = {top:0, left:0, width:maxWidth, height:maxHeight};
+        return param;
+    }
+          jQuery(document).ready(function(){
+        	    jQuery('.selectpicker').selectpicker();
+            	var promptMessage = "#{enterpriseSettingsHome.promptMessage}";
+				if(promptMessage != ""){
+					document.getElementById("productMsg").innerHTML = promptMessage;
+					jQuery("#myModal").modal('show');
+				}
+				jQuery('input[type=checkbox]').iCheck({
+				  checkboxClass: 'icheckbox_minimal-blue',
+				  increaseArea: '20%' // optional
+				});
+
+				//检测是否启用
+				jQuery('input[name=detectChe]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:detectEnable").val(0);
+					}else{
+						jQuery("#user\\:detectEnable").val(1);
+					}
+				});
+				/* //采收入库
+				jQuery('input[name=storageChe]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:harvestStorageEnable").val(0);
+					}else{
+						jQuery("#user\\:harvestStorageEnable").val(1);
+					}
+				}); */
+
+				//短信报警设置
+				jQuery('input[name=smsChe]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#smsEnable").val(0);
+						jQuery("#smsDiv").hide();
+					}else{
+						jQuery("#smsEnable").val(1);//启用
+						jQuery("#smsDiv").show();
+					}
+				});
+
+				//预采库存设置
+				jQuery('input[name=iCheckPre]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:preProduct").val(0);
+					}else{
+						jQuery("#user\\:preProduct").val(1);//启用
+					}
+				});
+				//投入品审核设置
+				jQuery('input[name=iCheckInputsAudit]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:inputsAudit").val(0);
+					}else{
+						jQuery("#user\\:inputsAudit").val(1);//启用
+					}
+				});
+				//自动生成物料信息
+				jQuery('input[name=autoMate]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:autoCreateMaterial").val(0);
+					}else{
+						jQuery("#user\\:autoCreateMaterial").val(1);//启用
+					}
+				});
+
+				//自动生成商品信息
+				jQuery('input[name=autoCommo]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:autoCreateCommodity").val(0);
+					}else{
+						jQuery("#user\\:autoCreateCommodity").val(1);//启用
+					}
+				});
+				//商品快速入库审核
+				jQuery('input[name=proAudit]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:productStorageAudit").val(0);
+					}else{
+						jQuery("#user\\:productStorageAudit").val(1);//启用
+					}
+				});
+				//采摘订单设置
+				jQuery('input[name=pickCheck]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:pick_using").val(0);
+					}else{
+						jQuery("#user\\:pick_using").val(1);//启用
+					}
+				});
+				//订单发货自动出库设置
+				jQuery('input[name=iCheckRepertory]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:orderRepertory").val(0);
+					}else{
+						jQuery("#user\\:orderRepertory").val(1);//启用
+					}
+				});
+				jQuery('input[type=radio]').iCheck({
+				  radioClass: 'iradio_minimal-blue',
+				  increaseArea: '20%' // optional
+				});
+				jQuery("input[name='iCheckPlant']").on("ifClicked", function(event){
+					if (this.checked) {
+						jQuery(this).attr("class","bbb");
+            		} else {
+            			jQuery(this).attr("class","aaa");
+            		}
+				});	
+				jQuery("input[name='iRadio']").on("ifClicked", function(event){
+					var val = jQuery(this).attr("bb");
+					jQuery("#harvestObj").val(val);
+				});
+				jQuery("input[name='unitRadio']").on("ifClicked", function(event){
+					var val = jQuery(this).attr("cc");
+					jQuery("#harvestUnit").val(val);
+				});
+				jQuery("input[name='productSourceRadio']").on("ifClicked", function(event){
+					var val = jQuery(this).attr("cc");
+					jQuery("#user\\:productListSource").val(val);
+				});
+				jQuery("input[name='iCheckResum']").on("ifClicked", function(event){
+					if (this.checked) {
+						jQuery(this).attr("class","ddd");
+            		} else {
+            			jQuery(this).attr("class","ccc");
+            		}
+				});
+				//库存回显
+				jQuery('input[name=stockEcho]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:stockEchoFlagHidden").val(0);
+					}else{
+						jQuery("#user\\:stockEchoFlagHidden").val(1);
+					}
+				}); 
+				//订单设置
+				jQuery("input[name='iCheckOrder']").on("ifClicked", function(event){
+					if (this.checked) {
+						var idParam = this.id;
+						jQuery("#imgHid").show();
+						if(idParam == "orderCheck_1"){
+							jQuery("#spanId").html("您的待审核订单会自动移至订单待处理中!");
+						}else if(idParam == "orderCheck_2"){
+							jQuery("#spanId").html("您的待处理订单会自动移至订单理货中!");
+						}else if(idParam == "orderCheck_3"){
+							jQuery("#spanId").html("您的待审核退货订单将直接跳过审核进入退货已完成！");
+						}else if(idParam == "orderCheck_4"){
+							jQuery("#spanId").html("您将无法接收到大客户订单！");
+						}else if(idParam == "orderCheck_5"){
+							jQuery("#spanId").html("您的理货中订单将会自动移至下个订单状态！");
+						}else if(idParam == "orderCheck_6"){
+							jQuery("#spanId").html("您的待发货订单将会全部自动发货并移至下个订单状态！");
+						}else if(idParam == "orderCheck_7"){
+							jQuery("#spanId").html("您的配送中订单将会全部自动签收完成并移至订单已完成!");
+						}
+						jQuery(this).attr("class","eee");
+            		} else {
+            			if(purchaseServiceFlag == "1"){
+            				if(idParam == "orderCheck_6"){
+            					jQuery("#orderMesg").html("如果您取消启用【订单待发货】模块，<br/>这对访问您【一键购买】的消费者会产生误会，<br/>强烈建议您保持启用状态。");
+            					$("#shelfModal").modal('show');
+                    		}
+                			if(idParam == "orderCheck_7"){
+                				jQuery("#orderMesg").html("如果您取消启用【订单配送中】模块，<br/>这对访问您【一键购买】的消费者会产生误会，<br/>强烈建议您保持启用状态。");
+                				$("#shelfModal").modal('show');
+                        	}
+                		}
+            			jQuery(this).attr("class","fff");
+            		}
+				});
+				//农事自定义设置
+				jQuery("input[name='agriculturalCheck']").on("ifClicked", function(event){
+					if (this.checked) {
+						jQuery(this).attr("class","hhh");
+            		} else {
+            			jQuery(this).attr("class","ggg");
+            		}
+				});
+				//采收自定义设置
+				jQuery("input[name='myHarvestCheck']").on("ifClicked", function(event){
+					if (this.checked) {
+						jQuery(this).attr("class","vvv");
+            		} else {
+            			jQuery(this).attr("class","rrr");
+            		}
+				});
+				//推送设置
+				jQuery("input[name='pushname']").on("ifClicked", function(event){
+					if (!this.checked) {
+	        	 		if(jQuery(this).attr('id')=="push1"){
+		           			jQuery('#push0').parent().iCheck('uncheck');
+		          		}else{
+		             		jQuery('#push1').parent().iCheck('uncheck');
+		            	}
+		       		}
+					
+				});
+				
+/* 				jQuery("input[name='user:qymc_color']").parent().find(".rich-color-picker-icon").bind("click",function(){
+					setTimeout("colorPic1('qymc_color')",10);				
+				});
+				jQuery("input[name='user:area_color']").parent().find(".rich-color-picker-icon").bind("click",function(){
+					setTimeout("colorPic1('area_color')",10);
+				});
+				jQuery("input[name='user:tunnel_color']").parent().find(".rich-color-picker-icon").bind("click",function(){
+					setTimeout("colorPic1('tunnel_color')",10);
+				});
+ */
+				jQuery(".rich-color-picker-input").css({"width":"0px","border":"0px"});
+				jQuery(".rich-color-picker-new-color").remove();
+				jQuery(".rich-color-picker-new-color").remove();
+				jQuery(".rich-color-picker-current-color").remove();
+				jQuery(".rich-color-picker-rgb-r").remove();
+				jQuery(".rich-color-picker-rgb-g").remove();
+				jQuery(".rich-color-picker-rgb-b").remove();
+				jQuery(".rich-color-picker-hsb-h").remove();
+				jQuery(".rich-color-picker-hsb-s").remove();
+				jQuery(".rich-color-picker-hsb-b").remove();
+				jQuery(".rich-color-picker-colors-input").remove();
+				jQuery(".rich-color-picker-hex-wrapper").remove();
+				jQuery(".rich-color-picker-ext").css("height","195px");
+				jQuery(".rich-color-picker-wrapper").css("left","10px");
+				jQuery(".rich-color-picker-wrapper").css("width","200px");
+				jQuery(".rich-color-picker-submit").css({"top":"170px","left":"30px","width": "50px", "height": "20px"}).html("确定");
+				jQuery(".rich-color-picker-cancel").css({"top":"170px","left":"120px","width": "50px", "height": "20px"}).html("取消");
+
+				//一键购买入口
+				var purchaseInFalg = "#{enterpriseSettingsHome.purchaseInFalg}";
+				if(purchaseInFalg == "1"){
+					jQuery("#toMartket").click();
+				}
+
+				//订单-库存流程简化
+			/* 	jQuery('input[name=orderProcessSimp]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:orderInventorySimplify").val(0);
+					}else{
+						jQuery("#user\\:orderInventorySimplify").val(1);
+					}
+				});  */
+
+				//订单-库存流程简化
+				jQuery('input[name=orderProcessSimp]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery('#inventory').prepend('<option value="1">商品库 </option>');
+						jQuery('#inventory').selectpicker('refresh');
+						jQuery('#inventory').selectpicker('refresh');
+						jQuery('#inventory').selectpicker("val",1);
+						
+						jQuery("#user\\:orderInventorySimplify").val(0);
+						jQuery("#orderHiddenDiv").hide();
+					}else{
+						jQuery('#inventory option').eq(0).remove();
+						jQuery('#inventory').selectpicker('refresh');
+						jQuery('#inventory').selectpicker("val",2);
+						jQuery("#user\\:orderInventorySimplify").val(1);
+						jQuery("#orderHiddenDiv").show();
+					}
+				}); 
+				//原料自动出库顺序
+				jQuery("input[name='sorting']").on("ifClicked", function(event){
+					var val = jQuery(this).attr("cc");
+					jQuery("#user\\:materialOutSorting").val(val);
+				});
+				//商品自动出库顺序
+				jQuery("input[name='shopSorting']").on("ifClicked", function(event){
+					var val = jQuery(this).attr("cc");
+					jQuery("#user\\:productOutSorting").val(val);
+				});
+				//商品库隐藏设置
+				jQuery('input[name=shopRoom]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:productStore").val(0);
+					}else{
+						jQuery("#user\\:productStore").val(1);
+						jQuery("#goodsLibrary").modal('show');
+					}
+				}); 
+				//负库存设置
+				jQuery('input[name=enableInventory]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:negativeInventory").val(0);
+					}else{
+						jQuery("#user\\:negativeInventory").val(1);
+					}
+				}); 
+				//盘点取消批次
+				jQuery('input[name=noBatch]').on("ifClicked", function(event){
+					if(this.checked){
+						jQuery("#user\\:inventoryNoBatchFlag").val(0);
+					}else{
+						jQuery("#user\\:inventoryNoBatchFlag").val(1);
+					}
+				}); 
+			});
+
+          jQuery('input[name=iCheckPlant]').each(function(i){
+			var clName = this.className;
+			if(clName == "aaa"){
+				jQuery(this).attr("checked","checked");
+			}
+          });
+            var detectEnable = "#{enterpriseSettingsHome.instance.detectEnable}";//检测
+            if(detectEnable == "1"){
+            	jQuery("#detectChe").iCheck('check');
+            	jQuery("#user\\:detectEnable").val(1);
+            }else{
+            	jQuery("#user\\:detectEnable").val(0);
+            }
+           // var harvestStorageEnable = "#{enterpriseSettingsHome.instance.harvestStorageEnable}";//采收入库
+            /* if(harvestStorageEnable == "1"){
+            	jQuery("#storageChe").iCheck('check');
+            	jQuery("#user\\:harvestStorageEnable").val(1);
+            }else{
+            	jQuery("#user\\:harvestStorageEnable").val(0);
+            } */
+
+            var smsAlarmEnable = "#{enterpriseSettingsHome.instance.smsAlarm}";//短信报警
+            if(smsAlarmEnable == "1"){
+            	jQuery("#smsChe").iCheck('check');
+            	jQuery("#smsEnable").val(1);
+            	jQuery("#smsDiv").show();
+            }else{
+            	jQuery("#smsEnable").val(0);
+            }
+
+            var preProduct = "#{enterpriseSettingsHome.preProduct}";//预采库存
+            if(preProduct == "1"){
+            	jQuery("#preCheck_1").iCheck('check');
+            	jQuery("#user\\:preProduct").val(1);
+            }else{
+            	jQuery("#user\\:preProduct").val(0);
+            }
+            <!-- 投入品审核启用，邱晨阳 -->
+            var inputsAudit = "#{enterpriseSettingsHome.inputsAudit}";//投入品审核
+            if(inputsAudit == "1"){
+            	jQuery("#inputsAuditId").iCheck('check');
+            	jQuery("#user\\:inputsAudit").val(1);
+            }else{
+            	jQuery("#user\\:inputsAudit").val(0);
+            }
+            <!-- 投入品审核启用，邱晨阳 -->
+            var autoMate = "#{enterpriseSettingsHome.autoCreateMaterial}";//自动生成物料信息
+            if(autoMate == "1"){
+            	jQuery("#autoMate").iCheck('check');
+            	jQuery("#user\\:autoCreateMaterial").val(1);
+            }else{
+            	jQuery("#user\\:autoCreateMaterial").val(0);
+            }
+
+            var autoCommo = "#{enterpriseSettingsHome.autoCreateCommodity}";//自动生成商品信息
+            if(autoCommo == "1"){
+            	jQuery("#autoCommo").iCheck('check');
+            	jQuery("#user\\:autoCreateCommodity").val(1);
+            }else{
+            	jQuery("#user\\:autoCreateCommodity").val(0);
+            }
+            
+			var proAudit="#{enterpriseSettingsHome.productStorageAudit}";//商品快速入库审核
+			if(proAudit == "1"){
+            	jQuery("#proAudit").iCheck('check');
+            	jQuery("#user\\:productStorageAudit").val(1);
+            }else{
+            	jQuery("#user\\:productStorageAudit").val(0);
+            }
+
+            
+            var orderRepertory = "#{enterpriseSettingsHome.orderRepertory}";//订单发货自动出库
+            if(orderRepertory == "1"){
+            	jQuery("#repertoryCheck").iCheck('check');
+            	jQuery("#user\\:orderRepertory").val(1);
+            }else{
+            	jQuery("#user\\:orderRepertory").val(0);
+            }
+            var proFreeze = "#{enterpriseSettingsHome.proFreeze}";//商品冻结
+            var select = "#{enterpriseSettingsHome.freezeSelect}";//商品冻结选项
+            if(proFreeze == "1"){
+            	jQuery("#ProFreezeCheck_1").iCheck('check');
+            	jQuery("#user\\:proFreeze").val(1);
+            	jQuery("#selectId").css("display","block");
+            	jQuery("#user\\:freezeSelect").val(select);
+            	jQuery("#timeId").val(select);
+            }else{
+            	jQuery("#user\\:proFreeze").val(0);
+            	jQuery("#selectId").css("display","none");
+            }
+        	//盘点取消批次设置
+			var inventoryNoBatch = "#{enterpriseSettingsHome.inventoryNoBatchFlag}";
+			if(inventoryNoBatch == "1"){
+            	jQuery("#noBatch").iCheck('check');
+            	jQuery("#user\\:inventoryNoBatchFlag").val(1);
+            }else{
+            	jQuery("#user\\:inventoryNoBatchFlag").val(0);
+            }
+         
+         //商品冻结设置
+			jQuery('input[name=iCheckProFreeze]').on("ifClicked", function(event){
+				if(this.checked){
+					jQuery("#user\\:proFreeze").val(0);
+					jQuery("#user\\:freezeSelect").val(0);
+					var timeid = '#{enterpriseSettingsHome.freezeSelect}';
+					jQuery("#timeId").val(timeid==''?0:timeid);
+					jQuery("#selectId").css("display","none");
+					jQuery("#freeze").html("您已关闭商品冻结时间设置！");
+					jQuery("#freezeImgHid").css("display","");
+				}else{
+					jQuery("#user\\:proFreeze").val(1);//启用
+					jQuery("#user\\:freezeSelect").val(0);
+					var timeid = '#{enterpriseSettingsHome.freezeSelect}';
+					jQuery("#timeId").val(0);
+					jQuery("#selectId").css("display","block");
+					jQuery("#freeze").html("");
+					jQuery("#freezeImgHid").css("display","none");
+				}
+			}); 
+            
+			var harvest = "#{enterpriseSettingsHome.instance.harvestType}";//采收模块设置
+			var harvest2 = "#{enterpriseSettingsHome.instance.harvestUnit}";//采收单位设置
+			var productSource = "#{enterpriseSettingsHome.instance.productListSource}";//商品入库列表来源 
+			if(harvest == "1" || harvest == "0"){
+				jQuery("#harvestObj").val(1);
+				jQuery("#easyHarvest").iCheck('check');
+			}else{
+				jQuery("#harvestObj").val(2);
+				jQuery("#hardHarvest").iCheck('check');
+			}
+			
+			if(harvest2 == "1" || harvest2 == "0"){
+				jQuery("#harvestUnit").val(1);
+				jQuery("#unitG").iCheck('check');
+			}else{
+				jQuery("#harvestUnit").val(2);
+				jQuery("#unitKg").iCheck('check');
+			}
+			if(productSource == "1"){
+				jQuery("#productInfo").iCheck("check");
+				jQuery("#user\\:productListSource").val(1);
+			}else{
+				jQuery("#productOut").iCheck("check");
+				jQuery("#user\\:productListSource").val(2);
+			}
+			var resume = "#{enterpriseSettingsHome.resumStr}";//履历模块设置
+			if(resume != ""){
+				if(resume.indexOf(",")!=-1){
+					var resumeStr = resume.split(",");
+					for(var i = 0;i<resumeStr.length;i++){
+						jQuery("#resumCheck_"+resumeStr[i]).iCheck('check');
+						jQuery("#resumCheck_"+resumeStr[i]).attr("class","ccc");
+						} 
+				}else{
+					jQuery("#resumCheck_"+resume).iCheck('check');
+					jQuery("#resumCheck_"+resume).attr("class","ccc");
+				}
+			}
+
+			var order = "#{enterpriseSettingsHome.orderStr}";//订单设置
+			if(order != ""){
+				if(order.indexOf(",")!=-1){
+					var orderStr = order.split(",");
+					for(var i = 0;i<orderStr.length;i++){
+						jQuery("#orderCheck_"+orderStr[i]).iCheck('check');
+						jQuery("#orderCheck_"+orderStr[i]).attr("class","fff");
+					} 
+				}else{
+					jQuery("#orderCheck_"+order).iCheck('check');
+					jQuery("#orderCheck_"+order).attr("class","fff");
+				}
+			}
+			
+			var farm = "#{enterpriseSettingsHome.farmStr}";//农事自定义设置
+			if(farm != ""){
+				if(farm.indexOf(",")!=-1){
+					var farmStr = farm.split(",");
+					for(var i = 0;i<farmStr.length;i++){
+						jQuery("#agriculturalCheck_"+farmStr[i]).iCheck('check');
+						jQuery("#agriculturalCheck_"+farmStr[i]).attr("class","ggg");
+					} 
+				}else{
+					jQuery("#agriculturalCheck_"+farm).iCheck('check');
+					jQuery("#agriculturalCheck_"+farm).attr("class","ggg");
+				}
+			}
+			var harvestStr = "#{enterpriseSettingsHome.harvestStr}";//采收自定义设置
+			if(harvestStr != ""){
+				if(harvestStr.indexOf(",")!=-1){
+					var harvestArr = harvestStr.split(",");
+					for(var i = 0;i<harvestArr.length;i++){
+						jQuery("#myHarvestCheck_"+harvestArr[i]).iCheck('check');
+						jQuery("#myHarvestCheck_"+harvestArr[i]).attr("class","rrr");
+					} 
+				}else{
+					jQuery("#myHarvestCheck_"+harvestStr).iCheck('check');
+					jQuery("#myHarvestCheck_"+harvestStr).attr("class","rrr");
+				}
+			}
+			var stockEcho = "#{enterpriseSettingsHome.stockEchoFlag}";
+			if(stockEcho == "1"){
+				jQuery("#stockEcho").iCheck("check");
+				jQuery("#user\\:stockEchoFlagHidden").val(1);
+			}else{
+				jQuery("#stockEcho").iCheck("uncheck");
+				jQuery("#user\\:stockEchoFlagHidden").val(0);
+			}
+		/* 	var order = "#{enterpriseSettingsHome.orderStr}";//订单设置
+			if(order != ""){
+				if(order.indexOf(",")!=-1){
+					var orderStr = order.split(",");
+					for(var i = 0;i<orderStr.length;i++){
+						jQuery("#orderCheck_"+orderStr[i]).iCheck('check');
+						jQuery("#orderCheck_"+orderStr[i]).attr("class","fff");
+						} 
+				}else{
+					jQuery("#orderCheck_"+order).iCheck('check');
+					jQuery("#orderCheck_"+order).attr("class","fff");
+				}
+			} */
+			var pick = "#{enterpriseSettingsHome.pickUsing}";
+			if(pick == 1){
+				jQuery('#pickCheck').parent().iCheck('check');
+			}
+			
+			jQuery('#push1').parent().iCheck('check');
+			var push="#{enterpriseSettingsHome.pushStr}";
+			if(push==0){
+				jQuery('#push0').parent().iCheck('check');
+				jQuery('#push1').parent().iCheck('uncheck');
+			}else{
+				jQuery('#push1').parent().iCheck('check');
+				jQuery('#push0').parent().iCheck('uncheck');
+			}
+
+			//订单-库存流程简化
+			var orderInventorySimplify = "#{enterpriseSettingsHome.orderInventorySimplify}";
+            if(orderInventorySimplify == "1"){
+            	jQuery("#orderProcessSimp").iCheck('check');
+            	jQuery("#user\\:orderInventorySimplify").val(1);
+            	
+            	jQuery('#inventory').empty();
+            	jQuery('#inventory').append('<option value="2">原料库 </option>');
+				jQuery('#inventory').selectpicker('refresh');
+            	
+            	jQuery("#orderHiddenDiv").show();
+            }else{
+
+            	jQuery('#inventory').empty();
+            	jQuery('#inventory').append('<option value="1">商品库 </option><option value="2">原料库 </option>');
+				jQuery('#inventory').selectpicker('refresh');
+                
+            	jQuery("#orderHiddenDiv").hide();
+            	jQuery("#user\\:orderInventorySimplify").val(0);
+            }
+
+			//原料自动出库顺序
+			var materialOutSorting = "#{enterpriseSettingsHome.instance.materialOutSorting}";
+			if(materialOutSorting == "1"){
+				jQuery("#timeDesc").iCheck("check");
+				jQuery("#user\\:materialOutSorting").val(1);
+			}else{
+				jQuery("#timeAsc").iCheck("check");
+				jQuery("#user\\:materialOutSorting").val(2);
+			}
+			//商品自动出库顺序
+			var productOutSorting = "#{enterpriseSettingsHome.instance.productOutSorting}";
+			if(productOutSorting == "1"){
+				jQuery("#shopTimeDesc").iCheck("check");
+				jQuery("#user\\:productOutSorting").val(1);
+			}else{
+				jQuery("#shopTimeAsc").iCheck("check");
+				jQuery("#user\\:productOutSorting").val(2);
+			}
+			//商品库隐藏设置
+			var productStore = "#{enterpriseSettingsHome.productStore}";
+            if(productStore == "1"){
+            	jQuery("#shopRoom").iCheck('check');
+            	
+            	jQuery("#user\\:productStore").val(1);
+            }else{
+                
+            	jQuery("#user\\:productStore").val(0);
+            }
+			//负库存设置
+			var negativeInventory = "#{enterpriseSettingsHome.negativeInventory}";
+            if(negativeInventory == "1"){
+            	jQuery("#enableInventory").iCheck('check');
+            	jQuery("#user\\:negativeInventory").val(1);
+            }else{
+            	jQuery("#user\\:negativeInventory").val(0);
+            }
+          	//商品自动出库顺序
+			var negativeInventoryType = "#{enterpriseSettingsHome.instance.negativeInventoryType}";
+			if(negativeInventoryType != ''){
+				jQuery("#inventory").selectpicker("val",negativeInventoryType);
+			}
+			
+			function addGoods(index){
+				var dengjiName = jQuery("#dengjiName").val();
+				var trLen = jQuery(".set_wuliaodj tr").length;
+				var str = "";
+				str += '<tr id="tr'+trLen+'"><td width="252"  class="goods" id="editGoodsName'+trLen+'">'+dengjiName+'</td>';
+				str += '<td width="140"><a class="base_listEdit" onclick="editGoods('+trLen+')" data-target="#myModal3" data-toggle="modal" title="编辑" href="javascript:void(0);"></a>';
+				str += '<a class="base_listDelete" onclick="deleteGoods('+trLen+')" href="javascript:void(0);" title="删除"></a>';
+				str += '</td></tr>';
+				jQuery(".set_wuliaodj").append(str);
+				jQuery("#dengjiName").val("");
+				jQuery("#myModal2,#myModal3").modal('hide');
+			}
+			var editId;
+			function editGoods(index){
+				editId = index;
+				var goodsName = jQuery("#editGoodsName"+index).html();
+				jQuery("#editGoodsId").val(goodsName);
+			}
+			function saveGoods(){
+				var name = jQuery("#editGoodsId").val();
+				var goodsName = jQuery("#editGoodsName"+editId).html(name);
+				editId = 0;
+				jQuery("#myModal3").modal('hide');
+			}
+			function deleteGoods(index){
+				if(confirm('确定删除？')){
+					jQuery("#tr"+index).remove();	
+				}
+			}
+			function checkSubmit(){
+				var plantIdAll = "";
+				var goodsValAll = "";
+				var resumIdAll = "";
+				var orderIdAll = "";//订单
+				var farmStrAll = "";//农事设置
+				var harvestAll = "";//采收自定义
+				var pushName="";
+				var plantLen = jQuery(".aaa").length;
+				if(plantLen == 0){
+					document.getElementById("productMsg").innerHTML = "至少选择一种种植标准！";
+					jQuery("#myModal").modal('show');
+			      return false;
+				}
+				var resumeLen = jQuery(".ccc").length;
+				if(resumeLen < 1){
+					document.getElementById("productMsg").innerHTML = "至少选择一种履历类型！";
+					jQuery("#myModal").modal('show');
+			      return false;
+				}
+				var startObj = jQuery("#user\\:alarmStartTime").val();
+				var endObj = jQuery("#user\\:alarmEndTime").val();
+				if(parseInt(startObj) > parseInt(endObj)){
+					document.getElementById("productMsg").innerHTML = "报警开始时间不能大于结束时间！";
+					jQuery("#myModal").modal('show');
+			      return false;
+				}
+
+				var proFreeze=jQuery("#user\\:proFreeze").val();
+				if(proFreeze=="1"){
+					var freezeSelect=jQuery("#user\\:freezeSelect").val();
+					if(freezeSelect=="0"){
+						document.getElementById("productMsg").innerHTML = "请选择商品冻结时间段，或者取消勾选该设置，再点击提交！";
+						jQuery("#myModal").modal('show');
+						return false;
+					}
+				}
+				jQuery(".aaa").each(function(){
+					var idNew = this.id;
+					plantIdAll += idNew.split("_")[1]+",";
+				});
+				jQuery(".goods").each(function(){
+					var goodsName = jQuery(this).html();
+					goodsValAll += goodsName+",";
+				});
+				jQuery(".ccc").each(function(){
+					var idNew2 = this.id;
+					resumIdAll += idNew2.split("_")[1]+",";
+				});
+				jQuery(".fff").each(function(){
+					var idNew2 = this.id;
+					orderIdAll += idNew2.split("_")[1]+",";
+				});
+				jQuery(".ggg").each(function(){
+					var idNew2 = this.id;
+					farmStrAll += idNew2.split("_")[1]+",";
+				});
+				if(farmStrAll!=""){
+					farmStrAll=farmStrAll.substring(0,farmStrAll.length-1);
+				}
+				//自定义采收
+				jQuery(".rrr").each(function(){
+					var idNew2 = this.id;
+					harvestAll += idNew2.split("_")[1]+",";
+				});
+				if(harvestAll!=""){
+					harvestAll=harvestAll.substring(0,harvestAll.length-1);
+				}
+				jQuery("input[name='pushname']").each(function(){
+					if(jQuery(this).parent().attr('class').indexOf('checked')!=-1){
+						pushName=jQuery(this).attr('val');
+					}
+				})
+				jQuery("#user\\:pushStr").val(pushName);
+				jQuery("#user\\:plantStr").val(plantIdAll);
+				jQuery("#user\\:resumStr").val(resumIdAll);
+				jQuery("#user\\:goodsStr").val(goodsValAll);
+				jQuery("#user\\:orderStr").val(orderIdAll);
+				jQuery("#user\\:farmStr").val(farmStrAll);
+				jQuery("#user\\:harvestStr").val(harvestAll);
+				jQuery("#user\\:loginSuccessLogoName").val(jQuery("#loginSuccessByte_p").attr("src"));
+				resumIdAll = "";
+				orderIdAll = "";
+				farmStrAll = "";
+
+				jQuery("#user\\:negativeInventoryType").val(jQuery("#inventory").val());
+				
+			}
+			function delLogoImg(){
+				jQuery(".fPicture").css("display","none");
+				jQuery("#loginSuccessByte_p").attr("src","");
+			}
+/* 			var ie7 = Sys.ie==7;
+			function colorPic1(objName){
+				var obj=jQuery("input[name='user:"+objName+"']");
+				var obj1=jQuery("#user\\:"+objName);
+				jQuery(obj).parent().parent().find(".rich-color-picker-wrapper").css({"top":jQuery(obj1).offset().top+1,"left":jQuery(obj1).offset().left+18,"position":"absolute","z-index":"4"}).show();
+				if(ie7){
+					jQuery(obj).parent().parent().find(".rich-color-picker-wrapper").css({"top":jQuery(obj1).offset().top+10,"left":jQuery(obj1).offset().left+18,"position":"absolute","z-index":"4"}).show();
+				}
+			} */
+			
+          //]]>
+			</script>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,302 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<style>
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:220px;}
+</style>
+#{stockControl.stockControlInit()}
+<td valign="top" width="100%">
+       	<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<div class="right_c">
+		<!-- 公用头部 开始 -->
+                	<div class="r_title clear" style="margin-bottom: 30px;">
+                    	<div class="r_t_l fl">生产管理&#160;&gt;&#160;&#160;<font size="3">农资管理</font></div>
+                        <div class="fr" style="margin-bottom:-1px;float:right;">
+                        	<ul class="cm_resumeList clear">
+                            	<li>
+                                	<a href="javascript:void(0)" disabled="true" class="borderBt" style="cursor:default;"><img src="../asset/images/tjsbg_01.jpg"/><span>库存</span></a>
+                                </li>
+                            	<li>
+                                	<a href="#{request.contextPath}/inputs/ExpireGoodsInfo.seam?dataType=0"><img src="../asset/images/tjsbg_02.jpg" /><span>过期</span></a>
+                                </li>
+                                	<li>
+                                	<a href="#{request.contextPath}/inputs/InOutRecord.seam?dataType=0"><img src="../asset/images/tjsbg_03.jpg" /><span>流水</span></a>
+                                </li>
+                            	<li>
+                                	<a href="#{request.contextPath}/inputs/InventoryRecordControl.seam?dataType=0"><img src="../asset/images/tjsbg_04.jpg" /><span>盘点</span></a>
+                                </li>
+                                <li>
+                                	<a href="#{request.contextPath}/inputs/InputStock.seam?dataType=0"><img src="../asset/images/tjsbg_05.png" /><span>农资库</span></a>
+                                </li>
+                        	</ul>
+                        </div>
+                    </div>
+		<!-- 公用头部 结束 -->
+		<s:div styleClass="z_r_ser" id="refreshLink">
+			<table cellpadding="0" cellspacing="0" class="cxtja">
+				<tr>
+					<td style=" float:left;" width="330">
+					   	<div class="col-lg-6" style="padding-left:0;">
+					        <div class="input-group">
+					          <div class="input-group-btn">
+					            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:4px 0 0 4px;"><span id="selectBut">全部</span> <span class="caret"></span></button>
+					            <ul class="dropdown-menu" role="menu" style="width: 80px;">
+					              <li><a href="javascript:void(0)" onclick="setInputsType('0')">全部</a></li>
+					              <li><a href="javascript:void(0)" onclick="setInputsType('2')">农药</a></li>
+					              <li><a href="javascript:void(0)" onclick="setInputsType('3')">肥料</a></li>
+					              <li><a href="javascript:void(0)" onclick="setInputsType('5')">种子</a></li>
+					              <li><a href="javascript:void(0)" onclick="setInputsType('4')">其他</a></li>
+					            </ul>
+					          </div>
+					          <input type="hidden" id="inputsType" value="" />
+					          <input type="text" id="goodsName" class="form-control" style="width:250px;" ></input>
+					        </div>
+					    </div>
+					</td>
+					<td style=" float:left;" width="200">
+					   	<div class="col-lg-6" style="padding-left:0;width:100%">
+					   		<div class="fl" style="width:60px;float:left">库存状态</div>
+					        <div class="input-group fl" style="width:105px;float:left">
+					          <div class="input-group-btn">
+					            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:4px 0 0 4px;width:100px"><span id="selectStockBut">全部</span> <span class="caret"></span></button>
+					            <ul class="dropdown-menu" role="menu" style="width: 100px;">
+					              <li><a href="javascript:void(0)" onclick="setInputsStockType('0')">全部</a></li>
+					              <li><a href="javascript:void(0)" onclick="setInputsStockType('1')">库存量不足</a></li>
+					              <li><a href="javascript:void(0)" onclick="setInputsStockType('2')">库存量充足</a></li>
+					            </ul>
+					          </div>
+					          <input type="hidden" id="inputStockType" value="" />
+					        </div>
+					    </div>
+					</td>
+					<td width="80" align="center" style="float:left;">
+						<button type="button" onclick="submitResult();" class="btn btn-primary" style="padding:6px 18px;">搜索</button>
+					</td>
+					<td width="100" style="float:right;display: #{s:hasRole('inputs_add')?'hidden':'none'}">
+					<s:link styleClass="btn btn-success" view="/inputs/CreateBreakage.seam?dataType=#{goodsInfoConstant.getEnteringGoodsType()}"  propagation="none" >投入品报损
+								<f:param name="baseId" value="#{stockControl.baseId}"/></s:link>
+					</td>
+					<td width="100" style="float:right;margin-right: 10px;display: #{s:hasRole('inputs_add')?'hidden':'none'}">
+						<s:link styleClass="btn btn-success" view="/inputs/EnteringOutStorage.seam?dataType=2&amp;goodsType=#{goodsInfoConstant.getEnteringGoodsType()}"  action="#{sessionTake.setStockParam(3)}" propagation="none" >投入品出库
+								<f:param name="baseId" value="#{stockControl.baseId}"/></s:link>
+					</td>
+					<td width="100" style="float:right;margin-right: 10px;display: #{s:hasRole('inputs_add')?'hidden':'none'}">
+						<s:link styleClass="btn btn-success" view="/inputs/EnteringInStorage.seam?dataType=1&amp;goodsType=#{goodsInfoConstant.getEnteringGoodsType()}"  action="#{sessionTake.setStockParam(3)}" propagation="none" >投入品入库
+								<f:param name="baseId" value="#{stockControl.baseId}"/></s:link>
+					</td>
+				</tr>
+			</table>                          
+		</s:div>
+		<div class="tree_dis">
+			<h:form id="stockControlFrom">
+				<a:commandLink id="refreshShow"  reRender="showPanel"></a:commandLink>
+			</h:form>
+			<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+				<div class="box2">
+					<div>
+						<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b2" style="border-top:1px solid #ddd;">
+							<tr>
+								<td class="tree_th" width="10%">ID</td>
+								<td class="tree_th" width="15%">物料编号</td>
+								<td class="tree_th" width="15%">物料名称</td>
+								<td class="tree_th" width="15%">总库存</td>
+								<td class="tree_th" width="10%">冻结数量</td>
+								<td class="tree_th" width="10%">实际库存</td>
+								<td class="tree_th" width="15%">规格</td>
+								<td class="tree_th" width="10%">操作</td>
+							</tr>
+						</table>
+						<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b">
+							<a:repeat value="#{stockControl.resultList}" var="_sc" rowKeyVar="_index">
+								<tr class="cm_nottt #{_index % 2 != 0 ? 'alt' : ''}">
+									<td height="48" width="10%">#{_sc[0]}</td>
+									<td width="15%">#{_sc[1]}</td>
+									<td width="15%">#{_sc[2]}</td>
+									<td width="15%">#{_sc[4]}</td>
+									<td width="10%">#{_sc[5]}</td>
+									<td width="10%"><font color="#{_sc[15]}">#{_sc[6]}</font></td>
+									<td width="15%">
+									<h:outputText  value="#{_sc[12] eq ''?'':_sc[12]}#{_sc[7]}#{_sc[13] eq null or _sc[13] eq '' ?'':'/'} #{_sc[13]}" />
+									</td>
+									<td width="10%">
+										<s:link propagation="none" style="display: #{s:hasRole('inputs_show')?'hidden':'none'}" view="/inputs/StockRecordDetail.xhtml" styleClass="list_view"  id="detailId" title="查看">
+											<f:param name="goodsInfoId" value="#{_sc[0]}" />
+											<f:param name="page" value="#{stockControl.page}" />
+										</s:link>&#160;
+									</td>
+								</tr>
+							</a:repeat>
+						</table>
+						<h:form id="pageFrom">
+							<h:inputHidden id="baseIdObj" value="#{stockControl.baseId}" />
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!stockControl.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" action="#{stockControl.pageFind(1)}" rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}" reRender="showPanel">首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" action="#{stockControl.pageFind(stockControl.previousPage)}" rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}" reRender="showPanel">&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{stockControl.showPageList}" rowKeyVar="_index">
+										<td class="td_t_b #{stockControl.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq stockControl.page ? 'onp' : ''}">
+											<a:commandLink id="thisPage" action="#{stockControl.pageFind(_page)}" reRender="showPanel">#{_page}</a:commandLink>
+										</td>
+									</a:repeat>
+									<s:fragment rendered="#{stockControl.hasNextPage}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" action="#{stockControl.pageFind(stockControl.nextPage)}" rendered="#{stockControl.hasNextPage and stockControl.totalPages > 1}" reRender="showPanel">&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" action="#{stockControl.pageFind(stockControl.totalPages)}" rendered="#{stockControl.hasNextPage and stockControl.totalPages > 1}" reRender="showPanel">尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{stockControl.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+			</rich:panel>
+		</div>
+		<div class="clear"></div>
+	</div>
+</td>
+<a:form>
+	<a:queue requestDelay="100" ignoreDupResponses="true"/>
+	<a:jsFunction name="queryResultFind" action="#{stockControl.queryResultFind}" reRender="refreshLink" oncomplete="refreshAction();" >
+		<a:actionparam name="goodsName" assignTo="#{stockControl.goodsCodeName}"/>
+		<a:actionparam name="dataType" assignTo="#{stockControl.dataType}"/>
+		<a:actionparam name="baseId" assignTo="#{stockControl.baseId}"/>
+		<a:actionparam name="flag" assignTo="#{stockControl.newFlag}"/>
+		<a:actionparam name="inputType" assignTo="#{stockControl.inputType}"/>
+		<a:actionparam name="page" assignTo="#{stockControl.page}"/>
+		<a:actionparam name="inputStockType" assignTo="#{stockControl.inputStockType}"/>
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript">
+//<![CDATA[
+var searchName = "";
+var inputsType;
+var inputStockType;
+var baseObj = '#{sessionTake.baseModel.baseId}';
+baseObj = baseObj == ''?0:baseObj;
+
+	var goodsType = 0;//物料类型 1原料 2成品 3辅料 
+	jquery(function(){
+		jquery(".selectpicker").selectpicker();
+	  	document.getElementById("stockControlFrom:refreshShow").onclick();
+	});
+	//提交搜索数据信息
+	function submitResult(){
+		var flag = 1;
+		var goodsName = jquery("#goodsName").val();
+		var inputType = jquery("#inputsType").val();
+		var inputsStockType = jquery("#inputStockType").val();
+		searchName = goodsName;
+		inputsType = inputType;
+		inputStockType = inputsStockType;
+		queryResultFind(goodsName, Number(goodsType),baseObj,flag,inputsType,1,inputStockType);
+	}
+
+	//刷新
+	function refreshAction(){
+		jquery(".selectpicker").selectpicker();
+		if(searchName != ""){
+			jquery("#goodsName").val(searchName);
+		}
+		if(inputStockType==1){
+			jQuery("#selectStockBut").text('库存量不足');
+		}else if(inputStockType==2){
+			jQuery("#selectStockBut").text('库存量充足');
+		}
+		var type = inputsType;
+		if(type==2){
+			jQuery("#selectBut").text('农药');
+		}else if(type==3){
+			jQuery("#selectBut").text('肥料');
+		}else if(type==4){
+			jQuery("#selectBut").text('其他');
+		}else if(type==5){
+			jQuery("#selectBut").text('种子');
+		}
+		jQuery("#inputsType").val(inputsType);
+		
+		var type1 = inputStockType;
+		if(type1==0){
+			jQuery("#selectBut").text('农药');
+		}else if(type==1){
+			jQuery("#selectBut").text('肥料');
+		}else if(type==2){
+			jQuery("#selectBut").text('其他');
+		}
+		jQuery("#inputStockType").val(inputStockType);
+		document.getElementById("stockControlFrom:refreshShow").onclick();
+	}
+
+	function setInputsType(type){
+		if(type==2){
+			jQuery("#selectBut").text('农药');
+		}else if(type==3){
+			jQuery("#selectBut").text('肥料');
+		}else if(type==4){
+			jQuery("#selectBut").text('其他');
+		}else if(type==0){
+			jQuery("#selectBut").text('全部');
+		}else if(type==5){
+			jQuery("#selectBut").text('种子');
+		}
+		inputsType = type;
+		jQuery("#inputsType").val(type);
+	}
+	function setInputsStockType(type){
+		if(type==0){
+			jQuery("#selectStockBut").text('全部');
+		}else if(type==1){
+			jQuery("#selectStockBut").text('库存量不足');
+		}else if(type==2){
+			jQuery("#selectStockBut").text('库存量充足');
+		}
+		inputStockType = type;
+		jQuery("#inputStockType").val(type);
+	}
+//]]>
+</script>
+</ui:define>
+</ui:composition>

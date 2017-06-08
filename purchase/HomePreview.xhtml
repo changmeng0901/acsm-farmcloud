@@ -1,0 +1,136 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_img.xhtml">
+
+	<ui:define name="body">
+	<title>商品详情页</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no"/>
+	<link rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/swiper.min.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/commons/scrollbar.css"/>
+	<link rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/reset.css"/>
+	<link rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/homePreview.css"/>
+	<style >
+		.dis{display:none}
+	</style>
+	#{weChatHomeDetail.init()}
+		<div class="buy-wrapper" id="wrapProductdetail">
+		<div class="more_wrapper" id="scroller">
+			<!--header-->
+			<div class="buy-header clearfixx">
+				<div class="header-lt">
+					<img id="logoimgtop" class="#{weChatHomeDetail.phs.logoFlg and null ne weChatHomeDetail.phs.logoImg and '' ne weChatHomeDetail.phs.logoImg ? '':'dis'}" src="#{weChatHomeDetail.phs.logoImg}"/>首页
+				</div>
+				<a class="header-rt" href="">
+					<img src="/asset/images/purchase/weChatBuy_record.png"/>我的记录
+				</a>
+			</div>
+			<!--body-->
+			<div class="buy-body">
+				<!-- Swiper 开始 -->
+			    <div class="swiper-container buyswiper-container" id="buyswiperContainer">
+			        <div class="swiper-wrapper" id="detailTop">
+			        <a:repeat value="#{weChatHomeDetail.topPicList}" var="_top" rowKeyVar="_index">
+			          <div class="swiper-slide">
+			                <a class="imgs-bg" href="javascript:;">
+			                	<img src="#{_top[0]}" />
+			                </a>
+			            </div>
+			          </a:repeat>
+			        </div>
+			        <!-- Add Pagination -->
+			        <div class="swiper-pagination"></div>
+			    </div>
+			    <input type="button" style="display:none" onclick="swiperFn()" id="topImgInit"/>
+				<div class="buy-title"   id="logoDiv"><img class="#{weChatHomeDetail.phs.logoFlg and  null ne weChatHomeDetail.phs.logoImg and  '' ne weChatHomeDetail.phs.logoImg ? '':'dis'}" id="qyLogo" src="#{weChatHomeDetail.phs.logoImg}" /><p id="purchaseName">#{weChatHomeDetail.phs.mallName}</p></div>
+				<!--search-->
+				<div class="search-box mb30">
+					<div class="search-lt">
+						<input type="text" id="searchProductName" value="请输入商品名称" />
+						<i class="iclose" id="closeEmpty" ></i>
+					</div>
+					<div class="search-btn"></div>
+				</div>
+				<!--banner-->
+				<div class="buy-banner #{weChatHomeDetail.phs.bannerFlag and null ne weChatHomeDetail.phs.bannerImg and '' ne weChatHomeDetail.phs.bannerImg ? '':'dis'}" id="buyBanner" >
+				 	<a:repeat value="#{weChatHomeDetail.bannerList}" var="_banner" rowKeyVar="_index">
+						<img src="#{_banner[0]}" />
+					</a:repeat>
+				</div> 
+				<!--list-->
+				<ul class="product-list clearfixx " id="productList">
+				 <a:repeat value="#{weChatHomeDetail.productList}" var="_product" rowKeyVar="_index">
+					<li>
+						<div class="pitem">
+							<img class="product-pic" src="#{_product[3]}" />
+							<div class="product-foot clearfixx">
+								<p class="txt-intro">#{_product[1]}</p>
+								<p class="txt-price"><span>#{_product[2]}</span>元</p>
+							</div>
+						</div>
+					</li>
+				</a:repeat>
+				</ul>
+				<div class="loading_more premium_more" id="premium_more"><p>加载中...</p></div>
+			</div>
+			<!--body end-->
+		</div>
+		</div>
+		<!--#############################################################-->
+		
+	<script type="text/javascript" src="/asset/js/purchase/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="/asset/js/purchase/jquery.lazyload.js"></script>
+	<script type="text/javascript" src="/asset/js/purchase/commons/swiper.min.js"></script>
+	<script type="text/javascript" src="/asset/js/purchase/commons/iscroll.js?v4"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	var swiper ;
+	swiperFn();
+	//swiper轮播图
+	function swiperFn(){
+	    swiper = new Swiper('.swiper-container', {
+	        pagination: '.swiper-pagination',
+	        paginationClickable: true,
+	        spaceBetween: 30,
+	        centeredSlides: true,
+	        //autoplay: 2500,
+	        autoplayDisableOnInteraction: false,
+	        loop: true,
+	        effect : 'fade',
+			fade: {
+			  crossFade: false,
+			}
+	    });
+	}
+
+    /* $('#searchProductName').focus(function(){
+        var txt_value = $(this).val();
+        if(txt_value=="请输入商品名称"){
+            $(this).val("");    
+        };  
+    });
+    $('#searchProductName').blur(function(){
+        var txt_value = $(this).val();
+        if(txt_value==""){
+            $(this).val("请输入商品名称"); 
+        };  
+    }); 
+
+    function clearSearch(){
+    	 $('#searchProductName').val(""); 
+    } */
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

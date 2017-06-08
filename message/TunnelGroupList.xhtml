@@ -1,0 +1,414 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+	
+	<ui:define name="foot">
+	<!-- 选择基地 开始 -->
+	<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+	<!-- 选择基地 结束 -->  
+	</ui:define>
+	<ui:define name="body">
+	<link href="#{request.contextPath}/asset/css/message/select2.css" rel="stylesheet" />
+	<link href="#{request.contextPath}/asset/css/message/jquery-picklist.css" rel="stylesheet" />	
+	<link href="#{request.contextPath}/asset/css/message/xxgl.css" rel="stylesheet" />
+	<link href="#{request.contextPath}/asset/css/dictionary/ziduangl.css" rel="stylesheet" />
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/settings/EnterpriseSettings.css" />
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/message/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/message/jquery-picklist.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/message/select2.js"></script>	    
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/EnterpriseLeftMenu.js"></script>
+	<style type="text/css">
+		.pickList_sourceList li, .pickList_targetList li{padding: 0px 10px;height: 28px;line-height: 28px;font-size: 12px;color: #6D6D6D;width:550px; }	
+	</style>
+	<script type="text/javascript">
+//<![CDATA[
+	jquery = jQuery.noConflict();
+	/* 模态框 */
+	jquery(function()
+	{
+		pickInit();
+	});
+	function pickInit(){
+		jquery("#nonnumeric").pickList({
+			sourceListLabel: "地块",
+			targetListLabel: "已选择"
+		});
+		jquery('#cm_close').click(function(){
+			jquery('#myModal').slideUp(function(){
+				jquery('.modal-backdrop ').slideUp(1000);
+			});	
+		});
+	}
+	//]]>	
+</script>
+
+<style>
+#showid .modal-dialog{ position:fixed; left:50%; margin-left:-305px; top:50%; margin-top:-246px;}
+.baseContentTd{padding:0 30px; margin:20px 0; height:30px;}
+.baseContentTd span{ float:left; line-height:30px;}
+.pickList_sourceList, .pickList_targetList{ height:200px; overflow:auto;}
+#showid .pickList_controlsContainer{ padding-top:56px; margin-right:4px;}
+.modal .modal-header .close, .modal .modal-header .close:link {background:  url("../asset/images/farmingIco16.jpg") no-repeat scroll 0 0; border: medium none;float: right;height: 11px;margin-top: 5px;opacity: 1;width: 11px;filter:alpha(opacity=100);}
+.modal .modal-header .close:hover, .modal-header .close:focus {background:  url("../asset/images/farmingIco17.jpg") no-repeat scroll 0 0;opacity: 1;filter:alpha(opacity=100);width:11px;}
+
+</style>
+	
+	
+		<td valign="top">
+                <div class="inbentory_file_main">
+                <!--左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_rkgl"></i>基础设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/user/UpdateEnterpriseSettings.seam?enterpriseId=#{sessionTake.enterpriseInfoId}','_self')" >
+                            	<i class="icon_sed"></i>企业设置                   	
+                            </li>
+                            <!-- 管理版和以前的版本（标准、白金...)显示 -->
+                            <h:panelGroup rendered="#{sessionTake.nowVersionService.basicService.basicServiceId==10 or sessionTake.nowVersionService.basicService.serviceType eq 1}">
+                            	<li class="sed_item" onclick="window.open('#{request.contextPath}/user/ModuleSettings.seam','_self')" ><i class="icon_sed"></i>模块配置</li>
+                            </h:panelGroup>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/dictionary/DataDicinfoList.seam','_self')" ><i class="icon_sed"></i>字段管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/user/EnterpriseCommunityList.seam','_self')" ><i class="icon_sed"></i>角色管理</li>
+                            <s:fragment rendered="#{enterpriseInfoHome.enterpriseInfo.govState}">
+	                        	<li class="sed_item" onclick="window.open('#{request.contextPath}/user/AuditInformationList.seam','_self')" ><i class="icon_sed"></i>审核信息</li>
+	                        </s:fragment>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/system/RecycleInfoList_1.seam','_self')" ><i class="icon_sed"></i>回收站</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_ckgl"></i>生产管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <h:panelGroup rendered="#{s:hasRole('certification')}">
+                            	<li class="sed_item" onclick="window.open('#{request.contextPath}/map/CertificationList.seam','_self')" ><i class="icon_sed"></i>认证信息</li>
+                            </h:panelGroup>
+                            <li class="sed_item sed_cur" onclick="window.open('#{request.contextPath}/message/TunnelGroupList.seam','_self')" ><i class="icon_sed"></i>分组管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/InputsInfoList.seam?goodsTypeInfoId=5','_self')" ><i class="icon_sed"></i>投入品信息</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_zkgl"></i>销售管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/GoodsInfoList.seam','_self')"><i class="icon_sed"></i>物料信息</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/product/ProductInfoList.seam','_self')" ><i class="icon_sed"></i>商品信息</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pdgl"></i>硬件管理设置</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/device/DeviceList.seam','_self')"><i class="icon_sed"></i>设备管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/device/VideoList.seam','_self')" ><i class="icon_sed"></i>视频管理</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/farming/AmRfidInfoList.seam','_self')" ><i class="icon_sed"></i>RFID卡管理</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!--左侧二级导航 -->
+				<!--右侧 -->
+                <div class="inbentory_content">
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">分组管理</font></div>
+                    </div>
+                     <!--分组内容开始-->
+                    <div class="base-navTabsWap mt20 pr30">
+	                    <ul class="nav nav-tabs" role="tablist" id="myTab" >
+	                        <li class="dikuai clear active"><a href="#dikuai" role="tab" data-toggle="tab">地块分组</a></li>
+	                        <li class="renyuan"><a href="#{request.contextPath}/message/SiteNewsUserPacketList.seam">消息分组</a></li>
+	                    </ul>
+                     <!--添加按钮开始-->
+		                    <div class="z_r_ser" style="float:right;margin-top:-43px;margin-bottom:0px;">
+		                        <input style="margin-right: 5px;" type="button" value="添加" class="btn btn-success" onclick="changeInitial()" />
+		                    </div>
+		                    <!--添加按钮结束-->
+					<br/>
+						<div class="tab-content">
+						 <!--地块分组选项卡内容开始-->
+						 <div class="tab-pane active" id="dikuai">
+		                    
+		                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+		                    	<tr>
+		                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+		                    		<td colspan="7" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+		                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+		                    	</tr>
+		                    	<tr>
+		                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+		                    		<th class="ze_bg" width="7%">序号</th>
+		                    		<th class="ze_bg" width="20%">名称</th>
+		                    		<th class="ze_bg" width="42%">包含地块</th>
+		                    		<th class="ze_bg" width="17%">创建时间</th>
+		                    		<th class="ze_bg" width="14%">操作</th>
+		                            
+		                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+		                    	</tr>
+		                    	<!--<rich:dataList value="#{tunnelGroupList.resultList}" var="_tunnelGroup" rendered="#{not empty tunnelGroupList.resultList}" rowKeyVar="_index">有序号会多次请求后台(aj4:repeat同样)(<ui:repeat不会多次请求，但是st.index不起作用)-->								
+								<ui:repeat value="#{tunnelGroupList.resultList}" var="_tunnelGroup" rendered="#{not empty tunnelGroupList.resultList}" varStatus="st">								
+		                    	<tr>
+		                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>		                            
+		                    		<td class="ze_bg2">#{_tunnelGroup.tunnelGroupId}</td>
+		                    		<td class="ze_bg2"><h:outputText  value="#{_tunnelGroup.name}" /></td>
+		                    		<td class="ze_bg2">		                    				                    			
+		                    			<a4j:repeat value="#{_tunnelGroup.tunnelInfoSet.toArray()}" var="_tunnelInfo" rowKeyVar="_index2" >
+		                    				<h:outputText  value="#{_tunnelInfo.tunnelName}" rendered="#{_index2 lt 7}"/>
+		                    				<h:outputText  value="..." rendered="#{_index2 eq 7}"/>
+		                    				<h:outputText  value="," rendered="#{(_index2+1) lt _tunnelGroup.tunnelInfoSet.size() and _index2 lt 6}"/>
+		                    			</a4j:repeat>
+									</td>
+		                    		<td class="ze_bg2">
+		                    		<h:outputText value="#{_tunnelGroup.insertTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+								    </h:outputText></td>
+								    <td class="ze_bg2">
+								    	<s:link propagation="none"  view="/#{empty from ? 'message/TunnelGroup' : from}.xhtml" styleClass="list_view"  id="tunnelGroupId" title="查看">
+										<f:param name="tunnelGroupTunnelGroupId" value="#{_tunnelGroup.tunnelGroupId}" />
+										<f:param name="pageNum" value="#{tunnelGroupList.pageNum}" />
+										</s:link>&#160;
+										<a class="list_edit" onclick="toview(#{_tunnelGroup.tunnelGroupId})" title="编辑"/> 
+										<a class="list_delete" title="删除" onclick="del(#{_tunnelGroup.tunnelGroupId});return false;" href="#"></a>
+									</td>
+		                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+		                    	</tr>
+		                    	</ui:repeat>
+		                    	<!--  </rich:dataList>-->
+		                    </table>
+		                    <!--翻页开始-->
+		                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+		                    	<tr>
+		                    	<s:div rendered="#{not empty tunnelGroupList.resultList}"> 
+					                <s:decorate rendered="#{!tunnelGroupList.previousExists }">
+					                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+					                </s:decorate>
+					                 <s:decorate rendered="#{tunnelGroupList.previousExists }">
+					                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+					                </s:decorate>
+					                <s:decorate rendered="#{tunnelGroupList.previousExists }">
+			                            <td class="td_t_b">
+				                            <s:link propagation="none"  view="/message/TunnelGroupList.xhtml" >首页
+				                            	<f:param name="pageNum" value="0" />
+				                            </s:link>
+			                            </td>
+			                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+				                            <s:link propagation="none"  view="/message/TunnelGroupList.xhtml"  styleClass="no_n" >
+				                            	<f:param name="pageNum" value="#{tunnelGroupList.previousFirstResult}"/>&lt;
+				                            </s:link>
+			                            </td>
+			                        </s:decorate>
+							        <a4j:repeat var="_page" value="#{tunnelGroupList.pageList}" rowKeyVar="_index">
+										<td class="td_t_b #{tunnelGroupList.previousExists or _index >0 ?'td_t_t':''} #{_page eq tunnelGroupList.pageNum?'onp':''}">
+											<s:link propagation="none"  view="/message/TunnelGroupList.xhtml" value="#{_page}" id="previousPage">
+												<f:param name="pageNum" value="#{_page}" />
+											</s:link>
+										</td>
+									</a4j:repeat>
+									<s:decorate rendered="#{tunnelGroupList.nextExists}">
+		                            <td class="td_t_b td_t_t">
+			                            <s:link propagation="none"  view="/message/TunnelGroupList.xhtml"   styleClass="no_d" >
+			                            	<f:param name="pageNum" value="#{tunnelGroupList.nextFirstResult}" />&gt;
+			                            </s:link>
+		                            </td>
+		                            <td class="td_t_b td_t_t">
+										 <s:link propagation="none"  view="/message/TunnelGroupList.xhtml" >尾页
+										 	<f:param name="pageNum" value="#{tunnelGroupList.PAGE_COUNT}" />
+										 </s:link>
+									</td>
+									</s:decorate>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{tunnelGroupList.PAGE_COUNT}页</td>
+		                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+		                    	</s:div>
+		                    	</tr>
+		                    </table>
+		                    <!--翻页结束-->
+	                    </div>	                   
+	                    <!--地块分组选项卡内容结束-->	                     
+	                   </div><!--分组结束-->
+                    </div> <!--right_c结束-->
+                    <div class="clear"></div>
+                </div><!--top结束-->
+	</div>	
+	</div>
+</td>
+  <!--  #{tunnelGroupHome.getBaseTunnelList()} -->
+ <h:panelGroup id="showid">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:610px; ">
+    <div class="modal-content">
+        <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"></button>
+	        <h4 class="modal-title font14" id="myModalLabel">新建组</h4>
+        </div>
+        <div>
+              
+           		<div class="baseContentTd">
+	           		<span>新建组名：</span>
+	           		<h:inputText  class="form-control zz" value="#{tunnelGroupHome.groupName}" style="width:180px; margin-right:5px;" type="text"/>
+           		</div>
+           		<div class="baseContentTd">
+           			<span>地块选择：</span>
+           		</div>
+           		<h:inputHidden value="#{tunnelGroupHome.tunnelNames}" id="hiddenNamezz"/>
+           		<h:inputHidden value="#{tunnelGroupHome.tunnelIds}" id="hiddenIdzz"/>         		
+           		<h:inputHidden value="#{tunnelGroupHome.groupId}"/>
+           		
+         </div>      
+        <s:div id="tunnelListDiv" styleClass="modal-body" style="padding-bottom:0; padding-top:0;">
+	        <h:selectManyMenu id="nonnumeric" multiple="multiple" name="nonnumeric">
+				  <s:selectItems value="#{tunnelGroupHome.tunnelInfoList}" var="var" label="#{var.tunnelName}" itemValue="#{var.tunnelInfoId}"/>
+			</h:selectManyMenu>
+			<script type="text/javascript">
+				pickInit();
+			</script>
+        </s:div>
+        <div class="modal-footer" style="border-top:none; margin-top:5px;">
+       		<button class="btn btn-primary" type="button" onclick="if(!goinsertback())return false;">保存</button><button class="btn btn-default" type="button" data-dismiss="modal">返回</button>
+        </div>
+    </div>
+</div>
+</div>
+</h:panelGroup>
+<a4j:form >
+	<a4j:jsFunction name="saveTunnelGroup"  action="#{tunnelGroupHome.saveTunnelGroup}">
+		<a4j:actionparam name="snameid" assignTo="#{tunnelGroupHome.tunnelIds}"/>
+		<a4j:actionparam name="name" assignTo="#{tunnelGroupHome.groupName}"/>
+		<a4j:actionparam name="selBaseId" assignTo="#{tunnelGroupHome.selBaseId}"/>
+		<f:param name="pageNum" value="0"></f:param>
+	</a4j:jsFunction>
+</a4j:form>
+
+<a4j:form >
+	<a4j:jsFunction name="examineme"  action="#{tunnelGroupHome.getTunnelGroup}" oncomplete="examineover()" reRender="showid">
+		<a4j:actionparam name="myId" assignTo="#{tunnelGroupHome.groupId}"/>
+	</a4j:jsFunction>
+</a4j:form>
+<a4j:form >
+	<a4j:jsFunction name="editTunnelGroup"  action="#{tunnelGroupHome.editTunnelGroup}">
+		<a4j:actionparam name="myId" assignTo="#{tunnelGroupHome.groupId}"/>		
+		<a4j:actionparam name="name" assignTo="#{tunnelGroupHome.groupName}"/>
+		<a4j:actionparam name="snameid" assignTo="#{tunnelGroupHome.tunnelIds}"/>
+	</a4j:jsFunction>
+</a4j:form>
+<a4j:form >
+	<a4j:jsFunction name="deleted"  action="#{tunnelGroupHome.deleteTunnelGroup}">
+		<a4j:actionparam name="myId" assignTo="#{tunnelGroupHome.groupId}"/>
+	</a4j:jsFunction>
+</a4j:form>
+<a4j:form >
+<a4j:jsFunction name="searchBaseTunnelList"  action="#{tunnelGroupHome.getBaseTunnelList()}" reRender="tunnelListDiv" oncomplete="showAddModul();">
+	<a4j:actionparam name="selBaseId" assignTo="#{tunnelGroupHome.selBaseId}"/>
+</a4j:jsFunction>
+</a4j:form>
+<script type="text/javascript">
+   //<![CDATA[
+   		//点击编辑 获取分组信息
+		function toview(id){
+			examineme(id);
+		}
+		//回调 显示选择分组的信息
+		function examineover(){
+			jquery("#myModal").modal("show");
+			jquery(function(){
+				jquery("#nonnumeric").pickList({
+					sourceListLabel: "地块",
+					targetListLabel: "已选择"
+				});
+				jquery('#cm_close').click(function(){
+					jquery('#myModal').slideUp(function(){
+						jquery('.modal-backdrop ').slideUp(1000);
+					});	
+				});
+			}); 
+			jquery(".pickList_removeAll").click();
+			var a=jquery("#hiddenIdzz").val().split(",");//选择地块的ID
+			var names=jquery("#hiddenNamezz").val().split(",");//选择地块的名称
+			/**
+			for(var i=0;i<a.length;i++){				
+				jquery(".pickList_sourceList li").each(function(){
+					if(a[i]==jquery(this).attr("data-value")){
+						jquery(this).attr("class","pickList_listItem ui-selected ui-state-highlight pickList_selectedListItem");
+						jquery(".pickList_add").click();
+					}
+		    	});		    	
+			}*/
+			for(var i=0;i<a.length;i++){//右侧显示已选择的地块
+				jquery(".pickList_targetList").append("<li class='pickList_listItem' label='"+names[i]+"' data-value='"+a[i]+"'>"+names[i]+"</li>");
+			}
+		}
+	  var selBaseId=0;
+		//显示添加分组框
+       function changeInitial(){
+    	   //检查是否选择基地
+    	   if(checkBaseModule(true)){        		  
+    		   showAddModul()
+    	   }else{
+    		   selBaseId=0;
+           }
+       }
+       function callBack(baseId){
+    	   selBaseId=baseId;
+    	   searchBaseTunnelList(baseId);
+    	}
+   	   function showAddModul(){
+	   	 	jquery(".zz").val("");
+	 	    jquery("#hiddenIdzz").val("");
+	 	    jquery("#hiddenIdzz").next().val("");
+	 	    jquery(".pickList_removeAll").click();
+	 	    jquery("#myModal").modal("show");
+   	   	}
+       //添加或编辑分组  提交
+       function goinsertback(name){
+	        var shouname="";
+	       	jquery(".pickList_targetList li").each(function(){
+		       	var idValue=jquery(this).attr("data-value");	       		
+	       		if(""!=idValue){
+	       			shouname+=idValue+","
+		       	}
+	       	});
+	       	var name=jquery(".zz").val();
+	       	var groupId=jquery("#hiddenIdzz").next().val();
+		   	if(name==""){
+		   		alert("请填写组名")
+				return false;
+			}else if(name.length>20){
+				alert("组名长度不能超过20字")
+				return false;
+			}
+		   	var snameid=shouname.substring(0, shouname.length-1);
+		   	/**
+	   		if(snameid==""){
+				alert("请选择地块")
+				return false;
+		   	}
+		   	*/	
+			if(groupId==""){
+				saveTunnelGroup(snameid,name,selBaseId);
+				return true;
+			}else{
+				editTunnelGroup(groupId,name,snameid);
+				return true;
+			}
+			jquery("#myModal").modal("hide");
+   			return true;
+   		}
+		//删除分组
+       del = function(a){
+   		if(confirm('确定删除?')){
+   	 		deleted(a);
+   	 		return true;
+   	 	}
+   	 	return false;
+   	}
+	//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,466 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/harvest/yushougl1.css"/>
+
+<style type="text/css">
+        .start
+        {
+            color:Red;   
+            font-weight:bold;
+            font-size:14px;
+        }
+</style>
+<script type="text/javascript">
+document.getElementById("selectBaseDiv").style.display="none";
+</script>
+				<!-- #{preHarvestHome.work()} -->
+
+ <td valign="top">
+        <!--右边开始-->
+        <div class="right_c clear">
+            <!-- 公用头部 开始 -->
+            <div class="r_title clear">
+                <div class="r_t_l fl"><span>采销存</span><em>&gt;</em><span>采收</span><em>&gt;</em><font size="3">预釆管理</font></div>
+            </div>
+            <!-- 公用头部 结束 -->
+            <!-- 预釆管理添加内容 开始 -->
+            <div class="search-header">
+            	<div class="search-header-lt">
+                	<form class="public-search"><span class="octicon-search02"></span>
+                    <input type="text" value="请输入查询内容" class="form-control srarchfont zz1" id="searchParam"/>
+                    
+                    </form>
+                    <button class="btn btn-primary" type="button" onclick="primary()">搜索</button>
+                </div>
+            </div>
+            <div class="record-stress">
+            	<span class="record-jidi">基地名称：#{baseHome.getBaseEdit(preHarvestHome.baseId)}</span>
+            	<span class="record-people">录入人：<h:outputText value="#{sessionTake.nickname}" rendered="#{preHarvestHome.instance.insertUser  eq null }"/>
+            										<h:outputText value="#{preHarvestHome.instance.insertUser.nickname}" rendered="#{preHarvestHome.instance.insertUser ne null }"/>
+            	</span>
+            	<h:outputText rendered="#{!preHarvestHome.managed}" >
+                <span class="record-time" style="margin-right: 10px;">录入时间：</span>
+				<div class="input-append date form_datetime ">
+				    <h:inputText  id="startTime"  styleClass="new_time nw100" style="width:150px;" value="#{preHarvestHome.dateString}" onchange="insertTimeSearch(this.value);" readonly="#{facesContext.renderResponse}"/>								   			    
+				    <span class="add-on"><i class="icon-th" style="margin-top:6px;"></i></span>
+				</div>
+                </h:outputText>
+                <h:outputText rendered="#{preHarvestHome.managed}" >
+	                <span class="record-time">录入时间：<h:outputText value="#{preHarvestHome.dateString}"></h:outputText></span>
+                </h:outputText>
+            </div>
+            <h:form id="goodsInfo">
+            <div class="search-body clear">
+            	<h:panelGroup id="harListId">
+	            	<table class="table-newTable" width="100%" cellpadding="0" cellspacing="0">
+	                      <thead>
+	                          <tr>
+	                              <th width="8%">ID</th>
+	                              <th width="12%">大棚</th>
+	                              <th width="12%">作物名称</th>
+	                              <th width="15%">等级</th>
+	                              <th width="15%">未来一天总采收量</th>
+	                              <th width="15%">未来一周总采收量</th>
+	                              <th width="12%">单位</th>
+	                              <th width="13%">操作</th>
+	                          </tr>
+	                      </thead>
+	                      <tbody>
+	                        <a:repeat value="#{preHarvestHome.myPhrList}" var="_obj" rowKeyVar="_index">
+	                         <tr class="one #{_obj[0]==''?'borderNo':''}">
+	                           <td class="zhavest">#{_obj[10]}</td>
+	                            <td class="zhavest housesname" >
+	                            <h:outputText value="#{_obj[0]}"/>
+								</td>
+								<td class="zhavest cropsname borderRt" >
+	                            <h:outputText value="#{_obj[1]}"/>
+								</td>
+								<td class="zhavest preone">
+									<span class="bootSelt110 ">
+									<h:selectOneMenu  styleClass="selectpicker"   value="#{_obj[9]}" onchange="xiuitional(#{_index},this.value)">
+										<s:selectItems value="#{_obj[8]}" var="var" label="#{var.name}"  itemValue="#{var.goodsLevelId}"/>
+									</h:selectOneMenu>
+									</span>
+								</td>
+	                            <td class="zhavest pretwo">
+	                            	<span class="bootTxt110">
+	                            		<input id="unit_#{_index}" type="hidden" value="#{_obj[11]}" />
+			                            <h:inputText value="#{_obj[2]}" styleClass="form-control weight1#{_index}" onkeyup="clearNoNum(this)">
+			                            	<a:support event="onblur" oncomplete="jisuan1()"></a:support>
+			                            </h:inputText>
+			                        </span>
+	                            </td>
+	                            <td class="zhavest two#{_index} prethree" >
+	                            	<span class="bootTxt110">
+			                            <h:inputText value="#{_obj[3]}" styleClass="form-control weight2#{_index}" onkeyup="clearNoNum(this)">
+			                            	<a:support event="onblur"  oncomplete="jisuan2()"></a:support>
+			                            </h:inputText>
+			                        </span>
+	                            </td>
+	                            <td class="zhavest">#{_obj[12]}</td>
+	                            <ui:fragment rendered="#{_obj[0]==''}">
+	                            	<td><a class="list_delete" href="javascript:;" onclick="reductionitional(#{_index});"></a></td>
+	                            </ui:fragment>
+	                            <ui:fragment rendered="#{_obj[0]!=''}">
+	                            	<td><a class="list_add2" href="javascript:;" onclick="additional(#{_index});"></a></td>
+	                            </ui:fragment>
+	
+	                        </tr>
+	                        </a:repeat>
+	                        <tr>
+	                        	<td colspan="8">
+	                        		<s:div styleClass="farming_nodata" rendered="#{empty preHarvestHome.myPhrList}" style="line-height: 0%; padding-top: 0px; padding-bottom: 0px; border-bottom-width: 0px; height: 378px;">
+				                        <div class="warning_noData">
+				                            <em>很遗憾，没有菜品预采信息</em>
+				                            <p>准确的菜品预采信息，是销售部门掌握菜品出产情况，制定销售目标的重要保证，请及时更新哦！</p>
+				                        </div>
+				                     </s:div>
+	                        	</td>
+	                        </tr>
+	                      </tbody>
+	                      <tfoot>
+	                      	<tr style="border-bottom:1px solid #f3f3f3;">
+	                        	<td colspan="8" align="right">
+	                                <span class="recoveryNum">可采收棚<em>#{preHarvestHome.tiNum}</em>个</span>
+	                                <span class="recoveryType">作物种类<em>#{preHarvestHome.plantNum}</em>种</span>
+	                            </td>
+	                        </tr>
+	                        <tr height="60">
+	                        	<td colspan="8" align="right">
+	                                <div class="allrecWeight">
+	                                    <span>未来一天总采收量<em id="total1">#{preHarvestHome.mustWeight}</em></span><br />
+	                                    <span>未来一周总采收量<em id="total2">#{preHarvestHome.canWeight}</em></span>
+	                                </div>
+	                     	 <input type="hidden" name="canWeight" id="canWeight"/>
+                   			<input type="hidden" name="mustWeight" id="mustWeight"/>
+	                            </td>
+	                        </tr>
+	                      </tfoot>
+	                  </table>
+	                  
+	              </h:panelGroup>
+                  <table class="baseBtn" style="margin:40px auto;">
+                   	<h:inputHidden value="#{preHarvestHome.dateString}" id="strartTimeHidden"/>
+                      <tr>
+							<td>
+							<input class="btn btn-primary tijiaobutton" onclick="clickgoto()" value="提交" style="width:64px;"></input>
+							<h:commandButton id="update" onclick="return checkSubmit()" styleClass="btn btn-primary tianbutton" value="提交" action="#{preHarvestHome.updateHarvest}" style="display:none"/>
+							</td>
+							<td>
+			            	<s:link view="/harvest/PreHarvestList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" propagation="none" style="margin-left:10px" >
+			            	<f:param name="baseId" value="#{preHarvestHome.baseId}"></f:param>
+			            	<f:param name="pageNum" value="#{preHarvestHome.pageNum}"></f:param>
+			            	</s:link>
+                            </td>
+						</tr>
+                  </table>
+            </div>
+            </h:form>
+            <!-- 预釆管理添加内容 结束 -->
+        </div>
+        <!--右侧结束-->
+        </td>
+           <a:form>
+		        <a:jsFunction name="additional" reRender="harListId" action="#{preHarvestHome.addItional}" oncomplete="delHuiDao();">
+		            <a:actionparam name="index"   assignTo="#{preHarvestHome.index}"/>                  
+		        </a:jsFunction>
+            </a:form>
+            <a:form>
+		        <a:jsFunction name="reductionitional" reRender="harListId" action="#{preHarvestHome.reductionItional}"  oncomplete="delHuiDao();">
+		            <a:actionparam name="index"   assignTo="#{preHarvestHome.index}"/>                  
+		        </a:jsFunction>
+            </a:form>
+            <a:form>
+		        <a:jsFunction name="xiuitional"  action="#{preHarvestHome.xiuItional}" oncomplete="huidiao()">
+		            <a:actionparam name="index"   assignTo="#{preHarvestHome.index}"/>  
+		            <a:actionparam name="indexValue"   assignTo="#{preHarvestHome.indexValue}"/>                  
+		        </a:jsFunction>
+		        <a:jsFunction name="insertTimeSearch" action="#{preHarvestHome.timeSearch()}" data="#{preHarvestHome.hasData}" oncomplete="searchHuiDao(data);">
+		        	<a:actionparam name="dateString" value="#{preHarvestHome.dateString}" />
+		        </a:jsFunction>
+            </a:form>
+<script type="text/javascript">
+//<![CDATA[
+           function searchHuiDao(data){
+				if(data==0){
+					var timeVal=jquery("#startTime").val();
+					jquery("#goodsInfo\\:strartTimeHidden").val(timeVal);
+					window.location.href="#{request.contextPath}/harvest/PreHarvestEdit.seam?pageNum=#{preHarvestHome.pageNum}&baseId=#{preHarvestHome.baseId}&dateString="+timeVal;
+				}else{
+					jquery("#startTime").val(jquery("#goodsInfo\\:strartTimeHidden").val());
+					alert("当前录入日期已添加过预采信息，请重新修改录入日期！");
+				}
+           }
+           function delHuiDao(){
+        	   jquery('.selectpicker').selectpicker();
+        	   jisuan1();
+				jisuan2();
+           }
+           function clickgoto(){
+
+				var le=false;
+			
+				jquery('.preone').each(function(){
+ 
+					if(jquery.trim(jquery(this).find('.dropdown-toggle').text())=="无可选择项目"){
+						if(jquery(this).next().find('.form-control').val()!=''){
+							le=true;
+					    }
+					    if(jquery(this).next().next().find('.form-control').val()!=''){
+					    	le=true;
+					    }
+					 }
+					
+				})
+				
+				
+				if(le){
+					alert("采收等级不能为空");
+				}else{
+					 jquery('.tijiaobutton').removeAttr('onclick');
+		        	   jquery('#goodsInfo\\:update').trigger('click');
+					}
+              
+               }
+           function primary(){
+        	   jquery(".housesname").attr("class","zhavest housesname");
+        	   jquery(".cropsname").attr("class","zhavest cropsname borderRt");
+               var search=jquery(".zz1").val();
+               jquery(".table-newTable").contents().find(".zhavest").each(function(){
+					var cla=jquery(this).attr("class");
+					if(cla.indexOf("housesname")!=-1){
+						var housesname=jquery(this).text();
+						if(housesname.indexOf(search)!=-1){
+							jquery(this).attr("class","zhavest housesname start")
+							
+						}
+					}
+					if(cla.indexOf("cropsname")!=-1){
+						var cropsname=jquery(this).text();
+						if(cropsname.indexOf(search)!=-1){
+							jquery(this).attr("class","zhavest cropsname start")
+						}
+					}
+					  
+				})
+				jquery(".table-newTable").contents().find(".zhavest").each(function(){
+					var cla=jquery(this).attr("class");
+					if(cla.indexOf("housesname")!=-1){
+						var housesname=jquery(this).text();
+						if(housesname.indexOf(search)!=-1){
+							var top1=jquery(this).offset().top;
+							jquery(document).scrollTop(top1)
+							 return false; 
+						}
+					}
+					if(cla.indexOf("cropsname")!=-1){
+						var cropsname=jquery(this).text();
+						if(cropsname.indexOf(search)!=-1){
+							var top1=jquery(this).offset().top;
+							jquery(document).scrollTop(top1)
+							 return false; 
+						}
+					}
+					  
+				})
+               
+               }
+           
+           jquery(document).ready(function(){
+        	   jquery('.selectpicker').selectpicker();
+        	   jquery(".zz1").val("");
+        	   jquery(".housesname").attr("class","zhavest housesname");
+        	   jquery(".cropsname").attr("class","zhavest cropsname borderRt");
+				jisuan1();
+				jisuan2();
+				document.onkeydown = function(e){
+				    var ev = document.all ? window.event : e;
+				    if(ev.keyCode==13) {
+				    	primary();//点击回车时，走搜索方法
+				     }
+				}
+				jquery(".form_datetime").datetimepicker({
+					format: "yyyy-mm-dd",
+				    autoclose: true,
+					weekStart: 1,
+					//startDate: "2014-08-14 10:00",
+					language:  'zh-CN',
+					minView:2,
+				    pickerPosition: "bottom-left"
+				});
+			});
+			/* jisuan1 = function(index){
+				var number = 0;
+				var number2 = 0;
+				for(var i = 0;i<jquery(".one").length;i++){
+					var total2 = 0;
+						jquery(".weight1"+i).each(
+								function(){
+									var a = jquery(".weight1"+i).val();
+									var a1 = parseFloat(a);
+									if(isNaN(a1)){
+									}else{
+										total2+= a1;
+									}
+								}
+								);
+						        number+=total2;
+				}
+					jquery("#total1").html(number.toFixed(2));
+					jquery("#mustWeight").val(number.toFixed(2));
+			}
+
+			jisuan2 = function(){
+				var number = 0;
+				for(var i = 0;i<jquery(".one").length;i++){
+					var total2 = 0;
+					var temp = 0;
+						jquery(".weight2"+i).each(
+								function(){
+									var a = jquery(".weight2"+i).val();
+									var a1 = parseFloat(a);
+									if(isNaN(a1)){
+									}else{
+										temp+= a1 ;
+									}	
+								}
+								);
+								number +=temp;
+					}
+					jquery("#total2").html(number.toFixed(2));
+					jquery("#canWeight").val(number.toFixed(2));
+			} */
+
+			jisuan1 = function(index){
+				var number = 0;
+				var number2 = 0;
+				for(var i = 0;i<jquery(".one").length;i++){
+					var total2 = 0;
+					var total3 = 0;
+						jquery(".weight1"+i).each(
+								function(){
+									var a = jquery(".weight1"+i).val();
+									var unit = jquery("#unit_"+i).val();
+									//var a1 = parseFloat(a);
+									if(isNaN(a)){
+									}else{
+										if(unit == 7){
+											total2+= (Number(a)/1000)
+										}else if(unit == 8){
+											total2+= (Number(a)/20)
+										}else if(unit == 9){
+											total2+= (Number(a)/2)
+										}else if(unit == 10){
+											total2+= (Number(a))
+										}else if(unit == 11){
+											total2+= (Number(a)*1000)
+										}else{
+											total3+= Number(a);
+										}
+									}
+							});
+						        number += total2;
+						        number2 += total3;
+				}
+				if(number2 == 0){
+					jquery("#total1").html(number+'公斤');
+				}else{
+					jquery("#total1").html(number+'公斤+'+number2);
+				}
+					
+					jquery("#mustWeight").val(number);
+			}
+			jisuan2 = function(){
+				var number = 0;
+				var number2 = 0;
+				for(var i = 0;i<jquery(".one").length;i++){
+					var total2 = 0;
+					var temp = 0;
+						jquery(".weight2"+i).each(
+								function(){
+									var a = jquery(".weight2"+i).val();
+									var unit = jquery("#unit_"+i).val();
+									//var a1 = parseFloat(a);
+									if(isNaN(a)){
+									}else{
+										if(unit == 7){
+											total2+= (Number(a)/1000)
+										}else if(unit == 8){
+											total2+= (Number(a)/20)
+										}else if(unit == 9){
+											total2+= (Number(a)/2)
+										}else if(unit == 10){
+											total2+= (Number(a))
+										}else if(unit == 11){
+											total2+= (Number(a)*1000)
+										}else{
+											temp+= Number(a);
+										}
+									}
+								}
+								);
+								number += total2;
+								number2 += temp;
+					}
+
+				if(number2 == 0){
+					jquery("#total2").html(number+'公斤');
+				}else{
+					jquery("#total2").html(number+'公斤+'+number2);
+				}
+					jquery("#canWeight").val(number);
+					
+			}
+
+			var focusParam = 0;
+			function checkSubmit(){
+				var b = true;
+				for(var i = 0;i<jquery(".one").length;i++){
+					var total2 = 0;
+						jquery(".weight1"+i).each(
+								function(){
+									var a1 = jquery(".weight1"+i).val();
+									var a2 = jquery(".weight2"+i).val();
+									var a11 = parseFloat(a1);
+									var a22 = parseFloat(a2);
+								
+								});
+				}
+				jisuan1();
+				jisuan2();
+				
+				
+				return b;
+			}
+			function closeMethod(){
+				jquery(".weight1"+focusParam).focus();
+			}
+
+			function clearNoNum(obj){
+				obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+				obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+				obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+				obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+			}
+
+			function huidiao(){
+	        	   jquery('.selectpicker').selectpicker();
+					
+				}
+			//]]>
+	</script>
+	
+</ui:define>
+
+</ui:composition>

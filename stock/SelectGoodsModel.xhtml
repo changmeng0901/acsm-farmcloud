@@ -1,0 +1,268 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<style>
+	</style>
+	  <!--添加物料内容-->
+    <div class="modal fade" id="goodsModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog material_dialog">
+	    <div class="modal-content" id="selectGoods">
+	        <div class="modal-header clear">
+	            <h4 class="modal-title fl">选择物料</h4>
+	            <i class="i_close" data-dismiss="modal"></i>
+	        </div>
+	        <div class="modal-body modal_body">
+	            <!--搜索-->
+	            <div class="search_header mb15 clear">
+	                <div class="search_selected clear">
+	                    <div class="public-search fl">
+	                        <span class="octicon-search02"></span>
+	                        	<input class="form-control nw300 srarchfont"  type="text" value="请输入查询内容" id="searchStr" onfocus="goodsNameFocus(this)"  onblur="goodsNameBlur(this)"/>
+	                        	<h:inputHidden value="" id="searchHide"/>
+	                    </div>
+	                    <button class="btn btn-primary fl ml5" type="button"  id="searchButton" onclick="buttonSearch()">搜索</button>
+	                   <p style="position: relative;left: 50px;color: red" id="waringMessage"></p>
+	                    <a id="new_material_btn1" class="new_material_btn fr" href="javascript:;" onclick="toAddGoodsModal(#{sessionTake.enterpriseInfoId},#{(sessionTake.baseModel ne null and sessionTake.baseModel.baseId ne null) ? sessionTake.baseModel.baseId : 0},#{sessionTake.levelId eq null ? 0 : sessionTake.levelId},#{sessionTake.userId eq null ? 0 : sessionTake.userId})">添加新物料信息</a>
+	                </div>
+	            </div>
+	            <!--物料列表-->
+	             <rich:panel id="modelListPanel" style="margin:0; border:none; padding: 0;">
+	            <div>
+	            <table class="material_list" width="100%" cellpadding="0" cellspacing="0">
+	                <tr>
+	                    <th><input class="iCheck" type="checkbox" aa="unchecked" name="goodsCheckAll" onclick="checkAllChange(this)"/></th>
+	                    <th style="display:none">物料行数</th>
+	                    <th width="228">物料编号</th>
+	                    <th width="228">物料名称</th>
+	                    <th width="228">单位规格</th>
+	                    <th style="display:none">物料等级</th>
+	                    <th style="display:none">来源</th>
+	                    <th style="display:none">物料id</th>
+	                    <th style="display:none">入库量</th>
+	                    <th style="display:none">入库总重量</th>
+	                    <th style="display:none">保质期</th>
+	                    <th style="display:none">价格</th>
+	                    <th style="display:none">总价</th>
+	                    <th style="display:none">单位id</th>
+	                    <th style="display:none">批次id</th>
+	                    <th style="display:none">批次集合</th>
+	                    <th style="display:none">负库存批次</th>
+	                    <th style="display:none">库存量</th>
+	                    <th style="display:none">批次来源</th>
+	                </tr>
+	                 <a:repeat value="#{selectGoodsModelHome.goodsList}" var="goods" rowKeyVar="_index">
+	                <tr class="model_tr">
+	                    <td class="bg1"><input class="iCheck" type="checkbox" name="selectGoods" id="selectGoods_#{_index}" bb="unchecked"  /></td>
+	                    <td id="model_num_#{_index}" style="display:none">#{_index}</td>
+	                    <td id="model_goodsCode_#{_index}">#{goods[1]}</td>
+	                    <td id="model_goodsName_#{_index}">#{goods[2]}</td>
+	                    <td id="model_goodSpec_#{_index}">#{goods[5]}</td>
+	                    <td style="display:none" id="model_goodLevel_#{_index}">
+	                    	<s:fragment rendered="#{goods[11] ne null}">
+	                    		<a:repeat value="#{goods[11]}" var="_level" rowKeyVar="_row">
+	                    			<li price="#{_level[2]}" levelid="#{_level[0]}" levelname="#{_level[1]}" stocknum="#{_level[5]}">
+                      					<a:repeat value="#{_level[4]}" var="_batch" rowKeyVar="_ix">
+                      						<span batchid="#{_batch[0]}">#{_batch[1]}</span>
+                      					</a:repeat>
+	                    			</li>
+	                    		</a:repeat>
+	                    	</s:fragment>	
+	                    </td>
+	                    <td style="display:none" id="model_source_#{_index}">
+	                    	<s:fragment rendered="#{goods[12] ne null}">
+	                    		<a:repeat value="#{goods[12]}" var="_source" rowKeyVar="_r">
+	                    			<li  sourceid="#{_source[0]}">#{_source[1]}</li>
+	                    		</a:repeat>
+	                    	</s:fragment>
+	                    </td>
+	                    <td style="display:none" id="model_goodId_#{_index}">#{goods[0]}</td>
+	                    <td style="display:none" id="model_inNum_#{_index}">#{goods[6]}</td>
+	                    <td style="display:none" id="model_weight_#{_index}">#{goods[7]}</td>
+	                    <td style="display:none" id="model_shelfLife_#{_index}">#{goods[8]}</td>
+	                    <td style="display:none" id="model_unitPrice_#{_index}">#{goods[9]}</td>
+	                    <td style="display:none" id="model_totalPrice_#{_index}">#{goods[10]}</td>
+	                    <td style="display:none" id="model_unitId_#{_index}">#{goods[13]}</td>
+	                    <td style="display:none" id="model_batchId_#{_index}">#{goods[14]}</td>
+	                   <td style="display:none" id="model_batcList_#{_index}">
+	                    	<s:fragment rendered="#{goods[15] ne null}">
+	                    		<a:repeat value="#{goods[15]}" var="_batch">
+	                    			<li  batchId="#{_batch[0]}" source="#{_batch[2]}" sepc="#{_batch[3]}" count="#{_batch[4]}" level="#{_batch[5]}" batchprice="#{_batch[6]}" shelfLife="#{_batch[7]}">#{_batch[1]}</li>
+	                    		</a:repeat>
+	                    	</s:fragment>
+						</td>
+						<td style="display:none" id="model_owebatcList_#{_index}">
+	                    	<s:fragment rendered="#{goods[16] ne null}">
+	                    		<a:repeat value="#{goods[16]}" var="_owebatch">
+	                    			<li  batchId="#{_owebatch[0]}">#{_owebatch[1]}</li>
+	                    		</a:repeat>
+	                    	</s:fragment> 
+						</td>
+						<td style="display:none" id="model_stockNum_#{_index}">#{goods[17]}</td>
+						<td style="display:none" id="model_batchSource_#{_index}">#{goods[4]}</td>
+	                </tr>
+	                </a:repeat>
+	            </table>
+	           
+	            </div>
+	            <!--分页-->
+	            <div class="pageModel_wap" style="padding:50px 0 30px;">
+	                           <h:form id="pageDiv" rendered="#{null ne selectGoodsModelHome.goodsList and selectGoodsModelHome.goodsList.size() gt 0}">
+								<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+									<tr>
+										<s:fragment rendered="#{!selectGoodsModelHome.hasPreviousPage }">
+											<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+										</s:fragment>
+										<s:fragment rendered="#{selectGoodsModelHome.hasPreviousPage and selectGoodsModelHome.totalPages > 1}">
+											<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+											<td class="td_t_b">
+												<a:commandLink style="color:#333333;" id="firstPage" onclick="findPage(1)" rendered="#{selectGoodsModelHome.hasPreviousPage and selectGoodsModelHome.totalPages > 1}" >首页</a:commandLink>
+											</td>
+											<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+												<a:commandLink styleClass="no_n" id="previousPage" onclick="findPage(#{selectGoodsModelHome.previousPage})"  >&lt;</a:commandLink>
+											</td>
+										</s:fragment>
+										<a:repeat var="_page" value="#{selectGoodsModelHome.showPageList}" rowKeyVar="_index">
+											<s:fragment rendered="#{_page gt 0 and _page le selectGoodsModelHome.totalPages}">
+												<td class="td_t_b #{selectGoodsModelHome.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq selectGoodsModelHome.pageNum ? 'onp' : ''}" >
+													<a:commandLink id="thisPage"  onclick="findPage(#{_page})"  >#{_page}</a:commandLink>
+												</td>
+											</s:fragment>
+										</a:repeat>
+										<s:fragment rendered="#{selectGoodsModelHome.hasNextPageFlag and selectGoodsModelHome.totalPages > 1}">
+											<td class="td_t_b td_t_t">
+												<a:commandLink styleClass="no_d"  id="nextPage" onclick="findPage(#{selectGoodsModelHome.nextPage})" rendered="#{selectGoodsModelHome.hasNextPage and selectGoodsModelHome.totalPages > 1}" >&gt;</a:commandLink>
+											</td>
+											<td class="td_t_b td_t_t">
+												<a:commandLink style="color:#333333;"  id="lastPage" onclick="findPage(#{selectGoodsModelHome.totalPages})" rendered="#{selectGoodsModelHome.hasNextPage and selectGoodsModelHome.totalPages > 1}" >尾页</a:commandLink>
+											</td>
+										</s:fragment>
+										<td class="td_t_b td_t_t" style="color:#9a9a9c;">共#{selectGoodsModelHome.totalPages}页</td>
+										<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+										<td class="pl5">
+	                                    </td>
+									</tr>
+								</table>
+							</h:form>
+						</div>
+						 </rich:panel>
+	            <!--分页-->
+	        </div>
+	        <div class="modal-footer">
+	            <button type="button" class="btn btn-success" data-dismiss="modal" onclick="addGoods()">添加物料</button>
+	            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeGoodsModal()">返回</button>
+	        </div>
+    	</div>
+    </div>
+    </div>
+     <a:form>
+		<a:queue requestDelay="10" ignoreDupResponses="true" />
+		<a:jsFunction name="findByPage" action="#{selectGoodsModelHome.initGoodsList()}"   reRender="modelListPanel" data="#{selectGoodsModelHome.goodsList.size()}"  oncomplete="showWaringMessage(data)">
+			<a:actionparam name="goodsType" assignTo="#{selectGoodsModelHome.goodsType}"/>
+			<a:actionparam name="param" assignTo="#{selectGoodsModelHome.param}"/>
+			<a:actionparam name="type" assignTo="#{selectGoodsModelHome.type}"/>
+			<a:actionparam name="searchStr" assignTo="#{selectGoodsModelHome.searchStr}"/>
+			<a:actionparam name="pageNum" assignTo="#{selectGoodsModelHome.pageNum}"/>
+		</a:jsFunction>
+		<a:jsFunction name="initGoodsList" action="#{selectGoodsModelHome.initGoodsList()}"   reRender="modelListPanel"  data="#{selectGoodsModelHome.goodsList.size()}" oncomplete="showGoodsModel(data)">
+			<a:actionparam name="goodsType" assignTo="#{selectGoodsModelHome.goodsType}"/>
+			<a:actionparam name="param" assignTo="#{selectGoodsModelHome.param}"/>
+			<a:actionparam name="type" assignTo="#{selectGoodsModelHome.type}"/>
+			<a:actionparam name="searchStr" assignTo="#{selectGoodsModelHome.searchStr}"/>
+			<a:actionparam name="pageNum" assignTo="#{selectGoodsModelHome.pageNum}"/>
+		</a:jsFunction>
+	</a:form>
+	<script>
+	//<![CDATA[
+	$(function(){
+		if(jquery("#titleName").html() != "入库单"){
+			jquery("#new_material_btn1").hide();
+		}else{
+			jquery("#new_material_btn1").show();
+		}
+	});
+
+	function closeGoodsModal(){
+		jquery("#goodsModel").modal("hide");
+	}
+	//弹出框
+	function showGoodsModel(data){
+		showWaringMessage(data);
+		jquery("#goodsModel").modal("show");
+	}
+	function showWaringMessage(data){
+		if(jquery("#titleName").html() == "入库单"){
+			var inStockType = $("#inStockType").attr("myInStockTypeId");
+			if(data==0){
+				if(inStockType==12){
+					$("#waringMessage").html("当前没有种植");
+				}else{
+					$("#waringMessage").html("没有物料");
+				}
+			}else{
+				$("#waringMessage").html("");
+			}
+		}else{
+			if(data==0){
+				$("#waringMessage").html("没有物料");
+			}else{
+				$("#waringMessage").html("");
+			}
+		}
+	}
+	//分页
+	function findPage(page){
+		var searchStr = $("#searchHide").val();
+		if(jquery("#titleName").html() == "入库单"){
+			var goodsType = $("#goodsType").val();
+			var inStockType = $("#inStockType").attr("myInStockTypeId");
+			findByPage(goodsType,inStockType,1,searchStr,page);
+		}else if(jquery("#titleName").html() == "盘点单"){
+			var goodsType = $("#goodsType").val();
+			var storageRoom = $("#storageRoom").val();
+			findByPage(goodsType,storageRoom,2,searchStr,page);
+		}
+	}
+
+	//搜索
+	function buttonSearch(){
+		var searchStr = $("#searchStr").val();
+		 $("#searchHide").val(searchStr)
+		if(jquery("#titleName").html() == "入库单"){
+			var goodsType = $("#goodsType").val();
+			var inStockType = $("#inStockType").attr("myInStockTypeId");
+			findByPage(goodsType,inStockType,1,searchStr,1);
+		}else if(jquery("#titleName").html() == "盘点单"){
+			var goodsType = $("#goodsType").val();
+			var storageRoom = $("#storageRoom").val();
+			findByPage(goodsType,storageRoom,2,searchStr,1);
+		}
+	}
+
+	//物料选择页面全选复选框变动
+	function checkAllChange(obj){
+		if (obj.checked) {
+			$("input[name='selectGoods']").iCheck("check"); 
+		} else {
+			$("input[name='selectGoods']").iCheck("uncheck"); 
+		}
+	}
+
+	function toAddGoodsModal(enterpriseInfoId,baseId,levelId,userId){
+		var goodsType = $("#goodsType").val();
+		if(goodsType == "1"){
+			initMateAddModel(enterpriseInfoId,baseId,levelId,userId);
+		}else if(goodsType == "3"){
+			initProductAddModel(enterpriseInfoId,baseId,levelId,userId);
+		}else if(goodsType == "4"){
+			initAccessAddModel(enterpriseInfoId,baseId,levelId,userId);
+		}
+	}	
+
+	
+	//]]>
+	</script>
+</ui:composition>

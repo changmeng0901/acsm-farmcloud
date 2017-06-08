@@ -1,0 +1,162 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+	<div class="right_coment">
+		<div class="con_top bg"></div>
+		<div class="con_con"><!--板块1开始-->
+		<div class="title_box"></div>
+		<div class="box_con">
+			<input type="hidden" value="0" name="firstResult"/>
+			<table width="99%" height="30" cellpadding="0" cellspacing="0"  >
+				<tr> 
+				<td width="15%" align="right" height="20">&#160;产品名称&#160;:&#160;<h:outputText value="#{productRecordHome.instance.productName}"/></td>
+				<td width="5%"></td>
+				<td width="15%" align="right" height="20">&#160;棚号&#160;:&#160;<h:outputText value="#{productRecordHome.instance.tunnelInfo.tunnelName}"/></td>
+				<td width="5%"></td>
+				<td width="15%" align="right" height="20">&#160;定植日期&#160;:&#160; 
+					<h:outputText value="#{productRecordHome.instance.plantTime}">
+						<s:convertDateTime pattern="yyyy-MM-dd" />
+					</h:outputText></td>
+				<td width="5%"></td>
+				<td width="15%" align="right" height="20">&#160;生成次数&#160;:&#160;<h:outputText value="#{productRecordHome.instance.productBaseInfoId.generationCount}"/></td>
+				<td width="5%"></td>
+				<td width="15%" align="right" height="20">&#160;生成张数&#160;:&#160;<h:outputText value="#{productRecordHome.instance.productBaseInfoId.generationNumberCount}"/></td>
+				<td width="5%"></td>
+			</tr>
+		</table>
+
+		</div>
+		<!--板块1结束--> <!--板块1开始-->
+		<div class="title_box"><a style="cursor:default;text-decoration: none"><strong>二维码批次列表页(#{empty productRecordTimesListByPR.resultList ? 0 : (productRecordTimesListByPR.paginated ? productRecordTimesListByPR.resultCount : productRecordTimesListByPR.resultList.size)})</strong></a></div>
+		<div class="box_con">
+		
+		
+		<table width="99%" cellpadding="0" cellspacing="1">
+	
+		
+
+	<tr>
+				<td><div class="results" id="productRecordTimesListByPR">
+		  <h:outputText value="没有找到符合条件的记录."
+               rendered="#{empty productRecordTimesListByPR.resultList}"/>
+
+    <rich:dataTable id="productRecordTimesListByPR"
+                var="_productRecordTimes"
+              value="#{productRecordTimesListByPR.resultList}" 
+				 styleClass="stripe" 
+           rendered="#{not empty productRecordTimesListByPR.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{productRecordTimesListByPR}"/>
+                    <ui:param name="propertyLabel" value="批次编号"/>
+                    <ui:param name="propertyPath" value="productRecordTimes.batchCode"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_productRecordTimes.batchCode}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{productRecordTimesListByPR}"/>
+                    <ui:param name="propertyLabel" value="生成张数"/>
+                    <ui:param name="propertyPath" value="productRecordTimes.generationNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_productRecordTimes.generationNumber}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{productRecordTimesListByPR}"/>
+                    <ui:param name="propertyLabel" value="生成人"/>
+                    <ui:param name="propertyPath" value="productRecordTimes.generationPeople"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_productRecordTimes.generationPeople}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{productRecordTimesListByPR}"/>
+                    <ui:param name="propertyLabel" value="生成时间"/>
+                    <ui:param name="propertyPath" value="productRecordTimes.generationTime"/>
+                </ui:include>
+            </f:facet>
+             <h:outputText value="#{_productRecordTimes.generationTime}">
+				<s:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+			</h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{productRecordTimesListByPR}"/>
+                    <ui:param name="propertyLabel" value="查询次数"/>
+                    <ui:param name="propertyPath" value="productRecordTimes.queryNumberCount"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_productRecordTimes.queryNumberCount==null?'0':_productRecordTimes.queryNumberCount}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">操作</f:facet>
+            <s:link propagation="none"  view="/record/ProcessDeliveryRecordsListInfo.xhtml" value="详情" id="productRecordTimesViewId">
+                <f:param name="productRecordTimesId" value="#{_productRecordTimes.productRecordTimesId}"/>
+            </s:link>
+            #{' '}
+            <s:link propagation="none"  value="下载" id="productRecordTimesEdit" action="#{productRecordTimesHome.exportExcel(_productRecordTimes.productRecordTimesId)}" onclick="return confirm('确定导出?');">
+                <f:param name="productRecordTimesId" value="#{_productRecordTimes.productRecordTimesId}"/>
+                <f:param name="paramId" value="#{_productRecordTimes.productRecordTimesId}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable></div>
+				</td>
+			</tr>
+			
+			
+			
+			<tr>
+				<td height="40" align="left" valign="middle"
+					style="padding-left: 10px;">
+		
+		
+		
+		
+		
+		<table width="90%" height="30" cellpadding="0" cellspacing="0">
+			<tr> 
+				<td width="5%" style="float: left">
+			         <s:button view="/record/ProductBaseInfoList.xhtml" id="create" value="返回" image="../img/back2.gif">
+							<f:param name="productInfoId" value="#{productRecordTimesListByPR.productRecordId}"/>
+					 </s:button>
+				</td>
+				<td width="89%"></td>
+				<td width="5%" style="float: right;">
+			         <s:button view="/record/ProductRecordTimesInfo.xhtml" id="create" value="生产批次" image="../img/scpc.jpg">
+							<f:param name="productInfoId" value="#{productRecordTimesListByPR.productRecordId}"/>
+					 </s:button>
+				</td>
+			</tr>
+		</table>
+		
+		
+		</td></tr>
+		
+		
+		</table>
+
+		</div>
+		<!--板块1结束--></div>
+		</div>
+
+</ui:define>
+
+</ui:composition>

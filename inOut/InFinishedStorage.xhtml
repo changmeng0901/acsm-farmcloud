@@ -1,0 +1,881 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+<script src="#{request.contextPath}/asset/js/common-acsm.js"/>
+<style>
+.input-append.date .add-on i, .input-prepend.date .add-on i {
+    cursor: pointer;
+    height: 14px;
+    margin-left: -19px;
+    margin-top: 7px;
+    width: 14px;
+}
+	.catd {
+	    font-size: 12px;
+	    line-height: 25px;
+	    padding: 5px 0;
+	    text-align: center;
+	}
+	.form_datetime input {
+	    border: 1px solid #ccc;
+	    float: left;
+	    height: 30px;
+	    line-height: 30px;
+	    width: 220px;
+	}	
+	a:focus {
+		outline:none;
+		-moz-outline:none;
+	}
+	.new_da {
+	    display: inline-block;
+	    float: none;
+	    margin-bottom: 15px;
+	    margin-right: 50px;
+	    min-height: 30px;
+	    min-width: 310px;
+	}
+	.dr-pnl {
+	    padding: 0px;
+	    border: none;
+	}
+	.dr-pnl-b {
+	    padding: 0px;
+	    border: none;
+	}
+	.newble12 {width: 99%;}
+	.dr-table-subheadercell{background:#f3f7fc; line-height:36px;}
+	.dr-table-subheadercell{background:#f0f5fb; padding:0; line-height:36px; color:#4d4d4d; font-size:14px; font-family:"微软雅黑"; font-weight:normal;}
+	.dr-table-cell{color: #000; font-family:"微软雅黑"; font-size: 12px;}
+	.form-control{ font-size:12px;}
+	.rich-panel{border-style:none;}
+</style>
+<script>
+//<![CDATA[
+	jquery(document).ready(function(){
+		jquery('.b1').attr("data-live-search","true");
+		jquery(".selectpicker").selectpicker();
+		jquery("#inStorageTime").val('#{repertoryChange.nowDate}');
+		jquery(".form_datetime").datetimepicker({
+			format: "yyyy-mm-dd hh:ii",
+		    autoclose: true,
+			weekStart: 1,
+			//startDate: new Date(),
+			language:  'zh-CN',
+		    pickerPosition: "bottom-left"
+		});
+	});
+
+	document.getElementById("selectBaseDiv").style.display="none";
+//]]>
+</script>
+   
+<td valign="top" width="100%">
+	<div class="right_c">
+		<div class="r_title">
+			<div class="r_t_l">加工&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/inOut/StockRecord.seam">库存</a>&#160;&gt;&#160;&#160;<font size="3">入库管理</font>
+			</div>
+		</div>
+		#{repertoryChange.detailsInit()}
+		<div class="all_d3" style=" margin-top:35px;">
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">仓库：</td>
+						<td width="205">
+							<h:selectOneMenu styleClass="selectpicker" value="#{repertoryChange.storageRoomId}"  id="storageRoomId">
+								<s:selectItems var="_storage" value="#{repertoryChange.storageRoomList}" label="#{_storage.name}" itemValue="#{_storage.storageRoomId}" />
+							</h:selectOneMenu> 
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">类型：</td>
+						<td width="205">
+							<h:selectOneMenu styleClass="selectpicker" id="storageType" value="#{repertoryChange.storageType}" immediate="true" onchange="showProductList(this.value);">
+								<s:selectItems value="#{repertoryChange.inStorageTypeList}" var="_type" itemValue="#{_type.id}" label="#{_type.name}"/>
+							</h:selectOneMenu>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da" style="display: none;" id="purchaseId">
+				<table>
+					<tr>
+						<td class="all_tenew">供应商：</td>
+						<td width="205">
+							<h:selectOneMenu styleClass="selectpicker" id="purchase" value="#{repertoryChange.purchase}" immediate="true">
+								<s:selectItems value="#{repertoryChange.purchaseMemberList}" var="_purchase" itemValue="#{_purchase.memberInfoId}" label="#{_purchase.realname}"/>
+							</h:selectOneMenu>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">经办人：</td>
+						<td width="205">
+							<h:selectOneMenu styleClass="selectpicker b1" id="operater" value="#{repertoryChange.operater}">
+								<s:selectItems var="_attn" value="#{repertoryChange.attnList}" label="#{_attn[1]}" itemValue="#{_attn[0]}" />
+							</h:selectOneMenu>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">入库时间：</td>
+						<td>
+							<div class="input-append date form_datetime " >
+								<input id="inStorageTime" size="22" type="text" value="" readonly="readonly"></input>
+								<span class="add-on"><i class="icon-th"></i></span>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">操作人：</td>
+						<td>#{sessionTake.nickname}</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">操作时间：</td>
+						<td>#{dateUtil.getCurrentTime('yyyy-MM-dd HH:mm')}</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da" style="width:80%">
+				<table >
+					<tr>
+						<td class="all_tenew">备注：</td>
+						<td>
+							<h:inputTextarea cols="85" value="#{enterOutHome.textarea}" id="commentArea" style="resize:none;" styleClass="form-control nw300"></h:inputTextarea>
+						</td>
+					</tr>
+				</table> 
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="erlist2" style="margin-top:35px;">
+			<ul>
+				<li class="current" id="tab1"><a href="javascript:void(0);" onclick="switchTab(1, '名称')">搜索</a></li>
+				<li class="" id="tab2"><a href="javascript:void(0);" onclick="switchTab(2, '条码')">扫描条码</a></li>
+			</ul>
+		</div>
+		<div class="erbox2">
+			<div id="tar1">
+				<div class="z_r_ser" style="margin:12px 0 30px;">
+					<table cellpadding="0" cellspacing="0" class="cxtja" style="width:547px">
+						<tr>
+							<td width="80" style="font-size:14px;"><span id="searchTitle">名称</span>：</td>
+							<td width="340">
+								<div class="public-search">   
+									<span class="octicon-search02"></span>
+									<input type="text" id="searchName" value="" class="form-control nw300 srarchfont" style="width: 340px;color:#777;"/>
+									<input type="text" id="searchNameSao" value="" class="form-control nw300 srarchfont" style="width: 340px;color:#777;display: none" onkeyup="getGoodsInfoCode(event);"/>
+								</div>
+							</td>
+							<td width="40" align="left">
+								<input id="selectButton" type="submit" value="搜索" class="btn btn-primary" onclick="searchButton();"></input>
+								<input id="scanButton" type="submit" value="搜索" class="btn btn-primary" onclick="searchScan();" style="display: none;"></input>
+							</td>
+						</tr>
+					</table>
+					<p style="font-size:12px;margin-bottom: 10px;display: none; text-align:center;" id="tishi"><img src="#{request.contextPath}/asset/images/orderManage/jinggao.png"/>扫描条形码时请将输入法切换为英文状态</p>	   
+				</div>
+				<rich:panel style="width:100%;" id="showPanel">				
+				<div id="addTableDiv" style="display:none;border: 1px solid #DDDDDD; width:99%; margin:0 auto; [;text-align:left;]; background: url(../asset/images/order/next_bg_24.jpg) repeat-x; color:#4e4d4d; border-right:1px solid #ccc; float: left;">
+					<div style="overflow-y:scroll;">
+					<table width="100%" cellspacing="0" cellpadding="0" border="0" style=" border-collapse:collapse; float:left;">
+						<tr>
+							<th class="catd" width="8%"><input type="checkbox" id="productCheckAll1" onclick="selectedAll1();"/></th>
+							<th class="catd" width="23%">物料编号</th>
+							<th class="catd" width="23%">物料名称</th>
+							<th class="catd" width="23%">商品规格 </th>
+							<th class="catd" width="23%">库存数量</th>
+						</tr>
+					</table>
+					</div>
+					<div class="table_scroll" style="width:100%; height:200px; overflow-y:scroll;  margin:0 auto;  border-right:0px solid #ccc;">
+						<table width="100%" cellspacing="0" cellpadding="0" border="0">
+							<a:repeat value="#{repertoryChange.showGoodsInfoList2}" var="_showProduct" >
+								<tr>
+									<td class="catd" width="8%">
+										<input type="checkbox" onclick="selectedOne();" name="productCheckCaigou" id="productCheckCaigou" value="#{_showProduct.goodsInfoId}|" />
+									</td>
+									<td class="catd" width="23%"><h:outputText value="#{_showProduct.goodsCode}"/></td>
+									<td class="catd" width="23%"><h:outputText value="#{_showProduct.goodsName}"/></td>
+									<td class="catd" width="23%"><h:outputText value="#{_showProduct.goodsSpec}"/></td>
+									<td class="catd" width="23%">
+										<h:outputText value="#{_showProduct.goodsNum}">
+				                    		<f:convertNumber pattern="#.###"/> 
+				                    	</h:outputText>
+									</td>  
+								</tr>
+							</a:repeat>
+						</table>
+					</div>
+				</div>
+				<!-- 类型选择生产入库、退货入库、盘点入库、其它入库时，物料搜索框的物料名称前增加字段“来源” -->
+				<div id="addTableDiv2" style="display:none;border: 1px solid #DDDDDD;width:99%; margin:0 auto; [;text-align:left;]; background: url(../asset/images/order/next_bg_24.jpg) repeat-x; color:#4e4d4d; border-right:1px solid #ccc; float: left;">
+					<div style="overflow-y:scroll;">
+					<table width="100%" cellspacing="0" cellpadding="0" border="0" style=" border-collapse:collapse;  float:left;">
+						<tr>
+							<th class="catd" width="8%"><input type="checkbox" id="productCheckAll2" onclick="selectedAll2();"/></th>
+							<th class="catd" width="20%">物料编号</th>
+							<th class="catd" width="20%">来源</th>
+							<th class="catd" width="20%">物料名称</th>
+							<th class="catd" width="20%">商品规格 </th>
+							<th class="catd" width="12%">库存数量</th>
+						</tr>
+					</table>
+					</div>
+					<div class="table_scroll" style="width:100%; height:200px; overflow-y:scroll; margin:0 auto;  border-right:0px solid #ccc;">
+						<table width="100%" cellspacing="0" cellpadding="0" border="0">
+						<h:outputText rendered="#{sessionTake.productListSource eq 1}">
+							<a:repeat value="#{repertoryChange.showGoodsInfoList2}" var="_showProduct" >
+								<tr>
+									<td class="catd" width="8%">
+										<input type="checkbox" onclick="selectedOne();" name="productCheck" id="productCheck" value="#{_showProduct.goodsInfoId}-#{_showProduct.tunnelId}-#{_showProduct.tunnelName}|" />
+									</td>
+									<td class="catd" width="20%"><h:outputText value="#{_showProduct.goodsCode}"/></td>
+									<td class="catd" width="20%">
+										<h:outputText value="#{_showProduct.tunnelName}" rendered="#{_showProduct.tunnelName ne null}"/>
+										<h:outputText value="--" rendered="#{_showProduct.tunnelName eq null}"/>
+									</td>
+									<td class="catd" width="20%"><h:outputText value="#{_showProduct.goodsName}"/></td>
+									<td class="catd" width="20%"><h:outputText value="#{_showProduct.goodsSpec}"/></td>
+									<td class="catd" width="12%">
+										<h:outputText value="#{_showProduct.goodsNum}">
+				                    		<f:convertNumber pattern="#.###"/> 
+				                    	</h:outputText>
+									</td>  
+								</tr>
+							</a:repeat>
+							</h:outputText>
+							<h:outputText rendered="#{sessionTake.productListSource eq 2}">
+							<a:repeat value="#{repertoryChange.showGoodsInfoList}" var="_showProduct" >
+								<tr>
+									<td class="catd" width="8%">
+										<input type="checkbox" onclick="selectedOne();" name="productCheck" id="productCheck" value="#{_showProduct.goodsInfoId}-#{_showProduct.tunnelId}-#{_showProduct.tunnelName}|" />
+									</td>
+									<td class="catd" width="20%"><h:outputText value="#{_showProduct.goodsCode}"/></td>
+									<td class="catd" width="20%">
+										<h:outputText value="#{_showProduct.tunnelName}" rendered="#{_showProduct.tunnelName ne null}"/>
+										<h:outputText value="--" rendered="#{_showProduct.tunnelName eq null}"/>
+									</td>
+									<td class="catd" width="20%"><h:outputText value="#{_showProduct.goodsName}"/></td>
+									<td class="catd" width="20%"><h:outputText value="#{_showProduct.goodsSpec}"/></td>
+									<td class="catd" width="12%">
+										<h:outputText value="#{_showProduct.goodsNum}">
+				                    		<f:convertNumber pattern="#.###"/> 
+				                    	</h:outputText>
+									</td>  
+								</tr>
+							</a:repeat>
+							</h:outputText>
+						</table>
+					</div>
+				</div>
+				<script type="text/javascript">
+					var typeValue=jquery("#storageType").val();
+					showProductList(typeValue);
+				</script>
+				</rich:panel>
+				<div class="clear"></div>
+				<div id="addGoodsInfoDiv" class="tjan_02" style=" width:100%; text-align:left; margin-top:27px; padding-bottom:27px;margin-left:30px;">
+					<a style="width:44px; height:30px;" href="javascript:void(0);" onclick="if(!submitProduct()){return false;};">
+						<button class="btn btn-success" type="button">添加</button>
+					</a>
+				</div>
+			</div>
+		</div>
+		<rich:panel id="totalPenal" style="width:100%; margin-top:35px;">
+			<rich:dataTable width="99%" id="cartList" var="_cartList" styleClass="newble12" value="#{repertoryChange.pickGoodsInfoList}"  rowKeyVar="_index">
+		        <h:column>
+		        	<f:facet name="header">物料编号</f:facet>
+		            <center>
+		            	<h:outputText value="#{_cartList.goodsCode}"/>
+		            	<input type="hidden" value="#{_cartList.goodsInfoId}#{_cartList.tunnelId}#{_index}" id="hiddenGoodsKey#{_index}"></input>
+		            </center>
+		        </h:column>
+		        <h:column>
+		        	<f:facet name="header">物料名称</f:facet>
+		        	<center>
+		        		<h:outputText value="#{_cartList.goodsName}"/>
+	        		</center>
+		        </h:column>
+		        <h:column>
+		        	<f:facet name="header">来源</f:facet>
+		        	<center>
+		        		<h:outputText rendered="#{_cartList.tunnelId ne null and _cartList.tunnelInfoList eq null}">
+			        		<h:outputText value="#{_cartList.tunnelName}" rendered="#{_cartList.tunnelName ne null}"/>
+			        		<h:outputText value="--" rendered="#{_cartList.tunnelName eq null}"/>
+		        		</h:outputText>
+		        		<h:outputText rendered="#{_cartList.tunnelInfoList ne null}">
+		        			<select id="tunnelId#{_cartList.goodsKey}" class="selectpicker" style="width:100px;"  onchange="updateTunnels('#{_cartList.goodsInfoId}',this.value,'#{_index}');">
+	        					<h:outputText value="#{_cartList.goodsTunnelOption}" escape="false"/>
+	        				</select> 
+		        		</h:outputText>
+	        		</center>
+		        </h:column>
+		        <h:column>
+		        	<f:facet name="header">商品规格 </f:facet>
+		            <center>
+		            	<h:outputText value="#{_cartList.goodsSpec}"/>
+		            </center>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">入库量</f:facet>
+		            <center>
+						<input class="form-control _number" onblur="updateMaoNum(#{_cartList.goodsInfoId},this.value,this.id, #{_cartList.goodsLevelId},#{_cartList.realityJingNum},#{_cartList.tunnelId},#{_index});" style="width: 100%; text-align: center;" id="numMaober#{_cartList.goodsInfoId}#{_cartList.tunnelId}#{_index}" type="text" value="#{_cartList.realityMaoNum}"/>
+		            </center>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">入库总重量(kg)</f:facet>
+		            <center>
+						<input class="form-control _number"  style="width: 100%; text-align: center;"  type="text" value="0.0" id="zongzhongliang#{_cartList.goodsInfoId}#{_cartList.tunnelId}#{_index}"  onblur="checkTotalStorage(this.value,this.id);"/>
+		            </center>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">保质期(天)</f:facet>
+		            <center>
+						<input class="form-control" onblur="updateExpirationDate(#{_cartList.goodsInfoId},this.value, #{_cartList.goodsLevelId}, this.id);" style="width: 100%; text-align: center;" id="baozhiqi#{_cartList.goodsInfoId}#{_cartList.tunnelId}#{_index}" type="text" value="#{_cartList.expirationTimes}"/>
+		            </center>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">物料单价</f:facet>
+		            <center>
+		            	<table>
+		            		<tr>
+		            			<td>￥</td>
+		            			<td><input class="form-control" onblur="updatePrice(#{_cartList.goodsInfoId},this.value, #{_cartList.goodsLevelId},#{_cartList.tunnelId},#{_index});" style="width: 100%; text-align: center;" id="goodsPrice#{_cartList.goodsInfoId}#{_cartList.tunnelId}#{_index}" type="text" value="#{_cartList.price}"/></td>
+		            		</tr>
+		            	</table>
+		            </center>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">物料总价</f:facet>
+		            <center>
+		            	<table>
+		            		<tr>
+		            			<td>￥</td>
+		            			<td id="totalGoodsPrice#{_cartList.goodsInfoId}#{_cartList.tunnelId}#{_index}"><h:outputText value="#{_cartList.totalPrice}"><f:convertNumber pattern="#0.00"/></h:outputText></td>
+		            		</tr>
+		            	</table>
+		            </center>
+		        </h:column>
+		        <rich:column styleClass="action" width="10%" style="border-right:none;">
+		            <f:facet name="header">操作</f:facet>
+					<table class="ps" align="center">
+						<tr>
+							<td style="border: none;">
+								<a href="javascript:void(0);" onclick="delOneProduct(#{_cartList.goodsInfoId}, #{_cartList.goodsLevelId},'#{_index}');">删除</a>
+							</td>
+						</tr>
+					</table>
+		        </rich:column>
+		    </rich:dataTable>
+		     <script type="text/javascript">
+			//<![CDATA[
+				jquery('.b1').attr("data-live-search","true");
+				jquery(".selectpicker").selectpicker();
+				jquery(".bootstrap-select").css("width","100%");
+			//]]>
+			</script>
+		</rich:panel>
+		<h:form id="saveFrom">
+			<div style="height:25px;"></div>
+			<div style=" padding-top:35px; text-align:center;">
+				<a:commandLink id="refreshShow" reRender="showPanel"></a:commandLink>
+				<a:commandLink id="refreshToral" reRender="totalPenal"></a:commandLink>
+				<h:inputHidden id="storageRoomIdHidden" value="#{repertoryChange.storageRoomId}"/>
+				<h:inputHidden id="tunnelInfoIdHidden" value="#{repertoryChange.tunnelInfoId}"/>
+				<h:inputHidden id="storageTypeHidden" value="#{repertoryChange.storageType}"/>
+				<h:inputHidden id="storageDateHidden" value="#{repertoryChange.storageDate}"/>
+				<h:inputHidden id="commentHidden" value="#{repertoryChange.comment}"/>
+				<h:inputHidden id="operaterHidden" value="#{repertoryChange.operater}"/>
+				<h:inputHidden id="goodsBatchStringsHidden" value="#{repertoryChange.goodsBatchStrings}"/>
+				<h:inputHidden id="purchaseHidden" value="#{repertoryChange.purchase}"/>
+				<a:commandButton id="save" value="提交" styleClass="btn btn-primary" onclick="if(!submitSave())return false;jquery('#saveFrom\\:save').attr('disabled','true');" action="#{repertoryChange.materialInStorageFind}"/>
+				&#160;
+				<s:button view="/inOut/#{stockUtil.changeStockUrl(sessionTake.stockParam)}.xhtml" value="返回" styleClass="btn btn-default">
+				<f:param name="baseId" value="#{repertoryChange.baseId}"></f:param>
+				</s:button>
+			</div>
+			<div style="height:20px; width:100%;"></div>
+			<div class="clear"></div>
+		</h:form>
+	</div>
+</td>
+<a:form>
+	<a:queue requestDelay="10" ignoreDupResponses="true"/>
+	<a:jsFunction name="modifyGoodsMaoNum" action="#{repertoryChange.modifyGoodsMaoNum}" oncomplete="refreshCartAction();document.getElementById('saveFrom:save').disabled = false;" >
+		<a:actionparam name="goodsInfoKey" assignTo="#{repertoryChange.goodsInfoKey}"/>
+		<a:actionparam name="modifyMaoNum" assignTo="#{repertoryChange.modifyMaoNum}"/>
+	</a:jsFunction>
+	<a:jsFunction name="modifyGoodsInfoPrice" action="#{repertoryChange.modifyGoodsInfoPrice}" oncomplete="refreshCartAction();document.getElementById('saveFrom:save').disabled = false;" >
+		<a:actionparam name="goodsInfoKey" assignTo="#{repertoryChange.goodsInfoKey}"/>
+		<a:actionparam name="modifyPrice" assignTo="#{repertoryChange.modifyPrice}"/>
+	</a:jsFunction>
+	<a:jsFunction name="modifyGoodsInfoExpirationDate" action="#{repertoryChange.modifyGoodsInfoExpirationDate}" oncomplete="refreshCartAction();document.getElementById('saveFrom:save').disabled = false;" >
+		<a:actionparam name="goodsInfoKey" assignTo="#{repertoryChange.goodsInfoKey}"/>
+		<a:actionparam name="modifyExpirationDate" assignTo="#{repertoryChange.modifyExpirationDate}"/>
+	</a:jsFunction>
+	<a:jsFunction name="removeGoodsInfo" action="#{repertoryChange.removeGoodsInfo}" oncomplete="refreshCartAction();" >
+		<a:actionparam name="goodsInfoKey" assignTo="#{repertoryChange.goodsInfoKey}"/>
+		<a:actionparam name="goodsBatchStrings" assignTo="#{repertoryChange.goodsBatchStrings}"/>
+		<a:actionparam name="listIndex" assignTo="#{repertoryChange.listIndex}"/>
+	</a:jsFunction>
+	<a:jsFunction name="showListFiltel" action="#{repertoryChange.showListFiltel}" oncomplete="searchOnComplete();" >
+		<a:actionparam name="goodsNameCode" assignTo="#{repertoryChange.goodsNameCode}"/>
+		<a:actionparam name="leixing" assignTo="#{repertoryChange.type}"/>
+	</a:jsFunction>
+	<a:jsFunction name="scanCodeFind" action="#{repertoryChange.scanCodeFind}" data="#{repertoryChange.scanCodeMsg}" oncomplete="searchScanOnComplete(data);" >
+		<a:actionparam name="goodsNameCode" assignTo="#{repertoryChange.goodsNameCode}"/>
+	</a:jsFunction>
+	<a:jsFunction name="addCheckedGoodsInfo" action="#{repertoryChange.addCheckedGoodsInfo}" oncomplete="refreshCartAction();">
+		<a:actionparam name="resultTree" assignTo="#{repertoryChange.resultTree}"/>
+		<a:actionparam name="goodsBatchStrings" assignTo="#{repertoryChange.goodsBatchStrings}"/>
+		<a:actionparam name="storageType" assignTo="#{repertoryChange.storageType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="findProductInfo" eventsQueue="mainQueue" action="#{repertoryChange.findProductInfo}" data="#{repertoryChange.scanStr}" oncomplete="scanAddPro(data);">
+		<a:actionparam name="productInfoCode" assignTo="#{repertoryChange.productInfoCode}"/>
+	</a:jsFunction>
+	<a:jsFunction name="addScanProductInfo" action="#{repertoryChange.addScanProductInfo}" oncomplete="refreshCartAction();">
+		<a:actionparam name="resultTree" assignTo="#{repertoryChange.resultTree}"/>
+		<a:actionparam name="goodsBatchStrings" assignTo="#{repertoryChange.goodsBatchStrings}"/>
+		<a:actionparam name="storageType" assignTo="#{repertoryChange.storageType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="productModifyTunnel" eventsQueue="mainQueue" action="#{repertoryChange.productModifyTunnel}" oncomplete="refreshCartAction();">
+		<a:actionparam name="goodsInfoKey" assignTo="#{repertoryChange.goodsInfoKey}"/>
+		<a:actionparam name="goodsTunnelId" assignTo="#{repertoryChange.goodsTunnelId}"/>
+		<a:actionparam name="goodsBatchStrings" assignTo="#{repertoryChange.goodsBatchStrings}"/>
+		<a:actionparam name="listIndex" assignTo="#{repertoryChange.listIndex}"/>
+	</a:jsFunction>
+	
+</a:form>
+<script type="text/javascript">
+//<![CDATA[
+	var tab = 1;//当前标签 
+     
+	function submitSave(){
+		var storageDate = jquery("#inStorageTime").val();
+		if(!storageDate){
+			alert("请选择入库时间");
+			return false;
+		}
+		if(jquery("._number").length==0){ 
+			alert("请至少添加一个物料信息");
+  		  	return false;
+		} 
+		var storageRoomId = jquery('select[name="storageRoomId"]').val();
+        if ("org.jboss.seam.ui.NoSelectionConverter.noSelectionValue" == storageRoomId || null==storageRoomId){
+        	alert("请选择库房....");
+			return false;
+		}
+        var storageType = jquery('select[name="storageType"]').val();
+        if ("org.jboss.seam.ui.NoSelectionConverter.noSelectionValue" == storageType || null==storageRoomId){
+        	alert("请选择入库类型....");
+			return false;
+		}
+		var commentArea = jquery("#commentArea").val();
+		var operaterValue = jquery("#operater").val();
+
+		var purchase = jquery('select[name="purchase"]').val();
+		if(storageType == 11){
+			if ("org.jboss.seam.ui.NoSelectionConverter.noSelectionValue" == purchase || purchase == null){
+    	    	alert("请选择供应商....");
+				return false;
+			}
+			jquery("#saveFrom\\:purchaseHidden").val(purchase);
+		}
+		
+		var tunnelInfoId = jquery('select[name="tunnelInfoId"]').val();
+		jquery("#saveFrom\\:tunnelInfoIdHidden").val(tunnelInfoId);
+		
+		jquery("#saveFrom\\:storageRoomIdHidden").val(storageRoomId);
+		jquery("#saveFrom\\:storageTypeHidden").val(storageType);
+		jquery("#saveFrom\\:storageDateHidden").val(storageDate);
+		jquery("#saveFrom\\:commentHidden").val(commentArea); 
+		if(operaterValue == ''){
+			alert("经办人不能为空!");
+			return false;
+		}else{
+			jquery("#saveFrom\\:operaterHidden").val(operaterValue);
+		}
+		var goodsBatchStrings=getAddGoodsInfo();
+ 	   jquery("#saveFrom\\:goodsBatchStringsHidden").val(goodsBatchStrings);  	   
+		return true;
+	}
+	//添加入库 保留上次修改的记录
+	function getAddGoodsInfo(){
+		var maoNum="";
+        var jingNum=0;
+        var exprDate="";
+        var totalWeight = "";
+        var goodsPrice="";
+        var goodsBatchStrings="";
+ 	    var trObj=jquery("#cartList\\:tb").children("tr");
+ 	    trObj.each(function(i){     
+ 	 	    	var goodsKey=jquery("#hiddenGoodsKey"+i).val();  
+				var tdObj=jquery(trObj[i]).children("td");
+				maoNum=jquery("#numMaober"+goodsKey).val();
+				exprDate=jquery("#baozhiqi"+goodsKey).val();
+				goodsPrice=jquery("#goodsPrice"+goodsKey).val();
+				totalWeight=jquery("#zongzhongliang"+goodsKey).val();
+				jingNum=maoNum;
+				if(""!=goodsBatchStrings){
+					goodsBatchStrings+="###";
+				}				
+				goodsBatchStrings+=goodsKey+"@@"+maoNum+"@@"+jingNum+"@@"+exprDate+"@@"+goodsPrice+"@@"+totalWeight;
+     	});
+     	return goodsBatchStrings;
+	}      
+    function KeyDown(){    
+        if (event.keyCode == 13){     
+            event.returnValue=false;        
+         }
+     }
+
+
+    jquery('#searchName').keydown(function(e){
+    	if(e.keyCode==13){
+    	       var serchType = jquery("#storageType").val();
+    			var searchName = jquery("#searchName").val();
+    		if (tab == 1) {
+    			showListFiltel(searchName,serchType);
+			} else {
+				scanCodeFind(searchName);
+			}
+    	}
+    }); 
+    
+    function updateExpirationDate(productId, expirationDate, levelId, Numberid){
+    	if(jquery.REGEX_TYPES.digital.test(expirationDate)){
+        	if (expirationDate.length > 4) {
+				alert("保质期不能大于4位数字...");
+				document.getElementById(Numberid).value=1;
+			} else {
+				var goodsInfoKey = productId + "-" + levelId;
+	    		//modifyGoodsInfoExpirationDate(goodsInfoKey,Number(expirationDate));
+			}
+		}else {
+			alert("保质期只能为正整数...");
+			document.getElementById(Numberid).value=1;
+		}
+	}
+
+    function updatePrice(productId, price, levelId,tunnelId,index){
+    	if(isNaN(price) || price <0 ){
+			alert("单价必须为数字");
+			document.getElementById("goodsPrice"+productId+tunnelId+index).value=parseFloat(0).toFixed(1);
+			return;
+		}else if(""==price){
+			document.getElementById("goodsPrice"+productId+tunnelId+index).value=parseFloat(0).toFixed(1);
+		}  
+		var goodsInfoKey = productId + "-" + levelId;
+		jquery("#totalGoodsPrice"+productId+tunnelId+index).html((parseFloat(jquery("#numMaober"+productId+tunnelId+index).val()).toFixed(2)*parseFloat(jquery("#goodsPrice"+productId+tunnelId+index).val())).toFixed(2));
+		//modifyGoodsInfoPrice(goodsInfoKey,price);  
+	}
+
+	function updateMaoNum(productId, num,Numberid, levelId,jingNum,tunnelId,index){
+		if(isNaN(num) || num <=0 ){
+			alert("商品数量大于0...");
+			document.getElementById(Numberid).value=1;
+			num = 1;
+		}
+		/* if(num<jingNum){
+			alert("毛入库量必须大于净入库量"); 
+			document.getElementById(Numberid).value=1;
+			return;
+		} */ 
+		var goodsInfoKey = productId + "-" + levelId;
+		if(jquery.REGEX_TYPES.digital.test(parseFloat(num)) == true){
+			//modifyGoodsMaoNum(goodsInfoKey,num);
+		}else{
+			var number = num.substr(0,num.indexOf('.')+4);
+			//modifyGoodsMaoNum(goodsInfoKey,number);
+		}
+		jquery("#totalGoodsPrice"+productId+tunnelId+index).html((parseFloat(jquery("#numMaober"+productId+tunnelId+index).val()).toFixed(2)*parseFloat(jquery("#goodsPrice"+productId+tunnelId+index).val())).toFixed(2));
+	}
+
+	//校验入库总重量输入框
+	function checkTotalStorage(num,Numberid){
+		if(isNaN(num)){
+			alert("请输入数字！");
+			document.getElementById(Numberid).value=0.0;
+		}else{
+			if(num<0){
+				alert("商品总重量不能小于0");
+				document.getElementById(Numberid).value=0.0;
+			}
+		}
+	}
+	//扫码添加物料到购物车
+	function scanAddPro(data){
+		if(data != ""){
+			var storageType = jquery('select[name="storageType"]').val();
+			var values = '{"resultDatas":[';
+			var scanArr = data.split('@@');
+			values += '{"goodsInfoId":"' + scanArr[0] + '","number":1},';
+			values = values.substring(0, values.length-1) + ']}';
+			//添加物料时，保留前面操作的数据信息
+		    var goodsBatchStrings=getAddGoodsInfo();
+		    jquery('#searchNameSao').val('');
+		    addScanProductInfo(values,goodsBatchStrings,storageType);
+	    	return true;
+		}else{
+			alert("未查询到该商品！");
+			jquery('#searchNameSao').val('');
+			return false;
+		}
+	}
+	
+    //添加选中商品到购物车
+    function submitProduct(){
+    	var storageType = jquery('select[name="storageType"]').val();
+        var str = "";
+        if(storageType == 11){
+        	jquery("input[name='productCheckCaigou']:checkbox:checked").each(function(){
+              	str += jquery(this).val();
+          	});
+        }else{
+        	jquery("input[name='productCheck']:checkbox:checked").each(function(){
+              	str += jquery(this).val();
+          	});
+        }
+		if (str != '') {
+			var values = '{"resultDatas":[';
+			var temp = str.split("|"); 
+			for ( var i = 0; i < temp.length-1; i++) {
+				var tunnelName = temp[i].split("-");
+				values += '{"goodsInfoId":' + tunnelName[0] + ',"number":1';
+				if(tunnelName.length > 1 && tunnelName[1] != ""){
+					values += ',"tunnelId":' + tunnelName[1];
+				}
+				if(tunnelName.length >3 && tunnelName[2] != "" && tunnelName[3] != ""){
+					values += ',"tunnelName":"' + tunnelName[2] +"-"+ tunnelName[3]+'"';
+				}else if(tunnelName.length > 2 && tunnelName[2] != ""){
+					values += ',"tunnelName":"' + tunnelName[2] + '"';
+				}
+				
+				values += '},';
+			}
+	    	values = values.substring(0, values.length-1) + ']}';
+	    	var goodsBatchStrings=getAddGoodsInfo();
+	    	addCheckedGoodsInfo(values,goodsBatchStrings,storageType);
+	    	return true;
+		}else {
+			alert("请选择至少一个商品...");
+			return false;
+		}
+    }
+    
+    //全选事件
+    function selectedAll1(){
+		var checked = jquery("#productCheckAll1").prop("checked");
+		jquery("input[name='productCheck']").prop("checked", checked);
+	}
+
+  //全选事件
+    function selectedAll2(){
+		var checked = jquery("#productCheckAll2").prop("checked");
+		jquery("input[name='productCheck']").prop("checked", checked);
+	}
+
+  	//单选事件
+    function selectedOne(){
+    	var str = "";
+    	jquery("input[name='productCheck']:checkbox:checked").each(function(){
+          	str += jquery(this).val();
+      	});
+      	if (str == '') {
+      		jquery("#productCheckAll").removeAttr("checked");
+		}
+	}
+           
+    //搜索商品
+    function searchButton(){
+        var serchType = jquery("#storageType").val();
+		var searchName = jquery("#searchName").val();
+		showListFiltel(searchName,serchType);
+    }
+
+  	//搜索商品回调
+    function searchOnComplete(){
+    	document.getElementById("saveFrom:refreshShow").onclick();
+    }
+
+  //扫码
+    function searchScan(){
+		var searchName = jquery("#searchName").val();
+		scanCodeFind(searchName);
+    }
+
+	//扫码商品回调
+    function searchScanOnComplete(data){
+    	jquery('#preview').remove();
+    	//jquery("#showMsg").append("<div id='preview'>" + data + "</div>");
+    	jquery("#showMsg").append("<div id='preview' style='width:340px; height:50px; line-height:50px; padding:20px; font-size:25px; background:#fcf8e3; text-align:center; position:absolute; left:50%; top:50%; margin-left:-170px; margin-top:-45px; border-radius:10px; border:1px solid #faebcc; color:#8a6d3b;'>" + data + "</div>");
+    	jquery("#preview").fadeIn(2500);
+    	jquery("#preview").fadeOut(2500);
+        document.getElementById("saveFrom:refreshToral").onclick();
+    }
+           
+	//删除单个
+	function delOneProduct(productId, levelId,listIndex){
+		var goodsInfoKey = productId + "-" + levelId;
+		if(confirm('确定删除吗？')){
+			var goodsBatchStrings=getAddGoodsInfo();
+			removeGoodsInfo(goodsInfoKey,goodsBatchStrings,listIndex);
+		}
+	}
+
+	//添加到购物车回调
+	function addProductComplete(data){
+		refreshCartAction();
+	}
+
+	//修改数量回调
+	function modifyNumComplete(data){
+		refreshCartAction();
+	}
+
+	//刷新
+	function refreshCartAction(){
+		document.getElementById("saveFrom:refreshToral").onclick();
+	}
+	
+	//切换tab展示
+	function switchTab(showTabId,searchTitle){
+		tab = showTabId;
+		jquery(".current").removeClass("current");
+		jquery("#tab" + showTabId).addClass("current");
+		jquery("#searchTitle").html(searchTitle);
+		if (showTabId == 2) {
+			jquery("#addTableDiv").hide();
+			jquery("#addTableDiv2").hide();
+			jquery("#addGoodsInfoDiv").hide();
+			jquery("#selectButton").css("display","none");
+			jquery('#searchName').css("display","none");
+			jquery("#searchNameSao").css("display","");
+			jquery('#searchNameSao').focus();
+			jquery('#tishi').css('display','');
+		} else {
+			jquery("#addTableDiv").show();
+			var typeValue=jquery("#storageType").val();
+			showProductList(typeValue);
+			jquery("#addGoodsInfoDiv").show();
+			jquery("#selectButton").css("display","");
+			jquery("#scanButton").css("display","none");
+			jquery("#searchName").css("display","");
+			jquery("#searchNameSao").css("display","none");
+			jquery('#searchName').focus();
+			jquery('#tishi').css('display','none');
+		}
+	}
+	 var produceType=#{storageInfoConstant.getProduceInStorageType()};//生产入库
+	 var refundType=#{storageInfoConstant.getRefundInStorageType()};//退库入库
+	 var inventoryType=#{storageInfoConstant.getInventoryInStorageType()};//盘点入库
+	 var otherType=#{storageInfoConstant.getOtherInStorageType()};//其它入库
+	 
+	function showProductList(typeValue){
+		/**型选择生产入库、退货入库、盘点入库、其它入库时，物料搜索框的物料名称前增加字段“来源”；*/
+		jquery("input[name='productCheck']:checkbox:checked").each(function(){
+          	jquery(this).removeAttr("checked");
+      	});
+		if(typeValue == produceType || typeValue == refundType || typeValue == inventoryType|| typeValue == otherType){
+			jquery("#addTableDiv").hide();
+			jquery("#addTableDiv2").show();
+			jquery('#tishi').css('display','none');
+			jquery("#tab1").attr('class','current');
+			jquery("#tab2").attr('class','');
+			jquery("#searchName").css("display","");
+			jquery("#searchNameSao").css("display","none");
+			jquery("#selectButton").css("display","");
+			jquery('#searchName').focus();
+			jquery("#searchTitle").html('名称');
+		  }else{
+			jquery("#addTableDiv2").hide();
+			jquery("#addTableDiv").show();
+			jquery('#tishi').css('display','none');
+			jquery("#tab1").attr('class','current');
+			jquery("#tab2").attr('class','');
+			jquery("#searchName").css("display","");
+			jquery("#searchNameSao").css("display","none");
+			jquery("#selectButton").css("display","");
+			jquery('#searchName').focus();
+			jquery("#searchTitle").html('名称');
+		}
+		if(typeValue == 11){
+			jquery("#purchaseId").show();
+			jquery('#tishi').css('display','none');
+			jquery("#tab1").attr('class','current');
+		 	jquery("#tab2").attr('class','');
+		 	jquery("#searchName").css("display","");
+			jquery("#searchNameSao").css("display","none");
+			jquery("#selectButton").css("display","");
+			jquery('#searchName').focus();
+			jquery("#searchTitle").html('名称');
+		}else{
+			jquery("#purchaseId").hide();
+			jquery('#tishi').css('display','none');
+			jquery("#tab1").attr('class','current');
+		 	jquery("#tab2").attr('class','');
+		 	jquery("#searchName").css("display","");
+			jquery("#searchNameSao").css("display","none");
+			jquery("#selectButton").css("display","");
+			jquery('#searchName').focus();
+			jquery("#searchTitle").html('名称');
+		}
+	}
+	
+	jquery(document).ready(function(){
+		var typeValue=jquery("#storageType").val();
+		showProductList(typeValue);
+	});
+
+function getGoodsInfoCode(event){
+	var keyCode = event.keyCode;
+	var goodsInfoCode;
+	if(keyCode == 108 || keyCode == 13){
+		goodsInfoCode = jquery('#searchNameSao').val();
+		findProductInfo(goodsInfoCode);
+	}
+}
+
+//修改商品来源（扫码入库专用）
+function updateTunnels(goodsKey, goodsTunnelId,listIndex){
+	//alert("goodsKey:"+goodsKey+"goodsLevelId:"+goodsLevelId);
+	//修改等级时，保留前面操作的数据信息
+	jquery('#saveFrom\\:saveSubmit').attr('disabled','true');   
+	var goodsStr=getAddGoodsInfo();
+	productModifyTunnel(goodsKey, Number(goodsTunnelId),goodsStr,listIndex);
+}
+//]]>
+</script>
+
+</ui:define>
+</ui:composition>

@@ -1,0 +1,539 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	#{orderOperate.orderViewInit()}
+	<style>
+		 .customMess_wap .items p.name {overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+		 .modalTable_minni td.pr10{ padding-right:10px;}
+		 body{ height: auto;}
+		 .modal{ z-index: 300;}
+		 #myModal_sendMail{ z-index: 301;}
+		 #messageDiv{z-index: 500;}
+		 #send_fail{z-index: 500;}
+	</style>
+	
+	<td valign="top" >
+		<div class="right_c">
+		<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+									<h4 class="modal-title" id="messageTitle">提示</h4>
+								</div>
+								<div class="modal-body">
+									<span id="messageValue"></span>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+								</div>
+							</div>
+						</div>
+					</div>
+			<div class="farmMain_wap clear" style="width:100%; padding:20px 30px;">
+				<div class="breadNav_wap clear">
+					<div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam?orderStatus=1"><strong>订单管理</strong></a></div>
+					<div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+						<ul class="resumeList clear">
+							<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+						</ul>
+					</div>
+				</div>
+				<div class="singleManage_con">
+					<div class="orderTrack_heade mb20">
+						<p class="mr70">订单编号：<span class="number">#{orderOperate.orderInfo.orderCode}</span></p>
+			            <p class="mr70">订单状态：<span class="statues">#{orderConstant.getOrderStatusLabel(orderOperate.orderInfo.orderStatus)}</span></p>
+		            	<p class="#{orderOperate.orderInfo.paymentStatus == true ? 'payStatues' : 'payStatues2'}">#{orderOperate.orderInfo.paymentStatus == true ? '已支付' : '未支付'}</p>
+					</div>
+					<div class="orderTrack_body">
+						<table class="tableGz" width="100%" cellpadding="0" cellspacing="0">
+							<thead>
+								<tr>
+									<th colspan="3">订单跟踪</th>
+								</tr>
+							</thead>
+			                <tbody>
+								<tr>
+									<th width="25%" height="50" align="left" style="padding-left:70px; font-weight:bold;">处理时间</th>
+			                        <th width="60%" align="left" style="font-weight:bold;">处理信息</th>
+			                        <th width="15%" align="center" style="font-weight:bold; text-align: center;">操作人</th>
+			                    </tr> 
+			                    <a:repeat value="#{orderOperate.orderRecordList}" var="_orderRecord" rowKeyVar="_index">
+		                    		<tr>
+				                    	<td class="dateTd #{_index + 1 != orderOperate.orderRecordList.size() ? 'bg' : ''}" height="50">
+				                    		<i class="ico_bg"></i>
+				                    		<h:outputText value="#{_orderRecord.insertTime}">
+						        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss" />
+						        			</h:outputText>
+			                    		</td>
+				                        <td>
+				                            <div style="overflow:hidden;">
+				                            <span style="float:left;">#{orderConstant.getOrderStatusLabel(_orderRecord.orderStatus)}</span>
+				                            <div class="InOrdePass_tip">
+				                            	<p>#{_orderRecord.description}</p>
+				                            </div>
+				                            </div>
+				                        </td>
+				                        <td align="center" style="text-align: center;">#{_orderRecord.operater}</td>
+				                    </tr>
+			                    </a:repeat>
+			                </tbody>
+			            </table>
+			        </div>
+			        <h2 class="titleH2">客户信息</h2>
+			        <div class="mb20 mt20">
+			        	<div class="customMess_wap" style="margin-left:40px;">
+			                <div class="items itemsCur" style="cursor:default;">
+			                    <p class="name"  title="#{orderOperate.orderInfo.memberInfo.realname}">客户姓名：<span>#{orderOperate.orderInfo.memberInfo.realname}</span></p>
+			                    <p class="phone">联系方式：<span>#{orderOperate.orderInfo.memberInfo.phone}</span></p>
+			                    <p class="come">客户来源：<span>#{orderOperate.orderInfo.memberInfo.mSource.name}</span></p>
+			                    <p class="type">客户类型：<span>#{orderOperate.orderInfo.memberInfo.mType.name}</span></p>
+			                    <p class="addresses">工作地址：<span>#{orderOperate.orderInfo.memberInfo.workAddress}</span></p>
+			                    <em class="defaultIco"></em>
+			                </div>
+			            </div> 
+			        </div>
+			        <h2 class="titleH2">收货人信息</h2>
+			        <div class="mb20">
+				        <table class="W_addresses" cellpadding="0" cellspacing="0" style="margin-left:40px;">
+					        <tr>
+					            <td>
+					                <div class="W_addresses_list">
+					                	<div class="addrItems" style=" cursor: default;">
+					                    	<div class="inner innerCur">
+					                        	<div class="addr_hd">
+													<span class="name" title="#{orderOperate.orderInfo.receiveName}" style=" font-weight:bold;cursor: pointer;">#{orderOperate.orderInfo.receiveName}&#160;&#160;</span><span title="#{orderOperate.orderInfo.receivePhone}" style="cursor: pointer;" class="phone">#{orderOperate.orderInfo.receivePhone}</span>
+					                            </div>
+					                            <div class="addr_bd">
+					                            	<span class="street">#{orderOperate.orderInfo.receiveAddress}</span>
+					                            </div>
+					                            <i class="curmarker"></i>
+					                        </div>
+					                    </div>
+					                </div>
+					            </td>
+					        </tr>
+				        </table>
+			        </div>
+			        <h2 class="titleH2">配送时间</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">配送时间：
+			        		<span class="date">
+			        			<h:outputText value="#{orderOperate.orderInfo.deliverTime}">
+			        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+			        			</h:outputText>
+			        		</span>&#160;|&#160;
+			        		<span class="sendStatues">
+			        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 0}">全天</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 1}">上午</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 2}">下午</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 3}">晚上</s:fragment>
+			        		</span></p>
+			        </div>
+			        <h2 class="titleH2">付款方式</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">#{orderConstant.getPayTypeLabel(orderOperate.orderInfo.paymentMode)}</p>
+			        </div>
+			        <h2 class="titleH2"><span style="display:inline-block; width:28px;"></span>备注</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">#{orderOperate.orderInfo.orderRemark}</p>
+			        </div>
+			    	<h2 class="titleH2">商品清单</h2>
+			    	<h:form id="accept">
+			        <div class="listGoods_con">
+			            <table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+			                <thead>
+			                <tr>
+			                	<th width="10%">编号</th>
+			                    <th width="20%">商品</th>
+			                    <th width="10%">单位</th>
+			                    <th width="15%">订购数量</th>
+			                    <th width="15%">订购单价</th>
+			                    <th width="15%">接受数量</th>
+								<th width="15%">接受价格</th>
+			                </tr>
+			                </thead>
+			            </table>
+			            <div class="listGoods_height" id="showProductDiv">
+				            <table id="orderAcceptTable" class="tableModel tbody" width="100%" cellpadding="0" cellspacing="0">
+				                <tbody>
+				                	<a:repeat value="#{orderOperate.orderProductList}" var="_orderProduct" rowKeyVar="_opIndex">
+				                		<tr class="odd">
+						                    <td width="10%">#{_orderProduct.productCode}</td>
+						                    <td width="20%">#{_orderProduct.productName}</td>
+						                    <td width="10%">#{_orderProduct.productUnit}</td>
+						                    <td width="15%">#{_orderProduct.productNum}</td>
+						                    <td width="15%">¥<span class="num_spdj2"><h:outputText value="#{_orderProduct.price}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    
+						                    <td width="15%">
+						                    	<div class="numCount_block">
+						                            <span class="minusOne" onclick="modifyNum('#{_opIndex}', 1);"></span>
+						                            <span class="inputText"><input name="productNum" id="productNum#{_opIndex}" type="text" class="form-control " value="#{_orderProduct.productNum}" onkeyup="clearNoNum(2, this, event);" onchange="valueChange(this.value,#{_opIndex},1);"/></span>
+						                            <span class="addOne" onclick="modifyNum('#{_opIndex}', 2);"></span>
+						                        </div>
+				                    		</td>
+						                    <td width="15%">
+						                    		<span class="num_spbz" >¥<input id="price#{_opIndex}" type="text" class="form-control" style="width: 50%;" value="#{_orderProduct.price}" onkeyup="clearNoNum(2, this, event);" onchange="valueChange(this.value,#{_opIndex},2);"/></span>
+						                    </td>
+						                </tr>
+				                	</a:repeat>
+				                </tbody>
+				            </table>
+			            </div>
+			            <div class="tfoot mb20"> 
+			                <div class="listGoods_total">
+			                    <ul>
+			                        <li class="listGoods_li1">共<span class="num"><h:outputText id="sumProductNum" value="#{orderOperate.sumProductNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></span>件商品</li>
+			                        <li class="listGoods_li2">商品总额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num"><h:outputText id="totalPrice" value="#{orderOperate.orderInfo.productAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                    </ul>
+			                </div>
+			                <div class="listGoods_li5 clear">
+			                    <div class="fr">
+			                    <span class="fl">应付总额：</span>
+			                    <span class="codeEle fl">¥</span>
+			                    <span class="num fl" ><h:outputText id="orderPrice" value="#{orderOperate.orderInfo.paymentAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText></span>
+			                    </div>
+			                </div>
+			            </div>
+			            <div>
+			            	<h:inputHidden id="jsonStr" value="#{orderOperate.orderProductJson}" />
+			            	<h:inputHidden id="productAccount" value="#{orderOperate.productAccount}" />
+			            	<h:inputHidden id="payAccount" value="#{orderOperate.payAccount}" />
+			            	<a  class="btn btn-primary fr" onclick="emailSend();">
+			            		接受并发送邮件
+			            	</a>
+			            	<h:commandButton action="#{orderOperate.orderAcceptPass}" id="toSend"  styleClass="btn btn-primary fr mr5" value="接受" onclick="productJson();">
+			            	    <f:param name="pages" value="#{orderOperate.page}"></f:param>
+			            		<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+			            		<f:param name="orderSearch" value="#{orderOperateList.orderSearch}" />
+			            	</h:commandButton>
+			            	<s:button view="/orderManage/OrderAcceptList.xhtml" styleClass="btn btn-default fr mr5" propagation="end" value="返回">
+			            		<f:param name="pages" value="#{orderOperate.page}"></f:param>
+			            		<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+			            		<f:param name="orderSearch" value="#{orderOperateList.orderSearch}" />
+			            	</s:button>
+			            </div>
+			        </div>
+			        </h:form>
+			    </div>
+			</div>
+			
+		</div>
+		<h:form id="sendEmail">
+		<div class="modal fade" id="myModal_sendMail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog" style="position:fixed; left:50%; top:50%; width:880px; margin-left:-440px; margin-top:-300px;">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		            <button type="button" class="close" data-dismiss="modal"></button>
+		            <h4 class="modal-title" id="myModalLabel">发送邮件</h4>
+		            </div>
+		            <div class="modal-body" style="position:relative; max-height:490px; overflow-y:auto;">
+		           		<table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0">
+		                	<tr>
+		                    	<td class="pr10" width="100" align="right">收件人</td>
+		                        <td><h:inputText id="user"  class="form-control" title="添加多个收件人时用“；”分开" value="#{orderOperate.receiveUser}" onkeyup="tranfer(this,event)" onfocus="if(this.value=='添加多个收件人时用“；”分开'){this.value=''}" onblur="if(this.value==''){this.value='添加多个收件人时用“；”分开'}" style="width:90%;" /></td>
+		                    </tr>
+		                    <tr>
+		                    	<td class="pr10" align="right">抄送人</td>
+		                        <td><h:inputText id="copy" class="form-control" value="#{orderOperate.copyUser}" style="width:90%;" /></td>
+		                    </tr>
+		                    <tr>
+		                    	<td class="pr10" align="right">主题</td>
+		                        <td><h:inputText id="title"  class="form-control" value="#{orderOperate.emailTitle}" style="width:90%;" /></td>
+		                    </tr>
+		                    <tr>
+		                    	<td class="pr10" align="right"></td>
+		                        <td style="padding-bottom:0;">
+		                        	<div class="xlsx-block">
+		                            	<div style="margin-bottom:15px"><a style="cursor: pointer;"  onclick="downLoad();"><img src="../asset/images/orderManage/Ex1.png"  /></a></div>
+		                                <div class="xlsx-bd">
+		                                <h:inputTextarea value="#{orderOperate.content}"  style="width:630px;height:400px"  id="description" name="description"/>
+		                                </div>
+		                            </div>
+		                        </td>
+		                    </tr>
+		                </table>
+		                <div id="chenggong" class="minitip-modal" style="display:none;">
+		                	<i class="mini-close"></i>
+		                	<p class="success-txt"><img src="../asset/images/orderManage/cm_sucess.png" />发送成功</p>
+		                </div>
+		            </div>
+		            <div class="modal-footer">
+		            	<h:inputHidden value="#{orderOperate.orderProductJson}" id="proJson" />
+		            	<h:inputHidden id="productAccount" value="#{orderOperate.productAccount}" />
+			            <h:inputHidden id="payAccount" value="#{orderOperate.payAccount}" />
+		                <button class="btn btn-default" data-dismiss="modal" type="button">返回</button>
+		                <a class="btn btn-primary"   onclick="sendValidation();">发送
+		                </a>
+		            </div>
+		            <div style="display:none;">
+		            	<h:commandButton action="#{orderOperate.excelDown()}" id="excelDown" />
+		            </div>
+		        </div>
+		    </div>
+		</div>  
+		</h:form> 
+		<div class="modal" id="send_fail" >
+				<div class="modal-dialog" style="width:320px;" >
+					<div class="modal-content">
+					    <div class="modal-header" style="border: none;">
+					    	<button type="button" class="close" data-dismiss="modal"></button>
+							<h4 class="modal-title" id="myModalLabel">发送失败</h4>
+					    </div>
+					    <div class="modal-body" style="padding-bottom: 30px; width: 100%;">
+							<div style="text-align: center;"><img src="../asset/images/orderManage/fail03.png" /></div>
+							<div style="text-align:center; font-size: 18px; line-height:40px;">发送失败!</div>
+							<div style="text-align:center; font-size:14px; color:#646464; line-height:22px;">抱歉，您输入的邮件地址错误</div>
+							<div style="text-align:center; font-size:14px; color:#646464; line-height:22px;">请返回修改！</div>
+					    </div>
+					</div>
+				</div>
+			</div> 
+		   
+	</td>
+	
+	<a:form>
+ 		<a:queue id="mainQueue" requestDelay="10" ignoreDupResponses="true"/>
+  		<a:jsFunction  eventsQueue="mainQueue" name="preEmailSend" action="#{orderOperate.excelUp()}" oncomplete="showView();">
+  			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}" />
+  		</a:jsFunction>
+  		<a:jsFunction  eventsQueue="mainQueue" name="send" action="#{orderOperate.send()}" data="#{orderOperate.sendState}" oncomplete="sendGoBack(data);">
+  			<a:actionparam name="receiveUser" assignTo="#{orderOperate.receiveUser}" />
+  			<a:actionparam name="copyUser" assignTo="#{orderOperate.copyUser}" />
+  			<a:actionparam name="emailTitle" assignTo="#{orderOperate.emailTitle}" />
+  			<a:actionparam name="content" assignTo="#{orderOperate.content}" />
+  		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/lang/zh_CN.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	var productJsons;
+	//发送回调
+	function sendGoBack(data){
+		if(data==1){
+			jQuery("#chenggong").css("display","block");
+			setTimeout(function () {
+				viewchange();
+		    }, 1000);
+		}else{
+			jQuery("#send_fail").modal("show");
+			setTimeout(function () {
+				jQuery("#send_fail").modal("hide");
+		    },  2000);
+		}
+	}
+	function viewchange(){
+		jQuery("#myModal_sendMail").modal('hide');
+		jQuery("#accept\\:toSend").click();
+	}
+	//发送验证
+	function sendValidation(){
+		var user=jQuery("#sendEmail\\:user").val();
+		var title=jQuery("#sendEmail\\:title").val();
+		var copy=jQuery("#sendEmail\\:copy").val();
+		var description = jQuery(".ke-edit-iframe").contents().find("body").html();
+		var reg = /^.{0,50}$/;
+		var str="";
+		if (jQuery.trim(user).charAt(jQuery.trim(user).length - 1) == ";") {
+			str=jQuery.trim(user).substring(0,jQuery.trim(user).length-1);
+		} else{
+			str=jQuery.trim(user);
+		}
+		if(str == ''||str=='添加多个收件人时用“；”分开'){
+			jQuery("#messageValue").html("请填写收件人地址！");
+			jQuery("#messageDiv").modal('show');
+			return  false;
+		}else{
+			var arr=str.split(";");
+			var ereg= /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+			for(var i=0;i<arr.length;i++){
+				if((arr[i]!=""|| arr[i]!=null) && ereg.test(arr[i])==false){
+					 jQuery("#messageValue").html(arr[i]+"邮件地址格式填写错误！");
+	                    jQuery("#messageDiv").modal('show');
+	                    return false;
+				}
+			}
+		}
+		
+		if(jQuery.trim(title) == ''){
+			jQuery("#messageValue").html("请填写邮件主题！");
+			jQuery("#messageDiv").modal('show');
+			return  false;
+		}else{
+			if (reg.test(title) == false) {
+                jQuery("#messageValue").html("邮件主题最长输入50位！");
+                    jQuery("#messageDiv").modal('show');
+                    return false;
+            }
+		}
+		
+		send(user,copy,title,description);
+	}
+	
+	KindEditor.ready(
+		function(K) {
+			editor = K.create('textarea[name="sendEmail\\:description"]', {
+			resizeType : 1,
+			allowPreviewEmoticons : false,
+			allowImageUpload : true,
+			items:[
+			         'undo', 'redo', '|', 'preview', 'cut', 'copy', 'paste',
+			        'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+			        'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'quickformat', 'selectall', '|',
+			        'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+			        'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|'
+			],
+		});
+			jQuery(".ke-edit-iframe ").contents().find(".ke-content").css("height","328")
+	});
+	
+		function downLoad(){
+			  productJson();
+			  jQuery("#sendEmail\\:proJson").val(productJsons);
+			 jQuery("#sendEmail\\:excelDown").click();
+		}
+		function showView(){
+			jQuery("#chenggong").css("display","none");
+			jQuery("#sendEmail\\:user").val("添加多个收件人时用“；”分开");
+			KindEditor.html('#sendEmail\\:description', "根据农场实际库存情况，我们调整了部分商品信息，具体详情请查看附件，谢谢！");
+			jQuery("#myModal_sendMail").modal('show');
+		}
+		
+		function emailSend(){
+			productJson();
+			jQuery("#sendEmail\\:proJson").val(productJsons);
+			var productAccount=jQuery("#accept\\:totalPrice").html();
+			var payAccount=jQuery("#accept\\:orderPrice").html();
+			jQuery("#sendEmail\\:productAccount").val(productAccount);
+			jQuery("#sendEmail\\:payAccount").val(payAccount);
+			preEmailSend(productJsons);
+		}
+		//拼接订单商品信息
+		function productJson(){
+			var jsonStr = "[";
+			jQuery("#orderAcceptTable tr").each(function(index){
+				var productNum = jQuery("#productNum" + index).val();
+				var productPrice = jQuery("#price" + index).val();
+				jsonStr += "{";
+				jsonStr += "productNum:" + productNum;
+				jsonStr += ",productPrice:" + productPrice;
+				jsonStr += "},";
+		    });
+		    
+			if (jsonStr != "[") {
+				jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+			}
+			jsonStr += "]";
+			var productAccount=jQuery("#accept\\:totalPrice").html();
+			var payAccount=jQuery("#accept\\:orderPrice").html();
+			jQuery("#accept\\:jsonStr").val(jsonStr);
+			jQuery("#accept\\:productAccount").val(productAccount);
+			jQuery("#accept\\:payAccount").val(payAccount);
+			productJsons=jsonStr;
+		}
+		jQuery(function(){
+			calculate();
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+		});
+		function valueChange(val,index,num){
+			var val=Number(val).toFixed(2);
+			if(num==1){
+				jQuery("#productNum"+index).val(val);
+			}else{
+				jQuery("#price"+index).val(val);
+			}
+			
+			calculate();
+		}
+		//验证输入值
+		function clearNoNum(type, obj, event){
+			var keyCode = event.keyCode;
+			var val=obj.value;
+			var temp;
+			if (type == 1) {
+				if (keyCode < 37 || keyCode > 40) {
+					if(!(keyCode >=48 && keyCode <=57)){
+						obj.value = obj.value.replace(/[^\d]/,"");  //清除“数字”和“.”以外的字符  
+					}
+					
+				}
+			} else {
+				if (keyCode < 37 || keyCode > 40) {
+					if(!(keyCode >=48 && keyCode <=57)){
+						obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+						obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+						obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+						obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+					}
+				}
+			}
+			calculate();
+		}
+		function tranfer(obj,event){
+			var keyCode = event.keyCode;
+			var val=obj.value;
+			if(keyCode==186){
+				obj.value=obj.value.replace("；",";");
+			}
+		}
+		//商品数量 +-变化
+		function modifyNum(productId, modifyType){
+			var productNum = jQuery("#productNum" + productId).val();
+			if (modifyType == 1) {
+				if (productNum > 1) {
+					productNum = Number(productNum) - 1;
+					jQuery("#productNum" + productId).val(productNum.toFixed(2));
+				}
+			} else {
+				productNum = Number(productNum) + 1;
+				jQuery("#productNum" + productId).val(productNum.toFixed(2));
+			}
+			calculate();
+		}
+		//公共 计算价格
+		function calculate(){
+			var sumProductNum = 0;
+			var orderPrice = 0;
+			jQuery("#orderAcceptTable tr").each(function(index){
+					var productNum = jQuery("#productNum" + index).val();
+					var productPrice = jQuery("#price" + index).val();
+					sumProductNum += Number(productNum);
+					orderPrice += Number(productNum * productPrice);
+			});
+			
+			jQuery("#accept\\:sumProductNum").html(sumProductNum.toFixed(2));
+			jQuery("#accept\\:totalPrice").html(orderPrice.toFixed(2));
+			
+			if (orderPrice >= 0) {
+				jQuery("#accept\\:orderPrice").html(orderPrice.toFixed(2));
+			}else {
+				jQuery("#accept\\:orderPrice").html(0);
+			}
+		}
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

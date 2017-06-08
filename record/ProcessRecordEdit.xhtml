@@ -1,0 +1,125 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="processRecord" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{processRecordHome.managed ? 'Edit' : 'Add'} Process record</f:facet>
+
+
+
+            <s:decorate id="orderNumbersField" template="layout/edit.xhtml">
+                <ui:define name="label">Order numbers</ui:define>
+                <h:inputTextarea id="orderNumbers"
+                               cols="80"
+                               rows="10"
+                              value="#{processRecordHome.instance.orderNumbers}"/>
+            </s:decorate>
+
+
+            <s:decorate id="processUserField" template="layout/edit.xhtml">
+                <ui:define name="label">Process user</ui:define>
+                <h:inputText id="processUser"
+                          value="#{processRecordHome.instance.processUser}">
+                    <a:support event="onblur" reRender="processUserField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="processTimeField" template="layout/edit.xhtml">
+                <ui:define name="label">Process time</ui:define>
+                <rich:calendar id="processTime"
+                          value="#{processRecordHome.instance.processTime}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="psPrintStatusField" template="layout/edit.xhtml">
+                <ui:define name="label">Ps print status</ui:define>
+                <h:inputText id="psPrintStatus"
+                          value="#{processRecordHome.instance.psPrintStatus}">
+                    <a:support event="onblur" reRender="psPrintStatusField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="msPrintStatusField" template="layout/edit.xhtml">
+                <ui:define name="label">Ms print status</ui:define>
+                <h:inputText id="msPrintStatus"
+                          value="#{processRecordHome.instance.msPrintStatus}">
+                    <a:support event="onblur" reRender="msPrintStatusField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="hsPrintStatusField" template="layout/edit.xhtml">
+                <ui:define name="label">Hs print status</ui:define>
+                <h:inputText id="hsPrintStatus"
+                          value="#{processRecordHome.instance.hsPrintStatus}">
+                    <a:support event="onblur" reRender="hsPrintStatusField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="deletedField" template="layout/edit.xhtml">
+                <ui:define name="label">Deleted</ui:define>
+                <h:inputText id="deleted"
+                       required="true"
+                          value="#{processRecordHome.instance.deleted}">
+                    <a:support event="onblur" reRender="deletedField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{processRecordHome.persist}"
+                       disabled="#{!processRecordHome.wired}"
+                       rendered="#{!processRecordHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{processRecordHome.update}"
+                       rendered="#{processRecordHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{processRecordHome.remove}"
+                      immediate="true"
+                       rendered="#{processRecordHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/ProcessRecord.xhtml"
+                rendered="#{processRecordHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty processRecordFrom ? 'ProcessRecordList' : processRecordFrom}.xhtml"
+                rendered="#{!processRecordHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

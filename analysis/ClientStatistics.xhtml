@@ -1,0 +1,464 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_left.xhtml">
+
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+	<!-- #{clientStatisticsHome.work()} -->
+	<style>
+	.rich-calendar-exterior{line-height: 20px;}
+	.ui-selectmenu{*display:inline-block;}
+	.legendLabel {font-size: 13px;float: left;}
+	#yyy table{margin: 0 auto;}
+	.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width: 84px;}
+	.newelement .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
+          width:200px
+          }
+	.fxy_lidate02 {
+    margin-right: 15px;
+	}
+	.fxze_bg2{text-align: center;}
+	.fxy_lidate{margin:5px 5px 5px 0;}
+	.newelement{
+          margin-top:15px;
+          }
+	</style>
+	<td valign="top">
+                 <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">客户购买量排名</font></div>
+                    	
+                    </div>
+                    <div class="clear"></div>
+                 </div>   
+				<!--分析页开始-->
+				<ui:fragment rendered="#{s:hasRole('purchase_volume_analyse_search')}">
+				<h:form id="search">
+					<div class="fxy_title">
+                    	<ul class="fxy_ul">
+                        	<li class="fxy_li01 #{clientStatisticsHome.btype==1?'fxyon':''}" style="padding-left:0; cursor:pointer" onclick="linksub(1)">
+                        	<a><b>最近7天</b></a>
+                        	</li>
+                            <li class="fxy_li01 #{clientStatisticsHome.btype==2?'fxyon':''}" onclick="linksub(2)" style=" cursor:pointer"><a><b>最近30天</b></a></li>
+                            <li class="fxy_li01 #{clientStatisticsHome.btype==3?'fxyon':''}" style="background:none; cursor:pointer" onclick="linksub(3)" ><a><b>当年年份</b></a></li>
+							<ui:fragment rendered="#{s:hasRole('purchase_volume_analyse_exp')}">
+                            <li class="fxy_li02" > 
+                            	<s:link   view="/analysis/ClientStatistics.xhtml" action="#{clientStatisticsHome.exportExcelMain}" >
+                            		<img src="#{request.contextPath}/asset/images/fxdc.jpg" width="82" height="16" /> 
+								</s:link>
+                            </li>
+                            </ui:fragment>
+                            <li class="ie7clear"></li>
+                        </ul>
+                    	<ul class="fxy_ul" id="male" style="height:30px;">
+                        	<li class="fxy_li">日期选择：</li>
+                            <li class="fxy_lidate">
+                            <input type="radio" value="6" name="sex" id="sex6"  style="display: none;"/><label style="font-weight: 100; margin-left: 5px;">按日</label></li>
+                            <li class="fxy_lidate">
+                            <input type="radio" value="5" name="sex" id="sex5" style="display: none;" /><label style="font-weight: 100; margin-left: 5px;">按月</label></li>
+                            <li class="fxy_lidate">
+							<h:inputHidden value="#{clientStatisticsHome.btype}" id="btype"/>
+                            <input type="radio" value="4" name="sex" id="sex4" style="display: none;" /><label style="font-weight: 100; margin-left: 5px;">按年</label></li>
+                            <li class="fxy_lidate02 sex_male1" style="#{clientStatisticsHome.btype==4||clientStatisticsHome.btype==5?'':'display:none'}"><font style="position:relative;[;top:0;]">日期：</font>
+                           <h:selectOneMenu value="#{clientStatisticsHome.year}"  styleClass="selectpicker">
+                           <f:selectItems value="#{clientStatisticsHome.years}"></f:selectItems>
+                           </h:selectOneMenu>
+                           <font style="position:relative;[;top:0;]"> &#160;年&#160;</font>
+                           </li>
+                           <li class="fxy_lidate02 sex_female1" style="#{clientStatisticsHome.btype==5?'':'display:none'}">
+                           <h:selectOneMenu value="#{clientStatisticsHome.month}"  styleClass="selectpicker">
+                           <f:selectItems value="#{clientStatisticsHome.months}"></f:selectItems>
+                           </h:selectOneMenu>
+							<font style="position:relative;[;top:0;]">&#160;月</font>
+                           </li>
+                            <li class="fxy_lidate02 sex_nomale1" style="#{clientStatisticsHome.btype==6?'':'display:none'}"><span style="float: left;">开始时间：</span>
+                           <div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="startTime"  styleClass="new_time nw100" value="#{clientStatisticsHome.startTime}" readonly="#{facesContext.renderResponse}"/>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    </div>
+                            </li>
+                            <li class="fxy_lidate02 sex_nomale1" style="#{clientStatisticsHome.btype==6?'':'display:none'}"><span style="float: left;">结束时间：</span>
+                            <div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="endTime"  styleClass="new_time nw100" value="#{clientStatisticsHome.endTime}" readonly="#{facesContext.renderResponse}"/>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    </div>
+                            </li>
+                           
+                        </ul>
+                        <ul class="fxy_ul" id="male">
+                            <li class="fxy_li newelement" style="height:30px; float:left;">客户类型：
+                            <input type="hidden" id="membertype" name="membertype"/><select class="selectpicker" onchange="changeType_before(this)" multiple="multiple" id="membertype_" name="membertype_"><a:repeat value="#{clientStatisticsHome.membertypeList}" var="var"><option value="#{var.value}">#{var.label}</option></a:repeat></select></li>
+                            <li class="fxy_li newelement" style="height:30px; float:left;">客户来源：
+                            	<input type="hidden" id="memberSource" name="memberSource"/>
+                            	<select class="selectpicker" multiple="multiple" id="memberSource_" name="memberSource_">
+                            		<a:repeat value="#{clientStatisticsHome.memberSourceList}" var="varSource">
+                            			<option value="#{varSource.value}">#{varSource.label}</option>
+                            		</a:repeat>
+                            	</select>
+                            </li>
+                            <li class="fxy_li newelement" style="height:36px"><span style="width: 60px; float: left; text-align: right;">客户：</span><input type="hidden" id="memberinfo" name="memberinfo"/><select class="selectpicker" multiple="multiple" id="memberinfo_" name="memberinfo_"><a:repeat value="#{clientStatisticsHome.memberinfoList}" var="var"><option value="#{var.value}">#{var.label}</option></a:repeat></select></li>
+                            <li class="fxy_lidate03 newelement" style="width:165px;">
+                            <h:commandButton action="/analysis/ClientStatistics.xhtml" onclick="return checksub()"  styleClass="btn btn-primary" value="搜索" style="float:left;margin-right:10px"/>
+                            <h:commandButton id="reset" action="#{clientStatisticsHome.reset}"  includePageParams="false" styleClass="btn btn-default" value="重置" style="float:left;"/>
+                            </li>
+                            <li class="ie7clear"></li>
+                        </ul>
+                    	<div class="clear"></div>
+                    </div>
+                </h:form>
+				</ui:fragment>
+				<ui:fragment rendered="#{!s:hasRole('purchase_volume_analyse_search')  and s:hasRole('purchase_volume_analyse_exp')}">
+				  <div style="float:right;padding-top: 10px;margin-right:20px;"> 
+                      <s:link   view="/analysis/ClientStatistics.xhtml" action="#{clientStatisticsHome.exportExcelMain}" >
+                         <img src="#{request.contextPath}/asset/images/fxdc.jpg" width="82" height="16" /> 
+						</s:link>
+                   </div>
+				</ui:fragment>
+				<!--分析页结束-->
+                <div class="right_c">
+                    <!--折线图开始-->
+                    <div class="ybp_02">
+                        <div class="fxy_xse">排名趋势</div>
+                        <div class="fxy_zxt">
+                        	<div id="xxx" style="text-align: center;"></div>
+							<div id="flot-placeholder" class="chart22" style="height:300px;"></div>
+							<div id="yyy" style="text-align: center;"></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <!--折线图结束-->
+                    
+                    <!--表格开始-->
+                    <div class="ybp_02">
+                        <div class="fxy_pzxs">
+                        <span style="float:left;">排名详情</span>
+                        </div>
+                        <div id="infoList">
+                             <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                                 <tr>
+                                     <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                                     <td colspan="5" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                     <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                                 </tr>
+                                 <tr>
+                                     <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                                     <th class="fxze_bg2" align="center">序号</th>
+                                     <th class="fxze_bg2" align="center">客户姓名</th>
+                                     <th class="fxze_bg2" align="center">订单数量</th>
+                                     <th class="fxze_bg2" align="center">订单总金额</th>
+                                     <th class="fxze_bg2" align="center">操作</th>
+                                     <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                                 </tr>
+                                 <h:panelGroup rendered="#{empty clientStatisticsHome.listobj}">
+                                 	<tr >
+	                                     <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                                     <td class="ze_bg2" colspan="5">没有找到符合条件的记录</td>
+	                                     <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                 	</tr>
+                                 </h:panelGroup>
+                                 <a:repeat value="#{clientStatisticsHome.listobj}" var="_obj" rowKeyVar="_index" rendered="#{not empty clientStatisticsHome.listobj}">
+                                 	<tr >
+                                     <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                                     <td class="ze_bg2">#{_index+1}</td>
+                                     <td class="ze_bg2">#{_obj[2]}</td>
+                                     <td class="ze_bg2">#{_obj[0]}单</td>
+                                     <td class="ze_bg2">￥#{processOrdersHome.getFloatbyTow(_obj[1])}</td>
+                                     <td class="ze_bg2">
+                                     <a href="javascript:;" class="list_view" onclick="jquery('#infoname_').html('#{_obj[2]}');lookinfo(#{_obj[3]})"></a>
+									 </td>
+                                     <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                 </tr>
+                                 </a:repeat>
+                             </table> 
+                             </div>
+                             <div id="infoinfo" style="display:none">
+                             	<div class="clear" style="margin-top:20px;">
+		                             <div id="infoname" style="float:left;height:30px;line-height:30px;">
+			                             <img class="photo01 fl" style="margin:7px 5px 0 0;" src="#{request.contextPath}/asset/images/icon06.png"/>客户姓名:
+			                             <span id="infoname_"></span>
+		                             </div>
+		                             <input type="button" onclick="jquery('#infoinfo').hide();jquery('#infoList').show();" class="btn btn-default fr" value="返回" id="bn_left6" style="margin-left:10px" />
+                             	</div>
+                             <s:div id="infoinfo_">
+                             <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:15px;">
+                                 <tr>
+                                     <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                                     <td colspan="8" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                     <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                                 </tr>
+                                 <tr>
+                                     <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                                     <th class="fxze_bg2" align="center">序号</th>
+                                     <th class="fxze_bg2" align="center">订单编号</th>
+                                     <th class="fxze_bg2" align="center">下单时间</th>
+                                     <th class="fxze_bg2" align="center">配送时间</th>
+                                     <th class="fxze_bg2" align="center">付款方式</th>
+                                     <th class="fxze_bg2" align="center">支付状态</th>
+                                     <th class="fxze_bg2" align="center">商品总额</th>
+                                     <th class="fxze_bg2" align="center">应付总额</th>
+                                     <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                                 </tr>
+                                 <h:panelGroup rendered="#{empty clientStatisticsHome.listobj}">
+                                 	<tr >
+	                                     <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                                     <td class="ze_bg2" colspan="8">没有找到符合条件的记录</td>
+	                                     <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                 	</tr>
+                                 </h:panelGroup>
+                                 <a:repeat value="#{clientStatisticsHome.orderInfoList}" var="obj" rowKeyVar="_index" rendered="#{not empty clientStatisticsHome.orderInfoList}">
+                                 	<tr >
+                                     <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                                     <td class="ze_bg2">#{_index+1}</td>
+                                     <td class="ze_bg2">#{obj[0]}</td>
+                                     <td class="ze_bg2"><h:outputText value="#{obj[1]}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></td>
+                                     <td class="ze_bg2"><h:outputText value="#{obj[2]}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText><s:fragment rendered="#{obj[3] == 0}">全天</s:fragment><s:fragment rendered="#{obj[3] == 1}">上午</s:fragment><s:fragment rendered="#{obj[3] == 2}">下午</s:fragment><s:fragment rendered="#{obj[3] == 3}">晚上</s:fragment></td>
+                                     <td class="ze_bg2">#{orderConstant.getPayTypeLabel(obj[4])}</td>
+                                     <td class="ze_bg2">#{obj[5] == 1 ? '已支付' : '未支付'}</td>
+                                     <td class="ze_bg2">￥#{obj[6]}</td>
+                                     <td class="ze_bg2">￥#{obj[7]}</td>
+                                     <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                 </tr>
+                                 </a:repeat>
+                             </table> 
+                             </s:div>
+                             </div>
+                       <div class="clear"></div>
+                    </div>
+                    <!--表格结束-->
+                    <div style="height:30px; width:100%;"></div>
+
+
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div class="clear"></div>
+<a:form id="formid" >
+<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+<!-- 删除基地锚点 -->
+<a:jsFunction name="changeType"  eventsQueue="mainQueue"  data="#{clientStatisticsHome.returnStr}" action="#{clientStatisticsHome.changeType()}" oncomplete="changeType_next(data)">
+   <a:actionparam name="param" assignTo="#{clientStatisticsHome.typeId}"/>
+</a:jsFunction>
+<a:jsFunction name="lookinfo"  eventsQueue="mainQueue"  action="#{clientStatisticsHome.selectOrderList()}" reRender="infoinfo_" oncomplete="jquery('#infoinfo').show();jquery('#infoList').hide()">
+<a:actionparam name="param" assignTo="#{clientStatisticsHome.memberinfoid}"/>
+</a:jsFunction>
+</a:form>
+    <script type="text/javascript">
+  //<![CDATA[
+             function changeType_before(obj){
+            	 var temp = jquery(obj).val();
+            	 var tempStr = "";
+            	 if(temp!=null){
+            		 tempStr = temp.toString();
+            	 }
+            	 changeType(tempStr);
+             }
+             function changeType_next(data){
+            	 jquery("#memberinfo_").empty().append(data);
+            	 jquery("#memberinfo_").selectpicker("refresh");
+             }
+	jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd",
+			    autoclose: true,
+				 weekStart: 1,
+				  //startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+				 minView:2,
+			    pickerPosition: "bottom-left"
+			    });
+	jquery(document).ready(function(){
+		 jquery('.selectpicker').not(".newelement select").selectpicker();
+		  var membertype = "#{clientStatisticsHome.membertype}";
+		  var memberSource = "#{clientStatisticsHome.memberSource}";
+		  var memberinfo = "#{clientStatisticsHome.memberinfo}";
+		  var s1 = [];
+		  if(membertype.length>0){
+			  membertype = membertype.split(",");
+			  for(var i = 0;i<membertype.length;i++){
+				  var temp = membertype[i];
+				  s1.push(parseInt(temp,10));
+			  }
+		  }
+		  jquery('#membertype_').val(s1);
+		  var s0 = [];
+		  if(memberSource.length>0){
+			  memberSource = memberSource.split(",");
+			  for(var i = 0;i<memberSource.length;i++){
+				  var temp = memberSource[i];
+				  s0.push(parseInt(temp,10));
+			  }
+		  }
+		  jquery('#memberSource_').val(s0);
+		  var s2 = [];
+		  if(memberinfo.length>0){
+			  memberinfo = memberinfo.split(",");
+			  for(var i = 0;i<memberinfo.length;i++){
+				  var temp = memberinfo[i];
+				  s2.push(parseInt(temp,10));
+			  }
+		  }
+		  jquery('#memberinfo_').val(s2);
+		  jquery('#membertype_').selectpicker({noneSelectedText:"全部"});
+		  jquery('#memberinfo_').selectpicker({noneSelectedText:"全部"});
+		  jquery('#memberSource_').selectpicker({noneSelectedText:"全部"});
+});
+				 //]]>
+	</script>
+                <link href="../asset/css/examples.css" rel="stylesheet" type="text/css" />
+	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="#{request.contextPath}/asset/js/excanvas.min.js"></script><![endif]-->
+	<script language="javascript" type="text/javascript" src="#{request.contextPath}/asset/js/jquery.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	jquery(".ui-selectmenu").remove();
+	jquery(".rich-calendar-input").addClass("gjss1");
+	jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+	jquery(".ui-selectmenu").addClass("small2");
+	jquery(".ui-selectmenu-menu").css("width","98px");
+	
+	checksub = function(){
+		if(document.getElementById("checkone")){
+			var str = "";
+			var check = document.getElementById("checkone").getElementsByTagName("input");
+			for(var i = 0;i<check.length;i++){
+				if(check[i].id=='search:allC')
+					continue;
+				if(check[i].getAttribute("aaa")=="true"){
+					str+=check[i].value+"_";
+				}
+			}
+			if(str.length>1){
+				str = str.substring(0,str.length-1);
+			}
+			document.getElementById("search:check").value=str;
+		}
+		var t0 = jquery("#memberSource_").val();
+		 if(t0!=null){
+			 jquery("#memberSource").val(t0.toString());
+		 }else{
+			 jquery("#memberSource").val("");
+		 }
+		var t1 = jquery("#membertype_").val();
+		 if(t1!=null){
+			 jquery("#membertype").val(t1.toString());
+		 }else{
+			 jquery("#membertype").val("");
+		 }
+		 var t2 = jquery("#memberinfo_").val();
+		 if(t2!=null){
+			 jquery("#memberinfo").val(t2.toString());
+		 }else{
+			 jquery("#memberinfo").val("");
+		 }
+		return true;
+	}
+	
+	
+	
+	linksub = function(val){
+		document.getElementById("search:btype").value=val;
+		jquery(".btn-primary").trigger("click");
+	}
+	
+	var clientName = #{clientStatisticsHome.clientName};
+	var clientCount = #{clientStatisticsHome.clientCount}
+	var clientSum = #{clientStatisticsHome.clientSum}
+	
+	$J = jQuery.noConflict();
+	$J(function() {
+		$J('#flot-placeholder').highcharts({
+			title :{
+			    text:null
+			},
+	        scrollbar: {
+	               enabled: true
+	          },
+	        xAxis: {
+				max:(clientName.length>7?7:clientName.length-1),
+	        	labels:{
+              			maxStaggerLines:1,
+	                 	formatter: function () {
+	                          var text = this.value,
+	                              formatted = text.length > 15 ? text.substring(0, 15) + '...' : text;
+	                          return '<div title="' + text + '">' + formatted + '</div>';
+	                     },
+	                     useHTML: true
+	          	},
+	            categories: clientName
+	        },
+			yAxis:[{
+				title: {
+	                text: '订单数量'
+	            }
+			},{
+				opposite: true,
+				title: {
+	                text: '订单金额'
+	            }
+			}]
+				,
+			
+	        series: [{
+	        	type: 'column',
+	        	name:'订单数量',
+	            data: clientCount
+	        },
+	        {
+	        	name:'订单金额',
+	        	yAxis: 1,
+	            data: clientSum
+	        }
+	        ]
+	    });
+	}); 
+
+	jquery(document).ready(function(){
+		jquery('input').iCheck({
+		    checkboxClass: 'icheckbox_minimal-blue',
+		    radioClass: 'iradio_minimal-blue',
+		    increaseArea: '20%' // optional
+		  });
+
+		jquery("input[name='sex']:radio").on("ifChecked", function(event){
+			var type = this.value;
+			document.getElementById("search:btype").value=type;
+			jquery(".fxyon").removeClass("fxyon");
+			jquery("input[name='sex']").removeAttr("checked");
+			jquery("#sex" + type).attr("checked", true);
+			if(type=="4"){
+				jquery(".sex_male1").show();
+				jquery(".sex_female1").hide();
+				jquery(".sex_nomale1").hide();
+			}else if(type=="5"){
+				jquery(".sex_male1").show();
+				jquery(".sex_female1").show();
+				jquery(".sex_nomale1").hide();
+			}else if(type=="6"){
+				jquery(".sex_male1").hide();
+				jquery(".sex_female1").hide();
+				jquery(".sex_nomale1").show();
+			}
+		});	
+
+		});
+		
+	window.onload = function() 
+	{
+		var type = document.getElementById("search:btype").value;
+		if(type != null){
+			jquery("#sex" + type).iCheck("check"); 
+		}
+	}
+	//]]>
+	</script>
+   
+            </td>     
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,1233 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_growth_device.xhtml">
+
+	<ui:define name="body">
+	<style>
+		.left_c {
+				
+			    background: url("#{request.contextPath}/asset/images/lefbg.jpg") repeat-y scroll 0 0 rgba(0, 0, 0, 0);
+			}
+	
+	</style>
+		<td valign="top" width="100%">
+			<!---作物生长情况开始-->
+			<div class="zuowbg">
+				<table cellpadding="0" cellspacing="0" width="100%"
+					style="table-layout: fixed;">
+					<tr>
+						<td valign="top" class="zwleftmenu"
+							style="background:url(#{request.contextPath}/asset/images/growth/qixz_05.png) repeat;">
+							<!--menu 开始-->
+							<div class="menutree" style="height:1545px;">
+								<table width="100%" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="nav_span">
+											<div class="slist_2" style="#{cropGrowthHome.tunnelInfo.partition.base eq _base or cropGrowthHome.deviceInfo.baseId.id eq _base or cropGrowthHome.videoInfo.baseId.id eq _base?'display: block;':'display:none;'}">
+												<a:repeat value="#{sessionTake.parList}" var="_par">
+													<h2
+														class="ltow #{cropGrowthHome.tunnelInfo.partition.id eq _par.id or cropGrowthHome.deviceInfo.pid eq _par.id or cropGrowthHome.videoInfo.partitionId.id eq _par.id?'currentltow':''}">
+														<h:outputText value="#{_par.name}" />
+													</h2>
+													<ul class="sslist" style="#{cropGrowthHome.tunnelInfo.partition.id eq _par.id or cropGrowthHome.deviceInfo.pid eq _par.id or cropGrowthHome.videoInfo.partitionId.id eq _par.id?'display: block;':'display:none;'}">
+														<a:repeat value="#{sessionTake.tiMap.get(_par.id)}"
+															var="_tinfo">
+															<li
+																class="lthree #{cropGrowthHome.keyString eq _tinfo[0]?'currentlthree':''}">
+																<h:outputText escape="false" value="#{_tinfo[1][0]}" />
+															</li>
+														</a:repeat>
+													</ul>
+												</a:repeat>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</div> <!--menu 结束-->
+						</td>
+						<td valign="top" class="charttd">
+							<!--中间头部开始-->
+							<div class="weather_title">
+								<span class="select_span2">#{cropGrowthHome.deviceInfo.name}</span>
+							</div>
+							<table width="100%" cellpadding="0" cellspacing="0"
+								class="weather_top_table">
+								<tr>
+									<td valign="top" class="weather_bg weatdp">
+										<!--中间第一块头下开始-->
+										<table cellpadding="0" cellspacing="0" height="120"
+											class="qixtop">
+											<tr>
+												<td rowspan="3" class="font_oc">#{cropGrowthHome.wsdInfo.airTemp}℃</td>
+												<td height="40"></td>
+											</tr>
+											<tr>
+												<td height="40"><span class="air_bg"><font
+														class="air_bgr">相对湿度:#{cropGrowthHome.wsdInfo.airHumidity}%</font></span></td>
+											</tr>
+											<tr>
+												<td height="40" class="date">#{cropGrowthHome.wsdInfo.dateString}</td>
+											</tr>
+										</table>
+										<div class="qixtop2">
+											<table cellpadding="0" cellspacing="0" class="qxtable" style="#{cropGrowthHome.wsdInfo.rainfall lt 0 or cropGrowthHome.wsdInfo.rainfall eq null?'display: none;':''}">
+												<tr>
+													<td rowspan="2" width="45" height="50" align="left"><img
+														src="#{request.contextPath}/asset/images/growth/qxyu.png"
+														width="37" height="50" /></td>
+													<td class="date">降水量</td>
+												</tr>
+												<tr>
+													<td class="date">
+													#{cropGrowthHome.wsdInfo.rainfall}mm
+													</td>
+												</tr>
+											</table>
+											<table style="#{cropGrowthHome.wsdInfo.windDirection eq ''?'display: none;':''}" cellpadding="0" cellspacing="0" class="qxtable">
+												<tr>
+												
+													<td rowspan="2" width="45" height="50" align="left"><img
+														src="#{request.contextPath}/asset/images/growth/qxwend.png"
+														width="37" height="50" /></td>
+													<td class="date">风向</td>
+												</tr>
+												<tr>
+													<td class="date">#{cropGrowthHome.wsdInfo.windDirection}</td>
+												</tr>
+											</table>
+											<table cellpadding="0" cellspacing="0" class="qxtable">
+												<tr>
+													<td rowspan="2" width="45" height="50" align="left"><img
+														src="#{request.contextPath}/asset/images/growth/qxfeng.png"
+														width="37" height="50" /></td>
+													<td class="date">风速</td>
+												</tr>
+												<tr>
+													<td class="date">#{cropGrowthHome.wsdInfo.windVelocity.flClass}</td>
+												</tr>
+											</table>
+											<table cellpadding="0" cellspacing="0" class="qxtable" style="#{cropGrowthHome.wsdInfo.pm25 eq null or cropGrowthHome.wsdInfo.pm25 lt 0?'display:none;':''}">
+												<tr>
+													<td rowspan="2" width="54" height="50" align="left"><img
+														src="#{request.contextPath}/asset/images/growth/2_5.png"
+														width="46" height="28" /></td>
+													<td class="date">PM2.5</td>
+												</tr>
+												<tr>
+													<td class="date">#{cropGrowthHome.wsdInfo.pm25}</td>
+												</tr>
+											</table>
+											<div class="clear"></div>
+										</div> <!--中间第一块头下结束-->
+									</td>
+									<td valign="top" width="358" height="255"
+										style="padding-left: 5px;">
+										<div style="width: 358px; height: 255px;">
+											<img
+												src="#{cropGrowthHome.deviceInfo.pictureUrl eq null or cropGrowthHome.deviceInfo.pictureUrl eq ''?'../asset/images/growth/qixzimg.jpg':cropGrowthHome.deviceInfo.pictureUrl}"
+												width="358" height="255" />
+										</div>
+									</td>
+								</tr>
+							</table> <!--中间头部结束--> <!--四种数据开始-->
+							<div class="data_box">
+								<table cellpadding="0" cellspacing="0" height="100"
+									class="weather_bg table_w">
+									<tr>
+										<td class="tdwidth" rowspan="2" align="left" valign="middle"
+											style="padding-left: 15px;"><img
+											src="#{request.contextPath}/asset/images/growth/qxsun.png" /></td>
+										<td height="23" valign="middle">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">&#160;</td>
+													<td class="zifont2">&#160;</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"></td>
+									</tr>
+									<tr>
+										<td height="23" valign="middle">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">&#160;</td>
+													<td class="zifont2">&#160;</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"></td>
+									</tr>
+									<tr style="#{cropGrowthHome.wsdInfo.illumination lt 0 or cropGrowthHome.wsdInfo.illumination eq null?'visibility: hidden;':''}">
+										<td height="20" valign="middle" colspan="2">
+											<table cellpadding="0" cellspacing="0"
+												style="float: right; margin-right: 25px;">
+												<tr>
+													<td class="zifont">光照</td>
+													<td class="zifont3" align="left" width="105">&#160;
+														#{cropGrowthHome.wsdInfo.illumination}LUX</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"><img
+											src="../asset/images/growth/gou.png"
+											width="15" height="15" /></td>
+									</tr>
+									<tr style="#{cropGrowthHome.wsdInfo.solarRadiation lt 0 or cropGrowthHome.wsdInfo.solarRadiation eq null?'visibility: hidden;':''}">
+
+										<td height="20" valign="middle" colspan="2">
+											<table cellpadding="0" cellspacing="0"
+												style="float: right; margin-right: 25px;">
+												<tr>
+													<td class="zifont">辐射</td>
+													<td class="zifont3" align="left" width="105">&#160;
+													#{cropGrowthHome.wsdInfo.solarRadiation}w/m2</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"><img
+											src="../asset/images/growth/gou.png"
+											width="15" height="15" /></td>
+									</tr>
+								</table>
+								<table cellpadding="0" cellspacing="0" height="100"
+									class="weather_bg table_w">
+									<tr>
+										<td class="tdwidth" align="left" valign="bottom" height="38px"
+											style="padding-left: 15px;"><img
+											src="#{request.contextPath}/asset/images/growth/qxland.png" /></td>
+										<td height="20" valign="middle"></td>
+										<td width="25"></td>
+									</tr>
+									<tr style="#{cropGrowthHome.wsdInfo.soilTemp lt 0 or cropGrowthHome.wsdInfo.soilTemp eq null?'visibility:hiddeen;':''}">
+										<td></td>
+										<td height="20" valign="bottom" width="144">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">#{cropGrowthHome.wsdInfo.soilTemp lt 0 or cropGrowthHome.wsdInfo.soilTemp eq null?'':'地温'}</td>
+													<td class="zifont2">&#160;
+													#{cropGrowthHome.wsdInfo.soilTemp lt 0 or cropGrowthHome.wsdInfo.soilTemp eq null?'':cropGrowthHome.wsdInfo.soilTemp}
+													#{cropGrowthHome.wsdInfo.soilTemp lt 0 or cropGrowthHome.wsdInfo.soilTemp eq null?'':'℃'}
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25" valign="bottom"><img style="#{cropGrowthHome.wsdInfo.soilTemp lt 0 or cropGrowthHome.wsdInfo.soilTemp eq null?'display:none;;':''}"
+											src="../asset/images/growth/gou.png"
+											width="15" height="15" /></td>
+									</tr>
+									<tr style="#{cropGrowthHome.wsdInfo.soilHumidity lt 0 or cropGrowthHome.wsdInfo.soilHumidity eq null?'visibility:hiddeen;':''}">
+										<td></td>
+										<td height="20" valign="middle" width="144">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">#{cropGrowthHome.wsdInfo.soilHumidity lt 0 or cropGrowthHome.wsdInfo.soilHumidity eq null?'':'水份'}</td>
+													<td class="zifont2" style="font-family: '微软雅黑';">
+													#{cropGrowthHome.wsdInfo.soilHumidity lt 0 or cropGrowthHome.wsdInfo.soilHumidity eq null?'':cropGrowthHome.wsdInfo.soilHumidity}
+													#{cropGrowthHome.wsdInfo.soilHumidity lt 0 or cropGrowthHome.wsdInfo.soilHumidity eq null?'':'%'}
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"><img style="#{cropGrowthHome.wsdInfo.soilHumidity lt 0 or cropGrowthHome.wsdInfo.soilHumidity eq null?'display:none;;':''}"
+											src="../asset/images/growth/gou.png"
+											width="15" height="15" /></td>
+									</tr>
+									<tr style="#{cropGrowthHome.wsdInfo.soilHumidity2 lt 0 or cropGrowthHome.wsdInfo.soilHumidity2 eq null?'visibility:hiddeen;':''}">
+										<td></td>
+										<td height="20" valign="middle" width="144">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">#{cropGrowthHome.wsdInfo.soilHumidity2 lt 0 or cropGrowthHome.wsdInfo.soilHumidity2 eq null?'':'水份2'}</td>
+													<td class="zifont2" style="font-family: '微软雅黑';">&#160;
+													#{cropGrowthHome.wsdInfo.soilHumidity2 lt 0 or cropGrowthHome.wsdInfo.soilHumidity2 eq null?'':cropGrowthHome.wsdInfo.soilHumidity2}
+													#{cropGrowthHome.wsdInfo.soilHumidity2 lt 0 or cropGrowthHome.wsdInfo.soilHumidity2 eq null?'':'%'}</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"><img style="#{cropGrowthHome.wsdInfo.soilHumidity2 lt 0 or cropGrowthHome.wsdInfo.soilHumidity2 eq null?'display:none;;':''}"
+											src="../asset/images/growth/gou.png"
+											width="15" height="15" /></td>
+									</tr>
+								</table>
+								<table cellpadding="0" cellspacing="0" height="100"
+									class="weather_bg table_w">
+									<tr>
+										<td class="tdwidth" rowspan="2" align="left" valign="middle"
+											style="padding-left: 10px;"><img
+											src="#{request.contextPath}/asset/images/growth/qxco.png" /></td>
+										<td height="20" valign="middle">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">&#160;</td>
+													<td class="zifont2">&#160;</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"></td>
+									</tr>
+									<tr>
+										<td height="20" valign="middle">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">&#160;</td>
+													<td class="zifont2">&#160;</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td height="20" valign="middle">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont3" align="right"
+														style="font-family: '微软雅黑';">#{cropGrowthHome.wsdInfo.co2
+														lt
+														0 or cropGrowthHome.wsdInfo.co2 eq null?'无设备':cropGrowthHome.wsdInfo.co2}#{cropGrowthHome.wsdInfo.co2
+														lt 0 or cropGrowthHome.wsdInfo.co2 eq null?'':'PPM'}</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"><img
+											src="#{cropGrowthHome.wsdInfo.co2 lt 0 or cropGrowthHome.wsdInfo.co2 eq null?'../asset/images/growth/cuo.png':'../asset/images/growth/gou.png'}"
+											width="15" height="15" /></td>
+									</tr>
+								</table>
+								<table cellpadding="0" cellspacing="0" height="100"
+									style="float: right; margin-right: 0;"
+									class="weather_bg table_w">
+									<tr>
+										<td class="tdwidth" rowspan="2" align="left" valign="middle"
+											style="padding-left: 10px;"><img
+											src="#{request.contextPath}/asset/images/growth/qxqy.png" /></td>
+										<td height="20" valign="middle">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">&#160;</td>
+													<td class="zifont2">&#160;</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"></td>
+									</tr>
+									<tr>
+										<td height="20" valign="middle">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont">&#160;</td>
+													<td class="zifont2">&#160;</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td height="20" valign="middle">
+											<table cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="zifont3" align="left">
+													#{cropGrowthHome.wsdInfo.atmosphericPressure
+														lt
+														0 or cropGrowthHome.wsdInfo.atmosphericPressure eq null?'无设备':cropGrowthHome.wsdInfo.atmosphericPressure}#{cropGrowthHome.wsdInfo.atmosphericPressure
+														lt 0 or cropGrowthHome.wsdInfo.atmosphericPressure eq null?'':'hPa'}
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="25"><img
+											src="#{cropGrowthHome.wsdInfo.atmosphericPressure lt 0 or cropGrowthHome.wsdInfo.atmosphericPressure eq null?'../asset/images/growth/cuo.png':'../asset/images/growth/gou.png'}"
+											width="15" height="15" /></td>
+									</tr>
+								</table>
+							</div> <!--四种数据结束--> <!--病虫害和自然成熟度开始-->
+							<div class="qix_title">
+								<div class="qixfont">环境走势图</div>
+								<div class="qixtul">
+									<ul>
+										<li class="qix_rit"><a href="Javascript: void(0)"
+											onclick="loginTunnelC(#{cropGrowthHome.deviceId},'6');">当天</a></li>
+										<li class="qix_rit"><a href="Javascript: void(0)"
+											onclick="loginTunnelC(#{cropGrowthHome.deviceId},'5');">一周</a></li>
+										<li class="qix_rit"><a href="Javascript: void(0)"
+											onclick="loginTunnelC(#{cropGrowthHome.deviceId},'4');">一月</a></li>
+										<li class="qix_rit"><a href="Javascript: void(0)"
+											onclick="loginTunnelC(#{cropGrowthHome.deviceId},'3');">一季</a></li>
+										<li class="qix_rit"><a href="Javascript: void(0)"
+											onclick="loginTunnelC(#{cropGrowthHome.deviceId},'2');">半年</a></li>
+										<li class="qix_rit"><a href="Javascript: void(0)"
+											onclick="loginTunnelC(#{cropGrowthHome.deviceId},'1');">一年</a></li>
+									</ul>
+								</div>
+							</div>
+
+
+							<div class="chratdiv">
+								<!--当天图表开始-->
+
+								<div class="_chrat">
+
+									<div class="ws_chart_l1">
+										<div class="chart_titdiv">
+											<div class="chart_titl">
+												<font class="chart_font">最近1小时降水量</font> <font
+													class="chart_font2">#{cropGrowthHome.wsdInfo.rainfall lt 0 or cropGrowthHome.wsdInfo.rainfall eq null?'0':cropGrowthHome.wsdInfo.rainfall}mm</font>
+													
+													
+											</div>
+											<div class="chart_titr">
+												<font class="chart_font">总降水量</font> <font
+													class="chart_font2"><h:panelGroup id="allrainfall">#{cropGrowthHome.allrainfall}mm</h:panelGroup></font>
+											</div>
+										</div>
+										<div id="rainfallDevice" class="chart244"></div>
+									</div>
+									<div class="ws_chart_r1">
+										<div class="chart_titdiv">
+											<div class="chart_titl">
+												<font class="chart_font">最新整点实况风向</font>&#160;&#160;&#160; <font
+													class="chart_font2">#{cropGrowthHome.wsdInfo.windDirection}&#160;&#160;&#160;&#160;&#160;&#160;风速#{cropGrowthHome.wsdInfo.windVelocity.flClass}</font>
+											</div>
+											<div class="chart_font chart_titr">
+												最高
+												<h:panelGroup id="maxWindVelocity">#{cropGrowthHome.maxWindVelocity.flClass}</h:panelGroup>
+											</div>
+										</div>
+										<div id="windVelocityDevice" class="chart244"></div>
+									</div>
+									<!---->
+									<div class="ws_chart_l1">
+										<div class="chart_title3">
+											<font color="#e4ff00">空气温度</font><font color="#ffffff">走势图</font>
+										</div>
+										<div id="airTempDevice" class="chart244"></div>
+									</div>
+									<div class="ws_chart_r1">
+										<div class="chart_title3">
+											<font color="#e4ff00">空气湿度</font><font color="#ffffff">走势图</font>
+										</div>
+										<div id="airHumidityDevice" class="chart244"></div>
+									</div>
+									<div class="ws_chart_l1">
+										<div class="chart_title3">
+											<font color="#e4ff00">土壤温度</font><font color="#ffffff">走势图</font>
+										</div>
+										<div id="soilTempDevice" class="chart244"></div>
+									</div>
+									<div class="ws_chart_r1">
+										<div class="chart_title3">
+											<font color="#e4ff00">土壤湿度</font><font color="#ffffff">走势图</font>
+										</div>
+										<div id="soilHumidityDevice" class="chart244"></div>
+									</div>
+									<div class="ws_chart_l1" >
+										<div class="chart_title3">
+											<font color="#e4ff00">太阳辐射</font><font color="#ffffff">走势图</font>
+										</div>
+										<div id="solarRadiationDevice" class="chart244"></div>
+									</div>
+									<div class="ws_chart_r1" >
+										<div class="chart_title3">
+											<font color="#e4ff00">大气压力</font><font color="#ffffff">走势图</font>
+										</div>
+										<div id="atmosphericPressureDevice" class="chart244"></div>
+									</div>
+									<div id="illumination" class="ws_chart_rc">
+										<div class="chart_title3">
+											<font color="#e4ff00">光照</font><font color="#ffffff">走势图</font>
+										</div>
+										<div id="illuminationDevice" class="chart245" ></div>
+									</div>
+									<div class="clear"></div>
+								</div>
+								<!--当天图表结束-->
+								<div class="clear"></div>
+							</div>
+							<!--chratdiv-->
+						</td>
+					</tr>
+				</table>
+				<div class="clear"></div>
+			</div> <!---作物生长情况结束-->
+		</td>
+		<a:form>
+			<a:queue requestDelay="10" ignoreDupResponses="true" />
+			<a:jsFunction name="loginDevice"
+				action="#{cropGrowthHome.loginDevice}" ignoreDupResponses="true"
+				data="#{cropGrowthHome.airTempDevice}_#{cropGrowthHome.rainfallDevice}_#{cropGrowthHome.airHumidityDevice}_#{cropGrowthHome.windVelocityDevice}_#{cropGrowthHome.solarRadiationDevice}_#{cropGrowthHome.illuminationDevice}_#{cropGrowthHome.soilTempDevice}_#{cropGrowthHome.soilHumidityDevice}_#{cropGrowthHome.atmosphericPressureDevice}_#{cropGrowthHome.tickSize}_#{cropGrowthHome.ticks}_#{cropGrowthHome.airTFlag}_#{cropGrowthHome.str}"
+				oncomplete="dateimg(data);" reRender="allrainfall,maxWindVelocity">
+				<a:actionparam name="deviceId" assignTo="#{cropGrowthHome.deviceId}" />
+				<a:actionparam name="dateType" assignTo="#{cropGrowthHome.dateType}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript"> 
+	    jq(".table_w").css("width",(document.body.clientWidth- 312) / 4 +"px ");
+		jq(".ws_chart_l1").css("width",(document.body.clientWidth- 302) / 2 +"px ");
+		jq(".ws_chart_r1").css("width",(document.body.clientWidth- 302) / 2 +"px ");
+		jq(".chart244").css("width",(document.body.clientWidth- 312) / 2 +"px ");
+		jq(".chart245").css("width",(document.body.clientWidth- 312)+"px ");
+		if(jq.browser.msie){
+			if((jq.browser.version == "7.0")){
+				jq(".table_w").css("width",(document.body.clientWidth- 341) / 4 +"px ");
+				jq(".ws_chart_l1").css("width",(document.body.clientWidth- 329) / 2 +"px ");
+				jq(".ws_chart_r1").css("width",(document.body.clientWidth- 329) / 2 +"px ");
+				jq(".chart244").css("width",(document.body.clientWidth- 312) / 2 +"px ");
+				jq(".chart245").css("width",(document.body.clientWidth- 312)+"px ");
+			} 
+		}
+		
+		jq(".jqplot-target").css("width",(document.body.clientWidth- 322) / 2 +"px ");
+		jq(window).resize(function(){
+			 var onLoadWidth = document.body.clientWidth;
+			 jq(".table_w").css("width",(document.body.clientWidth- 312) / 4 +"px ");
+			jq(".ws_chart_l1").css("width",(document.body.clientWidth- 302) / 2 +"px ");
+			jq(".ws_chart_r1").css("width",(document.body.clientWidth- 302) / 2 +"px ");
+			jq(".jqplot-target").css("width",(document.body.clientWidth- 322) / 2 +"px ");
+			jq(".chart244").css("width",(document.body.clientWidth- 312) / 2 +"px ");
+			jq(".chart245").css("width",(document.body.clientWidth- 312)+"px ");
+
+		})
+				
+		</script>
+		<script type="text/javascript">
+		jq(function(){
+			jq(".qixtul").jTab({
+		        menutag: ".qixtul li",
+		        boxtag: ".chratdiv > ._chrat2",
+		        cur: 0
+				
+		    });
+		});
+		</script>
+
+		<!--病虫害防治第二个js开始-->
+		<script type="text/javascript"
+			src="#{request.contextPath}/asset/js/jshashtable-2.1.js"></script>
+		<script type="text/javascript"
+			src="#{request.contextPath}/asset/js/jquery.numberformatter-1.2.3.min.js"></script>
+		<!--<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.content.js"></script>-->
+		<!--病虫害防治第二个js结束-->
+		<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="#{request.contextPath}/asset/js/excanvas.js"></script><![endif]-->
+		<!--自然成熟度开始-->
+		<script src="#{request.contextPath}/asset/js/growth/jquery.flot.js"></script>
+		<script
+			src="#{request.contextPath}/asset/js/jquery.flot.categories.js"></script>
+		<script type="text/javascript"
+			src="#{request.contextPath}/asset/js/jquery.flot.time.js"></script>
+		<!--自然成熟度结束-->
+		<script type="text/javascript">
+	<!--
+	//<![DATA[
+	jq(function(){
+		dateimg(1);
+	});
+	
+	function loginTunnelC(deviceId,typeId){
+		jq('#login').show();
+		loginDevice(deviceId,typeId);
+	}
+	function dateimg(data){
+	 	var airTempDevice = "";//温度
+	    var rainfallDevice = "";//降水量
+	    var airHumidityDevice = "";//湿度
+	    var windVelocityDevice = "";//风速
+	    var illuminationDevice = "";//光照
+	    var solarRadiationDevice = "";//太阳辐射
+	    var soilTempDevice = "";//土温
+	    var soilHumidityDevice = "";//土湿
+	    var atmosphericPressureDevice = "";//大气压力
+	    var tickSizeInfo = "";
+	    var ticksInfo = "";
+	    var dataAll = "";
+	    var airTFlag = 0;
+		if(data == 1){
+		 	airTempDevice = #{cropGrowthHome.airTempDevice};//温度
+		    rainfallDevice = #{cropGrowthHome.rainfallDevice};//降水量
+		    airHumidityDevice = #{cropGrowthHome.airHumidityDevice};//湿度
+		    windVelocityDevice = #{cropGrowthHome.windVelocityDevice};//风速
+		    illuminationDevice = #{cropGrowthHome.illuminationDevice};//光照
+		    solarRadiationDevice = #{cropGrowthHome.solarRadiationDevice};//太阳辐射
+		    soilTempDevice = #{cropGrowthHome.soilTempDevice};//土温
+		    soilHumidityDevice = #{cropGrowthHome.soilHumidityDevice};//土湿
+		    atmosphericPressureDevice = #{cropGrowthHome.atmosphericPressureDevice};//大气压力
+		    tickSizeInfo = #{cropGrowthHome.tickSize};
+		    ticksInfo = #{cropGrowthHome.ticks};
+		    airTFlag = #{cropGrowthHome.airTFlag};
+		}else{
+			if(data !=""){
+				dataAll = data.split("_");
+				eval("airTempDevice = "+dataAll[0]);
+				eval("rainfallDevice = "+dataAll[1]);
+				eval("airHumidityDevice = "+dataAll[2]);
+				eval("windVelocityDevice = "+dataAll[3]);
+				eval("solarRadiationDevice = "+dataAll[4]);
+				eval("illuminationDevice = "+dataAll[5]);
+				eval("soilTempDevice = "+dataAll[6]);
+				eval("soilHumidityDevice = "+dataAll[7]);
+				eval("atmosphericPressureDevice = "+dataAll[8]);
+				eval("tickSizeInfo = "+dataAll[9]);
+				eval("ticksInfo = "+dataAll[10]);
+				eval("airTFlag = "+dataAll[11]);
+			}else{
+				jq("#login").hide();
+			}
+		}
+	
+		jq(".menutree").css("height","1810px ");
+		
+		  //柱形图开始
+		    jq.plot("#rainfallDevice", [{
+		        data: rainfallDevice,
+		        label: " ",
+		        bars: {
+		                show: true,
+		                barWidth: ticksInfo,
+		                align: "center"
+		            }
+		        
+		    }], {
+		        series: {
+		            bars: {
+		                show: true,
+		                barWidth: ticksInfo,
+		                align: "center"
+		    		},
+		    		hoverable: true
+		        },
+		        yaxis:{
+					min:0
+				},
+		        xaxis: {
+					mode: "time",
+					tickformat:'%y/%m/%d',
+					tickSize:tickSizeInfo,
+                     tickLength: 0
+		        },
+		        grid: { hoverable: true, clickable: true }
+		    });
+		    
+			//柱形图结束
+		    
+			var lines2 = jq("#airTempDevice"),
+		    data_lines2 = [
+				{
+			        label: '', 
+			        data: airTempDevice,
+			        color: '#fc7548'
+		    	}
+			],
+		    options_lines2 = {
+				yaxis:{
+					min:airTFlag
+				},
+				xaxis: { 
+					mode: "time",
+					tickformat:'%y/%m/%d',
+					tickSize:tickSizeInfo
+				 },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    }
+		    // rendering plot lines
+		    var chart_lines2 = jq.plot(lines2, data_lines2, options_lines2);
+			
+		    //空气温度趋势图
+		 	var lines4 = jq("#airHumidityDevice"),
+		 	
+		    data_lines4 = [
+				{
+		        label: '', 
+		        data: airHumidityDevice,
+		        color: '#cfb9ea'
+		    }
+
+			],
+		    options_lines4 = {
+		 		yaxis:{
+					min:0,
+					max:100
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo
+				 },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines4 = jq.plot(lines4, data_lines4, options_lines4);
+		    //风速
+		 	var lines5 = jq("#windVelocityDevice"),
+
+		    data_lines5 = [
+				{
+		        label: '', 
+		        data: windVelocityDevice,
+		        color: '#a4e3f4'
+		    }
+
+			],
+		    options_lines5 = {
+		 		yaxis:{
+		 			ticks: [[1, "1级"], [6, "6级"], [12, "12级"]],
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo
+				 },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines5 = jq.plot(lines5, data_lines5, options_lines5);
+		    //太阳辐射
+		 	var lines6 = jq("#solarRadiationDevice"),
+		 	
+		    data_lines6 = [
+				{
+		        label: '', 
+		        data: solarRadiationDevice,
+		        color: '#961cb9'
+		    }
+
+			],
+		    options_lines6 = {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo
+				 },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines6 = jq.plot(lines6, data_lines6, options_lines6);
+
+		    //光照趋势图
+		 	var lines66 = jq("#illuminationDevice"),
+		    data_lines66 = [
+				{
+		        label: '', 
+		        data: illuminationDevice,
+		        color: '#fff886'
+		    }
+
+			],
+		    options_lines66 = {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo
+				 },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines66 = jq.plot(lines66, data_lines66, options_lines66);
+		    
+		    //土壤温度
+		 	var lines67 = jq("#soilTempDevice"),
+		    data_lines67 = [
+				{
+		        label: '', 
+		        data: soilTempDevice,
+		        color: '#aec2fd'
+		    }
+
+			],
+		    options_lines67 = {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo
+				 },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines67 = jq.plot(lines67, data_lines67, options_lines67);
+
+		    //土壤湿度
+		 	var lines8= jq("#soilHumidityDevice"),
+		    data_lines8= [
+				{
+		        label: '', 
+		        data: soilHumidityDevice,
+		        color: '#3AB7A4'
+		    }
+
+			],
+		    options_lines8= {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines8= jq.plot(lines8, data_lines8, options_lines8);
+
+		    //二氧化碳趋势图
+		 	var lines9= jq("#atmosphericPressureDevice"),
+		    data_lines9= [
+				{
+		        label: '', 
+		        data: atmosphericPressureDevice,
+		        color: '#1975B7'
+		    }
+
+			],
+		    options_lines9= {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines9= jq.plot(lines9, data_lines9, options_lines9);
+		    var previousPoint = null, previousLabel = null;
+		    jq("#airTempDevice").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"℃");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		   
+		 
+		    jq("#airHumidityDevice").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"%");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#windVelocityDevice").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"级");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+		  
+		    jq("#solarRadiationDevice").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"w/m2");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#illuminationDevice").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"LUX");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#soilTempDevice").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"℃");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+		    jq("#soilHumidityDevice").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"%");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#atmosphericPressureDevice").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"hPa");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#rainfallDevice").bind("plothover", function (event, pos, item) {
+				if (item) {
+					if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+						previousPoint = item.dataIndex;
+						previousLabel = item.series.label;
+						 jq("#tooltip").remove();
+						 var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[12]);
+							}
+							
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"mm");
+					}
+				} else {
+					 jq("#tooltip").remove();
+					previousPoint = null;
+				}
+			});
+			
+			function showTooltip(x, y, contents) {
+				jq("<div id='tooltip'>" + contents + "</div>").css({
+					position: "absolute",
+					display: "none",
+					top: y + 5,
+					left: x - 50,
+					border: "1px solid #fdd",
+					padding: "2px",
+					"background-color": "#fee",
+					opacity: 0.80
+				}).appendTo("body").fadeIn(200);
+			}
+		    jq("#login").hide();
+		}
+	//]]>
+	-->
+	</script>
+		<!--右边结束-->
+	</ui:define>
+</ui:composition>

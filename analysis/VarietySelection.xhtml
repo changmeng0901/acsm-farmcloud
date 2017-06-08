@@ -1,0 +1,652 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template_left.xhtml">
+
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+	<!-- #{varietySelectionHome.work()} -->
+	<style>
+	.rich-calendar-exterior{line-height: 20px;}
+	.ui-selectmenu{*display:inline-block;}
+	.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width: 84px;}
+	.fxy_lidate02 {
+    margin-right: 15px;
+	}
+	.fxy_lidate{margin:5px 5px 5px 0;}
+	.lookAll .icheckbox_minimal-blue{ float:right; margin-top:12px;}
+	.fx_tckli .icheckbox_minimal-blue{ margin:5px 5px 0 0;} 
+	.div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+width: 200px;
+}
+	</style>
+	<td valign="top">
+                 <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">履历生成量按品种统计</font></div>
+                    </div>
+                    <div class="clear"></div>
+                 </div>   
+				<!--分析页开始-->
+				<ui:fragment rendered="#{s:hasRole('resume_breed_analyse_search')}">
+				<h:form id="search">
+					<div class="fxy_title">
+                    	<ul class="fxy_ul">
+                        	<li class="fxy_li01 #{varietySelectionHome.btype==1?'fxyon':''}" style="padding-left:0; cursor:pointer" onclick="linksub(1)">
+                        	<a><b>最近7天</b></a>
+                        	</li>
+                            <li class="fxy_li01 #{varietySelectionHome.btype==2?'fxyon':''}" onclick="linksub(2)" style=" cursor:pointer"><a><b>最近30天</b></a></li>
+                            <li class="fxy_li01 #{varietySelectionHome.btype==3?'fxyon':''}" style="background:none; cursor:pointer" onclick="linksub(3)" ><a><b>当年年份</b></a></li>
+                            <ui:fragment rendered="#{s:hasRole('resume_breed_analyse_exp')}">
+                            
+                            <li class="fxy_li02" >
+								<a href="#" onclick="jquery('.exportexcel').trigger('click')" > 
+                               			<img src="../asset/images/fxdc.jpg" width="82" height="16" />
+                               		</a>
+                               </li>
+							</ui:fragment>
+                            <li class="ie7clear"></li>
+                        </ul>
+                        
+                        <ul class="fxy_ul" id="male">
+                        	<li class="fxy_li">日期选择：</li>
+                            <li class="fxy_lidate">
+                            <input type="radio" value="6" name="sex" id="sex6"  style="display: none;"/><label  style="font-weight: 100; margin-left: 5px;">按日</label></li>
+                            <li class="fxy_lidate">
+                            <input type="radio" value="5" name="sex" id="sex5"  style="display: none;"/><label  style="font-weight: 100; margin-left: 5px;">按月</label></li>
+                            <li class="fxy_lidate">
+                            
+							<h:inputHidden value="#{varietySelectionHome.btype}" id="btype"/>
+                            <input type="radio" value="4" name="sex" id="sex4"  style="display: none;"/><label  style="font-weight: 100; margin-left: 5px;">按年</label></li>
+                            <li class="fxy_lidate02 sex_male1" style="#{varietySelectionHome.btype==4||varietySelectionHome.btype==5?'':'display:none'}"><font style="position:relative;[;top:0;]">日期：</font>
+                           <h:selectOneMenu value="#{varietySelectionHome.year}" styleClass="selectpicker">
+                           <f:selectItems value="#{varietySelectionHome.years}"></f:selectItems>
+                           </h:selectOneMenu>
+                           <font style="position:relative;[;top:0;]"> &#160;年&#160;</font>
+                           </li>
+                           <li class="fxy_lidate02 sex_female1" style="#{varietySelectionHome.btype==5?'':'display:none'}">
+                           <h:selectOneMenu value="#{varietySelectionHome.month}" styleClass="selectpicker">
+                           <f:selectItems value="#{varietySelectionHome.months}"></f:selectItems>
+                           </h:selectOneMenu>
+							<font style="position:relative;[;top:0;]">&#160;月</font>
+                           </li>
+                            <li class="fxy_lidate02 sex_nomale1" style="#{varietySelectionHome.btype==6?'':'display:none'}"><span style="float: left;">开始时间：</span>
+                          	 <div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="startTime"  styleClass="new_time nw100" value="#{varietySelectionHome.startTime}" readonly="true">
+						    <f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8"/>
+						    </h:inputText>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    </div>
+                            </li>
+                            <li class="fxy_lidate02 sex_nomale1" style="#{varietySelectionHome.btype==6?'':'display:none'}"><span style="float: left;">结束时间：</span>
+                          	<div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="endTime"  styleClass="new_time nw100" value="#{varietySelectionHome.endTime}" readonly="true">
+						    <f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8"/>
+						    </h:inputText>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    </div>
+                            </li>
+                            
+                            <li class="ie7clear"></li>
+                        </ul>
+                        <s:span rendered="#{sessionTake.enterpriseInfoId==1}" style="display: inline-block; margin-top: 5px;">
+                    	<ul class="fxy_ul" id="checkone">
+                        	<li class="fxy_li ">企业选择：</li>
+                        	<a:repeat  value="#{varietySelectionHome.customList}"  var="obj"   rowKeyVar="_index">
+                                <li class="fxy_lina #{obj.id==varietySelectionHome.enId?'fxyon':''}" name="name_#{obj.id}" id="classId_#{_index}"><a href="javascript:;" onclick="return enClass(#{_index},#{obj.id})"><b>#{obj.name}</b></a></li>
+                            </a:repeat>
+                            <li class="ie7clear"></li>
+                        </ul>
+                        </s:span>
+                         <div class="fxy_div" style="float:left; width:auto;">
+                            <input type="hidden" value="" id="pIdString" name="pIdString"/>
+                            <table cellpadding="0" cellspacing="0" style="float:left;">
+						<tr>
+							<td align="right" class="tpcc_font">选择作物：</td>
+							<td align="left" style="padding-left:4px;" id="male" class="six3" >
+								<div class="div200">
+				<select  style="display:none" id="plantCheck" name="plantCheck"  data-live-search="true">
+						<a:repeat value="#{varietySelectionHome.plantList}" var="var">
+						<optgroup label="#{var}">
+							<a:repeat value="#{varietySelectionHome.allPlant[var]}" var="_var">
+								<option value="#{_var.plantId}">#{_var.name}</option>
+							</a:repeat>
+						</optgroup>
+						</a:repeat>
+				</select>
+							</div>
+							</td>
+						</tr>
+					</table>
+                        </div>
+                        <div class="fxy_lidate03 " style="width:165px; margin:15px 0 0 20px;">
+                            <h:commandButton action="#{varietySelectionHome.print()}" styleClass="btn btn-primary mybut1" value="搜索"  onclick="return checksub()" style="float:left;margin-right:10px"/>
+                           <h:commandButton action="#{varietySelectionHome.exportExcelMain}" styleClass="btn btn-primary exportexcel" style="display:none" value="导出" onclick="return checksub()" />
+                            <h:commandButton id="reset" action="#{varietySelectionHome.reset}"  styleClass="btn btn-default" value="重置"  includePageParams="false" style="float:left;"/>
+                            </div>
+                        	<div class="clear"></div>
+                        
+                    	<div class="clear"></div>
+                    </div>
+                </h:form>
+				</ui:fragment>
+				<ui:fragment rendered="#{!s:hasRole('resume_breed_analyse_search')  and s:hasRole('resume_breed_analyse_exp')}">
+				 <li class="fxy_li02" style="float:right;margin-right:20px;" >
+								<a href="#" onclick="jquery('.exportexcel').trigger('click')" > 
+                               			<img src="../asset/images/fxdc.jpg" width="82" height="16" />
+                               		</a>
+								</li>
+                            <li class="ie7clear"></li>
+				</ui:fragment>
+				<!--分析页结束-->
+                 <div class="right_c">
+                    <div class="fxy_print2">
+                    	<ul>
+                        	<li class="fxy_pli02">
+                            	<table class="pli_table">
+                                	<tr>
+                                    	<td rowspan="2"><img class="pli_img" src="#{request.contextPath}/asset/images/fxym_03.jpg" width="46" height="46" /></td>
+                                        <td class="pli_font01" height="23">总使用张数</td>
+                                    </tr>
+                                    <tr>
+                                    	<td class="pli_font02" height="16">#{varietySelectionHome.totalPrint}&#160;<font style="font-size:12px; font-family:'微软雅黑';">张</font></td>
+                                    </tr>
+                                </table>
+                            </li>
+                            <li class="fxy_pli02">
+                            	<table class="pli_table">
+                                	<tr>
+                                    	<td rowspan="2"><img class="pli_img" src="#{request.contextPath}/asset/images/fxym_05.jpg" width="46" height="46" /></td>
+                                        <td class="pli_font01" height="23">总生成次数</td>
+                                    </tr>
+                                    <tr>
+                                    	<td class="pli_font02" height="16">#{varietySelectionHome.totalTimes}&#160;<font style="font-size:12px; font-family:'微软雅黑';">次</font></td>
+                                    </tr>
+                                </table>
+                            </li>
+                    	</ul>
+                    </div>
+                    <!--折线图开始-->
+                    <div class="ybp_02">
+                        <div class="fxy_xse">打印品种统计趋势</div>
+                        <div class="fxy_zxt">
+                        	<div id="placeholder2" class="chart22"  style="height:300px"></div>
+                        	<div id="xxx" style="text-align: center;"></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <!--折线图结束-->
+                    
+                    <!--饼形图开始-->
+                    <div class="ybp_02" style="#{varietySelectionHome.pieBoolean?'':'display:none'};">
+                        <div class="fxy_bxt">打印品种占比</div>
+                        <div class="fxy_zxt"  style="height:400px">
+                        	<div id="placeholder" class="demo-placeholder" style="height:400px"></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <!--饼形图结束-->
+                    
+                    <!--表格开始-->
+                    <div class="ybp_02" style="#{not empty varietySelectionHome.downList ?'':'display:none;'}">
+                        <div class="fxy_pzxs">
+                        	<ul>
+                            	<li style="float:left;"><b>履历品种详情</b><font style="font-size:12px;"></font></li>
+                                <li style="float:right;" class="lookAll"><span style="float:right; text-indent:10px;">查看全部数据</span><input type="checkbox" checked="checked" name="lookAll" id="lookAll"></input></li>
+                            </ul>    
+                        </div>
+                        <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                                    <tr>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                                        <td colspan="4" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                                        
+                                         <th class="fxze_bg3">序号</th>
+                                        <th class="fxze_bg3">品种名称</th>
+                                        <th class="fxze_bg3">打印次数</th>
+                                        <th class="fxze_bg3">打印张数</th>
+                                        <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                                    </tr>
+                                    <a:repeat value="#{varietySelectionHome.downList}" var="_obj" rowKeyVar="_index">
+                                    <tr>
+                                        <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                                        <td class="ze_bg2">#{_index+1}</td>
+                                        <td class="ze_bg2">#{_obj[0]}</td>
+                                        <td class="ze_bg2">#{_obj[1]}</td>
+                                        <td class="ze_bg2">#{_obj[2]}</td>
+                                        <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                    </tr>
+                                    </a:repeat>
+                                </table> 
+                        <a:repeat value="#{varietySelectionHome.dataList}" var="obj" rowKeyVar="index" rendered="#{not empty varietySelectionHome.dataList}">
+                                <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                                    <tr>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                                        <td colspan="4" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                                        <th class="fxze_bg3" align="left" width="100%" colspan="4">#{varietySelectionHome.plantMap[obj].name}</th>
+                                        <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                                    </tr>
+                                    <tr>
+                                        <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                                        <td class="ze_bg2" width="25%">时间</td>
+                                        <td class="ze_bg2" width="25%">地块</td>
+                                        <td class="ze_bg2" width="25%">打印次数</td>
+                                        <td class="ze_bg2" width="25%">打印张数</td>
+                                        <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                    </tr>
+                                     <a:repeat value="#{varietySelectionHome.dataMap[obj]}" var="_obj" rowKeyVar="_index">
+                                    <tr class="#{_obj[1]==0?'takeaway':''}">
+                                        <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                                        <td class="ze_bg2">#{_obj[0]}</td>
+                                        <td class="ze_bg2">#{_obj[3]}</td>
+                                        <td class="ze_bg2">#{_obj[1]}</td>
+                                        <td class="ze_bg2">#{_obj[2]}</td>
+                                        <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                    </tr>
+                                    </a:repeat>
+                                </table> 
+                                </a:repeat>
+                       <div class="clear"></div>
+                    </div>
+                    <!--表格结束-->
+                    <div style="height:30px; width:100%;"></div>
+
+
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div class="clear"></div>
+                 <a:form>
+               <a:jsFunction name="getEnIdMethod" eventsQueue="eventsQueue" action="#{varietySelectionHome.getEnIdMethod()}" data="#{varietySelectionHome.returnStr}" oncomplete="refreshSelect(data)">
+               <a:actionparam name="enId" assignTo="#{varietySelectionHome.enId}"/>
+  			   </a:jsFunction>
+  			</a:form>
+  		    <a:form>
+               <a:jsFunction name="bIdStringMethod" eventsQueue="eventsQueue" reRender="breedDiv2" action="#{varietySelectionHome.bIdStringMethod()}">
+               <a:actionparam name="bIdString" assignTo="#{varietySelectionHome.pIdString}"/>
+  			   </a:jsFunction>
+  			</a:form>
+  			<script type="text/javascript">
+	jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd",
+			    autoclose: true,
+				 weekStart: 1,
+				  //startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+				 minView:2,
+			    pickerPosition: "bottom-left"
+			    });
+	</script>
+                <script src="#{request.contextPath}/asset/js/jquery.js"></script>
+		 <script src="#{request.contextPath}/asset/js/jquery.flot.js"></script>
+			 <script  type="text/javascript" src="#{request.contextPath}/asset/js/jquery.flot.time.js"></script>
+			 <script src="#{request.contextPath}/asset/js/jquery.flot.pie.js"></script>
+		<link href="../asset/css/examples.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+//<![CDATA[
+jquery(".ui-selectmenu").remove();
+jquery(".rich-calendar-input").addClass("gjss1");
+jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+jquery(".ui-selectmenu").addClass("small2");
+jquery(".ui-selectmenu-menu").css("width","98px");
+
+
+che = function(obj,o){
+	if(o.getAttribute("aaa")=="false"){
+		o.setAttribute("aaa","true");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("b");
+		jquery("#"+o.id).addClass("a");
+	}else{
+		o.setAttribute("aaa","false");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("a");
+		jquery("#"+o.id).addClass("b");
+	}
+	checkChecked();
+}
+
+checksub = function(){
+    var pids = "";
+    if(jquery("#plantCheck").val()!=null){
+        pids = jquery("#plantCheck").val().toString();
+    }
+	if(document.getElementById("search:btype").value==6){
+		if(document.getElementById("search:startTime").value==""){
+			alert("请填写开始时间");
+			return false;
+		}
+		if(document.getElementById("search:endTime").value==""){
+			alert("请填写结束时间");
+			return false;
+		}
+	}
+	jquery("#pIdString").val(pids);
+	return true;
+}
+
+checkAll = function(obj){
+	if(obj.getAttribute("aaa")=="true"){
+		jquery(".chccc").each(function(){
+			jquery(this).attr("aaa","false");
+			jquery("#"+jquery(this).attr("xx")).attr("aaa","false");
+			jquery(this).removeClass("a");
+			jquery(this).addClass("b");	   
+		});
+		document.getElementById("search:allC").value="false";
+		obj.setAttribute("aaa","false");
+		jquery(obj).removeClass("a");
+		jquery(obj).addClass("b");
+	}else{
+		jquery(".chccc").each(function(){
+			jquery(this).attr("aaa","true");
+			jquery("#"+jquery(this).attr("xx")).attr("aaa","true");
+			jquery(this).removeClass("b");
+			jquery(this).addClass("a");	  
+				
+		});
+		obj.setAttribute("aaa","true");
+		document.getElementById("search:allC").value="true";
+		jquery(obj).removeClass("b");
+		jquery(obj).addClass("a");
+	}
+}
+
+
+recheck = function(){
+	if(jquery("#search\\:checkAll").attr("checked")){
+		jquery("input[name='checkBName']").each(function(){
+			if(!jquery(this).attr("checked")){
+				jquery("#search\\:checkAll").attr("checked",false);
+			}
+		});
+	}else{
+		var a = jquery("input[name='checkBName']");
+		a.each(function(i){
+			if(!jquery(this).attr("checked")){
+				return false;
+			}else if(a.length-1==i){
+				jquery("#search\\:checkAll").attr("checked",true);
+			}
+		});
+	}
+}
+
+checkChecked =function(){
+	var obj = document.getElementById("search:allC")
+	if(obj.value=="false"){
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+				break;
+			}else if(i==check.length-1){
+				jquery("#b").attr("aaa","true");
+				document.getElementById("search:allC").value="true";
+				jquery("#b").removeClass("b");
+				jquery("#b").addClass("a");
+			}
+		}
+	}else{
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+			//}else if(i==check.length-1){
+				document.getElementById("search:allC").value="false";
+				jquery("#b").attr("aaa","false");
+				jquery("#b").removeClass("a");
+				jquery("#b").addClass("b");
+				break;
+			}
+		}
+	}
+	
+}
+
+function choseClass(){
+	this.className="city_nav city_hover";
+	if(document.getElementById('city_link').className=="fxy_tck city_hovers"){
+		document.getElementById('city_link').className=="fxy_tck";
+		checkBreed();
+	}else{
+		document.getElementById('city_link').className="fxy_tck city_hovers";
+	}
+	return false;
+}
+
+function enClass(obj,objTwo){
+	jquery(".fxy_lina").each(function(){
+		var a = this.className;
+		if(a == "fxy_lina fxyon"){
+			document.getElementById(this.id).className="fxy_lina";
+		}
+	});
+	var obj2 = "classId_"+obj;
+	document.getElementById(obj2).className="fxy_lina fxyon";
+	getEnIdMethod(objTwo);
+	return true;
+}
+
+function checkBreed(){
+	var s = "";
+	jquery("input[name='checkBName']:checked").each(function(){
+		s+=this.id+"_";		
+	});
+	bIdStringMethod(s);
+	document.getElementById('city_link').className='fxy_tck';
+	document.getElementById("fxy_ul02").style.display = "block";
+}
+cheAll = function(obj){
+		jquery("input[name='checkBName']").prop("checked", obj.checked);
+}
+jquery(document).ready(function(){
+	jquery('input').iCheck({
+	    checkboxClass: 'icheckbox_minimal-blue',
+	    radioClass: 'iradio_minimal-blue',
+	    increaseArea: '20%' // optional
+	  });
+
+	jquery("input[name='sex']:radio").on("ifChecked", function(event){
+		var type = this.value;
+		document.getElementById("search:btype").value=type;
+		jquery(".fxyon").removeClass("fxyon");
+		jquery("input[name='sex']").removeAttr("checked");
+		jquery("#sex" + type).attr("checked", true);
+		if(type=="4"){
+			jquery(".sex_male1").show();
+			jquery(".sex_female1").hide();
+			jquery(".sex_nomale1").hide();
+		}else if(type=="5"){
+			jquery(".sex_male1").show();
+			jquery(".sex_female1").show();
+			jquery(".sex_nomale1").hide();
+		}else if(type=="6"){
+			jquery(".sex_male1").hide();
+			jquery(".sex_female1").hide();
+			jquery(".sex_nomale1").show();
+		}
+	});	
+
+	jquery("input[name='lookAll']").on("ifClicked", function(event){
+		
+		if(jquery(".takeaway").css("display")=='none'){
+			
+			jquery("#lookAll").iCheck("check"); 
+			jquery(".takeaway").show();
+		}else{
+			jquery(".takeaway").hide();
+	 	}
+	});	
+	jquery("#search\\:checkAll").on("ifClicked", function(event){
+		if (this.checked) {
+			jquery("input[name='checkBName']").iCheck("uncheck"); 
+		} else {
+			jquery("input[name='checkBName']").iCheck("check"); 
+		}
+	});
+	});
+	
+window.onload = function() 
+{
+	var type = document.getElementById("search:btype").value;
+	if(type != null){
+		jquery("#sex" + type).iCheck("check"); 
+	}
+}
+
+function refreshSelect(data){
+	jquery("#plantCheck").empty().append(data);
+	jquery("#plantCheck").selectpicker("refresh");
+}
+
+jquery(document).ready(function(){ 
+	jquery('#plantCheck').attr("multiple","multiple");
+	jquery('select:not(#plantCheck)').selectpicker();
+	jquery('#plantCheck').selectpicker({noneSelectedText:"全部"});
+	jquery('#plantCheck').selectpicker('deselectAll');
+	var str = "#{varietySelectionHome.pIdString}";
+	var strs = str.split(",");
+    if(jquery("#plantCheck option").length!=strs.length)
+ 		jquery("#plantCheck").selectpicker("val",str.split(","));
+});
+
+linksub = function(val){
+	document.getElementById("search:btype").value=val;
+	jquery(".mybut1").trigger("click");
+}
+
+jq = jQuery.noConflict();
+jq(function() {
+var bb = #{varietySelectionHome.b};
+if(bb){
+#{varietySelectionHome.array1}
+
+var plot = jq.plot("#placeholder2", [
+	#{varietySelectionHome.array2}
+], {
+	xaxis: { mode: "time",
+	#{varietySelectionHome.ticks}
+    #{varietySelectionHome.tickformat}
+	minTickSize: #{varietySelectionHome.tick}},
+	yaxis: {  min: 0 },
+	series: {
+		lines: {
+			show: true
+		},
+		points: {
+			show: true
+		}
+	},
+	 legend: {
+    		show:true,
+            noColumns: 0,
+            labelBoxBorderColor: "#ffffff",
+    		position:"nw",
+    		container:jq("#xxx")
+        },
+	grid: {
+		hoverable: true,
+		clickable: true
+	}
+});
+
+function showTooltip(x, y, contents) {
+	jq("<div id='tooltip'>" + contents + "</div>").css({
+		position: "absolute",
+		display: "none",
+		top: y + 5,
+		left: x + 5,
+		border: "1px solid #fdd",
+		padding: "2px",
+		"background-color": "#fee",
+		opacity: 0.80
+	}).appendTo("body").fadeIn(200);
+}
+
+var previousPoint = null;
+jq("#placeholder2").bind("plothover", function (event, pos, item) {
+
+	if (true) {
+		var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+		jq("#hoverdata").text(str);
+	}
+	if (true) {
+		if (item) {
+			if (previousPoint != item.dataIndex) {
+				previousPoint = item.dataIndex;
+				jq("#tooltip").remove();
+				var x = item.datapoint[0].toFixed(2),
+				y = item.datapoint[1].toFixed(2);
+				var str1 = (x+"").split(".")[0];
+				var dat = new Date(parseInt(str1));
+				var str = #{varietySelectionHome.format};
+				y = (y+"").split(".")[0];
+				showTooltip(item.pageX, item.pageY,
+						str + " " + y+"张");
+			}
+		} else {
+			jq("#tooltip").remove();
+			previousPoint = null;            
+		}
+	}
+});
+}else{
+	document.getElementById("placeholder2").style.display="none";
+}
+});
+jquery(function() {   
+#{varietySelectionHome.pie}
+jq.plot('#placeholder', pie, {
+  series: {
+      pie: {
+          show: true
+      }
+  }
+});   
+});  
+
+
+takea = function(){
+	if(jquery(".takeaway").css("display")=='none'){
+		jquery(".takeaway").show();
+		reido1.style.backgroundImage='url(../asset/images/radio1.gif)';
+	}else{
+		jquery(".takeaway").hide();
+		reido1.style.backgroundImage='url(../asset/images/radio2.gif)';
+ 	}
+}
+
+
+
+
+
+//]]>
+</script>
+   
+            </td>     
+	            <style>
+	.rich-calendar-exterior{line-height: 20px;}
+	.legendLabel {font-size: 13px;float: left;}
+	#xxx table{margin: 0 auto;}
+	
+	</style> 
+            
+	</ui:define>
+
+</ui:composition>

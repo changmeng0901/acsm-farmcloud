@@ -1,0 +1,509 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml"
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<ui:define name="body">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+<style>
+/* 角色管理 */
+.mr5{ margin-right:5px;}
+.mt30{ margin-top:30px;}
+.mt50{ margin-top:50px;}
+.mb50{ margin-bottom:50px;}
+a:focus{ outline:none; outline-offset:0;}
+.btn{ height:32px; padding:0 19px; line-height:32px;}
+.public-searchWap{ margin-top:20px; padding:0 30px;}
+.public-searchWap .public-search{ float:left; width:300px; margin-right:5px;}
+.public-searchWap .form-control{ padding-left:25px;}
+.list_view, .list_edit, .list_delete{ vertical-align:middle;}
+
+.messageTable{ margin-top:24px;}
+.messageTable td{ padding-bottom:20px;}
+.modalTable_minni td{ padding-bottom:20px;}
+.bootList21 .bootLi{ float:left; padding-bottom:20px;}
+.bootTxt21{ float:left; width:100px; line-height:34px; padding-right:10px; text-align:right; font-size:12px;}
+.bootTextarea .area_textarea{ width:300px; height:82px; resize:none;}
+.bootData21{ float:left;}
+.bootSelt21{ float:left; display:inline-block;}
+.bootSelt21 .bootstrap-select{  width:220px;}
+.bootSelt21 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){ width:220px;}
+.bootSelt21 .bootstrap-select span{ font-size:12px; font-family:'微软雅黑';}
+.bootSelt21 .bootstrap-select > .btn{ height:34px; line-height:20px;}
+.bootstrap-select.btn-group .dropdown-menu{ max-width:220px;}
+.cm_resumeList{}
+.cm_resumeList li{ float:left;}
+.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'宋体';}
+.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+.cm_resumeList li img{ float:left; margin-top:16px;}
+.cm_resumeList li span{ float:left; text-indent:10px;}
+.borderBt{ border-bottom:2px solid #33aedc;}
+.borderBt02{ border-bottom:1px solid #cbcbcb;}
+
+</style>
+
+
+	<td valign="top">
+               
+		<!-- #{positionsHome.work()} -->
+		
+                <!-- right_c 开始 -->
+                 <div id="refreshDom" class="right_c" style="min-height:30px;">
+                 <h:form id="user">
+                    <div class="r_title clear">
+                    	<div class="r_t_l cm_r_t_l">数字农场&#160;&gt;&#160;&#160;人员档案&#160;&gt;&#160;&#160;<font size="4">#{sessionTake.tempType == 9 ? '部门管理':'职位管理'}</font></div>
+                    	<div class="fr" style="margin-bottom:-1px;">
+                        <ul class="cm_resumeList clear">
+                        	<li>
+                                <a href="#{request.contextPath}/map/FarmerInfoManageList.seam?from=from"><img src="#{request.contextPath}/asset/images/renyuan.png" /><span>人员管理</span></a>
+                            </li>
+                            <li>
+                                <a class="borderBt" href="#{request.contextPath}/user/PositionsList.seam"><img src="#{request.contextPath}/asset/images/positions.png" /><span>#{sessionTake.tempType == 9 ? '部门管理':'职位管理'}</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    </div>
+                    <!-- 公用搜索 开始 -->
+                <div class="public-searchWap clear">
+                    <strong class="fl" style="margin-top:5px;display:none" ><img width="100px;" src="#{sessionTake.getEsm().getLoginSuccessLogoUrl()}" style="#{sessionTake.getEsm().getLoginSuccessLogoUrl() ne null and sessionTake.getEsm().getLoginSuccessLogoUrl() ne ''?'display:block;':'display:none;'}"/></strong>
+                    <a class="btn btn-success fr" data-toggle="modal"  onclick="addPositions()"  href="javascript:;">新建职位</a>
+                </div>
+                <!-- 公用搜索 结束 -->
+                <!-- 职位管理 开始 -->
+                <div class="right_c mt20 clear">
+               		 <div style="display: none;" id="nodeDiv"></div>
+                    <div id="chart" class="orgChart"></div>                
+                </div>
+                <!-- 职位管理 结束 -->
+                <h:inputHidden value="#{positionsHome.resultStr}" name="resultStr" id="resultStr"/>
+                <h:inputHidden value="#{positionsHome.obj}" name="objVal" id="objVal"/>
+ <!--  新建职位模态框 开始 -->
+<div class="modal" id="myModal_xinjianzw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:540px;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"></button>
+        <h4 class="modal-title" id="myModalLabel">新建职位</h4>
+    </div>
+    <div class="modal-body" style="padding:20px 0 0;">
+        <table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="pr10" width="110" align="right">职位名</td>
+                <td width="262">
+                    <span class="bootSelt21">
+                    <h:inputText id="posName" styleClass="form-control nw221"  value="" immediate="true"/>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pr10" width="110" align="right">报告给</td>
+                <td width="262">
+                    <span class="bootSelt21">
+					 <select name="fId" id="fId" class="selectpicker">
+                       <a:repeat value="#{positionsHome.posList}" var="var" >
+                     	<option value="#{var.id}">#{var.name}</option>
+                  	   </a:repeat>
+                      </select>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pr10" width="110" align="right">
+                    <span class="share-data fr">
+                		    同事共享数据
+                    </span>
+                </td>
+                <td width="262">
+                <span style="line-height:34px;">
+                	<input type="checkbox" name="shareInfo" id="shareInfo" class=""/>
+                </span></td>
+            </tr>
+            <tr>
+                <td class="pr10" width="110" align="right">描述</td>
+                <td>
+                    <span class="bootTextarea">
+                    	<h:inputTextarea immediate="true" id="description" styleClass="form-control area_textarea" rows="3" value="" />
+                    </span>
+                </td>
+            </tr>
+        </table>     
+    </div>
+    <div class="modal-footer">
+        <h:commandButton id="persist"  styleClass="btn btn-success" value="提交" onclick="return checkSubmit(1);" action="#{positionsHome.persist}"/>
+        <a class="btn btn-default" data-dismiss="modal" href="javascript:;">返回</a>
+    </div>
+</div>
+</div>
+</div>
+<!--  新建职位模态框 结束 -->
+
+<!--  职位介绍模态框 开始 -->
+<div class="modal" id="myModal_zhiweijs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:540px;">
+	<!-- 职位介绍内容 开始 -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"></button>
+            <h4 class="modal-title" id="myModalLabel">职位介绍</h4>
+        </div>
+        <div class="modal-body" style="padding:20px 0 0; position:relative;">
+           
+            <table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="pr10" width="110" align="right">职位名</td>
+                    <td width="262">
+                        <span class="bootSelt-text" id="posName2"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pr10" width="110" align="right">报告给</td>
+                    <td width="262">
+                        <span class="bootSelt-text" id="fName"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pr10" width="110" align="right">
+                        <span class="share-data fr">
+                        	同事共享数据
+                        </span>
+                    </td>
+                    <td width="262"><span style="line-height:34px;">
+                    	<input type="checkbox" name="shareInfo2" id="shareInfo2" disabled="disabled"/>
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="pr10" width="110" align="right" valign="top"><span class="bootSelt-text">描述</span></td>
+                    <td>
+                        <span class="bootSelt-textarea" id="description2"></span>
+                    </td>
+                </tr>
+            </table>     
+        </div>
+        <div class="modal-footer">
+        	<a class="btn btn-default po-edit-btn" href="javascript:;">编辑</a>
+            <a class="btn btn-default po-delect-btn" href="javascript:;" onclick="delMe()">删除</a>
+            <a class="btn btn-default" data-dismiss="modal" href="javascript:;">返回</a>
+        </div>
+    </div>
+    <!-- 职位介绍内容 结束 -->
+	<!--  编辑职位 开始 -->
+	<s:div id="editDiv">
+	    <div class="defined-modal" id="myModal_bianjizw" style="display:none; width:540px; height:415px; left:0; top:0;">
+	        <div class="modal-header">
+	            <button type="button" class="close"></button>
+	            <h4 class="modal-title" id="myModalLabel">编辑职位</h4>
+	        </div>
+	        <div class="modal-body" style="padding:20px 0 0;">
+	        <table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0">
+	            <tr>
+	                <td class="pr10" width="110" align="right">职位名</td>
+	                <td width="262">
+	                    <span class="bootSelt21">
+	                    <h:inputText id="posName3" styleClass="form-control nw221"  value=""/>
+	                    </span>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td class="pr10" width="110" align="right">报告给</td>
+	                <td width="262">
+	                    <span class="bootSelt21">
+							 <select name="fId3" id="fId3" class="selectpicker">
+		                       <a:repeat value="#{positionsHome.posEditList}" var="var" >
+		                     	<option value="#{var.id}">#{var.name}</option>
+		                  	   </a:repeat>
+		                      </select>
+	                    </span>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td class="pr10" width="110" align="right">
+	                    <span class="share-data fr">
+							同事共享数据
+	                    </span>
+	                </td>
+	                <td width="262"><span style="line-height:34px;">
+	                	<input type="checkbox" name="shareInfo3" id="shareInfo3" class=""/>
+	                </span></td>
+	            </tr>
+	            <tr>
+	                <td class="pr10" width="110" align="right">描述</td>
+	                <td>
+	                    <span class="bootTextarea">
+	                    	<h:inputTextarea id="description3" styleClass="form-control area_textarea" rows="3" value="" />
+	                    </span>
+	                </td>
+	            </tr>
+	        </table>     
+	    </div>
+	    <div class="modal-footer">
+			<h:commandButton styleClass="btn btn-success ccc" id="update3" value="提交" onclick="return checkSubmit(2);" action="#{positionsHome.update}"/>
+	        <a class="btn btn-default" data-dismiss="modal" href="javascript:;">返回</a>
+	    </div>
+	    
+	    </div>
+    </s:div>
+    <!--  编辑职位 结束 -->
+</div>
+</div>
+<!--  职位介绍模态框 结束 -->
+               
+                 <!-- right_c 结束 -->
+                <div class="clear"></div>
+              </h:form>
+             </div>
+              <a:form id="formid" >
+				<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+				<a:jsFunction name="queryPosOne"  eventsQueue="mainQueue" action="#{positionsHome.queryPosOne()}" reRender="editDiv" data="#{positionsHome.returnDate}" oncomplete="queryPosOne_next(data)">
+				   <a:actionparam name="pId" assignTo="#{positionsHome.pId}"/>
+				</a:jsFunction>
+				<a:jsFunction name="deletePos"  eventsQueue="mainQueue" action="#{positionsHome.deletePos()}" data="#{positionsHome.delData}" oncomplete="delComplete(data)">
+				   <a:actionparam name="delId" assignTo="#{positionsHome.delId}"/>
+				</a:jsFunction>
+				<a:jsFunction name="checkUsed" action="#{positionsHome.checkUsed()}" data="#{positionsHome.showMessage}"  oncomplete="confirmRemove(data)" >
+					<a:actionparam name="delId" assignTo="#{positionsHome.delId}"/>
+				</a:jsFunction>
+				</a:form>				
+            </td> 
+            <script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-ui.min.js"></script>
+            	<script type="text/javascript" src="#{request.contextPath}/asset/js/jQuery.jOrgChart.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/prettify.js"></script>
+       <script type="text/javascript">
+     //<![CDATA[
+jQuery = jQuery.noConflict();
+jQuery(function(){
+	//下拉框
+	jQuery('.selectpicker').selectpicker();
+	
+	//文本控制
+	jQuery('input[type=text]').not('input[readonly]').focus(function(){
+		var txt_value = jQuery(this).val();
+		if(txt_value==this.defaultValue){
+			jQuery(this).val("");	
+		};	
+	});
+	jQuery('input[type=text]').blur(function(){
+		var txt_value = jQuery(this).val();
+		if(txt_value==""){
+			jQuery(this).val(this.defaultValue);	
+		};	
+	});
+	
+	//单选框控件
+	onloadChe();
+	
+	//职位自定义模态框
+	jQuery('.po-edit-btn').click(function(){
+		jQuery(this).parents('.modal-dialog').find('.defined-modal').show();
+		jQuery('.modal-footer .btn').click(function(){   //关闭按钮点击时，自定义模态框关闭
+			jQuery(this).parents('.defined-modal').hide();	
+		});	
+		jQuery('.defined-modal .modal-header .close').click(function(){ //自定义模态框下提交返回按钮点击时，自定义模态
+			jQuery(this).parents('.defined-modal').hide();	
+		});
+	});
+	jQuery('.defined-modal .modal-header .close').click(function(){
+		jQuery(this).parents('.defined-modal').hide();	
+	});
+	
+	//职位管理结构组织图控件
+	var obj = "#{positionsHome.sbStr}";
+	jQuery("#nodeDiv").html(obj);
+	jQuery("#org").jOrgChart({
+		chartElement : '#chart',
+		dragAndDrop  : true
+	});
+	
+	/*jQuery('.node-cells').click(function(){
+		jQuery(this).siblings().css({visibility:'visible'});
+	})*/;
+	var $windowWid = jQuery(window).width();
+	var $windowHei = jQuery(window).height();
+	jQuery('#chart').css({width:$windowWid - 350,height:$windowHei-235});
+	
+		
+});
+jQuery(window).resize( function(){  //当浏览器窗口改变时，结构组织图的宽高也改变
+	var $windowWid = jQuery(window).width();
+	var $windowHei = jQuery(window).height();
+	jQuery('#chart').css({width:$windowWid - 350,height:$windowHei-235});	
+})
+
+function initAddPositions(obj){
+	//var isHasBase = checkSelectNew();
+	//if(isHasBase){
+		var posId = obj.id;
+		if(posId == "posIdNull"){//该企业下没有职位
+			jQuery("#myModal_xinjianzw").modal('show');
+		}else{
+			jQuery("#myModal_zhiweijs").modal('show');
+		}
+	//}
+}
+
+
+
+function editPositions(obj){
+	//var isHasBase = checkSelectNew();
+	//if(isHasBase){
+		var param1 = obj.id;
+		if(param1 != null && param1 != "undefined"){
+			var posId = param1.split("_")[1];
+			queryPosOne(posId);
+		}
+	//}
+}
+
+//添加职位的方法
+function addPositions(){
+	//var isHasBase = checkSelectNew();
+	//if(isHasBase){
+		jQuery("#myModal_xinjianzw").modal('show');
+	//}
+}
+
+
+//编辑时弹框
+var publicPosId = 0;
+function queryPosOne_next(obj){
+	eval("var tempp = "+obj);
+	var id = tempp.id;
+	publicPosId = id;//当前编辑的对象id
+	var name = tempp.name;
+	var fid = tempp.fid;
+	var fName = tempp.fName;
+	var des = tempp.description;
+	var share = tempp.share;
+
+	if(name != null){
+		jQuery("#user\\:posName3").val(name);
+		jQuery("#posName2").html(name);
+	}
+	if(fName != null){
+		jQuery("#fName").html(fName);
+	}
+	if(share != null){
+		if(share == 1){
+			jQuery(this).attr("class","checkedaaa");//共享
+			jQuery("input[name='shareInfo3']").iCheck("check"); 
+			jQuery("input[name='shareInfo2']").iCheck("check"); 
+		}else{
+			jQuery(this).attr("class","checkedbbb");//共享
+			jQuery("input[name='shareInfo3']").iCheck("uncheck"); 
+			jQuery("input[name='shareInfo2']").iCheck("uncheck"); 
+		}
+		
+	}
+	if(des != null){
+		jQuery("#user\\:description3").val(des);
+		jQuery("#description2").html(des);
+	}
+
+	jQuery('#fId3').selectpicker('refresh');
+	onloadChe();
+	if(fid != null){
+		if(fid == 0){
+			jQuery("#fId3").attr("disabled",true); 
+		}else{
+			jQuery("#fId3").selectpicker('val', fid);
+		}
+	}
+	jQuery("#myModal_zhiweijs").modal('show');
+}
+
+
+function checkSubmit(type){
+	var name;
+	var fId;
+	var share;
+	var des;
+	if(type == 1){//添加
+		publicPosId = 0;
+		 name = jQuery("#user\\:posName").val();//职位名称
+		 fId = jQuery("#fId").val();//父类职位名称
+		 var className = jQuery("#shareInfo").attr("class");
+		 if(className == "checkedaaa"){//共享
+			 	share = 1;
+			}else{
+				share = 0;
+			}
+		 des = jQuery("#user\\:description").val();//描述
+		
+		jQuery("#myModal_xinjianzw").modal('hide');
+	}else{
+		 name = jQuery("#user\\:posName3").val();//职位名称
+		 fId = jQuery("#fId3").val();//父类职位名称
+		 var className = jQuery("#shareInfo3").attr("class");
+		 if(className == "checkedaaa"){//共享
+			 	share = 1;
+			}else{
+				share = 0;
+			}
+		 des = jQuery("#user\\:description3").val();//描述
+		
+			jQuery("#myModal_bianjizw").modal('hide');
+			jQuery("#myModal_zhiweijs").modal('hide');
+	}
+	if(fId == null || fId == ""){
+		fId = 0;
+	}
+	var jsonstr;
+	jsonstr="{positionsInfo:[";
+	jsonstr += "{\"pId\""+ ":" + "\"" + publicPosId + "\",";
+	jsonstr += "\"name\""+ ":" + "\"" + name + "\",";
+	jsonstr += "\"fId\""+ ":" + "\"" + fId + "\",";
+	jsonstr += "\"share\""+ ":" + "\"" + share + "\",";
+	jsonstr += "\"des\""+ ":" + "\"" + des + "\"}";
+	jsonstr += "]}";
+	var str = "{'name':"+name+",'fId':"+fId+",'share':"+share+",'des':"+des+"}";
+	jQuery("#user\\:resultStr").val(jsonstr);
+	
+}
+
+function delMe(){//刪除方法
+	if(publicPosId != 0){
+		if(confirm('确定删除吗？')){
+			//deletePos(publicPosId);
+			checkUsed(publicPosId);
+		}
+	}
+}
+function confirmRemove(data){
+	if(""!=data && null!=data){
+		alert("已有人员使用此职位，不能删除!");
+	}else{
+		deletePos(publicPosId);
+	}
+}
+function onloadChe(){
+	jQuery('input[type=checkbox]').iCheck({
+		  checkboxClass: 'icheckbox_minimal-blue',
+		  increaseArea: '20%' // optional
+		});
+	//是否共享数据
+	jQuery('input[type=checkbox]').on("ifClicked", function(event){
+		if(this.checked){
+			jQuery(this).attr("class","checkedbbb");
+		}else{
+			jQuery(this).attr("class","checkedaaa");//共享
+		}
+	});
+}
+
+
+function delComplete(obj){
+	if(obj != ""){
+		alert(obj);
+	}
+}
+//]]>
+</script>    
+	</ui:define>
+
+</ui:composition>

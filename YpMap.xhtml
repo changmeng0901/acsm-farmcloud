@@ -1,0 +1,1175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   xmlns:a4j="http://richfaces.org/a4j"
+   contentType="text/html">
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <meta http-equiv="pragma" content="no-cache"/>
+      <title>义田帮手简单实用的农场管理工具</title>
+      <link rel="shortcut icon" href="#{request.contextPath}/favicon.ico"/>
+      <ui:insert name="head"/>
+      <link rel="stylesheet" type="text/css" media="screen" href="#{request.contextPath}/asset/css/bootstrap-select.min.css"/>
+      <link href="#{request.contextPath}/asset/css/bootstrap3.min.css" rel="stylesheet"/>
+	  <link href="#{request.contextPath}/asset/css/datetimepicker.css" rel="stylesheet"/>
+	  <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/style_new_map.css"/>
+      <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/style_map.css"/>
+      <script type="text/javascript">
+  	//<![CDATA[
+  	           document.domain = 'farmeasy.cn';
+  	           try{
+  	        	 if (!('indexOf' in Array.prototype)) {
+  	        	    Array.prototype.indexOf = function (find, i) {
+  	        	      if (i === undefined) i = 0;
+  	        	      if (i < 0) i += this.length;
+  	        	      if (i < 0) i = 0;
+  	        	      for (var n = this.length; i < n; i++) {
+  	        	        if (i in this && this[i] === find) {
+  	        	          return i;
+  	        	        }
+  	        	      }
+  	        	      return -1;
+  	        	    }
+  	        	  }
+  	           }catch(e){
+  	        	   
+  	           }
+  	
+  //]]>
+  	  </script>
+
+  	<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/bootstrap.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/new_clone/bootstrap-select.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/new_clone/bootstrap-datetimepicker.js"> </script> 
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/bootstrap-datetimepicker.zh-CN.js"></script> 
+	  <style>
+.rt_top {
+margin-left: 5px;
+z-index: 1;
+position: relative;
+top: 0px;
+}
+	  </style>
+	   <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/mapRtArea.css"/>
+        <style>
+        .jumpToInfo{color:#3e3e3e;}
+        .jumpToInfo:hover{color:#4478c1}
+        .videoViewShow{ position:relative;width:680px;height:550px;}
+		.videoViewShow.big_iframe{ position:fixed;left:77px; right:0; top:0;bottom:0;z-index:999999;width:100%-;height:100%;}
+		.monitor_suspend {
+    background-color: #000;
+    height: 550px;
+    left: 50%;
+    margin-left: -342px;
+    margin-top: -225px;
+    position: fixed;
+    top: 50%;
+    width: 684px;
+    z-index: 91;
+    display:none;
+}
+        </style>
+   </head>
+   <body  style="overflow:hidden;">
+     <!--
+#{ypMapHome.apsWork()}
+-->
+<script type="text/javascript">
+				var fileDomain = "#{dataDicConstant.getDomainNameUrl()}";
+				var enterid = "#{sessionTake.enterpriseInfoId}";
+                var markstr = #{ypMapHome.baseString};
+                var secondstr = #{ypMapHome.partitionString};
+                var thirdstr = #{ypMapHome.groupString};
+				var _center = "#{ypMapHome.center}";
+				var _area = "#{ypMapHome.area}";
+				var allList = #{ypMapHome.allList};
+				var workpath = "#{request.contextPath}";
+				var ret = 1;
+				var realPlantJson = #{ypMapHome.realPlantJson};
+				var deviceStr = #{ypMapHome.deviceStr};
+				var videoStr = #{ypMapHome.videoStr};
+				var lastStr;
+				var isEdit = false;
+				var useStr = #{ypMapHome.useStr};
+				var tesStr = #{ypMapHome.tesStr};
+                var animalStr = #{ypMapHome.animalStr};
+                var base__id = "#{sessionTake.baseModel.baseId}";
+                var krpanoStr = #{ypMapHome.krpanoStr};
+                var baseFontSize = #{sessionTake.esm.enterpriseSize == null ? 2 : sessionTake.esm.enterpriseSize};
+                var partitionsFontsSize = #{sessionTake.esm.partitionSize == null ? 2 : sessionTake.esm.partitionSize};
+                var tunnelFontsSize = #{sessionTake.esm.tunnelSize == null ? 2 : sessionTake.esm.tunnelSize};
+                var zoom_group = "#{ypMapHome.first_group}";
+                </script>
+<script type='text/javascript'>
+//<![CDATA[
+		var head = document.getElementsByTagName('head')[0];
+		var insertBefore = head.insertBefore;
+		head.insertBefore = function (newElement, referenceElement) {
+		    if (newElement.href && (newElement.href.indexOf('https://fonts.googleapis.com/css?family=') === 0 || newElement.href.indexOf('http://fonts.googleapis.com/css?family=') === 0)) {
+		        //console.info('Prevented Roboto from loading!');
+		        return;
+		    }
+		    insertBefore.call(head, newElement, referenceElement);
+		};
+		
+		//]]>
+</script>
+                <script type="text/javascript" src="#{request.contextPath}/asset/js/map/JsMap.js"> </script> 
+<script src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script> 
+<script src="#{request.contextPath}/asset/js/map/map_yp.js" type="text/javascript"></script>
+<script type="text/javascript" >
+_Q(document).ready(function(){
+	initialize();
+	var b = true;
+});
+</script>
+        <!-- 全年环境平均指标弹窗 开始-->
+        
+            <script type="text/javascript">
+            	var ix = 0;
+            </script>
+<div class="box_back" id="login" style="display:none;z-index:1000">
+    <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" />
+  	</div>
+</div>
+<div class="box_back" id="login3" style="display:none;*position:*absolute;*top:64px;*left:77px;">
+  	</div>
+<div class="box_back" id="login4" style="display:none">
+</div>
+
+	     <div id="video_iframe" class="monitor_suspend">
+	          <iframe class="videoViewShow" id="videoViewShow" name="videoViewShow" frameBorder="0" scrolling="no"  ></iframe>
+	          <div style="z-index: 99999; position: relative; margin-top: -550px; left: 654px; width: 31px;"><a style="color:#3badfd; text-decoration:underline;" href="#" onclick="closeVideo()"><img src="#{request.contextPath}/asset/images/cose.png"></img></a></div>
+	     </div>
+	     
+<style>
+.area_reveal{ position:absolute; left:85px; top:4px;}
+.area_reveal span{ padding-right:5px; font-size:14px; font-family:'微软雅黑';}
+
+.dian{ width:12px; height:12px;margin-top:3px;margin-left:3px;}
+.aps_typs_name{font-size:14px}
+html {  
+       height: 100%;  
+       margin: 0px;  
+       padding: 0px;
+       background:none;
+     }
+     .videobut{ width:321px; height:77px; margin:0px auto 0 auto; background:url(../asset/images/growth/videobuts.png) no-repeat;}
+     .videobut_{ width:321px; height:77px; margin:0px auto 0 auto; background:url(../asset/images/growth/videobutk.png) no-repeat;}
+.box_back{background:url(../asset/images/bg_png3.png) repeat; width:100%; height:100%; position:fixed; z-index:98; display:none;}
+#login3{background:url(../asset/images/growth/zwleft_04.png) repeat; width:100%; height:100%; position:fixed; z-index:90; display:none;}{background:url(../asset/images/bg_png3.png) repeat; width:100%; height:100%; position:fixed; z-index:8888; display:none;}
+.width73{width:73px}
+.rich-color-picker-wrapper{z-index:4}
+.mu_mianji{float:left; height:30px; line-height:30px;}
+.rich-calendar-date-layout span{background :none;float: none;};
+
+#MySplitter {
+	min-width:  600px;
+	min-height: 300px;
+}
+#bPane{			/* Top nested in right pane */
+	height: 0px;		/* Initial height */
+	overflow-y: scroll;
+}
+#rightPane{
+	width: 0px;
+	max-width: 450px;
+	overflow-x:hidden;
+	overflow-y:hidden;
+	
+}
+#rbPane{
+	height: 0px;
+	background-color:#FFFFFF;
+	overflow:auto;
+	display:none;
+}
+.SplitterPane {
+	overflow: auto;
+}
+.vsplitbar {
+	width:2px;
+	background:#ccc;
+}
+
+.vsplitbar.active, .vsplitbar:hover {
+	background:#ccc;
+	width:2px;
+	opacity: 0.8;
+	filter: alpha(opacity=50); /* IE */
+}
+
+.hsplitbar {
+	height: 6px;
+	background:url(#{request.contextPath}/asset/images/paneh3.gif) repeat scroll 50% 0;
+}
+
+.hsplitbar.active, .hsplitbar:hover {
+	opacity: 0.7;
+	background:url(#{request.contextPath}/asset/images/paneh3.gif) repeat scroll 50% 0;
+	filter: alpha(opacity=70); /* IE */
+}
+.splitbarV {
+float:left;width:6px;height:100%;
+line-height:0px;font-size:0px;
+border-left:solid 1px #9cbdff;border-right:solid 1px #9cbdff;
+background:#cbe1fb url(#{request.contextPath}/asset/js/gantt/img/panev2.png) 0% 50%;
+}
+.splitbarH {
+height:6px;text-align:left;line-height:0px;font-size:0px;
+border-top:solid 1px #9cbdff;border-bottom:solid 1px #9cbdff;
+background:#cbe1fb url(#{request.contextPath}/asset/js/gantt/img/paneh2.gif) 50% 0%;
+}
+
+.splitbuttonV{
+margin-top:-41px;margin-left:-12px;top:50%;position:relative;
+height:108px;width:19px;
+background:transparent url(#{request.contextPath}/asset/js/gantt/img/panevc.png) 17px 50%;
+}
+.splitbuttonV.invert{
+margin-left:0px;background:transparent url(#{request.contextPath}/asset/js/gantt/img/panevc.png) 0px 50%;
+}
+
+.splitbuttonH{margin-left:-41px;left:50%;position:relative;height:17px !important;width:91px;background:transparent url(#{request.contextPath}/asset/js/gantt/img/panehc2.png) 50% 0px; margin-top:5px;}
+.splitbuttonH.invert{margin-top:-11px; background:transparent url(#{request.contextPath}/asset/js/gantt/img/panehc2.png)0 -16px;}
+
+   #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      #panel {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: -180px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+      }
+.jScrollbar_mask .tc_ul .tc_li table{*width:97%;}
+.tc_strong .uboxstyle3 font{font-size:14px;}
+.rich-calendar-popup{width:208px;}
+
+.uboxstyle1 .ui-state-default,.uboxstyle1 .ui-widget-content,.uboxstyle1 .ui-state-default,.uboxstyle1 .ui-widget-header,.uboxstyle1 .ui-state-default,
+.uboxstyle2 .ui-state-default,.uboxstyle2 .ui-widget-content,.uboxstyle2 .ui-state-default,.uboxstyle2 .ui-widget-header,.uboxstyle2 .ui-state-default,
+.uboxstyle3 .ui-state-default,.uboxstyle3 .ui-widget-content,.uboxstyle3 .ui-state-default,.uboxstyle3 .ui-widget-header,.uboxstyle3 .ui-state-default,
+.uboxstyle4 .ui-state-default,.uboxstyle4 .ui-widget-content,.uboxstyle4 .ui-state-default,.uboxstyle4 .ui-widget-header,.uboxstyle4 .ui-state-default,
+.uboxstyle5 .ui-state-default,.uboxstyle5 .ui-widget-content,.uboxstyle5 .ui-state-default,.uboxstyle5 .ui-widget-header,.uboxstyle5 .ui-state-default{border:0;}
+
+
+.maptck{ border-collapse:collapse; position:absolute; z-index:10000; left:150px; top:150px;}
+.titlefont{ font-size:16px; color:#e8e8e8; font-weight:bold;}
+.numfont{ font-size:12px; color:#dadada; font-weight:normal; padding-left:20px;}
+.closed{ margin-right:10px;}
+.ludian{ height:19px; line-height:19px; padding-left:10px; background:url(#{request.contextPath}/asset/images/tckbg.png) left center no-repeat; display:inline-block; float:left;}
+.ludian span{ min-width:30px; height:19px; line-height:19px; margin-right:-10px; padding-right:10px; color:#fff; background:url(#{request.contextPath}/asset/images/tckbg.png) right center no-repeat; display:inline-block; float:left; font-size:12px;}
+.shidu{ height:19px; line-height:19px; padding-left:10px; float:left; color:#fff;}
+.shuju{ width:100%; table-layout:fixed; margin-top:10px;padding-left:30px}
+.shujutd{ color:#fff; background:url(#{request.contextPath}/asset/images/shuline.png) right repeat-y;}
+.fottable{ height:22px; line-height:22px; background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat;}
+.ckxx{ color:#0878bf; font-size:14px; text-decoration:underline; padding-left:25px; text-align:left; font-weight:bold;}
+.qckxx2{ color:#0878bf; font-size:14px; text-decoration:underline; margin:0 auto; font-weight:bold; padding-top:5px; display:block;}
+.cjtime{ text-align:right; color:#dddddd; padding-right:15px;}
+.tdimg{padding-top:10px; padding-bottom:10px;}
+
+.qixz{ border-collapse:collapse; position:absolute; z-index:10000; left:650px; top:150px;}
+.qingt{ color:#fff; font-size:14px;}
+
+.aps_typs_name{font-size:14px}
+.datetimepicker-dropdown-bottom-left:before {
+    border-bottom: 7px solid rgba(0, 0, 0, 0.2);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 6px;
+    top: -7px;
+}
+.datetimepicker-dropdown-bottom-left:after {
+    border-bottom: 6px solid #ffffff;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 7px;
+    top: -6px;
+}
+
+.erlist4 li a:hover{
+text-decoration: none;
+}
+
+.fl{ float:left;}
+.fr{ float:right;}
+.clear{ clear:both;}
+.clear:after{ clear:both; content:""; display:block; visibility:hidden; height:0;}
+
+.close-btn{ width:11px; height:11px; border:none; overflow:hidden; zoom:1; background:url(#{request.contextPath}/asset/images/ico_close100.png) no-repeat;}
+.close-btn:hover, .close-btn:focus{ background:url(#{request.contextPath}/asset/images/ico_close101.png) no-repeat;}
+.map-IntroPop{ width:396px; min-height:50px; background:#fff; border-radius:5px;}
+.map-introPop-pot{ position:relative;}
+.map-introPop-pot .close-btn{ position:absolute; right:10px; top:10px;cursor: pointer;}
+.map-introPop-pot .supIco{ position:absolute; content:""; left:50%; margin-left:-8px; top:100%; border-width:18px 8px 18px 8px; border-style:solid solid solid solid; border-color:#fff transparent transparent transparent;}
+
+.map-introPop-header{ padding:15px 20px; border-bottom:1px dashed #e6e6e6;}
+.map-introPop-body{ min-height:15px;}
+.introPop-header-lt{ position:relative; z-index:200; float:left; margin:-45px 15px 0 0;}
+.introPop-header-lt img{ width:98px; height:98px; margin:1px;}
+.introPop-header-shade{ position:absolute; width:100px; height:100px; background:url(#{request.contextPath}/asset/images/map_zhezhao2.png) no-repeat;}
+.introPop-header-rt{ float:left;}
+.introPop-header-rt h3{ float:left; margin:0 10px 0 0; line-height:32px; font-family:'宋体'; font-size:18px; font-weight:bold; color:#303030;}
+.introPop-header-rt strong{ float:left; margin:0 10px 0 0; line-height:32px; font-family:'宋体'; font-size:16px; font-weight:bold; color:#303030;}
+.introPop-header-rt em{ float:left; margin:0 10px 0 0; line-height:32px; font-style:normal; font-family:'宋体'; font-size:12px; color:#b0b0b0;}
+.bootSelt130{ display:inline-block; }
+.bootSelt130 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){ width:130px;}
+.bootSelt130 .bootstrap-select{ width:130px;}
+.bootSelt130 .btn-group .btn{ padding:6px 25px 6px 12px; font-size:12px;}
+.bootstrap-select.btn-group .dropdown-menu{ max-width:170px; overflow:auto;}
+.farmer_mess{ clear:both; overflow:hidden; height:16px; line-height:16px; margin-top:10px; padding-left:20px; background:url(#{request.contextPath}/asset/images/map_ico100.png) no-repeat left center; color:#9d9d9d;}
+.farmer_mess .farmer{ padding-left:5px;}
+.farmer_mess .farmland{ padding-left:15px; font-family:'Arial'; color:#b0b0b0;}
+.introPop-introTime{ padding:5px 0; border-bottom:1px dashed #e6e6e6; background:#fafafa;}
+.introPop-introTime li{ float:left; margin:10px 0; line-height:16px; font-size:12px; font-family:'宋体'; color:#535353;}
+.introPop-introTime li img{ float:left; margin:0 8px 0 25px;}
+.introPop-introTime li p{ float:left; width:60px;}
+.intro-chart-trend{ padding:10px;}
+
+/* 土地检测记录  */
+.tudi-jcjl{margin-left:25px;}
+.detailedInfo{ position:absolute; right:0; top:-37px; height:20px; line-height:20px; padding:0 19px; border:1px solid #ddd; border-radius:4px; color:#323232; font-size:11px; }
+.detailedInfo:hover{ background:#e6e6e6; border-color:#adadad; text-decoration:none; color:#323232;}
+.jiance_mechanism, .jiance_date{ height:16px; line-height:16px; background:url(#{request.contextPath}/asset/images/bg_jiance.png) no-repeat; font-family:'微软雅黑'; text-indent:25px; margin-bottom:10px;}
+.jiance_mechanism{ height:auto; max-height:32px; overflow:hidden; padding-left:25px; background:url(#{request.contextPath}/asset/images/bg_jiance2.png) no-repeat; text-indent:0;}
+.jiance_date{ background-position: 0 -25px;}
+.landRecord_wp{ width:210px; margin:0 auto 15px 32px; padding:5px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;}
+.landRecord_wp table th{ text-align:center; font-size:16px; color:#428bca; font-family:'Arial';}
+.landRecord_wp table td{ text-align:center; vertical-align:middle; padding-bottom:0; font-size:11px; font-family:'Arial';}
+
+/* 土地历史记录 */
+.colorGrn02{ color:#428bca;}
+.landHistory_jl{ position:relative; width:268px; margin:5px auto 0;}
+.landHistory_list{overflow:hidden; margin-bottom:0;}
+.landHistory_list{ background:url(#{request.contextPath}/asset/images/bg_landhistory02.png) repeat-y 5px 0;}
+.block_landhis-pos9{ position:absolute; left:0; top:0; width:7px; height:9px; background:#fff;}
+.block_landhis-pos22{ position:absolute; left:0; bottom:0; width:7px; height:22px; background:#fff;}
+.landHistory_list li{ padding-left:20px; height:28px; line-height:28px; padding-bottom:15px; background:url(#{request.contextPath}/asset/images/bg_landhistory.png) no-repeat 0 9px;}
+.landHistory_list li.histroyJl_date02{ background-position:0 -36px;}
+.landHistory_list li.histroyJl_date03{ background-position:1px -83px;}
+.landHistory_list span{ float:left; width:70px; font-family:'Arial';}
+.landHistory_list div{ float:left; padding-left:14px; width:115px; }
+.landHistory_list div em{ font-style:normal; font-family:'微软雅黑'; float:left; padding-right:7px;}
+	  .noPlant .introPop-header-title h3{background:#FFFFFF}
+#btn div{
+	float:left;
+	margin:3px;
+	width:44px;
+	height:44px;
+	cursor: pointer;
+}
+.t0{
+ background:url(#{request.contextPath}/asset/images/yp_icon_map3.png) no-repeat
+}
+.t1{
+ background:url(#{request.contextPath}/asset/images/yp_icon_map2.png) no-repeat
+}
+.t2{
+ background:url(#{request.contextPath}/asset/images/yp_icon_weixing.png) no-repeat
+}
+
+.t0_{
+ background:url(#{request.contextPath}/asset/images/yp_icon_map3.png) no-repeat 0px -48px
+}
+.t1_{
+ background:url(#{request.contextPath}/asset/images/yp_icon_map2.png) no-repeat  0px -48px
+}
+.t2_{
+ background:url(#{request.contextPath}/asset/images/yp_icon_weixing.png) no-repeat  0px -48px
+}
+</style>
+<!-- 地图卫星切换 -->
+<div id="btn" class="map_search" style="position:absolute; right:18px; margin-top:70px;    border: 1px solid #e4d6d6;">
+  	<div class="t0" style="display:none">
+  	</div>
+  	<div class="t1" style="display:none">
+  	</div>
+  	<div class="t2_ visi" style="">
+  	</div>
+ </div>
+ 
+<div id="MySplitter">
+  <div id="CenterAndRight">
+  </div> <!-- #CenterAndRight -->
+<!-- #MySplitter -->
+<div style="display:none">
+农户
+<select  id="group_farmer_"  class="notselect">
+<a4j:repeat value="#{ypMapHome.keeperList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+生产负责人
+<select  id="group_farmer1_"  class="notselect">
+<a4j:repeat value="#{ypMapHome.masterList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+饲养员
+<select  id="group_farmer2_"  class="notselect">
+<a4j:repeat value="#{ypMapHome.syyList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+养殖负责人
+<select  id="group_farmer3_" class="notselect">
+<a4j:repeat value="#{ypMapHome.yzfList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+分组
+<select  id="group_groupId_" class="notselect">
+<a4j:repeat value="#{ypMapHome.tunnelGroupList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+</div>   
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/highcharts_atten.js"></script>
+<!--下拉table结束-->
+<style>
+html{
+}
+  .custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: -2px;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    height: 32px;
+    /* support: IE7 */
+    *top:1px;
+  }
+  
+  .custom-combobox-input {
+    margin: 0;
+    padding:2px 5px; width:130px;height: 28px;
+  }
+  #ui-id-1{height:150px; overflow-x:hidden; overflow-y:scroll; *width:143px;}
+  .plant_imgbd{ position:absolute; top:0; left:0;}
+  .rteic{height:auto;margin-top:0px};
+
+
+
+.sw170{width:170px;}
+.sw170 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+    width: 170px;
+}
+
+
+.icon-th {
+    background-position: -240px 0;
+}
+.form_datetime input{border:1px solid #CCC; height:30px; line-height:30px;width:170px}
+.icon-arrow-left { background-position: -240px -96px; } .icon-arrow-right { background-position: -264px -96px; } .dropdown-menu { position: absolute; top: 100%; left: 0; z-index: 1000; display: none; float: left; min-width: 160px; padding: 5px 0; margin: 2px 0 0; font-size: 14px; text-align: left; list-style: none; background-color: #fff; -webkit-background-clip: padding-box; background-clip: padding-box; border: 1px solid #ccc; border: 1px solid rgba(0, 0, 0, .15); border-radius: 4px; -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175); box-shadow: 0 6px 12px rgba(0, 0, 0, .175); } .form_datetime input { border: 1px solid #ccc; height: 30px; line-height: 30px; }
+.input-append.date .add-on i, .input-prepend.date .add-on i {
+  cursor: pointer;
+    height: 14px;
+   /*  margin-left: -41px; */
+   /*  margin-top:9px; */ /* IE8支持 */ 
+    width: 14px;
+}
+@media all and (-webkit-min-device-pixel-ratio:0){
+.add-on {height:14px;
+position: relative;
+z-index:10;
+
+display: block;
+
+}
+ .input-append.date .add-on i, .input-prepend.date .add-on i {
+  cursor: pointer;
+    height: 14px;
+    /*margin-left: -49px;*/  
+    width: 14px;
+ 
+ }
+}
+
+
+.add-on{height: 14px; float: left; position: relative; z-index: 10; 
+
+}
+.baseWidth148 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+     width:148px;
+}
+.nav-tabs > li > a {
+    border: 1px solid #ddd;
+    color: #555;
+    height: 22px;
+    line-height: 22px;
+    margin-left: -1px;
+    margin-right: 0;
+    padding: 0 8px;
+}
+ @media screen and (-webkit-min-device-pixel-ratio:0) {
+ .div_dl2 {
+position: relative;
+width: 140px;
+top: 0px;
+margin-left: 8px;
+}
+} 
+.plant_hide .baseWidth148 .bootstrap-select.btn-group .dropdown-menu{
+min-width:160px
+}
+.animal_hide .baseWidth148 .bootstrap-select.btn-group .dropdown-menu{
+min-width:160px 
+}
+
+  </style>
+</div>
+<div id="mPane" style="height:100%;width:100%">
+ 		<div id="map-canvas"  class="gm-style" style="width:100%;height:100%"></div>
+ 		<div id="tab" style="float: right;height: 51px;position: relative;width: 49px;z-index: 3;">
+	</div>
+	</div>
+<div class="farmIntroPop" style="position: absolute;z-index:99;display:none;">
+	<div class="farmIntro_header clear">
+    	<h2 class="cm_name" style="height:18px; width:260px; overflow:hidden;">北菜园合作社</h2>
+        <input type="button" class="close" onclick="closeCm()"/>
+    </div>
+    <div class="farmIntro_body clear">
+        <table width="100%" cellpadding="0" cellspacing="0">
+        	<tr>
+            	<td width="120"><div class="companyPic"><img id="baseurl" width="114" height="90" aa="#{request.contextPath}/asset/images/textPic01.png" src="#{request.contextPath}/asset/images/textPic01.png" /></div></td>
+                <td>
+                	<div>
+                    	<table>
+                        	<tr>
+                            	<td width="58" align="right">联系人：</td>
+                            	<td class="fl"><div class="fl_concat" style="width:48px; height:20px; overflow:hidden;"></div></td>
+                            </tr>
+                            <tr>
+                                <td align="right">电&#160;话：</td>
+                                <td class="fl "><div class="phone" style="height:20px; overflow:hidden;"></div></td>
+                            </tr>
+                            <tr>
+                                <td align="right"  valign="top">地&#160;址：</td>
+                                <td class="" height="40" valign="top"><div class="cm_address" style="max-height:60px; overflow:hidden;"></div></td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="farmIntro_footer clear">
+    	<span class="supIco"></span>
+    	<p class="briefing cm_mark" style="height:60px;overflow:hidden;"></p>
+    </div>
+</div>
+<div class="div_width" style="display:none;">
+                <div class="div_012"  >
+                	<div style="width:100%;">
+                           <div class="ret_pic2">
+                               <img class="zw_bgt2" onclick="addPlant()" src="#{request.contextPath}/asset/images/png-png.png" width="88" height="88"  />
+                               <img class="zw_libg_img2" src="" width="88" height="88" />
+                            </div>
+                            <div style="float:left; width:95px; *width:130px; ">
+                            	<dl class="div_dl2">
+                                	<dt class="div_dt2"><font style="font-family:Arial, Helvetica, sans-serif">A</font>区-06温室温室</dt>
+                                    <dd class="div_dt4"></dd>
+									<dd><div class="div_dt3"></div></dd>
+                                </dl>
+                            </div>
+                            <div class="clear"></div>
+                    </div> 
+                    <table width="100%" height="28" cellpadding="0" cellspacing="0"  style="margin:10px auto 0 auto;background:url(#{request.contextPath}/asset/images/line_03.jpg) top repeat-x; padding-bottom:5px;">
+                    	<tr>
+                        	<td width="19" height="28" valign="top" style="padding-right:5px; padding-top:5px;"><img src="#{request.contextPath}/asset/images/fzr.png" width="14" height="14" /></td>
+                            <td valign="top" style="font-size:12px; color:#989898; padding-top:5px;" class="div_dt55 win_masterId"></td>
+                            <td width="19" height="28" valign="top" style="padding-right:5px; padding-top:5px;" class="win_date_1"><img src="#{request.contextPath}/asset/images/fzs.png" width="14" height="14" /></td>
+                            <td valign="top" style="font-size:12px; color:#989898; padding-top:5px;" class="div_dt55 win_date_2"></td>
+                            
+                        </tr>
+                    </table>  
+                </div>    
+ </div>
+ <a4j:form style="display:none">
+ 		<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+		<a4j:jsFunction name="findWeatherData" eventsQueue="mainQueue" action="#{ypMapHome.findWeatherData}" data="#{ypMapHome.weatherData}" oncomplete="findWeatherData_next(data)">
+				<a4j:actionparam name="param1" assignTo="#{ypMapHome.device_sn}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<!-- 重置全景的图片iframe -->
+		<a4j:jsFunction name="resetSessionKrpano" evenQueue="mainQueue" action="#{ypMapHome.resetSessionKrpano}" data="#{ypMapHome.re_krpano_str}" oncomplete="refreshKrpanoFrame(data)">
+			<a4j:actionparam name="param1" assignTo="#{ypMapHome.krpano_id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		
+      	</a4j:form>
+      	<a4j:form >
+     	<a4j:jsFunction name="mapZero" action="#{ypMapHome.apsZero}" data="#{ypMapHome.partitionString}" oncomplete="zero_next(data)">
+		</a4j:jsFunction>
+		<a4j:jsFunction name="mapFirst" reRender="thirdspan" action="#{ypMapHome.apsFirst}" oncomplete="first_next();setTimeout(function(){first_next_next()},1)">
+		</a4j:jsFunction>
+		<a4j:jsFunction name="mapSecond" action="#{ypMapHome.apsSecond}" data="#{ypMapHome.secondStr}" oncomplete="second_next(data)">
+		</a4j:jsFunction>
+      	</a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+var noneOption = "<option value='0'>暂无数据</option>";
+function insertPartition(){
+	if(secondstr.length==0){
+		_Q("#group_parent_id").append(noneOption);
+	}else {
+		_Q("#group_parent_id").append(noneOption);
+		for(var i = 0;i<secondstr.length;i++){
+			var os = secondstr[i];
+			_Q("#group_parent_id").append("<option value='"+os.id+"'>"+os.name+"</option>");
+		}
+	}
+}
+
+
+function resetCurrentTable(obj){
+	obj.css("top","240px");
+}
+_Q(window).resize(function(){
+	 resetFrameSize();
+})
+<!--下拉table开始-->
+_Q(document).ready(function(){
+	
+	_Q("#btn").mouseover(function(){
+		_Q("#btn div").each(function(){
+			if(!_Q(this).hasClass("visi")){
+				_Q(this).addClass("needHide");
+			}
+		})
+		_Q("#btn div").show();
+	});
+	
+	_Q("#btn").mouseout(function(){
+		_Q("#btn div.needHide").hide();
+	});
+	
+	_Q("#btn div").click(function(){
+		var cla0 = "",cla1 = "",cla2 = "";
+		var ind = _Q(this).index();
+		if(ind == 0){
+			_Q("#btn div").eq("0").attr("class","t0_ visi");
+			_Q("#btn div").eq("1").attr("class","t1 needHide").hide();
+			_Q("#btn div").eq("2").attr("class","t2 needHide").hide();
+			map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+		}else if(ind == 1){
+			_Q("#btn div").eq("0").attr("class","t0 needHide").hide();
+			_Q("#btn div").eq("1").attr("class","t1_ visi");
+			_Q("#btn div").eq("2").attr("class","t2 needHide").hide();
+			map.setMapTypeId("Black Map");
+		}else if(ind == 2){
+			_Q("#btn div").eq("0").attr("class","t0 needHide").hide();
+			_Q("#btn div").eq("1").attr("class","t1 needHide").hide();
+			_Q("#btn div").eq("2").attr("class","t2_ visi");
+			map.setMapTypeId(google.maps.MapTypeId.SATELLITE);	 
+		}
+	});
+	
+	insertPartition();
+	_Q("select").each(function(){
+		if(_Q(this).find("option").length==0){
+			_Q(this).append(noneOption);
+		}
+	});
+    document.body.style.overflow = "hidden";
+    //卫星和街道切换
+	
+});
+
+
+var locationMarker;
+var locationSrc = workpath+"/asset/images/locationimg.png";
+
+function mylocation(){
+	if(navigator.geolocation){
+		navigator.geolocation.getCurrentPosition(showPosition,showError);//{timeout:10000}
+		_Q("#geoId img").attr("src",geo_blue);
+	}else{
+		alert("当前浏览器不支持此操作!");
+	}
+	 
+}
+
+function showPosition(position){
+	_Q("#geoId img").attr("src",geo_gray);
+   var i;
+   if(map){
+	   var GCJ02loc = new WGS84_to_GCJ02().transform(parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
+	   try{
+		   console.log(parseFloat(position.coords.latitude)+"|"+parseFloat(position.coords.longitude));
+		   console.log(GCJ02loc[0]+"|"+GCJ02loc[1]);
+	   }catch(e){}
+	   
+	   var np = new google.maps.LatLng(GCJ02loc[0],GCJ02loc[1]);
+	   map.setCenter(np);
+	   map.setZoom(16);
+	   locationMarker = new google.maps.Marker({
+		      position: np,
+		      map: map,
+		      title: '我的位置',
+			  icon: locationSrc 
+		  });
+   }
+}
+function showError(error){
+	_Q("#geoId img").attr("src",geo_gray);
+	  switch(error.code){
+	   case error.PERMISSION_DENIED:
+	    alert("用户不允许地理定位.");
+	     //positionInfo.innerHTML="用户不允许地理定位."
+	     break;
+	   case error.POSITION_UNAVAILABLE:
+	   	 alert("无法获取当前位置.");
+	     //positionInfo.innerHTML="无法获取当前位置."
+	     break;
+	   case error.TIMEOUT:
+	     alert("操作超时.");
+	     //positionInfo.innerHTML="操作超时."
+	     break;
+	   case error.UNKNOWN_ERROR:
+		   alert("An unknown error occurred.");
+	     //positionInfo.innerHTML="An unknown error occurred."
+	     break;
+	   }
+	}
+	
+	var video ;
+function maxwindow(ind,obj){
+	var width=document.body.offsetWidth;
+	var height=document.body.offsetHeight;
+	video = obj;
+	var target = _Q(obj).closest(".maxdiv");
+	target.css({"position":"fixed","top":"0","left":"0","width":width,"height":height});
+	target.find(".seconddiv").css({"width":width});
+	_Q("#videotable").css({"position":"fixed","top":"0","left":"0"});
+	if(ind == 2){
+		target.find(".videoimg").attr("style","overflow:hidden;width:100%, height: 100%; right: 0px; margin-top: -25px; margin-right: auto; margin-bottom: 0px; margin-left: auto;");
+		target.find("object").attr("width",width).attr("height",height);
+	}else if(ind == 3){
+		target.find("#outDiv").css("height",height-92).css("width",width);
+		target.find("object").attr("width",width).attr("height",height-92);
+	}
+	target.find(".videobg").css({"width":width,"height":height-92});
+	target.find(".fdimg1").hide();
+	target.find(".fdimg2").show();
+}
+function minwindow(ind,obj){
+	var width=document.body.offsetWidth;
+	var height=document.body.offsetHeight;
+	video = obj;
+	var target = _Q(obj).closest(".maxdiv");
+	target.css({"position":"","width":680,"height":457});
+	target.find(".videobg").css({"width":680,"height":457});
+	if(ind == 2){
+		target.find(".videoimg").attr("style","overflow:hidden; height: 482px; right: 0px; margin-top: -25px; margin-right: auto; margin-bottom: 0px; margin-left: auto;");
+		target.find("object").attr("width",680).attr("height",532);
+	}else if(ind == 3){
+		target.find(".videobg").css("height",457).css("width",680);
+		target.find("#outDiv").css("height",457).css("width",680);
+		target.find("object").attr("width",680).attr("height",457);
+	}
+	_Q("#videotable").css({"position":"relative","top":"","left":""});
+	var target = _Q(obj).closest(".maxdiv");
+	target.find(".seconddiv").css({"width":680});
+	target.find(".fdimg1").show();
+	target.find(".fdimg2").hide();
+}
+//]]>
+Date.prototype.format = function(format)
+{
+	var o = {
+	"M+" : this.getMonth()+1, //month
+	"d+" : this.getDate(),    //day
+	"h+" : this.getHours(),   //hour
+ 	"m+" : this.getMinutes(), //minute
+	"s+" : this.getSeconds(), //second
+ 	"q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+ 	"S" : this.getMilliseconds() //millisecond
+	}
+
+	if(/(y+)/.test(format)) 
+	{
+		format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+	}
+	
+ 	for(var k in o)
+	{
+		if(new RegExp("("+ k +")").test(format))
+		{
+ 			format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+		}
+	}
+	return format;
+}
+
+function loadimg(){
+	_Q(".lazyloadimg").each(function(){
+		_Q(this).attr('src',_Q(this).attr('data-src'))
+	});
+}
+</script>
+      <div style="display:none" id="firstHtml">
+      <div style="width:100%; display:block; margin-bottom:10px;" class="plantList_"   sid="">
+                                                <div class="pcaqu2">
+                                                    <table width="100%" cellspacing="0" cellpadding="0">
+                                                        <tbody><tr>
+                                                            <td width="20" align="left">
+                                                            	<img width="20" height="23" src="#{request.contextPath}/asset/images/xhs01_03.jpg"/>                                                            </td>
+                                                            <td align="left" class="pca_hg">    
+                                                            esr.plantId.name
+                                                            </td></tr></tbody></table>            
+                                                </div>
+                                                <ul style="min-width:320px;" class="aqu_ul">
+                                                    <li class="pca_li" sid="">
+                                                    <table width="100%" cellspacing="0" cellpadding="0"><tbody><tr>
+                                                                <td width="100" height="60" rowspan="3">
+																<img width="100" height="60" pic="pic" src="" /> </td>
+                                                                <td valign="middle" align="left" class="pca_font" aa="x" onclick="gotoMap(this.getAttribute('aa'))" style="cursor:pointer">#{_esr.tunnelInfoId.tunnelName}</td></tr>
+                                                            <tr><td valign="middle" align="left" class="pca_font1 font1_">面积：</td></tr>
+                                                            <tr><td valign="middle" align="left" class="pca_font1 font2_">种植日期：</td></tr>
+                                                     </tbody></table>       	
+                                                    </li> </ul> <div class="clear"></div>
+                                            </div></div>
+      <div class="tec_c2 thirdHtml" style="display:none">
+                                            <div class="pcic" sid="">
+                                                <a onclick="pc_img2(this)" class="thirdHtmlClass" aa="" lj="lj" href="#"><img width="99" height="102" src="#{request.contextPath}/asset/images/pcdi_03.png" class="pcpic"/></a>
+                                                   <div class="pcimg">
+                                                   <div><img id="thirdimg" src="../asset/images/wt.png" width="70" height="70"/></div>
+	                                		   			</div>
+                                                   <div class="pctext">#{obj1.plantId.name}</div>
+                                                   <div class="pc_bgdiv" style="display:none">
+                                                   <div class="pc_bgno"><strong>1.2</strong></div>
+                                                   </div> 
+                                            </div>
+                                        </div> 
+<!--传感器开始-->   
+<table class="maptck" width="400" height="100" cellpadding="0" cellspacing="0" style="display:none;" >
+    <tr>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg2.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg3.png) repeat-x;"></td>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg4.png" width="7" height="5" /></td>
+    </tr>
+    <tr>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat-y;"></td>
+        <td valign="top" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat;font-size:12px; font-family:'微软雅黑';">
+            <table width="100%" height="38" cellpadding="0" cellspacing="0" style="background:url(#{request.contextPath}/asset/images/linerepe.png) bottom repeat-x; border-collapse:collapse;">
+                <tr>
+                    <td align="left"><font class="titlefont">四合一传感器</font><font class="numfont t1_sn">编号：A057406005060062001</font></td>
+                    <td align="right"><a class="closed" href="#" onclick="closeCgq()"><img src="#{request.contextPath}/asset/images/closed.png" width="12" height="13" /></a></td>
+                </tr>
+              </table>  
+              <table width="100%" cellpadding="0" cellspacing="0">
+              	<tr>
+                	<td width="113" height="113" class="tdimg"><img src="#{request.contextPath}/asset/images/tckimg.png" width="113" height="113" /></td>
+                    <td style="padding-left:15px; padding-top:10px; padding-bottom:10px;" valign="top">
+                    	<table width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td rowspan="2"><img src="#{request.contextPath}/asset/images/cloud.png" width="43" height="29"  style="vertical-align:top;"/><font class="t1_airTemp" style="font-size:28px;line-height:30px; color:#fff;font-family: Helvetica Neue, Helvetica, Arial, sans-serif;">28.4℃</font></td>
+                                <td>
+                                	<div class="ludian">
+                                    	<span class="t1_ludian" style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif;">露点：</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        	<tr>
+                            	<td class="shidu t1_airHumidity" style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif;">湿度：</td>
+                            </tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju" style="padding-left:0px">
+                        	<tr>
+                            	<td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon1.png" width="58" height="20" /></td>
+                            	<td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon2.png" width="59" height="24" /></td>
+                                <td class="shujutd" style="background:none;"><img src="#{request.contextPath}/asset/images/tckicon3_.png" width="76" height="24" /></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd t1_soilTemp"></td>
+                            	<td class="shujutd t1_illumination" style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif;"> </td>
+                                <td class="shujutd t1_co2" style="background:none;"> </td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd t1_soilHumidity"></td>
+                            	<td class="shujutd"></td>
+                                <td class="shujutd" style="background:none;"></td>
+                            </tr>
+                        </table>
+                    
+                    </td>
+                </tr>
+              </table>
+              <table width="100%" cellpadding="0" cellspacing="0" class="fottable">
+              	<tr>
+                	<td><a class="ckxx" href="#" style="display:none;">查看详细</a></td>
+                    <td class="cjtime t1_gentime">采集时间：</td>
+                </tr>
+              </table>
+        </td>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg6.png) repeat-y;"></td>
+    </tr>
+    <tr>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg7.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg8.png) repeat-x;"></td>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg9.png" width="7" height="5" /></td>
+    </tr>
+    <tr style="">
+    	<td colspan="3" align="center" valign="top"><img src="#{request.contextPath}/asset/images/tckkbg1.png" width="21" height="23" /></td>
+    </tr>
+</table>
+<!--传感器结束-->    
+<!--气象站开始-->   
+<table class="qixz" width="555" height="100" cellpadding="0" cellspacing="0" style="display:none;">
+    <tr>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg2.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg3.png) repeat-x;"></td>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg4.png" width="7" height="5" /></td>
+    </tr>
+    <tr>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat-y;"></td>
+        <td valign="top" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat;">
+            <table width="100%" height="38" cellpadding="0" cellspacing="0" style="background:url(#{request.contextPath}/asset/images/linerepe.png) bottom repeat-x; border-collapse:collapse;">
+                <tr>
+                    <td align="left" style="padding-left:10px"><font class="titlefont">气象站</font><font class="numfont t2_sn">编号：A057406005060062001</font></td>
+                    <td align="right"><a class="closed" href="#" onclick="closeQxz()"><img src="#{request.contextPath}/asset/images/closed.png" width="12" height="13" /></a></td>
+                </tr>
+              </table>  
+              <table width="100%" cellpadding="0" cellspacing="0">
+              	<tr>
+                	
+                    <td style="padding-top:10px; padding-bottom:10px;" valign="top">
+                    	<table width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td height="60" width="" style="font-size:54px; color:#fff;padding-left:30px" class="" valign=""><span class="t2_air_temp">28.43°</span>
+                            	<img src="#{request.contextPath}/asset/images/cloud.png" width="43" height="29" style="position: absolute;margin-top: -15px;margin-left: 15px;"/>
+                            	</td>
+                                <td valign="top" width=""></td>
+                                <td valign="top" class="qingt" width="100px"></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shidu t2_gen_time" style="padding-left:30px" colspan="3">采集时间：06月19日16时24分</td>
+                            </tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju">
+                        	<tr>
+                            	<td width="32" height="32" valign="middle" align="left" class="td1_"><img src="#{request.contextPath}/asset/images/icon5.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_rainfallS td1_">降水量&nbsp;5%</td>
+                                <td width="32" height="32" valign="middle" align="left" class="td2_"><img src="#{request.contextPath}/asset/images/icon6.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_air_humidity td2_">湿度&nbsp;38%</td>
+                                <td width="32" height="32" valign="middle" class="td3_" align="left"><img src="#{request.contextPath}/asset/images/icon7.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_wind_velocity td3_">东南风2级</td>
+                        	</tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju">
+                        	<tr>
+                            	<td class="shujutd shujutd1"><img src="#{request.contextPath}/asset/images/tckicon1.png" width="58" height="20" /></td>
+                            	<td class="shujutd shujutd2"><img src="#{request.contextPath}/asset/images/tckicon2.png" width="59" height="24" /></td>
+                                <td class="shujutd shujutd3"><img src="#{request.contextPath}/asset/images/tckicon4.png" width="59" height="26" /></td>
+                                <td class="shujutd shujutd4" style="background:none;"><img src="#{request.contextPath}/asset/images/2501.png"  height="24" /></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd shujutd1 t2_soil_temp">温度&nbsp;70.5%</td>
+                            	<td class="shujutd shujutd2 t2_illumination">光照&nbsp;6015.6LUX</td>
+                                <td class="shujutd shujutd3 t2_atmospheric_pressure">22.03Pa </td>
+                                <td class="shujutd shujutd4 pm25" style="background:none;"></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd shujutd1 t2_soil_humidity">湿度&nbsp;70.5%</td>
+                            	<td class="shujutd shujutd2 t2_solar_radiation">辐射&nbsp;6015.6LUX</td>
+                                <td class="shujutd shujutd3"></td>
+                                <td class="shujutd shujutd4" style="background:none;"></td>
+                            </tr>
+                            <tr>
+                            	<td class="shujutd shujutd1 t2_soil_humidity2">湿度2&nbsp;70.5%</td>
+                            	<td class="shujutd shujutd2"></td>
+                                <td class="shujutd shujutd3"></td>
+                                <td class="shujutd shujutd4" style="background:none;"></td>
+                            </tr>
+                        </table>
+                    
+                    </td>
+                    <td width="160" height="113" valign="top" class="tdimg" align="center"><img src="#{request.contextPath}/asset/images/qxaimg.png" width="113" height="113" /><br/><a class="qckxx2" href="#" style="display:none">查看详细</a></td>
+                </tr>
+              </table>
+        </td>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg6.png) repeat-y;"></td>
+    </tr>
+    <tr>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg7.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg8.png) repeat-x;"></td>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg9.png" width="7" height="5" /></td>
+    </tr>
+    <tr style="">
+    	<td colspan="3" align="center" valign="top"><img src="#{request.contextPath}/asset/images/tckkbg1.png" width="21" height="23" /></td>
+    </tr>
+</table>
+<!-- 无作物 开始 -->
+<div class="map-IntroPop notPlant" style="width:448px;position: absolute;top:400px;left:400px;z-index:100;display:none">
+	<div class="map-introPop-pot">
+    	<button class="close-btn" onclick="closeNotPlant()"></button>
+        <span class="supIco"></span>
+        <div class="map-introPop-header clear">
+        	<div class="introPop-header-lt">
+            	<span class="introPop-header-shade"></span>
+            	<img src="#{request.contextPath}/asset/images/map_zhezhao3.png" />
+            </div>
+            <div class="introPop-header-rt">
+            	<div class="introPop-header-title">
+                    <h3>20号棚</h3>
+                    <em>生产负责人 王军</em>
+                </div>
+                <p class="farmer_mess">农户<span class="farmer" style="font-weight:normal;color:#9d9d9d">小张</span><span class="farmland">0.88亩/2.56亩</span></p>
+            </div>
+        </div>
+        <div class="map-introPop-body clear">
+        	<div class="tudi-jcjl fl">
+                <h2 class="baseMap_ttl" style="background:none; text-indent:0;">土地检测记录</h2>  
+                <div class="baseMap_con">
+                    <div style="width:154px; margin:0 auto;">
+                        <p class="jiance_mechanism">检测机构：北京农学院</p>
+                        <p class="jiance_date">检测日期：2014.06.25</p>
+                    </div>
+                    <div class="landRecord_wp" style="width:150px; margin-left:0;">
+                    <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                        <tr>
+                            <th width="48" class="ph ph1" height="28" align="center">5.0</th>
+                            <th width="48" class="ec ec1" align="center">--</th>
+                            <th width="48" class="pb pb1" align="center" style="padding-bottom:0px">1.8</th>
+                        </tr>
+                        <tr>
+                            <td  height="22">PH</td>
+                            <td >EC</td>
+                            <td >PB</td>
+                        </tr>
+                    </table>
+                    </div>
+                </div>  
+            </div>
+            <div class="tudi-jcjl fl" style="width:220px;">
+                <h2 class="baseMap_ttl" style="background:none; text-indent:0;">土地历史记录</h2>  
+                <div class="baseMap_con">
+                    <div class="landHistory_jl" style=" margin-top:0;">
+                    	<span class="block_landhis-pos9"></span>
+                        <span class="block_landhis-pos22"></span>
+                        <ul class="landHistory_list">
+                            <li>
+                                <span>2010-2014</span>
+                                <div style="border-right:none">
+                                    <em>松沙土</em><em class="colorGrn02">红壤土</em>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
+<div class="map-IntroPop onePlant" style="display:none;position: absolute;top:200px;left:400px;z-index:100;">
+	<div class="map-introPop-pot">
+    	<button class="close-btn" onclick="closeOnePlant();"></button>
+        <span class="supIco"></span>
+        <div class="map-introPop-header clear">
+        	<div class="introPop-header-lt">
+            	<span class="introPop-header-shade"></span>
+            	<img src="" />
+            </div>
+            <div class="introPop-header-rt">
+            	<div class="introPop-header-title">
+                    <h3>20号棚</h3>
+                    <strong>芹菜</strong>
+                    <span class="bootSelt130">
+                    <select class="selectpicker" onchange="resetDate(this)">
+                    </select>
+                    </span>
+                </div>
+                <p class="farmer_mess" >农户<span class="farmer" style="font-weight:normal;color:#9d9d9d">小张</span><span class="farmland">0.88亩/2.56亩</span></p>
+            </div>
+        </div>
+        <div class="map-introPop-body clear">
+        	<ul class="introPop-introTime time1 clear">
+            	<li>
+                	<img src="#{request.contextPath}/asset/images/map_pic100.png" />
+                    <p>定植时间<br/>6月21日</p>
+                </li>
+                <li>
+                	<img src="#{request.contextPath}/asset/images/map_pic101.png" />
+                    <p>采收开始<br/>6月21日</p>
+                </li>
+                <li>
+                	<img src="#{request.contextPath}/asset/images/map_pic102.png" />
+                    <p>种植结束<br/>6月21日</p>
+                </li>
+            </ul>
+            <ul class="introPop-introTime time2 clear" style="display:none">
+            	<li style="width:50%;padding-left:20px">
+                	<img src="#{request.contextPath}/asset/images/map_pic103.png" />
+                    <p>休耕开始<br/>6月21日</p>
+                </li>
+                <li style="">
+                	<img src="#{request.contextPath}/asset/images/map_pic103.png" />
+                    <p>休耕结束<br/>6月21日</p>
+                </li>
+            </ul>
+            <div class="intro-chart-trend">
+            	<div id="container-oneChart" style="min-width:360px;height:100px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 无作物 结束 --> 
+<div style="display:none" id="type20"><a4j:repeat value="#{ypMapHome.type20}" var="var"><li aa="#{var[0]}" bb="#{var[1]}"/></a4j:repeat> </div>    
+<div style="display:none" id="type21"><a4j:repeat value="#{ypMapHome.type21}" var="var"><li aa="#{var[0]}" bb="#{var[1]}"/></a4j:repeat></div>                                 
+       <a4j:status id="ajaxStatus" forceId="true" onstart="_Q('#login').show()" onstop="_Q('#login').hide()" />
+	<s:span id="thirdspan" style="display:none">
+      	<script type="text/javascript">
+      		var thirdthird = #{ypMapHome.firstStr}
+      	</script>
+     </s:span>
+     <s:span id="historySpan" style="display:none">
+      	<script type="text/javascript">
+      	lastStr = "";
+      	</script>
+     </s:span>
+<style>
+.plotsYield_table td input{line-height: 25px;}
+.introPop-header-rt{ float:none; padding-left:115px;}
+.introPop-header-rt h3{ float:none; display:inline-block;}
+.introPop-header-rt em{ float:none;}
+</style>
+<div id="previewDiv" style="display:none;cursor: pointer;" >
+		<img width="1024" height="768" onclick="_Q('#previewDiv').hide()"/>
+		<div onclick="document.getElementById('previewDiv').style.display='none';" style="position: absolute;right: -10px;top: -10px;cursor: pointer;z-index:99999999">
+			<img src="#{request.contextPath}/asset/images/cose.png" />
+		</div>
+	</div>
+    <iframe src="" aa="#{request.contextPath}/map/Krpano.seam" id="krpano_iframe" frameborder="no" border="0" style="display:none;width:600px;height:600px;">
+        
+    </iframe>
+    <div id="krpano_iframe_img" style="display:none">
+    	<img src="#{request.contextPath}/asset/krpano/skin/closeImg.png" onclick="closeKrpanoFrame()" style="width:40px;heigh:40px;cursor:pointer;" />
+    </div>
+    <script type="text/javascript" src="#{request.contextPath}/asset/monitoring/js/webVideoCtrl.js"></script>
+ <!-- 消息gritter end -->    
+   </body>
+</html>
+</f:view>

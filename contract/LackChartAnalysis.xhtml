@@ -1,0 +1,462 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/tubiaoFx.css" />
+<!-- 	<script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script> -->
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts4/highcharts.js"></script>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/contractMenu.css" />
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/contract/contractLeftMenu.js"></script> 
+
+
+       <td valign="top" >
+       
+<!-- #{lackSum.createHighChartJson()} -->
+		<div class="inbentory_file_main">
+                   	<!-- 左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pc"></i>排产</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/map/GanttSum.seam','_self')" ><i class="icon_sed"></i>产量汇总</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/map/PlantInfoList.seam','_self')"><i class="icon_sed"></i>排产管理</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/map/Gantt.seam','_self')"><i class="icon_sed"></i>计划表</li>
+                        </ol>                       
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_qk"></i>缺口</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/contract/LackSum.seam','_self')"><i class="icon_sed"></i>缺口产量表</li>
+                            <li class="sed_item sed_cur" onClick="window.open('#{request.contextPath}/contract/LackChartAnalysis.seam','_self')"><i class="icon_sed"></i>图表分析</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 左侧二级导航 -->
+				<div class="inbentory_content">
+                	<div class="r_title clear">
+                	<!-- 公用头部 start-->
+                    	<div class="r_t_l fl">&#160;&#160;生产计划&#160;&gt;&#160;&#160;缺口&#160;&gt;&#160;&#160;<font size="3">图表分析</font></div>
+                   <!-- 公用头部 end -->
+                    </div>
+                    <a4j:status id="ajaxStatus" forceId="true" onstart="jquery('#login').show()" onstop="jquery('#login').hide()" />
+                      <!-- 图表分析内容 开始 -->
+
+					<div class="pb40">
+					<!-- ajax 刷新部分start -->
+					<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+                    	<ul class="baseDataList gapData clear pt20">
+                        	<li>
+                                <a href="javascript:;" class="baseDataA">
+                                    <span>
+                                    	<h:panelGroup rendered="#{!lackSum.notchDrainage}">
+                                    	总缺口量
+                                    	</h:panelGroup>
+                                   		<h:panelGroup rendered="#{lackSum.notchDrainage}">
+                                   		总超产量
+                                    	</h:panelGroup>
+                                    </span>
+                                    <em>
+                                    <h:panelGroup rendered="#{lackSum.highChartJson.lackSum==''}">
+                                   		<h:outputText  value="--" />
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{lackSum.highChartJson.lackSum==0}">
+                                   		<h:outputText  value="持平" />
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{lackSum.highChartJson.lackSum!=0 &amp;&amp; lackSum.highChartJson.lackSum!=''}">
+                                   		<h:outputText  value="#{lackSum.highChartJson.lackSum}" />kg
+                                    </h:panelGroup>
+                                    </em>
+                                </a>
+                            </li>
+                            <li>
+                            	<a href="javascript:;" class="baseDataA">
+                                    <span>
+                                    	<h:panelGroup rendered="#{!lackSum.notchDrainage}">
+                                    	最大缺口月份
+                                    	</h:panelGroup>
+                                   		<h:panelGroup rendered="#{lackSum.notchDrainage}">
+                                   		最大超产月份
+                                    	</h:panelGroup>
+                                    </span>
+                                    <em style="font-family:'微软雅黑'; font-size:23px;">
+                                    <h:panelGroup rendered="#{lackSum.highChartJson.lackSum=='' || lackSum.highChartJson.lackSum==0}">
+                                   		<h:outputText  value="--" />
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{lackSum.highChartJson.lackSum !=0 &amp;&amp; lackSum.highChartJson.lackSum!=''}">
+                                   		<h:outputText  value="#{lackSum.highChartJson.maxLackMonth}" />
+                                    </h:panelGroup>
+                                    </em>
+                                </a>
+                            </li>
+                            <li>
+                            	<a href="javascript:;" class="baseDataA">
+                                    <span>
+                                    	<h:panelGroup rendered="#{!lackSum.notchDrainage}">
+                                    	最大缺口量
+                                    	</h:panelGroup>
+                                   		<h:panelGroup rendered="#{lackSum.notchDrainage}">
+                                   		最大超产量
+                                    	</h:panelGroup>
+                                    </span>
+                                    <em>
+                                    <h:panelGroup rendered="#{lackSum.highChartJson.lackSum=='' || lackSum.highChartJson.lackSum==0}">
+                                   		<h:outputText  value="--" />
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{lackSum.highChartJson.lackSum !=0 &amp;&amp; lackSum.highChartJson.lackSum!=''}">
+                                   		<h:outputText  value="#{lackSum.highChartJson.maxLack}" />kg
+                                    </h:panelGroup>
+                                    </em>
+                                </a>
+                            </li>
+                        </ul>
+                      </rich:panel>
+                        
+                        <div class="quekouAytjt_wap pt20" style="margin-left: 25px;">
+                        	<div class="commomHd20 borderBt02">
+                                <span>缺口按月统计图</span>
+                                <div class="baseDateWap fr">
+                                	<div class="baseDateLt" onclick="reset_gantt(1)" ></div>
+                                    <div class="baseDateCt" id="baseDateCt">
+                                        
+                                    </div>
+                                    <div class="baseDateRt" onclick="reset_gantt(2)"></div>
+                                </div>
+                                <script type="text/javascript">
+									function reset_gantt(ty){
+		
+										var year = document.getElementById("baseDateCt").innerHTML;
+										if(ty==1){
+											year = parseInt(year,10)-1;
+										}else{
+											year = parseInt(year,10)+1;
+										}
+										document.getElementById("baseDateCt").innerHTML = year;
+
+										gainResult();
+									};
+                                	jquery(function(){
+										document.getElementById("baseDateCt").innerHTML = new Date().getFullYear();		
+									})
+                                </script>
+                                <div class="fr mt10">
+                                   <ul class="selectpickerList">
+                                        <!-- 	#{plantSelects.queryPlantSelects()} -->
+                                         <li class="selectpickerLi">
+											<select id="plantIdStr"  name="plantIdStr"  data-live-search="true"  class="selectpicker nw100"  onchange="gainResult()">
+													<a4j:repeat value="#{plantSelects.plantList}" var="var">
+														<optgroup label="#{var}">
+															<a4j:repeat value="#{plantSelects.allPlant[var]}" var="_var">
+																<option value="#{_var.plantId}">#{_var.name}</option>
+															</a4j:repeat>
+														</optgroup>
+													</a4j:repeat>
+											</select>
+                                        </li>
+                                        
+                                        
+                                          <li class="selectpickerLi">
+											<select id="and_planted"  name="and_planted"  class="selectpicker nw100"  onchange="gainResult()">
+													<option value="0">包含种植</option>
+													<option value="1">不包含种植</option>
+											</select>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                            <div class="pt30 clear">
+                            	<div id="container_quekouAytjt" style="min-height:305px;"></div>
+                            </div>
+                        </div>
+                        <div class="pt30 clear">
+                        	<div class="chanliangZct_wap fl">
+                            	<div class="commomHd20 borderBt02" style="margin-right:35px;"><span>产量组成图</span></div>
+                                <div class="pt20" style="margin-right:35px;">
+                                	<div id="container_chanliangZct" style="min-height:305px;"></div>
+                                </div>
+                            </div>
+                            <div class="quekouLpm_wap fr">
+                            	<div class="commomHd20 borderBt02" style="margin-left:35px;"><span>缺口量排名</span></div>
+                                <div class="pt30" style="margin-left:35px;overflow-y:hidden;overflow-x:auto;">
+                                	<div id="container_quekouLpm" style="min-height:305px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 图表分析内容 结束 -->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+              </div>    
+<a4j:form>
+	<a4j:queue requestDelay="100" ignoreDupResponses="true"/>
+	<a4j:jsFunction status="ajaxStatus" name="queryResult" action="#{lackSum.createHighChartJson}" reRender="showPanel" data="#{lackSum.highChartJson}"   oncomplete="refreshAction(data);" >
+		<a4j:actionparam name="searchTime" assignTo="#{lackSum.searchTime}"/>
+		<a4j:actionparam name="baseId" assignTo="#{lackSum.baseId}"/>
+		<a4j:actionparam name="plantIdStr" assignTo="#{lackSum.plantIdStr}"/>
+		<a4j:actionparam name="andPlanted" assignTo="#{lackSum.andPlanted}"/>
+	</a4j:jsFunction>
+</a4j:form>     
+	
+<script>
+//<![CDATA[
+           
+           
+function noSelectedTOall(){
+	jquery(".filter-option").each(
+			function(){
+				if(jquery(this).text() == "无可选择项目"){
+					
+					jquery(this).text('全部');
+				}
+			}
+		);
+}
+           
+var hchartJson =  #{lackSum.highChartJson};
+
+Highcharts.setOptions({
+ 	yAxis: {
+		title: {
+			text: ''
+		}
+	},
+	exporting:{
+		enabled:false
+	},
+	credits:{
+		enabled:false
+	}
+ });
+
+function getRefurbishData(chartJson){
+	
+	hchartJson = chartJson;
+	//大于15个显示滚动条
+	var maxCount = 15;
+	var rankXCount = chartJson.rankXCount;
+	if(rankXCount > maxCount){
+		var rankWidth = jquery('#container_quekouLpm').width();
+		var rankWidthNew = (rankXCount - maxCount) * (rankWidth/maxCount) + rankWidth;
+		jquery('#container_quekouLpm').css({ width : rankWidthNew });
+	}else{
+		jquery('#container_quekouLpm').css({ width : 'auto' });
+	}
+	
+	/* 缺口按月统计图 */
+	jquery('#container_quekouAytjt').highcharts({
+		chart: {
+			type: 'column'
+		},
+		title: {
+			text: ''
+		},
+		yAxis: {
+			allowDecimals: false,
+			title: {
+				text: ''
+			},
+			 labels: {
+ 	        	formatter: function () {
+ 	        		return this.value + 'kg';
+ 	        	}
+ 	        }
+		},
+		 tooltip: {
+ 	    	valueSuffix: 'kg'
+ 	    	//followPointer: true
+ 	    },
+		xAxis: {
+			categories: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
+		},
+		colors: "#84b9e0,#9dd6a6,#babbe4,#fa7470,#f1f1f1,#f15c80,#e4d354,#8085e8,#8d4653,#91e8e1".split(","),
+		series: [{
+			name: '需求',
+			data: chartJson.cjson
+		}, {
+			name: '排产',
+			data: chartJson.gjson
+		}, {
+			name: '外采',
+			data: chartJson.pcjson
+		}, {
+			name: '缺口',
+			data: chartJson.lackjson
+		}]
+	});
+	var gantt_sum = chartJson.ganttSum,pContract_sum = chartJson.pContractSum;
+	var rank_data = [];
+	if(gantt_sum == 0 && pContract_sum == 0){
+		rank_data = [['无数据',  1]];
+	}else{
+		rank_data = [
+						['排产',  chartJson.ganttSum],
+						['外采',  chartJson.pContractSum]
+					];	
+	}
+	
+	
+	/* 产量组成图 */
+	jquery('#container_chanliangZct').highcharts({
+		chart: {
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false
+		},
+		title: {
+			text: ''
+		},
+		tooltip: {
+			pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+		},
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+				dataLabels: {
+					enabled: true,
+					color: '#000000',
+					connectorColor: '#000000',
+					format: '<b>{point.name}</b>'
+				}
+			}
+		},
+		series: [{
+			type: 'pie',
+			name: '比例',
+			//data: chartJson.pieData.replace('"','')
+			data:rank_data
+		}],
+		colors: "#8bc2ee,#98ee94,#90ed7d,#f7a35c,#8085e9,#f15c80,#e4d354,#8085e8,#8d4653,#91e8e1".split(",")
+	});
+	
+	/* 缺口产量排名 全部分类 */
+
+	jquery('#container_quekouLpm').highcharts({
+		colors:Highcharts.getOptions().colors,
+        chart: {
+            type: 'column'
+//             margin: [40]
+        },
+        legend:{
+            enabled:false
+            },
+        title: {
+            text: ''
+        },
+        yAxis: {
+            min:0,
+            max:chartJson.rankmax,
+			title: {
+				text: ''
+			},
+			 labels: {
+ 	        	formatter: function () {
+ 	        		return this.value + 'kg';
+ 	        	}
+ 	        }
+		},
+		 tooltip: {
+ 	    	valueSuffix: 'kg'
+ 	    },
+        xAxis: {
+            categories: chartJson.lackRankCg,
+            //opposite :true,//翻转
+           labels: {
+				enabled: false
+			}
+        },
+        plotOptions: {
+            series: {
+                dataLabels:{
+                	//align: 'left',
+                    enabled:true, // dataLabels设为true
+					//rotation:-50,
+                    formatter: function () {  
+						return this.x;  
+					}  
+                }
+            }
+		},
+        series: [{
+            name: '缺口',
+            data: chartJson.lackRankData
+            //color: 'white'
+        }]
+    });
+
+};
+
+
+//等比例缩放图形高度
+function scaleHei(){
+	var quekouAytjtWid = jquery('#container_quekouAytjt').outerWidth();
+	var oquekouAytjthHei = quekouAytjtWid * 0.3;
+	var quekouLpmWapWid = jquery('.quekouLpm_wap').outerWidth();
+	var oquekouLpmWid = quekouLpmWapWid - 35;
+	
+	jquery('#container_quekouAytjt').css({ height : oquekouAytjthHei });
+	jquery('#container_chanliangZct').css({ height : oquekouAytjthHei });
+	jquery('#container_quekouLpm').css({ height : oquekouAytjthHei });
+	jquery('#container_quekouLpm').parent().css({ width : oquekouLpmWid });
+	
+};
+
+jquery(function () {
+	/* 下拉框 */
+	jquery('#plantIdStr').attr("multiple","multiple");
+	jquery('.selectpicker').selectpicker('deselectAll');
+	
+	scaleHei();
+	
+	noSelectedTOall();
+	
+	 getRefurbishData(hchartJson);
+	 
+});
+
+/* 刷新 */
+window.onresize = function(){
+	
+	getRefurbishData(hchartJson);
+	scaleHei();
+}
+
+
+//搜索提交方法 
+function gainResult(){
+	var baseId = "#{sessionTake.baseModel.baseId}";
+	var plantIdStr = "";
+	if(jquery("#plantIdStr").val() != null){
+		plantIdStr = jquery("#plantIdStr").val().toString();
+	}
+    var and_planted = jquery("#and_planted").val();
+	var searchTime = document.getElementById("baseDateCt").innerHTML;
+	queryResult( searchTime, baseId,plantIdStr,and_planted);
+    return true;
+}
+
+//刷新
+function refreshAction(data){
+	getRefurbishData(data);
+	scaleHei();
+	noSelectedTOall();
+}
+		
+//]]>
+</script>
+		</td>
+		
+	</ui:define>
+
+</ui:composition>

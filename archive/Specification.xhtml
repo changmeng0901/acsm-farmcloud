@@ -1,0 +1,146 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	#{specificationList.initInfo()}
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge"></meta>
+	<!--[if lt IE 9]>
+      <script src="#{request.contextPath}/asset/js/bootstrap/respond.js"></script>
+    <![endif]-->
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/archive/Specification.css" />
+	<td valign="top">
+	<div class="right_c" style="min-height:30px;">
+		<!-- 面包屑 -->
+		<div class="r_title mb14">
+			<div class="r_t_l cm_r_t_l"><span>生产管理</span><em>&nbsp;&gt;&nbsp;</em><font	size="3">标准规范</font></div>
+		</div>
+		<!-- 搜索 -->
+		<div class="search-wrap mb14 clear">
+			<div class="public-search mr20 fl">
+				<span class="octicon-search02"></span>
+		    	<input type="text" id="searchContent" class="form-control srarchfont" value="输入搜索内容"></input>
+		    </div>
+		    <div class="select-w74 select-noborder mr20 fl">
+			    <select class="selectpicker" id="plantInfo">
+			    	<a:repeat value="#{specificationList.plantList}" var="_plant">
+			    	 	<option value="#{_plant.plantId}">#{_plant.name}</option>
+			    	</a:repeat>
+				</select>
+			</div>
+			<div class="select-w102 select-noborder mr20 fl">
+			    <select class="selectpicker"  id="planStandard">
+				    <a:repeat value="#{specificationList.planStandardList}" var="_stand">
+			    	 	<option value="#{_stand.dataDicId}">#{_stand.name}</option>
+			    	</a:repeat>
+				</select>
+			</div>
+			<div class="select-w102 select-noborder mr20 fl">
+			    <select class="selectpicker" id="plantEnv">
+				    <a:repeat value="#{specificationList.plantEnvList}" var="_env">
+			    	 	<option value="#{_env.id}">#{_env.name}</option>
+			    	</a:repeat>
+				</select>
+			</div>
+			<button type="button" class="btn btn-primary fr" onclick="queryPage(1);">搜索</button>
+		</div>
+		<!-- 全部作物种类列表 -->
+		<s:div id="infoList">
+		<div class="row crop-list">
+			<a:repeat value="#{specificationList.resultList}" var="_list">
+				<div class="col-crop2" onclick="window.location.href = 'SpecificationDetail.seam?plantId=#{_list[0]}&amp;listPage=#{specificationList.thisPage}'">
+					<dl class="crop-con">
+						<dd class="crop-top clear">
+							<div class="crop-pic">
+								<s:fragment rendered="#{not empty _list[2]}"><img src="#{_list[2]}@60_60h_1e_1c.src" /></s:fragment>
+								<s:fragment rendered="#{empty _list[2]}"><img src="#{request.contextPath}/asset/images/wt.png"/></s:fragment>
+							</div>
+							<div class="crop-name" title="#{_list[1]}">#{_list[1]}</div>
+						</dd>
+						<dd class="crop-center">
+							<div class="text-item">
+								<p class="text-name">已有种植方法</p>
+								<p class="total-num">#{_list[3]}</p>
+							</div>
+							<div class="text-item">
+								<p class="text-name">正在使用</p>
+								<p class="total-num">#{_list[4]}</p>
+							</div>
+						</dd>
+						<dd class="crop-bottom clear">
+							<div class="text-item fl">
+								<p class="text-name">当前种植</p>
+								<p class="total-num">#{_list[5]}</p>
+							</div>
+							<div class="text-item fr">
+								<p class="text-name">计划种植</p>
+								<p class="total-num">#{_list[6]}</p>
+							</div>
+						</dd>
+					</dl>
+				</div>
+			</a:repeat>
+		</div>
+		<div class="pageModel_wap" style="padding:0px 0 30px;">
+             <h:form id="pageFrom" rendered="#{null ne specificationList.resultList and specificationList.resultList.size() gt 0}">
+				<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<s:fragment rendered="#{!specificationList.hasPreviousPage }">
+							<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+						</s:fragment>
+						<s:fragment rendered="#{specificationList.hasPreviousPage and specificationList.totalPages > 1}">
+							<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+							<td class="td_t_b">
+								<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{specificationList.hasPreviousPage and specificationList.totalPages > 1}" >首页</a:commandLink>
+							</td>
+							<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+								<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{specificationList.previousPage})"  >&lt;</a:commandLink>
+							</td>
+						</s:fragment>
+						<a:repeat var="_page" value="#{specificationList.showPageList}" rowKeyVar="_index">
+							<s:fragment rendered="#{_page gt 0 and _page le specificationList.totalPages}">
+								<td class="td_t_b #{specificationList.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq specificationList.thisPage ? 'onp' : ''}" >
+									<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+								</td>
+							</s:fragment>
+						</a:repeat>
+						<s:fragment rendered="#{specificationList.hasNextPageFlag}">
+							<td class="td_t_b td_t_t">
+								<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{specificationList.nextPage})" rendered="#{specificationList.hasNextPage and specificationList.totalPages > 1}" >&gt;</a:commandLink>
+							</td>
+							<td class="td_t_b td_t_t">
+								<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{specificationList.totalPages})" rendered="#{specificationList.hasNextPage and specificationList.totalPages > 1}" >尾页</a:commandLink>
+							</td>
+						</s:fragment>
+						<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{specificationList.totalPages}页</td>
+						<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+					</tr>
+				</table>
+			</h:form>
+          </div> 
+		</s:div>
+		<!-- 全部作物种类列表 -->
+		<a:form id="formid" >
+			<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+			<a:jsFunction eventsQueue="mainQueue" name="searchSpecification" action="#{specificationList.getSpecificationList()}" reRender="infoList">
+				<a:actionparam name="planIds" assignTo="#{specificationList.planIds}" />
+				<a:actionparam name="planStandardIds" assignTo="#{specificationList.planStandardIds}" />
+				<a:actionparam name="plantEnvIds" assignTo="#{specificationList.plantEnvIds}" />
+				<a:actionparam name="searchContent" assignTo="#{specificationList.searchContent}" />
+				<a:actionparam name="thisPage" assignTo="#{specificationList.thisPage}" />
+			</a:jsFunction>
+		</a:form>
+	</div>
+	<script src="#{request.contextPath}/asset/js/archive/Specification.js"></script>
+	</td>
+	</ui:define>
+
+</ui:composition>

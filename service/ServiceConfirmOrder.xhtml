@@ -1,0 +1,374 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/service/commons.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/skinBlue.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/service/ServiceOrderManage.css" />
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+<style></style>
+        	<td valign="top">
+            <div class="right_c" style="min-height:30px; padding-bottom:15px; padding-top:15px;">
+            	<!-- 面包屑导航 开始 -->
+                <div class="breadNav_wap mb15 clear">
+                    <div class="breadNav_lt">
+                        <a href="/service/ServiceCenter.seam">增值服务</a><span>&gt;</span>
+                        <strong>版本升级</strong>
+                    </div>
+                </div>
+                <!-- 发票信息 -->
+                <div class="service_step fr mt20 mb30">
+                    <span class="step step1"></span>
+                </div>
+                <div class="invoice_block mb30 clear">
+                    <i class="i_bg"></i>
+                    <h3 class="h_title mb20">发票信息</h3>
+                    <div class="invoice_content">
+                        <ul class="timeRadio_list invoice_mode">
+                            <li class="items fl">
+                                <input type="radio" class="iRadio" name="testRadio" value="1" checked="checked" /><label class="iRadioLable" style="width:auto; max-width:auto;">不需要发票</label>
+                            </li>
+                            <li class="items fl">
+                                <input type="radio" class="iRadio" name="testRadio" value="2"/><label class="iRadioLable" style="width:auto; max-width:auto;">需要发票(服务费)</label>
+                            </li>
+                            <li class="items fl">
+                                <input type="radio" class="iRadio" name="testRadio" value="3"/><label class="iRadioLable" style="width:auto; max-width:auto;">增值税发票<span class="star_red" style="line-height:20px;">(税率6%)</span></label>
+                            </li>
+                        </ul> 
+                        <!-- 选择需要发票，显示此版块 -->
+                        <div class="need_invoice">
+                            <ul class="timeRadio_list">
+                            	<h:panelGroup id="invoicesPanel">
+	                            	<a4j:repeat value="#{feeServiceHome.invoicesList}" var="_invoice" rowKeyVar="_row">
+		                                <li class="items clear" style="display:block;">
+		                                	<s:fragment rendered="#{_row eq 0}">
+		                                		<input type="radio" class="iRadio" name="testRadio2" checked="checked" value="#{_invoice.invoicesId}"/>
+		                                	</s:fragment>
+		                                    <s:fragment rendered="#{_row ne 0}">
+		                                		<input type="radio" class="iRadio" name="testRadio2" value="#{_invoice.invoicesId}"/>
+		                                	</s:fragment>
+		                                    <label class="iRadioLable" style="width:auto; max-width:auto;">抬头：#{_invoice.invoiceTitle}</label>
+		                                    <label class="iRadioLable" style="width:auto; max-width:auto;">地址：#{_invoice.areaId.provCn}#{_invoice.areaId.districtCn}#{_invoice.areaId.nameCn}#{_invoice.address}</label>
+		                                    <button class="btn btn-default btn-xs" 
+		                                    onclick="editInvoiceInfo('#{_invoice.invoicesId}','#{_invoice.invoiceTitle}','#{_invoice.address}','#{_invoice.postcode}','#{_invoice.areaId.provEn}','#{_invoice.areaId.districtEn}','#{_invoice.areaId.nameEn}')">编辑</button>
+		                                </li>
+	                                </a4j:repeat>
+	                                <script>
+		                                //单选和复选插件
+		                        	    jQuery('input[class=iRadio]').iCheck({  
+		                        	        radioClass: 'iradio_minimal-blue',
+		                        	     });
+	                                </script>
+                                </h:panelGroup>
+                            </ul>  
+                            <table class="need_table" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="66">发票抬头</td>
+                                    <td>
+                                    	<input type="hidden" id="invoiceId" value=""/>
+                                        <input type="text" class="form-control nw220 fl" id="invoiceTitle"/>
+                                        <span class="star_red fl">*</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="66" style="vertical-align:top;line-height:34px;">寄送地址</td>
+                                    <td>                                       
+                                        <div class="mb15 clear">
+                                            <div class="bootSelt130 fl mr10">
+                                                <select class="selectpicker" id="province" name="province" onchange="getCity();">
+					                                <a4j:repeat value="#{feeServiceHome.provinceList}" var="var" >	
+					                                    <option value="#{var[1]}" >#{var[0]}</option>	                              																						
+													</a4j:repeat>
+					                            </select>
+                                            </div>
+                                            <div class="bootSelt130 fl mr10">
+                                                <h:panelGroup id="cityPanel">
+													<select class="selectpicker" id="city" name="city" onchange="getArea();">
+						                                <a4j:repeat  value="#{feeServiceHome.cityList}" var="var" >	
+						                                    <option value="#{var[1]}" >#{var[0]}</option>	                              																						
+														</a4j:repeat>
+						                            </select>
+													<script type="text/javascript">
+														jQuery('#province').selectpicker({noneSelectedText:"请选择省"});
+														jQuery('#city').selectpicker({noneSelectedText:"请选择市"});
+														jQuery('#area').selectpicker({noneSelectedText:"请选择县"});
+					
+						
+													</script>
+												</h:panelGroup>
+                                            </div>
+                                            <div class="bootSelt130">
+                                                <h:panelGroup id="areaPanel">
+													<select class="selectpicker" id="area" name="area">
+						                                <a4j:repeat  value="#{feeServiceHome.countyList}" var="var" >	
+						                                    <option value="#{var[1]}" >#{var[0]}</option>	                              																						
+														</a4j:repeat>
+						                            </select>
+													<script type="text/javascript">
+													jQuery('#province').selectpicker({noneSelectedText:"请选择省"});
+													jQuery('#city').selectpicker({noneSelectedText:"请选择市"});
+													jQuery('#area').selectpicker({noneSelectedText:"请选择县"});
+					
+													</script>
+												</h:panelGroup>
+                                            </div>
+                                        </div>
+                                        <div class="mb15 clear">
+                                            <input type="text" class="form-control nw410 fl" style="color:#ccc;" id="address" value="路名或街道地址、门牌号"/>
+                                            <span class="star_red fl">*</span>
+                                        </div>
+                                        <div class="clear">
+                                            <input type="text" class="form-control nw130 fl" style="color:#ccc;" id="postcode" value="邮政编码"/>
+                                            <span class="star_red fl"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="66">寄送方式&nbsp;:&nbsp;</td>
+                                    <td>
+                                        <p class="color_y1">免费寄送发票，付款后一周内寄出。</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="mt30 mb30" style="text-align:center;">
+                                <a class="btn btn-primary" href="javascript:addInvoice();">保存</a>
+                            </div>
+                        </div>
+                        <!-- 选择增值税发票，显示此版块 -->
+                        <div class="tax_invoice">
+                            <p class="pay_tip">成功支付后我们的客服会与您联系！</p>
+                        </div>
+                        <!-- 选择增值税发票，显示此版块 -->
+                    </div>
+                </div>
+                <!-- 订单详情 -->
+                <div class="appreciation_sblock" style="padding:0;border:0;background:none;box-shadow:none;">
+                    <h5 class="h5_title">订单详情</h5>
+                    <table class="service_order_list mb20" width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <th width="30%">版本名称</th>
+                            <th width="20%">有效期</th>
+                            <th width="25%">价格</th>
+                            <th width="25%">小计</th>
+                        </tr>
+                        <tr>
+                        <s:fragment rendered="#{feeServiceHome.serviceType eq 1}">
+                            <td>#{feeServiceHome.basicService.packageName}</td>
+                            <td>#{feeServiceHome.serviceYear}年</td>
+                            <td>￥#{feeServiceHome.basicService.packagePrice}</td>
+                            <td>￥#{feeServiceHome.serviceTotalPrice}</td>
+                         </s:fragment>
+                         <s:fragment rendered="#{feeServiceHome.serviceType eq 2 or feeServiceHome.serviceType eq 3}">
+                            <td>#{feeServiceHome.appreciationServiceInfo.serviceName}</td>
+                            <td>#{feeServiceHome.serviceYear}年</td>
+                            <td>￥#{feeServiceHome.appreciationServiceInfo.servicePrice}</td>
+                            <td>￥#{feeServiceHome.serviceTotalPrice}</td>
+                         </s:fragment>
+                        </tr>
+                    </table>
+                    <div class="sp_price">
+                       	 商品金额<p class="p_txt">￥#{feeServiceHome.serviceTotalPrice}</p>
+                    </div>
+                    <div class="sp_price">
+                       	 确认支付<p class="p_txt p_pay">￥#{feeServiceHome.serviceTotalPrice}</p>
+                    </div>
+                    <div class="sp_price mt20 mb20">
+	                    <h:form id="orderForm" name="orderForm">
+			            	<h:inputHidden value="#{feeServiceHome.serviceId}" id="hidServiceId"/>
+			            	<h:inputHidden value="#{feeServiceHome.serviceYear}" id="hidServiceYear" />
+			            	<h:inputHidden value="#{feeServiceHome.invoicesId}" id="hidInvoicesId" />
+			            	<h:inputHidden value="#{feeServiceHome.invoicesType}" id="hidInvoicesType" />
+			            	<h:inputHidden value="#{feeServiceHome.serviceType}" id="hidServiceType" />
+			            	<h:commandButton id="saveOrderBtn" class="btn btn-primary" value="提交订单" onclick="if(!checkSubmitOrder()){return false;}" action="#{feeServiceHome.submitOrder()}"/>
+			            </h:form>
+                    </div>
+                </div>
+                <!-- 增值服务订单列表 -->
+
+            </div>
+            </td>    
+             <a4j:form>
+ 				<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+	            <a4j:jsFunction name="getCityArea" reRender="cityPanel,areaPanel" action="#{feeServiceHome.getCityArea()}" oncomplete="cityCallBack();">
+			  		<a4j:actionparam name="provEn" assignTo="#{feeServiceHome.provEn}"/>
+			    </a4j:jsFunction>
+			    <a4j:jsFunction name="getNameArea" reRender="areaPanel" action="#{feeServiceHome.getNameArea()}" oncomplete="areaCallBack();">
+			  		<a4j:actionparam name="citytEn" assignTo="#{feeServiceHome.citytEn}"/>
+			    </a4j:jsFunction>			    
+			    <a4j:jsFunction name="saveInvoice" reRender="invoicesPanel" action="#{feeServiceHome.saveInvoice()}" oncomplete="invoiceCallBack();">			    	
+			  		<a4j:actionparam name="invoicesId" assignTo="#{feeServiceHome.invoicesId}"/>
+			  		<a4j:actionparam name="invoiceTitle" assignTo="#{feeServiceHome.invoices.invoiceTitle}"/>
+			  		<a4j:actionparam name="address" assignTo="#{feeServiceHome.invoices.address}"/>
+			  		<a4j:actionparam name="postcode" assignTo="#{feeServiceHome.invoices.postcode}"/>
+			  		<a4j:actionparam name="provEn" assignTo="#{feeServiceHome.provEn}"/>
+			  		<a4j:actionparam name="citytEn" assignTo="#{feeServiceHome.citytEn}"/>
+			  		<a4j:actionparam name="countyEn" assignTo="#{feeServiceHome.countyEn}"/>
+			    </a4j:jsFunction>
+			 </a4j:form>			    
+<script>
+//<![CDATA[
+	jQuery(function(){   
+		jQuery('input[type=text]').focus(function(){
+	        var txt_val = this.defaultValue;
+	        if( jQuery(this).val() == txt_val ){
+	            jQuery(this).val('');
+	        }
+	        jQuery(this).css('color','#333');
+		});
+		jQuery('input[type=text]').blur(function(){
+	        var txt_val = this.defaultValue;
+	        if( jQuery(this).val() == '' ){
+	            jQuery(this).val( this.defaultValue );
+	            jQuery(this).css('color','#ccc')
+	        }else{
+	            jQuery(this).css('color','#333');
+	        }
+		});
+	    //单选和复选插件
+	    jQuery('input[class=iRadio]').iCheck({  
+	        radioClass: 'iradio_minimal-blue',
+	     });
+	
+	    // 下拉框插件
+	    //jQuery('.selectpicker').selectpicker();  
+	    jQuery('#province').selectpicker({noneSelectedText:"请选择省"});
+	    jQuery('#city').selectpicker({noneSelectedText:"请选择市"});
+	    jQuery('#area').selectpicker({noneSelectedText:"请选择县"});
+	    jQuery("#province").selectpicker("val","");//默认类型为请选择
+	    jQuery("#city").selectpicker("val","");
+	    jQuery("#area").selectpicker("val","");
+	
+	    // 发票选择方式
+	    jQuery('.invoice_mode .items').each(function(index, elem) {
+	    	jQuery('.invoice_mode .items').eq(0).find('input').on('ifChecked',function(event){
+	    		jQuery('.need_invoice').hide();
+	    		jQuery('.tax_invoice').hide();
+	    	});
+	    	jQuery('.invoice_mode .items').eq(1).find('input').on('ifChecked',function(event){
+	    		jQuery('.need_invoice').show();
+	    		jQuery('.tax_invoice').hide();
+	    	});
+	    	jQuery('.invoice_mode .items').eq(2).find('input').on('ifChecked',function(event){
+	    		jQuery('.tax_invoice').show();
+	    		jQuery('.need_invoice').hide();
+	    	});
+	    });		
+	    
+	});
+	function getCity(){
+		var pro=document.getElementById("province").value;
+		getCityArea(pro);
+	}
+	function getArea(){
+		var city=document.getElementById("city").value;
+		getNameArea(city);
+	}
+	function cityCallBack(){//编辑地址时赋值
+		if(cityValue!=""){
+			jQuery("#city").selectpicker("val",cityValue);
+			cityValue="";
+		}			
+	}
+	function areaCallBack(){//编辑地址时赋值
+		if(areaValue!=""){
+			jQuery("#area").selectpicker("val",areaValue);
+			 areaValue="";
+		}			
+	}
+	//保存邮寄地址
+	function addInvoice(){				
+		var invoiceId=jQuery("#invoiceId").val();
+		var invoiceTitle=jQuery("#invoiceTitle").val();
+		var address=jQuery("#address").val();
+		var postcode=jQuery("#postcode").val();
+		var pro=jQuery("#province").val();
+		var city=jQuery("#city").val();
+		var area=jQuery("#area").val();
+		if(invoiceTitle==""){
+			alert("请填写发票抬头");
+			return false;
+		}
+		if(invoiceTitle.length>50){
+			alert("发票抬头不能超过50字");
+			return false;
+		}
+		if(pro=="" || city=="" || area=="" ||pro==null || city==null || area==null){
+			alert("请选择地址");
+			return false;
+		}
+		if(address=="" || address=="路名或街道地址、门牌号"){
+			alert("请填写寄送详细地址");
+			return false;
+		}
+		var re = /^[0-9]+$/;
+		if(postcode=="邮政编码"){
+			postcode="";
+		}else if(postcode!="" && postcode!="邮政编码"){
+			if(!re.test(postcode)){
+				alert("请填写正确的邮政编码");
+				return false;
+			}
+		}
+		if(invoiceId==""){
+			saveInvoice(0,invoiceTitle,address,postcode,pro,city,area);
+		}else{
+			saveInvoice(invoiceId,invoiceTitle,address,postcode,pro,city,area);
+		}
+		
+	}
+	var cityValue="";
+	var areaValue="";
+	//编辑邮寄地址
+	function editInvoiceInfo(invoiceId,invoiceTitle,address,postcode,pro,city,area){
+		jQuery("#invoiceId").val(invoiceId);
+		jQuery("#invoiceTitle").val(invoiceTitle);
+		jQuery("#address").val(address);
+		jQuery("#postcode").val(postcode);
+	    jQuery("#province").selectpicker("val",pro);	    
+	    jQuery("#province").selectpicker("refresh");
+	    cityValue=city;
+		areaValue=area;
+	    jQuery('input[type=text]').css('color','#333');
+	}
+	function invoiceCallBack(){
+		jQuery("#invoiceId").val("");
+		jQuery("#invoiceTitle").val("");
+		jQuery("#address").val("");
+		jQuery("#postcode").val("");
+		jQuery('#province').selectpicker({noneSelectedText:"请选择省"});
+	    jQuery('#city').selectpicker({noneSelectedText:"请选择市"});
+	    jQuery('#area').selectpicker({noneSelectedText:"请选择县"});
+	}
+	function checkSubmitOrder(){
+		var invoiceType=jQuery('input[name="testRadio"]:checked ').val(); 
+		jQuery("#orderForm\\:hidInvoicesType").val(invoiceType);
+		var invoiceId=null;
+		if(invoiceType==2){
+			invoiceId=jQuery('input[name="testRadio2"]:checked ').val(); 
+			if(null!=invoiceId && ""!=invoiceId && "undifined"!=invoiceId){
+				jQuery("#orderForm\\:hidInvoicesId").val(invoiceId);
+			}else{
+				alert("请添加发票邮寄地址！");
+				return false;
+			}			
+		}
+		return true;
+	}
+//]]>
+</script>
+
+
+
+
+</ui:define>
+
+</ui:composition>

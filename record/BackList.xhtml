@@ -1,0 +1,66 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+<rich:tabPanel switchType="client" style="width:700px">
+<script type="text/javascript">
+	var t;
+	startTi = function(index){
+		var str = "document.getElementById('repeat:"+index+":pages').component.hide();";
+		t=setTimeout(str,200);
+	}
+
+	startTi2 = function(index){
+		var str = "document.getElementById('repeat2:"+index+":mains').component.hide();";
+		t=setTimeout(str,200);
+	}
+	
+	stopTim = function(){
+		clearTimeout(t);
+	}
+
+	clearAll = function(){
+		jquery(".aaaa").hide();
+	}
+</script>
+        <rich:tab label="绿色履历 (#{productBaseInfoList.resultCount})">
+        <a4j:repeat id="repeat" value="#{productBaseInfoList.resultList}"  var="_pro"  rendered="#{not empty productBaseInfoList.resultList}" rowKeyVar="_index">
+	        <div onmouseout="startTi(#{_index})" id="page#{_pro.productInfoId}" style="float:left;margin-left:5px">
+	            <iframe src="#{request.contextPath}/record/viewRecord.seam?productRecordProductInfoId=#{_pro.productInfoId}" scrolling="no" 
+	             frameborder="1" style="width:160px;height:330px;overflow:hidden;overflow-x : hidden;overflow-y : hidden;margin:0;">
+	            </iframe>
+	        </div>
+	        <rich:contextMenu event="onmouseover" attachTo="page#{_pro.productInfoId}" styleClass="aaaa" id="pages#{_pro.productInfoId}" submitMode="none">
+	            <rich:menuItem value="编辑1" onmouseover="stopTim()" style="background-color:red;" onclick="enlarge('pic');" ></rich:menuItem>
+	            <rich:menuItem value="删除1" onmouseover="stopTim()" onclick="decrease('pic');" ></rich:menuItem>
+	        </rich:contextMenu>
+	    </a4j:repeat>
+        </rich:tab>
+        <rich:tab label="履历模版 (#{phoneModelInfoList.resultCount})">
+             <a4j:repeat id="repeat2" value="#{phoneModelInfoList.resultList}"  var="_phone"  rendered="#{not empty phoneModelInfoList.resultList}"  rowKeyVar="_index">
+                <div onmouseout="startTi2(#{_index})" id="main#{_index}" style="float:left;margin-left:5px">
+	            <iframe src="#{request.contextPath}/record/viewModel.seam?phoneModelInfoId=#{_phone.id}" scrolling="no" 
+	             frameborder="1" style="width:160px;height:162px;overflow:hidden;overflow-x : hidden;overflow-y : hidden;margin:0;">
+	            </iframe>
+	        </div>
+                <rich:contextMenu event="onmouseover" attachTo="main#{_index}" style="z-index:10000" styleClass="aaaa" id="mains#{_pro.productInfoId}" submitMode="none">
+	            <rich:menuItem value="编辑1" onmouseover="stopTim()" style="background-color:red;" onclick="enlarge('pic');" ></rich:menuItem>
+	            <rich:menuItem value="删除1" onmouseover="stopTim()" onclick="decrease('pic');" ></rich:menuItem>
+	        </rich:contextMenu>
+             </a4j:repeat>
+        </rich:tab>
+</rich:tabPanel>
+
+
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,535 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/map/farmInformation.css"/>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+	<link href="#{request.contextPath}/asset/css/FarmInformation.css" rel="stylesheet" type="text/css"></link>
+
+<script type="text/javascript">
+//<![CDATA[
+function picRize(obj,arr){
+    var w = obj.width;
+    var h = obj.height;
+    var wbh = arr[0]/arr[1] //388/540;
+    if(w > arr[0] || h>arr[1]){
+       if((w/h)>wbh){
+            obj.style.width = "100%"
+            obj.style.height=h/(w/arr[0])+"px";
+            obj.style.marginTop = ((arr[1] - (h/(w/arr[0])))/2)+"px";
+        }else{
+            obj.style.height = "100%" 
+            obj.style.width=w/(h/arr[1])+"px";
+        }  
+    }else{
+        obj.style.marginTop = (arr[1] - h)/2+"px"; 
+        
+    }
+   
+ }
+//]]>
+</script>
+<script src="#{request.contextPath}/asset/js/map/jquery.cycle.all.js"></script>
+		<td valign="top">           
+            <div class="right_c clear">
+                <!-- 面包屑导航 开始 -->
+                <div class="r_title clear" style="z-index: 1;">
+                	<div class="r_t_l fl">数字农场<span style="padding:0 5px;">&gt;</span><font size="3">基地档案</font></div>
+                   	<ul class="cm_resumeList fr" style="margin-bottom:0;">
+            			<li>
+                        	<a href="#{request.contextPath}/map/CompanyList.seam"><span>公司信息</span></a>
+                        </li>
+                    	<li>
+                        	<a href="javascript:void(0);" disabled="true" class="borderBt" style="cursor:default;"><span>基地信息</span></a>
+                        </li>
+                    </ul>
+               	</div>
+                <!-- 农场信息主体 开始 -->
+                <!-- 农场焦点图及基本信息 -->
+                <div class="farm-info-wap mt20 mb20 clear"><h:panelGroup rendered="#{s:hasRole('farm_info_edit')}">
+                	<a class="btn btn-default" href="#" onclick="isHasBase();" style="position:absolute; right:0; top:20px;">编辑</a></h:panelGroup>
+                    <div class="cropLeft" style="margin-left:10px; padding:0;">
+                        <div class="picture">
+                            <a href="javascript:;"><img src="#{enterpriseHome.sceneUrlList[0]}" alt="" /></a>
+                        </div>
+                        <div class="thumbnail-w" id="carousel">
+                            <ul class="imagesList">
+                            	<a:repeat value="#{enterpriseHome.sceneUrlList}" var="_pet" rowKeyVar="_index">
+		                          <li><img src="#{_pet}" alt="" /></li>
+	                            </a:repeat>
+                            
+                                <!-- <li><img src="../images/FarmInfor_pic1.jpg" alt="javascript:;" /></li>
+                                <li><img src="../images/FarmInfor_pic2.jpg" alt="javascript:;" /></li>
+                                <li><img src="../images/FarmInfor_pic3.jpg" alt="javascript:;" /></li> -->
+                            </ul>
+                        </div>
+                        <div class="thumbnail-btns">
+                            <a href="javascript:void(0);" class="leftBtn"></a>
+                            <a href="javascript:void(0);" class="rightBtn"></a>
+                        </div>
+                    </div>
+                    <div class="farm-info-rt">
+                    	<div class="farm-infoinstro-hd">
+                        	<strong class="farm-name">#{enterpriseHome.baseName}</strong>
+                        	<a:repeat value="#{enterpriseHome.getWlwsbList2()}" var="var">
+								<p class="icos-info #{var[2]}"><i class="min-ico"></i>#{var[1]}</p>
+							</a:repeat>
+                            <!-- <p class="icos-info bg1"><i class="min-ico"></i>试点农场</p>
+                            <p class="icos-info bg2"><i class="min-ico"></i>试点农场</p>
+                            <p class="icos-info bg3"><i class="min-ico"></i>试点农场</p>
+                            <p class="icos-info bg4"><i class="min-ico"></i>试点农场</p>
+                            <p class="icos-info bg5"><i class="min-ico"></i>试点农场</p>
+                            <p class="icos-info bg6"><i class="min-ico"></i>试点农场</p> -->
+                        </div>
+                        <div class="farm-infoinstro-bd">
+                        	<table class="info-table" width="100%" cellpadding="0" cellspacing="0">
+                            	<tr>
+                                	<td class="td-name">联系人</td>
+                                    <td class="td-date" style="width:150px;">#{enterpriseHome.baseObj.contact}</td>
+                                    <td class="td-name">电<span class="font-one"></span>话</td>
+                                    <td class="td-date">#{enterpriseHome.baseObj.phone}</td>
+                                </tr>
+                                <tr>
+                                	<td class="td-name" colspan="4">组织管理机构 <span style="color:#666; margin-left:15px;">#{enterpriseHome.baseObj.organizationManagement}</span></td>
+                                </tr>
+                                <tr>
+                                	<td class="td-name">邮<span class="font-one"></span>箱</td>
+                                    <td class="td-date" colspan="3">#{enterpriseHome.baseObj.email}</td>
+                                </tr>
+                                <tr>
+                                	<td class="td-name" valign="top">销售方式</td>
+                                    <td class="td-date" colspan="3">
+                                    	<ol class="servce-list">
+                                    		<a:repeat value="#{enterpriseHome.getNcbqList2()}" var="var">
+												<li class="#{var[2]}"><i></i>#{var[1]}</li>
+											</a:repeat> 
+                                        	<!-- <li class="items1"><i></i>社区直供</li>
+                                            <li class="items2"><i></i>商超</li>
+                                            <li class="items3"><i></i>宅配</li>
+                                            <li class="items4"><i></i>电商</li>
+                                            <li class="items5"><i></i>批发</li>
+                                            <li class="items6"><i></i>采摘</li>
+                                            <li class="items7"><i></i>其他</li> -->
+                                        </ol>
+                                    </td>
+                                </tr>
+                                <tr>
+                                	<td class="td-name" valign="top">基地类型</td>
+                                    <td class="td-date" colspan="3">
+                                    	<ol class="servce-list">
+                                    		 <a:repeat value="#{enterpriseHome.getncTypeList2()}" var="var">
+												<li class="#{var[2]}"><i></i>#{var[1]}</li>
+											</a:repeat>  
+                                        	<!-- <li class="farm-type1"><i></i>订单农场</li>
+                                            <li class="farm-type2"><i></i>F2C农场</li>
+                                            <li class="farm-type3"><i></i>宅配农场</li> -->
+                                            
+                                        </ol>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    	
+                    </div>
+                </div>
+                <!-- 农场地图 -->
+                <div class="farm-info-ttl clear">
+                	<h2><i class="ttl-icos icos1"></i>基地地图</h2>
+                </div> 
+                <h:outputText rendered="#{(enterpriseHome.baseObj.staticPicture ne null and enterpriseHome.baseObj.staticPicture ne '') or (enterpriseHome.baseObj.address ne null and enterpriseHome.baseObj.address ne '') or (enterpriseHome.baseObj.description ne null and enterpriseHome.baseObj.description ne '')}">             
+                <div class="farm-map-bd clear">
+                	<div class="farm-map-lt" >
+                	<div class="farmmapimg" id="map-canvas" style="width: 410px; border: 0; height: 320px; margin:15px auto 10px auto;">
+                    <img src="#{enterpriseHome.baseObj.staticPicture}" style="width: 410px; height: 320px;"/>
+                    </div>
+                    <input type="hidden" name="coordinateX" value="#{enterpriseHome.baseObj.coordinateX}"/>
+                    <input type="hidden" name="coordinateY" value="#{enterpriseHome.baseObj.coordinateY}"/>
+                	</div>
+                    <div class="farm-map-rt">
+                    	<em class="addr-pos">地址: #{enterpriseHome.baseObj.address eq ''?'暂无':stringUtil.shortString(enterpriseHome.baseObj.address,12)}</em>
+                        <div class="addr-txt">
+                        	<h:outputText id="ncjj" value="#{enterpriseHome.baseObj.description}" escape="false"></h:outputText>
+                        </div>
+                    </div>
+                </div>
+                </h:outputText>
+                <h:outputText rendered="#{(enterpriseHome.baseObj.staticPicture eq null or enterpriseHome.baseObj.staticPicture eq '') and (enterpriseHome.baseObj.address eq null or enterpriseHome.baseObj.address eq '') and (enterpriseHome.baseObj.description eq null or enterpriseHome.baseObj.description eq '')}">
+                <div id="mess2" class="tip-nodata-wap" style="border:none;display:none;">
+                	<div class="tip-warning-nodata" style="margin-top:-37px;">
+                    	<span class="ico"><img width="31" height="31" src="../images/FarmInfor_noico1.jpg"/></span>
+                        <em>很遗憾，没有任何农场介绍信息新查询！</em>
+                    </div>
+                </div>
+                </h:outputText>
+                <!-- 农场介绍 -->
+                <div class="farm-info-ttl clear">
+                	<h2><i class="ttl-icos icos2"></i>农场介绍</h2>
+                </div>  
+                <h:outputText rendered="#{enterpriseHome.baseObj.baseDescription ne null and enterpriseHome.baseObj.baseDescription ne ''}">
+                <div id="mess3" class="farm-instro-con">
+                	<h:outputText id="ncjs" value="#{enterpriseHome.baseObj.baseDescription}" escape="false"></h:outputText>
+                </div>
+                </h:outputText>
+                <h:outputText rendered="#{enterpriseHome.baseObj.baseDescription eq null or enterpriseHome.baseObj.baseDescription eq ''}">
+                <div id="mess4" class="tip-nodata-wap" style="border:none;">
+                	<div class="tip-warning-nodata" style="margin-top:-37px;">
+                    	<span class="ico"><img width="31" height="31" src="../images/FarmInfor_noico2.jpg"/></span>
+                        <em>很遗憾，没有任何农场介绍信息新查询！</em>
+                    </div>
+                </div>
+                </h:outputText>
+                <h:panelGroup rendered="#{sessionTake.userSource==null || sessionTake.userSource!=1}">
+                <!-- 采摘信息 -->
+	               <div class="farm-info-ttl clear">
+	                	<h2 class="fl"><i class="ttl-icos icos3"></i>采摘信息</h2>
+	                    <div class="fr" style="position:relative; bottom:5px;">
+	                    	
+	                       <h:panelGroup rendered="#{s:hasRole('farm_info_edit')}"> <a class="btn btn-default fl" href="#" onclick="isHasBase2();"  >编辑</a></h:panelGroup>
+	                    </div>
+	                </div> 
+	                
+	                <h:outputText rendered="#{enterpriseHome.pickInfo.pickInfoId ne null and enterpriseHome.pickMess eq 0}">
+	                <div id="mess5" class="pick-instro-con">
+	                	<table class="pick-table" width="100%" cellpadding="0" cellspacing="0">
+	                    	<tr>
+	                        	<th>人均价格</th>
+	                            <td><p class="price"><span>￥</span>#{enterpriseHome.pickInfo.avgPrice}</p></td>
+	                        </tr>
+	                        <tr>
+	                        	<th>可接待人数</th>
+	                            <td>#{enterpriseHome.pickInfo.receptionNum}人</td>
+	                        </tr>
+	                        <!-- <tr>
+	                        	<th>农产品采摘时间</th>
+	                            <td>
+	                           <h:outputText rendered="#{enterpriseHome.pickInfo.supplyType eq 1}">
+	                            	常年
+	                            </h:outputText>
+	                            <h:outputText rendered="#{enterpriseHome.pickInfo.supplyType eq 0}">
+	                            	 #{enterpriseHome.pickInfo.beginTime} 至  #{enterpriseHome.pickInfo.endTime}
+	                            </h:outputText>
+	                            </td>
+	                        </tr> -->
+	                        <tr>
+	                        	<th>农场包装</th>
+	                            <td>#{enterpriseHome.packagetype}</td>
+	                        </tr>
+	                    </table>
+	                    <em class="em-title">特色种植</em>
+	                   	<ol class="pick-list">
+	                   		<a:repeat value="#{enterpriseHome.plants}" var="plant" >
+	                    	<li class="items">
+	                        	<div class="pick-pic">
+	                            	<img class="mark-80" src="../images/FarmInfor_mark1.png" />
+	                                <img class="pic" src="#{plant.plantImgRound}"  />
+	                            </div>
+	                            <p class="txt-info" title="#{plant.name}">#{plant.name}</p>
+	                        </li>
+	                        </a:repeat>
+	                    </ol>
+	                    <h:outputText rendered="#{enterpriseHome.pickMealmess eq '1'}">
+	                    <em class="em-title">套餐信息</em>
+	                    <table class="package-table" width="100%" cellpadding="0" cellspacing="0">
+	                    	<a:repeat value="#{enterpriseHome.pickMealInfos}" var="meal" >
+	                    	<tr>
+	                        	<td class="td-txt1" width="30%">#{meal.name}</td>
+	                            <td class="td-txt2" width="20%"><span class="price">￥#{meal.price}</span></td>
+	                            <td class="td-txt3" width="50%">#{meal.comments}</td>
+	                        </tr>
+	                        </a:repeat>
+	                    </table>
+	                    </h:outputText>
+	                </div> 
+	                </h:outputText>
+	                <h:outputText rendered="#{enterpriseHome.pickInfo.pickInfoId eq null or enterpriseHome.pickMess eq 1}">
+	                <div id="mess6" class="tip-nodata-wap" style="border:none;">
+	                	<div class="tip-warning-nodata" style="margin-top:-37px;">
+	                    	<span class="ico"><img width="31" height="31" src="../images/FarmInfor_noico3.jpg"/></span>
+	                        <em>很遗憾，没有任何采摘介绍信息新查询！</em>
+	                    </div>
+	                </div>
+	                </h:outputText>
+                </h:panelGroup>
+                <!-- 农场信息主体 结束 -->
+                <!-- 2016.9.6水土气检测报告 -->
+	                <h4 class="report">
+	           			<a:form id="headid">
+	                    <img src="#{request.contextPath}/asset/images/report.png"  width="15" height="18" style="vertical-align: -3px; margin-right:5px;"/>
+	                    	水土气检测报告
+                       		<h:commandButton id="manyexport" styleClass="btn  btn-default fr" action="#{enterpriseHome.ExportExcel()}" value="导出"  style="#{enterpriseHome.rwdList.size()==0?'display:none;':''}">   </h:commandButton>
+	                    <a href="/map/RusticWaterDetection.seam" class="btn btn-success fr" onclick="return checkSelectNew()" style="margin-right: 5px;">添加</a>
+		                </a:form>
+	                </h4>
+	                <h:panelGroup rendered="#{enterpriseHome.rwdList.size()==0}">
+		                <div class="no_report">
+		                    <img src="#{request.contextPath}/asset/images/noReport.jpg" />
+		                    <p>您还没有添加过检测报告！</p>
+		                </div>
+	                </h:panelGroup>
+	                <h:panelGroup rendered="#{enterpriseHome.rwdList.size()!=0}">
+		                <a:repeat value="#{enterpriseHome.rwdList}" var="_var" rowKeyVar="_index">
+		                <div class="hasReport">
+		                    <div class="org-contant">
+		                        <div class="org_left">
+		                            <img src="#{_var.firstImg}@168h_108w.src" style="height:168px;width:108px;margin-top: 1px;"  data-cycleImageList="#{_var.moreImges}" />
+		                            <!--
+		                           
+		                            	 轮播图的url写在data-cycleImageList里 以‘|’分开 
+		                            -->
+		                        </div>
+		                        <!-- 右边 -->
+		                        <table width="100%" cellpading="0" cellspacing="0" class="crop_name">
+		                            <tr>
+		                                <td width="80%">
+		                                	<h:panelGroup rendered="#{_var.type==1}">
+		                                    	<div class="cotton fl mr15" title="灌溉水">灌溉水</div>
+		                                	</h:panelGroup>
+		                                	<h:panelGroup rendered="#{_var.type==2}">
+		                                    	<div class="cotton fl mr15" title="土壤">土壤</div>
+		                                	</h:panelGroup>
+		                                	<h:panelGroup rendered="#{_var.type==3}">
+		                                    	<div class="cotton fl mr15" title="空气">空气</div>
+		                                	</h:panelGroup>
+		                                	<h:panelGroup rendered="#{_var.type==4}">
+		                                    	<div class="cotton fl mr15" title="其他">其他</div>
+		                                	</h:panelGroup>
+		                                </td>
+		                                <td width="20%" style="text-align:right;">
+		                                    <a href="#{request.contextPath}/map/RusticWaterDetection.seam?rusticWaterDetectionRusticWaterDetectionId=#{_var.id}"><img src="#{request.contextPath}/asset/images/map/editor.png" alt="" /></a>
+						                   	<s:link styleClass="delete" propagation="none"  view="/map/RusticWaterDetection.xhtml"   title="删除"   action="#{rusticWaterDetectionHome.remove}" onclick="return confirm('确定删除吗？');" id="DeleteId" rendered="#{empty from}">
+					                        	<img src="#{request.contextPath}/asset/images/map/delt.png" />
+					                        	<f:param name="rusticWaterDetectionRusticWaterDetectionId" value="#{_var.id}" />
+					                       	</s:link>
+		                                </td>
+		                            </tr>
+		                        </table>
+		                        <table width="100%" cellpading="0" cellspacing="0" class="org_name">
+		                            <tr>
+		                                <td width="50%">
+		                                    <div class="institution">
+		                                        <span class="c64">检测单位：</span>
+		                                        <span style="font-size:16px; cursor: pointer;" title="PONY谱尼测试集团股份有限公司">#{_var.name}</span>
+		                                    </div>
+		                                </td>
+		                                <td width="50%">
+		                                    <span class="c64">检测时间：</span>
+		                                    <span style="color:#68a968"><h:outputText value="#{_var.testTime}">
+											<s:convertDateTime type="both" dateStyle="short" pattern="yyyy/MM/dd"/>
+										</h:outputText></span>
+		                                </td>
+		                            </tr>
+		                        </table>
+		                        <table width="100%" cellpading="0" cellspacing="0" class="others">
+		                            <tr>
+		                                <td width="65" class="c64" style="vertical-align: top;">结&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;论：</td>
+		                                <td> 
+		                                    <div class="org_text">#{_var.remarks}</div>
+		                                </td>
+		                            </tr>
+		                        </table>                      
+		                    </div>
+		                </div>
+		                </a:repeat>
+		                <!-- 分页开始 -->
+				        <h:panelGroup rendered="#{enterpriseHome.RESULT_COUNT !=1}">
+				        	<table class="fenye">
+				            	<tr>
+				            		<td>
+				                    	<table class="pageModel" >
+				                			<tbody>
+				                    			<tr>
+				                        			<td>
+					                        <ui:fragment rendered="#{not empty enterpriseHome.rwdList}">
+							                <ui:fragment rendered="#{!enterpriseHome.previousExists }">
+							                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+							                </ui:fragment>
+							                 <ui:fragment rendered="#{enterpriseHome.previousExists }">
+							                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+							                </ui:fragment>
+							                <ui:fragment rendered="#{enterpriseHome.previousExists }">
+						                           <td class="td_t_b">
+						                            <a href="#" onclick="jump(0);return false;">首页</a>
+						                           </td>
+						                           <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+						                            <a href="#" onclick="jump(#{enterpriseHome.previousFirstResult});return false;" class="no_n">
+						                            	&lt;
+						                            </a>
+						                           </td>
+					                       </ui:fragment>
+									       <a:repeat var="_page" value="#{enterpriseHome.pageList}" rowKeyVar="_index">
+												<td class="td_t_b #{enterpriseHome.previousExists or _index >0 ?'td_t_t':''} #{_page eq enterpriseHome.pageNum?'onp':''}">
+													<a href="#" onclick="jump(#{_page});return false;">
+														#{_page}
+													</a>
+												</td>
+											</a:repeat>
+											<ui:fragment rendered="#{enterpriseHome.nextExists}">
+						                          <td class="td_t_b td_t_t">
+						                           <a href="#" class="no_d" onclick="jump(#{enterpriseHome.nextFirstResult});return false;">
+						                           &gt;
+						                           </a>
+						                          </td>
+						                          <td class="td_t_b td_t_t">
+												 <a href="#" onclick="jump(#{enterpriseHome.PAGE_COUNT});return false;">
+												 尾页
+												 </a>
+											</td>
+											</ui:fragment>
+												<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{enterpriseHome.PAGE_COUNT}页</td>
+						                          <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+						                	</ui:fragment>
+				                    				</td>
+				                				</tr>
+				            				</tbody>
+				            			</table>
+									</td>
+								</tr>
+				            
+							</table>
+							</h:panelGroup>
+				        <!-- 分页 结束 -->  
+	            	</h:panelGroup>
+                
+            </div>
+            <h:form>
+	            <input type="hidden" value="#{enterpriseHome.pageNum}" id="pageNum" name="pageNum"/>
+	            <h:commandButton value="" action="/map/FarmList.xhtml" styleClass="but_" style="display:none"/>
+            </h:form>
+         </td>    
+<!-- 弹窗开始 -->
+<div id="popupBigic" class="popup-bigic" >
+     <div class="baseAddModel_body">
+        <div class="carousel">
+            <ul class="imagesList">
+            </ul>
+        </div>
+         <div class="btns">
+           <a href="javascript:void(0);" class="leftBtn"></a>
+           <a href="javascript:void(0);" class="rightBtn"></a>
+         </div>
+     </div>
+    <em class="baseAddModel_close"></em>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+	
+    function isHasBase(){
+    	var isHasBaseObj = checkSelectNew();
+		if(isHasBaseObj){
+			var baseIdObj = "#{enterpriseHome.baseId}";
+			window.location.href="#{request.contextPath}/map/FarmEdit.seam?baseId="+baseIdObj;
+		}
+    }
+    function isHasBase2(){
+    	var isHasBaseObj = checkSelectNew();
+		if(isHasBaseObj){
+			var baseIdObj = "#{enterpriseHome.baseId}";
+			window.location.href="#{request.contextPath}/map/GatheringEditor.seam?baseId="+baseIdObj;
+		}
+    }            
+
+
+jQuery = jQuery.noConflict();
+jQuery(function(){
+
+	// 弹窗轮播
+    var win = jQuery(document);
+        var nWinWid = win.width();
+        var nWinHei = win.height();
+        jQuery('.popup-bigic').width(nWinWid);
+        jQuery('.popup-bigic').height(nWinHei);
+        jQuery(".baseAddModel_close").click(function(){jQuery('.popup-bigic').hide();})
+        jQuery('.org_left img').click(function(event) {
+           var cycleList = jQuery(this).attr('data-cycleImageList');
+           if (cycleList) {
+               var arr = cycleList.split('|');
+               if (arr.length > 0) {
+                   jQuery('.popup-bigic').show();
+                   jQuery(".baseAddModel_body .imagesList").cycle('destroy').html("")
+                   for (var i = 0; i < arr.length; i++) {
+                       var li = '<li><img onload="picRize(this,[388,540])" src=' + arr[i] + ' /></li>';
+                       jQuery('.baseAddModel_body .imagesList').append(li)
+                   }
+                   jQuery(".baseAddModel_body .imagesList").cycle({
+                       fx: 'scrollHorz', //动画效果
+                       prev: ".leftBtn", //后退按钮
+                       next: ".rightBtn", //前进按钮
+                       timeout: 0, //间隔
+                       speed: 400, //速度
+                       requeueOnImageNotLoaded:false,
+                       slideExpr: 'li' //轮播对象 div p li 等或class
+                   });
+               }
+           }
+       });
+
+	
+	
+	// 轮播图
+	var nowing=0;
+	var imglength=jQuery('.thumbnail-w .imagesList').children().length;
+	var Lening = imglength-3;
+	if(Lening<=0){
+		jQuery('.thumbnail-btns .leftBtn').addClass('noClick');
+		jQuery('.thumbnail-btns .rightBtn').addClass('noClick');
+		jQuery(".thumbnail-btns .leftBtn").click(function(){
+			nowing=0;
+			jQuery('.thumbnail-w .imagesList').animate({"left":-74*nowing+'px'});			
+		});
+		jQuery(".thumbnail-btns .rightBtn").click(function(){
+			nowing=0;
+			jQuery('.thumbnail-w .imagesList').animate({"left":-74*nowing+'px'});
+		});			
+	}else{
+		jQuery(".thumbnail-btns .leftBtn").click(function(){
+			nowing--;
+			if(nowing<0){ 
+				nowing=0 ;
+				jQuery('.thumbnail-btns .leftBtn').addClass('noClick');
+				
+			}
+			jQuery('.thumbnail-w .imagesList').animate({"left":-74*nowing+'px'});
+			jQuery('.thumbnail-btns.rightBtn').removeClass('noClick');
+		});
+		jQuery(".thumbnail-btns .rightBtn").click(function(){
+			nowing++;
+			if(nowing>Lening){ 
+			//alert(1)
+				nowing=Lening;
+				//alert(2)
+				jQuery('.thumbnail-btns .rightBtn').addClass('noClick');
+				
+			}
+			jQuery('.thumbnail-w .imagesList').animate({"left":-74*nowing+'px'});	
+			jQuery('.thumbnail-btns .leftBtn').removeClass('noClick');
+		});		
+	}
+	jQuery(".picture>a").attr('href',jQuery(".picture img").attr('alt'))
+	jQuery('.thumbnail-w .imagesList img').click(function(){
+		jQuery(".picture img").attr('src',jQuery(this).attr('src'));
+		jQuery(".picture>a").attr('href',jQuery(this).attr('alt'))
+	});
+
+});
+
+
+function jump(index){
+  	 jQuery("#pageNum").val(index);
+  	 jQuery(".but_").trigger("click");
+}
+
+
+//]]>
+</script>
+
+
+</ui:define>
+</ui:composition>

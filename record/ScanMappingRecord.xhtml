@@ -1,0 +1,518 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_newtow_model.xhtml">
+<ui:define name="head">
+<script src="#{request.contextPath}/asset/js/easypiechart2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/app.css"/>
+<link href="#{request.contextPath}/asset/css/bootstrap3.min.css" rel="stylesheet"/>
+	  <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/style_new.css"/>
+	  <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/materielAnalysis.css"/>
+	  <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+	  <style>
+	  .warning_noData2 {
+		    background: rgba(0, 0, 0, 0) url("../asset/images/farmingIco20_1.png") no-repeat scroll center top;
+		    margin: 70px auto 220px;
+		    padding-top: 60px;
+		    text-align: center;
+		    width: 508px;
+		}
+		
+	  </style>
+	  <script type="text/javascript">
+	//<![CDATA[
+ 
+ function aa(){
+     jQuery(".pingt_rk a").attr("a","a");
+ 	jQuery(".pingt_rk a").each(function(index){
+ 		var temp = index +1;
+ 			jQuery(this).find("img").attr("src","#{request.contextPath}/asset/images/tabicon"+temp+".jpg");
+ 	});
+ }
+
+ drawImage = function (imgd,fitwidth,fitheight){  
+        var image=new Image();  
+        image.src=imgd.src;  
+        if(image.width>0 && image.height>0){  
+            if(image.width/image.height>= fitwidth/fitheight){  
+                if(image.width>fitwidth){  
+                    imgd.width=fitwidth;  
+                    imgd.height=(image.height*fitwidth)/image.width;  
+                }else{  
+                    imgd.width=image.width;   
+                   imgd.height=image.height;  
+                }  
+            } else{  
+                if(image.height>fitheight){  
+                    imgd.height=fitheight;  
+                    imgd.width=(image.width*fitheight)/image.height;  
+                }else{  
+                    imgd.width=image.width;   
+                   imgd.height=image.height;  
+                }   
+           }  
+        }  
+    }  
+ //]]>
+	  </script>
+
+</ui:define>
+<ui:define name="body">
+<style>
+       #placeholder canvas.flot-base{width:100%!important;}
+       #placeholder2 canvas.flot-base{width:100%!important;}
+       .rt_top{top:0px;}
+ </style>
+ 
+ <div class="box_back" id="login" style="display:none;z-index:1000">
+    <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" />
+  	</div>
+  	</div>
+<td valign="top" width="100%">
+                <div class="right_c">
+                	<!-- 公用头部 开始 -->
+			    	<div class="r_title clear">
+			        	<div class="r_t_l fl">
+			        		精准营销&#160;&gt;&#160;&#160;<s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="履历 "></s:link>&#160;&gt;&#160;&#160;<font size="3">履历管理</font>
+			        	</div>
+			            <div class="fr" style="margin-bottom:-1px;">
+			            	<ul class="cm_resumeList clear" style="margin-bottom:0;">
+			                    <h:panelGroup rendered="#{param.source==1}">
+				                     <li>
+	                                	<a  href="#{request.contextPath}/record/ProductBaseInfoList.seam?lvliType=1"><img src="#{request.contextPath}/asset/images/cm_lsllIco01.jpg"/><span>履历设计</span></a>
+	                                </li>
+	                                <li>
+	                                	<a  href="#{request.contextPath}/record/ProductBaseInfoList.seam?lvliType=2"  class="borderBt"><img src="#{request.contextPath}/asset/images/lvliyl-ico1.jpg"/><span>履历预览</span></a>
+	                                </li>
+                                </h:panelGroup>
+				                <h:panelGroup rendered="#{param.source==2}">
+				                    <li>
+				                    	<a  href="#{request.contextPath}/resume/NewPhoneModelInfoList.seam"><img src="../asset/images/resume/icon6.png" /><span>履历列表</span></a>
+				                    </li>
+				                </h:panelGroup>
+			                	<li>
+			                    	<a href="#{request.contextPath}/record/UsedResume.seam?source=#{param.source}"><img src="../asset/images/lsll/cm_lsllIco02.jpg" /><span style="font-size: 14px;">履历制作</span></a>
+			                    </li>
+			                    <li>
+			                    	<a href="#{request.contextPath}/record/ResumeTracing.seam?source=#{param.source}" ><img src="#{request.contextPath}/asset/images/cm_lsllIco05.png" /><span>履历追溯</span></a>
+			                    </li>
+			            	</ul>
+			            </div>
+			        </div>
+			<!-- 公用头部 结束 -->
+			
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:35px; table-layout: fixed;">
+                	<tr>
+                		<td width="392" valign="top" class="pad_td">
+                        <!--==========手机页面开始============-->
+                        <div class="phon_bg">
+                        <div class="phon_div">
+                            <!--手机里的页面开始-->
+                            <iframe name="myframe" id='aaa' src="#{request.contextPath}/record/#{newProductRecordHome.instance.phoneModelInfoId.skinInfoId.skinUrl}_show.seam?prId=#{newProductRecordHome.instance.productInfoId}" frameborder="0" scrolling="auto" width="100%" height="100%" onload="if(!jQuery.browser.msie) {document.all['myframe'].style.height=myframe.document.body.scrollHeight}" ></iframe> 
+                        </div>
+                        </div>
+                        </td>
+                        <!--右侧开始-->
+                		<td valign="top" >
+                        	<div class="pro_bg" style="margin-top:74px;">
+                            	<div class="pro_png">
+                            		<img src="#{newProductRecordHome.instance.breed.plant.plantImgSquare}" width="141" height="141"/>
+                            	</div>
+                            	<div class="pro_div3">
+                                	<a class="pro_t_e" href="#"><strong>#{newProductRecordHome.instance.productName}</strong></a>
+                                </div>
+                            </div>
+                        	<table width="95%" cellpadding="0" cellspacing="0">
+                            	<tr>
+                                	<td width="4"  class="ge_td1" valign="top"><img src="#{request.contextPath}/asset/images/bg_se_03.jpg" width="4" height="51" /></td>
+                                    <td valign="top" align="center" class="ge_td1 getddiw"><img src="#{request.contextPath}/asset/images/picc_05.jpg" width="37" height="45" /></td>
+                                    <td class="ge_td1 ge_td2" align="right" width="100">履历名称：</td>
+                                    <td class="ge_td1 ge_td3">#{newProductRecordHome.instance.plantName}</td>
+                            	</tr>
+                            	<tr>
+                                	<td width="4"  class="ge_td1" valign="top"><img src="#{request.contextPath}/asset/images/bg_se_06.jpg" width="4" height="51" /></td>
+                                    <td valign="top" align="center" class="ge_td1 getddiw"><img src="#{request.contextPath}/asset/images/picc_10.jpg" width="37" height="45" /></td>
+                                    <td class="ge_td1 ge_td2" align="right" width="100" valign="top">创&#160;&#160;建&#160;&#160;人：</td>
+                                    <td class="ge_td1 ge_td3">#{newProductRecordHome.instance.userInfoId.name}</td>
+                            	</tr>
+                            	<tr>
+                                	<td width="4"  class="ge_td1" valign="top"><img src="#{request.contextPath}/asset/images/bg_se_08.jpg" width="4" height="51" /></td>
+                                    <td valign="top" align="center" class="ge_td1 getddiw"><img src="#{request.contextPath}/asset/images/picc_15.jpg" width="37" height="45" /></td>
+                                    <td class="ge_td1 ge_td2" align="right" width="100">创建时间：</td>
+                                    <td class="ge_td1 ge_td3">
+                                    <h:outputText value="#{newProductRecordHome.instance.insertTime}">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+						    </h:outputText></td>
+                            	</tr>
+                            	<tr style="#{newProductRecordHome.instance.phoneModelInfoId.name eq ''?'':'display: none;'}">
+                                	<td width="4"  class="ge_td1" valign="top"><img src="#{request.contextPath}/asset/images/bg_se_10.jpg" width="4" height="51" /></td>
+                                    <td width="100"  valign="top" align="center" class="ge_td1"><img src="#{request.contextPath}/asset/images/picc_21.jpg" width="37" height="45" /></td>
+                                    <td class="ge_td1 ge_td2" align="right" width="100">使用模版：</td>
+                                    <td class="ge_td1 ge_td3">#{newProductRecordHome.instance.phoneModelInfoId.name}</td>
+                            	</tr>
+                        	</table>
+                        	
+                            <div class="no_nt">二维码生成数量</div>
+                            <div class="no_img_c">
+                            	<div id="content">
+                            	<s:div styleClass="demo-container"  rendered="#{newProductRecordHome.zhuzhuangs.length()==2}">
+			                         	<div class="warning_noData2">
+			                             	<em style=" color: #333;font-family: '微软雅黑';font-size: 18px;font-style: normal;">抱歉！暂无数据！</em>
+			                             </div>
+			                     </s:div>
+			                     <ui:fragment rendered="#{newProductRecordHome.zhuzhuangs.length()==2}">
+									<div class="demo-container" style="display:none;">
+										<div id="placeholder" class="demo-placeholder" ></div>
+									</div>
+								</ui:fragment>
+								<ui:fragment rendered="#{newProductRecordHome.zhuzhuangs.length()!=2}">
+									<div class="demo-container">
+										<div id="placeholder" class="demo-placeholder" ></div>
+									</div>
+								</ui:fragment>
+								</div>
+                            </div>
+                            <div class="no_nt">履历查询记录</div>
+                            <div class="no_img_c">
+                            	<div id="content">
+                            	<s:div styleClass="demo-container"  rendered="#{newProductRecordHome.zhuzhuang.length()==2}">
+			                         	<div class="warning_noData2">
+			                             	<em>抱歉！暂无查询记录！</em>
+			                             </div>
+			                     </s:div>
+			                     <ui:fragment rendered="#{newProductRecordHome.zhuzhuang.length()==2}">
+									<div class="demo-container" style="display:none;">
+										<div id="placeholder2" class="demo-placeholder" ></div>
+									</div>
+								</ui:fragment>
+								<ui:fragment rendered="#{newProductRecordHome.zhuzhuang.length()!=2}">
+									<div class="demo-container">
+										<div id="placeholder2" class="demo-placeholder" ></div>
+									</div>
+								</ui:fragment>
+   								</div>
+                            </div>
+                        </td>
+					</tr>
+                </table>
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div style="width:100%; height:32px; text-align:center; margin-top:15px;">
+                	<h:form id="save">
+                		<h:inputHidden value="#{scanMappingInfoHome.smiId}" id="smiId"/>
+	           		 	<h:inputHidden value="#{scanMappingInfoHome.prId}" id="prId"/>
+                		<h:commandButton id="persist" value="匹配" styleClass="btn btn-primary" action="#{scanMappingInfoHome.saveMate}" onclick="wait()"/>
+                		<s:button view="/record/ScanMappingMate.seam?id=#{param.id}&amp;name=#{param.name}" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" />
+                	</h:form>
+                </div>
+                <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../asset/js/excanvas.min.js"></script><![endif]-->
+	<script language="javascript" type="text/javascript" src="../asset/js/jquery.js"></script>
+	<script language="javascript" type="text/javascript" src="../asset/js/jquery.flot.js"></script>
+	<script language="javascript" type="text/javascript" src="../asset/js/jquery.flot.categories.js"></script>
+			<link href="../asset/css/examples.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript">
+	//<![CDATA[
+	
+	var a = document.getElementsByTagName("script");
+	for(var i = 0;i<a.length;i++){
+		if(a[i].getAttribute("src")!=null){
+			if(a[i].getAttribute("src").indexOf("renderkit/html/scripts/skinning.js")>-1){
+				a[i].parentNode.removeChild(a[i]);
+			}
+		}
+	}
+
+	$(function() {
+	    $("#iframepage").load(function(){
+	    	var iframeHeight = $("#iframepage").contents().find("body").height();
+			$("#iframepage").css("height",iframeHeight+"px");
+	    });
+	    
+		 $.plot("#placeholder", [{
+		        data: #{newProductRecordHome.zhuzhuangs},
+		        label: "使用量",
+		        bars: {
+		                show: true,
+		                barWidth: 0.6,
+		                align: "center"
+		            }
+		        
+		    }], {
+		        series: {
+		            bars: {
+		                show: true,
+		                barWidth: 0.6,
+		                align: "center"
+		    		},
+		    		hoverable: true
+		        },
+		        yaxis:{
+		        	min:"0",
+		        	minTickSize:"1",
+		        	tickDecimals:"null"
+				},
+		        xaxis: {
+					mode: "categories",
+                  tickLength: 0
+		        },
+		        grid: { hoverable: true, clickable: true }
+		    });
+		 	var previousPoint = null, previousLabel = null;
+			$("#placeholder").bind("plothover", function (event, pos, item) {
+				if (item) {
+					if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+						previousPoint = item.dataIndex;
+						previousLabel = item.series.label;
+						$("#tooltip").remove();
+						//console.log(item.datapoint);
+						var x = item.datapoint[0];
+						var y = item.datapoint[1];
+		
+						var date =  #{newProductRecordHome.zhuzhuangs}[item.dataIndex][0] ;
+						//console.log(item);
+						showTooltip(item.pageX, item.pageY, date +" 使用量 : <strong>" + y + "</strong> 张");
+					}
+				} else {
+					$("#tooltip").remove();
+					previousPoint = null;
+				}
+			});
+			function showTooltip(x, y, contents) {
+				$("<div id='tooltip'>" + contents + "</div>").css({
+					position: "absolute",
+					display: "none",
+					top: y + 5,
+					left: x + 5,
+					border: "1px solid #fdd",
+					padding: "2px",
+					"background-color": "#fee",
+					opacity: 0.80
+				}).appendTo("body").fadeIn(200);
+			}
+	});
+//]]>
+</script>
+	<script language="javascript" type="text/javascript" src="../asset/js/jquery.flot.time.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	$ = jQuery.noConflict();
+	
+	$(function() {
+
+		$.plot("#placeholder2", [
+			{ data: #{newProductRecordHome.zhuzhuang}, label: "点击量"},
+		], {
+			xaxis: {mode: "time",timeformat: "%y-%m-%d"},
+			yaxis:{min:"0",minTickSize:"1",tickDecimals:"null"},
+			series: {
+				lines: {
+					show: true
+				},
+				points: {
+					show: true
+				}
+			},
+			grid: {
+				hoverable: true,
+				clickable: true
+			},
+		});
+
+		function showTooltip(x, y, contents) {
+			$("<div id='tooltip'>" + contents + "</div>").css({
+				position: "absolute",
+				display: "none",
+				top: y + 5,
+				left: x + 5,
+				border: "1px solid #fdd",
+				padding: "2px",
+				"background-color": "#fee",
+				opacity: 0.80
+			}).appendTo("body").fadeIn(200);
+		}
+
+		var previousPoint = null;
+		$("#placeholder2").bind("plothover", function (event, pos, item) {
+
+			if (true) {
+				var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+				$("#hoverdata").text(str);
+			}
+			if (true) {
+				if (item) {
+					if (previousPoint != item.dataIndex) {
+						previousPoint = item.dataIndex;
+						$("#tooltip").remove();
+						var x = item.datapoint[0].toFixed(2),
+						y = item.datapoint[1].toFixed(2);
+						var str1 = (x+"").split(".")[0];
+						var dat = new Date(parseInt(str1));
+						var str = dat.getFullYear()+"年"+(dat.getMonth()+1)+"月"+dat.getDate()+"日";
+						y = (y+"").split(".")[0];
+						showTooltip(item.pageX, item.pageY,str + " 点击量： " + y +"次");
+					}
+				} else {
+					$("#tooltip").remove();
+					previousPoint = null;            
+				}
+			}
+		});
+	});
+	//]]>
+	</script>
+	<script src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script>
+<script type="text/javascript">
+//<![CDATA[
+function aa(){
+	$(".pingt_rk span").attr("a","a");
+	$(".pingt_rk span").each(function(index){
+		var temp = index +1;
+		$(this).find("img").attr("src","#{request.contextPath}/asset/images/tabicon"+temp+".png");
+	});
+}
+window.onload = function(){
+	if(jQuery("#aaa").contents().find("#divid").outerHeight()<20){
+		jQuery("#aaa").contents().find(".zhiwen").attr('style','display: none;');
+	}
+}
+
+$(document).ready(function(){
+	jQuery(".pingt_rk a").each(function(index){
+ 		jQuery(this).click(function(){
+ 			var temp = index + 1;
+ 			if(jQuery(this).attr("a")=="a"){
+ 				aa();
+ 				jQuery(this).attr("a","b");
+ 				jQuery(this).find("img").attr("src","#{request.contextPath}/asset/images/tabicon"+temp+""+temp+".jpg");
+ 				jQuery(".four_table").hide();
+ 				jQuery("#table"+temp).show();
+ 			}
+ 		})
+ 	})
+ 	//jQuery(".pingt_rk ").pin({containerSelector: ".yyyy", minWidth: 940});
+ 	//var chart = window.chart = new EasyPieChart(document.getElementById("chart"), {
+	//	easing: 'easeOutElastic',
+	//	delay: 3000,
+	//	onStep: function(from, to, percent) {
+//			this.el.children[0].innerHTML = Math.round(percent);
+//		}
+//	});
+	$(".width").each(function(index){
+		if(index % 2 == 0){
+			$(this).addClass("width50");
+		}else{
+			$(this).addClass("width51");
+		}
+	});
+	$(".pingt_rk span").each(function(index){
+		$(this).click(function(){
+			var temp = index + 1;
+			if($(this).attr("a")=="a"){
+				aa();
+				$(this).attr("a","b");
+				$(this).find("img").attr("src","#{request.contextPath}/asset/images/tabicon"+temp+""+temp+".png");
+				$(".four_table").hide();
+				$("#table"+temp).show();
+			}
+			if(temp==2){
+				google.maps.event.trigger(map, 'resize');
+				map.setCenter(new google.maps.LatLng(x, y));
+			}
+		})
+	})
+	//$(".pingt_rk ").pin({containerSelector: ".yyyy", minWidth: 940});
+})
+  var map;
+var x ;
+var y ;
+function initialize() {
+	x = $("input[name='coordinateX']").val();
+	y = $("input[name='coordinateY']").val();
+	jQuery("#map-canvas").css("width",jQuery("#map-canvas-parent").width());
+  var mapOptions = {
+    zoom: 12,
+    center: new google.maps.LatLng(x, y),
+	mapTypeId: google.maps.MapTypeId.ROADMAP,
+	streetViewControl: false,// 取消街景
+	   //disableDoubleClickZoom:true,
+	   mapTypeControl:false,
+		panControl:false,
+		zoomControl:false,
+		panControlOptions:{position:google.maps.ControlPosition.LEFT_CENTER},
+		zoomControlOptions:{position:google.maps.ControlPosition.LEFT_CENTER}
+  }
+ map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  var myLatLng = new google.maps.LatLng(x, y);
+  var beachMarker = new google.maps.Marker({
+      position: myLatLng,
+      map: map
+  });
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+function changeImg(indexParam){
+	 $("#scoreId").val(indexParam);
+	 for ( var i = 1; i < 6; i++) {
+		if(parseInt(i)<=parseInt(indexParam)){
+			$("#imgId" + i).attr("src","#{request.contextPath}/asset/images/star_01.jpg");
+		}else{
+			$("#imgId" + i).attr("src","#{request.contextPath}/asset/images/star_03.jpg");
+		}
+	}
+}
+function insertc(){
+	var score = $("#scoreId").val();
+	var experience = $("#experience").val();
+	insertComent(score,experience);
+}
+
+
+$(function() {
+	$('#save\\:smiId').val('#{param.id}');
+	$('#save\\:prId').val('#{newProductRecordHome.instance.productInfoId}');
+  	 if(document.body.clientWidth<=1017){
+  		   jquery(".top").css("min-width","1003px");
+             jquery(".content").css("min-width","1003px");
+             jquery(".getddiw").attr("style","width:40px");
+			   document.getElementById("sc").setAttribute("href","#{request.contextPath}/asset/css/1024.css");
+			   //document.getElementById("liuc").style.display="none";
+     	 }else{
+     	//jquery(".top").css("min-width","1334px");
+       //jquery(".content").css("min-width","1334px");
+          document.getElementById("sc").setAttribute("href","#{request.contextPath}/asset/css/1028.css");
+          //document.getElementById("liuc").style.display="block";
+     	 }
+			
+     });
+       window.onresize = function(){
+      	 if(document.body.clientWidth<=1010){
+      		 //jquery(".top").css("min-width","1010px");
+               //jquery(".content").css("min-width","1010px");
+               //document.getElementById("liuc").style.display="none";
+				 document.getElementById("sc").setAttribute("href","#{request.contextPath}/asset/css/1024.css");
+      	 }else{
+      		//jquery(".top").css("min-width","1334px");
+            // jquery(".content").css("min-width","1334px");
+               //document.getElementById("liuc").style.display="block";
+      		 document.getElementById("sc").setAttribute("href","#{request.contextPath}/asset/css/1028.css");
+      	 }
+       }
+
+	function wait(){
+		jQuery('#login').attr('style',"background:url(../asset/images/bg_png.png) repeat; width:100%; height:100%; position:fixed; z-index:1684; display:none;");
+		jQuery("#login").show();
+	}
+//]]>
+</script>
+            </td>    
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,791 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_left.xhtml">
+
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>	
+	<!-- #{orderInfoAnalysisHome.work()} -->
+	<style>
+	.rich-calendar-exterior{line-height: 20px;}
+	.ui-selectmenu{*display:inline-block;}
+	.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width: 84px;}
+	.fxy_lidate02 {
+    margin-right: 15px;
+	}
+	.fxy_lidate{margin:5px 5px 5px 0;}
+	.lookAll .icheckbox_minimal-blue{ float:right; margin-top:12px;}
+	.fx_tckli .icheckbox_minimal-blue{ margin:5px 5px 0 0;} 
+	</style>
+	<td valign="top">
+                 <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">商品销售统计</font></div>
+                    	
+                    </div>
+                    <div class="clear"></div>
+                 </div>   
+				<!--分析页开始-->
+				<ui:fragment rendered="#{s:hasRole('goods_sale_analyse_search')}">
+				
+				<h:form id="search">
+					<div class="fxy_title">
+                    	<ul class="fxy_ul">
+                        	<li class="fxy_li01 #{orderInfoAnalysisHome.btype==1?'fxyon':''}" style="padding-left:0; cursor:pointer" onclick="linksub(1)">
+                        	<a><b>最近7天</b></a>
+                        	</li>
+                            <li class="fxy_li01 #{orderInfoAnalysisHome.btype==2?'fxyon':''}" onclick="linksub(2)" style=" cursor:pointer"><a><b>最近30天</b></a></li>
+                            <li class="fxy_li01 #{orderInfoAnalysisHome.btype==3?'fxyon':''}" style="background:none; cursor:pointer" onclick="linksub(3)" ><a><b>当年年份</b></a></li>
+							<ui:fragment rendered="#{s:hasRole('goods_sale_analyse_exp')}">
+                            <li class="fxy_li02" ><s:link   view="/analysis/OrderInfoStatistics.xhtml" action="#{orderInfoAnalysisHome.exportExcelMain}" >
+                            		<img src="#{request.contextPath}/asset/images/fxdc.jpg" width="82" height="16" /> 
+								</s:link></li>
+							</ui:fragment>
+                            <li class="ie7clear"></li>
+                        </ul>
+                    	<ul class="fxy_ul" id="male">
+                        	<li class="fxy_li">日期选择：</li>
+                            <li class="fxy_lidate">
+                            <input type="radio" value="6" name="sex" id="sex6" style="display: none;" /><label style="font-weight: 100; margin-left: 5px;">按日</label></li>
+                            <li class="fxy_lidate">
+                            <input type="radio" value="5" name="sex" id="sex5" style="display: none;" /><label style="font-weight: 100; margin-left: 5px;">按月</label></li>
+                            <li class="fxy_lidate">
+							<h:inputHidden value="#{orderInfoAnalysisHome.btype}" id="btype"/>
+                            <input type="radio" value="4" name="sex" id="sex4" style="display: none;" /><label style="font-weight: 100; margin-left: 5px;">按年</label></li>
+                           <li class="fxy_lidate02 sex_male1" style="#{orderInfoAnalysisHome.btype==4||orderInfoAnalysisHome.btype==5?'':'display:none'}"><font style="position:relative;[;top:0;]">日期：</font>
+                           <h:selectOneMenu value="#{orderInfoAnalysisHome.year}" styleClass="selectpicker">
+                           <f:selectItems value="#{orderInfoAnalysisHome.years}"></f:selectItems>
+                           </h:selectOneMenu>
+                           <font style="position:relative;[;top:0;]"> &#160;年&#160;</font>
+                           </li>
+                           <li class="fxy_lidate02 sex_female1" style="#{orderInfoAnalysisHome.btype==5?'':'display:none'}">
+                           <h:selectOneMenu value="#{orderInfoAnalysisHome.month}" styleClass="selectpicker">
+                           <f:selectItems value="#{orderInfoAnalysisHome.months}"></f:selectItems>
+                           </h:selectOneMenu>
+							<font style="position:relative;[;top:0;]">&#160;月</font>
+                           </li>
+                            <li class="fxy_lidate02 sex_nomale1" style="#{orderInfoAnalysisHome.btype==6?'':'display:none'}"><span style="float: left;">开始时间：</span>
+                             <div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="startTime"  styleClass="new_time nw100" value="#{orderInfoAnalysisHome.startTime}" readonly="#{facesContext.renderResponse}"/>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    </div>
+                            </li>
+                            <li class="fxy_lidate02 sex_nomale1" style="#{orderInfoAnalysisHome.btype==6?'':'display:none'}"><span style="float: left;">结束时间：</span>
+                           <div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="endTime"  styleClass="new_time nw100" value="#{orderInfoAnalysisHome.endTime}" readonly="#{facesContext.renderResponse}"/>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    </div>
+                            </li>
+                            <li class="fxy_lidate03 " style="width:165px;">
+                            
+                            
+                            </li>
+                            <li class="ie7clear"></li>
+                        </ul>
+                         <div class="fxy_div">
+                            <table cellpadding="0" cellspacing="0" style="float:left;">
+						<tr>
+							<td align="right" class="tpcc_font">选择作物：</td>
+							<td align="left" style="padding-left:4px;" id="male" class="six3" >
+								<div class="div200">
+								<input type="hidden" value="" id="bIdString" name="bIdString"/>
+									<select  id="plantCheck" name="plantCheck" style="display:none;" data-live-search="true">
+										<a:repeat value="#{orderInfoAnalysisHome.bList}" var="var">
+											<option value="#{var.productInfoId}">#{var.name}</option>
+										</a:repeat>
+									</select>
+							</div>
+							</td>
+							<td align="right" class="tpcc_font"><span style="margin-left:15px">客户类型：</span></td>
+							<td align="left" style="padding-left:4px;" id="male" class="six3" >
+								<div class="div200 newelement" >
+								<input type="hidden" value="" id="membertype" name="membertype"/>
+									<select  id="membertype_" name="membertype_" style="display:none;"  multiple="multiple">
+										<a:repeat value="#{orderInfoAnalysisHome.membertypeList}" var="var">
+											<option value="#{var.value}">#{var.label}</option>
+										</a:repeat>
+									</select>
+							</div>
+							</td>
+							<td>
+							<span style="margin-left:15px;float:left;">
+							<input  type="submit" onclick="return checksub()" class="btn btn-primary searchCla" value="搜索" style="float:left;margin-right:10px"/>
+                            <h:commandButton id="reset" action="#{orderInfoAnalysisHome.reset}"  includePageParams="false" styleClass="btn btn-default" value="重置" style="float:left;"/>
+							</span>
+							</td>
+						</tr>
+					</table>
+                        </div>
+                    	<div class="clear"></div>
+                    </div>
+                </h:form>
+				
+				</ui:fragment>
+				<ui:fragment rendered="#{!s:hasRole('goods_sale_analyse_search') and s:hasRole('goods_sale_analyse_exp')}">
+					<div style="float:right;padding-top: 10px;margin-right:20px;">
+						<s:link   view="/analysis/OrderInfoStatistics.xhtml" action="#{orderInfoAnalysisHome.exportExcelMain}" >
+                        <img src="#{request.contextPath}/asset/images/fxdc.jpg" width="82" height="16" /> 
+						</s:link>
+					</div>
+				</ui:fragment>
+				<!--分析页结束-->
+                <div class="right_c">
+                    <div class="fxy_print5">
+                    	<ul>
+                        	<li style="width:20%;" class="fxy_pli05">
+                            	<table class="pli_table">
+                                	<tbody><tr>
+                                    	<td rowspan="2"><img width="46" height="46" src="#{request.contextPath}/asset/images/fxydsp_03.jpg" class="pli_img"/></td>
+                                        <td height="23" class="pli_font01">商品销售总额</td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="16" class="pli_font02"><h:outputText value="#{orderInfoAnalysisHome.totalPrint}"><f:convertNumber pattern="##.##"/></h:outputText>&#160;<font style="font-size:12px; font-family:'微软雅黑';">元</font></td>
+                                    </tr>
+                                </tbody></table>
+                            </li>
+                            <li style="width:20%;" class="fxy_pli05">
+                            	<table class="pli_table">
+                                	<tbody><tr>
+                                    	<td rowspan="2"><img width="46" height="46" src="#{request.contextPath}/asset/images/fxyxs_05.jpg" class="pli_img"/></td>
+                                        <td height="23" class="pli_font01">商品销售数量</td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="16" class="pli_font02"><h:outputText value="#{orderInfoAnalysisHome.totalTimes}"><f:convertNumber pattern="##.##"/></h:outputText>&#160;<font style="font-size:12px; font-family:'微软雅黑';">份</font></td>
+                                    </tr>
+                                </tbody></table>
+                            </li>
+                            <li style="width:20%;" class="fxy_pli05">
+                            	<table class="pli_table">
+                                	<tbody><tr>
+                                    	<td rowspan="2"><img width="46" height="46" src="#{request.contextPath}/asset/images/fxypj_07.jpg" class="pli_img"/></td>
+                                        <td height="23" class="pli_font01">商品平均价格</td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="16" class="pli_font02"><h:outputText value="#{orderInfoAnalysisHome.average}"><f:convertNumber pattern="##.##"/></h:outputText>&#160;<font style="font-size:12px; font-family:'微软雅黑';">元</font></td>
+                                    </tr>
+                                </tbody></table>
+                            </li>
+                            <li style="width:20%;" class="fxy_pli05">
+                            	<table class="pli_table">
+                                	<tbody><tr>
+                                    	<td rowspan="2"><img width="46" height="46" src="#{request.contextPath}/asset/images/fxysp_09.jpg" class="pli_img"/></td>
+                                        <td height="23" class="pli_font01">商品种类</td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="16" class="pli_font02">#{empty orderInfoAnalysisHome.checkBList?"0":orderInfoAnalysisHome.checkBList.size}&#160;<font style="font-size:12px; font-family:'微软雅黑';">种</font></td>
+                                    </tr>
+                                </tbody></table>
+                            </li>
+                            <li style="width:19%;" class="fxy_pli05">
+                            	<table class="pli_table">
+                                	<tbody><tr>
+                                    	<td rowspan="2"><img width="46" height="46" src="#{request.contextPath}/asset/images/fxyspxs0.jpg" class="pli_img"/></td>
+                                        <td height="23" class="pli_font01">商品销售种类</td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="16" class="pli_font02">#{orderInfoAnalysisHome.count}&#160;<font style="font-size:12px; font-family:'微软雅黑';">种</font></td>
+                                    </tr>
+                                </tbody></table>
+                            </li>
+                    	</ul>
+                    </div>
+                    <!--折线图开始-->
+                    <div class="ybp_02">
+                        <div class="fxy_xse">品种销售额统计趋势</div>
+                        <div class="fxy_zxt">
+                        	<div id="placeholder2" class="chart22"  style="height:300px"></div>
+                        	<div id="xxx" style="text-align: center;"></div>
+                        	
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <!--折线图结束-->
+                    
+                    <!--饼形图开始-->
+                    <div class="ybp_02" style="#{orderInfoAnalysisHome.pieBoolean?'':'display:none'};">
+                        <div class="fxy_bxt">品种销售额占比</div>
+                        <div class="fxy_zxt"  style="height:400px">
+                        	<div id="placeholder" class="demo-placeholder" style="height:400px"></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <!--饼形图结束-->
+                    
+                    <!--表格开始-->
+                    <div class="ybp_02"  style="#{not empty orderInfoAnalysisHome.downList ?'':'display:none;'}">
+                         <div class="fxy_pzxs">
+                        	<ul>
+                            	<li style="float:left;"><b>商品销售详情</b><font style="font-size:12px;"></font></li>
+                                <li style="float:right;" class="lookAll"><span style="float:right; text-indent:10px;">查看全部数据</span><input type="checkbox" checked="checked" name="lookAll" id="lookAll"></input></li>
+                            </ul>    
+                        </div>
+                        <div id="shopping">
+                        	<table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                                    <tr>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                                        <td colspan="6" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                                        <th class="fxze_bg3">序号</th>
+                                        <th class="fxze_bg3">商品</th>
+                                        <th class="fxze_bg3">规格</th>
+                                        <th class="fxze_bg3">商品销售数量</th>
+                                        <th class="fxze_bg3">总金额</th>
+                                        <th class="fxze_bg3">操作</th>
+                                        <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                                    </tr>
+                                    <a:repeat value="#{orderInfoAnalysisHome.showList}" var="_obj" rowKeyVar="_index">
+                                    <tr>
+                                        <td class="ze_bg2 ze_bt_le" width="5" height="4" ></td>
+                                        <td class="ze_bg2">#{_index+1}</td>
+                                        <td class="ze_bg2">#{_obj[0]}</td>
+                                        <td class="ze_bg2">#{_obj[1]}</td>
+                                        <td class="ze_bg2"><h:outputText value="#{_obj[2]}"><f:convertNumber pattern="##.##"/></h:outputText></td>
+                                        <td class="ze_bg2">¥<h:outputText value="#{_obj[3]}"><f:convertNumber pattern="##.##"/></h:outputText></td>
+                                        <td class="ze_bg2"><a href="javascript:void(0);" onclick="plantMess('#{_obj[4]}','#{_obj[0]}')">查看详情</a></td>
+                                        <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                    </tr>
+                                    </a:repeat>
+                                </table> 
+                           </div>
+                           <h:panelGroup id="view" >
+                           	<div id="orders" style="display: none;">
+                           	<div >
+								<ul style="float: right;margin-right: 21px;"><a href="javascript:;" class="btn btn-default" type="button" data-dismiss="modal" onclick="toBack()">返回</a></ul>
+								<ul style="text-align: left;">
+									<li style="display: inline-block;margin-right: 15px;"><span style="color:#65666a; font-size:14px;">商品名称：#{orderInfoAnalysisHome.plantName}</span></li>
+								</ul>
+							</div>
+                        	<table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                                    <tr>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                                        <td colspan="5" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                                        <th class="fxze_bg3">序号</th>
+                                        <th class="fxze_bg3">销售日期</th>
+                                        <th class="fxze_bg3">订单编号</th>
+                                        <th class="fxze_bg3">商品数量</th>
+                                        <th class="fxze_bg3">客户姓名</th>
+                                        <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                                    </tr>
+                                    <a:repeat value="#{orderInfoAnalysisHome.orderPlantList}" var="_obj" rowKeyVar="_index">
+                                    <tr>
+                                        <td class="ze_bg2 ze_bt_le" width="5" height="4" ></td>
+                                        <td class="ze_bg2">#{_index+1}</td>
+                                        <td class="ze_bg2">#{_obj[0]}</td>
+                                        <td class="ze_bg2">#{_obj[1]}</td>
+                                        <td class="ze_bg2">#{_obj[2]}</td>
+                                        <td class="ze_bg2">#{_obj[3]}</td>
+                                        <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                    </tr>
+                                    </a:repeat>
+                                </table> 
+                                </div>
+                           </h:panelGroup>
+                           
+                           
+                           
+                           
+                        <a:repeat value="#{orderInfoAnalysisHome.showDataList}" var="obj" rowKeyVar="index" rendered="#{not empty orderInfoAnalysisHome.showDataList}">
+                                <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                                    <tr>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                                        <td colspan="4" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                        <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                                        
+                                        <th class="fxze_bg3" align="left"  colspan="4">#{orderInfoAnalysisHome.customMap[obj]}</th>
+                                        
+                                        <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                                    </tr>
+            
+                                    <tr>
+                                        <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                                        <td class="ze_bg2">时间</td>
+                                        <td class="ze_bg2">订单数量</td>
+                                        <td class="ze_bg2">总金额</td>
+                                        <td class="ze_bg2">平均价格</td>
+                                        <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                    </tr>
+                                     <a:repeat value="#{orderInfoAnalysisHome.showDataMap.get(obj)}" var="_obj" rowKeyVar="_index">
+                                    <tr class="#{_obj[1]==0?'takeaway':''}">
+                                        <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                                        <td class="ze_bg2">#{_obj[0]}</td>
+                                        <!-- <h:outputText value="#{_obj[0]}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText> -->
+                                        <td class="ze_bg2">#{_obj[1]}</td>
+                                        <td class="ze_bg2">¥<h:outputText value="#{_obj[2]}"><f:convertNumber pattern="##.##"/></h:outputText></td>
+                                        <td class="ze_bg2">¥#{stringUtil.floatFormat2(_obj[1]==0?0:_obj[2]/_obj[1])}</td>
+                                        <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                    </tr>
+                                    </a:repeat>
+                                </table> 
+                                </a:repeat>
+                       <div class="clear"></div>
+                    </div>
+                    <!--表格结束-->
+                    <div style="height:30px; width:100%;"></div>
+
+
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div class="clear"></div>
+           	<a:form>
+               <a:jsFunction name="getEnIdMethod"  action="#{orderInfoAnalysisHome.getEnIdMethod()}" eventsQueue="default" data="#{orderInfoAnalysisHome.returnStr}" oncomplete="refreshSelect(data)">
+               <a:actionparam name="enId" assignTo="#{orderInfoAnalysisHome.enId}"/>
+  			   </a:jsFunction>
+  			</a:form>
+  		    <a:form>
+               <a:jsFunction name="bIdStringMethod" reRender="breedDiv2" action="#{orderInfoAnalysisHome.bIdStringMethod()}" evesntsQueue="default">
+               <a:actionparam name="bIdString" assignTo="#{orderInfoAnalysisHome.bIdString}"/>
+  			   </a:jsFunction>
+  			   
+  			   
+  			   
+	  			<a:jsFunction name="plantOrderMess" action="#{orderInfoAnalysisHome.plantOrdersMess()}" reRender="view" oncomplete="huidiao()">
+			   		<a:actionparam name="shopId" value="#{orderInfoAnalysisHome.shopId}" />
+			   		<a:actionparam name="plantName" value="#{orderInfoAnalysisHome.plantName}" />
+		   		</a:jsFunction>
+  			</a:form>
+  		<script type="text/javascript">
+	jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd",
+			    autoclose: true,
+				 weekStart: 1,
+				  //startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+				 minView:2,
+			    pickerPosition: "bottom-left"
+			    });
+	</script>
+	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="#{request.contextPath}/asset/js/excanvas.min.js"></script><![endif]-->
+                <script src="#{request.contextPath}/asset/js/jquery.js"></script>
+		 <script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highcharts.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+jquery(".ui-selectmenu").remove();
+jquery(".rich-calendar-input").addClass("gjss1");
+jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+jquery(".ui-selectmenu").addClass("small2");
+jquery(".ui-selectmenu-menu").css("width","98px");
+
+che = function(obj,o){
+	if(o.getAttribute("aaa")=="false"){
+		o.setAttribute("aaa","true");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("b");
+		jquery("#"+o.id).addClass("a");
+	}else{
+		o.setAttribute("aaa","false");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("a");
+		jquery("#"+o.id).addClass("b");
+	}
+	checkChecked();
+}
+
+checksub = function(){
+	if(document.getElementById("checkone")){
+		var str = "";
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="true"){
+				str+=check[i].value+"_";
+			}
+		}
+		if(str.length>1){
+			str = str.substring(0,str.length-1);
+		}
+		document.getElementById("search:check").value=str;
+	}
+	var pids = "";
+	if(jquery("#plantCheck").val()!=null){
+		pids = jquery("#plantCheck").val().toString();
+	}
+	jquery("#bIdString").val(pids);
+	var t2 = jquery("#membertype_").val();
+	 if(t2!=null){
+		 jquery("#membertype").val(t2.toString());
+	 }else{
+		 jquery("#membertype").val();
+	 }
+	return true;
+}
+
+checkAll = function(obj){
+	if(obj.getAttribute("aaa")=="true"){
+		jquery(".chccc").each(function(){
+			jquery(this).attr("aaa","false");
+			jquery("#"+jquery(this).attr("xx")).attr("aaa","false");
+			jquery(this).removeClass("a");
+			jquery(this).addClass("b");	   
+		});
+		document.getElementById("search:allC").value="false";
+		obj.setAttribute("aaa","false");
+		jquery(obj).removeClass("a");
+		jquery(obj).addClass("b");
+	}else{
+		jquery(".chccc").each(function(){
+			jquery(this).attr("aaa","true");
+			jquery("#"+jquery(this).attr("xx")).attr("aaa","true");
+			jquery(this).removeClass("b");
+			jquery(this).addClass("a");	  
+				
+		});
+		obj.setAttribute("aaa","true");
+		document.getElementById("search:allC").value="true";
+		jquery(obj).removeClass("b");
+		jquery(obj).addClass("a");
+	}
+}
+
+checkChecked =function(){
+	var obj = document.getElementById("search:allC")
+	if(obj.value=="false"){
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+				break;
+			}else if(i==check.length-1){
+				jquery("#b").attr("aaa","true");
+				document.getElementById("search:allC").value="true";
+				jquery("#b").removeClass("b");
+				jquery("#b").addClass("a");
+			}
+		}
+	}else{
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+			//}else if(i==check.length-1){
+				document.getElementById("search:allC").value="false";
+				jquery("#b").attr("aaa","false");
+				jquery("#b").removeClass("a");
+				jquery("#b").addClass("b");
+				break;
+			}
+		}
+	}
+	
+}
+
+function choseClass(){
+	this.className="city_nav city_hover";
+	document.getElementById('city_link').className="fxy_tck city_hovers";
+	return false;
+}
+
+function enClass(obj,objTwo){
+	jquery(".fxy_lina").each(function(){
+		var a = this.className;
+		if(a == "fxy_lina fxyon"){
+			document.getElementById(this.id).className="fxy_lina";
+		}
+	});
+	var obj2 = "classId_"+obj;
+	document.getElementById(obj2).className="fxy_lina fxyon";
+	getEnIdMethod(objTwo);
+	return true;
+}
+
+function checkBreed(){
+	var s = "";
+	jquery("input[name='checkBName']:checked").each(function(){
+		s+=this.id+"_";		
+	});
+	bIdStringMethod(s);
+	document.getElementById('city_link').className='fxy_tck';
+	document.getElementById("fxy_ul02").style.display = "block";
+}
+
+jquery(document).ready(function(){ 
+	var membertype = "#{orderInfoAnalysisHome.membertype}";
+	  var s1 = [];
+	  if(membertype.length>0){
+		  membertype = membertype.split(",");
+		  for(var i = 0;i<membertype.length;i++){
+			  var temp = membertype[i];
+			  s1.push(parseInt(temp,10));
+		  }
+	  }
+	  jquery('#membertype_').val(s1);
+	jquery('#plantCheck').attr("multiple","multiple");
+	jquery('select:not(#plantCheck,#membertype_)').selectpicker();
+    jquery('#plantCheck,#membertype_').selectpicker({noneSelectedText:"全部"});
+	jquery('#plantCheck').selectpicker('deselectAll');
+	var str = "#{orderInfoAnalysisHome.bIdString}";
+	var checkStr = str.split(",");
+	if(jquery("#plantCheck option").length!=checkStr.length){
+		jquery("#plantCheck").selectpicker("val",checkStr);
+	}
+	if(str!=""){
+		var strs = str.split("_");
+		jquery("input[name='checkBName']").each(function(){
+			for(var i = 0;i<strs.length;i++){
+				if(jquery(this).attr("id")==strs[i]){
+					jquery(this).attr("checked", true);
+				}
+			}	
+		});
+	}
+	
+});
+
+
+linksub = function(val){
+	document.getElementById("search:btype").value=val;
+	jquery(".searchCla").trigger("click");
+}
+
+
+jquery(document).ready(function(){
+var data = #{orderInfoAnalysisHome.array1String}
+Highcharts.setOptions({ global: { useUTC: false } });
+jQuery("#placeholder2").highcharts({
+	title :{
+	    text:null
+	},
+	xAxis: {  
+		#{orderInfoAnalysisHome.tick}
+	        type: 'datetime', //定义x轴上日期的显示格式  
+	        labels: {  
+	        formatter: function() {  
+	            var vDate=new Date(this.value);  
+	            return Highcharts.dateFormat('#{orderInfoAnalysisHome.tickformat}', this.value);  
+	        },  
+	        align: 'center' ,
+	        style:{
+	        	color:"black"
+	        }
+	    }  
+    }, 
+	tooltip: {
+    	formatter: function() {
+            return '<b>'+ this.series.name +'</b><br/>'+
+            Highcharts.dateFormat('#{orderInfoAnalysisHome.tickformat}',this.x) +'：'+ Highcharts.numberFormat(this.y,2)+"元" ;
+    	}
+    },
+	yAxis:{
+		min:0,
+		title:{
+			text:null
+		}
+	},
+	series :data
+});
+#{orderInfoAnalysisHome.pieString}
+$('#placeholder').highcharts({
+    
+    title: {
+        text: null
+    },
+    tooltip: {
+	    pointFormat: ''
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                color: '#000000',
+                connectorColor: '#000000',
+                format: '<b>{point.name}</b>'
+            }
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: "",
+        data: pie
+    }]
+});
+});
+/* jquery(function() {   
+#{orderInfoAnalysisHome.pie}
+jq.plot('#placeholder', pie, {
+  series: {
+      pie: {
+          show: true
+      }
+  }
+});   
+});  */ 
+
+
+
+
+cheAll = function(obj){
+	if(obj.checked){
+		jquery("input[name='checkBName']").each(function(){
+			jquery(this).attr("checked",true);
+		});
+	}else{
+		jquery("input[name='checkBName']").each(function(){
+			jquery(this).attr("checked",false);
+		});
+	}
+}
+
+recheck = function(){
+	if(jquery("#search\\:checkAll").attr("checked")){
+		jquery("input[name='checkBName']").each(function(){
+			if(!jquery(this).attr("checked")){
+				jquery("#search\\:checkAll").attr("checked",false);
+			}
+		});
+	}else{
+		var a = jquery("input[name='checkBName']");
+		a.each(function(i){
+			if(!jquery(this).attr("checked")){
+				return false;
+			}else if(a.length-1==i){
+				jquery("#search\\:checkAll").attr("checked",true);
+			}
+		});
+	}
+}
+
+takea = function(){
+	if(jquery(".takeaway").css("display")=='none'){
+		jquery(".takeaway").show();
+		reido1.style.backgroundImage='url(../asset/images/radio1.gif)';
+	}else{
+		jquery(".takeaway").hide();
+		reido1.style.backgroundImage='url(../asset/images/radio2.gif)';
+ 	}
+}
+
+
+
+jquery(document).ready(function(){
+	jquery('input').iCheck({
+	    checkboxClass: 'icheckbox_minimal-blue',
+	    radioClass: 'iradio_minimal-blue',
+	    increaseArea: '20%' // optional
+	  });
+
+	jquery("input[name='sex']:radio").on("ifChecked", function(event){
+		var type = this.value;
+		document.getElementById("search:btype").value=type;
+		jquery(".fxyon").removeClass("fxyon");
+		jquery("input[name='sex']").removeAttr("checked");
+		jquery("#sex" + type).attr("checked", true);
+		if(type=="4"){
+			jquery(".sex_male1").show();
+			jquery(".sex_female1").hide();
+			jquery(".sex_nomale1").hide();
+		}else if(type=="5"){
+			jquery(".sex_male1").show();
+			jquery(".sex_female1").show();
+			jquery(".sex_nomale1").hide();
+		}else if(type=="6"){
+			jquery(".sex_male1").hide();
+			jquery(".sex_female1").hide();
+			jquery(".sex_nomale1").show();
+		}
+	});	
+
+	jquery("input[name='lookAll']").on("ifClicked", function(event){
+		
+		if(jquery(".takeaway").css("display")=='none'){
+			
+			jquery("#lookAll").iCheck("check"); 
+			jquery(".takeaway").show();
+		}else{
+			jquery(".takeaway").hide();
+	 	}
+	});	
+	jquery("#search\\:checkAll").on("ifClicked", function(event){
+		if (this.checked) {
+			jquery("input[name='checkBName']").iCheck("uncheck"); 
+		} else {
+			jquery("input[name='checkBName']").iCheck("check"); 
+		}
+	});
+	});
+	
+window.onload = function() 
+{
+	var btype = document.getElementById("search:btype").value;
+	
+	if(btype != null){
+		jquery('input').iCheck({
+		    checkboxClass: 'icheckbox_minimal-blue',
+		    radioClass: 'iradio_minimal-blue',
+		    increaseArea: '20%' // optional
+		  });
+		jquery("#sex" + btype).iCheck("check");
+		jquery("input[name='sex']:radio").on("ifChecked", function(event){
+			var type = this.value;
+			document.getElementById("search:btype").value=type;
+			jquery(".fxyon").removeClass("fxyon");
+			jquery("input[name='sex']").removeAttr("checked");
+			jquery("#sex" + type).attr("checked", true);
+			if(type=="4"){
+				jquery(".sex_male1").show();
+				jquery(".sex_female1").hide();
+				jquery(".sex_nomale1").hide();
+			}else if(type=="5"){
+				jquery(".sex_male1").show();
+				jquery(".sex_female1").show();
+				jquery(".sex_nomale1").hide();
+			}else if(type=="6"){
+				jquery(".sex_male1").hide();
+				jquery(".sex_female1").hide();
+				jquery(".sex_nomale1").show();
+			}
+		});	
+	}
+}
+
+function refreshSelect(data){
+	jquery("#plantCheck").empty().append(data);
+	jquery("#plantCheck").selectpicker("refresh");
+}
+
+function plantMess(shopId,plantName){
+	jquery("#shopping").hide();
+	plantOrderMess(shopId,plantName);
+}
+function huidiao(){
+	jquery("#orders").show();
+}
+function toBack(){
+	jquery("#orders").hide();
+	jquery("#shopping").show();
+}
+//]]>
+</script>
+            </td>     
+	            <style>
+	.rich-calendar-exterior{line-height: 20px;}
+	.legendLabel {font-size: 13px;float: left;}
+	#xxx table{margin: 0 auto;}
+	.div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+width: 200px;
+}
+
+	</style> 
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,146 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	template="/layout/template_pack.xhtml">
+	
+	<style>
+	*{ maring:0; padding:0;}
+	#baozhuang .ckd_table13{ margin-top:0;}
+	</style>
+
+	<ui:define name="body">
+	<!-- 
+#{processOrdersHome.log()}
+#{orderDispose.logInfo2()}  -->
+		<div id="rightPanel" style="width:700px; margin:0 auto;font-family: '宋体';color:#2e2e2e;">
+			 
+                    <div class="ckd_d" style="font-size:22px;">包装单</div>
+
+                    <div style="font-size:15px;line-height:22px;font-family: '宋体';">
+                    <table width="100%" cellspacing="0" cellpadding="0">
+                    	<thead>
+                    		<tr>
+                    			<td height="22" colspan="4" style="line-height:22px;border-bottom: 1px solid #676767;">
+                    				<p style="float:left; margin-right:20px;font-size:15px;">包装号：#{processOrdersHome.snInfo}</p>
+                    				<p style="float:left; margin-right:20px;font-size:15px;">日期：<h:outputText value="#{processOrdersHome.dateInfo}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></p>
+                    				<p style="float:left; margin-right:20px;font-size:15px;">人员：#{processOrdersHome.userInfo}</p>
+                    			</td>
+                    		</tr>
+                    	</thead>
+                    	<ui:fragment rendered="#{processOrdersHome.orderInfoP.orderInfoId !=null}">
+                    	<tbody>
+                    		<tr>
+                    			<td width="80" height="22" style="font-size:15px;">订单编号：</td>
+                    			<td width="258" style="font-size:15px;padding-left:10px;">#{processOrdersHome.orderInfoP.orderCode}</td>
+                    			<td width="80" height="22" style="font-size:15px;">收货人：</td>
+								<td width="258" style="font-size:15px;padding-left:10px;">#{processOrdersHome.orderInfoP.receiveName}</td>
+                    		</tr>
+                    		<tr>
+									<td width="80" style="font-size:15px;">联系方式：</td>
+									<td colspan="3" style="font-size:15px;padding-left:10px;">#{processOrdersHome.orderInfoP.receivePhone}</td>
+								</tr>
+								<tr>
+									<td height="22" style="font-size:15px;">支付方式：</td>
+									<td style="font-size:15px;padding-left:10px;">#{orderConstant.getPayTypeLabel(processOrdersHome.orderInfoP.paymentMode)}</td>
+									<td style="font-size:15px;">配送日期：</td>
+									<td style="font-size:15px;padding-left:10px;">
+										<h:outputText value="#{processOrdersHome.orderInfoP.deliverTime}">
+					        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+					        			</h:outputText>
+					        			<s:fragment rendered="#{processOrdersHome.orderInfoP.timeSlot == 0}">全天</s:fragment>
+					        			<s:fragment rendered="#{processOrdersHome.orderInfoP.timeSlot == 1}">上午</s:fragment>
+					        			<s:fragment rendered="#{processOrdersHome.orderInfoP.timeSlot == 2}">下午</s:fragment>
+					        			<s:fragment rendered="#{processOrdersHome.orderInfoP.timeSlot == 3}">晚上</s:fragment>
+									</td>
+								</tr>
+								<tr>
+									<td height="22" style="font-size:15px;">配送地址：</td>
+									<td colspan="3" style="font-size:15px;padding-left:10px;">#{processOrdersHome.orderInfoP.receiveAddress}</td>
+								</tr>
+                    	</tbody>
+                    	</ui:fragment>
+                    </table>
+                    </div>
+                    
+					
+                    <div id="baozhuang" style="width:98%; margin:0 auto;padding-top:10px;">
+                    	<table id="ckd_table13" class="ckd_table14" cellpadding="0" cellspacing="0" style="border:1px solid #dddddd;border-collapse:collapse;width:100%">
+	                        <tr>
+	                        	<th name="ckd_thc8" class="ckd_thc8" style="border:1px solid #dddddd;font-size:15px;">序号</th>
+	                            <th class="ckd_thc8" style="border:1px solid #dddddd;font-size:15px;">物料编码</th>
+	                            <th class="ckd_thc8" style="border:1px solid #dddddd;font-size:15px;">物料名称</th>
+	                            <th class="ckd_thc8" style="border:1px solid #dddddd;font-size:15px;">规格</th>
+	                            <th class="ckd_thc8" style="border:1px solid #dddddd;font-size:15px;">包装数量</th>
+	                           	<th class="ckd_thc8" style="border:1px solid #dddddd;font-size:15px;" width="200">备注</th>
+	                        </tr>
+	                        <a4j:repeat value="#{orderDispose.goodsInfoOutboundList}" var="_pp" rowKeyVar="_index">
+		                        <tr>
+		                        	<td name="ckd_thc8" class="bao_td8" style="border:1px solid #dddddd;font-size:15px;">#{_index+1}</td>
+		                            <td class="bao_td8" style="border:1px solid #dddddd;font-size:15px;">#{_pp.goodsCode}</td>
+		                            <td class="bao_td8" style="border:1px solid #dddddd;font-size:15px;">#{_pp.name}</td>
+		                            <td class="bao_td8" style="border:1px solid #dddddd;font-size:15px;">#{_pp.goodsSpec}</td>
+		                            <td class="bao_td8" style="border:1px solid #dddddd;font-size:15px;"><h:outputText class="bao#{_pp.goodsInfoId}  allnums" value="#{_pp.packageQuantity}" /></td>
+		                            <td class="bao_td8"  style="border:1px solid #dddddd;font-size:15px;">#{_pp.orderProductId.remark}</td>
+		                        </tr>
+		                    </a4j:repeat>
+	                    </table>
+                    </div>                 
+	                <ui:fragment rendered="#{processOrdersHome.orderInfoP.orderInfoId !=null}">
+						<table style="width:700px; margin:15px auto 0; font-family:'宋体';" cellspacing="0" cellpadding="0">
+						<tr>
+							<td width="480" height="30" style="font-size:15px;">备&nbsp;&nbsp;&nbsp;&nbsp;注：#{processOrdersHome.orderInfoP.orderRemark}</td>
+							<td align="right" width="200" style="font-size:15px;padding-left:20px;">包装数量合计：<span id="allNum" style="font-weight:bold;"></span>份</td>
+						</tr>
+						</table>
+					</ui:fragment>
+					<ui:fragment rendered="#{processOrdersHome.orderInfoP.orderInfoId ==null}">
+						<table style="width:700px; margin:15px auto 0; font-family:'宋体';" cellspacing="0" cellpadding="0">
+						<tr>
+							<td width="480" height="30" style="font-size:15px;"></td>
+							<td align="right" width="200" style="font-size:15px;padding-left:20px;">包装数量合计：<span id="sumNum" style="font-weight:bold;"></span>份</td>
+						</tr>
+						</table>
+					</ui:fragment>
+                </div>
+<!---印刷管理下开始-->
+            	<div id="printButton" class="ckd_div" align="center">
+            		 <input type="button" id="btnPrint" onclick="printButtonClick();" style="background-image: url('#{request.contextPath}/asset/images/print03.jpg');width: 77px;height: 32px;cursor: pointer;" />
+		    		 <input type="button" id="btnPrint" onclick="window.close();" style="background-image: url('#{request.contextPath}/asset/images/re_43.jpg');width: 77px;height: 32px;cursor: pointer;" />
+               </div>     
+<!--印刷管理下结束-->
+
+	<script type="text/javascript">
+	var obj;
+	function printButtonClick(){
+		jQuery('#printButton').attr('style','display:none;');
+		obj = jQuery("#printButton").clone();
+		
+		jQuery("#printButton").empty();
+		jQuery("#rightPanel").printArea();
+		window.print();
+	}
+	function closeAll(){
+		window.opener.document.pr.ps.value=1;
+		if(confirm("是否关闭打印页面!")){
+			window.close();
+		}else{
+			jQuery("#printButton").html(obj);
+		}
+	}
+	jQuery(function(){
+		var a=0;
+		jQuery('.ckd_table14').find('.allnums').each(function(){
+		  a+=Number(jquery(this).text())
+		});
+		jQuery("#allNum").text(a.toFixed(2));
+		jQuery("#sumNum").text(a.toFixed(2));
+	})
+	</script>	</ui:define>
+</ui:composition>

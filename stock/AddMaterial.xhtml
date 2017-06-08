@@ -1,0 +1,338 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	>
+	<style>
+	</style>
+	  <!--添加物料内容-->
+    <div class="modal fade" id="materialModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog material_dialog">
+	    <rich:panel id="addMate" style="margin:0; border:none; padding: 0;">
+	       <div class="modal-header clear">
+	           <h4 class="modal-title fl">新增原料</h4>
+	           <i class="i_close" onclick="closeMaterial()"></i>
+	       </div>
+	       <h:inputHidden value="#{addMaterialHome.enterpriseInfoId}" id="enterpriseId"/>
+	        <h:inputHidden value="#{addMaterialHome.baseId}" id="baseId"/>
+	        <h:inputHidden value="#{addMaterialHome.levelId}" id="levelId"/>
+	         <h:inputHidden value="#{addMaterialHome.userId}" id="userId"/>
+	        <h:form id="goodsInfo" enctype="multipart/form-data">
+	       <div class="modal-body modal_body" style="padding-bottom:20px;">
+	       	<table class="edit_infor_table" cellpadding="0" style="width:100%;margin:20px auto;">
+	               <tr>
+	                   <td class="td_lt" style="width:100px;">物料名称</td>
+	                   <td class="td_rt" style="width:240px;">
+	                       <input class="form-control w220 fl" type="text" value=""  id="mateName" maxlength="20"/>
+	                       <span class="star_red">*</span>
+	                   </td>
+	                   <td class="td_lt" style="width:100px;">作物种类</td>
+	                   <td class="td_rt">
+	                       <div class="inline_block bootSelt220 fl">
+	                           <select class="selectpicker" id="matePlantType" data-live-search="true">
+	                               <option value="-1">请选择</option>
+	                                <a:repeat value="#{addMaterialHome.plantList}" var="pl">
+									<option value="#{pl[0]}" >#{pl[1]}</option>
+								</a:repeat>
+	                           </select>
+	                       </div>
+	                       <span class="star_red">*</span>
+	                   </td>
+	               </tr>
+	               <tr>
+	                   <td class="td_lt">存储类型</td>
+	                   <td class="td_rt">
+	                       <div class="inline_block bootSelt220 fl">
+	                           <select class="selectpicker" id="mateStoreType">
+	                               <option value="-1">请选择</option>
+	                              <a:repeat value="#{addMaterialHome.storeTypeList}" var="stl">
+									<option value="#{stl.goodsStorageTypeId}" >#{stl.name}</option>
+								</a:repeat>
+	                           </select>
+	                       </div>                                        
+	                   </td>
+	                   <td class="td_lt">保质期</td>
+	                   <td class="td_rt">
+	                       <input class="form-control w220 fl" type="text" value="" id="mateShelfLife" maxlength="9"/>
+	                       <span style="float:left;padding-left:2px;line-height:34px;">天</span>
+	                       <span class="star_red">*</span>
+	                   </td>
+	               </tr>
+	               <tr>
+	                   <td class="td_lt">规格</td>
+	                   <td class="td_rt" colspan="3">
+	                       <div class="inline_block bootSelt220 fl">
+	                           <select class="selectpicker" id="mateSpec">
+	                               <option value="-1">请选择</option>
+	                               <a:repeat value="#{addMaterialHome.specList}" var="spec">
+									<option value="#{spec.id}" >#{spec.name}</option>
+								</a:repeat>
+	                           </select>
+	                       </div>
+	                   </td>
+	               </tr>
+	               <tr>
+	                   <td class="td_lt">图片</td>
+	                  <td class="td_rt" colspan="3">
+	                       <h:inputHidden  id="pictureUrl1" value=""/>
+	                       <iframe src="#{request.contextPath}/stock/MatePicUp.seam" id="myframe" class="fl" name="myframe" frameBorder="0" scrolling="no" width="600" onLoad="" ></iframe>
+	                   </td>
+	               </tr>
+	           </table>
+	       	<div style="padding:10px 0; font-size:15px; border-bottom:1px solid #ddd;">物料等级</div>
+	           <!--搜索-->
+	           <div class="search_header mb10 clear">
+	               <div class="search_selected clear">
+	                   <dl class="se_selt180" style="width:340px;">
+	                       <dt style="width:80px;">等级添加</dt>
+	                       <dd class="inline_block bootSelt180">
+	                           <input type="text" class="form-control mr5 fl" value="请输入物料等级" onclick="removeMe(this)" style="width:180px;font-size:12px;" id="addMateLevelName" maxlength="20"/>
+	                           <input type="button" class="btn btn-success" value="添加" onclick="addLevel()"/>
+	                       </dd>
+	                   </dl>
+	               </div>
+	           </div>
+	           <!--物料列表-->
+	           <table class="material_list" id="levelTab" width="100%" cellpadding="0" cellspacing="0" >
+	               <tr>
+	                   <th width="200">等级名称</th>
+	                   <th width="200">物料单价（元）</th>
+	                   <th width="200">创建时间</th>
+	                   <th>操作</th>
+	               </tr>
+	           </table>
+	           <!--物料等级-->
+	       </div>
+	       <h:inputHidden value="#{addMaterialHome.goodsInfoName}" id="gname"/>
+	       <h:inputHidden value="#{addMaterialHome.plantType}" id="ptype"/>
+	       <h:inputHidden value="#{addMaterialHome.storeType}" id="stype"/>
+	       <h:inputHidden value="#{addMaterialHome.shelfLife}" id="slife"/>
+	       <h:inputHidden value="#{addMaterialHome.unit}" id="gunit"/>
+	       <h:inputHidden value="#{addMaterialHome.levelJson}" id="json"/>
+	       <div class="modal-footer">
+	      		<h:commandButton action="#{inStockHome.addMateGoods}" value="隐藏提交" id="persist" style="display:none;"/>
+	           <button type="button" class="btn btn-primary" onclick="checkMate()" id="mateSubBut">提交</button>
+	           <button type="button" class="btn btn-default" onclick="closeMaterial()">返回</button>
+	       </div>
+	       </h:form>
+	       </rich:panel>
+	  <!--编辑等级-->
+	    <div class="modal-content modal_content modal_fuliao" id="levelToEdit">
+	    	<div class="modal-header clear">
+	            <h4 class="modal-title fl">编辑物料等级</h4>
+	            <i class="i_close"></i>
+	        </div>
+	    	<div class="modal-body clear">
+		    	<table class="edit_infor_table" width="100%" cellpadding="0" cellspacing="0" style="width:100%;">
+		    		<tr>
+		    			<td class="td_lt">等级名称：</td>
+		    			<td class="td_rt"><input class="form-control" type="text" id="levelEditName" value="" style="width:200px;" maxlength="20"/></td>
+		    		</tr>
+		    		<tr>
+		    			<td class="td_lt">价格：</td>
+		    			<td class="td_rt"><input class="form-control" type="text" id="levelEditPrice" value="" style="width:200px;" maxlength="9"/></td>
+		    		</tr>
+		    	</table>
+	    	</div>
+	    	<div class="modal-footer">
+	            <input type="text" style="display:none" id="noneId" value=""/>
+	    		<input type="button" class="btn btn-primary" id="buttonLevel" value="确定" onclick="levelEditButton()"/>
+	    		<input type="button" class="btn btn-default"    id="buttonquxiao" value="取消" onclick="quxiaobutton()"/>
+	        </div>
+	    </div>
+	  
+    </div>
+    </div>
+     <a:form>
+		<a:jsFunction name="initMateAddModel" action="#{addMaterialHome.initMateAddModel()}"  reRender="addMate" oncomplete="showAddMaterial()">
+			<a:actionparam name="enterpriseInfoId" assignTo="#{addMaterialHome.enterpriseInfoId}"/>
+			<a:actionparam name="baseId" assignTo="#{addMaterialHome.baseId}"/>
+			<a:actionparam name="levelId" assignTo="#{addMaterialHome.levelId}"/>
+			<a:actionparam name="userId" assignTo="#{addMaterialHome.userId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="addMateGoods"  action="#{addMaterialHome.addMateGoods()}" data="#{addMaterialHome.message}"  oncomplete="addMaterialComple(data)">
+			<a:actionparam name="goodsInfoName" assignTo="#{addMaterialHome.goodsInfoName}"/>
+			<a:actionparam name="plantType" assignTo="#{addMaterialHome.plantType}"/>
+			<a:actionparam name="storeType" assignTo="#{addMaterialHome.storeType}"/>
+			<a:actionparam name="shelfLife" assignTo="#{addMaterialHome.shelfLife}"/>
+			<a:actionparam name="unit" assignTo="#{addMaterialHome.unit}"/>
+			<a:actionparam name="packingImagesUrl" assignTo="#{addMaterialHome.packingImagesUrl}"/>
+			<a:actionparam name="levelJson" assignTo="#{addMaterialHome.levelJson}"/>
+			<a:actionparam name="enterpriseInfoId" assignTo="#{addMaterialHome.enterpriseInfoId}"/>
+			<a:actionparam name="baseId" assignTo="#{addMaterialHome.baseId}"/>
+			<a:actionparam name="levelId" assignTo="#{addMaterialHome.levelId}"/>
+			<a:actionparam name="userId" assignTo="#{addMaterialHome.userId}"/>
+		</a:jsFunction>
+	</a:form>
+	<script>
+	//<![CDATA[
+	
+	function goodsNameFocus(obj){
+		var txt_value = $(obj).val();
+	    if(txt_value=="请输入查询内容"){
+	        $(obj).val(""); 
+	    }; 
+	}
+	
+	function goodsNameBlur(obj){
+		var txt_value = $(obj).val();
+	    if(txt_value==""){
+	        $(obj).val("请输入查询内容"); 
+	    }; 
+	}
+	function showAddMaterial(){
+		$('.selectpicker').selectpicker();
+		$("#goodsModel").modal("hide");
+		$("#mateSubBut").attr("disabled",false);
+		$("#materialModal").modal("show");
+	}
+	function closeMaterial(){
+		$("#goodsModel").modal("show");
+		$("#materialModal").modal("hide");
+	}
+	function removeMe(data){
+		$(data).removeAttr("onclick");
+		$(data).val("");
+	}
+	 //添加等级校验
+	  function addLevel(){
+		  var levelName = $("#addMateLevelName").val().trim();
+		  if("请输入物料等级"==levelName || ""==levelName){
+			  alert("物料等级不能为空");
+			}else{
+				levelListAdd(levelName);
+			}		
+	  }
+
+	  //添加等级
+	  function levelListAdd(levelName){
+		  var isExistFlag = false;
+		  $(".tr_item").each(function(i){
+			  var iName = $(this).find("td:first-child").html();
+			  if(iName == levelName){
+				  isExistFlag = true;
+				  alert("已存在此等级名称");
+				  return false;
+			  }
+		  });
+		  if(!isExistFlag){
+			 var timeStamp =  Date.parse(new Date()); 
+			  var levelTr = "<tr class='tr_item' id='" + timeStamp + "'>";
+			  levelTr += "<td>" + levelName + "</td>";
+			  levelTr += "<td>0.0</td>";
+			  levelTr += "<td>" + getNowDate() + "</td>";
+			  levelTr += "<td>";
+			  levelTr += "<a class='icon_link' href='javascript:;' title='编辑' name='levelEdit' onclick='editLevel(this)'><img src='/asset/images/stock/commons/tableIco_edit2.png' /></a>";
+			  levelTr += "<a class='icon_link' href='javascript:;' title='删除' name='levelDel' onclick='delLevel(this)'><img src='/asset/images/stock/commons/tableIco_delect2.png' /></a>";
+			  levelTr += "</td>";
+			  levelTr += "</tr";
+			  $("#levelTab").append(levelTr);
+			  $("#addMateLevelName").val("请输入物料等级");
+		  }
+	  }
+	//编辑等级
+	function editLevel(obj){
+		var name = $(obj).parent().parent().find("td:first-child").html();
+		var price = $(obj).parent().parent().find("td:first-child").next().html();
+		var id = $(obj).parent().parent().attr("id");
+		$("#levelEditName").val(name);
+		$("#levelEditPrice").val(price);
+		$("#noneId").val(id);
+		$("#levelToEdit").show();
+	}
+
+	//删除等级
+	function delLevel(obj){
+		var trParent = $(obj).parent().parent();
+		trParent.remove();
+	}
+	//等级编辑确认
+	function levelEditButton(){
+		var name = $("#levelEditName").val();
+		var price = $("#levelEditPrice").val();
+		var id = $("#noneId").val();
+		var a = $("#"+id).find("td:first-child").html();
+		$("#"+id).find("td:first-child").html(name);
+		$("#"+id).find("td:first-child").next().html(parseFloat(price).toFixed(2));
+		$("#levelToEdit").hide();
+	}
+
+	function quxiaobutton(){
+		$("#levelToEdit").hide();
+	}
+
+	//原料保存
+	function checkMate(){
+		var goodsName = $("#mateName").val();
+		var plantType = $("#matePlantType").val();
+		var storeType = $("#mateStoreType").val();
+		var shelfLife = $("#mateShelfLife").val();
+		var picture = $('#myframe').contents().find('#mateImage').attr("src");
+		var spec = $("#mateSpec").val();
+		var image = $("#mateImage").attr("src");
+		var leveljson = getLevelJson();
+		var enterpriseInfoId = $("#enterpriseId").val();
+		var baseId = $("#baseId").val();
+		var levelId = $("#levelId").val();
+		var userId = $("#userId").val();
+		if(goodsName == ""){
+			alert("物料名称不能为空");
+			return;
+		}
+		if(plantType=="-1"){
+			alert("请选择作物种类");
+			return;
+		}
+		if(storeType=="-1"){
+			alert("请选择存储类型");
+			return;
+		}
+		if(shelfLife==""){
+			alert("请输入保质期");
+			return;
+		}
+		if(spec=="-1"){
+			alert("请选择规格");
+			return;
+		}
+		if(leveljson=='{"levelList":[]}'){
+			alert("请添加物料等级");
+			return;
+		}
+		$("#goodsInfo\\:gname").val(goodsName);
+		$("#goodsInfo\\:ptype").val(plantType);
+		$("#goodsInfo\\:stype").val(storeType);
+		$("#goodsInfo\\:slife").val(shelfLife);
+		$("#goodsInfo\\:gunit").val(spec);
+		$("#goodsInfo\\:json").val(leveljson);
+		$("#mateSubBut").attr("disabled",true);
+		addMateGoods(goodsName,plantType,storeType,shelfLife,spec,image,leveljson,enterpriseInfoId,baseId,levelId,userId);
+	}
+
+	  //遍历等级列表
+	  function getLevelJson(){
+		  var levelJson='{"levelList":[';
+		  $("#levelTab").find(".tr_item").each(function(i){
+			  var firstTd = $(this).find("td:first-child");
+			  levelJson +='{"levelName":"'+firstTd.html()+'","unitPrice":"'+firstTd.next().html()+'","createTime":"'+firstTd.next().next().html()+'"},';
+		  });
+		  levelJson+="]}";
+		  return levelJson;
+	};
+
+	//原料等级添加回调
+	function addMaterialComple(data){
+		if(data != "ok"){
+			alert(data);
+		}else{
+			var inStockType = $("#inStockType").attr("myInStockTypeId");
+			findByPage(1,inStockType,1,"",1);
+			closeMaterial();
+		}
+	}
+	//]]>
+	</script>
+</ui:composition>

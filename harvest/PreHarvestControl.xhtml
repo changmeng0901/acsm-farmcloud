@@ -1,0 +1,265 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+<style>
+.ui-selectmenu{*position:static;}
+.sh_d_d{ width:100%; padding:10px 0; line-height:45px; font-family:"微软雅黑"; font-size:14px;}
+.sh_01{ height:45px; line-height:45px; float:left; text-align:left; margin-right:25px; display:inline-block;}
+.sh_02{ min-width: 150px; border-bottom:1px solid #373737; display: inline-block; height: 33px; *height: 30px; *line-height:33px;}
+.ts_div2{width:240px; height: 125px; border: 1px solid #81C5E9; margin: 0px auto; padding: 0 15px 15px;  background: url(#{request.contextPath}/asset/images/tck_bg_14.jpg) #ffffff repeat-x scroll center top;}
+.dr-mpnl-shadow{background:none;}
+.dr-mpnl-pnl{background:none; border:none;}
+.dr-mpnl-pnl-b{padding:0;}
+.dr-mpnl-shadow{top:0; left:0;}
+.rich-picklist-source-items{margin:0;}
+</style>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/harvest/yushougl2.css"/>
+
+<!-- #{preHarvestHome.work3()} -->
+<td valign="top">
+        <!--右边开始-->
+       <div class="right_c clear">
+            <!-- 公用头部 开始 -->
+            <div class="r_title clear">
+                <div class="r_t_l fl"><span>采销存</span><em>&gt;</em><span>采收</span><em>&gt;</em><font size="3">预釆库管理</font></div>
+            </div>
+            <!-- 公用头部 结束 -->
+            <!-- 预釆管理内容 开始 -->
+            <h:form id="preHarvestSearch">
+            <div class="yucaiSearch">
+                <table>
+                    <tr>
+                        <td width="310">
+                                <span class="octicon-search02"></span>
+                                <h:inputText id="preHarvestSearch"  value="#{preHarvestHome.preHarvestSearch}"  class="form-control srarchfont" style="width:300px;"/>
+                        </td>
+                        <td>
+                        	<h:commandButton id="preHarvestCommand" styleClass="btn btn-primary" action="/harvest/PreHarvestControl.xhtml" value="搜索"></h:commandButton>
+                        </td>
+                    </tr>
+                </table> 
+            </div>
+            </h:form>
+            <div class="yucaiTime">
+                <div class="record_p">
+                   <img src="../asset/images/harvest/no1.png" alt=""/>
+                   <span>入录人</span>
+                   <span>#{preHarvestHome.instance.insertUser.nickname}</span>
+                </div>
+                <div class="record_t">
+                   <img src="../asset/images/harvest/no2.png" alt=""/>
+                   <span>入录时间</span>
+                   <span><h:outputText value="#{preHarvestHome.instance.insertTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+								    </h:outputText></span>
+                </div>
+                <div class="yucai_t">
+                   <img src="../asset/images/harvest/no3.png" alt=""/>
+                   <span>预采收时间</span>
+                   <span><h:outputText value="#{preHarvestHome.instance.preHarvestTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+								    </h:outputText></span>
+                </div>
+            </div>
+            <h:form id="control">
+            <div class="yucaiTable">
+                <table width="100%" cellpadding="0" cellspacing="0" class="table_header" >
+                    <thead>
+                        <tr>
+                            <th width="5%" >ID</th>
+                            <th width="15%">作物名称</th>
+                            <th width="8%">等级</th>
+                            <th width="13%">未来一天总收采量</th>
+                            <th width="7%">单位</th>
+                            <th width="8%">商品规格</th>
+                            <th width="17">商品编码</th>
+                            <th width="10%">包装数量</th>
+                            <th width="9%">当日入库量</th>
+                            <th width="8%">冻结数量</th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="yucaiContent tableFixed_scroll" style="border-bottom: 1px solid #e1e1e1;">
+                	<h:inputHidden value="#{preHarvestHome.preHarvestId}" />
+                    <table id="preProduct" width="100%" cellpadding="0" cellspacing="0">
+                     <a:repeat value="#{preHarvestHome.myPhrList}" var="_obj" rowKeyVar="_index">
+                         <tr>
+                          	<h:outputText rendered="#{_obj[1] ne ''}" >
+                            <td width="5%"  rowspan="#{_obj[9]}" class="ble">#{_obj[18]}</td>
+                            <td width="15%" rowspan="#{_obj[9]}">#{_obj[1]}</td>   
+                            </h:outputText> 
+                            <h:outputText rendered="#{_obj[8] ne ''}" >                        
+                            <td width="8%" rowspan=" #{_obj[14]}" > #{_obj[8]}</td>
+                            <td width="13%" id="#{_obj[15]}" rowspan=" #{_obj[14]}"  class="c_blue">#{_obj[2]}</td>
+                            <td width="7%" rowspan=" #{_obj[14]}">#{preHarvestHome.unitName(_obj[22])}</td>
+                            </h:outputText>
+                            <td width="8%" >
+                            	<h:outputText  value="#{_obj[11] &gt; 0? _obj[11] :''}#{productInfoHome.unitName(_obj[12])}#{_obj[13].trim()!=null &amp;&amp; _obj[13].trim()!=''?'/':''}#{_obj[13]}" />
+                            </td>
+                            <td width="17%" >#{_obj[10]}</td>
+                            
+                            <h:outputText rendered="#{_obj[12] ne null}" >
+	                             <td width="10%" >
+	                             	<input type="hidden" value="#{_obj[17]}" id="hidden_#{_index}"/>
+	                            	<input id="packnum_#{_index}" value="#{_obj[17]}"  class="form-control number" onkeyup="clearNoNum(this, event);"  onchange="calculates(this.value,#{_index},#{_obj[19]});" />
+	                             </td>
+	                             <td width="10%">
+	                            	<span  id="input_#{_index}" >#{_obj[20]}</span>    
+	                             </td>
+                            </h:outputText>
+                             <h:outputText rendered="#{_obj[12] eq null}" >
+                             <td width="9%" >
+                            	<input   class="form-control number"  value="#{_obj[17]}" disabled="disabled"/>
+                             </td>
+                           	 <td width="9%">
+                            	<h:outputText value="#{_obj[20]}" />    
+                             </td>
+                              
+                            </h:outputText>
+                           <td width="8%">
+                            	<h:outputText value="#{_obj[23]}" />    
+                             </td>
+                           
+                        </tr>
+                    </a:repeat>
+                    </table>
+                </div>
+            </div>
+            <!-- 预釆管理内容 结束 -->
+            <div class="yucai_total">
+                合计：商品种类<span class="red">#{preHarvestHome.count}</span>种， 包装数量<span class="red" id="sumNum">200</span>份
+            </div>
+            <div class="yucai_button">
+            <h:inputHidden id="hiddenStr" value="#{preHarvestHome.numStr}" />
+                <h:commandButton class="btn btn-primary" style="margin-right:10px;" value="完成" action="#{preHarvestHome.save}" onclick="numJson();"/>
+                <s:link propagation="end" view="/harvest/PreHarvestList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" >
+	            	<f:param name="baseId" value="#{preHarvestHome.baseId}"/>
+	            	<f:param name="pageNum" value="#{preHarvestHome.pageNum}"></f:param>
+            	</s:link>
+            </div>
+            </h:form>
+        </div>
+        <!--右侧结束-->
+        </td> 
+ <a:form>
+ 		<a:queue id="mainQueue" requestDelay="10" ignoreDupResponses="true"/>
+  		<a:jsFunction  eventsQueue="mainQueue" name="compare" action="#{preHarvestHome.compareTo()}" data="#{preHarvestHome.kcNum}" oncomplete="editGoBack(data);">
+  			<a:actionparam name="packNum" assignTo="#{preHarvestHome.packNum}" />
+  			<a:actionparam name="goodsInfoId" assignTo="#{preHarvestHome.goodsInfoId}" />
+  		</a:jsFunction>
+	</a:form>
+ <script type="text/javascript" src="../asset/js/nicescroll.js"></script>       
+  <script type="text/javascript">  
+//<![CDATA[ 
+        var newpacknum;
+        var trindex;
+        //包装数量对比
+        function calculates(obj,index,goodsInfoId){
+			var val=Number(obj).toFixed(2);
+			newpacknum=val;
+			trindex=index;
+			compare(val,goodsInfoId);
+		}
+		//包装数量对比后回调
+        function editGoBack(data){
+			if(data<0){ 
+				var d=Number(data).toFixed(2);
+				var flag=window.confirm("您修改的数值将小于订单需求商品数量，继续修改将使下单页面库存数量显示为"+d+",确定继续修改?");
+				if(flag){
+					var val=Number(newpacknum).toFixed(2);
+					jQuery("#packnum_"+trindex).val(val);
+					jQuery("#hidden_"+trindex).val(val);
+					colorControl(trindex);
+				}else{
+					var oldpacknum=jQuery("#hidden_"+trindex).val();
+					jQuery("#packnum_"+trindex).val(oldpacknum);
+					colorControl(trindex);
+				}
+			}else{
+				var val=Number(newpacknum).toFixed(2);
+				jQuery("#packnum_"+trindex).val(val);
+				jQuery("#hidden_"+trindex).val(val);
+				colorControl(trindex);
+			}
+        }
+        function colorControl(i){
+        	var packnum = Number(jQuery("#packnum_" + i).val());
+			var inputnum = Number(jQuery("#input_" + i).html());
+			if(packnum>inputnum){
+				jQuery("#packnum_" + i).css("color","red");
+				jQuery("#input_" + i).removeAttr("style")
+			}else if(packnum<inputnum){
+				jQuery("#packnum_" + i).removeAttr("style")
+				jQuery("#input_" + i).css("color","red");
+			}else{
+				jQuery("#input_" + i).removeAttr("style")
+				jQuery("#packnum_" + i).removeAttr("style")
+			}
+			totalNum();
+        }
+        //拼接包装数量返回后台
+        function numJson(){
+	  		var jsonStr = "";
+	  		jQuery(".number").each(function(){
+		  		var num=jQuery(this).val();
+		  		jsonStr +=Number(num)+",";
+			});
+            if (jsonStr != "") {
+				jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+			}
+			jQuery("#control\\:hiddenStr").val(jsonStr);
+		}
+		
+    jQuery(function(){
+	  	totalNum();
+	  	jQuery("#preProduct tr").each(function(index){
+			var packnum = Number(jQuery("#packnum_" + index).val());
+			var inputnum = Number(jQuery("#input_" + index).html());
+			if(packnum>inputnum){
+				jQuery("#packnum_" + index).css("color","red");
+			}else if(packnum<inputnum){
+				jQuery("#input_" + index).css("color","red");
+			}
+			
+	    });
+	    jQuery(".tableFixed_scroll").niceScroll({cursorcolor:"#919191",cursorwidth:6,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false});  //滚动条控件 
+		
+	});
+     //验证 数量
+	function clearNoNum(obj, event){
+		var keyCode = event.keyCode;
+		var val=obj.value;
+		if (keyCode < 37 || keyCode > 40) {
+			if(!(keyCode >=48 && keyCode <=57)){
+				obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+				obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+				obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+				obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+			}
+		}
+		totalNum();
+	}
+	
+	function totalNum(){
+		var totalNum=0;
+		jQuery(".number").each(function(){
+			var val=jQuery(this).val();
+			totalNum +=Number(val);
+		});
+		jQuery("#sumNum").text(totalNum.toFixed(2));
+	}
+//]]>
+  </script>
+</ui:define>
+
+</ui:composition>

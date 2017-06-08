@@ -1,0 +1,580 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+	<ui:define name="body">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/AllOrder.css"/>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+		<style>
+			.baseFile_onload{ display:block; float:left; width:130px; height:130px; margin:25px 50px 25px 0;border:none;background: url("../asset/images/upload_file.png") no-repeat scroll 0 0; cursor:pointer;}
+			.baseFile_onload:hover{ background: url("../asset/images/upload_file.png") no-repeat scroll 0 0; border:none;}
+			.baseFile_onload input{ position:absolute; right:0; top:0; width:130px; height:130px; opacity:0; filter:alpha(opacity=0); cursor:pointer; font-size: 100px;}
+			.baseFile_pic194 img{ width:194px; height:94px;}
+			.modal-header h4{font-family: 微软雅黑;}
+			.excelName,.msgSource{ margin:0 50px; line-height:20px;}
+			.kuandu{width: 340px; left:50%; margin-left: -170px; top:50%; margin-top:-234px; margin-bottom:0; position: absolute;}
+			.bus{width:70px; height: 70px; background: url(../asset/images/orderManage/bus.jpg) no-repeat; float: left; margin-left: 59px;}
+			.fahuo{line-height: 70px; font-size: 22px; color: #646464; font-weight: bold;}
+			.kuanDu{width: 510px; left:50%; margin-left: -255px; top: 50%; margin-top: -234px; margin-bottom: 0; position: absolute;}
+			.kuanDu .modal-body td{padding: 5px 0;}
+			.shaiXuan{border-top: 1px solid #cfe3f3; margin-top: 15px;}
+			div.shaiSelect .bootstrap-select:not([class*=span]):not([class*=col-]):not([class*=form-control]):not(.input-group-btn){width: 170px;}
+			#lxfs{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;width: 190px;}
+		</style>
+		#{orderOperateList.orderOperateListInit()}
+		<td valign="top" >
+				<div class="content">	
+				    <table width="100%" height="100%" cellpadding="0" cellspacing="0">
+				    	<tr>
+				        <td valign="top" width="210" style=" border-right:1px solid #e1e4eb;">
+				        <div class="levelMenu_list3" style="min-height:500px;">
+				        	<ul class="levelMenu_ul3">
+				            	<li><a class="link #{orderOperateList.orderStatus == 0 ? 'curLink' : ''}" href="../orderManage/OrderOperateList.seam?orderStatus=0&amp;pages=1"><img src="../asset/images/orderManage/levelMenu50.png" />全部订单<em class="num">#{orderOperateList.orderNumberArr[0]}</em></a></li>
+				        		<h:outputText rendered="#{sessionTake.orderAudit}">
+				        		<li><a class="link #{orderOperateList.orderStatus == 11 ? 'curLink' : ''}" href="../orderManage/OrderReturnList.seam?orderStatus=11&amp;pages=1"><img src="../asset/images/orderManage/levelMenu006.png" />订单已驳回<em class="num">#{orderOperateList.orderNumberArr[11]}</em></a></li>
+				            	</h:outputText>
+<!-- 				            	<h:outputText rendered="#{sessionTake.orderReceive}"> -->
+				            	<li><a class="link #{orderOperateList.orderStatus == 13 ? 'curLink' : ''}" href="../orderManage/OrderAcceptList.seam?orderStatus=13&amp;pages=1"><img src="../asset/images/orderManage/levelMenu51.png" />订单待接受<em class="num">#{orderOperateList.orderNumberArr[13]}</em></a></li>
+<!-- 				        		</h:outputText> -->
+				        		<h:outputText rendered="#{sessionTake.orderAudit}">
+				        		<li><a class="link #{orderOperateList.orderStatus == 1 ? 'curLink' : ''}" href="../orderManage/OrderAuditList.seam?orderStatus=1&amp;pages=1"><img src="../asset/images/orderManage/levelMenu51.png" />订单待审核<em class="num">#{orderOperateList.orderNumberArr[1]}</em></a></li>
+				                </h:outputText>
+				                <h:outputText rendered="#{sessionTake.orderHandle}">
+				                <li><a class="link #{orderOperateList.orderStatus == 2 ? 'curLink' : ''}" href="../orderManage/OrderDisposeList.seam?orderStatus=2&amp;pages=1"><img src="../asset/images/orderManage/levelMenu52.png" />订单待处理<em class="num">#{orderOperateList.orderNumberArr[2]}</em></a></li>
+				               	</h:outputText>
+				               	<h:outputText rendered="#{sessionTake.orderTally}">
+				                <li><a class="link #{orderOperateList.orderStatus == 14 ? 'curLink' : ''}" href="../orderManage/OrderTallyList.seam?orderStatus=14&amp;pages=1"><img src="../asset/images/orderManage/lihuo-icon.png" />订单理货中<em class="num">#{orderOperateList.orderNumberArr[14]}</em></a></li>
+				                </h:outputText>
+				                <h:outputText rendered="#{sessionTake.orderShipments}">
+				                <li><a class="link #{orderOperateList.orderStatus == 3 ? 'curLink' : ''}" href="../orderManage/OrderDeliveryList.seam?orderStatus=3&amp;pages=1"><img src="../asset/images/orderManage/levelMenu53.png" />订单待发货<em class="num">#{orderOperateList.orderNumberArr[3]}</em></a></li>
+				                </h:outputText>
+				                <h:outputText rendered="#{sessionTake.orderDispatching}">
+				                <li><a class="link #{orderOperateList.orderStatus == 4 ? 'curLink' : ''}" href="../orderManage/OrderTransportList.seam?orderStatus=4&amp;pages=1"><img src="../asset/images/orderManage/levelMenu54.png" />订单配送中<em class="num">#{orderOperateList.orderNumberArr[4]}</em></a></li>
+				                </h:outputText>
+				                <li><a class="link #{orderOperateList.orderStatus == 5 ? 'curLink' : ''}" href="../orderManage/OrderFinishList.seam?orderStatus=5&amp;pages=1"><img src="../asset/images/orderManage/levelMenu55.png" />订单已完成<em class="num">#{orderOperateList.orderNumberArr[5]}</em></a></li>
+				                <li><a class="link #{orderOperateList.orderStatus == 6 ? 'curLink' : ''}" href="../orderManage/OrderDeleteList.seam?orderStatus=6&amp;pages=1"><img src="../asset/images/orderManage/levelMenu56.png" />订单已删除<em class="num">#{orderOperateList.orderNumberArr[6]}</em></a></li>
+				                <li class="line"></li>
+				                <s:fragment rendered="#{sessionTake.refundAudit == true}">
+				            	<li><a class="link #{refundOperateList.orderStatus == 12 ? 'curLink' : ''}" href="../orderManage/RefundOperateList.seam?orderStatus=12&amp;pages=1"><img src="../asset/images/orderManage/levelMenu57.png" />退货单已驳回<em class="num">#{orderOperateList.orderNumberArr[12]}</em></a></li>
+				            	<li><a class="link #{orderOperateList.orderStatus == 9 ? 'curLink' : ''}" href="../orderManage/RefundOperateList.seam?orderStatus=9&amp;pages=1"><img src="../asset/images/orderManage/levelMenu57.png" />订单待退货<em class="num">#{orderOperateList.orderNumberArr[9]}</em></a></li>
+				                </s:fragment>
+				                <li><a class="link #{orderOperateList.orderStatus == 10 ? 'curLink' : ''}" href="../orderManage/RefundOperateList.seam?orderStatus=10&amp;pages=1"><img src="../asset/images/orderManage/levelMenu58.png" />订单已退货<em class="num">#{orderOperateList.orderNumberArr[10]}</em></a></li>
+				            </ul>
+				        </div>
+				        </td>  
+				        <td valign="top">
+				        <div class="right_c clear" style="padding-top:20px; padding-bottom:20px;">
+				            <div class="r_title clear" style="margin-top:0;">
+				                <div class="r_t_l fl">采销存<span style="padding:0 5px;">&gt;</span>订单管理<span style="padding:0 5px;">&gt;</span><font size="3">#{orderOperateList.orderLabelArr[orderOperateList.orderStatus]}<span class="num">(<i>#{orderOperateList.orderNumberArr[orderOperateList.orderStatus]}</i>)</span></font></div>
+				                <div class="fr" style="margin-bottom:-1px;">
+				                    <ul class="cm_resumeList clear">
+				                        <li>
+				                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+				                        </li>
+				                        <li>
+				                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+				                        </li>
+				                        <li>
+				                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+				                        </li>
+				                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+					                        <li >
+				                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+				                            </li>
+			                            </h:panelGroup>
+				                    </ul>
+				                </div>
+				            </div>
+				            <div class="allOrder_wap">
+				            	<div class="allOrder_header mb20">
+			            			<p class="reseverText">
+				                    	<em>排 序</em>
+			                    		<span id="sortType1" class="tabtxt #{orderOperateList.sortType == 1 ? 'cur' : ''}" onclick="sortAction(1);">下单时间</span>
+				                    	<span id="sortType2" class="tabtxt #{orderOperateList.sortType == 2 ? 'cur' : ''}" onclick="sortAction(2);">配送时间</span>
+				                    	<span id="sortType3" class="tabtxt #{orderOperateList.sortType == 3 ? 'cur' : ''}" onclick="sortAction(3);">支付状态</span>
+				                    	<span id="sortType4" class="tabtxt #{orderOperateList.sortType == 4 ? 'cur' : ''}" onclick="sortAction(4);">订单状态</span>
+				                    </p>
+				                    <h:form id="orderSearch">
+				                    <div class="search-header" style="margin-top:10px; margin-bottom:-5px;">
+											<input type="hidden" value="1" name="pages" />
+											<s:fragment >
+												<p class="check_lt mt3 clear" style="width:78px;">
+													<input id="orderCheckAll" type="checkbox" class="iCheckbox" name="orderCheckAll"/>
+													<label>全选</label>
+												</p>
+												
+											</s:fragment>
+					                        <div class="search-header-lt">
+					                            <div class="public-search">
+					                            	<h:inputText class="form-control mt5" id="orderSearch" autocomplete="off" value="#{orderOperateList.orderSearch}" style="width:240px;height:24px; line-height:22px; padding:0 5px; color:#b3b5b5; font-size:12px;" onfocus="if(this.value=='请输入订单编号/收货人/销售人/手机'){this.value=''}" onblur="if(this.value==''){this.value='请输入订单编号/收货人/销售人/手机'}"/>
+					                            </div>
+				                            	<h:commandButton id="orderCommand" styleClass="btn btn-primary mt5" style="height:24px; padding:0 10px; float:left;" action="/orderManage/OrderTallyList.xhtml" value="搜索" ></h:commandButton>
+					                        </div>
+					                        <div class="search-header-rt">
+												<s:button id="excelButton" action="#{orderOperateList.exportExcelFind}" styleClass="btn btn-default mr5" value="导出"   />
+												<a href="javascript:void(0);" class="btn btn-default mr5" onclick="batchJump();">批量跳过理货</a>
+					                        </div>
+				                    </div>
+				                    </h:form>
+				                </div>
+				                <div class="allOrder_body">
+				                	<s:div id="contentList">
+				                	<a:repeat value="#{orderOperateList.resultList}" var="_order" rowKeyVar="_index">
+				                		<div class="allOrder_items #{_order.orderStatusCss}">
+						                    <div class="itemsCon">
+						                        <div class="itemsHd">
+						                            <s:fragment rendered="#{_order.everyoneOrderSn eq null}">
+						                        		<p class="check_lt clear"><input id="orderCheck#{_order.orderInfoId}" type="checkbox" class="iCheckbox" name="orderCheck"/></p>
+						                        	</s:fragment>
+						                            <p class="orderNum fl" style="#{_order.specialType eq null or _order.specialType eq 0 ? '': 'color:red;'}">订单编号：<span>#{_order.orderCode}</span></p>
+						                            <s:fragment rendered="#{_order.orderType == 7}">
+						                            	<img src="#{request.contextPath}/asset/images/purchase/yjgm.png" />
+						                            </s:fragment>
+						                            <s:fragment rendered="#{_order.deliverTimeFlag == true and _order.deleted == false and _order.orderStatus != orderConstant.getDeliverDoneOrderStatus()}">
+						                            	<p class="stay fl">配送时间已过期</p>
+						                            </s:fragment>
+						                            <p class="fr">下单时间：
+						                            	<span>
+						                            		<h:outputText value="#{_order.insertTime}">
+										        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+										        			</h:outputText>
+						                            	</span>
+					                            	</p>
+					                            	<h:outputText rendered="#{_order.orderType eq 6}" >
+				                                    	<p class="orderNum fl" style="margin-top:5px;margin-left: 30px;" title="微商城"><img src="../../asset/images/orderManage/wsc.png" alt=""/></p>
+				                                    </h:outputText>
+						                        </div>
+						                        <div class="itemsBd">
+						                            <table width="100%" cellpadding="0" cellspacing="0">
+						                                <tr>
+						                                    <td class="tdLine" width="20%" style="padding-left:0;"><span class="explain">收货人：</span>#{_order.receiveName}</td>
+						                                    <td class="tdLine" width="18%"><span class="explain">销售人：</span>#{_order.memberInfo.farmerInfoId != null ? _order.memberInfo.farmerInfoId.name : ""}</td>
+						                                    <td class="tdLine" width="20%" >
+						                                    	<span class="explain">配送时间：</span>
+						                                    	<h:outputText value="#{_order.deliverTime}">
+											        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+											        			</h:outputText>
+											        			<s:fragment rendered="#{_order.timeSlot == 0}">全天</s:fragment>
+											        			<s:fragment rendered="#{_order.timeSlot == 1}">上午</s:fragment>
+											        			<s:fragment rendered="#{_order.timeSlot == 2}">下午</s:fragment>
+											        			<s:fragment rendered="#{_order.timeSlot == 3}">晚上</s:fragment>
+					                                    	</td>
+						                                    <td class="tdLine" width="16%" rowspan="2">
+					                                    		<span class="explain">支付状态：</span>#{_order.paymentStatus == true ? '已支付' : '未支付'}
+					                                    	</td>
+						                                    <td width="26%" align="center">
+							                                    <s:span styleClass="auditBtn" rendered="#{_order.everyoneOrderSn eq null}">
+					                                        		<s:link styleClass="btn btn-success" view="/orderManage/OrderTally.xhtml" rendered="#{ (sessionTake.levelId ==4) or (sessionTake.levelId == 3 and sessionTake.admin == true) or (sessionTake.levelId == 5 and sessionTake.communityId==14)}" value="理货" propagation="#{empty from ? 'none' : 'default'}" >
+														                <f:param name="orderInfoId" value="#{_order.orderInfoId}"/>
+														                <f:param name="page" value="#{orderOperateList.pages}"/>
+														                <f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+														                <f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+														            </s:link>
+														            <a class="btn btn-primary mr5" href="javascript:void(0);" onclick="giveUpTally(#{_order.orderInfoId});">跳过理货</a>
+														        </s:span>
+						                                    </td>
+						                                </tr>
+						                                <tr>
+						                                    <td class="tdLine" style="padding-left:0;">
+						                                    <div id="lxfs" title="#{_order.deliverAddress.phone}" style="cursor: pointer;">
+						                                    	<span class="explain">联系方式：</span>#{_order.deliverAddress.phone}
+						                                    </div>
+						                                    </td>
+						                                    <td class="tdLine"><span class="explain">金额：</span>¥<h:outputText value="#{_order.paymentAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+						                                    <td class="tdLine">
+						                                    <h:outputText rendered="#{orderOperateList.getCardcodes(_order.orderInfoId) ne ''}">
+						                                    	<span class="explain" style="width: 100px;">使用会员卡名称：</span>
+						                                    	<h:outputText value="#{orderOperateList.getCardcodes(_order.orderInfoId)}" />
+						                                    </h:outputText>
+						                                    </td>
+						                                    <td align="center">
+						                                    	<span class="btnsSet">
+						                                    		<s:link view="/orderManage/OrderView.xhtml" title="查看" style="text-decoration:none;" propagation="#{empty from ? 'none' : 'default'}" id="orderViewId" >
+						                                    			<img src="../asset/images/orderManage/table_ico100.png" width="18" height="18" />
+														                 <f:param name="orderInfoId" value="#{_order.orderInfoId}"/>
+														                <f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+														                <f:param name="page" value="#{orderOperateList.pages}"/>
+														                <f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+														                <f:param name="from" value="OrderTallyList"></f:param>
+														            </s:link>&#160;
+														            <s:fragment rendered="#{_order.orderType ne 7 and _order.everyoneOrderSn eq null}">
+														            <a href="javascript:void(0);" title="编辑" style="text-decoration:none;" onclick="uptadeDivShow('#{_order.orderInfoId}','#{orderOperateList.orderStatus}','#{orderOperateList.pages}','#{orderOperateList.orderSearch}');"  >
+														            	<img src="../asset/images/orderManage/table_ico101.png" width="18" height="18" />
+														            </a>
+														            &#160;
+														            <s:link view="/orderManage/OrderTallyList.xhtml" title="删除" style="text-decoration:none;" name="orderRemove" id="orderRemoveId" action="#{orderOperateList.removeOrder}" onclick="return confirm('确定删除吗？');" rendered="#{(sessionTake.levelId==3) or (sessionTake.levelId==5 and sessionTake.communityId==14)}">
+														            	<img src="../asset/images/orderManage/table_ico102.png" width="18" height="18" />
+														                <f:param name="orderInfoId" value="#{_order.orderInfoId}"/>
+														                <f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+														                <f:param name="pages" value="#{orderOperateList.pages}"/>
+														            </s:link>&#160;
+														            
+														             <s:link view="/orderManage/OrderTallyList.xhtml" title="修改支付状态" style="text-decoration:none;" id="modifyPayStatusId" action="#{orderOperate.modifyPayStatus}" rendered="#{_order.paymentStatus == false and orderOperateList.orderStatus != 0 and orderOperateList.orderStatus != 11 and orderOperateList.orderStatus != 6 and (s:hasRole('change_payment_status') or (sessionTake.levelId == 3 and sessionTake.admin == true))}">
+														            	<img width="17" height="14" src="#{request.contextPath}/asset/images/orderManage/pay.png" />
+														               <f:param name="oId" value="#{_order.orderInfoId}"/>
+														                <f:param name="oStatus" value="#{orderOperateList.orderStatus}"/>
+														            </s:link>&#160;
+														             <s:link view="/orderManage/OrderTallyList.xhtml" title="修改支付状态" style="text-decoration:none;" id="modifyPayAntiStatusId" action="#{orderOperate.modifyPayAntiStatus}" rendered="#{_order.paymentStatus == true and orderOperateList.orderStatus != 0 and orderOperateList.orderStatus != 6 and (s:hasRole('change_payment_status') or (sessionTake.levelId == 3 and sessionTake.admin == true)) and _order.paymentMode != orderConstant.getBalancePaymentMode() and _order.paymentMode != orderConstant.getGiftPaymentMode()}">
+														            	<img width="17" height="14" src="#{request.contextPath}/asset/images/orderManage/pay.png" />
+														               <f:param name="oId" value="#{_order.orderInfoId}"/>
+														                <f:param name="oStatus" value="#{orderOperateList.orderStatus}"/>
+														            </s:link>&#160;
+														            </s:fragment>
+														            <s:fragment rendered="#{_order.everyoneOrderSn eq null}">
+														            <a title="打印理货单" style="text-decoration:none;" href="#{request.contextPath}/orderManage/PrintTallyInfo.seam?orderInfoId=#{_order.orderInfoId}" target="_blank"><img src="#{request.contextPath}/asset/images/orderManage/dayin.png" width="16" height="15"></img></a>
+														            </s:fragment>
+						                                        </span>
+						                                    </td>
+						                                </tr>
+						                            </table>
+						                        </div>
+						                    </div>
+					                    </div>
+				                	</a:repeat>
+				                	</s:div>
+				                </div>
+				                <a:form id="subFrom">
+				                <s:div id="paging">
+				                <input type="hidden" value="#{orderOperateList.orderStatus}" id="orderStatus" />
+				                <input type="hidden" value="#{orderOperateList.orderSearch}" id="orderSearch" />
+				                <input type="hidden" value="#{orderOperateList.sortType}" id="sortType" />
+				                
+				                <h:inputHidden value="#{orderOperateList.orderIds}" id="orderIds" />
+					            <table cellspacing="0" cellpadding="0" style="height:30px; margin:40px auto 20px auto;">
+					                <tr>
+					                	<td><img width="4" height="32" src="../asset/images/orderManage/page_67.jpg"></img></td>
+					                	<td class="td_t_b">
+					                		<h:commandLink  view="/orderManage/OrderTallyList.xhtml" value="首页" id="firstPage">
+												<f:param name="pages" value="1"/>
+												<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+												<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+												<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+											</h:commandLink >
+					                	</td>
+					                	<s:fragment rendered="#{orderOperateList.previousExists}">
+						                    <td class="td_t_b td_t_t">
+					                    		<h:commandLink  view="/orderManage/OrderTallyList.xhtml" value="&lt;&lt;" id="previousPage" styleClass="no_n">
+													<f:param name="pages" value="#{orderOperateList.previousFirstResult}"/>
+													<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+													<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+													<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+												</h:commandLink>
+						                    </td>
+					                    </s:fragment>
+					                    <s:fragment rendered="#{orderOperateList.pageNoList.size() > 0}">
+					                    	<a:repeat value="#{orderOperateList.pageNoList}" var="_pageNo" >
+						                    	<td class="td_t_b td_t_t #{orderOperateList.pages == _pageNo ? 'onp' : ''}">
+						                    		<h:commandLink view="/orderManage/OrderTallyList.xhtml" value="#{_pageNo}" >
+														<f:param name="pages" value="#{_pageNo}"/>
+														<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+														<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+														<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+													</h:commandLink>
+						                    	</td>
+											</a:repeat>
+					                    </s:fragment>
+										<s:fragment rendered="#{orderOperateList.nextExists}">
+											<td class="td_t_b td_t_t">
+						                    	<h:commandLink view="/orderManage/OrderTallyList.xhtml" value="&gt;&gt;" id="nextPage" styleClass="no_d">
+													<f:param name="pages" value="#{orderOperateList.nextFirstResult}"/>
+													<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+													<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+													<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+												</h:commandLink>
+						                    </td>
+						                    <td class="td_t_b td_t_t">
+						                    	<h:commandLink view="/orderManage/OrderTallyList.xhtml"  value="尾页" id="lastPage" >
+													<f:param name="pages" value="#{orderOperateList.lastFirstResult}"/>
+													<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+													<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+													<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+												</h:commandLink>
+											</td>
+										</s:fragment>
+					                    <td class="td_t_b td_t_t"><span style="color:#9a9a9a;">共#{orderOperateList.pageCount}页</span></td>
+					                    <td><img width="4" height="32" src="../asset/images/orderManage/page_70.jpg"></img></td>
+					                </tr>
+					            </table>
+					            </s:div>
+					            </a:form>
+				        	</div>
+			        	</div>
+			        </td>
+					</tr>
+			   </table>
+			</div>
+			<h:form id="jump">
+			<div class="modal" id="giveUp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog kuandu" style="width:380px;">
+					<div class="modal-content">
+					    <div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">跳过理货</h4>
+					    </div>
+					    <div class="modal-body" style=" width: 92%; height: 90px;">
+							<div class="fahuo" align="center" style="margin-top:13px;">是否确认跳过理货?</div>
+					    </div>
+					     <div class="modal-footer">
+					     <h:inputHidden id="jumpId" value="#{orderOperateList.orderId}" />
+				            <h:commandButton value="是" styleClass="btn btn-success" action="#{orderOperateList.jumpTally()}" />
+				            <button type="button" class="btn btn-default" onclick="giveUp();">否</button>
+				          </div>
+					</div>
+				</div>
+			</div>
+			</h:form>
+			<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na" style="display: none;z-index:11;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="messageTitle">提示</h4>
+						</div>
+						<div class="modal-body">
+							<span id="messageValue"></span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</td>
+		
+		<a:form id="updateJump">
+			<div class="modal" id="updateOrder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog kuandu" style="width:600px;">
+					<div class="modal-content" style="width: 506px;">
+					    <div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" onclick="updateGiveUp();"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">修改理由</h4>
+					    </div>
+					    <div class="modal-body" style=" width: 92%; height: 90px;">
+					   		<h:inputHidden id="orderInfoId" name="orderInfoId" value="#{orderOperate.orderInfoId}" />
+					   		<h:inputHidden id="orderStatus" name="orderStatus" value="#{orderOperateList.orderStatus}" />
+					   		<h:inputHidden id="page" name="page" value="#{orderOperateList.pages}" />
+					   		<h:inputHidden id="orderSearch" name="orderSearch" value="#{orderOperateList.orderSearch}" />
+							<h:inputTextarea id="orderUpdateMess" styleClass="form-control nw420" rows="3" style="width: 450px;" value="#{orderOperate.orderUpdateMess}" />
+					    </div>
+					     <div class="modal-footer">
+				            <button type="button" class="btn btn-success" onclick="update();">确认</button>
+				            <button type="button" class="btn btn-default" onclick="updateGiveUp();">取消</button>
+				          </div>
+					</div>
+				</div>
+			</div>
+		</a:form>
+		
+		<a:form>
+	  		<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+	  		<a:jsFunction name="refresh" action="#{orderOperateList.orderOperateListInit}" reRender="contentList,paging" >
+				<a:actionparam name="pages" assignTo="#{orderOperateList.pages}"/>
+				<a:actionparam name="sortType" assignTo="#{orderOperateList.sortType}"/>
+				<a:actionparam name="orderStatus" assignTo="#{orderOperateList.orderStatus}"/>
+				<a:actionparam name="orderSearch" assignTo="#{orderOperateList.orderSearch}"/>
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+		<script type="text/javascript">
+		//<![CDATA[
+		    //订单批量跳过理货
+			function batchJump(){
+				var oIds=jQuery("#subFrom\\:orderIds").val();
+				if (oIds != null && oIds != '') {
+					jQuery("#jump\\:jumpId").val(oIds)
+					jQuery("#giveUp_modal").modal('show');
+				} else {
+					jQuery("#messageValue").html("请选择一个订单进行操作！");
+					jQuery("#messageDiv").modal('show');
+				}
+			}
+			
+			function giveUp(){
+				jQuery("#giveUp_modal").modal('hide');
+			}
+
+			//跳过理货页面弹出
+			function giveUpTally(id){
+				jQuery("#jump\\:jumpId").val(id)
+				jQuery("#giveUp_modal").modal('show');
+			}
+			//切换 排序字段 
+			function sortAction(type){
+				jQuery(".reseverText span").removeClass("cur");
+				jQuery("#sortType" + type).addClass("cur");
+				var orderSearch = jQuery("#orderSearch\\:orderSearch").val();
+				var orderStatus = '#{orderOperateList.orderStatus}';
+				window.location.href = "#{request.contextPath}/orderManage/OrderTallyList.seam?orderStatus=" + orderStatus + "&pages=1&orderSearch=" + orderSearch + "&sortType=" + type;
+			}
+			jQuery(function(){
+				var searchVal="#{orderOperateList.orderSearch}";
+				if(searchVal==null || searchVal==""){
+					jQuery("#orderSearch\\:orderSearch").val("请输入订单编号/收货人/销售人/手机");
+				}
+
+				//页面初始化控制复选框选择状态
+				var allOrderCheckNum =0;
+				jQuery("input[name='orderCheck']").each(function(){
+					var checkId = this.id;
+					
+					var orderId= checkId.replace("orderCheck", "");
+					var ids=jQuery("#subFrom\\:orderIds").val();
+					if(ids!=""){
+						var arr=ids.split(",");
+						var flag=false;
+						for(var i=0;i<arr.length;i++){
+							if(arr[i]==orderId){
+								flag=true;
+								allOrderCheckNum++;
+							}
+						}
+						if(flag){
+							jQuery(this).iCheck("check"); 
+						}
+					}
+					var orderNum = jQuery("input[name='orderCheck']").length;
+					if (orderNum == allOrderCheckNum) {
+						jQuery("input[name='orderCheckAll']").iCheck("check"); 
+					}else {
+						jQuery("input[name='orderCheckAll']").iCheck("uncheck"); 
+					}
+					
+				});
+				
+				jQuery('input[class=iCheckbox]').iCheck({
+					checkboxClass: 'icheckbox_minimal-blue',
+				});
+
+				//订单全选按钮
+				jQuery("#orderCheckAll").on('ifClicked', function(){
+					if (this.checked) {
+						jQuery("input[name='orderCheck']").iCheck("uncheck"); 
+					} else {
+						jQuery("input[name='orderCheck']").iCheck("check"); 
+					}
+				});
+
+				//订单单选按钮
+				jQuery("input[name='orderCheck']:checkbox").on('ifChanged', function(){
+					var orderId=this.id;
+					var orderInfoId=orderId.replace("orderCheck", "")
+					var temp = "";
+					jQuery("input[name='orderCheck']:checkbox:checked").each(function(){
+						temp += jQuery(this).val() + ",";
+					});
+					var orderCheckNum = temp.split(",");
+					var orderNum = jQuery("input[name='orderCheck']").length;
+					if (orderNum == orderCheckNum.length - 1) {
+						jQuery("input[name='orderCheckAll']").iCheck("check"); 
+					}else {
+						jQuery("input[name='orderCheckAll']").iCheck("uncheck"); 
+					}
+
+					if(this.checked){
+						var ids=jQuery("#subFrom\\:orderIds").val();
+						if(ids==""){
+							jQuery("#subFrom\\:orderIds").val(orderInfoId);
+						}else{
+							jQuery("#subFrom\\:orderIds").val(ids+","+orderInfoId); 
+						}
+						
+					}else{
+						var ids=jQuery("#subFrom\\:orderIds").val();
+						var arr=ids.split(",");
+						var str="";
+						for(var i=0;i<arr.length;i++){
+							if(arr[i]!=orderInfoId){
+									str+=arr[i]+",";
+							}
+						}
+						var str2="";
+						if (str.charAt(str.length - 1) == ",") {
+							str2=str.substring(0,str.length-1);
+						} else{
+							str2=str;
+						}
+						jQuery("#subFrom\\:orderIds").val(str2);
+					}
+				});
+
+				//回车搜索事件
+				jQuery("#orderSearch\\:orderSearch").keydown(function(e){
+					if(e.keyCode==13){
+						jquery('#orderSearch\\:orderCommand').trigger("click");
+					}
+				});  
+				sessionStorage.clear();
+			});
+
+			jQuery(function(){
+				/* var myDate = new Date();
+				var mytime=myDate.toLocaleTimeString();     //获取当前时间
+				console.log("开始："+mytime); */
+				//setTimeout('myrefresh()', 1000*60 ); //指定60秒刷新一次  
+			});
+			
+			function myrefresh(){ 
+				/* var myDate = new Date();
+				var mytime=myDate.toLocaleTimeString();     //获取当前时间
+				console.log(mytime); */
+				var pages = '#{orderOperateList.pages}';
+				var sortType = jQuery("#sortType").val();
+				var orderStatus = jQuery("#orderStatus").val();
+				var orderSearch = jQuery("#orderSearch").val();
+				
+				//setTimeout('myrefresh()', 1000*60 ); //指定60秒刷新一次  
+				refresh(pages,sortType,orderStatus,orderSearch);
+			} 
+			document.onkeydown=function(event){
+				var e = event || window.event || arguments.callee.caller.arguments[0];
+	            if(e && e.keyCode==13){ // enter 键
+	                //要做的事情
+	            	jQuery('#orderSearch\\:orderCommand').click();
+	            }
+			}; 
+
+			//修改信息
+			function uptadeDivShow(orderInfoId,orderStatus,pages,orderSearch){
+				jQuery('#updateJump\\:orderInfoId').val(orderInfoId);
+				jQuery('#updateJump\\:orderStatus').val(orderStatus);
+				jQuery('#updateJump\\:page').val(pages);
+				jQuery('#updateJump\\:orderSearch').val(orderSearch);
+				jQuery('#updateJump\\:orderUpdateMess').val("");
+				
+				jQuery('#updateOrder').show();
+			}
+			function updateGiveUp(){
+				jQuery('#updateOrder').hide();
+			}
+			function update(){
+				var orderInfoId = jQuery('#updateJump\\:orderInfoId').val();
+				var orderStatus = jQuery('#updateJump\\:orderStatus').val();
+				var pages = jQuery('#updateJump\\:page').val();
+				var orderSearch = jQuery('#updateJump\\:orderSearch').val();
+				var orderUpdateMess = jQuery('#updateJump\\:orderUpdateMess').val();
+
+				sessionStorage.setItem("orderUpdateMess", orderUpdateMess);
+				
+				if( orderUpdateMess != '' ){
+					if(orderUpdateMess.length <= 500){
+						window.location.href = "#{request.contextPath}/orderManage/OrderModify.seam?orderStatus=" + orderStatus + "&orderInfoId=" + orderInfoId + "&orderSearch=" + orderSearch+ "&pages=" + pages+ "&from=OrderTallyList";
+					}else{
+						alert('修改理由字数超过500字！');
+					}
+				}else{
+					alert('请填写修改理由！');
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

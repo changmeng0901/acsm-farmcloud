@@ -1,0 +1,229 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+<ui:define name="foot">
+	<ui:include src="/layout/BaseIframe.xhtml"></ui:include> 
+</ui:define>
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/js/gantt/prettify.css" />
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/js/gantt/gtstyle2.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/supply/SypplyGantt.css" />
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel"></h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"></button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal"></button>
+      </div>
+    </div>
+  </div>
+</div>    
+		<!-- #{saleProductInfoHome.getSaleProductListChart()} -->
+	<td valign="top">
+		<div class="right_c" style="min-height:30px;">
+			<div class="r_title">
+				<div class="r_t_l cm_r_t_l"><span>销售工具</span><em>&nbsp;&gt;&nbsp;</em><font	size="3">供货管理</font></div>
+			</div>
+			<div class="search_header clear">
+				<div class="search_selected fl mr5">
+					<dl class="se_selt180 fl">
+						<dt>产品状态</dt>
+						<dd class="boot_selected_100">
+							<h:selectOneMenu class="selectpicker" id="cpzt" value="#{saleProductInfoHome.cpzt}" onchange="cpztxz();">
+								<f:selectItem itemValue="全部" itemLabel="全部"/>
+                                <f:selectItem itemValue="现货" itemLabel="现货"/>
+                                <f:selectItem itemValue="预售" itemLabel="预售"/>
+                            </h:selectOneMenu>
+                        </dd>
+                     </dl>
+                     <dl class="se_selt180 fl">
+						<dt>供应类型</dt>
+                        <dd class="boot_selected_100">
+							<h:selectOneMenu class="selectpicker" id="gylx" value="#{saleProductInfoHome.gylx}" onchange="gylxxz();">
+                            	<f:selectItem itemValue="全部" itemLabel="全部"/>
+                            	<f:selectItem itemValue="已上架" itemLabel="已上架"/>
+                            	<f:selectItem itemValue="未上架" itemLabel="未上架"/>
+                           	</h:selectOneMenu>
+                        </dd>
+                     </dl>
+					</div>
+                	<div class="search_blt">
+						<div class="public-search fl mr5">
+							<span class="octicon-search02"></span>
+							<h:inputText class="form-control srarchfont w140" value="#{saleProductInfoHome.searchParam}" id="searchParam" onfocus="FocusFn(this,'#333','请输入产品名称')" onblur="BlurFn(this,'#a8a8a8','请输入产品名称')" />
+							<h:inputHidden id="searchParamHId" value="#{saleProductInfoHome.searchParam}" />
+						</div>
+            				<h:commandButton id="search" styleClass="btn btn-primary fl mr10" onclick="submitSele();" value="搜索" ></h:commandButton>
+						<s:link styleClass="btn btn-success fl" view="/supply/SaleProductInfoEdit.xhtml" includePageParams="none" propagation="none" style="display: #{s:hasRole('supplyAdd')?'hidden':'none'};float:right" onclick="return checkBase(this)">
+							<f:param name="chartOrDetails" value="1"></f:param>
+							添加
+						</s:link>
+					</div>
+					<div class="fr mt5">
+					<div class="year_box fl mr10">
+						<span class="y_item y_lt" onclick="MinusoneFn()">&lt;</span>
+						<span class="y_item y_ct" id="yearlic"></span>
+						<span class="y_item y_rt" onclick="PlusoneFn()">&gt;</span>
+					</div>
+					<div class="sort_way">
+						<p class="btn_xq dq_cur"><a href="javascript:void(0);"><font style="color: white">图表</font></a></p>
+						<p class="btn_tb"><a href="#{request.contextPath}/supply/SaleProductInfoList.seam">详情</a></p>
+					</div>
+				</div>
+			</div>
+                <!-- 主体 -->
+			<div>
+				<div class="gantt_wrap">
+					<div class="gantt_spacer">
+						<p class="txt_name">产品名称</p>
+						<p class="txt_status">产品状态</p>
+					</div>
+					<div class="gantt"></div>
+		   		</div>
+			</div>
+		<!-- 主体 -->
+		</div>
+		<h:panelGroup id="purchaseList">
+			<h:inputHidden id="pageHId" value="#{saleProductInfoHome.page}" />
+			<h:inputHidden id="pageNumHId" value="#{saleProductInfoHome.totalPages}" />
+			<h:inputHidden id="saleProductJsonArrayStrHId" value="#{saleProductInfoHome.saleProductJsonArrayStr}" />
+			<h:inputHidden id="totalSizeHId" value="#{saleProductInfoHome.totalSize}" />
+		</h:panelGroup>
+	</td>  
+<a4j:form>
+ 	<a4j:jsFunction name="queryPurchaseList" action="#{saleProductInfoHome.getSaleProductListChart()}" reRender="purchaseList" oncomplete="mygantt()">
+		<a4j:actionparam name="page" assignTo="#{saleProductInfoHome.page}"/>
+		<a4j:actionparam name="cpzt" assignTo="#{saleProductInfoHome.cpzt}"/>
+		<a4j:actionparam name="gylx" assignTo="#{saleProductInfoHome.gylx}"/>
+		<a4j:actionparam name="searchParam" assignTo="#{saleProductInfoHome.searchParam}"/>
+		<a4j:actionparam name="searchYear" assignTo="#{saleProductInfoHome.searchYear}"/>
+	</a4j:jsFunction>
+</a4j:form>	  
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery.fn.gantt2.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/prettify.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+    jquery = jQuery.noConflict();
+    Array.prototype.del = function(n) {  
+		if(n<0){
+			return this;
+		}else{
+			return this.slice(0,n).concat(this.slice(n+1,this.length));
+		}
+	} ;
+	var nowpage; //gantt当前页数
+	var totalSize;//gantt数据总条数
+	var max;
+	var pageSize = 10; //gantt一页显示几条数据
+	jquery('.selectpicker').selectpicker(); 
+    function FocusFn(obj,oColor,txt_val){
+    	if(_Q(obj).val()==txt_val){
+    		_Q(obj).val('');
+    		_Q(obj).css('color',oColor)
+    	}
+    }
+    function BlurFn(obj,oColor,txt_val){
+    	if(_Q(obj).val()==''){
+    		_Q(obj).val(txt_val);
+    		_Q(obj).css('color',oColor)
+    	}
+    }
+    //(3)年的计算
+    var yearlic = Number(#{saleProductInfoHome.searchYear});
+    _Q('#yearlic').html(yearlic);
+    var _source; 
+    function mygantt(){
+        max = Number(jquery("#pageNumHId").val())-1;
+        totalSize = Number(jquery("#totalSizeHId").val());
+        if(totalSize==0){
+        	nowpage = -1;
+            }
+        else{
+        	nowpage = Number(jquery("#pageHId").val())-1;//gantt当前页数
+            }
+        if(jquery("#saleProductJsonArrayStrHId").val()==null||jquery("#saleProductJsonArrayStrHId").val()==""){
+        	_source = [];
+            }
+        else{
+        	_source = JSON.parse(jquery("#saleProductJsonArrayStrHId").val());
+            }
+		"use strict";
+		_Q(".gantt").gantt({
+			source: _source,
+			navigate: "scroll",//时间范围的级别 例如：["hours", "days", "weeks", "months"]
+			scale: "weeks",
+			minScale: "weeks",
+			maxScale: "weeks",
+			tipPosition : "left",
+			waitText:"加载中......",
+			months : ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+			itemsPerPage:pageSize//分页的每页数据行数
+		});	
+    }
+    mygantt();
+	//加载下一页数据方法
+	function next_page(){
+   		nowpage = nowpage+1;
+		if(nowpage>max){
+			nowpage = max;
+			return;
+		}
+   		findInfoByPageNum(nowpage+1);
+    }
+	//加载上一页数据方法
+    function prev_page(){
+   		nowpage = nowpage-1;
+		if(nowpage<0){
+			nowpage = 0;
+			return;
+		}
+   		findInfoByPageNum(nowpage+1);
+    }
+    function findInfoByPageNum(page){
+    	var searchYear = jquery('#yearlic').html();
+    	var cpzt = jquery('#cpzt').val();
+    	var gylx = jquery('#gylx').val();
+    	var searchParam = jquery('#searchParam').val();
+    	queryPurchaseList(page,cpzt,gylx,searchParam,searchYear);
+    }
+    function submitSele(){//搜索
+    	jquery('#searchParamHid').val(jquery('#searchParam').val())
+    	findInfoByPageNum(1);
+    }
+    function cpztxz(){
+    	jquery('#search').click();
+    }
+    function gylxxz(){
+    	jquery('#search').click();
+    }
+    function MinusoneFn(){
+    	var _minus = Number(_Q('#yearlic').html());
+    	_Q('#yearlic').html(_minus-1);
+    	jquery('#search').click();
+    }
+    function PlusoneFn(){
+    	var _plus = Number(_Q('#yearlic').html());
+    	_Q('#yearlic').html(_plus+1);
+    	jquery('#search').click();
+    }
+	//]]>
+</script> 
+</ui:define>
+</ui:composition>

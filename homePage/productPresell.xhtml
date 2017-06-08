@@ -1,0 +1,694 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">    
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/phone/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/homePage/presell.css"/>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/marketPrice/echarts.js"></script>
+<style>
+
+</style>
+        	<!--#{welComeHome.presellInit()}-->        	
+            <td valign="top">
+            <div class="right_c">
+            	<!-- 面包屑导航 -->
+            	<div class="breadNav_wap clear" style="border:0;">
+                    <div class="breadNav_lt"><span style="color:#333; font-size:14px;">当前位置：</span>个人中心<span>&gt;</span>产品预售</div>
+                </div>
+				<!-- 内容开始 -->
+				<div class="products">
+					<h4>看看别人卖什么价格</h4>
+					<div class="clear" style="padding: 20px 0;">
+						<div class="fl variety">
+							<span class="fl" style="padding: 0 10px 0 20px; height: 34px; line-height: 34px;">品种</span>
+							<div style="position:relative;float: left;">
+								<span class="octicon-search02"></span>							
+							    <h:inputText value="#{welComeHome.searchParam}" id="searchParam" class="form-control" onkeydown="submitSele(event);"/>
+						    </div>
+						</div>
+ 						
+						<s:link styleClass="btn btn-success" target="_blank" view="/supply/SaleProductInfoEdit.xhtml" includePageParams="none" propagation="none" style="display: #{s:hasRole('supplyAdd')?'hidden':'none'};float:right" onclick="return checkSelectNew()">
+							发布我的供应信息
+							<f:param name="saleProductInfoId"/>
+						</s:link>
+					</div>				
+					<h:panelGroup id="purchaseList">
+						<s:fragment value="" rendered="#{empty welComeHome.saleProductInfoList}">
+				            <div style="text-align: center;" >
+				        		<img src="#{request.contextPath}/asset/images/warn.png" alt="" style="margin-top:140px;"/>
+				        		<p style="margin-top:15px; margin-bottom:5px; font-size:16px; color:#909090;">暂无供应信息 </p>
+				    		</div>
+			    		</s:fragment>
+						<s:fragment rendered="#{not empty welComeHome.saleProductInfoList}">
+							<div class="fruit">
+								<ul class="box">
+									<a4j:repeat value="#{welComeHome.saleProductInfoList}" var="_supply">
+										<li>
+											<div class="inner">
+												<div class="pic">
+													<div class="mask">
+														<span class="trend" data-toggle="modal" data-target="#trend" onclick="seachPriceChart('#{_supply.plantId.plantId}');"></span>
+														<span class="supply">
+															<s:link includePageParams="none" propagation="none" target="_blank" view="/supply/SaleProductInfoEdit.xhtml" onclick="return checkSelectNew()" title="编辑">
+									                           	<f:param name="saleProductInfoId" value="#{_supply.saleProductInfoId}" />
+															</s:link>
+														</span>
+													</div>
+													<img src="#{_supply.productImage eq null or _supply.productImage eq 'null' or _supply.productImage eq '' ? '/asset/images/homePage/emptyProductImage.png' : _supply.productImage}" />
+													<p class="name">#{_supply.name}</p>
+													<p style="font-size: 14px; color: #fb4f00;">￥#{_supply.minPrice}~￥#{_supply.maxPrice}</p>
+												</div>
+												<ul class="txt">
+													<li class="clear">
+														<span class="fl">本来生活</span>
+														<span class="fr green">
+															<s:fragment rendered="#{_supply.lifePrice le 0}">--</s:fragment>
+															<s:fragment rendered="#{_supply.lifePrice gt 0}">￥ #{_supply.lifePrice}(kg)</s:fragment> 
+														</span>
+													</li>
+													<li class="clear">
+														<span class="fl">市场价格</span>
+														<span class="fr blue">
+															<s:fragment rendered="#{_supply.marketPrice le 0}">--</s:fragment>
+															<s:fragment rendered="#{_supply.marketPrice gt 0}">￥ #{_supply.marketPrice}(kg)</s:fragment> 
+														</span>
+													</li>
+												</ul>
+											</div>
+										</li>
+									</a4j:repeat>
+								</ul>
+							</div>
+						
+						
+						<div class="pageModel_wap" style="margin-top:10px;">
+							<table cellspacing="0" cellpadding="0">
+		                        <tbody><tr>
+		                            <td>
+		                                <div style="width:auto;">
+		                                    <table cellspacing="0" cellpadding="0" class="pageModel">
+		                                        <tbody>
+		                                        	<tr>
+			                                            <td>
+			                                            	<s:fragment rendered="#{welComeHome.firstEnable}">
+															<span> <a href="javascript:void(0);" onclick="findInfoByPageNum(1);" class="page_prev">首页</a></span> 
+														</s:fragment>
+														<s:fragment rendered="#{welComeHome.previousEnable}">
+															<span class="pagePrve"> 
+																<a href="javascript:void(0);" onclick="findInfoByPageNum(#{welComeHome.pageInt-1});">&lt;&lt;</a>
+															</span> 
+														</s:fragment>
+														<s:fragment rendered="#{welComeHome.numPageList ne null}">
+															<a4j:repeat value="#{welComeHome.numPageList}" var="_page" rowKeyVar="_index">
+																<s:fragment rendered="#{welComeHome.page eq _page}">
+																	<span class="page_num page_Cur"> 
+																		<a href="javascript:void(0);">#{_page}</a>
+																	</span>
+																</s:fragment>
+																<s:fragment rendered="#{welComeHome.page ne _page}">
+																	<span class="page_num "> 
+																		<a href="javascript:void(0);" onclick="findInfoByPageNum(#{_page});">#{_page}</a>
+																	</span>
+																</s:fragment>
+															</a4j:repeat>
+														</s:fragment>
+														<s:fragment rendered="#{welComeHome.nextEnable}">
+															<span class="page_next"> 
+																<a href="javascript:void(0);" onclick="findInfoByPageNum(#{welComeHome.pageInt+1});">&gt;&gt;</a>
+															</span>
+														</s:fragment>
+														<s:fragment rendered="#{welComeHome.lastEnable}">
+															<span id="j_id56"> 
+																<a href="javascript:void(0);" onclick="findInfoByPageNum(#{welComeHome.totalPages});">尾页</a>
+															</span> 
+														</s:fragment>
+														<span> 
+															<span class="pageCount" style="border-right: 0">
+																<a>共#{welComeHome.totalPages}页</a>
+															</span>
+														</span>
+			                                            </td>
+			                                        </tr>
+			                                    </tbody>
+			                                </table>
+		                                </div>
+		                            </td>
+		                        </tr>
+		                    </tbody></table>						
+	                	</div>
+	                	</s:fragment>
+                	</h:panelGroup>
+				</div>
+				<div class="datas">
+					<h4>农场数据统计</h4>
+					<div class="clear" style="padding: 20px 0;">
+						<span class="fl" style="font-size:14px; padding-left:20px;">近30天统计数据</span>
+						<span class="fr" style="font-size:14px; font-weight:bold; margin-right:15px;">【数据来源：<font style="color:#5cb85c;">义田买手网</font>】</span>
+					</div>
+					<ul class="dataBox">
+						<li>
+							<div class="inner">
+								<img src="#{request.contextPath}/asset/images/homePage/data1.png" alt=""/>
+								<p class="detail">您的电话被义田买手网的采购商</p>
+								<p class="num num1">拨打了<span>#{welComeHome.farmDataCount[0]}</span>次</p>
+							</div>
+						</li>
+						<li>
+							<div class="inner">
+								<img src="#{request.contextPath}/asset/images/homePage/data2.png" alt=""/>
+								<p class="detail">关注您的采购商共计</p>
+								<p class="num num2"><span>#{welComeHome.farmDataCount[1]}</span>个</p>
+							</div>
+						</li>
+						<li>
+							<div class="inner">
+								<img src="#{request.contextPath}/asset/images/homePage/data3.png" alt=""/>
+								<p class="detail">您的农场共计被预览</p>
+								<p class="num num3"><span>#{welComeHome.farmDataCount[2]}</span>次</p>
+							</div>
+						</li>
+						<li>
+							<div class="inner">
+								<img src="#{request.contextPath}/asset/images/homePage/data4.png" alt=""/>
+								<p class="detail">您的农场评分为</p>
+								<div class="stars">
+								</div>
+							</div>
+						</li>
+					</ul>
+					<p style="text-align: center; padding-top: 15px;">对数据不满意？</p>
+					<div class="veiw"><img src="#{request.contextPath}/asset/images/homePage/view.png" style="cursor: pointer;"/></div>
+				</div>
+				<div class="analyse">
+					<h4>数据分析<span class="fr ways" data-toggle="modal" data-target="#ways">想提升排名？<font>查看攻略></font></span></h4>
+					<div class="box">
+						<p class="tip">我们根据义田买手网获得的数据对您的农场管理进行了简单的评估/打分，旨在帮助您完善您的农场，达到提高访问量，打造品牌！数据仅供参考</p>
+						<s:fragment rendered="#{welComeHome.farmDataInfo[0] eq '1'}">
+							<div class="inner">
+								<h6 class="pre1">物流和服务能力设置<i></i>
+									<span class="perfect">
+									<s:link target="_blank" view="/map/FarmEdit.seam" includePageParams="none" propagation="none"  onclick="return checkSelectNew()">
+										立即完善
+										<f:param name="baseId" value="#{sessionTake.baseModel.baseId}"/>
+									</s:link>
+									</span>
+								</h6>
+								<p>配送能力少于1种</p>
+								<p>服务能力少于1种</p>
+							</div>
+						</s:fragment>
+						<s:fragment rendered="#{welComeHome.farmDataInfo[1] eq '1'}">
+							<div class="inner">
+								<h6 class="pre2">供应信息<i></i><span class="perfect"><a target="_blank" href="#{request.contextPath}/supply/SaleProductInfoList.seam">立即修改</a></span></h6>
+								<p>供应信息已经超过7天未更新</p>
+							</div>
+						</s:fragment>
+						<s:fragment rendered="#{welComeHome.farmDataInfo[2] eq '1'}">
+							<div class="inner">
+								<h6 class="pre3">管理团队<i></i><span class="perfect"><a target="_blank" href="#{request.contextPath}/map/FarmerInfoManageList.seam">立即完善</a></span></h6>
+								<p>团队人员信息少于2项</p>
+							</div>
+						</s:fragment>
+						<s:fragment rendered="#{welComeHome.farmDataInfo[3] eq '1'}">
+							<div class="inner">
+								<h6 class="pre4">基地基本信息不完善<i></i><span class="perfect"><a target="_blank" href="#{request.contextPath}/map/CompanyList.seam">立即完善</a></span></h6>
+								<p>基地照片上传少于4张</p>
+								<p>基地介绍文字为空</p>
+								<p>企业荣誉图片上传少于2张</p>
+							</div>
+						</s:fragment>
+						<s:fragment rendered="#{welComeHome.farmDataInfo[4] eq '1'}">
+							<div class="inner">
+								<h6 class="pre5">未开通绿色履历功能<i></i><span class="perfect"><a target="_blank" href="#{request.contextPath}/service/AddService.seam?serviceId=#{welComeHome.serviceIdArray[1]}">立即了解</a></span></h6>
+								<p>未开通绿色履历功能，开通农产品的“身份证”消费者更信赖</p>
+							</div>
+						</s:fragment>
+						<s:fragment rendered="#{welComeHome.farmDataInfo[5] eq '1'}">
+							<div class="inner">
+								<h6 class="pre6">未开通四季田景功能<i></i><span class="perfect"><a target="_blank" href="#{request.contextPath}/service/AddService.seam?serviceId=#{welComeHome.serviceIdArray[0]}">立即了解</a></span></h6>
+								<p>未开通四季田景功能，使农产品生长环境随时看</p>
+							</div>
+						</s:fragment>
+						<s:fragment rendered="#{welComeHome.farmDataInfo[6] eq '1'}">
+							<div class="inner" style="display: none;">
+								<h6 class="pre7">农场排名较低<i></i><span class="perfect" data-toggle="modal" data-target="#apply">立即申请</span></h6>
+								<p>义田买手农场排名低于60%，可以联系客服帮助您提高</p>
+							</div>
+						</s:fragment>
+						<s:fragment rendered="#{welComeHome.farmDataInfo[7] eq '1'}">
+							<div class="inner">
+								<h6 class="pre8">生产数据<i></i><span class="perfect"><a target="_blank" href="#{request.contextPath}/agricultural/Manager.seam">立即完善</a></span></h6>
+								<p>近5天农事数据更新较少</p>
+								<p>近5天订单数据更新较少</p>
+								<p>近5天库存数据更新较少</p>
+								<p>近5天采收数据更新较少</p>
+							</div>
+						</s:fragment>
+					</div>
+				</div>
+				<p class="copyRight"></p>
+            </div>
+            <!-- 内容结束 -->
+            </td>   
+ <!-- 查看攻略弹窗 -->
+   <div class="modal fade" id="ways" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog wayPop">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" style="margin-top:0;"></button>
+            <h4 class="modal-title" id="myModalLabel" style='font-weight:bold; font-family:"微软雅黑";'>攻略</h4>
+          </div>
+          <div class="modal-body">
+           <p>1、种植开始即发布预售供应信息</p>
+           <p>2、多发布供应信息</p>
+           <p>3、供应信息经常更新</p>
+           <p>4、企业信息、管理团队、服务能力信息完整</p>
+           <p>5、及时完善土壤、水源、农残、空气等检测信息</p>
+           <p>6、航拍、四季田景、绿色履历、农场名片等展示更加生动真实</p>
+           <p>7、保质保量更新农事（订单/库存/采收）信息</p>
+           <p>8、每天勤登录关注信息动态</p>
+           <p>9、接听电话及时且无漏接，办理400电话</p>
+           <p>10、上传到图片和实物相符，定期更新</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 查看攻略弹窗结束 -->
+    <!-- 提示弹窗 -->
+   <div class="modal fade" id="apply" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog tipPop">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" style="margin-top:0;"><span aria-hidden="true" style="color:#d8d6d8;">×</span></button>
+            <h4 class="modal-title" id="myModalLabel" style='font-weight:bold; font-family:"微软雅黑";'>提示</h4>
+          </div>
+          <div class="modal-body">
+          	<img src="#{request.contextPath}/asset/images/homePage/mark.png" />
+          	<p>您的申请已经提交，<br/>我们的客服会与您联系！</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 提示弹窗结束 -->
+    <!-- 提示弹窗 -->
+   <div class="modal fade" id="trend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog trendPop">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" style="margin-top:0;"></button>
+            <h4 class="modal-title" id="myModalLabel" style='font-weight:bold; font-family:"微软雅黑";'>价格趋势</h4>
+          </div>
+          <div class="modal-body clear">
+          	<div class="clear" style="width:100%;">
+	          	<h:panelGroup id="priceData">
+	          		<h:inputHidden value="#{welComeHome.realObjectList}" id="dmyId"/>
+	          		<h:inputHidden value="#{welComeHome.provinceName}" id="provinceName"/>
+				</h:panelGroup>
+          		<ul class="date fr clear" >
+	          		<li class="cur" val="1">周</li>
+	          		<li val="2">月</li>
+	          		<li val="3" style="border-right:0;">年</li>
+	          	</ul>
+          	</div>
+          	<div class="chartBox current" style="display:none;" id="container"></div>
+          	<div class="emptyChartBox">
+          		<img src="#{request.contextPath}/asset/images/homePage/empty_price.png" alt="" />
+          		<p class="empty_txt">该时间段暂无数据,请点击其它时间段查询</p>
+          	</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 提示弹窗结束 -->
+<div class="clear"></div>
+<!--content结束-->
+ <a4j:form>
+ <a4j:jsFunction name="queryPurchaseList" action="#{welComeHome.getSaleProductList()}" reRender="purchaseList" oncomplete="">
+	<a4j:actionparam name="page" assignTo="#{welComeHome.page}"/>
+	<a4j:actionparam name="searchParam" assignTo="#{welComeHome.searchParam}"/>
+</a4j:jsFunction>
+  <a4j:jsFunction name="getProductPriceData" action="#{welComeHome.getProductPriceData()}" data="#{welComeHome.priceAnalyseData}" oncomplete="priceChartCallBack(data)">
+	<a4j:actionparam name="searchType" assignTo="#{welComeHome.searchType}"/>
+	<a4j:actionparam name="plantId" assignTo="#{welComeHome.plantId}"/>
+</a4j:jsFunction>
+<a4j:jsFunction  name="getPlantPriceData" action="#{welComeHome.getPlantPriceData}" oncomplete="returnPlantPriceData()" reRender="priceData">	
+	<a4j:actionparam name="searchType" assignTo="#{welComeHome.searchType}"/>
+	<a4j:actionparam name="plantId" assignTo="#{welComeHome.plantId}"/>
+	<a4j:actionparam name="provinceName" assignTo="#{welComeHome.provinceName}"/>
+</a4j:jsFunction>
+
+ </a4j:form>
+<script>
+//<![CDATA[
+var starNum=#{welComeHome.farmDataCount[3]};
+jQuery(document).ready(function() {
+		jQuery('.veiw img').click(function() {
+			if(jQuery('.analyse').is(':hidden')){
+				jQuery('.analyse').slideDown();
+			}else{
+				jQuery('.analyse').slideUp();
+			}
+		});
+		// 价格趋势
+		jQuery('.trendPop .date li').click(function() {
+			jQuery(this).addClass('cur').siblings().removeClass('cur');
+			var searchType=jQuery("#trend .date .cur").attr("val");
+			weekMonthYearClick(searchType);
+			//getProductPriceData(searchType,pricePlantId);
+		});		
+        jQuery(".stars").html("");
+        if(starNum<3){
+        	starNum=3;
+        }
+        for(var i=0;i<starNum;i++){
+			jQuery(".stars").append("<img src='#{request.contextPath}/asset/images/homePage/star.png'/>");
+        }          
+})
+//旧版图开始（改为用价格模块的）
+	function getOption(timeData,marketData,lifeData){
+		option = {
+		    title : {
+		        text: '',
+		    },
+		    tooltip : {
+		        trigger: 'axis',
+		        formatter: "{a}<br/>{b}: ￥{c}/kg"
+		    },
+		    legend: {
+		      	 x: 'center',
+		         y: 'bottom',
+		        data:['市场价格','本来生活价格']
+		    },
+		    toolbox: {
+		        show : false,
+		        feature : {
+		            mark : {show: true},
+		            dataView : {show: true, readOnly: false},
+		            magicType : {show: true, type: ['line', 'bar']},
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        }
+		    },
+		    calculable : false,
+		    xAxis : [
+		        {
+		            type : 'category',
+		            boundaryGap : false,
+		            data : timeData
+		        
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type : 'value',
+		            name: '价格（元/kg）',
+		            nameLocation:'top',
+		            nameRotate:'40',//不起作用(坐标轴名字旋转，角度值)
+		            nameGap:'130',//不起作用(坐标轴名称与轴线之间的距离)
+		            nameTextStyle:{
+		            color:'#000',
+		              fontWeight:'bold',
+		              fontFamily:'微软雅黑'
+		            },
+		            axisLabel : {
+		                formatter: '{value}'
+		            }
+	            
+		        }
+		    ],
+		    series : [
+		        {
+		            name:'市场价格',
+		            type:'line',
+		            data:marketData,
+		            markPoint : {
+		                data : [
+		                    {
+			                    type : 'min',
+			                  	name: '历史最低',
+			                  	symbolSize:[13,13],
+			                  	itemStyle: { 
+		                        	normal: { 
+		                                label: { 
+		                        			formatter: '最低'
+		                                    },
+	                                    textStyle:{
+                                              fontStyle:'微软雅黑',
+                                              fontWeight:'bold'
+                                        }
+		                                }
+				            	},
+				            	label: { 
+		                        	normal: { 
+		                        		textStyle : { 
+		                        			fontWeight:'bold',
+		                        			fontStyle:'微软雅黑'
+		                                    } 
+		                                }
+				            	}
+		                    }
+		                ]
+		            },
+		            markLine : {
+		                data : [
+		                    {type : 'average', name: '平均值'}
+		                ]
+		            }
+		        },
+		        {
+		            name:'本来生活价格',
+		            type:'line',
+		            data:lifeData,
+		            markPoint : {
+		                data : [
+		                    {
+		                    	type : 'min',
+			                  	name: '历史最低',
+			                  	symbolSize:[13,13],
+			                  	itemStyle: { 
+		                        	normal: { 
+		                                label: { 
+		                        			formatter: '最低',
+		                        			textStyle:{
+	                                              fontStyle:'微软雅黑',
+	                                              fontWeight:'bold'
+	                                        }
+		                                 } 
+		                             }
+				            	}
+		                    }
+		                ]
+		            },
+		            markLine : {
+		                data : [
+		                    {type : 'average', name : '平均值'}
+		                ]
+		            }
+		        }
+		    ]
+		};
+		return option;
+	}
+
+function priceChartCallBack(priceData){	
+	var pd=priceData.split("@");
+	var myChart = echarts.init(document.getElementById('container'));
+	var option = getOption(pd[0].split(","),pd[1].split(","),pd[2].split(","));
+    myChart.setOption(option);  
+}
+//旧版图结束
+
+function findInfoByPageNum(page){
+	var searchParam = jQuery('#searchParam').val();
+	queryPurchaseList(page,searchParam);
+}
+function submitSele(e){
+	if(e.keyCode==13) {
+		findInfoByPageNum(1);
+     }
+}
+var pricePlantId;
+function seachPriceChart(plantId){
+	jQuery(".emptyChartBox").hide();
+	jQuery("#container").hide();
+	dayjson="";
+	monthjson="";
+	yearjson="";
+	pricePlantId=plantId;
+	var searchType=jQuery("#trend .date .cur").attr("val");
+	var proName=jQuery("#provinceName").val();
+	//getProductPriceData(searchType,plantId);
+	getPlantPriceData(searchType,plantId,proName);
+}
+function returnPlantPriceData(){		
+	jquery('#login').hide();
+	lineGraph(0);
+}
+
+//周月年(如果已查看过，就不在请求后台)
+function weekMonthYearClick(num){
+	var proName=jQuery("#provinceName").val();
+	if(num==1){
+		if(dayjson !=""){
+			lineGraph(1);
+		}else{
+			if(pricePlantId!=null){
+				jquery('#login').show();
+				getPlantPriceData(1,pricePlantId,proName);
+			}
+		}	
+	}else if(num==2){
+		if(monthjson !=""){
+			lineGraph(2);
+		}else{
+			if(pricePlantId!=null){
+				jquery('#login').show();
+				getPlantPriceData(2,pricePlantId,proName);
+			}
+		}		
+	}else if(num==3){
+		if(yearjson!=""){
+			lineGraph(3);
+		}else{
+			if(pricePlantId!=null){
+				jquery('#login').show();
+				getPlantPriceData(3,pricePlantId,proName);
+			}
+		}	
+	}
+}
+
+var dayjson="";
+var monthjson="";
+var yearjson="";
+//折线图
+function lineGraph(num){	
+	var weekMonthYear=jQuery("#trend .date .cur").attr("val");
+	var json="";
+	if(num==0){
+		if(weekMonthYear==1){
+			if(dayjson==""){
+				dayjson=jquery('#dmyId').val();
+			}
+			json=jquery.parseJSON(dayjson);
+		}else if(weekMonthYear==2){
+			if(monthjson==""){
+				monthjson=jquery('#dmyId').val();
+			}
+			json=jquery.parseJSON(monthjson);
+		}else if(weekMonthYear==3){
+			if(yearjson==""){
+				yearjson=jquery('#dmyId').val();
+			}
+			json=jquery.parseJSON(yearjson);
+		}
+	}else{
+		if(num==1){
+			json=jquery.parseJSON(dayjson);
+		}else if(num==2){
+			json=jquery.parseJSON(monthjson);
+		}else if(num==3){
+			json=jquery.parseJSON(yearjson);
+		}
+	}
+	//x坐标
+	var x_coordinates=json.x_coordinates
+	//曲线数据
+	var json_data=json.result_date;
+
+	if(json_data==null || json_data==""){
+		jQuery(".emptyChartBox").show();
+		jQuery("#container").hide();
+		return;
+	}else{
+		jQuery(".emptyChartBox").hide();
+		jQuery("#container").show();
+	}
+	var legend_data=[];
+	var series=[];
+	for(var p in json_data){
+		var name_=json_data[p].name;
+		var data_=json_data[p].data;
+	    series.push({
+	    	name:name_,
+			type:'line',
+			connectNulls:true,
+			step: 'start',
+			data:data_
+        });
+	    legend_data.push(name_ );
+	}
+	var dom = document.getElementById("container");
+	var myChart = echarts.init(dom);
+	var app = {};
+	option = null;
+	option = {
+		tooltip: {
+			trigger: 'axis'
+		},
+		legend: {
+			bottom:'2%',
+			data:legend_data
+		},
+		grid: {
+			y2: 120,
+			left: '3%',
+			right: '4%',
+			containLabel: true
+		},
+		xAxis: {
+			type: 'category',
+			data: x_coordinates
+		},
+		yAxis: {
+			type: 'value'
+		},
+		tooltip: {
+			triggerOn: 'mousemove',
+	        formatter: function(params) {  
+	              var res = params.name+'<br/>';  
+	              var myseries = option.series;  
+	       
+	              for (var i = 0; i < myseries.length; i++) {  
+	                res+= myseries[i].name;
+	              
+	                 for(var j=0;j<myseries[i].data.length;j++){  
+	                    
+	                      if(j==params.dataIndex){
+		                      if(myseries[i].data[j]==null){
+		                    	  res+=' :-</br>';  
+			                  }else{
+			                	  res+=' : '+myseries[i].data[j]+'元</br>';  
+				              }
+	                      }  
+	                  }         
+	              }  
+	              return res;  
+	        }  
+	        
+	    },
+		series:series
+	};
+	if (option && typeof option === "object") {
+		myChart.setOption(option, true);
+		
+	}
+}
+//]]>
+</script>
+
+
+
+
+</ui:define>
+
+</ui:composition>

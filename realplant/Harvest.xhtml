@@ -1,0 +1,472 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+ <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<style>
+.ui-selectmenu{*position:static;}
+.sh_d_d{ width:100%; padding:10px 0; line-height:45px; font-family:"微软雅黑"; font-size:14px;}
+.sh_01{ height:45px; line-height:45px; float:left; text-align:left; margin-right:25px; display:inline-block;}
+.sh_02{ min-width: 150px;  display: inline-block; height: 33px; *height: 30px; *line-height:33px;}
+.ts_div2{width:240px; height: 125px; border: 1px solid #81C5E9; margin: 0px auto; padding: 0 15px 15px;  background: url(#{request.contextPath}/asset/images/tck_bg_14.jpg) #ffffff repeat-x scroll center top;}
+.dr-mpnl-shadow{background:none;}
+.dr-mpnl-pnl{background:none; border:none;}
+.dr-mpnl-pnl-b{padding:0;}
+.dr-mpnl-shadow{top:0; left:0;}
+.rich-picklist-source-items{margin:0;}
+</style>
+<!-- #{productRecordTimesHome.toEdit()} -->
+<td valign="top" width="100%">
+                <div class="right_c">
+                	<div class="r_title">
+                	<div class="r_t_l cm_r_t_l"><span>加工&#160;&gt;&#160;&#160;采收</span><em>&gt;</em><font size="3">采收记录</font></div>
+                       <div class="fr" style="margin-bottom:-1px;float:right;">
+                        	<ul class="cm_resumeList clear">
+								 <li>
+                                	<a disabled="true" class="borderBt" style="cursor:default;" href="javascript:void(0)"><img src="../asset/images/caishoujilu01.png"/><span>采收记录</span></a>
+                                </li> 
+								<li>
+                                	<a href="#{request.contextPath}/harvest/PreHarvestList.seam"><img src="../asset/images/yucai01.png"/><span>预采管理</span></a>
+                                </li> 
+                                
+                                <li>
+                                	<a href="#{request.contextPath}/harvest/PreSalesList.seam"><img src="../asset/images/yushou01.png"/><span>预售管理</span></a>
+                                </li> 
+                             </ul>   
+                        </div>
+                    </div>
+                  <!--入库订单列表开始-->
+                  <a:form>
+                  <span class="enterpriseSet" style="display:none">#{sessionTake.harvestUnit}</span>
+                  <rich:modalPanel id="products" autosized="true" height="125" width="240" headerClass="modalHeader" >
+                    	<div class="ts_div2" id="div2">
+		        		<div class="tck_ti"><a href="#">
+		        			<h:outputLink value="#"  onclick="#{rich:component('products')}.hide(); return false;">
+		                    <img src="#{request.contextPath}/asset/images/close_17.jpg" width="20" height="20" onclick="return closeMethod()"/>
+		                </h:outputLink>
+		        		</a></div>
+		        	 
+						<table style="width:100%; margin-top:25px; table-layout:fixed; margin-left:15px;">
+		                    <tr>
+		                    	<td width="46" align="left"><img src="#{request.contextPath}/asset/images/tstc.jpg" width="46" height="46" /></td>
+		                        <td align="left" style="font-family:'宋体'; color:#000000; font-size:12px; padding-left:15px;">
+		                        	<span id="spanValue"></span>
+		                        </td>
+		                    </tr>
+		                </table>
+		                </div>
+		          </rich:modalPanel>
+		           <div class="sp_d_iv">
+                  
+                  <span class="spn_01" style="margin-right: 5px;"> 采收单号：<span class="sh_02">
+                  <h:outputText value="#{productRecordTimesHome.harvest.code}"></h:outputText></span> </span>
+                  <span class="spn_01"> 基地名称：<span class="sh_02">
+                  <h:outputText value="#{productRecordTimesHome.baseName}" ></h:outputText> </span></span>
+				  <div class="clear"></div>
+				  </div>
+				  <div class="sp_d_iv">
+				  <s:fragment rendered="#{sessionTake.harvestHarvesterCheck}">
+	                  <span class="spn_01"> 采收人：<span class="sh_02">
+	                  <h:outputText value="#{productRecordTimesHome.harvest.farmerId.name}"></h:outputText></span> </span>
+	             </s:fragment>
+                  <span class="spn_01"> 采收时间：<span class="sh_02">
+                  <h:outputText value="#{productRecordTimesHome.harvest.operatorTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></span> </span>
+                  <h:outputText rendered="#{productRecordTimesHome.storageRoomId ne 0}" >
+                  <span class="spn_01"> 采收入库：<span class="sh_02">
+                  <h:outputText  value="#{productRecordTimesHome.getRoomName(productRecordTimesHome.storageRoomId)}" ></h:outputText></span> </span>
+                  </h:outputText>
+				  <div class="clear"></div>
+				  </div>
+                   </a:form>
+				  <br></br>
+				<!--入库订单列表结束-->
+				<h:form id="goodsInfo">
+				<a:repeat value="#{productRecordTimesHome.finalList}" var="obj" rowKeyVar="index" id="lists">
+				<div style="#{index==0?'':'margin-top:35px;'}">
+				
+				<div class="sp_d_iv">
+								<h:outputText rendered="#{obj.realPlantId ne null}" >
+									<span class="spn_01">作物：#{obj.breedBreedId.plant.name}</span>
+								    <span class="spn_01">品种：#{obj.breedBreedId.name}</span>
+								    <span class="spn_01">区域：#{obj.tunnelInfoId.tunnelName}</span>
+								  </h:outputText>
+								  <h:outputText rendered="#{obj.realPlantId eq null}" >
+									<span class="spn_01">作物：#{obj.goodsInfoId.plant.name}</span>
+								    <h:outputText  rendered="#{obj.tunnelInfoId ne null}">
+								    <span class="spn_01">区域：#{obj.tunnelInfoId.tunnelName}</span>
+								    </h:outputText>
+								  </h:outputText>
+								  <h:outputText rendered="#{obj.outputCheck}" >
+									<span class="spn_01">产出品：#{obj.outputsName}</span>
+								  </h:outputText>
+								  <s:fragment rendered="#{sessionTake.harvestLevelCheck}">
+								    	<span class="spn_01">等级：#{harvestRecordsList.levelName(obj.tempTimes.level)}</span>
+								   </s:fragment>
+								  <s:fragment rendered="#{sessionTake.harvestPriceCheck}">
+								    <span class="spn_01">单价：#{obj.unitPrice}</span>
+								    </s:fragment>
+								    <span class="spn_02 ">
+								    <a  href="#"  class="one" ></a>
+								    <span style="display:none" class="goodsUnit#{index}">#{obj.goodsInfoId.goodsUnit}</span>
+								    </span>
+								</div>
+                    <table class="newble12" cellpadding="0" cellspacing="1" >
+                        <tr>
+                            <th class="new_thc8" >ID</th>
+                         
+                            <th class="new_thc8">采收量</th>
+                             <s:fragment rendered="#{sessionTake.harvestEarthCheck}">
+                            	<th class="new_thc8">扣土量</th>
+                            </s:fragment>
+                            <s:fragment rendered="#{sessionTake.harvesttareCheck}">
+                            	<th class="new_thc8">皮量</th>
+                            </s:fragment>
+                            <s:fragment rendered="#{sessionTake.harvestDishCheck}">
+                            	<th class="new_thc8">净菜量</th>
+                            </s:fragment>
+                             
+                            <th class="new_thc8">单位</th>
+                        </tr>
+                        <a:repeat value="#{obj.harvestDetails}" var="_obj" rowKeyVar="_index">
+                        <tr>
+                           <td class="new_td8">#{_index+1}</td>
+                           
+                            <td class="new_td8 two#{index}" >#{unitStranfer.outStranfer(obj.goodsInfoId.goodsUnit,_obj.weight)}
+                             <input type="hidden" value="#{_obj.weight}" class="weight#{index}" />
+                            </td>
+                            <s:fragment rendered="#{sessionTake.harvestEarthCheck}">
+                            	 <td class="new_td8 two#{index}" >#{unitStranfer.outStranfer(obj.goodsInfoId.goodsUnit,_obj.earthWeigth)}</td>
+                            </s:fragment>
+                            <s:fragment rendered="#{sessionTake.harvesttareCheck}">
+                            	 <td class="new_td8 two#{index}" >#{unitStranfer.outStranfer(obj.goodsInfoId.goodsUnit,_obj.tareWeight)}</td>
+                            </s:fragment>
+                            <s:fragment rendered="#{sessionTake.harvestDishCheck}">
+                            	 <td class="new_td8 two#{index}" >#{unitStranfer.outStranfer(obj.goodsInfoId.goodsUnit,_obj.dishWeight)}</td>
+                            </s:fragment>
+                            <td class="new_td8"> #{goodsInfoConstant.getGoodUnitLabel(obj.goodsInfoId.goodsUnit)}</td>
+                        </tr>
+                        </a:repeat>
+                    </table>
+                    <div style="overflow:hidden;">
+                    <div style="float:left;">
+                     	<div style="overflow:hidden;margin:15px 0;">
+	                     	<s:fragment rendered="#{obj.outStorageNum ne null and obj.outStorageNum ne 0}">
+			                    <div style="float:left; margin-right:60px;">
+			                    	<div style="float:left;font-size:14px;width:60px;margin: 10px 5px 5px 0;height:30px;line-height:30px;">采收出库</div>
+				                    <h:inputText value=""  class="form-control outWeight"  style="width:220px; margin-top:10px;display: inline-block;"/> 
+				                    <span style="margin-left:5px;margin-top:19px; font-size:14px;" > #{goodsInfoConstant.getGoodUnitLabel(obj.goodsInfoId.goodsUnit)}</span>
+			                    </div>
+		                    </s:fragment>
+		                    <s:fragment rendered="#{(obj.outStorageNum eq null or obj.outStorageNum eq 0) and sessionTake.harvestOutstockCheck}">
+			                    <div style="float:left; margin-right:60px;">
+			                    	<div style="float:left;font-size:14px;width:60px;margin: 10px 5px 5px 0;height:30px;line-height:30px;">采收出库</div>
+				                    <h:inputText value=""  class="form-control outWeight"  style="width:220px; margin-top:10px;display: inline-block;"/> 
+				                    <span style="margin-left:5px;margin-top:19px; font-size:14px;" > #{goodsInfoConstant.getGoodUnitLabel(obj.goodsInfoId.goodsUnit)}</span>
+			                    </div>
+		                    </s:fragment>
+                    	<s:fragment rendered="#{sessionTake.harvestCarsCheck}">
+				                <div style="float:left;">
+				                	<div style="float:left; font-size:14px;width:60px;margin: 10px 5px 5px 0;height:30px;line-height:30px;">车辆数量</div>
+			                    	<s:fragment rendered="#{obj.carsNum eq null}">
+			                    	 <h:inputText value=""  class="form-control outWeight"  style="width:220px; margin-top:10px;display: inline-block;"/> 
+			                    	</s:fragment>
+			                    	<s:fragment rendered="#{obj.carsNum ne null}">
+			                    	 <h:inputText value="#{obj.carsNum}"  class="form-control outWeight"  style="width:220px; margin-top:10px;display: inline-block;"/> 
+			                    	 </s:fragment>
+				                    <span style="margin-left:5px;margin-top:10px; font-size:14px;height:30px;line-height:30px;display: inline-block;" >
+				                  	  辆
+				                    </span>
+				                </div>
+			         	</s:fragment>
+			         </div>
+			         <s:fragment rendered="#{sessionTake.harvestMethodCheck}">
+			                <div style="overflow:hidden;margin:15px 0;">
+			                    <div style="float: left;margin-right:5px;width:60px;text-align:right;font-size:14px;">采收方法</div>
+			                   	<h:inputTextarea value="#{obj.harvestMethod}" class="form-control nw300 method" rows="3" id="method"/>
+		                   	</div>
+		            </s:fragment>
+		             <div style="overflow:hidden;">
+		             	<div style="float: left; margin-left:33px;margin-right:5px;">备注</div>
+                   		<h:inputTextarea value="#{productRecordTimesHome.instance.remark}" class="form-control nw300" rows="3" />
+		             </div>
+		             </div>
+		              <div style="float:right;">
+	                    <div style="text-align:rigth; padding-right:30px; height:30px; line-height:30px;">
+	                    	<span style="margin-right: 8px; margin-left: 30px; float: right;">采收量：&#160;<font color="#ff0000" size="+1" style="font-family: Arial, Helvetica, sans-serif;" id="_count#{index}">0</font>&#160;#{goodsInfoConstant.getGoodUnitLabel(obj.goodsInfoId.goodsUnit)}</span>
+								<span style="float: right;">采收筐数量：&#160;<font color="#d87500" size="+1" style="font-family: Arial, Helvetica, sans-serif;">#{obj.harvestDetails.size}</font>&#160;筐</span>
+	                    </div>
+	                    </div>
+                    </div>
+                      </div>
+                    </a:repeat>
+                    
+                   	<div style="margin-top:5px; font-size:14px; height:40px; line-height:40px;">
+							<span style="margin-right: 8px; margin-left: 30px; float: right;">采收总量：&#160;<font color="#ff0000" size="+1" style="font-family: Arial, Helvetica, sans-serif;" id="total2">#{productRecordTimesHome.harvest.weight}</font>&#160;<font id="unit2"></font><font id="add2"></font><font color="#ff0000" size="+1" style="font-family: Arial, Helvetica, sans-serif;" id="num3"></font></span>
+							<span style="float: right;">总采收筐数量：&#160;<font color="#d87500" size="+1" id="total1" style="font-family: Arial, Helvetica, sans-serif;">#{productRecordTimesHome.harvest.number}</font>&#160;筐</span>
+                            <div class="clear"></div>
+                   </div>
+                     	
+                   <div style="height:25px;"></div>
+                    <table width="180" style="margin:35px auto 0 auto;">
+						<tr>
+							<td>
+			            	<s:link view="/realplant/RealPlantList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" >
+			            	
+			            	<f:param name="pageNum" value="#{productRecordTimesHome.pageNum}"/>
+			            	</s:link>
+                            </td>
+						</tr>
+                   </table> 
+                   <div style="height:20px; width:100%;"></div>
+                 <div class="clear"></div>
+                 </h:form>
+                </div><!--right_c结束-->
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/superfish.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/supersubs.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/hoverIntent.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.flot.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui-select.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/customInput.jquery.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.dataTables.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.fancybox-1.3.4.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.filestyle.mini.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.treeview.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.tipsy.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.wysiwyg.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/inline.js"></script>
+            </td>  
+            <a:form>
+		        <a:jsFunction name="addOne" reRender="goodsInfo" action="#{productRecordTimesHome.addOne}"  eventsQueue="default"  oncomplete="jisuan(0);www()">
+		            <a:actionparam name="param1"   assignTo="#{productRecordTimesHome.ind}"/>                  
+		        </a:jsFunction>
+            </a:form>
+            <a:form>
+		        <a:jsFunction name="deleted" reRender="goodsInfo" action="#{productRecordTimesHome.delete}"  eventsQueue="default" oncomplete="jisuan(0);www()">
+		        	<a:actionparam name="param1"   assignTo="#{productRecordTimesHome.ind}"/>     
+		            <a:actionparam name="param2"   assignTo="#{productRecordTimesHome.deleteId}"/>                  
+		        </a:jsFunction>
+            </a:form>
+<script type="text/javascript">
+//<![CDATA[
+	 www = function(){
+		    jquery(".ui-selectmenu").remove();
+			jquery('select').selectmenu({style:'dropdown'})
+			jquery(".rich-calendar-input").addClass("r_c_text_date");
+			jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+			jquery(".ui-selectmenu").addClass("small2");
+			jquery(".ui-selectmenu-menu").css("width","98px");
+			}
+	jquery(".rich-calendar-input").addClass("r_c_text180").addClass("intime");
+	jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+	document.onkeydown=function(event){ 
+		e = event ? event :(window.event ? window.event : null); 
+		if(e.keyCode==13){ 
+		if(document.activeElement.id=="goodsInfoSearch:search"){
+			jquery(".searchClass").trigger("onclick");
+		}
+		e.keyCode=0;
+		 if (window.navigator.userAgent.indexOf("MSIE")==-1)
+		    {
+			 e.preventDefault();
+			 return false;
+		    }
+		e.returnValue=false;				
+		} 
+	}
+
+	jisuan = function(index){
+		var sessionUnit = Number(jquery(".enterpriseSet").html());
+		var unitName = "公斤";
+		var total2Str = ""
+		var totalweight1 = 0;//重量单位的重量
+		var totalweight2 = 0;//非重量单位的重量
+		var total1 = 0;
+		var number = 0;
+		for(var i = 0;i<jquery(".one").length;i++){
+			var weight1 = 0;//重量单位的重量
+			var weight2 = 0;//非重量单位的重量
+			var total2 = 0;
+			var temp = 0;
+			var unit = Number(jquery(".goodsUnit" + i).html());
+			jquery(".weight"+i).each(
+				function(){
+					var a = jquery(this).val();
+					var a1 = parseFloat(a);
+					if(isNaN(a1)){
+						temp+=1;
+						return true;
+					}
+					if( Number(unit) >= 7 && Number(unit) <= 11){
+						weight1 += a1;
+						temp+=1;
+						total2+=a1;
+					}else{
+						weight2 += a1;
+						temp+=1;
+						total2+=a1;
+					}
+					/* temp+=1;
+					total2+=a1; */
+				}
+			);
+			number +=temp;
+			total1+=total2;
+			totalweight1 += weight1;
+			totalweight2 += weight2;
+			document.getElementById("_count" + i).innerHTML = transferNum(unit,total2);
+		}
+		if(sessionUnit == 1){
+			totalweight1 = totalweight1 * 2;
+			unitName = "斤";
+		}
+		if(totalweight1 != 0 && totalweight2 != 0){
+			total2Str = totalweight1 + unitName + "+" + totalweight2;
+		}
+		if(jquery(".one").length>0){
+			jquery("#total1").html(number);
+			jquery("#total2").html(total2Str);
+			if(totalweight1 != 0 && totalweight2 != 0){
+				jquery("#total2").html(totalweight1);
+				jquery("#unit2").html(unitName);
+				//jquery("#add2").html("+");
+				jquery("#num3").html("+" + totalweight2);
+			}else if(totalweight1 == 0 && totalweight2 != 0){
+				jquery("#total2").html("");
+				jquery("#num3").html(totalweight2);
+			}else if(totalweight1 != 0 && totalweight2 == 0){
+				jquery("#total2").html(totalweight1);
+				jquery("#num3").html("");
+				jquery("#unit2").html(unitName);
+			}
+		}else{
+			jquery("#total1").html(1);
+			jquery("#total2").html(1);
+		}
+		
+	}
+
+	jisuan(1);
+	
+	deleteOne = function(){
+		
+	}
+
+	checkSub = function(){
+		var number1 = document.getElementById("j_id73:serialNumber").value;
+		var number2 = document.getElementById("j_id73:harvestNumber").value;
+		var operator = document.getElementById("j_id73:operator").value;
+		var harvestTime = document.getElementById("j_id73:harvestTimeInputDate").value;
+		if(number1==""){
+			document.getElementById("spanValue").innerHTML = "采收编号不能为空";
+    		#{rich:component('products')}.show();
+			return false;
+		}
+		if(number2==""){
+			document.getElementById("spanValue").innerHTML = "采收单号不能为空";
+    		#{rich:component('products')}.show();
+			return false;
+		}
+		if(operator==""){
+			document.getElementById("spanValue").innerHTML = "采收人不能为空";
+    		#{rich:component('products')}.show();
+			return false;
+		}
+		if(harvestTime==""){
+			document.getElementById("spanValue").innerHTML = "采收时间不能为空";
+    		#{rich:component('products')}.show();
+			return false;
+		}
+		return b;
+	}
+
+	function closeMethod(){
+		var number1 = document.getElementById("j_id73:serialNumber");
+		var number2 = document.getElementById("j_id73:harvestNumber");
+		var operator = document.getElementById("j_id73:operator");
+		var harvestTime = document.getElementById("j_id73:harvestTimeInputDate");
+		 if(number1.value==""){
+	  		 number1.focus();
+	  		return false;
+	  	   }else if(number2.value==""){
+	  		 number2.focus();
+	  		return false;
+	  	   }else if(operator.value==""){
+	  		 operator.focus();
+	  		return false;
+		   }else if(harvestTime.value==""){
+			 harvestTime.focus();
+			 return false;
+		   }
+		var b = true;
+		jquery(".input_03bg").each(function(){
+			if(jquery(this).val()==""){
+				jquery(this).focus();
+				b = false;
+				return false;
+			}
+		});
+		if(b){
+			jquery(".input_02bg").each(function(){
+				if(jquery(this).val()==""){
+					jquery(this).focus();
+					b = false;
+					return false;
+				}
+				var b1 = parseFloat(jquery(this).val());
+				if(isNaN(b1)||b1<=0.0){
+					jquery(this).focus();
+					b = false;
+					return false;
+				}
+			});
+		}
+		return b;
+	}
+	window.onload = function () {
+		var value='#{productRecordTimesHome.allWeight}';
+		if(value!=null || "".equal(value)){
+			var arr=value.split("@");
+			if(arr.length>0){
+				jquery(".outWeight").each(function (index,domEle){
+					jquery(this).val(arr[index]);
+				});
+		    }
+		}
+		
+	  };
+	jquery(document).ready(function(){
+		
+	});
+
+	//展示单位转换
+	function transferNum(unit,num){
+		var result = num;
+		if(unit == 7){
+			result = num * 1000;
+		}else if(unit == 8){
+			result = num * 20;
+		}else if(unit == 9){
+			result = num * 2;
+		}else if(unit == 10){
+			result = num;
+		}else if(unit == 11){
+			result = num/1000;
+		}
+		return result;
+	}
+    //]]>
+</script>
+</ui:define>
+
+</ui:composition>

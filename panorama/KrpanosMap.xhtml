@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   xmlns:a4j="http://richfaces.org/a4j"
+   contentType="text/html">
+   
+<html  xmlns="http://www.w3.org/1999/xhtml" lang="en" ng-app="app">
+<!--#{panoramaHome.initKrpanosMap()} -->
+   <head>
+      	<title></title>
+      	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      	<link href="#{request.contextPath}/asset/css/bootstrap3.min.css" rel="stylesheet"/>
+      	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/style.css" />
+      	<link href="#{request.contextPath}/asset/js/jquery-ui4.css" rel="stylesheet"/>
+	  	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.10.2.min.js"></script>
+	  	<script type="text/javascript">
+			_Q = jQuery.noConflict();
+		</script>
+	  	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-ui4.js"></script>  
+		<script type="text/javascript" src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/map_base_functions.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/map_controller.js"></script>
+		<style>		
+			html,body{min-height:100%;height:100%; background:none;}			
+			.search_div{position: absolute;top: 10px;right: 51px;z-index:2;}
+			.search_btn{background-color: #64B54B;border-color: #64B54B;border-radius: 0px;color: #fff;}
+			.search_btn:hover, .search_btn:focus, .search_btn:active, .search_btn.active {color: #fff;}
+		</style>
+   </head>
+   <body style="margin:0;position:relative;overflow: hidden;">
+   		
+ 			<div id="map-canvas" style="width:100%;height:100%;border-radius:12px;overflow:hidden; z-index:2;"></div>
+ 			<div class="search_div">
+ 				<input type="text" id="baseName" style="float:left;height:34px;padding:0 10px;" onkeypress="enterKeyPress()"></input>
+ 				<a class="btn  search_btn" style="float:left;height:21px;margin-top:-1px;" href="#" onclick="searchBase();" >快速定位</a>
+ 			</div>
+
+		<h:inputHidden type="text" id="krpano_id" value="#{panoramaHome.krpanos.id}"/>   
+        <h:inputHidden type="text" id="krpanos_base_id" value="#{panoramaHome.krpanos.baseId}"/>
+        <h:inputHidden type="text" id="krpanos_coordinate_X" value="#{panoramaHome.krpanos.coordinateX}"/>
+        <h:inputHidden type="text" id="krpanos_coordinate_Y" value="#{panoramaHome.krpanos.coordinateY}"/>   
+		
+		
+   </body>
+	<script type="text/javascript">	
+	//<![CDATA[
+		var domain_url = "#{dataDicConstant.getDomainNameUrl()}";
+		var base_id="#{panoramaHome.baseId}";
+		var coordinate_X="#{panoramaHome.coordinate_X}";
+		var coordinate_Y="#{panoramaHome.coordinate_Y}";    
+		var krpano_id="#{panoramaHome.krpanosId}";
+		var krpano_coordinate_X="#{panoramaHome.krpanos.coordinateX}";
+		var krpano_coordinate_Y="#{panoramaHome.krpanos.coordinateY}";
+		var baseIdStr="#{panoramaHome.baseStr}";
+		var baseNameStr="#{panoramaHome.baseNameStr}";
+		var baseLonLatStr="#{panoramaHome.baseLonLatStr}";
+
+		jQuery(function(){
+			var flag=false;
+			if(krpano_coordinate_X != "" && krpano_coordinate_Y != ""){
+				flag=true;
+			}
+			
+			loadZyMap(domain_url,coordinate_X,coordinate_Y,flag)//加载地图
+			//加载基地信息
+			var base=baseIdStr.split(",");
+			for(var i=0;i<base.length; i++){
+				loadZyBase(base[i]);
+			}
+			if(flag){
+				loadKrpanos(krpano_coordinate_X,krpano_coordinate_Y);
+			}
+		});
+
+		function searchBase(){
+			var flag=false;
+			var baseName=jQuery("#baseName").val();
+			var nameStr=baseNameStr.split("@#$");
+			if(baseName==""){
+				alert("请输入基地名称！");
+				return;
+			}
+			for(var i=0;i<nameStr.length; i++){
+				if(nameStr[i].indexOf(baseName)!=-1){
+					var lonLat=baseLonLatStr.split(";")[i];
+					setMapCenter(lonLat.split(",")[0],lonLat.split(",")[1]);
+					flag=true;
+				}
+			}
+			if(!flag){
+				alert("基地不存在！");
+				return;
+			}
+		}
+		function enterKeyPress(){
+			 if(event.keyCode==13){
+				 searchBase();
+		     }
+		}
+		
+	//]]>
+	</script>
+
+</html>
+</f:view>

@@ -1,0 +1,239 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	template="/layout/template_print.xhtml"
+    xmlns:a="http://richfaces.org/a4j">
+<ui:define name="body">
+<!-- #{inOutStorageRecordList.printInOut()} -->
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery("#zoom_id img").css({"width":"290px","height":"70"});
+	});
+</script>
+<style>
+.table_product th,
+.table_product td{border-bottom:1px solid #000;color:#000;}
+.table_product .ze_bg2{border-bottom:1px solid #000;color:#000;padding: 10px 5px; }
+.table_product .ze_bg{ color:#000;background:#F0F5FB;padding: 10px 5px; }
+</style>
+  <td valign="top" width="100%">
+	<div id="rightPanel" class="right_c" style="width: 700px;margin:auto;padding:20px 0;">
+		<a:repeat value="#{inOutStorageRecordList.inOutList}" var="_inOut" rowKeyVar="_inOutIndex">
+		<div style="#{_inOutIndex + 1 != inOutStorageRecordList.inOutList.size() ? 'page-break-after:always;' : ''}">
+			<div class="right_c" style="width: 700px;margin:auto;">
+				<div class="ckd_d"  align="center" style="height:40px;font-size:22px;font-weight: bold;">
+					<s:fragment >农资流水记录</s:fragment>
+				</div>
+				<table width="700" cellpadding="0" cellspacing="0" style="margin:0 auto ;">
+		    	<tr>
+		    		<td width="250" height="30px;">
+		    			<table width="100%" cellpadding="0" cellspacing="0" >
+		        			<tr>
+		                		<td width="85" height="28" align="center" style="font-size:14px;">
+									<s:fragment >出入库编号：</s:fragment>
+		                		</td>
+		                    	<td style=" font-size:14px;" >
+		                    		<h:outputText value="#{_inOut[0].name}"></h:outputText>
+		                    	</td>
+		               	 	</tr>
+		            	</table>
+		    		</td>
+		        	<td width="270"><!-- 年月日 开始 -->
+		            	<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 auto;" align="center">
+		            		<tr>
+		                		<td width="85" height="28" align="center" style="font-size:14px;" >
+									<s:fragment >出入库日期：</s:fragment>
+								</td>
+								<td style=" font-size:14px;" >
+		                    		<h:outputText value="#{_inOut[0].insertTime}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd  HH:mm" /></h:outputText>
+		                    	</td>
+		                	</tr>
+		            	</table><!-- 年月日 结束 -->
+		        	</td>
+		        	<td width="220"><!-- 经办人开始 -->
+		        		<table width="100%" cellpadding="0" cellspacing="0" >
+		        			<tr>
+		                		<td width="64" height="28" align="center" style="font-size:14px;">
+		                			经办人：
+		                		</td>
+		                    	<td style=" font-size:14px;" >
+									<h:outputText rendered="#{_inOut[0].operater.name eq null}">
+										系统自动操作
+									</h:outputText>
+									<h:outputText rendered="#{_inOut[0].operater.name ne null}">
+										#{_inOut[0].operater.name}
+									</h:outputText>
+								</td>
+		                	</tr>
+		            	</table><!-- 经办人 结束 -->
+		        	</td>
+		    	</tr>
+			</table>
+			<hr/>
+			<table width="700" cellpadding="0" cellspacing="0" style="margin:0 auto ;">
+		    	<tr>
+		    		<td width="260" height="30px;">
+		    			<table width="100%" cellpadding="0" cellspacing="0" >
+		        			<tr>
+		                		<td width="80" height="28" align="center" style="font-size:14px;">
+		                			<s:fragment >库房：</s:fragment>
+		                		</td>
+		                    	<td style=" font-size:14px;" >
+		                    		#{_inOut[0].storageRoom.name}
+		                    	</td>
+		                	</tr>
+		            	</table>
+		    		</td>
+		        	<td width="270">
+		            <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 auto;" align="center">
+		            	<tr>
+		                	<td width="85" height="28" align="center" style="font-size:14px;" >
+								<s:fragment >出入库类型：</s:fragment>		
+							</td>
+							<td style=" font-size:14px;" >
+		                   		<h:outputText value="#{publicStorageHome.getStorageChangeTypeName(_inOut[0].storageChangeTypeId.storageChangeTypeId,_inOut[0].storageType)}"></h:outputText>
+		                    </td>
+		                </tr>
+		            </table>
+		        	</td>
+		        	<td width="220">
+		        	<!-- 操作人开始 -->
+		        	<table width="100%" cellpadding="0" cellspacing="0" >
+		        		<tr>
+		                	<td width="64" height="28" align="center" style="font-size:14px;">
+		                		操作人：
+		                	</td>
+		                    <td style=" font-size:14px;" >
+								<h:outputText value="#{inOutStorageRecordList.userName}"></h:outputText>
+							</td>
+		                </tr>
+		            </table>
+		            <!-- 操作人 结束 -->
+		        	</td>
+		    	</tr>
+			</table>
+
+			<table class="table_product" width="700"  cellpadding="0" cellspacing="0"  style="margin:0 auto ;border:1px solid #000;border-collapse:collapse;">
+			<tr>
+				<th  class="ze_bg">批次编号</th>
+				<th  class="ze_bg">物料名称</th>
+				<th  class="ze_bg" width="50">来源</th>
+				<th  class="ze_bg" width="70">保质期</th>
+				<th  class="ze_bg" width="50">数量</th>
+				<th  class="ze_bg">规格</th>
+				<th  class="ze_bg">单价</th>
+				<th  class="ze_bg">小计</th>
+			</tr>
+			<a:repeat value="#{_inOut[2]}" var="_gpcr" >
+				<tr>
+					<td class="ze_bg2" align="center"><h:outputText value="#{_gpcr[1]}" /></td>
+					<td class="ze_bg2" align="center"><h:outputText value="#{_gpcr[2]}" /></td>
+					<td class="ze_bg2" align="center">
+						<h:outputText value="--" rendered="#{null eq _gpcr[13]}"/>
+						<h:outputText value="#{_gpcr[13]}" rendered="#{null ne  _gpcr[13]}"/> 
+					</td>
+					<td class="ze_bg2" align="center"><h:outputText value="#{_gpcr[3]}月" /></td>
+					<td class="ze_bg2" align="center">
+						<s:fragment rendered="#{_gpcr[8] eq 1}">
+							<h:outputText rendered="#{_gpcr[7] ge 7 and _gpcr[7] le 11}" >
+	                        	<h:outputText value="#{stringUtil.changeFloatMe(_gpcr[5],3)}" rendered="#{sessionTake.harvestUnit eq 1}">
+	                            	<f:convertNumber pattern="#0.0"/>
+	                            </h:outputText>
+	                            <h:outputText value="#{_gpcr[5]}" rendered="#{sessionTake.harvestUnit ne 1}">
+	                            	<f:convertNumber pattern="#0.0"/>
+	                            </h:outputText>
+			                </h:outputText>
+				            <h:outputText value="#{unitStranfer.outStranfer(_gpcr[7],_gpcr[5])}" rendered="#{_gpcr[7] lt 7 or _gpcr[7] gt 11}" >
+				                   	<f:convertNumber pattern="#0.0"/>
+				            </h:outputText>
+				        </s:fragment>
+				        <s:fragment rendered="#{_gpcr[8] ne 1}">
+				            <h:outputText value = "#{_gpcr[5]}" >
+				                   	<f:convertNumber pattern="#0.0"/>
+				            </h:outputText>
+				        </s:fragment>	
+					</td>
+					<td class="ze_bg2" align="center">
+						<s:fragment rendered="#{_gpcr[8] eq 1}">
+							<s:fragment rendered="#{_gpcr[7] ge 7 and _gpcr[7] le 11}">
+								#{sessionTake.harvestUnit eq 1? '斤':'公斤（kg）'}
+							</s:fragment>
+							<s:fragment rendered="#{_gpcr[7] lt 7 or _gpcr[7] gt 11}">
+								#{_gpcr[6]}
+							</s:fragment>
+						</s:fragment>
+						<s:fragment rendered="#{_gpcr[8] ne 1}">
+								#{_gpcr[10]}#{_gpcr[6]}
+							<s:fragment rendered="#{_gpcr[11] ne null and _gpcr[11] ne ''}">
+								/#{_gpcr[11]}
+							</s:fragment>
+						</s:fragment>
+					</td>
+					<td class="ze_bg2" align="center">
+						￥
+						<s:fragment rendered="#{_gpcr[8] eq 1}">
+							<h:outputText rendered="#{_gpcr[7] ge 7 and _gpcr[7] le 11}" >
+	                        	<h:outputText value="#{unitStranfer.outStranferPrice(9,_gpcr[9])}" rendered="#{sessionTake.harvestUnit eq 1}">
+	                            	<f:convertNumber pattern="#0.00"/>
+	                            </h:outputText>
+	                            <h:outputText value="#{_gpcr[9]}" rendered="#{sessionTake.harvestUnit ne 1}">
+	                            	<f:convertNumber pattern="#0.00"/>
+	                            </h:outputText>
+			                </h:outputText>
+				            <h:outputText value="#{_gpcr[9]}" rendered="#{_gpcr[7] lt 7 or _gpcr[7] gt 11}" >
+				                   	<f:convertNumber pattern="#0.00"/>
+				            </h:outputText>
+				        </s:fragment>
+				        <s:fragment rendered="#{_gpcr[8] ne 1}">
+				            <h:outputText value="#{_gpcr[9]}" >
+				                   	<f:convertNumber pattern="#0.00"/>
+				            </h:outputText>
+				        </s:fragment>	
+					</td>
+					<td class="ze_bg2 total_price"  align="center">
+						￥<h:outputText value="#{_gpcr[18]}"><f:convertNumber pattern="#0.00"/></h:outputText>
+					</td>
+				</tr>
+			</a:repeat>
+		</table>
+		<div  style="border:0px;margin-top:15px;margin:auto;font-weight: bold;width: 700px;" align="center">
+				<table width="700">
+					<tr>
+						<td class="print_001" style="float:left;">金额合计：<h:outputText id="totalNumer" value="#{_inOut[1]}"><f:convertNumber pattern="#0.00"/></h:outputText> </td>
+						<td class="print_001" style="float:right;margin-right:25%;">签字确认：</td>
+					</tr>
+				</table>		
+				<div class="clear"></div>
+		</div>
+		</div>	
+		</div>
+	</a:repeat>
+</div>
+</td>
+	<div id="printButton" class="ckd_div" style="text-align:center">
+		<input id="btnPrint" onclick="printButtonClick();" style="background-image: url('#{request.contextPath}/asset/images/print03.jpg'); background-repeat:no-repeat; width: 77px; height: 32px; padding:0; margin:0; cursor: pointer; border:0 none;" />
+		<input id="btnPrint" onclick="window.close();" style="background-image: url('#{request.contextPath}/asset/images/re_43.jpg'); background-repeat:no-repeat; width: 77px; height: 32px; padding:0; margin:0; cursor: pointer; border:0 none;" />
+	</div>
+	<script type="text/javascript">
+			var obj;
+			function printButtonClick(){
+				obj = jQuery("#printButton").clone();
+				window.print();
+			}
+			function closeAll(){
+				if(confirm("是否关闭打印页面!")){
+					window.close(); 
+				}else{
+					jQuery("#printButton").html(obj);
+				}
+			}
+		</script>	
+	</ui:define>
+</ui:composition>

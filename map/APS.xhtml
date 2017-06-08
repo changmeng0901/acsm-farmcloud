@@ -1,0 +1,2983 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_aps.xhtml">
+    <ui:define name="head">
+    </ui:define>
+    <ui:define name="head_next">
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/mapRtArea.css"/>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/map/layer.css" />
+        <link rel="stylesheet" href="#{request.contextPath}/asset/css/webgis/select2.css" />
+        <style>
+        .jumpToInfo{color:#3e3e3e;}
+        .jumpToInfo:hover{color:#4478c1}
+        .videoViewShow{ position:relative;width:680px;height:550px;}
+		.videoViewShow.big_iframe{ position:fixed;left:77px; right:0; top:0;bottom:0;z-index:999999;width:100%-;height:100%;}
+		.monitor_suspend {
+    background-color: #000;
+    height: 550px;
+    left: 50%;
+    margin-left: -342px;
+    margin-top: -225px;
+    position: fixed;
+    top: 50%;
+    width: 684px;
+    z-index: 91;
+    display:none;
+}
+        </style>
+    </ui:define>
+    <ui:define name="body">
+<td valign="top" >
+ <!--
+#{mapHome.apsWork()}
+-->
+<script type="text/javascript">
+
+				var fileDomain = "#{dataDicConstant.getDomainNameUrl()}";
+				var enterid = "#{sessionTake.enterpriseInfoId}";
+                var markstr = #{mapHome.baseString};
+                var secondstr = #{mapHome.partitionString};
+                var thirdstr = #{mapHome.groupString};
+                var colors = #{mapHome.dicColor};
+				var _center = "#{mapHome.center}";
+				var _area = "#{mapHome.area}";
+				var allList = #{mapHome.allList};
+				var workpath = "#{request.contextPath}";
+				var envTypeList = #{mapHome.entTypeString};
+				var ret = 1;
+				var realPlantJson = #{mapHome.realPlantJson};
+				var deviceStr = #{mapHome.deviceStr};
+				var videoStr = #{mapHome.videoStr};
+				var lastStr;
+				var isEdit = #{s:hasRole('map_edit')};
+				var useStr = #{mapHome.useStr};
+				var tesStr = #{mapHome.tesStr};
+                var animalStr = #{mapHome.animalStr};
+                var base__id = "#{sessionTake.baseModel.baseId}";
+                var krpanoStr = #{mapHome.krpanoStr};
+                var baseFontSize = #{sessionTake.esm.enterpriseSize == null ? 2 : sessionTake.esm.enterpriseSize};
+                var partitionsFontsSize = #{sessionTake.esm.partitionSize == null ? 2 : sessionTake.esm.partitionSize};
+                var tunnelFontsSize = #{sessionTake.esm.tunnelSize == null ? 2 : sessionTake.esm.tunnelSize};
+                var baseFontColor = "#{sessionTake.esm.enterpriseFontColor == null ? '#FFFFFF' : sessionTake.esm.enterpriseFontColor}";
+                var partitionsFontsColor = "#{sessionTake.esm.areaFontColor == null ? '#FFFFFF' : sessionTake.esm.areaFontColor}";
+                var tunnelFontsColor = "#{sessionTake.esm.tunnelFontColor == null ? '#FFFFFF' : sessionTake.esm.tunnelFontColor}";
+                
+                var zoom_group = "#{mapHome.first_group}";
+                </script>
+<script type='text/javascript'>
+//<![CDATA[
+		var head = document.getElementsByTagName('head')[0];
+		var insertBefore = head.insertBefore;
+		head.insertBefore = function (newElement, referenceElement) {
+		    if (newElement.href && (newElement.href.indexOf('https://fonts.googleapis.com/css?family=') === 0 || newElement.href.indexOf('http://fonts.googleapis.com/css?family=') === 0)) {
+		        //console.info('Prevented Roboto from loading!');
+		        return;
+		    }
+		    insertBefore.call(head, newElement, referenceElement);
+		};
+		
+		//]]>
+</script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/select2.full.min.js" ></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/map/select2_i18n/zh-CN.js" ></script>
+                <script type="text/javascript" src="#{request.contextPath}/asset/js/map/JsMap.js"> </script> 
+<script src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script> 
+<script src="#{request.contextPath}/asset/js/map/map_aps.js" type="text/javascript"></script>
+<script type="text/javascript" >
+//<![CDATA[
+var plant_select ;
+_Q(document).ready(function(){
+	function formatData(result) {
+		if (result.loading) return result.text;
+			var html = '<div>'+result.plantName+"-"+result.breedName+'</div>';
+	    return html;
+	}
+
+	function formatDataSelection(data) {
+		if(data.id == "")
+			return '搜索作物或品种的名称！';
+		return data.plantName+"-"+data.breedName;
+	}
+	var currentQuery;
+	plant_select = _Q('#breed_new').select2({
+		language : "zh-CN",
+		ajax : {
+			url : "/rest/1.0/breedList",
+			delay : 450,
+			dataType : 'json',
+			data : function(params) {
+				var param = "";
+				var page = "";
+				if(typeof(params.term) != "undefined"){
+					param = params.term;
+					param = param.replace("'","\'");
+				}
+				if(typeof(params.page) != "undefined"){
+					page = params.page;
+				}
+				return {
+					'method' : 'breed_plant_list',
+					'field' : "{'enterprise_info_id':"+enterid+",'search':'"+param+"','page':'"+page+"'}",
+				};
+			},
+			processResults : function(data, params) {
+				if(typeof(params.page) == "undefined"){
+					params.page = 1
+				}
+				return {
+					results : data.result_data,
+					pagination : {
+						more : (params.page * 50) < data.total_count
+					}
+				};
+			}
+		},
+		escapeMarkup : function(markup) {
+			return markup;
+		}, 
+		//minimumInputLength : 2,
+		templateResult : formatData,
+		templateSelection : formatDataSelection
+	}).on('select2:open', function() {
+	      _Q('.select2-search input')
+	          .focus()
+	          .val(currentQuery)
+	          .trigger('input');
+	    }).on('select2:closing', function() {
+	      currentQuery = _Q('.select2-search input').prop('value');
+	    });
+	_Q("#map-canvas").width(_Q(window).width()-77);
+	_Q("#map-canvas").height(_Q(window).height()-60);
+	initialize();
+});
+function openAerialVideo(){
+	_Q('#aerialIframe').attr("src","#{request.contextPath}/map/AerialvideoView.html?groupId=#{mapHome.groupId}&amp;domainUrl=#{dataDicConstant.getDomainNameUrl()}&amp;operType=2");
+	_Q('#aerialVideoDiv').show();
+}
+//]]>
+</script>
+        <!-- 全年环境平均指标弹窗 开始-->
+        <div class="envir-pointer-pop weatherStion_wp" style="cursor: pointer; z-index: 80;">
+            <div class="envir-pointer-wap">
+                <i class="wap-close-btn"></i>
+                <div class="left">
+                    <span class="rainDrop">降水量</span>
+                 <div class="topBox">
+                     <span class="weather fl"></span>
+                     <div class="forecast fl">
+                       <div class="case"><img src="#{request.contextPath}/asset/images/weather/resource/1.png" alt=""/>无污染</div>
+                       <div class="case_y"><img src="#{request.contextPath}/asset/images/weather/resource/4.png" alt=""/><span>有污染(有12家)</span></div>
+                       <p class="city"><img class="" src="#{request.contextPath}/asset/images/weather/resource/city.png" alt=""/>北京市<span class="county">•昌平区</span></p>  
+                     </div> 
+                 </div> 
+                 <div id="container" style="width:220px;height:120px; margin-left:6px;" data-highcharts-chart="0"></div>  
+                </div>
+                <div class="right">
+                    <ul>
+                        <li>
+                            <span class="name"><img src="#{request.contextPath}/asset/images/weather/resource/tem.png" />积温</span>
+                            <div class="strip">
+                                <div class="init1" style="width:#{mapHome.assessStyle[0]}"></div>
+                            </div>
+                            <span class="unit">#{mapHome.assessValue[0]}℃</span>
+                        </li>
+                        <li>
+                            <span class="name"><img src="#{request.contextPath}/asset/images/weather/resource/water.png" />无霜期</span>
+                            <div class="strip">
+                                <div class="init2" style="width:#{mapHome.assessStyle[1]}"></div>
+                            </div>
+                            <span class="unit">#{mapHome.assessValue[1]}天</span>
+                        </li>
+                         <li>
+                            <span class="name"><img src="#{request.contextPath}/asset/images/weather/resource/cloud.png" />日夜温差</span>
+                            <div class="strip">
+                                <div class="init3" style="width:#{mapHome.assessStyle[2]}"></div>
+                            </div>
+                            <span class="unit">#{mapHome.assessValue[2]}℃</span>
+                        </li>
+                         <li>
+                            <span class="name"><img src="#{request.contextPath}/asset/images/weather/resource/snow.png" />需冷量</span>
+                            <div class="strip">
+                                <div class="init4" style="width:#{mapHome.assessStyle[3]}"></div>
+                            </div>
+                            <span class="unit">#{mapHome.assessValue[3]}h</span>
+                        </li>
+                         <li>
+                            <span class="name"><img src="#{request.contextPath}/asset/images/weather/resource/sun.png" />光照时长</span>
+                            <div class="strip">
+                                <div class="init5" style="width:#{mapHome.assessStyle[4]}"></div>
+                            </div>
+                            <span class="unit">#{mapHome.assessValue[4]}h</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+<div style="float:left; display:inline; margin:15px 0 0 31px;display:none;	position:absolute;" class="weatherStion_wp">
+            <!-- 气象站 开始 -->
+                <div class="weatherStion" style="z-index:98">
+                    <table cellspacing="0" cellpadding="0" class="weatherStion_table">
+                        <tbody><tr>
+                            <td>
+                            <div class="area_reveal" style=""><span id="area1"></span><span id="area2"></span></div>
+                            	<div class="weatherStion_lt clear">
+                                	<dl class="weatherStion_dl">
+                                    	<dt class=""><img class="image_1" width="74" height="74" src="#{request.contextPath}/asset/images/weatherStion_img01.png"/></dt>
+                                        <dd>
+                                        	<em class="temperature airTemp" style="font-style: inherit;">22</em><span class="weatherCondi theWeather" style="min-width:10px;max-width:115px">晴</span>
+                                            <div class="dayQw_list clear">
+                                            	<span class="dayQw dayHigh" style="font-size:13px">24°</span>
+                                                <span class="nightQw dayLow" style="font-size:13px">16°</span>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                   <div class="dayWr_list clear">
+                                   		<span class="dayWind rainfall">降水量 0ml</span><span class="dayRain winds">东北风3-4级</span></div>
+                                </div>
+                            </td>
+                            <td>
+                            	<div class="weatherStion_rt">
+                                	<table cellspacing="0" cellpadding="0" style="margin-top:13px;">
+                                    	<tbody><tr>
+                                        	<td class="day2">10月20日</td>
+                                            <td class="day3">10月20日</td>
+                                        </tr>
+                                        <tr>
+                                        	<td height="55" class=""><img class="image_2" width="" height="48" src="#{request.contextPath}/asset/images/weatherStion_img01.png"/></td>
+                                            <td height="55" class=""><img class="image_3" width="" height="48" src="#{request.contextPath}/asset/images/weatherStion_img01.png"/></td>
+                                        </tr>
+                                        <tr>
+                                        	<td class="day2_date" align="center" style="font-size:13px">22° / 24°</td>
+                                            <td class="day3_date" align="center" style="font-size:13px">22° / 24°</td>
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody></table>
+                    <button class="weatherStion_del"><img width="20" height="20" src="#{request.contextPath}/asset/images/weatherStion_bg05.png" /></button>
+                </div>
+            <!-- 气象站 结束 -->
+            </div>
+            <script type="text/javascript">
+            	var ix = 0;
+            </script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/splitter15_Q.js"></script>
+<div class="box_back" id="login" style="display:none;z-index:1000">
+    <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" />
+  	</div>
+</div>
+<div class="box_back" id="login3" style="display:none;*position:*absolute;*top:64px;*left:77px;">
+  	</div>
+<div class="box_back" id="login4" style="display:none">
+</div>
+
+	     <div id="video_iframe" class="monitor_suspend">
+	          <iframe class="videoViewShow" id="videoViewShow" name="videoViewShow" frameBorder="0" scrolling="no"  ></iframe>
+	          <div style="z-index: 99999; position: relative; margin-top: -550px; left: 654px; width: 31px;"><a style="color:#3badfd; text-decoration:underline;" href="#" onclick="closeVideo()"><img src="#{request.contextPath}/asset/images/cose.png"></img></a></div>
+	     </div>
+	     
+<style>
+.area_reveal{ position:absolute; left:85px; top:4px;}
+.area_reveal span{ padding-right:5px; font-size:14px; font-family:'微软雅黑';}
+
+.dian{ width:12px; height:12px;margin-top:3px;margin-left:3px;}
+.aps_typs_name{font-size:14px}
+html {  
+       height: 100%;  
+       margin: 0px;  
+       padding: 0px  
+     }
+     .videobut{ width:321px; height:77px; margin:0px auto 0 auto; background:url(../asset/images/growth/videobuts.png) no-repeat;}
+     .videobut_{ width:321px; height:77px; margin:0px auto 0 auto; background:url(../asset/images/growth/videobutk.png) no-repeat;}
+.box_back{background:url(../asset/images/bg_png3.png) repeat; width:100%; height:100%; position:fixed; z-index:98; display:none;}
+#login3{background:url(../asset/images/growth/zwleft_04.png) repeat; width:100%; height:100%; position:fixed; z-index:90; display:none;}{background:url(../asset/images/bg_png3.png) repeat; width:100%; height:100%; position:fixed; z-index:8888; display:none;}
+.width73{width:73px}
+.rich-color-picker-wrapper{z-index:4}
+.mu_mianji{float:left; height:30px; line-height:30px;}
+.rich-calendar-date-layout span{background :none;float: none;};
+
+#MySplitter {
+	min-width:  600px;
+	min-height: 300px;
+}
+#bPane{			/* Top nested in right pane */
+	height: 0px;		/* Initial height */
+	overflow-y: scroll;
+}
+#rightPane{
+	width: 0px;
+	max-width: 450px;
+	overflow-x:hidden;
+	overflow-y:hidden;
+	
+}
+#rbPane{
+	height: 0px;
+	background-color:#FFFFFF;
+	overflow:auto;
+	display:none;
+}
+.SplitterPane {
+	overflow: auto;
+}
+.vsplitbar {
+	width:2px;
+	background:#ccc;
+}
+
+.vsplitbar.active, .vsplitbar:hover {
+	background:#ccc;
+	width:2px;
+	opacity: 0.8;
+	filter: alpha(opacity=50); /* IE */
+}
+
+.hsplitbar {
+	height: 6px;
+	background:url(#{request.contextPath}/asset/images/paneh3.gif) repeat scroll 50% 0;
+}
+
+.hsplitbar.active, .hsplitbar:hover {
+	opacity: 0.7;
+	background:url(#{request.contextPath}/asset/images/paneh3.gif) repeat scroll 50% 0;
+	filter: alpha(opacity=70); /* IE */
+}
+.splitbarV {
+float:left;width:6px;height:100%;
+line-height:0px;font-size:0px;
+border-left:solid 1px #9cbdff;border-right:solid 1px #9cbdff;
+background:#cbe1fb url(#{request.contextPath}/asset/js/gantt/img/panev2.png) 0% 50%;
+}
+.splitbarH {
+height:6px;text-align:left;line-height:0px;font-size:0px;
+border-top:solid 1px #9cbdff;border-bottom:solid 1px #9cbdff;
+background:#cbe1fb url(#{request.contextPath}/asset/js/gantt/img/paneh2.gif) 50% 0%;
+}
+
+.splitbuttonV{
+margin-top:-41px;margin-left:-12px;top:50%;position:relative;
+height:108px;width:19px;
+background:transparent url(#{request.contextPath}/asset/js/gantt/img/panevc.png) 17px 50%;
+}
+.splitbuttonV.invert{
+margin-left:0px;background:transparent url(#{request.contextPath}/asset/js/gantt/img/panevc.png) 0px 50%;
+}
+
+.splitbuttonH{margin-left:-41px;left:50%;position:relative;height:17px !important;width:91px;background:transparent url(#{request.contextPath}/asset/js/gantt/img/panehc2.png) 50% 0px; margin-top:5px;}
+.splitbuttonH.invert{margin-top:-11px; background:transparent url(#{request.contextPath}/asset/js/gantt/img/panehc2.png)0 -16px;}
+
+   #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      #panel {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: -180px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+      }
+.jScrollbar_mask .tc_ul .tc_li table{*width:97%;}
+.tc_strong .uboxstyle3 font{font-size:14px;}
+.rich-calendar-popup{width:208px;}
+
+.uboxstyle1 .ui-state-default,.uboxstyle1 .ui-widget-content,.uboxstyle1 .ui-state-default,.uboxstyle1 .ui-widget-header,.uboxstyle1 .ui-state-default,
+.uboxstyle2 .ui-state-default,.uboxstyle2 .ui-widget-content,.uboxstyle2 .ui-state-default,.uboxstyle2 .ui-widget-header,.uboxstyle2 .ui-state-default,
+.uboxstyle3 .ui-state-default,.uboxstyle3 .ui-widget-content,.uboxstyle3 .ui-state-default,.uboxstyle3 .ui-widget-header,.uboxstyle3 .ui-state-default,
+.uboxstyle4 .ui-state-default,.uboxstyle4 .ui-widget-content,.uboxstyle4 .ui-state-default,.uboxstyle4 .ui-widget-header,.uboxstyle4 .ui-state-default,
+.uboxstyle5 .ui-state-default,.uboxstyle5 .ui-widget-content,.uboxstyle5 .ui-state-default,.uboxstyle5 .ui-widget-header,.uboxstyle5 .ui-state-default{border:0;}
+
+
+.maptck{ border-collapse:collapse; position:absolute; z-index:10000; left:150px; top:150px;}
+.titlefont{ font-size:16px; color:#e8e8e8; font-weight:bold;}
+.numfont{ font-size:12px; color:#dadada; font-weight:normal; padding-left:20px;}
+.closed{ margin-right:10px;}
+.ludian{ height:19px; line-height:19px; padding-left:10px; background:url(#{request.contextPath}/asset/images/tckbg.png) left center no-repeat; display:inline-block; float:left;}
+.ludian span{ min-width:30px; height:19px; line-height:19px; margin-right:-10px; padding-right:10px; color:#fff; background:url(#{request.contextPath}/asset/images/tckbg.png) right center no-repeat; display:inline-block; float:left; font-size:12px;}
+.shidu{ height:19px; line-height:19px; padding-left:10px; float:left; color:#fff;}
+.shuju{ width:100%; table-layout:fixed; margin-top:10px;padding-left:30px}
+.shujutd{ color:#fff; background:url(#{request.contextPath}/asset/images/shuline.png) right repeat-y;}
+.fottable{ height:22px; line-height:22px; background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat;}
+.ckxx{ color:#0878bf; font-size:14px; text-decoration:underline; padding-left:25px; text-align:left; font-weight:bold;}
+.qckxx2{ color:#0878bf; font-size:14px; text-decoration:underline; margin:0 auto; font-weight:bold; padding-top:5px; display:block;}
+.cjtime{ text-align:right; color:#dddddd; padding-right:15px;}
+.tdimg{padding-top:10px; padding-bottom:10px;}
+
+.qixz{ border-collapse:collapse; position:absolute; z-index:10000; left:650px; top:150px;}
+.qingt{ color:#fff; font-size:14px;}
+
+.aps_typs_name{font-size:14px}
+.datetimepicker-dropdown-bottom-left:before {
+    border-bottom: 7px solid rgba(0, 0, 0, 0.2);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 6px;
+    top: -7px;
+}
+.datetimepicker-dropdown-bottom-left:after {
+    border-bottom: 6px solid #ffffff;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 7px;
+    top: -6px;
+}
+
+.erlist4 li a:hover{
+text-decoration: none;
+}
+
+.fl{ float:left;}
+.fr{ float:right;}
+.clear{ clear:both;}
+.clear:after{ clear:both; content:""; display:block; visibility:hidden; height:0;}
+
+.close-btn{ width:11px; height:11px; border:none; overflow:hidden; zoom:1; background:url(#{request.contextPath}/asset/images/ico_close100.png) no-repeat;}
+.close-btn:hover, .close-btn:focus{ background:url(#{request.contextPath}/asset/images/ico_close101.png) no-repeat;}
+.map-IntroPop{ width:396px; min-height:50px; background:#fff; border-radius:5px;}
+.map-introPop-pot{ position:relative;}
+.map-introPop-pot .close-btn{ position:absolute; right:10px; top:10px;cursor: pointer;}
+.map-introPop-pot .supIco{ position:absolute; content:""; left:50%; margin-left:-8px; top:100%; border-width:18px 8px 18px 8px; border-style:solid solid solid solid; border-color:#fff transparent transparent transparent;}
+
+.map-introPop-header{ padding:15px 20px; border-bottom:1px dashed #e6e6e6;}
+.map-introPop-body{ min-height:15px;}
+.introPop-header-lt{ position:relative; z-index:200; float:left; margin:-45px 15px 0 0;}
+.introPop-header-lt img{ width:98px; height:98px; margin:1px;}
+.introPop-header-shade{ position:absolute; width:100px; height:100px; background:url(#{request.contextPath}/asset/images/map_zhezhao2.png) no-repeat;}
+.introPop-header-rt{ float:left;}
+.introPop-header-rt h3{ float:left; margin:0 10px 0 0; line-height:32px; font-family:'宋体'; font-size:18px; font-weight:bold; color:#303030;}
+.introPop-header-rt strong{ float:left; margin:0 10px 0 0; line-height:32px; font-family:'宋体'; font-size:16px; font-weight:bold; color:#303030;}
+.introPop-header-rt em{ float:left; margin:0 10px 0 0; line-height:32px; font-style:normal; font-family:'宋体'; font-size:12px; color:#b0b0b0;}
+.bootSelt130{ display:inline-block; }
+.bootSelt130 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){ width:130px;}
+.bootSelt130 .bootstrap-select{ width:130px;}
+.bootSelt130 .btn-group .btn{ padding:6px 25px 6px 12px; font-size:12px;}
+.bootstrap-select.btn-group .dropdown-menu{ max-width:170px; overflow:auto;}
+.farmer_mess{ clear:both; overflow:hidden; height:16px; line-height:16px; margin-top:10px; padding-left:20px; background:url(#{request.contextPath}/asset/images/map_ico100.png) no-repeat left center; color:#9d9d9d;}
+.farmer_mess .farmer{ padding-left:5px;}
+.farmer_mess .farmland{ padding-left:15px; font-family:'Arial'; color:#b0b0b0;}
+.introPop-introTime{ padding:5px 0; border-bottom:1px dashed #e6e6e6; background:#fafafa;}
+.introPop-introTime li{ float:left; margin:10px 0; line-height:16px; font-size:12px; font-family:'宋体'; color:#535353;}
+.introPop-introTime li img{ float:left; margin:0 8px 0 25px;}
+.introPop-introTime li p{ float:left; width:60px;}
+.intro-chart-trend{ padding:10px;}
+
+/* 土地检测记录  */
+.tudi-jcjl{margin-left:25px;}
+.detailedInfo{ position:absolute; right:0; top:-37px; height:20px; line-height:20px; padding:0 19px; border:1px solid #ddd; border-radius:4px; color:#323232; font-size:11px; }
+.detailedInfo:hover{ background:#e6e6e6; border-color:#adadad; text-decoration:none; color:#323232;}
+.jiance_mechanism, .jiance_date{ height:16px; line-height:16px; background:url(#{request.contextPath}/asset/images/bg_jiance.png) no-repeat; font-family:'微软雅黑'; text-indent:25px; margin-bottom:10px;}
+.jiance_mechanism{ height:auto; max-height:32px; overflow:hidden; padding-left:25px; background:url(#{request.contextPath}/asset/images/bg_jiance2.png) no-repeat; text-indent:0;}
+.jiance_date{ background-position: 0 -25px;}
+.landRecord_wp{ width:210px; margin:0 auto 15px 32px; padding:5px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;}
+.landRecord_wp table th{ text-align:center; font-size:16px; color:#428bca; font-family:'Arial';}
+.landRecord_wp table td{ text-align:center; vertical-align:middle; padding-bottom:0; font-size:11px; font-family:'Arial';}
+
+/* 土地历史记录 */
+.colorGrn02{ color:#428bca;}
+.landHistory_jl{ position:relative; width:268px; margin:5px auto 0;}
+.landHistory_list{overflow:hidden; margin-bottom:0;}
+.landHistory_list{ background:url(#{request.contextPath}/asset/images/bg_landhistory02.png) repeat-y 5px 0;}
+.block_landhis-pos9{ position:absolute; left:0; top:0; width:7px; height:9px; background:#fff;}
+.block_landhis-pos22{ position:absolute; left:0; bottom:0; width:7px; height:22px; background:#fff;}
+.landHistory_list li{ padding-left:20px; height:28px; line-height:28px; padding-bottom:15px; background:url(#{request.contextPath}/asset/images/bg_landhistory.png) no-repeat 0 9px;}
+.landHistory_list li.histroyJl_date02{ background-position:0 -36px;}
+.landHistory_list li.histroyJl_date03{ background-position:1px -83px;}
+.landHistory_list span{ float:left; width:70px; font-family:'Arial';}
+.landHistory_list div{ float:left; padding-left:14px; width:115px; }
+.landHistory_list div em{ font-style:normal; font-family:'微软雅黑'; float:left; padding-right:7px;}
+	  .noPlant .introPop-header-title h3{background:#FFFFFF}
+</style>
+<!-- 航拍弹出框 开始-->
+<div id="aerialVideoDiv" style="position:fixed; z-index:10000; left:0; top:0;width:100%; height:100%;display:none;">
+ 	<iframe id="aerialIframe" scrolling="yes" frameborder="no" src="" width="100%" height="100%" ></iframe>	
+</div>
+<!-- 航拍弹出框 结束 -->
+<div id="MySplitter">
+  <div id="CenterAndRight">
+  <div id="mbPane"  class="SplitterPane" style="overflow-x:hidden；overflow-y:hidden;overflow:hidden;">
+  <ul class="map_0search">
+                           	   <li style="position:relative; right:31px; margin-top:15px;" id="searchLi">
+                           	 <div id="btn" class="map_search">
+                                	<a id="t1" href="#"><img src="#{request.contextPath}/asset/images/mapwd3.jpg" border="0" onMouseOver="this.src='#{request.contextPath}/asset/images/mapwd4.jpg'" onMouseOut="this.src='#{request.contextPath}/asset/images/mapwd3.jpg'" width="49" height="51" /></a>
+                                   <a id="t2" href="#" style="display:none"><img src="#{request.contextPath}/asset/images/mapwd2.jpg" border="0" onMouseOver="this.src='#{request.contextPath}/asset/images/mapwd1.jpg'" onMouseOut="this.src='#{request.contextPath}/asset/images/mapwd2.jpg'" width="49" height="51" /></a>
+                                </div>
+                           </li>   
+                      </ul>
+                      <ul class="map_0search">
+                           	   <li style="position:relative; right:31px; margin-top:73px;" id="searchLi">
+                           	 <div  class="map_search">
+                                	<a  href="#{request.contextPath}/map/Map.seam"><img src="#{request.contextPath}/asset/images/cq_03_02.jpg" border="0" onMouseOver="this.src='#{request.contextPath}/asset/images/cq_03_03.jpg'" onMouseOut="this.src='#{request.contextPath}/asset/images/cq_03_02.jpg'" width="49" height="51" /></a>
+                                </div>
+                           </li>   
+                      </ul> 
+                      <s:fragment rendered="#{mapHome.groupId ne null and (sessionTake.valueAdded.aerialVideoService eq 1 or sessionTake.valueAdded.aerialVideoService eq 3)}">
+	                      <ul class="map_0search">
+	                           	   <li style="position:relative; right:31px; margin-top:130px;" id="searchLi">
+	                           	 	<div  class="map_search">
+	                                	<a  href="javascript:void(0);" onclick="openAerialVideo();">
+	                                		<img src="#{request.contextPath}/asset/images/aerialphoto/map_fly.png" border="0"  width="47" height="49" />
+	                                	</a>
+	                                </div>
+	                           </li>   
+	                      </ul>
+                      </s:fragment>
+	<div id="mPane" style="height:100%;width:100%">
+ 		<div id="map-canvas"  class="gm-style"></div>
+ 		<div id="tab" style="float: right;height: 51px;position: relative;width: 49px;z-index: 3;">
+	</div>
+	</div>
+	
+	
+	<div id="bPane" style="display:none">
+		<div class="gantt" ></div>
+    </div>
+   </div>
+   <div id="rightPane"  class="SplitterPane" >
+		<div id="rmPane">
+                          	  <div class="tc_top_05 list1">
+                                    <div class="erlist4">
+                                          <ul>
+                                            <li class="" style="width:50%" onclick="loadimg()"><a title="" href="javascript:">排产</a></li>
+                                            <li class="current" style="width:50%"><a title="" href="javascript:">区域</a></li>
+                                          </ul>
+                                    </div>
+                               </div> 
+                        <div class="erbox3 list1">
+                         <!--排产开始-->
+                        	<div class="erb" style="display: none;">
+                        	<table cellpadding="0" cellspacing="0" class="tc_top_04" style="border-collapse:collapse; table-layout:fixed;">	
+                          		<tr>
+                                	<td style="width:34px; padding-left:40px;"><a href="#"  onclick="searchApsBy()"><img width="34" height="32" src="#{request.contextPath}/asset/images/sous_04.jpg"/></a></td>
+                                    <td style="padding-right:45px;"><input type="text" id="tc_top_input" value="" class="tc_top_in2"  /></td>
+                                </tr>
+                           </table>
+                            <div  class="tc_rw_rw2">
+                                 <div class="jScrollbar_mask">
+                                     <div class="erbox3min">
+                                   <div class="erb2" style="">
+                                   		<!--排产第三页开始-->
+                                        <div style="display:block; margin-bottom:10px;">
+                                   		<div class="pcaqu2">
+                                            <table width="100%" cellspacing="0" cellpadding="0" style="background:url(#{request.contextPath}/asset/images/gtd_03.jpg) left bottom no-repeat;">
+                                                <tbody><tr>
+                                                  <td width="20" height="15" align="left">    
+                                                       <img width="17" height="15" src="#{request.contextPath}/asset/images/gtda_07.jpg" style="cursor:pointer;" class="gtbut2"/>                                                    </td>
+                                                    <td align="left">
+                                                        <div class="pca_hg">当前作物</div>                                                    </td>
+                                                </tr>
+                                            </tbody></table>            
+                                   		</div>
+                                        <div class="tec_c2 nowPlant">
+                                         <a4j:repeat value="#{mapHome.myPlant}"  var="obj1" >
+                                            <div class="pcic" sid="#{obj1.plantId}">
+                                                <a onclick="pc_img2(this)" style="cursor:default;" class="thirdHtmlClass" lj="lj" aa="#{obj1.plantId}" href="#"><img width="99" height="102" src="#{request.contextPath}/asset/images/pcdi_03.png" class="pcpic"/></a>
+                                                   <div class="pcimg">
+                                                   		<s:decorate rendered="#{obj1.plantImgRound ne null &amp;&amp; obj1.plantImgRound ne ''}">
+                                							<img src="../asset/images/wt.png" class="lazyloadimg" data-src="#{obj1.plantImgRound}" width="70" height="70"/>
+	                                		   			</s:decorate> 
+											    		<s:decorate rendered="#{obj1.plantImgRound eq null || obj1.plantImgRound eq ''}">
+                                							<img src="../asset/images/wt.png" width="70" height="70"/>
+	                                		   			</s:decorate>         
+	                                		   			</div>
+                                                   <div class="pctext">#{obj1.name}</div>
+                                                   <div class="pc_bgdiv" style="display:none">
+                                                   <div class="pc_bgno"><strong>1.2</strong></div>
+                                                   </div> 
+                                            </div>
+                                            </a4j:repeat>
+                                        </div> 
+                                        <div class="clear"></div>   
+                                   </div>
+                                   <!--排产第三页结束--> 
+                                   </div><!--erb2结束-->
+                           </div>                
+                                    <div class="clear"></div>
+                               </div>
+                              </div>        
+                                	<div class="clear"></div>
+                          </div><!--erb结束-->
+                               <!--排产结束-->       
+                         <!--区域开始-->
+                        	<div class="erb" style="">
+                               <table cellpadding="0" cellspacing="0" class="tc_top_04" style="border-collapse:collapse; table-layout:fixed;">	
+                          		<tr>
+                                	<td style="width:34px; padding-left:5px;"><a href="#" onclick="searchs()"><img width="34" height="32" src="#{request.contextPath}/asset/images/sous_04.jpg"/></a></td>
+                                    <td style="padding-right:15px;"><input type="text" id="second_word" class="tc_top_in2" /></td>
+                                </tr>
+                           </table>
+                              <div  class="tc_rw_rw2">
+                                     <div class="jScrollbar_mask" style="top: 0px; padding-left:0;">
+                                         <div class="erbox4min">
+                                <div id="erb2" style="display: block;">
+                                <div class="tc_rw_rw2 _scroll" >
+                                <div class="jScrollbar_mask _area0" style="top: 0px; padding-left:0;">
+                                </div></div>          
+                                <div class="clear"></div>
+                                </div>
+                                <div class="clear" style="display: none;"></div>  
+                                        </div><!--erbox3min结束-->              
+                                        <div class="clear"></div>
+                                     </div><!--jScrollbar_mask结束-->
+    
+                                     <!--<div class="jScrollbar_draggable">
+                                        <a href="#" class="draggable"/></a>
+                                     </div>-->
+                                </div><!--rw_rw2结束-->          
+                                <div class="clear"></div>
+                            </div><!--erb结束-->
+                       <!--区域结束-->       
+                          <div class="clear" style="display: none;"></div>
+                           </div> <!--erbox3结束-->                        
+		 <div id="tunnelInfo" class="list1" style="display:none">
+		 <div class="tc_top_03" style="overflow:hidden"><div style="width:130px" id="divtittle">编辑区域</div></div> 
+		 	<a4j:form ajaxSubmit="true" id="groupForm">
+                                <div class="rightNo rightNo5">
+                                <div class="mapRtArea_ctWp">
+                    <div class="mapRtArea_ct">
+                        <!-- 信息 开始 -->
+                        <h2 class="baseMap_ttl">信息</h2>  
+                        <div class="baseMap_con">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">区域名称</span></td>
+                                    <td colspan="2"><span class="baseWidth148 group_name_1" style="display:none">
+                                    <input type="hidden" value="" id="group_id" name="group_id" />
+									<input type="hidden" value="" id="group_index" name="group_index"/>
+									<input type="hidden" value="1" id="maptype" name="maptype"></input>
+									<input type="hidden" value="" id="group_base_id" name="group_base_id"/>
+                                   	<input type="text" id="group_name" name="group_name" class="form-control"  />
+                                   	<input type="hidden" id="group_envList" name="group_envList" />
+                                    <input type="hidden" id="group_x" name="group_x" />
+                                    <input type="hidden" id="group_y" name="group_y" />
+                                    <input type="hidden" id="group_group" name="group_group"></input>
+                                    <input type="hidden" id="isaps" name="isaps" value="1"/>
+                                    </span>
+                                    <span class="baseWidth148 group_name_2" style="">
+                                    
+                                    </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">分区</span></td>
+                                    <td colspan="2">
+                                    <span class="baseWidth148 group_parent_id_1" style="display:none">
+                                        <select name="group_parent_id" id="group_parent_id" class="selectpicker"></select>
+                                        <input  type="hidden" id="group_parent_id_default" ></input>
+                                    </span>
+                                    <span class="baseWidth148 group_parent_id_2" >
+                                    
+                                    </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">种植面积</span></td>
+                                    <td colspan="2"><span class="baseWidth148 pr5 muarea_1"  style="width:87px;display:none;">
+                                    <input class="form-control fl" style="width:85px;" type="text" id="muarea" name="muarea" />
+                                    </span>
+                                    <span class="baseWidth148 pr5 muarea_2" style="width:auto;line-height: 20px;font-size: 11px;padding-right:2px;">
+                                    
+                                    </span>
+                                    <span style="line-height:20px; font-size:11px;" id="group_area_hidden"></span>
+                                    <input type="hidden" id="group_area" name="group_area"  />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">设施类型</span></td>
+                                    <td colspan="2">
+                                        <div class="plantEnvir">
+                                            <a class="active" href="javascript:;"><img src="#{request.contextPath}/asset/images/map_icon0_9.png" title="加热温室" width="30" height="24"/></a>
+                                            <a href="javascript:;"><img src="#{request.contextPath}/asset/images/map_icon0_11.png" width="30" title="日光温室" height="24"/></a>
+                                            <a href="javascript:;"><img src="#{request.contextPath}/asset/images/map_icon0_13.png" width="30" title="连栋温室" height="24"/></a>
+                                            <a href="javascript:;"><img src="#{request.contextPath}/asset/images/map_icon0_15.png" width="30" title="春秋棚" height="24"/></a>
+                                            <a href="javascript:;"><img src="#{request.contextPath}/asset/images/map_icon0_17.png" width="30" title="大田" height="24"/></a>
+                                            <a href="javascript:;"><img src="#{request.contextPath}/asset/images/map_icon0_19.png" width="30" title="果树" height="24"/></a>
+                                            <a href="javascript:;"><img src="#{request.contextPath}/asset/images/map_icon0_21.png" width="30" title="水面" height="24"/></a>
+                                            <a href="javascript:;"><img src="#{request.contextPath}/asset/images/map_icon0_23.png" width="30" title="养殖" height="24"/></a>
+                                        </div>
+                                        <input type="hidden" name="group_type" id="group_type" ></input>
+                                        <input type="hidden" id="group_type_default" ></input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100" style="line-height:18px;">颜色</span></td>
+                                    <td colspan="2"><div id="tunnel_color" style="background:red;width:17px;height:17px;"><input type="hidden" id="groupFormColor" name="groupFormColor"/></div></td>
+                                </tr>
+                            </table>
+                        </div>  
+                        <div class="borderBt04 plant_hide"></div>
+                        <!-- 信息 结束 -->
+                        <!-- 人员 开始 -->
+                        <h2 class="baseMap_ttl plant_hide">人员</h2>  
+                        <div class="baseMap_con plant_hide">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">#{sessionTake.viewFarmer}</span></td>
+                                    <td width="148">
+                                        <span class="baseWidth148">
+                                        <select name="group_farmer" id="group_farmer" data-live-search="true">
+	                                                      	</select>
+                                        </span>
+                                    </td>
+                                    <td width="78">
+                                    <ui:fragment rendered="#{s:hasRole('map_edit')}">
+                                        <a class="mapAdd_btn" href="#"  onclick="addFarmer(1)"><img src="#{request.contextPath}/asset/images/baseIcoadd3.png" width="22" height="22" /></a>
+                                    </ui:fragment>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">#{sessionTake.viewAdmin}</span></td>
+                                    <td width="148">
+                                        <span class="baseWidth148">
+                                            <select name="group_farmer1" id="group_farmer1" data-live-search="true">
+	                                                      	</select>
+	                                                      	
+                                        </span>
+                                    </td>
+                                    <td width="78">
+                                    <ui:fragment rendered="#{s:hasRole('map_edit')}">
+                                        <a class="mapAdd_btn" href="#"  onclick="addFarmer(2)"><img src="#{request.contextPath}/asset/images/baseIcoadd3.png" width="22" height="22" /></a>
+                                    </ui:fragment>
+                                    </td>
+                                </tr>
+                                <tr class="fenzu" style="display:none">
+                                    <td width="104"><span class="baseWidth100">分组</span></td>
+                                    <td width="148">
+                                        <span class="baseWidth148">
+                                            <select name="group_farmer1" id="group_farmer1" data-live-search="true">
+                                                              </select>
+                                        </span>
+                                    </td>
+                                    <td width="78">
+                                    </td>
+                                </tr>
+                                
+                            </table>
+                        </div>  
+                        <div class="borderBt04 jilu plant_hide"></div>
+                        <!-- 人员 结束 -->
+                        <!-- 土地检测记录 开始 -->
+                        <h2 class="baseMap_ttl jilu plant_hide">土地检测记录</h2>  
+                        <div class="baseMap_con jilu plant_hide" style="position:relative;">
+                        	<a  class="detailedInfo" href="#" onclick="jumpToPartition()" >详情</a>
+                            <div style="width:268px; margin:5px auto 0;">
+                            	<p class="jiance_mechanism">检测机构：北京农学院</p>
+                                <p class="jiance_date">检测日期：2014.06.25</p>
+                            </div>
+                            <div class="landRecord_wp">
+                            <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                            	<tr>
+                                	<th width="68" height="32" align="center" class="ph ph1">5.0</th>
+                                    <th width="68" align="center" class="ec ec1">2.3</th>
+                                    <th width="68" align="center" style="padding-bottom:0px" class="pb pb1">1.8</th>
+                                </tr>
+                                <tr>
+                                	<td height="22" class="ph1">PH</td>
+                                    <td class="ec1">EC</td>
+                                    <td class="pb1">ρb</td>
+                                </tr>
+                            </table>
+                            </div>
+                        </div>
+                        <div class="borderBt04 shiy plant_hide"></div>
+                        <!-- 土地检测记录 结束 -->
+                        <!-- 土地历史记录 开始 -->
+                        <h2 class="baseMap_ttl shiy plant_hide">土地历史记录</h2>  
+                        <div class="baseMap_con shiy plant_hide" style="position:relative;">
+                        	<a  class="detailedInfo shiy" onclick="jumpToPartition()" href="#">详情</a>
+                            <span class="bg_landHistory02 shiy shiyspan"></span>
+                            <div class="landHistory_jl shiy">
+                            	<span class="block_landhis-pos9"></span>
+                        <span class="block_landhis-pos22"></span>
+                            	<ul class="landHistory_list">
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="borderBt04 plant_hide"></div>
+                        <!-- 人员 结束 -->
+                        <!-- 种植作物 开始 -->
+                        <h2 class="baseMap_ttl plant_hide">种植作物</h2>  
+                        <div class="baseMap_con plant_hide">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth101">当前种植</span></td>
+                                    <td width="148">
+                                        <div class="mapPlant_crop realplantlist">
+                                        </div>
+                                    </td>
+                                    <td width="78"></td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth101">计划种植</span></td>
+                                     <td width="148">
+                                        <div class="mapPlant_crop apslist">
+                                        </div>
+                                    </td>
+                                    <td width="78"></td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth101">历史种植</span></td>
+                                     <td width="148">
+                                        <div class="mapPlant_crop hislist">
+                                        </div>
+                                    </td>
+                                    <td width="78"></td>
+                                </tr>
+                            </table>
+                        </div>  
+                        <!-- 种植作物 结束 -->
+                        
+                        <div class="borderBt04 animal_hide"></div>
+                        <!-- 信息 结束 -->
+                        <!-- 人员 开始 -->
+                        <h2 class="baseMap_ttl animal_hide">人员</h2>  
+                        <div class="baseMap_con animal_hide">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">饲养员</span></td>
+                                    <td width="148">
+                                        <span class="baseWidth148">
+                                        <select name="group_farmer2" id="group_farmer2" data-live-search="true">
+	                                                      	</select>
+                                        </span>
+                                    </td>
+                                    <td width="78">
+                                    <ui:fragment rendered="#{s:hasRole('map_edit')}">
+                                        <a class="mapAdd_btn ml8" href="#"  onclick="addFarmer(3)"><img src="#{request.contextPath}/asset/images/baseIcoadd3.png" width="22" height="22" /></a>
+                                    </ui:fragment>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">养殖负责人</span></td>
+                                    <td width="148">
+                                        <span class="baseWidth148">
+                                            <select name="group_farmer3" id="group_farmer3" data-live-search="true">
+	                                                      	</select>
+                                        </span>
+                                    </td>
+                                    <td width="78">
+                                    <ui:fragment rendered="#{s:hasRole('map_edit')}">
+                                        <a class="mapAdd_btn ml8" href="#"  onclick="addFarmer(4)"><img src="#{request.contextPath}/asset/images/baseIcoadd3.png" width="22" height="22" /></a>
+                                    </ui:fragment>
+                                    </td>
+                                </tr>
+                                                                <tr class="fenzu" style="display:none">
+                                    <td width="104"><span class="baseWidth100">分组</span></td>
+                                    <td width="148">
+                                        <span class="baseWidth148">
+                                            <select name="group_farmer1" id="group_farmer1" data-live-search="true">
+                                                              </select>
+                                        </span>
+                                    </td>
+                                    <td width="78">
+                                    </td>
+                                </tr>
+                                
+                            </table>
+                        </div>
+                        <div   class="borderBt04 animal_hide"></div>
+                        <!-- 信息 结束 -->
+                        <!-- 人员 开始 -->
+                        <h2 class="baseMap_ttl animal_hide">养殖种类</h2>  
+                        <div class="baseMap_con animal_hide">
+                            <ul class="breedList clear">
+                            	
+                            </ul>
+                            <div class="noneani" style="width:190px; margin-left:30px; padding:30px; line-height:18px; border:1px dashed #ddd; text-align:center;">暂无养殖记录</div>
+                        </div>
+                    </div>
+                </div>
+                                
+                                <div class="clear"></div>
+                                <div class="tc_bottom" >
+                                <ui:fragment rendered="#{s:hasRole('map_edit')}">
+                                <table style="width:50%; margin:0 auto;">
+                                <tr><td width="50%" align="right" style="padding-right:2px">
+                                        <a4j:commandButton status="ajaxStatus" styleClass="btn btn-primary" value="保存" eventsQueue="mainQueue" style="cursor: pointer;" onclick="if(!che())return false;" action="#{mapHome.updateTunnelGroup}" data="#{mapHome.re_group_id}" oncomplete="if(data==0){alert('区域名称重复!');return false;}_Q('#group_id').val(data);setTimeout(function(){group_ok()},0)"/>
+								</td><td width="30%" align="left" style="padding-right:2px">		
+								<input type="button" id="groupbutton1" class="btn btn-default" value="取消" style="  cursor:pointer"  onclick="group_no()"/>
+									<input type="button" id="groupbutton2"  class="btn btn-default" value="返回" style="display:none;  cursor:pointer"  onclick="group_back()"/>
+                                  </td>
+                                  <td width="20%" align="right" style="padding-right:17px;">    
+                                  <input type="button" id="groupbutton3"  class="btn btn-default" value="删除"  style=" cursor:pointer"  onclick="delete_tunnel(_Q('#group_id').val())"/>
+                                 </td></tr>	 </table>
+                                 </ui:fragment>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+                                
+		 </div>
+		 
+		 <div id="add_farmer" class="list1" style="display:none;margin:0 auto;">
+		 <div class="tc_top_03"><div style="width:130px;" id="divtittle " class="divtittle_4 addFarm">添加农户</div></div> 
+		 		<a4j:form ajaxSubmit="true" id="farmer">
+                                <div class="rightNo rightNo7">
+                                <div class="tc_rw_rw2" z-height="146">
+                                 <div class="jScrollbar_mask">
+	                                <ul class="tc_ul">
+	                                  	<li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">姓名</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <input type="hidden" value="" id="farmer_base_id" name="farmer_base_id"/>
+	                                                    <input type="text" class="form-control nw221" style="width:170px"  value="" id="farmer_name" name="farmer_name"></input>
+	                                                    <input type="hidden" value="" id="farmer_type" name="farmer_type"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">年龄</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_age" name="farmer_age"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">从业年限</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_age2" name="farmer_age2"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">电话</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_phone" name="farmer_phone"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">荣誉</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_honor" name="farmer_honor"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                    </ul>
+	                                </div>
+								</div>
+                                <div class="clear"></div>
+                                <div class="tc_bottom" >
+                                <ui:fragment rendered="#{s:hasRole('map_edit')}">
+                                <table style="margin:auto;">
+                                <tr><td style="padding-right:2px">
+                                        <a4j:commandButton status="ajaxStatus" eventsQueue="mainQueue" style="cursor: pointer;" styleClass="btn btn-primary" value="保存" action="#{mapHome.updateFarmer}"  data="#{mapHome.re_farmer_str}"  oncomplete="farmer_ok(data,event)" onclick="if(!checkFarmer()) return false;"/>
+								</td><td style="padding-right:2px">	<input type="button" style=" cursor:pointer" class="btn btn-default" value="返回" onclick="farmer_no(event)"/>
+                                 </td></tr>	 </table></ui:fragment>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+		 </div>
+		 
+		 <div id="realplant" class="list1" style="display:none;margin:0 auto;">
+		 <div class="tc_top_03"><div style="width:130px;" id="divtittle " class="divtittle_2">添加作物</div></div> 
+		 		<a4j:form ajaxSubmit="true" id="plant">
+                                <div class="rightNo rightNo6">
+                                <div class="mapRtArea_ctWp">
+                        <!-- 信息 开始 -->
+                        <h2 class="baseMap_ttl">信息</h2>  
+                        <div class="baseMap_con">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr id="tunnel_none1">
+                                    <td width="104"><span class="baseWidth100">地块</span></td>
+                                    <td colspan="2">
+                                    <input type="hidden" value="" id="plant_tunnel_id" name="plant_tunnel_id"></input>
+	                                <input type="hidden" value="" id="plant_real_id" name="plant_real_id"></input>
+	                                <input type="hidden" value="" id="edittype" name="edittype"></input>
+	                                <input type="hidden" value="" id="scheduleId" name="scheduleId"></input>
+	                                <input type="hidden" value="" id="env_type" name="env_type"></input>
+	                                <input type="hidden" id="model_name" name="model_name"/>
+	                                <font id="plant_parent_name"></font>
+	                                <input type="hidden" value="" id="map_p"></input>
+	                                <input type="hidden" value="" id="map_b"></input>
+	                                <input type="hidden" value="" id="map_m"></input>
+	                                <input type="hidden" value="" id="tunnel_area" name="tunnel_area"></input>
+                                    </td>
+                                </tr>
+                                <tr style="display:none">
+                                    <td width="104"><span class="baseWidth100">类别</span></td>
+                                    <td colspan="2">
+                                    <span class="aps_typs_name"></span>
+                                    <span class="baseWidth148">
+                                        <select id="aps_type" name="aps_type" >
+	                                                  	<option value="0">历史种植</option>
+	                                                  	<option value="1">实际种植</option>
+	                                                  	<option value="2">计划种植</option>
+	                                                  	</select>
+                                    </span>
+                                    </td>
+                                </tr>
+                                <tr style="display:none">
+                                    <td width="104"><span class="baseWidth100">作物</span></td>
+                                    <td colspan="2">
+                                    <input type="hidden" id="plant_plantId" name="plant:plantId"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">作物品种</span></td>
+                                    <td colspan="2">
+                                    <span class="baseWidth148 baseWidth149">
+                                <select  id="breed_new"   class="notselect" style="display:none;width:149px" data-live-search="true" onchange="changeBreed();getModelByTime(this.value,_Q('#plant_tunnel_id').val(),_Q('#plant\\:plant_beginInputDate').val(),_Q('#plant_standard').val(),_Q('#plant\\:plant_endInputDate').val(),_Q('#plant_real_id').val())">
+								<h:outputText value="#{mapHome.plantBreedStr}" escape="false"/>
+								</select>
+								<input type="hidden" name="breedBreedId" id="breedBreedId"/>
+                                    </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">种植标准</span></td>
+                                    <td colspan="2">
+                                    <div class="mapRtArea_btns02">
+                                    <input type="hidden" name="plant_standard" id="plant_standard"/>
+                                    <input type="hidden" id="plant_standard_name"/>
+                                    	<ui:fragment rendered="#{sessionTake.ddList.size()==1}">
+                                       	<input class="button_ button_1_"  type="button" id="stand_0" aa="#{sessionTake.ddList[0].dataDicId}" bb="#{sessionTake.ddList[0].name}" style="margin-left:-1px;border-radius: 4px 4px 4px 4px;" value="#{sessionTake.ddList[0].name}"/>
+                                       	</ui:fragment>
+                                       	<ui:fragment rendered="#{sessionTake.ddList.size()==2}">
+                                       	<input class="button_ button_1_" type="button" id="stand_0" aa="#{sessionTake.ddList[1].dataDicId}" bb="#{sessionTake.ddList[0].name}" style="margin-left:-1px;" value="#{sessionTake.ddList[0].name}"/>
+                                       	<input class="button_ " type="button" id="stand_1" aa="#{sessionTake.ddList[2].dataDicId}" bb="#{sessionTake.ddList[1].name}" style="margin-left:-1px;" value="#{sessionTake.ddList[1].name}"/>
+                                       	</ui:fragment>
+                                       	<ui:fragment rendered="#{sessionTake.ddList.size()==3}">
+                                       	<input class="button_ button_1_" type="button" id="stand_0" aa="#{sessionTake.ddList[0].dataDicId}" bb="#{sessionTake.ddList[0].name}" style="margin-left:-1px;" value="#{sessionTake.ddList[0].name}"/>
+                                       	<input class="button_ " type="button" id="stand_1" aa="#{sessionTake.ddList[1].dataDicId}" bb="#{sessionTake.ddList[1].name}" style="margin-left:-1px;" value="#{sessionTake.ddList[1].name}"/>
+                                       	<input class="button_ " type="button" id="stand_2" aa="#{sessionTake.ddList[2].dataDicId}" bb="#{sessionTake.ddList[2].name}" style="margin-left:-1px;" value="#{sessionTake.ddList[2].name}"/>
+                                       	</ui:fragment>
+                                    </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">种植面积</span></td>
+                                    <td colspan="2"><span class="baseWidth148 pr5" style="width:87px;">
+                                    <input class="form-control fl" style="width:85px;" type="text" id="plant_area" name="plant_area" onkeyup="clearNoNum(this)"/></span>
+                                    /<span style="line-height:20px; font-size:11px;" id="plantarea" name="plantarea">1.2</span>亩
+                                    <input type="hidden" id="myarea"/>
+                                                     	  	<input type="hidden" id="old_start"/>
+                                                     	  	<input type="hidden" id="old_end" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">种苗来源</span></td>
+                                    <td colspan="2">
+                                    <span class="baseWidth148">
+                                    	<input type="hidden" value="" id="sproutSource" name="sproutSource"/>
+                                        <select id="sproutSel" name="sproutSel" class="selectpicker" onchange="sproutChange(this.value);">
+											<option value="0" selected="selected">无</option>
+                                            <option value="1" >自繁</option>
+                                            <option value="2" >市场购买</option>
+                                        </select>
+                                    </span>
+                                    </td>
+                                </tr>
+                                <tr style="display:none" id="purchaseSourceDiv">
+                                    <td width="104"><span class="baseWidth100">购买来源</span></td>
+                                    <td colspan="2">
+                                    <span class="baseWidth148">
+                                       <input value="" class="form-control nw221" id="purchaseSource" name="purchaseSource" />
+                                    </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>  
+                        <div class="borderBt04  yinian"></div>
+                        <!-- 信息 结束 -->
+                        <!-- 时间 开始 -->
+                        <h2 class="baseMap_ttl yinian">时间</h2>  
+                        <div class="baseMap_con yinian">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth100 modehidename_1">定植时间</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date beginInput form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="plant:plant_beginInputDate" name="plant:plant_beginInputDate" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr class="modehide">
+                                    <td width="104"><span class="baseWidth100">采收开始</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date harvestTime form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="plant:harvest_timeInputDate" name="plant:harvest_timeInputDate" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100 modehidename_2">种植结束</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date endInput form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="plant:plant_endInputDate" name="plant:plant_endInputDate" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                                                
+                        <div class="borderBt04 duonian"></div>
+                        <!-- 信息 结束 -->
+                        <!-- 时间 开始 -->
+                        <h2 class="baseMap_ttl duonian">幼苗时期</h2>  
+                        <div class="baseMap_con duonian">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth100 ">开始时间</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date ymstart form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="ymstart" name="ymstart" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100 ">结束时间</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date ymend form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="ymend" name="ymend" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>  
+                        
+                        <div class="borderBt04 duonian"></div>
+                        <!-- 信息 结束 -->
+                        <!-- 时间 开始 -->
+                        <h2 class="baseMap_ttl duonian">成苗时期</h2>  
+                        <div class="baseMap_con duonian">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth100 ">落叶休眠</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date xiumian form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="xiumian" name="xiumian" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100 ">采收开始</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date csstart form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="csstart" name="csstart" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="104"><span class="baseWidth100 ">采收结束</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date csend form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="csend" name="csend" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>  
+                        <div class="borderBt04 duonian"></div>
+                        <!-- 信息 结束 -->
+                        <!-- 时间 开始 -->
+                        <h2 class="baseMap_ttl duonian">种植结束</h2>  
+                        <div class="baseMap_con duonian">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth100 ">结束时间</span></td>
+                                    <td colspan="2">
+                                        <span class="baseWidth148">
+                                            <div class="input-append date zzend form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="zzend" name="zzend" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                
+                            </table>
+                        </div>  
+                        
+   
+<script type="text/javascript">
+    _Q(document).ready(function() {
+    	//_Q(".weatherStion_wp").show();
+    	var b = true;
+        _Q("#btn").click(function(e){
+	    	if(b){
+	    	   _Q("#t1").hide(); 
+	    	   _Q("#t2").show();
+	    	   map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+	    	   b = false;
+	    	}else{
+	    		_Q("#t1").show(); 
+	    	    _Q("#t2").hide();
+	    	    map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+	    		b = true
+	    	}
+        })
+    	_Q(".r_ulli1").hover(
+    			function(){
+    				_Q("#ll").show();
+    			},function(){
+    				_Q("#ll").hide();
+    			}
+         	);
+    	_Q(".beginInput").datetimepicker({
+		    format: "yyyy-mm-dd",
+		    autoclose: true,
+			 weekStart: 1,
+			  //startDate: "2014-08-14 10:00",
+			 language:  'zh-CN',
+		   minView:2,
+		    pickerPosition: "bottom-left"
+		    }).on('changeDate', function(ev){
+		    	 var time = new Date(ev.date);
+				 if(time!=null)
+		    		 time = time.format("yyyy-MM-dd");
+				 else
+					time = _Q('#plant\\:plant_beginInputDate').val()
+			getModelByTime(_Q('#breed_new').val(),_Q('#plant_tunnel_id').val(),time,_Q('#plant_standard').val(),_Q('#plant\\:plant_endInputDate').val(),_Q('#plant_real_id').val())
+			});
+ 
+    	
+    	_Q(".endInput").datetimepicker({
+		    format: "yyyy-mm-dd",
+		    autoclose: true,
+			 weekStart: 1,
+			  //startDate: "2014-08-14 10:00",
+			 language:  'zh-CN',
+		   minView:2,
+		    pickerPosition: "bottom-left"
+		    }).on('changeDate', function(ev){
+		    var time = new Date(ev.date);
+		    if(time!=null)
+	    		 time = time.format("yyyy-MM-dd");
+			 else
+				time = _Q('#plant\\:plant_endInputDate').val()
+			getModelByTime(_Q('#breed_new').val(),_Q('#plant_tunnel_id').val(),_Q('#plant\\:plant_beginInputDate').val(),_Q('#plant_standard').val(),time,_Q('#plant_real_id').val())
+			});
+    	
+    	
+    	_Q(".harvestTime").datetimepicker({
+		    format: "yyyy-mm-dd",
+		    autoclose: true,
+			 weekStart: 1,
+			  //startDate: "2014-08-14 10:00",
+			 language:  'zh-CN',
+		   minView:2,
+		    pickerPosition: "bottom-left"
+		    }).on('changeDate', function(ev){
+			    var time = new Date(ev.date);
+			    if(time!=null)
+		    		 time = time.format("yyyy-MM-dd");
+				 else
+					time = _Q('#plant\\:harvest_timeInputDate').val();
+				begin_end(time);
+				});
+    	_Q(".ymstart").datetimepicker({
+		    format: "yyyy-mm-dd",autoclose: true,weekStart: 1,language:  'zh-CN',minView:2,pickerPosition: "bottom-left"
+		    }).on('changeDate', function(ev){
+		    	 var time = new Date(ev.date);
+				 if(time!=null)
+		    		 time = time.format("yyyy-MM-dd");
+				 else
+					time = _Q('#ymstart').val()
+				var end =  _Q("#zzend").val();
+				 if(end==""){
+					 end = "2050-12-31"
+				 }
+			getModelByTime(_Q('#breed_new').val(),_Q('#plant_tunnel_id').val(),time,_Q('#plant_standard').val(),end,_Q('#plant_real_id').val())
+			})
+		    
+		    _Q(".ymend").datetimepicker({
+		    	format: "yyyy-mm-dd",autoclose: true,weekStart: 1,language:  'zh-CN',minView:2,pickerPosition: "bottom-left"
+		    })
+		    
+		    _Q(".xiumian").datetimepicker({
+		    	format: "mm-dd",autoclose: true,weekStart: 1,language:  'zh-CN',minView:2,pickerPosition: "bottom-left"
+		    }).on('changeDate', function(ev){
+		    	 var time = new Date(ev.date);
+				 if(time!=null)
+		    		 time = time.format("MM-dd");
+				 else
+					time = _Q('#xiumian').val()
+				begin_end2(time,'','')
+			})
+		    
+		    _Q(".csstart").datetimepicker({
+		    	format: "mm-dd",autoclose: true,weekStart: 1,language:  'zh-CN',minView:2,pickerPosition: "bottom-left"
+		    }).on('changeDate', function(ev){
+		    	 var time = new Date(ev.date);
+				 if(time!=null)
+		    		 time = time.format("MM-dd");
+				 else
+					time = _Q('#csstart').val()
+				begin_end2('',time,'')
+			})
+		    
+		    _Q(".csend").datetimepicker({
+		    	format: "mm-dd",autoclose: true,weekStart: 1,language:  'zh-CN',minView:2,pickerPosition: "bottom-left"
+		    }).on('changeDate', function(ev){
+		    	 var time = new Date(ev.date);
+				 if(time!=null)
+		    		 time = time.format("MM-dd");
+				 else
+					time = _Q('#csend').val()
+				begin_end2('','',time)
+			})
+		    
+		    _Q(".zzend").datetimepicker({
+		    	format: "yyyy-mm-dd",autoclose: true,weekStart: 1,language:  'zh-CN',minView:2,pickerPosition: "bottom-left"
+		    }).on('changeDate', function(ev){
+		    	 var time = new Date(ev.date);
+				 if(time!=null)
+		    		 time = time.format("yyyy-MM-dd");
+				 else
+					time = _Q("#zzend").val()
+				if(time==""){
+					time = "2050-12-31";
+				}
+				 if(_Q('#ymstart').val()=="")
+					 return ;
+			getModelByTime(_Q('#breed_new').val(),_Q('#plant_tunnel_id').val(),_Q('#ymstart').val(),_Q('#plant_standard').val(),time,_Q('#plant_real_id').val())
+			})
+			_Q('.weatherStion_del').click(function(){
+				_Q('.weatherStion_wp').slideUp(800);	
+			});	
+	    	_Q('.wap-close-btn').click(function(){
+				_Q('.envir-pointer-pop').slideUp(800);	
+			});	    	
+    });
+	 function sproutChange(selValue){
+		if(selValue==2){
+			_Q("#purchaseSourceDiv").show();
+		}else{
+			_Q("#purchaseSourceDiv").hide();
+		}
+	 }
+    </script>
+                        <div class="borderBt04 modehide yugu"></div>
+                        <!-- 时间 结束 -->
+                        <!-- 产量预估 开始 -->
+                        <h2 class="baseMap_ttl modehide yugu">产量预估</h2>  
+                        <div class="baseMap_con modehide yugu">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="104"><span class="baseWidth100">计算标准</span></td>
+                                    <td colspan="2">
+                                    <input type="hidden" id="yield_type" name="yield_type" />
+                                         <ul class="nav nav-tabs" role="tablist" id="myTab">
+                                          <li class="">
+                                          <a href="#home" onclick="changeYield(2)" role="tab" data-toggle="tab" style="border-radius:4px 0 0 4px;">地块产量</a></li>
+                                          <li><a href="#profile" onclick="changeYield(1)" role="tab" data-toggle="tab" style="border-radius:0 4px 4px 0;">亩产量</a></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                	<td colspan="3">
+                                    <div class="tab-content pt5">
+                                        <div class="tab-pane active" id="home">
+                                        <div style="width:288px; height:140px; overflow:hidden;margin-left:15px" id="highChart">
+                                            	<div id="perMuYield" style="min-width:288px; height:140px"></div>
+                                            </div>
+                                            <table class="plotsYield_table" cellpadding="0" cellspacing="0">
+                                            	<tr>
+                                                	<td width="34" height="32">1月</td>
+                                                    <td width="45"><input style="text-align: center;" type="text" id="month1" value="" name="month1"/></td>
+                                                    <td width="34">2月</td>
+                                                    <td width="45"><input style="text-align: center;" type="text" id="month2" value=""  name="month2"/></td>
+                                                    <td width="34">3月</td>
+                                                    <td width="45"><input style="text-align: center;" type="text" id="month3"  value="" name="month3"/></td>
+                                                </tr>
+                                                <tr>
+                                                	<td width="34" height="32">4月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month4"  value="" name="month4"/></td>
+                                                    <td width="34">5月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month5"  value="" name="month5"/></td>
+                                                    <td width="34">6月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month6"  value="" name="month6"/></td>
+                                                </tr>
+                                                <tr>
+                                                	<td width="34" height="32">7月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month7"  value="" name="month7"/></td>
+                                                    <td width="34">8月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month8"  value="" name="month8"/></td>
+                                                    <td width="34">9月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month9"  value="" name="month9"/></td>
+                                                </tr>
+                                                <tr>
+                                                	<td width="34" height="32">10月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month10"  value="" name="month10"/></td>
+                                                    <td width="34">11月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month11"  value="" name="month11"/></td>
+                                                    <td width="34">12月</td>
+                                                    <td><input type="text" style="text-align: center;" id="month12"  value="" name="month12"/></td>
+                                                </tr>
+                                            </table>
+                                            <p class="baseZongji">总产量：<span>kg</span></p>
+                                        </div>
+                                    </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>  
+                       
+                        <!-- 产量预估 结束 -->
+                                   	
+                    </div> 		<div class="borderBt04"></div>
+                               	<div class="clear"></div>
+                                <div class="tc_bottom" style="background:none;" >
+                                <ui:fragment rendered="#{s:hasRole('map_edit')}">
+                                <table style="margin:0 auto;" id="firsttable">
+                                <tr><td align="left" style="padding-right:2px">
+                                      <a4j:commandButton requestDelay="10" status="ajaxStatus" styleClass="btn btn-primary" value="保存" onclick="if(!checkSubmit()) return false; " eventsQueue="mainQueue" style="cursor: pointer;" action="#{mapHome.updateRealPlant}" data="#{mapHome.re_plant_str}" oncomplete="plant_ok(data,event)" />
+                                </td><td align="left" style="padding-right:2px">        
+                                <input type="button" class="btn btn-default" value="返回" style=" cursor:pointer"  onclick="plant_no(event)"/>
+                                  </td>
+                                  <td align="left" style="padding-right:2px;">    
+                                  <input type="button" class="btn btn-default" value="删除" style=" cursor:pointer"  onclick="delete_plant_or()"/>
+                                 </td>
+                                 <td align="left" style="">    
+                                  <input type="button" class="btn btn-success saveagain" value="再次种植" style=" cursor:pointer" />
+                                 </td>
+                                 
+                                 </tr>     </table>
+                                 
+                                 <table style="margin:0 auto;" id="secondtable"> 
+                                <tr><td align="left" style="padding-right:2px">
+                                      <a4j:commandButton requestDelay="10" status="ajaxStatus" styleClass="btn btn-primary" value="保存" onclick="if(!checkSubmit()) return false; " eventsQueue="mainQueue" style="cursor: pointer;" action="#{mapHome.updateRealPlant}" data="#{mapHome.re_plant_str}" oncomplete="plant_ok(data,event)" />
+                                </td><td align="left" style="padding-right:2px">        
+                                		<input type="button" class="btn btn-default" value="返回" style=" cursor:pointer"  />
+                                  </td>
+                                 </tr>     </table>
+</ui:fragment>
+                                    </div>
+                                    </div>
+                                    </a4j:form>
+		 </div>
+		 </div>
+		<div id="rbPane">
+		    <div class="section">
+                                                       <!--弹出div结束-->
+                                       </div>
+                                           
+		
+		
+		</div>
+   </div>
+	
+  </div> <!-- #CenterAndRight -->
+  
+<!-- #MySplitter -->
+
+<div style="display:none">
+农户
+<select  id="group_farmer_"  class="notselect">
+<a4j:repeat value="#{mapHome.keeperList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+生产负责人
+<select  id="group_farmer1_"  class="notselect">
+<a4j:repeat value="#{mapHome.masterList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+饲养员
+<select  id="group_farmer2_"  class="notselect">
+<a4j:repeat value="#{mapHome.syyList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+养殖负责人
+<select  id="group_farmer3_" class="notselect">
+<a4j:repeat value="#{mapHome.yzfList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+分组
+<select  id="group_groupId_" class="notselect">
+<a4j:repeat value="#{mapHome.tunnelGroupList}" var="f" >
+<option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option>
+</a4j:repeat>
+</select>
+</div>   
+
+<script type="text/javascript"> 
+//<![CDATA[
+            /* 地图右侧栏 列表显示隐藏 */
+_Q(function(){
+/* 地图右侧栏 有机无机无公害 点击选中 */
+	_Q('.mapRtArea_btns02 .button_').click(function(){
+		_Q(this).addClass('active')
+		.siblings().removeClass('active');	
+		_Q("#plant_standard").val(_Q(this).attr("aa"));
+		_Q("#plant_standard_name").val(_Q(this).attr("bb"));
+		getModelByTime(_Q('#breed_new').val(),_Q('#plant_tunnel_id').val(),_Q('#plant\\:plant_beginInputDate').val(),_Q('#plant_standard').val(),_Q('#plant\\:plant_endInputDate').val(),_Q('#plant_real_id').val())
+		if(plant_select.find(":selected").data().data.type=="2"){
+			var tim = _Q('#zzend').val();
+			if(tim=="")
+				tim="2050-12-31";
+			getModelByTime(_Q('#breed_new').val(),_Q('#plant_tunnel_id').val(),_Q('#ymstart').val(),_Q('#plant_standard').val(),tim,_Q('#plant_real_id').val())
+		}else{
+			getModelByTime(_Q('#breed_new').val(),_Q('#plant_tunnel_id').val(),_Q('#plant\\:plant_beginInputDate').val(),_Q('#plant_standard').val(),_Q('#plant\\:plant_endInputDate').val(),_Q('#plant_real_id').val())
+		}
+	});	
+						
+	// Second vertical splitter, nested in the right pane of the main one.
+	_Q("#CenterAndRight").splitter({
+        sizeRight: true,//初始化最小
+		splitVertical: true,
+		outline: true,
+        resizeToWidth: true,
+        anchorToWindow: true 
+	});
+
+     _Q("#rightPane").splitter({
+		splitHorizontal: true,
+		type: "h", 
+		outline: true,
+        sizeBottom: true
+	});
+	
+	//var splitbuttonH = "<div style='cursor: pointer; display: block;' class='splitbuttonH invert' unselectable='on' onclick='changeBPane(this)'></div>"; 
+	var splitbuttonV ="<div style='cursor: pointer;' class='splitbuttonV' unselectable='on' onclick='changeRPane(this)'></div>";
+	//_Q(".hsplitbar").append(splitbuttonH); 
+	_Q(".vsplitbar").append(splitbuttonV); 	
+
+	//竖轴点击
+	_Q('.splitbuttonV').attr('onclick', '').click(function (){
+		if(_Q("#rightPane").width()){
+			_Q(this).removeClass().addClass("splitbuttonV");
+			_Q('#rightPane').css('width',0);
+			_Q('#CenterAndRight').trigger('resize');
+		}else{
+			_Q(this).removeClass().addClass("splitbuttonV invert");
+			_Q('#rightPane').css('width',368);
+			_Q('#CenterAndRight').trigger('resize');
+		}
+	});
+});
+
+function changeBPane(obj){
+	if(_Q(obj).parent().next().attr("id")=="bPane"){
+	
+		if(_Q("#bPane").height()){
+		    _Q(obj).removeClass().addClass("splitbuttonH invert");
+			_Q('#bPane').css("height","0px");
+			_Q('#CenterAndRight').trigger('resize');
+		}else{
+		    _Q(obj).removeClass().addClass("splitbuttonH");
+			_Q('#bPane').css("height","400px");
+			_Q('#CenterAndRight').trigger('resize');
+		}
+	}else if(_Q(obj).parent().next().attr("id")=="rbPane"){
+		if(_Q("#rbPane").height()){
+		    _Q(obj).removeClass().addClass("splitbuttonH invert");
+			_Q('#rbPane').css("height","0px");
+			_Q('#rightPane').trigger('resize');
+		}else{
+		    _Q(obj).removeClass().addClass("splitbuttonH");
+			_Q('#rbPane').css("height","300px");
+			_Q('#rightPane').trigger('resize');
+		}
+	}
+	
+}
+
+function changeRPane(obj){
+	if(_Q("#rightPane").width()){
+	    _Q(obj).removeClass().addClass("splitbuttonV");
+		_Q('#rightPane').css("width","0px");
+		_Q('#CenterAndRight').trigger('resize');
+	}else{
+	    _Q(obj).removeClass().addClass("splitbuttonV invert");
+		_Q('#rightPane').css("width","350px");
+		_Q('#CenterAndRight').trigger('resize');
+	}
+}
+
+
+
+</script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/highcharts_atten.js"></script>
+<script type="text/javascript"> 
+var noneOption = "<option value='0'>暂无数据</option>";
+function insertPartition(){
+	if(secondstr.length==0){
+		_Q("#group_parent_id").append(noneOption);
+	}else {
+		_Q("#group_parent_id").append(noneOption);
+		for(var i = 0;i<secondstr.length;i++){
+			var os = secondstr[i];
+			_Q("#group_parent_id").append("<option value='"+os.id+"'>"+os.name+"</option>");
+		}
+	}
+}
+
+
+_Q(document).ready(function(){
+	insertPartition();
+	_Q("select").not("#breed,.notselect").each(function(){
+		if(_Q(this).find("option").length==0){
+			_Q(this).append(noneOption);
+		}
+	});
+    document.body.style.overflow = "hidden";
+	_Q(".content").css("height",document.body.clientHeight- 60 +"px ");
+	_Q(".box_back").css("width",document.body.clientWidth- 77 +"px ");
+	_Q('.tc_rw_rw2').css("height",document.body.clientHeight - 160)
+	_Q('.mapRtArea_ctWp').css("height",document.body.clientHeight - 160)
+	_Q("#plant\\:plantId").attr("id","plant_plantId");
+	_Q('select').not(".notselect").selectpicker({size:8,dropupAuto:false});
+	_Q(".rich-calendar-input").addClass("r_c_text_date");
+    _Q(".rich-calendar-input").removeClass("rich-calendar-input");
+	_Q("#plant\\:plant_beginInputDate,#plant\\:plant_beginPopupButton").bind('click',function(){
+		setTimeout(function(){resetCurrentTable(_Q("#plant\\:plant_begin"))},20);
+	});
+	_Q("#plant\\:plant_endInputDate,#plant\\:plant_endPopupButton").bind('click',function(){
+		setTimeout(function(){resetCurrentTable(_Q("#plant\\:plant_end"))},20);
+	});
+	//getWeatherReport(_area);
+	
+	//新版天气预报
+	
+	if(_area!=""){
+		getNewWeatherReport(_area);
+		var month='#{mapHome.months}';
+		var line_railfall="#{mapHome.lineRailfall}";
+		var pillar_railfall="#{mapHome.pillarRailfall}";
+		rainChart(month,line_railfall,pillar_railfall); 
+	}
+	
+	
+	_Q("#login4,#login3").bind("click",function(){
+		closeNotPlant();
+		closeOnePlant();
+		closeCgq();
+		closeQxz();
+		closeVideo();
+		closeVideo2();
+		closeVideo3();
+		closeVideo4();
+	})
+}); 
+//降雨量图表
+function rainChart(month,line_railfall,pillar_railfall){
+	month=eval(month);
+	line_railfall=eval(line_railfall);
+	pillar_railfall=eval(pillar_railfall);
+	_Q('#container').highcharts({
+		chart:{
+			// backgroundColor : "transparent"
+			backgroundColor: 'rgba(0,0,0,0)',
+			style:{
+					color:"#fff",
+					fontSize:'10px'
+				},
+		},
+		title: {
+			text: ''
+		},
+		credits: {
+            enabled: false
+        },
+		xAxis: {
+			categories:month,
+			labels: {
+				style: {
+					color: '#fff',//颜色
+				}
+			}
+		},
+		
+		yAxis: {
+			title: {
+				text: null
+			},
+			labels: {
+				style: {
+					color: '#fff',//颜色
+				}
+			}
+		},
+		
+		tooltip: {
+			crosshairs: true,
+			shared: true,
+			valueSuffix: 'mm'
+		},
+		
+		legend: {
+			 enabled: false,
+		},
+		
+		series: [{
+			type: 'column',
+			name: '每月降水量',
+			color : "#71e6a2",
+			data: line_railfall,
+			zIndex: 1,
+			marker: {
+				fillColor: '#71e6a2',
+				lineWidth: 0
+			}
+		}, {
+			type: 'spline',
+			name: '累积降水量',
+			color : "#7cb5ec",
+			data: pillar_railfall,
+			marker: {
+				lineWidth: 2,
+				lineColor: Highcharts.getOptions().colors[0],
+				fillColor: 'white'
+			}
+		}]
+	});
+}
+function resetCurrentTable(obj){
+	obj.css("top","240px");
+}
+_Q(window).resize(function(){
+	 resetFrameSize();
+})
+<!--下拉table开始-->
+_Q(document).ready(function(){
+  _Q(".plotsYield_table input").keyup(function(){
+	 	var obj = _Q(this)[0];	
+	  obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+		obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+		obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+		obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+  });
+		
+
+  _Q(".plotsYield_table input").focus(function(){
+	  var a,b;
+	  	if(plant_select.find(":selected").data().data.type=="2"){
+	  		a = _Q("#csstart").val();
+	  		b = _Q("#csend").val();
+	  		a = a.split("-")[0];
+	  		b = b.split("-")[0];
+	  	}else{
+	  		a = _Q("#plant\\:harvest_timeInputDate").val();
+	  	  	b = _Q("#plant\\:plant_endInputDate").val();
+	  	    a = a.split("-")[1];
+	  		b = b.split("-")[1];
+	  	}
+	  	
+		
+		a = parseInt(a,10);
+		b = parseInt(b,10);
+		var arr = [];
+		if(b>=a){
+			for(var i = a ;i<=b;i++){
+				arr.push(i);
+			}
+		}else if(b<a){
+			for(var i = a ;i<=12;i++){
+				arr.push(i);
+			}
+			for(var i = 1 ;i<=b;i++){
+				arr.push(i);
+			}
+		}
+		for(var i = 0;i<arr.length;i++){
+			if(arr[i]==_Q(this).attr("name").replace("month","")){
+				break;
+			}else if(i==arr.length-1){
+				alert("该月份不在采收开始和结束时间之内");
+				_Q(this).blur();
+			}
+		}
+  }).blur(function(){
+	  resetHightChart();
+  });
+  
+  _Q(".erlist4").jTab({
+      menutag: ".erlist4 li",
+      boxtag: ".erbox3 > .erb",
+      cur: 1
+  });
+  
+  _Q('.baseMap_ttl').click(function(){
+		//console.log(_Q(this).next('.baseMap_con').is(':hidden'));    	 
+      if(_Q(this).next('.baseMap_con').is(':hidden')){
+          _Q(this).css('background','url(#{request.contextPath}/asset/images/baseIcojian1.png) no-repeat 10px center');
+          _Q(this).next('.baseMap_con').slideDown(1000);	
+      }else{
+          _Q(this).css('background','url(#{request.contextPath}/asset/images/baseIcojian2.png) no-repeat 13px center');
+          _Q(this).next('.baseMap_con').slideUp(1000);	
+      }
+  });	
+});
+</script>
+<!--下拉table结束-->
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/tab.js"></script>
+
+<script type="text/javascript">
+
+//右侧弹框滚动条滚动时，下拉框隐藏
+ _Q(".tc_rw_rw2").scroll(function(){
+	 _Q(".ui-selectmenu-open").removeClass("ui-selectmenu-open");
+   });
+//验证开始
+function checkSubmit(){
+	var asp_type = _Q('#aps_type').val();
+	var nowD = new Date();
+	_Q("#plant_plantId").val(plant_select.find(":selected").data().data.plantId);
+    if(_Q("#breed_new").val()==0){
+        document.getElementById("plant:harvest_timeInputDate").value = document.getElementById("plant:plant_beginInputDate").value;
+    }
+    var sproutSel=_Q("#sproutSel").val();
+    var purchaseSource=_Q("#purchaseSource").val();   
+    _Q("#sproutSource").val(sproutSel);
+    if(sproutSel!=2){
+    	_Q("#purchaseSource").val("");
+    }else if(sproutSel==2 && purchaseSource.length>0 && purchaseSource.length>50){
+		alert("购买来源不能大于50字！");
+		return false;
+    }
+    if(plant_select.find(":selected").data().data.type=="2"){
+		var ymstart = _Q("#ymstart").val();
+		var ymend = _Q("#ymend").val();
+		var xiumian = _Q("#xiumian").val();
+		var csstart = _Q("#csstart").val();
+		var csend = _Q("#csend").val();
+		var zzend = _Q("#zzend").val();
+		if(ymstart == ""){
+			alert("请填写幼苗开始时间!");
+			return false;
+		}
+		if(ymend == ""){
+			alert("请填写幼苗结束时间!");
+			return false;
+		}
+		if(ymstart>ymend){
+			alert("幼苗开始时间不能大于结束时间!");
+			return false;
+		}
+		if(zzend!=""){
+			if(ymstart>zzend){
+				alert("幼苗开始时间不能大于种植结束时间!");
+				return false;
+			}else if(ymend>zzend){
+				alert("幼苗结束时间不能大于种植结束时间!");
+				return false;
+			}
+		}
+		if(xiumian == ""){
+			alert("请填写落叶休眠期!");
+			return false;
+		}
+		if(csstart == ""){
+			alert("请填采收开始时间!");
+			return false;
+		}
+		if(csend == ""){
+			alert("请填采收结束时间!");
+			return false;
+		}
+		if(ymstart>ymend){
+			alert("幼苗开始时间不能大于结束时间!");
+			return false;
+		}
+		if(csstart<=xiumian<=csend){
+			alert("落叶休眠期不能在采收范围内!");
+			return false;
+		}
+		var yme = ymend.split("-");
+		var yme_ = yme[1]+"-"+yme[2];
+		if(csstart<yme_){
+			if(yme_<csend){
+				alert("幼苗结束时间不能在采收区间内!");
+				return false;
+			}
+		}
+		if(csstart>yme_){
+			if(csstart>csend&&yme<csend){
+				alert("幼苗结束时间不能在采收区间内!");
+				return false;
+			}
+		}
+		var plantarea = document.getElementById("plant_area").value;
+		var allarea =  parseFloat(_Q("#plantarea").text());
+		if(false&& parseFloat(plantarea) > allarea){
+		    alert("种植面积不能大于剩余种植面积！");
+		    return false;
+		}
+		var plantarea = document.getElementById("plant_area").value;
+		if(plantarea == 0){
+        	alert("种植面积不能为0！");
+			return false;
+        }
+	    if(plantarea == ""){
+	    	alert("种植面积不能为空！");
+			return false;
+	    }
+		_Q("#breedBreedId").val(_Q("#breed_new").val());
+		var arr = xiumian.split("-");
+		_Q('#model_name').val(envTypeList[_Q("#env_type").val()]+'-'+_Q("#plant_standard_name").val()+'-'+arr[0]+'-'+arr[1]);
+		plant_select.prop("disabled",false);
+	}else{
+		var nowD_ = new Date(nowD.getFullYear(),nowD.getMonth()+1,nowD.getDate());
+		var beginTime = document.getElementById("plant:plant_beginInputDate").value;
+	    var endTime = document.getElementById("plant:plant_endInputDate").value;
+	    var harvestTime = document.getElementById("plant:harvest_timeInputDate").value;
+	    var plantarea = document.getElementById("plant_area").value;
+	    var edittype = _Q("#edittype").val();
+	    var breedId = _Q("#breedBreedId").val();
+	    var arr = beginTime.split("-");
+	    var starttime = new Date(arr[0], parseInt(arr[1],10)-1, arr[2]);
+	    var starttimes = starttime.getTime();
+	    var arrs = endTime.split("-");
+	    var lktime = new Date(arrs[0], parseInt(arrs[1],10)-1, arrs[2]);
+	    var lktimes = lktime.getTime();
+	    var flag = true;
+	    var allarea =  parseFloat(_Q("#plantarea").text());
+	    if((lktimes-starttimes)/60/60/24/1000>365){
+	    	alert("一年生作物生长周期不超过一年!")
+	    	return false;
+	    }
+	    if (starttimes >= lktimes) {
+            alert(_Q(".modehidename_1").html()+"不能大于"+_Q(".modehidename_2").html()+"！");
+			return false;
+	    }
+	    if(beginTime == ""){
+            alert(_Q(".modehidename_1").html()+"不能为空！");
+			return false;
+	    }
+	    if(endTime == ""){
+            alert(_Q(".modehidename_2").html()+"不能为空！");
+			return false;
+	    }
+	    if(harvestTime == ""){
+	    	alert("采收开始时间不能为空！");
+			return false;
+	    }
+	    var hars = harvestTime.split("-");
+	    var hartime = new Date(hars[0], parseInt(hars[1],10)-1, hars[2]);
+	    var hartimes = hartime.getTime();
+	    if(hartimes>lktimes){
+	    	alert("采收开始时间不能大于结束时间！")
+	    	return false;
+	    }
+	    var nowT = nowD_.getTime();
+	    if(starttimes<nowT){
+	    	if(lktimes<nowT){
+	    		_Q('#aps_type').val(0);
+	    	}else{
+	    		_Q('#aps_type').val(1);
+	    	}
+	    }else{
+	    	_Q('#aps_type').val(2);
+	    }
+	    if(asp_type == 1){
+		    if(starttimes>nowT){
+	        	//alert("实际种植开始日期不能大于今天！");
+	        	//return false;
+	        }
+		    if(lktimes<nowT){
+	        	//alert("实际种植结束日期不能小于今天！");
+	        	//return false;
+	        }
+	    }else if(asp_type==0){
+        	if(lktimes>nowT){
+            	//alert("历史种植结束日期不能大于今天！");
+            	//return false;
+                }
+            }else if(asp_type==2){
+        	if(starttimes<nowT){
+	        	//alert("计划种植开始日期不能小于今天！");
+	        	//return false;
+	        }
+            }
+	    if(plantarea == 0){
+        	alert("种植面积不能为0！");
+			return false;
+        }
+	    if(plantarea == ""){
+	    	alert("种植面积不能为空！");
+			return false;
+	    }
+	    //if(parseFloat(plantarea) > parseFloat(_Q("#tunnel_area").val())){
+	    //	_Q("#prompt").text("种植面积不能大于区域面积！");
+		//	return false;
+	    //}
+	    
+	    	if(false&&parseFloat(plantarea) > allarea){
+	            alert("种植面积不能大于剩余种植面积！");
+				return false;
+	        }
+	    if(_Q("#modelId").val()==""||_Q("#modelId").val()==0){
+	    	alert("请先预估每月产量！");
+			return false;
+	    }
+	    var year = parseInt(_Q("#checkStart").val(),10)<parseInt(_Q("#checkMonth").val())?arr[0]:parseInt(arr[0],10)+1;
+		var date1 = new Date(arrs[0],parseInt(arrs[1],10)-1,arrs[2]);
+		var date2 ;
+		if(_Q("#checkDays").val()==3){
+			date2 = new Date(year,_Q("#checkMonth").val(),0);
+		}else {
+			date2 = new Date(year,(_Q("#checkMonth").val()-1),_Q("#checkDays").val()*10);
+		}
+		var month1 = parseInt(arr[0]) * 12 + parseInt(arr[1]);
+		var month2 = parseInt(arrs[0]) * 12 + parseInt(arrs[1]);
+		var cha = Math.abs(month2 - month1);
+		if(cha<12){
+		    if(date1>date2){
+		    	alert("结束时间未在模型区间内！");
+		    	return false;
+		    }
+		}
+		_Q("#breedBreedId").val(_Q("#breed_new").val());
+		_Q('#model_name').val(envTypeList[_Q("#env_type").val()]+'-'+_Q("#plant_standard_name").val()+'-'+arr[1]+'-'+arr[2]);
+		plant_select.prop("disabled",false);
+	}
+    var flag2=false;
+	if(_Q('#yield_type').val()==1){
+		_Q('.plotsYield_table :input').each(function(){
+		    if(_Q(this).val()>30000){
+		    	flag2=true;
+			}
+		})
+	}else{
+		_Q('.plotsYield_table :input').each(function(){
+			if((_Q(this).val()/_Q('#plant_area').val())>30000){
+				flag2=true;
+			}
+		})
+	}
+	if(flag2){
+		alert("产量每亩不能大于30000！");
+		return false;
+	}
+	if(_Q('#plant_standard').val()==""){
+		alert("请选择种植标准！");
+		return false;
+	}
+	return true;
+}
+
+function clearNoNum(obj){
+	obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+	obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+	obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+	obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+	if(obj.value==""||parseFloat(obj.value)==0){
+		_Q(".yugu").hide();
+		_Q(".plotsYield_table input").val("");
+		changeYield(1);
+		return ;
+	}else if(_Q("#breed_new").val()!=0){
+		_Q(".yugu").show();
+	}else{
+		_Q(".yugu").hide();
+	}
+		
+	_Q(".table_0 .mul").each(function(){
+		var mu = parseFloat(_Q(this).attr("mul"));
+		var total = mu*parseFloat(obj.value);
+		_Q(this).html(total.toFixed(2)+"kg");
+	});
+}
+
+	/*  */
+	_Q('.plantEnvir > a').click(function(){
+		_Q(this).addClass('active')
+		.siblings().removeClass('active');	
+		_Q("#group_type").val(_Q(this).index()+1);
+		_Q("#group_type_default").val(_Q(this).index());
+        if(_Q(this).index()+1==8){
+            _Q(".animal_hide").show();
+            _Q(".plant_hide").hide();
+        }else{
+            _Q(".animal_hide").hide();
+            _Q(".plant_hide").show();
+        }
+	});
+//验证结束
+</script>
+<style>
+html{
+}
+  .custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: -2px;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    height: 32px;
+    /* support: IE7 */
+    *top:1px;
+  }
+  
+  .custom-combobox-input {
+    margin: 0;
+    padding:2px 5px; width:130px;height: 28px;
+  }
+  #ui-id-1{height:150px; overflow-x:hidden; overflow-y:scroll; *width:143px;}
+  .plant_imgbd{ position:absolute; top:0; left:0;}
+  .rteic{height:auto;margin-top:0px};
+
+
+
+.sw170{width:170px;}
+.sw170 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+    width: 170px;
+}
+
+
+.icon-th {
+    background-position: -240px 0;
+}
+.form_datetime input{border:1px solid #CCC; height:30px; line-height:30px;width:170px}
+.icon-arrow-left { background-position: -240px -96px; } .icon-arrow-right { background-position: -264px -96px; } .dropdown-menu { position: absolute; top: 100%; left: 0; z-index: 1000; display: none; float: left; min-width: 160px; padding: 5px 0; margin: 2px 0 0; font-size: 14px; text-align: left; list-style: none; background-color: #fff; -webkit-background-clip: padding-box; background-clip: padding-box; border: 1px solid #ccc; border: 1px solid rgba(0, 0, 0, .15); border-radius: 4px; -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175); box-shadow: 0 6px 12px rgba(0, 0, 0, .175); } .form_datetime input { border: 1px solid #ccc; height: 30px; line-height: 30px; }
+.input-append.date .add-on i, .input-prepend.date .add-on i {
+  cursor: pointer;
+    height: 14px;
+   /*  margin-left: -41px; */
+   /*  margin-top:9px; */ /* IE8支持 */ 
+    width: 14px;
+}
+@media all and (-webkit-min-device-pixel-ratio:0){
+.add-on {height:14px;
+position: relative;
+z-index:10;
+
+display: block;
+
+}
+ .input-append.date .add-on i, .input-prepend.date .add-on i {
+  cursor: pointer;
+    height: 14px;
+    /*margin-left: -49px;*/  
+    width: 14px;
+ 
+ }
+}
+
+
+.add-on{height: 14px; float: left; position: relative; z-index: 10; 
+
+}
+.baseWidth148 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+     width:148px;
+}
+.nav-tabs > li > a {
+    border: 1px solid #ddd;
+    color: #555;
+    height: 22px;
+    line-height: 22px;
+    margin-left: -1px;
+    margin-right: 0;
+    padding: 0 8px;
+}
+ @media screen and (-webkit-min-device-pixel-ratio:0) {
+ .div_dl2 {
+position: relative;
+width: 140px;
+top: 0px;
+margin-left: 8px;
+}
+} 
+.plant_hide .baseWidth148 .bootstrap-select.btn-group .dropdown-menu{
+min-width:160px
+}
+.animal_hide .baseWidth148 .bootstrap-select.btn-group .dropdown-menu{
+min-width:160px 
+}
+
+  </style>
+<script type="text/javascript" >
+
+//]]>
+</script>
+</div>
+<div class="farmIntroPop" style="position: absolute;z-index:99;display:none;">
+	<div class="farmIntro_header clear">
+    	<h2 class="cm_name" style="height:18px; width:260px; overflow:hidden;">北菜园合作社</h2>
+        <input type="button" class="close" onclick="closeCm()"/>
+    </div>
+    <div class="farmIntro_body clear">
+        <table width="100%" cellpadding="0" cellspacing="0">
+        	<tr>
+            	<td width="120"><div class="companyPic"><img id="baseurl" width="114" height="90" aa="#{request.contextPath}/asset/images/textPic01.png" src="#{request.contextPath}/asset/images/textPic01.png" /></div></td>
+                <td>
+                	<div>
+                    	<table>
+                        	<tr>
+                            	<td width="58" align="right">联系人：</td>
+                            	<td class="fl"><div class="fl_concat" style="width:48px; height:20px; overflow:hidden;"></div></td>
+                            </tr>
+                            <tr>
+                                <td align="right">电&#160;&#160;话：</td>
+                                <td class="fl "><div class="phone" style="height:20px; overflow:hidden;"></div></td>
+                            </tr>
+                            <tr>
+                                <td align="right"  valign="top">地&#160;&#160;址：</td>
+                                <td class="" height="40" valign="top"><div class="cm_address" style="max-height:60px; overflow:hidden;"></div></td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="farmIntro_footer clear">
+    	<span class="supIco"></span>
+    	<p class="briefing cm_mark" style="height:60px;overflow:hidden;"></p>
+    </div>
+</div>
+<div class="div_width" style="display:none;">
+                <div class="div_012"  >
+                	<div style="width:100%;">
+                           <div class="ret_pic2">
+                               <img class="zw_bgt2" onclick="addPlant()" src="#{request.contextPath}/asset/images/png-png.png" width="88" height="88"  />
+                               <img class="zw_libg_img2" src="" width="88" height="88" />
+                            </div>
+                            <div style="float:left; width:95px; *width:130px; ">
+                            	<dl class="div_dl2">
+                                	<dt class="div_dt2"><font style="font-family:Arial, Helvetica, sans-serif">A</font>区-06温室温室</dt>
+                                    <dd class="div_dt4"></dd>
+									<dd><div class="div_dt3"></div></dd>
+                                </dl>
+                            </div>
+                            <div class="clear"></div>
+                    </div> 
+                    <table width="100%" height="28" cellpadding="0" cellspacing="0"  style="margin:10px auto 0 auto;background:url(#{request.contextPath}/asset/images/line_03.jpg) top repeat-x; padding-bottom:5px;">
+                    	<tr>
+                        	<td width="19" height="28" valign="top" style="padding-right:5px; padding-top:5px;"><img src="#{request.contextPath}/asset/images/fzr.png" width="14" height="14" /></td>
+                            <td valign="top" style="font-size:12px; color:#989898; padding-top:5px;" class="div_dt55 win_masterId"></td>
+                            <td width="19" height="28" valign="top" style="padding-right:5px; padding-top:5px;" class="win_date_1"><img src="#{request.contextPath}/asset/images/fzs.png" width="14" height="14" /></td>
+                            <td valign="top" style="font-size:12px; color:#989898; padding-top:5px;" class="div_dt55 win_date_2"></td>
+                            
+                        </tr>
+                    </table>  
+                </div>    
+ </div>
+ <a4j:form style="display:none">
+ 		<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+        <a4j:jsFunction name="deleteTunnel"  eventsQueue="mainQueue"  action="#{mapHome.deleteTunnelInfo()}" data="#{mapHome.deleteStr}" oncomplete="delete_tunnel_next(data)" >
+        <a4j:actionparam name="param3" assignTo="#{mapHome.delete_group_id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="deletePlant"  eventsQueue="mainQueue"  action="#{mapHome.deletePlant()}" data="#{mapHome.del_plant_str}" oncomplete="deletePlant_(data);">
+        <a4j:actionparam name="param3" assignTo="#{mapHome.del_plant_id}"></a4j:actionparam>
+        <a4j:actionparam name="param4" assignTo="#{mapHome.removeType}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="deletePlantCheck_Two"  eventsQueue="mainQueue"  action="#{mapHome.deletePlantCheck_Two()}">
+        <a4j:actionparam name="param3" assignTo="#{mapHome.del_plant_id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="deleteHisPlant"  eventsQueue="mainQueue"  action="#{mapHome.deleteHisPlant()}" data="#{mapHome.del_his_str}" oncomplete="deleteHisPlant_next(data)">
+        <a4j:actionparam name="param3" assignTo="#{mapHome.del_plant_id}"></a4j:actionparam>
+        <a4j:actionparam name="param4" assignTo="#{mapHome.removeType}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="getModelByTime_"  eventsQueue="mainQueue"  action="#{mapHome.getModelByTime()}" data="#{mapHome.return1}" oncomplete="_Q('#plant\\:but').removeAttr('disabled');getModelByRealId_next(data)">
+        <a4j:actionparam name="param1" assignTo="#{mapHome.param1}"></a4j:actionparam>
+        <a4j:actionparam name="param2" assignTo="#{mapHome.param2}"></a4j:actionparam>
+        <a4j:actionparam name="param3" assignTo="#{mapHome.param3}"></a4j:actionparam>
+        <a4j:actionparam name="param4" assignTo="#{mapHome.param4}"></a4j:actionparam>
+        <a4j:actionparam name="param5" assignTo="#{mapHome.param5}"></a4j:actionparam>
+        <a4j:actionparam name="param6" assignTo="#{mapHome.param6}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="findWeatherData" eventsQueue="mainQueue" action="#{mapHome.findWeatherData}" data="#{mapHome.weatherData}" oncomplete="findWeatherData_next(data)">
+				<a4j:actionparam name="param1" assignTo="#{mapHome.device_sn}"></a4j:actionparam>
+		</a4j:jsFunction>
+		
+		<a4j:jsFunction name="historyList" eventsQueue="mainQueue" action="#{mapHome.work6}" reRender="historySpan">
+		</a4j:jsFunction>
+		<a4j:jsFunction name="getModelByRealId"  eventsQueue="mainQueue" action="#{mapHome.getModelByRealId}" data="#{mapHome.modelByRealIdStr}" oncomplete="_Q('#plant\\:but').removeAttr('disabled');getModelByRealId_next(data)">
+			<a4j:actionparam name="param1" assignTo="#{mapHome.param1}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<!-- 重置全景的图片iframe -->
+		<a4j:jsFunction name="resetSessionKrpano" evenQueue="mainQueue" action="#{mapHome.resetSessionKrpano}" data="#{mapHome.re_krpano_str}" oncomplete="refreshKrpanoFrame(data)">
+			<a4j:actionparam name="param1" assignTo="#{mapHome.krpano_id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		
+      	</a4j:form>
+      	<a4j:form >
+     	<a4j:jsFunction name="mapZero" action="#{mapHome.apsZero}" data="#{mapHome.partitionString}" oncomplete="zero_next(data)">
+		</a4j:jsFunction>
+		<a4j:jsFunction name="mapFirst" reRender="thirdspan" action="#{mapHome.apsFirst}" oncomplete="first_next();setTimeout(function(){first_next_next()},1)">
+		</a4j:jsFunction>
+		<a4j:jsFunction name="mapSecond" action="#{mapHome.apsSecond}" data="#{mapHome.secondStr}" oncomplete="second_next(data)">
+		</a4j:jsFunction>
+      	</a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+function getModelByTime (v1,v2,v3,v4,v5,v6){
+	if(v2 == null || v2=="0")
+		return;
+	if(v1==""||v2==""||v3==""||v4==""||v5==""||v6=="")
+		return;
+	else{
+		_Q("#plant\\:but").attr('disabled',"true");
+		getModelByTime_ (v1,v2,v3,v4,v5,v6);
+	}
+		
+}
+
+
+function changeYield(obj){
+	var area = _Q("#plant_area").val();
+	if(obj==1&&obj!=_Q("#yield_type").val()){
+		_Q("#yield_type").val(obj);
+		_Q(".plotsYield_table input").each(function(){
+			var val = _Q(this).val()
+			if(val!=""){
+				var tempv = parseFloat(val)/parseFloat(area);
+				tempv = tempv.toFixed(2);
+				_Q(this).val(tempv);
+			}
+		});
+	}else if(obj==2&&obj!=_Q("#yield_type").val()){
+		_Q("#yield_type").val(obj);
+		_Q(".plotsYield_table input").each(function(){
+			var val = _Q(this).val()
+			if(val!=""){
+				var tempv = parseFloat(val)*parseFloat(area);
+				tempv = tempv.toFixed(2);
+				_Q(this).val(tempv);
+			}
+		});
+	}
+	resetHightChart();
+}
+
+var locationMarker;
+var locationSrc = workpath+"/asset/images/locationimg.png";
+
+function mylocation(){
+	if(navigator.geolocation){
+		navigator.geolocation.getCurrentPosition(showPosition,showError);//{timeout:10000}
+		_Q("#geoId img").attr("src",geo_blue);
+	}else{
+		alert("当前浏览器不支持此操作!");
+	}
+	 
+}
+
+function showPosition(position){
+	_Q("#geoId img").attr("src",geo_gray);
+   var i;
+   if(map){
+	   var GCJ02loc = new WGS84_to_GCJ02().transform(parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
+	   try{
+		   console.log(parseFloat(position.coords.latitude)+"|"+parseFloat(position.coords.longitude));
+		   console.log(GCJ02loc[0]+"|"+GCJ02loc[1]);
+	   }catch(e){}
+	   
+	   var np = new google.maps.LatLng(GCJ02loc[0],GCJ02loc[1]);
+	   map.setCenter(np);
+	   map.setZoom(16);
+	   locationMarker = new google.maps.Marker({
+		      position: np,
+		      map: map,
+		      title: '我的位置',
+			  icon: locationSrc 
+		  });
+   }
+}
+function showError(error){
+	_Q("#geoId img").attr("src",geo_gray);
+	  switch(error.code){
+	   case error.PERMISSION_DENIED:
+	    alert("用户不允许地理定位.");
+	     //positionInfo.innerHTML="用户不允许地理定位."
+	     break;
+	   case error.POSITION_UNAVAILABLE:
+	   	 alert("无法获取当前位置.");
+	     //positionInfo.innerHTML="无法获取当前位置."
+	     break;
+	   case error.TIMEOUT:
+	     alert("操作超时.");
+	     //positionInfo.innerHTML="操作超时."
+	     break;
+	   case error.UNKNOWN_ERROR:
+		   alert("An unknown error occurred.");
+	     //positionInfo.innerHTML="An unknown error occurred."
+	     break;
+	   }
+	}
+	
+	var video ;
+function maxwindow(ind,obj){
+	var width=document.body.offsetWidth;
+	var height=document.body.offsetHeight;
+	video = obj;
+	var target = _Q(obj).closest(".maxdiv");
+	target.css({"position":"fixed","top":"0","left":"0","width":width,"height":height});
+	target.find(".seconddiv").css({"width":width});
+	_Q("#videotable").css({"position":"fixed","top":"0","left":"0"});
+	if(ind == 2){
+		target.find(".videoimg").attr("style","overflow:hidden;width:100%, height: 100%; right: 0px; margin-top: -25px; margin-right: auto; margin-bottom: 0px; margin-left: auto;");
+		target.find("object").attr("width",width).attr("height",height);
+	}else if(ind == 3){
+		target.find("#outDiv").css("height",height-92).css("width",width);
+		target.find("object").attr("width",width).attr("height",height-92);
+	}
+	target.find(".videobg").css({"width":width,"height":height-92});
+	target.find(".fdimg1").hide();
+	target.find(".fdimg2").show();
+}
+function minwindow(ind,obj){
+	var width=document.body.offsetWidth;
+	var height=document.body.offsetHeight;
+	video = obj;
+	var target = _Q(obj).closest(".maxdiv");
+	target.css({"position":"","width":680,"height":457});
+	target.find(".videobg").css({"width":680,"height":457});
+	if(ind == 2){
+		target.find(".videoimg").attr("style","overflow:hidden; height: 482px; right: 0px; margin-top: -25px; margin-right: auto; margin-bottom: 0px; margin-left: auto;");
+		target.find("object").attr("width",680).attr("height",532);
+	}else if(ind == 3){
+		target.find(".videobg").css("height",457).css("width",680);
+		target.find("#outDiv").css("height",457).css("width",680);
+		target.find("object").attr("width",680).attr("height",457);
+	}
+	_Q("#videotable").css({"position":"relative","top":"","left":""});
+	var target = _Q(obj).closest(".maxdiv");
+	target.find(".seconddiv").css({"width":680});
+	target.find(".fdimg1").show();
+	target.find(".fdimg2").hide();
+}
+//]]>
+Date.prototype.format = function(format)
+{
+	var o = {
+	"M+" : this.getMonth()+1, //month
+	"d+" : this.getDate(),    //day
+	"h+" : this.getHours(),   //hour
+ 	"m+" : this.getMinutes(), //minute
+	"s+" : this.getSeconds(), //second
+ 	"q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+ 	"S" : this.getMilliseconds() //millisecond
+	}
+
+	if(/(y+)/.test(format)) 
+	{
+		format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+	}
+	
+ 	for(var k in o)
+	{
+		if(new RegExp("("+ k +")").test(format))
+		{
+ 			format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+		}
+	}
+	return format;
+}
+
+function loadimg(){
+	_Q(".lazyloadimg").each(function(){
+		_Q(this).attr('src',_Q(this).attr('data-src'))
+	});
+}
+</script>
+      <div style="display:none" id="firstHtml">
+      <div style="width:100%; display:block; margin-bottom:10px;" class="plantList_"   sid="">
+                                                <div class="pcaqu2">
+                                                    <table width="100%" cellspacing="0" cellpadding="0">
+                                                        <tbody><tr>
+                                                            <td width="20" align="left">
+                                                            	<img width="20" height="23" src="#{request.contextPath}/asset/images/xhs01_03.jpg"/>                                                            </td>
+                                                            <td align="left" class="pca_hg">    
+                                                            esr.plantId.name
+                                                            </td></tr></tbody></table>            
+                                                </div>
+                                                <ul style="min-width:320px;" class="aqu_ul">
+                                                    <li class="pca_li" sid="">
+                                                    <table width="100%" cellspacing="0" cellpadding="0"><tbody><tr>
+                                                                <td width="100" height="60" rowspan="3">
+																<img width="100" height="60" pic="pic" src="" /> </td>
+                                                                <td valign="middle" align="left" class="pca_font" aa="x" onclick="gotoMap(this.getAttribute('aa'))" style="cursor:pointer">#{_esr.tunnelInfoId.tunnelName}</td></tr>
+                                                            <tr><td valign="middle" align="left" class="pca_font1 font1_">面积：</td></tr>
+                                                            <tr><td valign="middle" align="left" class="pca_font1 font2_">种植日期：</td></tr>
+                                                     </tbody></table>       	
+                                                    </li> </ul> <div class="clear"></div>
+                                            </div></div>
+      <div class="tec_c2 thirdHtml" style="display:none">
+                                            <div class="pcic" sid="">
+                                                <a onclick="pc_img2(this)" class="thirdHtmlClass" aa="" lj="lj" href="#"><img width="99" height="102" src="#{request.contextPath}/asset/images/pcdi_03.png" class="pcpic"/></a>
+                                                   <div class="pcimg">
+                                                   <div><img id="thirdimg" src="../asset/images/wt.png" width="70" height="70"/></div>
+	                                		   			</div>
+                                                   <div class="pctext">#{obj1.plantId.name}</div>
+                                                   <div class="pc_bgdiv" style="display:none">
+                                                   <div class="pc_bgno"><strong>1.2</strong></div>
+                                                   </div> 
+                                            </div>
+                                        </div> 
+<!--传感器开始-->   
+<table class="maptck" width="400" height="100" cellpadding="0" cellspacing="0" style="display:none;" >
+    <tr>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg2.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg3.png) repeat-x;"></td>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg4.png" width="7" height="5" /></td>
+    </tr>
+    <tr>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat-y;"></td>
+        <td valign="top" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat;font-size:12px; font-family:'微软雅黑';">
+            <table width="100%" height="38" cellpadding="0" cellspacing="0" style="background:url(#{request.contextPath}/asset/images/linerepe.png) bottom repeat-x; border-collapse:collapse;">
+                <tr>
+                    <td align="left"><font class="titlefont">四合一传感器</font><font class="numfont t1_sn">编号：A057406005060062001</font></td>
+                    <td align="right"><a class="closed" href="#" onclick="closeCgq()"><img src="#{request.contextPath}/asset/images/closed.png" width="12" height="13" /></a></td>
+                </tr>
+              </table>  
+              <table width="100%" cellpadding="0" cellspacing="0">
+              	<tr>
+                	<td width="113" height="113" class="tdimg"><img src="#{request.contextPath}/asset/images/tckimg.png" width="113" height="113" /></td>
+                    <td style="padding-left:15px; padding-top:10px; padding-bottom:10px;" valign="top">
+                    	<table width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td rowspan="2"><img src="#{request.contextPath}/asset/images/cloud.png" width="43" height="29"  style="vertical-align:top;"/><font class="t1_airTemp" style="font-size:28px;line-height:30px; color:#fff;font-family: Helvetica Neue, Helvetica, Arial, sans-serif;">28.4℃</font></td>
+                                <td>
+                                	<div class="ludian">
+                                    	<span class="t1_ludian" style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif;">露点：</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        	<tr>
+                            	<td class="shidu t1_airHumidity" style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif;">湿度：</td>
+                            </tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju" style="padding-left:0px">
+                        	<tr>
+                            	<td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon1.png" width="58" height="20" /></td>
+                            	<td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon2.png" width="59" height="24" /></td>
+                                <td class="shujutd" style="background:none;"><img src="#{request.contextPath}/asset/images/tckicon3_.png" width="76" height="24" /></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd t1_soilTemp"></td>
+                            	<td class="shujutd t1_illumination" style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif;"> </td>
+                                <td class="shujutd t1_co2" style="background:none;"> </td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd t1_soilHumidity"></td>
+                            	<td class="shujutd"></td>
+                                <td class="shujutd" style="background:none;"></td>
+                            </tr>
+                        </table>
+                    
+                    </td>
+                </tr>
+              </table>
+              <table width="100%" cellpadding="0" cellspacing="0" class="fottable">
+              	<tr>
+                	<td><a class="ckxx" href="#" >查看详细</a></td>
+                    <td class="cjtime t1_gentime">采集时间：</td>
+                </tr>
+              </table>
+        </td>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg6.png) repeat-y;"></td>
+    </tr>
+    <tr>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg7.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg8.png) repeat-x;"></td>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg9.png" width="7" height="5" /></td>
+    </tr>
+    <tr style="">
+    	<td colspan="3" align="center" valign="top"><img src="#{request.contextPath}/asset/images/tckkbg1.png" width="21" height="23" /></td>
+    </tr>
+</table>
+<!--传感器结束-->    
+<!--气象站开始-->   
+<table class="qixz" width="555" height="100" cellpadding="0" cellspacing="0" style="display:none;">
+    <tr>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg2.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg3.png) repeat-x;"></td>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg4.png" width="7" height="5" /></td>
+    </tr>
+    <tr>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat-y;"></td>
+        <td valign="top" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat;">
+            <table width="100%" height="38" cellpadding="0" cellspacing="0" style="background:url(#{request.contextPath}/asset/images/linerepe.png) bottom repeat-x; border-collapse:collapse;">
+                <tr>
+                    <td align="left" style="padding-left:10px"><font class="titlefont">气象站</font><font class="numfont t2_sn">编号：A057406005060062001</font></td>
+                    <td align="right"><a class="closed" href="#" onclick="closeQxz()"><img src="#{request.contextPath}/asset/images/closed.png" width="12" height="13" /></a></td>
+                </tr>
+              </table>  
+              <table width="100%" cellpadding="0" cellspacing="0">
+              	<tr>
+                	
+                    <td style="padding-top:10px; padding-bottom:10px;" valign="top">
+                    	<table width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td height="60" width="" style="font-size:54px; color:#fff;padding-left:30px" class="" valign=""><span class="t2_air_temp">28.43°</span>
+                            	<img src="#{request.contextPath}/asset/images/cloud.png" width="43" height="29" style="position: absolute;margin-top: -15px;margin-left: 15px;"/>
+                            	</td>
+                                <td valign="top" width=""></td>
+                                <td valign="top" class="qingt" width="100px"></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shidu t2_gen_time" style="padding-left:30px" colspan="3">采集时间：06月19日16时24分</td>
+                            </tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju">
+                        	<tr>
+                            	<td width="32" height="32" valign="middle" align="left" class="td1_"><img src="#{request.contextPath}/asset/images/icon5.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_rainfallS td1_">降水量&nbsp;5%</td>
+                                <td width="32" height="32" valign="middle" align="left" class="td2_"><img src="#{request.contextPath}/asset/images/icon6.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_air_humidity td2_">湿度&nbsp;38%</td>
+                                <td width="32" height="32" valign="middle" class="td3_" align="left"><img src="#{request.contextPath}/asset/images/icon7.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_wind_velocity td3_">东南风2级</td>
+                        	</tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju">
+                        	<tr>
+                            	<td class="shujutd shujutd1"><img src="#{request.contextPath}/asset/images/tckicon1.png" width="58" height="20" /></td>
+                            	<td class="shujutd shujutd2"><img src="#{request.contextPath}/asset/images/tckicon2.png" width="59" height="24" /></td>
+                                <td class="shujutd shujutd3"><img src="#{request.contextPath}/asset/images/tckicon4.png" width="59" height="26" /></td>
+                                <td class="shujutd shujutd4" style="background:none;"><img src="#{request.contextPath}/asset/images/2501.png"  height="24" /></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd shujutd1 t2_soil_temp">温度&nbsp;70.5%</td>
+                            	<td class="shujutd shujutd2 t2_illumination">光照&nbsp;6015.6LUX</td>
+                                <td class="shujutd shujutd3 t2_atmospheric_pressure">22.03Pa </td>
+                                <td class="shujutd shujutd4 pm25" style="background:none;"></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd shujutd1 t2_soil_humidity">湿度&nbsp;70.5%</td>
+                            	<td class="shujutd shujutd2 t2_solar_radiation">辐射&nbsp;6015.6LUX</td>
+                                <td class="shujutd shujutd3"></td>
+                                <td class="shujutd shujutd4" style="background:none;"></td>
+                            </tr>
+                            <tr>
+                            	<td class="shujutd shujutd1 t2_soil_humidity2">湿度2&nbsp;70.5%</td>
+                            	<td class="shujutd shujutd2"></td>
+                                <td class="shujutd shujutd3"></td>
+                                <td class="shujutd shujutd4" style="background:none;"></td>
+                            </tr>
+                        </table>
+                    
+                    </td>
+                    <td width="160" height="113" valign="top" class="tdimg" align="center"><img src="#{request.contextPath}/asset/images/qxaimg.png" width="113" height="113" /><br/><a class="qckxx2" href="#">查看详细</a></td>
+                </tr>
+              </table>
+        </td>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg6.png) repeat-y;"></td>
+    </tr>
+    <tr>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg7.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg8.png) repeat-x;"></td>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg9.png" width="7" height="5" /></td>
+    </tr>
+    <tr style="">
+    	<td colspan="3" align="center" valign="top"><img src="#{request.contextPath}/asset/images/tckkbg1.png" width="21" height="23" /></td>
+    </tr>
+</table>
+<!-- 无作物 开始 -->
+<div class="map-IntroPop notPlant" style="width:448px;position: absolute;top:400px;left:400px;z-index:100;display:none">
+	<div class="map-introPop-pot">
+    	<button class="close-btn" onclick="closeNotPlant()"></button>
+        <span class="supIco"></span>
+        <div class="map-introPop-header clear">
+        	<div class="introPop-header-lt">
+            	<span class="introPop-header-shade"></span>
+            	<img src="#{request.contextPath}/asset/images/map_zhezhao3.png" />
+            </div>
+            <div class="introPop-header-rt">
+            	<div class="introPop-header-title">
+                    <h3>20号棚</h3>
+                    <em>生产负责人 王军</em>
+                </div>
+                <p class="farmer_mess">农户<span class="farmer" style="font-weight:normal;color:#9d9d9d">小张</span><span class="farmland">0.88亩/2.56亩</span></p>
+            </div>
+        </div>
+        <div class="map-introPop-body clear">
+        	<div class="tudi-jcjl fl">
+                <h2 class="baseMap_ttl" style="background:none; text-indent:0;">土地检测记录</h2>  
+                <div class="baseMap_con">
+                    <div style="width:154px; margin:0 auto;">
+                        <p class="jiance_mechanism">检测机构：北京农学院</p>
+                        <p class="jiance_date">检测日期：2014.06.25</p>
+                    </div>
+                    <div class="landRecord_wp" style="width:150px; margin-left:0;">
+                    <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                        <tr>
+                            <th width="48" class="ph ph1" height="28" align="center">5.0</th>
+                            <th width="48" class="ec ec1" align="center">--</th>
+                            <th width="48" class="pb pb1" align="center" style="padding-bottom:0px">1.8</th>
+                        </tr>
+                        <tr>
+                            <td  height="22">PH</td>
+                            <td >EC</td>
+                            <td >PB</td>
+                        </tr>
+                    </table>
+                    </div>
+                </div>  
+            </div>
+            <div class="tudi-jcjl fl" style="width:220px;">
+                <h2 class="baseMap_ttl" style="background:none; text-indent:0;">土地历史记录</h2>  
+                <div class="baseMap_con">
+                    <div class="landHistory_jl" style=" margin-top:0;">
+                    	<span class="block_landhis-pos9"></span>
+                        <span class="block_landhis-pos22"></span>
+                        <ul class="landHistory_list">
+                            <li>
+                                <span>2010-2014</span>
+                                <div style="border-right:none">
+                                    <em>松沙土</em><em class="colorGrn02">红壤土</em>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
+<div class="map-IntroPop onePlant" style="display:none;position: absolute;top:200px;left:400px;z-index:100;">
+	<div class="map-introPop-pot">
+    	<button class="close-btn" onclick="closeOnePlant();"></button>
+        <span class="supIco"></span>
+        <div class="map-introPop-header clear">
+        	<div class="introPop-header-lt">
+            	<span class="introPop-header-shade"></span>
+            	<img src="" />
+            </div>
+            <div class="introPop-header-rt">
+            	<div class="introPop-header-title">
+                    <h3>20号棚</h3>
+                    <strong>芹菜</strong>
+                    <span class="bootSelt130">
+                    <select class="selectpicker" onchange="resetDate(this)">
+                    </select>
+                    </span>
+                </div>
+                <p class="farmer_mess" >农户<span class="farmer" style="font-weight:normal;color:#9d9d9d">小张</span><span class="farmland">0.88亩/2.56亩</span></p>
+            </div>
+        </div>
+        <div class="map-introPop-body clear">
+        	<ul class="introPop-introTime time1 clear">
+            	<li>
+                	<img src="#{request.contextPath}/asset/images/map_pic100.png" />
+                    <p>定植时间<br/>6月21日</p>
+                </li>
+                <li>
+                	<img src="#{request.contextPath}/asset/images/map_pic101.png" />
+                    <p>采收开始<br/>6月21日</p>
+                </li>
+                <li>
+                	<img src="#{request.contextPath}/asset/images/map_pic102.png" />
+                    <p>种植结束<br/>6月21日</p>
+                </li>
+            </ul>
+            <ul class="introPop-introTime time2 clear" style="display:none">
+            	<li style="width:50%;padding-left:20px">
+                	<img src="#{request.contextPath}/asset/images/map_pic103.png" />
+                    <p>休耕开始<br/>6月21日</p>
+                </li>
+                <li style="">
+                	<img src="#{request.contextPath}/asset/images/map_pic103.png" />
+                    <p>休耕结束<br/>6月21日</p>
+                </li>
+            </ul>
+            <div class="intro-chart-trend">
+            	<div id="container-oneChart" style="min-width:360px;height:100px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 无作物 结束 -->
+<!-- 图层 开始 -->
+<div class="layer">
+    <img src="#{request.contextPath}/asset/images/map/layer/layer.png" width="26" height="26" style="margin-top:12px;"/>
+</div>
+<div class="layerDetail">
+    <h4>图层<img src="#{request.contextPath}/asset/images/map/layer/doubleArrow.png" style="float:right; margin-top: 14px;" /></h4>
+    <ul class="firstList">
+        <li>
+            <div class='controller'><span class="icon"></span><img src="#{request.contextPath}/asset/images/map/layer/area.png" />区域</div><div class='input piaochecked'><input type="checkbox" class="iCheckbox" value="area"/></div>
+            <div class="clear"></div>
+            <dl>
+                <dd><img src="#{request.contextPath}/asset/images/map/layer/area1.png" />基地<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="base"/></span></dd>
+                <dd><img src="#{request.contextPath}/asset/images/map/layer/area2.png" />分区<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="partition"/></span></dd>
+                <dd class="soil">
+                    <div class="controller"><span class="icon"></span><img src="#{request.contextPath}/asset/images/map/layer/area3.png" />地块</div><div class="input piaochecked"><input type="checkbox" class="iCheckbox"  value="tunnel"/></div><div class="clear"></div>
+                </dd>
+                <dt>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil1.png" />加热温室<span class="piaochecked"><input type="checkbox" class="iCheckbox" value="env_type_1" /></span></span>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil2.png" />日光温室<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="env_type_2"/></span></span>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil3.png" />连栋温室<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="env_type_3"/></span></span>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil4.png" />春秋棚<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="env_type_4"/></span></span>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil5.png" />大田<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="env_type_5"/></span></span>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil6.png" />果树<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="env_type_6"/></span></span>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil7.png" />水面<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="env_type_7"/></span></span>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil8.png" />养殖<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="env_type_8"/></span></span>
+                    <span><img src="#{request.contextPath}/asset/images/map/layer/soil9.png" />种植信息<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="env_type_9"/></span></span>
+                </dt>
+                
+            </dl>
+        </li>
+        <li>
+        	<div class='controller'><span class="icon"></span><img src="#{request.contextPath}/asset/images/map/layer/set.png" />设备</div><div class='input piaochecked'><input type="checkbox" class="iCheckbox" value="device_0"/></div>
+            <div class="clear"></div>
+            <dl>
+                <dd><img src="#{request.contextPath}/asset/images/map/layer/set1.png" />摄像头<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="video"/></span></dd>
+                <dd><img src="#{request.contextPath}/asset/images/map/layer/set2.png" />传感器<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="device_1"/></span></dd>
+                <dd><img src="#{request.contextPath}/asset/images/map/layer/set3.png" />气象站<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="device_2"/></span></dd>
+            </dl>
+        </li>
+        <li>
+        	<div class='controller'><span class="icon"></span><img src="#{request.contextPath}/asset/images/map/layer/picture.png" />照片</div><div class='input piaochecked'><input type="checkbox" class="iCheckbox" value="image"/></div>
+            <div class="clear"></div>
+            <dl>
+                <dd><img src="#{request.contextPath}/asset/images/map/layer/picture1.png" />四季田景<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value="krpano"/></span></dd>
+                <dd style="display:none;"><img src="#{request.contextPath}/asset/images/map/layer/picture2.png" />农事图片<span class="piaochecked"><input type="checkbox" class="iCheckbox"  value=""/></span></dd>
+            </dl>
+        </li>
+    </ul>
+</div>
+<!-- 图层 结束 -->
+<script type="text/javascript"> 
+
+//图层
+_Q(function(){
+	//默认全部选中
+	_Q(".firstList li").find(".piaochecked").addClass("on_check");
+	
+  	_Q(".layer").click(function(){                 
+        _Q(".layer").hide();
+        _Q('.layerDetail').show();       
+    });
+    _Q('.layerDetail h4').click(function() {
+        _Q(this).parent(".layerDetail").hide();
+        _Q('.layer').show(); 
+    });
+    _Q('.firstList li .controller').click(function() {
+    	var index= _Q('.controller').index(this);
+        var icon = _Q('.firstList li .controller .icon').eq(index)
+    	var node=_Q('.firstList li .controller').eq(index).parent();
+    	var flag=node.children('dl').is(":visible");
+    	if(flag){
+    		icon.css('background-image','url(#{request.contextPath}/asset/images/map/layer/up.png)');
+    		node.children('dl').slideUp();
+    	}else{
+    		icon.css('background-image', 'url(#{request.contextPath}/asset/images/map/layer/down.png)');
+    		node.children('dl').slideDown();
+    	}
+   });
+	_Q('dd.soil .controller').click(function() {
+		var index=_Q('dd.soil .controller').index(this);
+        var icon = _Q('dd.soil .controller .icon').eq(index)
+		var node = _Q('dd.soil .controller').eq(index).parent();
+		var flag=node.siblings('dt').is(":visible");
+		if(flag){
+			 icon.css('background-image', 'url(#{request.contextPath}/asset/images/map/layer/up.png)');
+		     node.siblings('dt').slideUp();
+		}else{
+			 icon.css('background-image', 'url(#{request.contextPath}/asset/images/map/layer/down.png)');
+		     node.siblings('dt').slideDown();
+		}
+    });
+    _Q('.input').click(function() {
+        if(!_Q(this).hasClass("on_check")){
+           _Q(this).siblings('dl').find('.piaochecked').addClass("on_check"); 
+           _Q(this).parent('.soil').siblings('dt').find('.piaochecked').addClass("on_check"); 
+        }else{
+           _Q(this). siblings('dl').find('.piaochecked').removeClass("on_check");
+            _Q(this).parent('.soil').siblings('dt').find('.piaochecked').removeClass("on_check");  
+        }
+        var checkFlag=_Q(this).hasClass("on_check");
+        var checkValue=_Q(this).find("input").val();
+    });
+    _Q(".piaochecked").click(function() {    
+        _Q(this).hasClass("on_check")? _Q(this).removeClass("on_check"):_Q(this).addClass("on_check");
+        var checkFlag=_Q(this).hasClass("on_check");
+        var checkValue=_Q(this).find("input").val();
+   	    mapLayerOperate(checkValue,checkFlag);
+    })   
+ });
+</script>           
+<div style="display:none" id="type20"><a4j:repeat value="#{mapHome.type20}" var="var"><li aa="#{var[0]}" bb="#{var[1]}"/></a4j:repeat> </div>    
+<div style="display:none" id="type21"><a4j:repeat value="#{mapHome.type21}" var="var"><li aa="#{var[0]}" bb="#{var[1]}"/></a4j:repeat></div>                                 
+       <a4j:status id="ajaxStatus" forceId="true" onstart="_Q('#login').show()" onstop="_Q('#login').hide()" />
+</td>
+	<s:span id="thirdspan" style="display:none">
+      	<script type="text/javascript">
+      		var thirdthird = #{mapHome.firstStr}
+      	</script>
+     </s:span>
+     <s:span id="historySpan" style="display:none">
+      	<script type="text/javascript">
+      	lastStr = #{mapHome.re_last_Str}
+      	</script>
+     </s:span>
+<style>
+.plotsYield_table td input{line-height: 25px;}
+.introPop-header-rt{ float:none; padding-left:115px;}
+.farmer_mess{ clear:none;}
+.introPop-header-rt h3{ float:none; display:inline-block;}
+.introPop-header-rt em{ float:none;}
+</style>
+<div id="previewDiv" style="display:none;cursor: pointer;" >
+		<img width="1024" height="768" onclick="_Q('#previewDiv').hide()"/>
+		<div onclick="document.getElementById('previewDiv').style.display='none';" style="position: absolute;right: -10px;top: -10px;cursor: pointer;z-index:99999999">
+			<img src="#{request.contextPath}/asset/images/cose.png" />
+		</div>
+	</div>
+    <iframe src="" aa="#{request.contextPath}/map/Krpano.seam" id="krpano_iframe" frameborder="no" border="0" style="display:none;width:600px;height:600px;">
+        
+    </iframe>
+    <div id="krpano_iframe_img" style="display:none">
+    	<img src="#{request.contextPath}/asset/krpano/skin/closeImg.png" onclick="closeKrpanoFrame()" style="width:40px;heigh:40px;cursor:pointer;" />
+    </div>
+    <script type="text/javascript" src="#{request.contextPath}/asset/monitoring/js/webVideoCtrl.js"></script>
+ <!-- 消息gritter end -->    
+</ui:define>
+</ui:composition>

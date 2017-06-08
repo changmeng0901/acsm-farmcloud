@@ -1,0 +1,1202 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+	<ui:define name="head_next">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/disease/css/binghaifz.css"/>
+	<style>
+		.fzbh_l td{ border-bottom:1px solid #e5e5e5;padding-top:10px;padding-bottom:10px;}
+		.fzbh_l{margin-left:auto;margin-right:auto;}
+	</style>
+	</ui:define>
+	<ui:define name="body">
+	<!--右边开始-->
+      <td valign="top">
+      <h:panelGroup id="refreshAll">
+            <div class="right_c clear">
+            <!-- 公用头部 开始 -->
+            <div class="r_title clear">
+                <div class="r_t_l fl"><span>生产管理</span><em>&gt;</em><font size="3">病害防治</font></div>
+                <div class="fr" style="margin-bottom:-1px;">
+                     <ul class="cm_resumeList clear">
+		                        <li>
+		                            <a href="#{request.contextPath}/agricultural/Manager.seam"><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico1.jpg"/><span style="font-size: 14px;">农事管理</span></a>
+		                        </li>
+		                        <li>
+		                            <a class="borderBt" href="#{request.contextPath}/agricultural/DiseaseControl.seam"><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico2.jpg" /><span style="font-size: 14px;">病害防治</span></a>
+		                        </li>
+		                    </ul>
+                </div>
+            </div>
+            <!-- 病害防治头部内容 开始 -->
+            	<input type="hidden" name="searchType" id="searchType"/>
+                <input type="hidden" name="floristicsId" id="floristicsId"/>
+                <input type="hidden" name="dataDicIdStr" id="dataDicIdStr"/>
+                <input type="hidden" name="searchParam" id="searchParam"/>
+                <input type="hidden" name="preventionId" id="preventionId"/>
+                <input type="hidden" name="preventionMethod" id="preventionMethod"/>
+                
+                
+                
+            <div class="binghai-header">
+            	<table class="binghai-table" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td valign="top">
+                    <div class="binghai-table-lt">
+                        <ul class="nav nav-tabs" role="tablist" id="myTab">
+                            <li class="active"><a id="search1" href="#today" role="tab" data-toggle="tab">病害图片搜索</a></li>
+                            <li><a id="search2" href="#tomorrow" role="tab" data-toggle="tab">病害描述搜索</a></li>
+                            <li><a id="search3" href="#history" role="tab" data-toggle="tab" style="border-radius:0 4px 4px 0;">病害名称搜索</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- 病害图片搜索选项卡内容 开始 -->
+                            <div class="tab-pane active" id="today">
+                                <div class="bingh-searchBody">
+                                <table class="farmingMageTab_jl mt20" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="pr10" width="70" align="right">品种选择</td>
+                                    <td>
+                                    	<select data-live-search="true" class="selectpicker" id="floristicsId1" name="floristicsId1"  onchange="changeFid(this.value)">
+                                    	<h:panelGroup rendered="#{harmfulPartsInfoHome.floristicsId eq null}">
+                                    		<option value="0" selected="selected">请选择品种</option>
+                                    	</h:panelGroup>
+                                    	<h:panelGroup rendered="#{harmfulPartsInfoHome.floristicsId ne null}">
+                                    		<option value="0">请选择品种</option>
+                                    	</h:panelGroup>
+										<a4j:repeat  value="#{harmfulPartsInfoHome.floristicsList}" var="var" >
+											<h:panelGroup rendered="#{harmfulPartsInfoHome.floristicsId eq var.floristicsId}">
+												<option value="#{var.floristicsId}" selected="selected">#{var.name}</option>
+											</h:panelGroup>
+										    <h:panelGroup rendered="#{harmfulPartsInfoHome.floristicsId ne var.floristicsId}">
+												<option value="#{var.floristicsId}">#{var.name}</option>
+											</h:panelGroup>
+										</a4j:repeat>
+										</select>
+                                       <span class="finput" style="color:#FF0000">*</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pr10" align="right">危害部位</td>
+                                    <td>
+										<select data-live-search="true" class="selectpicker selectFlo" id="dataDicId1" name="dataDicId1"  >
+										<a4j:repeat  value="#{harmfulPartsInfoHome.ddList}" var="var" >
+												<option id="dataDicVal1_#{var.dataDicId}" value="#{var.dataDicId}" >#{var.name}</option>
+										</a4j:repeat>
+										</select>
+										<span class="finput" style="color:#FF0000">*</span>
+                                    </td>
+                                </tr>
+                                 <tr>
+                                    <td class="pr10" align="right" valign="middle">上传图片</td>
+                                    <td>
+                                    	<h:form id="inputsImages" enctype="multipart/form-data">
+                                    	 <h:inputHidden value="#{harmfulPartsInfoHome.searchType}"  name="searchTypeHid" id="searchTypeHid"/>
+						                <h:inputHidden value="#{harmfulPartsInfoHome.floristicsId}" name="floristicsIdHid" id="floristicsIdHid"/>
+						                <h:inputHidden value="#{harmfulPartsInfoHome.dataDicIdStr}" name="dataDicIdStrHid" id="dataDicIdStrHid"/>
+						                <h:inputHidden value="#{harmfulPartsInfoHome.searchObj}" name="searchObjHid" id="searchObjHid"/>
+						                	<ui:fragment id = "refreshImg">
+		                                       <ul class="baseAddList searchImgList" style="float:none;">
+		                                       	<a4j:repeat  value="#{harmfulPartsInfoHome.uploadImg}" var="var"  rowKeyVar="_indexImg">
+							        	  		<li class="baseAddLi">
+									                 <a href="javascript:;"><img id="zoomId" src="#{var}"/><em class="closeBtn" aa="#{_indexImg}"></em></a>
+									                 <div class="baseAddModel">
+									                     <em class="baseAddModel_close"></em>
+									                     <div class="baseAddModel_body">
+									                         <img id="zoomId" src="#{var}"/>
+									                     </div>
+									                 </div>
+										             </li>
+								        	  </a4j:repeat>
+		                                        </ul>
+	                                        </ui:fragment>
+                                        <span class="baseAddbtn">
+                                        <img src="#{request.contextPath}/asset/images/farmingIco15.jpg" />
+										<s:fileUpload id="exampleInputFile" size="30"
+											accept="image/png,image/jpeg,image/gif"
+											contentType="image/png,image/jpeg,image/gif"
+											fileName="#{harmfulPartsInfoHome.imageUrlName}"
+											data="#{harmfulPartsInfoHome.imageUrlBtye}" onchange="saveImage();">
+										</s:fileUpload>
+                                        </span>
+                                        <span class="finput" style="color:#FF0000;margin-top: 48px;margin-left: 10px;">*</span>
+                                        <h:commandButton id="insertImages" action="#{harmfulPartsInfoHome.saveImg}" styleClass="edit_save" style="display:none;"/>
+                                        </h:form>
+                                    </td>
+                                </tr>
+                                </table>
+                                </div>
+                                <div class="bingh-searchFooter">
+                                	 <input type="button" id="search1" class="btn btn-primary" value="搜索" style="margin-top:10px;" onclick="searchClick(1);"/>                                	
+                                </div>
+                            </div>
+                            <!-- 病害图片搜索选项卡内容 结束 -->
+                            <!-- 病害描述搜索选项卡内容 开始 -->
+                            <div class="tab-pane" id="tomorrow">
+                                <div class="bingh-searchBody">
+                                <table class="farmingMageTab_jl mt20" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="pr10" width="70" align="right">品种选择</td>
+                                    <td>
+                                        <select data-live-search="true" class="selectpicker" id="floristicsId2" name="floristicsId2"  onchange="changeFid(this.value)">
+                                        <option value="0" selected="selected">请选择品种</option>
+										<a4j:repeat  value="#{harmfulPartsInfoHome.floristicsList}" var="var" >
+											<h:panelGroup rendered="#{harmfulPartsInfoHome.floristicsId eq var.floristicsId}">
+												<option value="#{var.floristicsId}" selected="selected">#{var.name}</option>
+											</h:panelGroup>
+										    <h:panelGroup rendered="#{harmfulPartsInfoHome.floristicsId ne var.floristicsId}">
+												<option value="#{var.floristicsId}">#{var.name}</option>
+											</h:panelGroup>
+										</a4j:repeat>
+										</select>
+										<span class="finput" style="color:#FF0000">*</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pr10" align="right">危害部位</td>
+                                    <td>
+                                         <select data-live-search="true" class="selectpicker selectFlo" id="dataDicId2" name="dataDicId2"  >
+                                         
+										<a4j:repeat  value="#{harmfulPartsInfoHome.ddList}" var="var" >
+										    <h:panelGroup rendered="#{harmfulPartsInfoHome.dataDicId eq var.dataDicId}">
+												<option value="#{var.dataDicId}" selected="selected">#{var.name}</option>
+											</h:panelGroup>
+										    <h:panelGroup rendered="#{harmfulPartsInfoHome.dataDicId ne var.dataDicId}">
+												<option value="#{var.dataDicId}">#{var.name}</option>
+											</h:panelGroup>
+										</a4j:repeat>
+										</select>
+										<span class="finput" style="color:#FF0000">*</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pr10" align="right" valign="middle">病害描述</td>
+                                    <td>
+                                        <textarea class="form-control" style="width:60%; min-width:240px; height:80px; overflow:auto; resize:none; font-size:12px; box-sizing:border-box;float:left;" id="description"></textarea>
+                                   		<span class="finput" style="color:#FF0000;line-height: 87px;">*</span>
+                                    </td>
+                                </tr>
+                                </table>
+                                </div>
+                                <div class="bingh-searchFooter">
+                                	 <input type="button" id="search2" class="btn btn-primary" value="搜索" style="margin-top:10px;" onclick="searchClick(2);"/>                                	
+                                </div>
+                            </div>
+                            <!-- 病害描述搜索选项卡内容 结束 -->
+                            <!-- 病害名称搜索选项卡内容 开始 -->
+                            <div class="tab-pane" id="history">
+                                <div class="bingh-searchBody">
+                                <table class="farmingMageTab_jl mt20" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="pr10" width="70" align="right">品种选择</td>
+                                    <td>
+                                       <select data-live-search="true" class="selectpicker" id="floristicsId3" name="floristicsId3" onchange="changeFid(this.value)">
+                                       <option value="0" selected="selected">请选择品种</option>
+										<a4j:repeat  value="#{harmfulPartsInfoHome.floristicsList}" var="var" >
+											<h:panelGroup rendered="#{harmfulPartsInfoHome.floristicsId eq var.floristicsId}">
+												<option value="#{var.floristicsId}" selected="selected">#{var.name}</option>
+											</h:panelGroup>
+										    <h:panelGroup rendered="#{harmfulPartsInfoHome.floristicsId ne var.floristicsId}">
+												<option value="#{var.floristicsId}">#{var.name}</option>
+											</h:panelGroup>
+										</a4j:repeat>
+										</select>
+										<span class="finput" style="color:#FF0000">*</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pr10" align="right">危害部位</td>
+                                    <td>
+                                       <select data-live-search="true" class="selectpicker selectFlo" id="dataDicId3" name="dataDicId3"  >
+                                       
+										<a4j:repeat  value="#{harmfulPartsInfoHome.ddList}" var="var" >
+												<option id="dataDicVal_#{var.dataDicId}" value="#{var.dataDicId}" >#{var.name}</option>
+										</a4j:repeat>
+										</select>
+										<span class="finput" style="color:#FF0000">*</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pr10" align="right" valign="middle">病害名称</td>
+                                    <td>
+                                        <span class="bootSelt21">
+                                        <input class="form-control" type="text" style="width:190px;" id="name"/>
+                                        </span>
+                                        <span class="finput" style="color:#FF0000">*</span>
+                                    </td>
+                                </tr>
+                                </table>
+                                </div>
+                                <div class="bingh-searchFooter">
+                                	 <input type="button" id="search3" class="btn btn-primary" value="搜索" style="margin-top:10px;" onclick="searchClick(3);"/>                                	
+                                </div>
+                            </div>
+                            <!-- 病害名称搜索选项卡内容 结束 -->
+                        </div>
+                    </div>
+                    </td>
+                    <td><div class="binghai-table-ct"><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico3.png" /></div></td>
+                    <td valign="top">
+                   	<div class="binghai-table-rt">
+                    	<s:div styleClass="picture-tab-wap" rendered="#{harmfulPartsInfoHome.modelNum ne 0}">
+                            <ul class="nav nav-tabs fr" role="tablist" id="myTab2">
+                            	<a4j:repeat value="#{harmfulPartsInfoHome.model_imgKeyList()}" var="var" rowKeyVar="_index">
+                            		<li class="#{_index eq 0?'active':''}" onclick="changeModel(#{harmfulPartsInfoHome.model_img.get(_index)[0]})">
+                            			<a href="#picture-tab_#{harmfulPartsInfoHome.model_img.get(_index)[0]}" title="#{harmfulPartsInfoHome.model_img.get(_index)[1]}" role="tab" data-toggle="tab">#{harmfulPartsInfoHome.model_img.get(_index)[1]}</a>
+                            		</li>
+                            	</a4j:repeat>
+                            </ul>
+                            <div class="tab-content">
+                                <!-- 图片选项卡内容1 开始 -->
+                                <a4j:repeat value="#{harmfulPartsInfoHome.model_imgKeyList()}" var="var" rowKeyVar="_index">
+	                                <div class="tab-pane #{_index eq 0?'active':''}" id="picture-tab_#{harmfulPartsInfoHome.model_img.get(_index)[0]}">
+	                                    <div id="myCarouse#{harmfulPartsInfoHome.model_img.get(_index)[0]}" class="carousel slide"> 
+	                                       <!-- 轮播（Carousel）项目 -->
+	                                       <div class="carousel-inner">
+	                                       	  <a4j:repeat value="#{harmfulPartsInfoHome.model_img.get(_index)[2]}" var="_img" rowKeyVar="_imgIndex" rendered="#{harmfulPartsInfoHome.model_img.get(_index)[2] ne '[]'}">
+	                                       	  		<div class="item #{_imgIndex eq 0?'active':''}">
+	                                       	  			<h:panelGroup rendered="#{_img eq null or _img eq ''}">
+	                                       	  				<img src="#{request.contextPath}/asset/disease/images/no_disease_img.png"/>
+	                                       	  			</h:panelGroup>
+	                                       	  			<h:panelGroup rendered="#{_img ne null and _img ne ''}">
+	                                       	  				<img src="#{_img}"/>
+	                                       	  			</h:panelGroup>
+	                                          		</div>
+	                                       	  </a4j:repeat>
+	                                       	  <!-- 无图 -->
+	                                       	  <s:div styleClass="item active" rendered="#{harmfulPartsInfoHome.model_img.get(_index)[2] eq '[]'}">
+	                                       	  	<img src="#{request.contextPath}/asset/disease/images/no_disease_img.png"/>
+	                                       	  </s:div>
+	                                       </div>
+	                                       <!-- 轮播（Carousel）导航 -->
+	                                       <a class="carousel-control left" href="#myCarouse#{harmfulPartsInfoHome.model_img.get(_index)[0]}" 
+	                                          data-slide="prev">&lsaquo;</a>
+	                                       <a class="carousel-control right" href="#myCarouse#{harmfulPartsInfoHome.model_img.get(_index)[0]}" 
+	                                          data-slide="next">&rsaquo;</a>
+	                                    </div> 
+	                                </div>
+	                               </a4j:repeat>
+                                <!-- 图片选项卡内容1 结束 -->
+                            </div>  
+                        </s:div> 
+                        
+                        <s:div styleClass="picture-tab-wap" rendered="#{harmfulPartsInfoHome.modelNum eq 0}">
+                           <div class="farming_nodata" style="position:relative; margin:10px-; background:#fff; border:1px dashed #ddd; box-sizing:border-box;">
+                            <div class="warning_noData" style="left:50%; top:50%;width:420px; background-image:url(#{request.contextPath}/asset/disease/images/binghaifz_ico13.jpg);">
+                                <em>暂无信息</em>
+                                <p>请在左侧选择并输入搜索条件，这里为您呈现病害结果！</p>
+                            </div>
+                          </div>
+                        </s:div> 
+                    </div>
+                    </td>
+                </tr>
+                </table>
+            </div>
+            <!-- 病害防治头部内容 结束 -->
+            
+            <!-- 病害防治主体内容 结束 -->
+            <div class="binghai-body">
+            	<table class="binghai-table2" width="100%" cellpadding="0" cellspacing="0">
+               	<tr>
+                	<td valign="top">
+                    <div class="binghai-table2-rt qiuzhu-lt">
+                    	<h:panelGroup rendered="#{harmfulPartsInfoHome.modelNum ne 0}">
+                    		<a4j:repeat value="#{harmfulPartsInfoHome.model_imgKeyList()}" var="_model" rowKeyVar="_index">
+	                        <!-- 病原(有数据) 开始 -->
+	                        <div class="pathogeny-con clear hasModel" style="#{_index eq 0?'':'display:none;'}" id="modelInfo_#{harmfulPartsInfoHome.modelMap.get(_index).harmfulModelId}">
+	                            <ul class="clear">
+	                                <li class="pathogeny-items">
+	                                    <dl>
+	                                        <dt><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico4.png" />#{harmfulPartsInfoHome.modelMap.get(_index).type eq 1?'病原':'形态特征'}</dt>
+	                                        <dd><span style="font-family:'Arial'; font-style:italic; font-size:16px;">#{harmfulPartsInfoHome.modelMap.get(_index).cause}</span></dd>
+	                                    </dl>
+	                                    <div class="clear"></div>
+	                                </li>
+	                                <li class="pathogeny-items">
+	                                    <dl>
+	                                        <dt><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico5.png" />#{harmfulPartsInfoHome.modelMap.get(_index).type eq 3?'发生特点':'症状'}</dt>
+	                                        <dd>
+	               								#{harmfulPartsInfoHome.modelMap.get(_index).symptom}                         
+	                                        </dd>
+	                                    </dl>
+	                                    <div class="clear"></div>
+	                                </li>
+	                                <li class="pathogeny-items">
+	                                    <dl>
+	                                        <dt><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico6.png" />#{harmfulPartsInfoHome.modelMap.get(_index).type eq 3?'危害情况':'发病条件'}</dt>
+	                                        <dd>
+	                                              #{harmfulPartsInfoHome.modelMap.get(_index).attackCriteria} 
+	                                        </dd>
+	                                    </dl>
+	                                    <div class="clear"></div>
+	                                </li>
+	                                <li class="pathogeny-items">
+	                                    <dl>
+	                                        <dt><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico7.png" />防治方法</dt>
+	                                        <dd>
+	                                            <ol class="controlMethod">
+	                                                <li>
+	                                                	 <a onclick="showMethod(1,'#{harmfulPartsInfoHome.modelMap.get(_index).agricultureControl}');">
+	                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img1.png" />
+	                                                     <span class="btnTxt">农业方法</span>
+	                                                     </a>
+	                                                </li>
+	                                                <li>
+	                                                	 <a onclick="showMethod(2,'#{harmfulPartsInfoHome.modelMap.get(_index).physicsControl}');">
+	                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img2.png" />
+	                                                     <span class="btnTxt">物理方法</span>
+	                                                     </a>
+	                                                </li>
+	                                                <li>
+	                                                	 <a onclick="showMethod(3,'#{harmfulPartsInfoHome.modelMap.get(_index).chemistryControl}');">
+	                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img3.png" />
+	                                                     <span class="btnTxt">化学方法</span>
+	                                                     </a>
+	                                                </li>
+	                                                <li>
+	                                                	 <a onclick="showMethod(4,'#{harmfulPartsInfoHome.modelMap.get(_index).biologyControl}');">
+	                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img4.png" />
+	                                                     <span class="btnTxt">生物方法</span>
+	                                                     </a>
+	                                                </li>
+	                                                <li>
+	                                                	 <a onclick="showMethod(5,'#{harmfulPartsInfoHome.modelMap.get(_index).organicControl}');">
+	                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img5.png" />
+	                                                     <span class="btnTxt">有机防治</span>
+	                                                     </a>
+	                                                </li>
+	                                            </ol>
+	                                        </dd>
+	                                    </dl>
+	                                    <div class="clear"></div>
+	                                </li>
+	                            </ul>
+	                        </div>
+	                        <!-- 病原 结束 -->
+	                      </a4j:repeat>
+                    	</h:panelGroup>
+                    	<h:panelGroup rendered="#{harmfulPartsInfoHome.modelNum eq 0}">
+                    		<!-- 病原（无数据） 开始 -->
+                        <div class="pathogeny-con clear">
+                            <ul class="clear">
+                                <li class="pathogeny-items">
+                                    <dl>
+                                        <dt><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico4.png" />形态特征</dt>
+                                        <dd><span class="pathogeny-nodate">暂无信息</span></dd>
+                                    </dl>
+                                    <div class="clear"></div>
+                                </li>
+                                <li class="pathogeny-items">
+                                    <dl>
+                                        <dt><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico5.png" />症状</dt>
+                                        <dd><span class="pathogeny-nodate">暂无信息</span></dd>
+                                    </dl>
+                                    <div class="clear"></div>
+                                </li>
+                                <li class="pathogeny-items">
+                                    <dl>
+                                        <dt><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico6.png" />发病条件</dt>
+                                        <dd><span class="pathogeny-nodate">暂无信息</span></dd>
+                                    </dl>
+                                    <div class="clear"></div>
+                                </li>
+                                <li class="pathogeny-items">
+                                    <dl>
+                                        <dt><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico7.png" />防治方法</dt>
+                                        <dd>
+                                            <ol class="controlMethod">
+                                                <li>
+                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img1.png" />
+                                                     <span class="btnTxt">农业方法</span>
+                                                </li>
+                                                <li>
+                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img2.png" />
+                                                     <span class="btnTxt">物理方法</span>
+                                                </li>
+                                                <li>
+                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img3.png" />
+                                                     <span class="btnTxt">化学方法</span>
+                                                </li>
+                                                <li>
+                                                     <img src="#{request.contextPath}/asset/disease/images/binghaifz_img4.png" />
+                                                     <span class="btnTxt">生物方法</span>
+                                                </li>
+                                                <li>
+                                                	 <img src="#{request.contextPath}/asset/disease/images/binghaifz_img5.png" />
+                                                     <span class="btnTxt">有机防治</span>
+                                                </li>
+                                            </ol>
+                                        </dd>
+                                    </dl>
+                                    <div class="clear"></div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- 病原（无数据） 结束 -->
+                    	</h:panelGroup>
+                        <!-- 农场采用的防治方法 开始 -->
+                        <h:panelGroup id="refreshDiv">
+                        	<a4j:repeat value="#{harmfulPartsInfoHome.preventionArrKeyList()}" var="_model" rowKeyVar="_index">
+	                        <div id="control_#{_model}" class="farm-controlMethod mt20 mb20" style="#{_index eq 0?'':'display:none;'}">
+	                            <div class="nn-commonTtl">
+	                                <h2><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico8.png" />农场采用的防治方法</h2>
+	                                <a class="btn btn-default btn-xs fr" style="margin-top:10px;#{sessionTake.baseModel.baseId ne null and sessionTake.baseModel.baseId ne 0?'':'display:none;'}" onclick="editPrevention(#{_model});">编辑</a>
+	                                <a class="btn btn-default btn-xs fr" style="margin-top:10px;#{sessionTake.baseModel.baseId eq null or sessionTake.baseModel.baseId eq 0?'':'display:none;'}" data-toggle="modal" data-target="#myModal_more" onclick="morePrevention(#{_model});">更多</a>
+	                            </div>
+	                            <div class="nn-commonCon">
+	                                <h:panelGroup rendered="#{_index eq 0}">
+	                                	<h:panelGroup rendered="#{harmfulPartsInfoHome.preventionMethod eq null or harmfulPartsInfoHome.preventionMethod eq''}">
+	                                	   <strong style="display:block; margin:20px 0 10px; font-size:16px; font-weight:normal; text-align:center;">暂无信息</strong>
+                                           <span style="display:block; margin-bottom:20px; text-align:center;">记录发病历史和当时的处理方法可以帮助农场准确诊断病害、掌握发生规律以及存档有效防治措施！</span>
+	                                	</h:panelGroup>
+	                                	<h:panelGroup rendered="#{harmfulPartsInfoHome.preventionMethod ne null and harmfulPartsInfoHome.preventionMethod ne ''}">
+	                                	   <p style="word-wrap:break-word;">#{harmfulPartsInfoHome.preventionMethod}</p>
+	                                	</h:panelGroup>
+	                                </h:panelGroup>
+	                                 <h:panelGroup rendered="#{_index ne 0}">
+	                                	<h:panelGroup rendered="#{harmfulPartsInfoHome.preventionArr.get(_model) eq null or harmfulPartsInfoHome.preventionArr.get(_model) eq ''}">
+	                                	   <strong style="display:block; margin:20px 0 10px; font-size:16px; font-weight:normal; text-align:center;">暂无信息</strong>
+                                           <span style="display:block; margin-bottom:20px; text-align:center;">记录发病历史和当时的处理方法可以帮助农场准确诊断病害、掌握发生规律以及存档有效防治措施！</span>
+	                                	</h:panelGroup>
+	                                	<h:panelGroup rendered="#{harmfulPartsInfoHome.preventionArr.get(_model) ne null and harmfulPartsInfoHome.preventionArr.get(_model) ne ''}">
+	                                	   <p style="word-wrap:break-word;">#{harmfulPartsInfoHome.preventionArr.get(_model)}</p>
+	                                	</h:panelGroup>
+	                                </h:panelGroup>
+	                            </div>
+	                        </div>
+                        </a4j:repeat>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{harmfulPartsInfoHome.preventionArrKeyList() eq null}">
+                        	<div class="farm-controlMethod mt20 mb20">
+                            <div class="nn-commonTtl">
+                                <h2><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico8.png" />农场采用的防治方法</h2>
+                            </div>
+                            <div class="nn-commonCon">
+                                <strong style="display:block; margin:20px 0 10px; font-size:16px; font-weight:normal; text-align:center;">暂无信息</strong>
+                                <span style="display:block; margin-bottom:20px; text-align:center;">记录发病历史和当时的处理方法可以帮助农场准确诊断病害、掌握发生规律以及存档有效防治措施！</span>
+                            </div>
+                        </div>
+                        </h:panelGroup>
+                        <!-- 农场采用的防治方法 结束 -->
+                    </div>
+                    </td>
+                    <td><div class="binghai-table2-ct"></div></td>
+                    <td valign="top">
+                    <div class="binghai-table2-lt qiuzhu-rt">
+                        <!-- 病害求助 开始 -->
+	                        <div class="disease-help mb20">
+	                            <div class="nn-commonTtl">
+	                                <h2>病害求助</h2>
+	                                <a style="display: none;" class="nn-commonMore" href="#">更多&gt;&gt;</a>
+	                            </div>
+	                            <ul>
+	                                <a4j:repeat value="#{harmfulPartsInfoHome.helpList}" var="_obj" rowKeyVar="_index2">
+		                                <li class="nn-common-items">
+		                                    <dl>
+		                                        <dt>
+		                                        	<h:panelGroup rendered="#{_obj[0].imgUrl eq null or _obj[0].imgUrl eq ''}">
+		                                        		<img src="#{request.contextPath}/asset/disease/images/no_far.png"/>
+		                                        	</h:panelGroup>
+		                                        	<h:panelGroup rendered="#{_obj[0].imgUrl ne null and _obj[0].imgUrl ne ''}">
+		                                        		<img src="#{_obj[0].imgUrl}" />
+		                                        	</h:panelGroup>
+		                                        </dt>
+		                                        <dd>
+		                                            <strong>#{_obj[0].name}</strong>
+		                                            <em>
+		                                            	<h:outputText value="#{harmfulPartsInfoHome.findFarmerTypeName(_obj[0].type)}" rendered="#{harmfulPartsInfoHome.findFarmerTypeName(_obj[0].farmerId) ne null}"/>
+		                                            	<h:outputText value="#{harmfulPartsInfoHome.findFarmerTypeName(0)}" rendered="#{harmfulPartsInfoHome.findFarmerTypeName(_obj[0].farmerId) eq null}"/>
+		                                            </em>
+		                                            <span class="time">
+		                                            	<h:outputText value="#{_obj[1].insertTime}" />
+		                                            </span>
+		                                        </dd>
+		                                    </dl>
+		                                    <p class="introduce-txt"><a href="#{dataDicConstant.getYpDomainNameUrl()}/farmeasybbs/qa/qaInfo.jsp?showAcceptMsg=0&amp;questionId=#{_obj[1].harmfulHelpInfoId}">#{_obj[1].description}</a></p>
+		                                    <ul class="baseAddList" style="float:none; margin-top:10px;">
+		                                     <a4j:repeat value="#{_obj[2]}" var="_obj" rowKeyVar="_index2">
+			                                        <li class="baseAddLi">
+			                                            <a href="javascript:;"><img src="#{_obj}" /></a>
+			                                            <div class="baseAddModel">
+			                                                <em class="baseAddModel_close"></em>
+			                                                <div class="baseAddModel_body">
+			                                                    <img id="zoomId" src="#{_obj}" />
+			                                                </div>
+			                                            </div>
+			                                        </li>
+		                                        </a4j:repeat>
+		                                    </ul>
+		                                    <br class="clear" />
+		                                </li>
+		                              </a4j:repeat>
+	                            </ul>
+	                             <s:div styleClass="qiuzhuRt-nodate" style="position:relative;" rendered="#{harmfulPartsInfoHome.helpList eq null or harmfulPartsInfoHome.helpList.size() eq 0}">
+                            		<div class="warning_noData" style="position:absolute; left:50%; top:50%; margin-left:-160px; margin-top:-85px; width:320px; background-image:url(#{request.contextPath}/asset/images/binghaifz_ico14.jpg);">
+                                    <em>暂无信息</em>
+                                    <p>无法判断的病害可以通过病害求助得到答案，还会有服务团队的专业解答哦！</p>
+                                </div>
+                            	</s:div>
+	                        </div>
+                        <!-- 病害求助 结束 -->
+                    </div>
+                    </td>
+                </tr>
+                </table>
+            </div>
+            <!-- 病害防治主体内容 结束 -->
+	</div>
+	<!-- 农业防治方法模态框 开始 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:674px; margin:0; left:50%; margin-left:-337px; top:50%; margin-top:-180px;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"></button>
+        <h4 class="modal-title" id="myModalLabel_name" style="color:#1e1e1e;">农业防治方法</h4>
+    </div>
+    <div class="modal-body" style="height:200px; padding:20px 0 0;">
+        <div class="modalheight" style="margin-top:0;">
+        	<p class="modalSection"><span class="modalMark-b"></span>
+        		<span id="model_content"></span>
+        	</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn btn-default" data-dismiss="modal" href="#">返回</a>
+    </div>
+</div>
+</div>
+</div>
+<!-- 农业防治方法模态框 结束 -->
+<!-- 没有防治方法的提示框 -->
+<div class="modal fade" id="myModalNoData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:674px; margin:0; left:50%; margin-left:-337px; top:50%; margin-top:-180px;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"></button>
+        <h4 class="modal-title" id="myModalLabel_name" style="color:#1e1e1e;">防治方法</h4>
+    </div>
+    <div class="modal-body" style="height:200px; padding:20px 0 0;">
+        <div class="farming_nodata" style="margin-top:0;border-bottom:0;background:none;">
+	        <div class="warning_noData" style="margin:50px auto;padding-top:0;background:none;">
+	        	<span class="ico" style="display:block; text-align:center; margin-bottom:20px;"><img src="#{request.contextPath}/asset/images/farming/farmingIco20.png" /></span>
+	        	<em style="font-size:14px;">抱歉，暂时无参考的防治信息</em>
+	        </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn btn-default" data-dismiss="modal" href="#">返回</a>
+    </div>
+</div>
+</div>
+</div>
+<!-- 农场采用的防治方法模态框 (编辑)开始 -->
+<a4j:repeat value="#{harmfulPartsInfoHome.preventionArrKeyList()}" var="_model" rowKeyVar="_index">
+<div class="modal fade" id="preventionModal_#{_model}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="#{_index eq 0 ?'':'display: none;'}">
+<div class="modal-dialog" style="width:674px; margin:0; left:50%; margin-left:-337px; top:50%; margin-top:-180px;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"></button>
+        <h4 class="modal-title" id="myModalLabel" style="color:#1e1e1e;">农场采用的防治方法</h4>
+    </div>
+    <div class="modal-body" style="height:auto; padding:20px 0 0;">
+        <table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0" style="margin:10px 0;">
+            <tr>
+            	<td class="pr10" width="110" align="right">防治方法</td>
+                <td colspan="2">
+                		<textarea id="prevention_#{_model}" class="form-control" style="width:436px; height:164px; box-sizing:border-box; resize:none; font-size:12px; overflow:auto;">#{harmfulPartsInfoHome.preventionArr.get(_model)}</textarea>
+                </td>
+            </tr>
+        </table> 
+    </div>
+    <div class="modal-footer">
+        <a class="btn btn-success" href="JavaScript:void(0)" onclick="savePrevention(#{_model})">提交</a>
+        <a class="btn btn-default" data-dismiss="modal" href="#">返回</a>
+    </div>
+</div>
+</div>
+</div>
+</a4j:repeat>
+<!-- 农场采用的防治方法模态框(编辑) 结束 -->
+
+
+<!-- 农场采用的防治方法模态框(更多) 开始 -->
+<a4j:repeat value="#{harmfulPartsInfoHome.preventionArrKeyList()}" var="_model" rowKeyVar="_index">
+<div class="modal fade" id="moreModal_#{_model}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:674px; margin:0; left:50%; margin-left:-337px; top:50%; margin-top:-180px;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"></button>
+        <h4 class="modal-title" id="myModalLabel" style="color:#1e1e1e;">农场采用的防治方法</h4>
+    </div>
+    <div class="modal-body" style="height:auto; "> 
+    		<h:panelGroup rendered="#{not empty harmfulPartsInfoHome.preventionBaseArr.get(_model)}">
+        		<div style="margin:10px 0; height:270px; overflow-y:scroll">
+                	<table width="90%" align="center" class="fzbh_l">
+                	<a4j:repeat value="#{harmfulPartsInfoHome.preventionBaseArr.get(_model)}" var="_prevention" rowKeyVar="_index2">
+                		<tr>
+	                      <td width="54" valign="top"><img src="#{_prevention.baseId.baseImageUrl}" width="54px;" height="54px;"/></td>
+	                      <td style="padding-left:8px;">
+	                       <h5 style="font-weight:none;">#{_prevention.baseId.name}</h5>
+	                       #{_prevention.description}
+	                      </td>
+                    </tr> 
+                	</a4j:repeat>
+                	
+                    </table>
+                </div>
+            </h:panelGroup>
+             <h:panelGroup rendered="#{empty harmfulPartsInfoHome.preventionBaseArr.get(_model)}">
+             		 <div class="farming_nodata" style="margin-top:0;border-bottom:0;background:none;">
+		        <div class="warning_noData" style="margin:50px auto;padding-top:0;background:none;">
+		        	<span class="ico" style="display:block; text-align:center; margin-bottom:20px;"><img src="#{request.contextPath}/asset/images/farming/farmingIco20.png" /></span>
+		        	<em style="font-size:14px;">抱歉，暂时无参考的防治信息</em>
+		        </div>
+	        </div>
+           </h:panelGroup>
+    </div>
+    <div class="modal-footer">
+        
+        <a class="btn btn-default" data-dismiss="modal" href="#">返回</a>
+    </div>
+</div>
+</div>
+</div>
+</a4j:repeat>
+<!-- 农场采用的防治方法模态框(更多) 结束 -->
+				<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="alertModal" class="modal fade in w600na" style="display: none;top:30%;left:30%;">
+  <div class="modal-dialog" style="margin-top:30px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body" style="height:auto;padding:15px;">
+       <span id="spanValue">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+</h:panelGroup>
+<a4j:form id="formid" >
+<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+<a4j:jsFunction eventsQueue="mainQueue" name="savePreventionMe" action="#{harmfulPartsInfoHome.savePrevention()}" data="#{harmfulPartsInfoHome.mId}" oncomplete="complate(data)" reRender="refreshDiv">
+	<a4j:actionparam name="modelId" assignTo="#{harmfulPartsInfoHome.mId}"/>
+	<a4j:actionparam name="dataDicIdStr" assignTo="#{harmfulPartsInfoHome.dataDicIdStr}"/>
+	<a4j:actionparam name="floristicsId" assignTo="#{harmfulPartsInfoHome.floristicsId}"/>
+	<a4j:actionparam name="preventionMethod" assignTo="#{harmfulPartsInfoHome.preventionMethod}"/>
+</a4j:jsFunction>
+<a4j:jsFunction eventsQueue="mainQueue" name="delImg" action="#{harmfulPartsInfoHome.delImg()}" data="#{harmfulPartsInfoHome.uploadImg.size()}" oncomplete="completeImg(data)" reRender="refreshImg">
+	<a4j:actionparam name="indexObj" assignTo="#{harmfulPartsInfoHome.indexObj}"/>
+</a4j:jsFunction>
+
+<a4j:jsFunction eventsQueue="mainQueue" name="queryResult" action="#{harmfulPartsInfoHome.queryResult()}" data="#{harmfulPartsInfoHome.resultArr}" oncomplete="searchComplate(data)" reRender="refreshAll">
+	<a4j:actionparam name="floristicsId" assignTo="#{harmfulPartsInfoHome.floristicsId}"/>
+	<a4j:actionparam name="dataDicIdStr" assignTo="#{harmfulPartsInfoHome.dataDicIdStr}"/>
+	<a4j:actionparam name="searchParam" assignTo="#{harmfulPartsInfoHome.searchParam}"/>
+	<a4j:actionparam name="searchType" assignTo="#{harmfulPartsInfoHome.searchType}"/>
+	<a4j:actionparam name="searchObj" assignTo="#{harmfulPartsInfoHome.searchObj}"/>
+</a4j:jsFunction>
+ 	</a4j:form>         
+<script type="text/javascript">
+//<![CDATA[
+ var promptMessage = "#{harmfulPartsInfoHome.promptMessage}";
+	if(promptMessage != ""){
+		document.getElementById("spanValue").innerHTML = promptMessage;
+		jquery("#alertModal").modal('show');
+	}          
+ var len = "#{harmfulPartsInfoHome.uploadImg.size()}";
+function initResult(){
+	jquery("#login").hide();
+	jquery('#dataDicId1').attr("multiple","multiple");
+	jquery('#dataDicId2').attr("multiple","multiple");
+	jquery('#dataDicId3').attr("multiple","multiple");
+  	 jquery('.selectFlo').selectpicker('deselectAll');
+  	jquery(".filter-option").each(
+			function(){
+				if(jquery(this).text() == "无可选择项目"){
+					
+					jquery(this).text('请选择危害部位');
+				}
+			}
+		);
+  	 
+	var type = "#{harmfulPartsInfoHome.searchType}";
+	var searchParam = "#{harmfulPartsInfoHome.searchParam}";
+	var dataDicIdStr = "#{harmfulPartsInfoHome.dataDicIdStr}";
+	 
+	if(type == 2){
+		if(dataDicIdStr != ""){
+			var checkStr = dataDicIdStr.split(",");
+			if(jquery("#dataDicId2 option").length!=checkStr.length)
+				jquery("#dataDicId2").selectpicker("val",checkStr);
+		}
+		
+		jquery("#description").val(searchParam);
+		jquery("#search2").trigger("click");
+    }else if(type == 3){
+    	if(dataDicIdStr != ""){
+			var checkStr = dataDicIdStr.split(",");
+			if(jquery("#dataDicId3 option").length!=checkStr.length)
+				jquery("#dataDicId3").selectpicker("val",checkStr);
+		}
+    	jquery("#name").val(searchParam);
+    	jquery("#search3").trigger("click");
+    }else{
+    	if(dataDicIdStr != ""){
+			var checkStr = dataDicIdStr.split(",");
+			if(jquery("#dataDicId1 option").length!=checkStr.length){
+				jquery("#dataDicId1").selectpicker("val",checkStr);
+			}
+		}
+     }
+	//下拉框
+	 jquery('.b1').attr("data-live-search","true");
+	 jquery('.selectpicker').selectpicker({size:6,dropupAuto:false});
+	
+	//文本框获取焦点失去焦点变化
+	jQuery('input[type=text]').focus(function(){
+		var txt_value = jQuery(this).val();
+		if( txt_value == this.defaultValue ){
+			jQuery(this).val("");	
+		}	
+	});	
+	jQuery('input[type=text]').blur(function(){
+		var txt_value = jQuery(this).val();
+		if( txt_value == "" ){
+			jQuery(this).val(this.defaultValue);	
+		}	
+	});
+	
+	//时间控件
+	jQuery(".form_datetime").datetimepicker({
+		format: "yyyy mm",  /* 控制显示格式，默认为空，显示小时分钟 */
+		autoclose: true,
+		weekStart: 1,
+		language:  'zh-CN',
+		startView: 3,
+		minView: 3,
+		maxView: 4,		
+		pickerPosition: "bottom-left"
+    });	
+	
+	//表格隔行换色
+	jQuery('.table-newTable tbody tr').mouseover(function(){
+		jQuery(this).addClass('hover');
+	});
+	jQuery('.table-newTable tbody tr').mouseout(function(){
+		jQuery(this).removeClass('hover');
+	});	
+	
+	magnifier();  //  通用添加图片，放大镜
+	computeWidth();  //病害选项卡和轮播图计算宽高
+}
+jQuery(function(){
+	initResult();
+});
+	//病害选项卡和轮播图计算宽高
+	function computeWidth(){
+		var oWidth = jQuery(window).width();	
+		var aBinghaiLt = (oWidth - jQuery('.left_c').width() - 60)*0.4;
+		var aBinghaiRt = (oWidth - jQuery('.left_c').width() - 60)*0.6;
+		var aBinghaiLtMin =(1002 - jQuery('.left_c').width() - 60)*0.4;
+		var aBinghaiRtMin = (1002 - jQuery('.left_c').width() - 60)*0.6;
+		jQuery('.binghai-table-lt').css({"width":aBinghaiLt,"height":aBinghaiLt*0.77});  //左侧病害图片搜索
+		jQuery('.binghai-table2-lt').css({"width":aBinghaiLt});  //右侧病害求助
+		jQuery('.binghai-table-rt').css({"width":aBinghaiRt-52,"height":aBinghaiLt*0.77});  //右侧病害图片轮播
+		jQuery('.binghai-table2-rt').css({"width":aBinghaiRt-22});  //左侧病原
+		jQuery('.binghai-table-lt .tab-pane').css({"height":aBinghaiLt*0.77-40});//左侧病害图片搜索选项卡内容高度
+		jQuery('.binghai-table-lt .bingh-searchBody').css({"height":aBinghaiLt*0.77-40-54});
+		
+		jQuery('#myTab2').css({height:jQuery('.binghai-table-rt').height()-22});//右侧选项卡图片轮播内容高度
+		jQuery('.binghai-table-rt .item img').css({   //右侧选项卡图片轮播内容高度
+			"width":jQuery('.binghai-table-rt').width()-152,
+			"height":jQuery('.binghai-table-rt').height()-22
+			}); 
+		jQuery('.binghai-table-rt .farming_nodata').css({   //右侧选项卡无数据内容高度
+			"width":jQuery('.binghai-table-rt').width()-20,
+			"height":jQuery('.binghai-table-rt').height()-20
+			}); 
+		jQuery('.qiuzhuRt-nodate').css({
+			"height" : jQuery('.qiuzhu-lt').height() -47
+			});	
+		if(oWidth<1002){
+			jQuery('.binghai-table-lt').css({"width":aBinghaiLtMin,"height":aBinghaiLtMin*0.77});	
+			jQuery('.binghai-table2-lt').css({"width":aBinghaiLtMin});	
+			jQuery('.binghai-table-rt').css({"width":aBinghaiRtMin-52,"height":aBinghaiLtMin*0.77});	
+			jQuery('.binghai-table2-rt').css({"width":aBinghaiRtMin-22});				
+			jQuery('.binghai-table-lt .tab-pane').css({"height":aBinghaiLtMin*0.77-40});//左侧病害图片搜索选项卡内容高度
+			jQuery('.binghai-table-lt .bingh-searchBody').css({"height":aBinghaiLtMin*0.77-40-54});
+			
+			jQuery('#myTab2').css({height:jQuery('.binghai-table-rt').height()-22});//右侧选项卡图片轮播内容高度
+			jQuery('.binghai-table-rt .item img').css({   //右侧选项卡图片轮播内容高度
+				"width":jQuery('.binghai-table-rt').width()-152,
+				"height":jQuery('.binghai-table-rt').height()-22
+				}); 
+			jQuery('.binghai-table-rt .farming_nodata').css({   //右侧选项卡无数据内容高度
+				"width":jQuery('.binghai-table-rt').width()-20,
+				"height":jQuery('.binghai-table-rt').height()-20
+				}); 
+		}
+		if(oWidth>1360){
+			jQuery('.binghai-table-lt .baseAddLi img').css({"width":"120px","height":"120px"});	
+			jQuery('.binghai-table-lt .baseAddbtn,.binghai-table-lt .baseAddbtn img,.binghai-table-lt .baseAddbtn input').css({"width":"120px","height":"120px"});	
+		}else{
+			jQuery('.binghai-table-lt .baseAddLi img').css({"width":"94px","height":"94px"});	
+			jQuery('.binghai-table-lt .baseAddbtn,.binghai-table-lt .baseAddbtn img,.binghai-table-lt .baseAddbtn input').css({"width":"94px","height":"94px"});		
+		}
+	};
+	jQuery(window).resize(function(){
+		computeWidth();	 //病害选项卡和轮播图计算宽高随浏览器变化
+	});
+	
+	/*  通用添加图片 开始 */
+	function magnifier(){
+		jQuery('.baseAddLi a').click(function(){
+		jQuery('body').append('<div id="fadeMini" style="position:fixed; width:100%; height:100%; background:rgba(0,0,0,0.5); left:0; top:0; z-index:100;"></div>');	
+			var img = jQuery(this).find("img");
+			var _th = jQuery(this);
+			var realWidth;//真实的宽度
+			var realHeight;//真实的高度
+			jQuery("<img/>").attr("src", jQuery(img).attr("src")).load(function() {
+				realWidth = this.width;
+				realHeight = this.height;
+				//var width = document.body.clientWidth-30;
+				//var height = document.body.clientHeight-30;
+				var width = jQuery(window).width()-30;
+				var height = jQuery(window).height()-30;
+				var a1 = realWidth/width;
+				var a2 = realHeight/height;
+				if(a1>a2){
+					_th.next().css("max-width",width+"px");
+					_th.next().find(".baseAddModel_body").css("max-width",width+"px");
+					_th.next().find("#zoomId").css("max-width",width+"px");
+					if(realWidth>width){
+						_th.next().css("left","15px");
+						var x = width/realWidth*realHeight;
+						_th.next().css("top",(height-x)/2+"px");
+					}else{
+						_th.next().css("top",(height-realHeight)/2+"px");
+						_th.next().css("left",(width-realWidth)/2+"px");
+					}
+				}else{
+					_th.next().css("max-height",height+"px");
+					_th.next().find(".baseAddModel_body").css("max-height",height+"px");
+					_th.next().find("#zoomId").css("max-height",height+"px");
+					if(realHeight>height){
+						_th.next().css("top","15px");
+						var x = height/realHeight*realWidth;
+						_th.next().css("left",(width-x)/2+"px");
+					}else{
+						_th.next().css("top",(height-realHeight)/2+"px");
+						_th.next().css("left",(width-realWidth)/2+"px");
+					}
+				}
+				_th.next().css('display','block')
+				.parent().siblings().children('a').next().hide();
+				jQuery('.baseAddModel_close').click(function(){
+					jQuery(this).parent().hide();
+					jQuery('#fadeMini').remove();	
+				});
+				
+			});
+		});
+		jQuery('.baseAddLi a .closeBtn').click(function(){
+			jQuery(this).parents('.baseAddLi').remove();	
+			var index = jQuery(this).attr("aa");
+			jquery("#login").show();
+			delImg(index);	
+		});
+		
+	};
+
+	//显示上传的图片
+	function previewImage(file)
+    {
+		  var len = jquery(".searchImg").length;
+		  var divId = "imageUrlByte_"+(len+1)+"_div";
+		  var imgId = "imageUrlByte_"+(len+1);
+	      var liStr = "<li class='baseAddLi searchImg'><a href='javascript:;'><div id='"+divId+"'>";
+	         liStr += "<img id='"+imgId+"' src='' /></div><em class='closeBtn'></em></a>";
+	         liStr += "<div class='baseAddModel'><em class='baseAddModel_close'></em><div class='baseAddModel_body'><img id='zoomId_"+imgId+"' src='' /></div></div></li>";
+	      jquery(".searchImgList").append(liStr);
+	      var MAXWIDTH  = 0; 
+	      var MAXHEIGHT = 0;
+	    	 MAXWIDTH  = document.getElementById(imgId).offsetWidth; 
+	         MAXHEIGHT = document.getElementById(imgId).offsetHeight;
+      var div = document.getElementById(imgId+"_div");
+      if (file.files && file.files[0])
+      {
+          var img;
+ 	    	div.innerHTML = '<img class=imghead id='+imgId+'>';
+ 	           img = document.getElementById(imgId);
+          img.onload = function(){
+            var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+            img.width  =  rect.width;
+            img.height =  rect.height;
+//             img.style.marginLeft = rect.left+'px';
+            img.style.marginTop = rect.top+'px';
+          }
+          var reader = new FileReader();
+          reader.onload = function(evt){
+              img.src = evt.target.result;
+              jquery("#zoomId_"+imgId).attr("src",evt.target.result);
+          }
+          reader.readAsDataURL(file.files[0]);
+      }
+      else //兼容IE
+      {
+        var sFilter='filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
+        file.select();
+        var src = document.selection.createRange().text;
+        var img;
+	    	div.innerHTML = '<img class=imghead id='+imgId+'>';
+	           img = document.getElementById(id);
+	           img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
+	           document.getElementById("zoomId_"+imgId).src=src;
+	           var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+	           status =('rect:'+rect.top+','+rect.left+','+rect.width+','+rect.height);
+	           div.innerHTML = "<div class=divhead id='"+imgId+"' style='position:absolute; width:"+rect.width+"px;height:"+rect.height+"px;margin-top:"+rect.top+"px;"+sFilter+src+"\"'></div>";
+        
+      }
+
+      magnifier();  //  通用添加图片，放大镜
+      computeWidth();  //病害选项卡和轮播图计算宽高
+    }
+	function clacImgZoomParam( maxWidth, maxHeight, width, height ){
+        var param = {top:0, left:0, width:maxWidth, height:maxHeight};
+        return param;
+    }
+
+	//改变大品种id的方法
+    function changeFid(fid){
+    	jquery("#floristicsId").val(fid);
+    }
+
+    function searchClick(type){
+    	jquery("#searchType").val(type);
+    	var f = jquery("#floristicsId"+type).val();
+    	var d = jquery("#dataDicId"+type).val();
+    	var searchParam = "";
+		if(type == 2){
+			//按照病害描述搜索
+			var des = jquery("#description").val();
+			if(f == 0 && d == null && des == ""){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择品种、危害部位，及输入病害描述信息，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');
+     		    jquery('body').css('padding-right',0);
+				return false;
+			}else if(f == 0){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择品种，请填写相关信息再搜索。";
+				 jquery("#alertModal").modal('show');
+	     		 jquery('body').css('padding-right',0);
+				return false;
+		    }else if(d == null){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择危害部位，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+		    }else if(des == ""){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有填写病害描述，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+		    }
+			searchParam = des;
+		}else if(type == 3){
+			//按照名称搜索
+			var name = jquery("#name").val();
+			if(f == 0 && d == null && name == ""){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择品种、危害部位，及输入病害名称，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+			}else if(f == 0){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择品种，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+		    }else if(d == null){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择危害部位，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+		    }else if(name == ""){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有填写病害名称，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+		    }
+			searchParam = name;
+		}else if(type == 1){
+			
+			if(f == 0 && d == null && len == 0){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择品种、危害部位及上传图片，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+			}else if(f == 0){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择品种，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+		    }else if(d == null){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有选择危害部位，请填写相关信息再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+		    }else if(len == 0){
+				document.getElementById("spanValue").innerHTML = "很遗憾，您还没有上传图片，请上传相关图片再搜索。";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+				return false;
+		    }
+		    
+		}
+		jquery("#login").show();
+		queryResult(f,d+"",searchParam,type,type);
+    }
+
+    //点击四种防治方法时弹出框显示的内容
+    function showMethod(type,content){
+		if(type == 1){
+			//农业方法
+			document.getElementById("myModalLabel_name").innerHTML = "农业防治方法";
+		}else if(type == 2){
+			//物理方法
+			document.getElementById("myModalLabel_name").innerHTML = "物理防治方法";
+		}else if(type == 3){
+			//化学方法
+			document.getElementById("myModalLabel_name").innerHTML = "化学防治方法";
+		}else if(type == 4){
+			//生物方法
+			document.getElementById("myModalLabel_name").innerHTML = "生物防治方法";
+		}else if(type == 5){
+			//有机防治
+			document.getElementById("myModalLabel_name").innerHTML = "有机防治方法";
+		}
+		if(content != null && content != ""){
+			document.getElementById("model_content").innerHTML = content;
+			jquery("#myModal").modal('show');
+		}else{
+			jquery("#myModalNoData").modal('show');
+		}
+    }
+
+    //点击病害名称时，左边中间部分内容改变
+    function changeModel(id){
+    	jquery(".hasModel").hide();
+    	jquery(".farm-controlMethod").hide();
+    	jquery("#modelInfo_"+id).show();
+    	jquery("#control_"+id).show();
+    }
+    //防治方法模块点击编辑时，判断弹出框显示的内容
+    function editPrevention(id){
+        if(id != "" && id != 0){
+        	jquery("#preventionModal_"+id).modal('show');
+        }
+		
+    }
+    function morePrevention(modelId){
+    	 if(modelId != "" && modelId != 0){
+         	jquery("#moreModal_"+modelId).modal('show');
+         }
+    }
+
+    function savePrevention(modelId){
+        var baseId = "#{sessionTake.baseModel.baseId}";
+        if(baseId == null || baseId == ""){
+			document.getElementById("spanValue").innerHTML = "请选择基地！";
+ 		    jquery("#alertModal").modal('show');
+ 		    return false;
+        }else{
+        	var did = "#{harmfulPartsInfoHome.dataDicIdStr}";
+    		var fid = "#{harmfulPartsInfoHome.floristicsId}";
+    		var des = jquery("#prevention_"+modelId).val();
+    		jquery("#login").show();
+    		savePreventionMe(modelId,did,fid,des);
+        }
+    }
+
+    function complate(modelId){
+    	jquery("#preventionModal_"+modelId).modal('hide');
+    	jquery("#login").hide();
+    }
+
+    function searchComplate(data){
+    	jquery("#login").hide();
+    	var a = data +"";
+        if(a != "undefined"){
+            var obj = eval(data);
+        	var resultSize = obj[0];
+    		initResult();
+    		if(resultSize == 0){
+        		document.getElementById("spanValue").innerHTML = "非常抱歉，没有找到该病害！";
+     		    jquery("#alertModal").modal('show');jquery('body').css('padding-right',0);
+            }
+    		var type = obj[1];
+    		var searchParam = obj[2];
+    		var dataDicIdStr = obj[3];
+    		if(type == 2){
+    			if(dataDicIdStr != ""){
+    				var checkStr = dataDicIdStr.split(",");
+    				if(jquery("#dataDicId2 option").length!=checkStr.length)
+    					jquery("#dataDicId2").selectpicker("val",checkStr);
+    			}
+    			
+    			jquery("#description").val(searchParam);
+    			jquery("#search2").trigger("click");
+    	    }else if(type == 3){
+    	    	if(dataDicIdStr != ""){
+    				var checkStr = dataDicIdStr.split(",");
+    				if(jquery("#dataDicId3 option").length!=checkStr.length)
+    					jquery("#dataDicId3").selectpicker("val",checkStr);
+    			}
+    	    	jquery("#name").val(searchParam);
+    	    	jquery("#search3").trigger("click");
+    	    }else{
+    	    	if(dataDicIdStr != ""){
+    				var checkStr = dataDicIdStr.split(",");
+    				if(jquery("#dataDicId1 option").length!=checkStr.length)
+    					jquery("#dataDicId1").selectpicker("val",checkStr);
+    			}
+    	     }
+        }else{
+        	initResult();
+            }
+    }
+    function saveImage(){
+        jquery("#login").show();
+    	var f = jquery("#floristicsId1").val();
+    	var d = jquery("#dataDicId1").val();
+    	jquery("#inputsImages\\:searchTypeHid").val(1);
+    	jquery("#inputsImages\\:floristicsIdHid").val(f);
+    	jquery("#inputsImages\\:dataDicIdStrHid").val(d);
+    	jquery("#inputsImages\\:searchObjHid").val(0);
+    	jquery("#inputsImages\\:insertImages").click();
+    }
+    function completeImg(num){
+ 	   jquery('#login').hide();
+ 	   len = num;
+     }
+
+    jquery("body").keydown(function(e){
+    	var ev = window.event || e;
+    	var code = ev.keyCode || ev.which;
+    	if (code==116) {
+    	 // 阻止默认的F5事件
+    	if(ev.preventDefault) {
+    	ev.preventDefault();
+    	}else {
+    	ev.keyCode=0;
+    	ev.returnValue=false;
+    	}
+    	window.location.href = "#{request.contextPath}/agricultural/DiseaseControl.seam";
+    	}
+    });
+	/* 放大镜 结束 */
+//]]>
+</script>
+            </td>
+	</ui:define>
+
+</ui:composition>

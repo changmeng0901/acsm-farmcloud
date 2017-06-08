@@ -1,0 +1,1723 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/sort.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<!-- #{orderOperate.orderPorductInit()} -->
+	<style>
+		div#menu .helpSeleHd{ float:left; overflow:hidden; width:60px; height:24px; line-height:24px; padding:0 20px 0 5px; background:url(#{request.contextPath}/asset/images/sitIco2.png) no-repeat 50px 12px; color:#cfe3fe;}
+		div#menu .siteSeleHd { width: 84px;}
+		.r_title{ font-size: 14px; color:#525252;}
+		.cm_resumeList li{ float:left;}
+		.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'微软雅黑';}
+		.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+		.cm_resumeList li img{ float:left; margin-top:16px;}
+		.cm_resumeList li span{ float:left; text-indent:10px;}
+		.borderBt{ border-bottom:2px solid #33aedc;}
+		.borderBt02{ border-bottom:1px solid #cbcbcb;}
+		.choineUl{list-style: none; border-bottom: 1px solid #ddd;  padding-left: 0; margin-bottom: 0; list-style: none;height: 28px;}
+		.choineUl li{float: left;  margin-bottom:-1px;}
+		.choineUl li a{text-decoration: none; color: #555;padding: 5px 10px; display:inline-block;cursor: default;}
+		.choineUl li a.cur{background-color: #fff;border: 1px solid #ddd;border-bottom-color: transparent; border-radius: 5px 5px 0 0;}
+		.qingdan-selt .bootstrap-select.btn-group .dropdown-menu{max-width:900px;}
+		.add td{ width:150px; padding: 5px 0;}
+	    .add td img{vertical-align: top; margin-top: 1px; margin-right:3px;}
+	    .dot_bg{ background: url(../asset/images/orderManage/tiao.jpg) repeat-y 0 0; width: 180px; position: relative;}
+	    .circle{position: absolute; top:6px; left: -5px; width:12px; height: 16px; background: url(../asset/images/orderManage/circle.jpg); }
+	    .space{width: 3px; height: 6px; position: absolute; top:0; left: 0; background: #fff;}
+	    .space1{width: 3px; height: 6px; position: absolute; bottom:0; left: 0; background: #fff;}
+	    .tableModel thead th{min-width: 60px;}
+	    .tableModel tbody td{min-width: 60px;}
+	    .customMess_wap .items p.name {overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+	    .productNumClass{position:absolute;right:10px;top:3px;}
+	    .productName .dropdown-menu > li > a {padding: 3px 80px 3px 20px;}
+	</style>
+	<div class="box_back" id="login" style="display: none; z-index: 1000">
+		<div id="login2"
+			style="width: 60px; height: 60px; margin: 220px auto 0 auto;">
+			<img src="../asset/images/loginda.gif" />
+		</div>
+	</div>
+	<td valign="top" >
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%;">
+			    <div class="breadNav_wap clear">
+			        <div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam">订单管理</a><span>&gt;</span><strong>下单管理</strong></div>
+			        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+			            <ul class="resumeList clear">
+			            	<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+			                <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                            </h:panelGroup>
+			            </ul>
+			        </div>
+			    </div>
+			    <div class="singleManage_con">
+			        <div class="clear">
+			            <h2 class="titleH2 fl">客户信息 </h2>
+			            <a class="btn btn-success fl ml15" href="javascript:void(0);" onclick="gainMemberList('');">选择客户</a>
+			        </div>
+			        <s:div styleClass="mb20 mt20 fl mr20" id="memberInfoDiv">
+			        	<s:fragment rendered="#{orderOperate.memberInfo != null}">
+			        		<div class="customMess_wap mb20" id="showMemberInfoDiv">
+				                <div class="items itemsCur" style="cursor: default;">
+				                    <p class="name" title="#{orderOperate.memberInfo.realname}">客户姓名：#{orderOperate.memberInfo.realname}</p>
+				                    <p class="phone">联系方式：<span>#{orderOperate.memberInfo.phone}</span></p>
+				                    <p class="come">客户类型：<span>#{orderOperate.memberInfo.mType.name}</span></p>
+				                    <p class="type">销售人：<span>#{orderOperate.memberInfo.farmerInfoId != null ? orderOperate.memberInfo.farmerInfoId.name : ""}</span></p>
+				                    <p class="addresses">工作地址：<span>#{orderOperate.memberInfo.workAddress}</span></p>
+				                    <div class="note">备注：
+				                    	<p id="text_note" class="text_note"><span>#{orderOperate.memberInfo.remark2}</span><img class="icon_edit" src="../asset/images/orderManage/icon_edit_order.png" onclick="updateRem();"/></p>
+				                    	<div id="text_save" class="text_save" style="display:none;">
+				                        	<input class="form-control" type="text" value="#{orderOperate.memberInfo.remark}"/>
+				                            <button class="btn" onclick="saveRem();">保存</button>
+				                        </div>
+				                    </div>
+				                    <em class="defaultIco"></em>
+				                </div>
+				            </div>
+				            <s:fragment rendered="#{orderOperate.memberInfo.supplementRemark != '' and orderOperate.memberInfo.supplementRemark != null}">
+				            	<p style="height:20px; line-height:20px;color:#ff8c52;">
+					            	<img style="float:left;margin-right:3px; margin-top: 4px;" src="../asset/images/orderManage/tiX.png" />
+					            	<span style="float:left; height:20px; max-width:600px; overflow:hidden;" title="#{orderOperate.memberInfo.supplementRemark}">#{orderOperate.memberInfo.supplementRemark}</span>
+				            	</p>
+				            </s:fragment>
+			        	</s:fragment>
+			        </s:div>
+			        <s:div style="float: left; position: relative;" id="historyOrderDiv">
+			        	<s:fragment rendered="#{orderOperate.memberInfo != null and orderOperate.historyOrderList.size() > 0}">
+							<h2 class="titleH2" style="margin-top: -34px;">订单内容</h2>
+							<span style="position: absolute; right: 0; top: 0px; cursor: pointer;"><a href="javascript:void(0);" onclick="moreOrderAction(#{orderOperate.memberInfo.memberInfoId});">更多&gt;&gt;</a></span>   
+							<div id="memberInfoDiv" class="mb20 mt20">
+								<div class="customMess_wap" id="showMemberInfoDiv">
+									<div class="items itemsCur" style="cursor: default; padding-left: 15px;">
+										<table  cellpadding="0" cellpacing="0" class="add">
+											<a:repeat value="#{orderOperate.historyOrderList}" var="_historyOrder" rowKeyVar="_historyIndex">
+												<tr >
+													<td class="dot_bg" style="width:101px; padding-left:30px;">
+														<i class="circle"></i><b class="#{_historyIndex == 0 ? 'space' : 'space1'}"></b>
+														<h:outputText value="#{_historyOrder.insertTime}">
+									        				<s:convertDateTime type="both" dateStyle="short" pattern="MM/dd HH:mm" />
+									        			</h:outputText>
+													</td>
+													<td style="width:200px; padding-left: 30px;">
+														<img src="../asset/images/orderManage/text.png" alt=""></img>#{_historyOrder.orderCode}
+													</td>
+													<td >
+														<img src="../asset/images/orderManage/money.png" alt=""></img>¥<i style="color:#ff5000; font-style:normal;">#{_historyOrder.paymentAccount}</i>
+													</td>
+													<td >
+														<img src="../asset/images/orderManage/order.png" alt=""></img>#{orderConstant.getOrderStatusLabel(_historyOrder.orderStatus)}
+													</td>
+												</tr>
+											</a:repeat>
+										</table>
+									</div>
+								</div>
+							</div>
+						</s:fragment>
+					</s:div>
+			        <s:div style="width:100%; height:auto;" id="memberCardDiv">
+			        	<h:inputHidden value="#{orderOperate.ues}" id="useType" />
+			        	<input type="hidden" id="cardMessage" value="#{orderOperate.cardMessage}"/>
+			        	<s:fragment rendered="#{orderOperate.memberCardList.size() > 0}">
+			        		<h2 class="titleH2" style="font-weight:normal; margin-left:16px;">会员卡信息 </h2>
+							<div class="W_addresses_list" style="margin-left:16px; display:inline-block;" >
+								<a:repeat value="#{orderOperate.memberCardList}" var="_mc">
+								<h:outputText value="" rendered="#{_mc.cardsInfo.cardCategory.giftType eq 1}">
+								<div class="fl" style="margin-bottom:10px;">
+									<div class="cardBh" style="height:266px;margin-bottom:5px;">
+										<div class="cardTop">
+											<div class="cardTopL fl">会员卡编号：<span>#{_mc.cardsInfo.cardCode}</span></div>
+											<div class="cardTopC fr"><img src="../asset/images/orderManage/syu.png" alt="" style="margin-right:3px; margin-bottom:2px;"></img><span>剩余<i class="se">#{_mc.deliverNum+_mc.cardsInfo.deliverChangeNum}</i>次配送</span></div>
+										</div> 
+										<div class="bgTiao">
+											<table>
+												<tr>
+													<td style="width:95px">商品名称</td>
+													<td style="width:130px">单价*剩余数量</td>
+													<td style="width:85px">使用数量</td>
+												</tr>
+											</table>
+										</div> 
+										<div class="cardContent" id="carousel#{_mc.cardsInfo.cardCode}" style="height: 100px;">
+											<ul class="tabList">
+												<a:repeat value="#{orderOperate.cardProductMap.get(_mc.cardsInfo.cardCode)}" var="_result" rowKeyVar="_index">
+													<li class="#{_index == 0 ? 'cur' : ''}">
+														<table>
+															<a:repeat value="#{_result}" var="_sp">
+																<tr id="sp_#{_mc.cardsInfo.cardCode}_#{_sp.surplusProductId}_#{_sp.productInfo.productInfoId}">
+																	<td style="width:95px"><a href="javascript:void(0);" title="#{_sp.productName}" class='w84'>#{_sp.productName}</a></td>
+																	<td style="width:130px"><span id="spPrice_#{_mc.cardsInfo.cardCode}_#{_sp.surplusProductId}_#{_sp.productInfo.productInfoId}">#{_sp.price}元</span>*<span>#{_sp.productNum}</span></td>
+																	<td style="width:85px"><input id="spNum_#{_mc.cardsInfo.cardCode}_#{_sp.surplusProductId}_#{_sp.productInfo.productInfoId}" type="text" class="form-control number" value="#{_sp.useNumber}" onkeyup="numMax(this.id, this.value, #{_sp.productNum});"></input></td>
+																</tr>
+															</a:repeat>
+														</table>                                   
+													</li>
+												</a:repeat>
+											</ul>
+											<div class="jiantou">
+												<span class="leftJt"></span>
+												<span class="rightJt"></span>
+											</div>
+										</div>
+										<dl class="remark_dl">
+											<dt class="remark_dt">备注：</dt>
+											<dd class="remark_dd" id="text_title_#{_mc.cardsInfo.cardCode}" title="#{_mc.cardsInfo.remark}">
+												<p id="text_note_#{_mc.cardsInfo.cardCode}" class="text_note"><span style="display: inline-block; height: 18px; line-height: 18px; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">#{_mc.cardsInfo.remark2}</span><img class="icon_edit" style="margin: 3px 0 0 5px; vertical-align:top;" src="../asset/images/orderManage/icon_edit_order.png" onclick="updateCardRem('#{_mc.cardsInfo.cardCode}');"/></p>
+						                    	<div id="text_save_#{_mc.cardsInfo.cardCode}" class="text_save" style="display:none;">
+						                    		<input class="cardInfoId" type="hidden" value="#{_mc.cardsInfo.cardInfoId}" />
+						                        	<input class="form-control" style="float:left;width: 195px;height:24px;padding:0 5px;border-radius:0;" type="text" value="#{_mc.cardsInfo.remark}"/>
+						                            <button class="btn" style="margin:0 0 0 5px;height:24px;line-height:22px;border: 1px solid #ccc;box-sizing:border-box;padding:0 15px;" onclick="saveCardRem('#{_mc.cardsInfo.cardCode}');">保存</button>
+						                        </div>
+											</dd>
+										</dl>
+										<div class="useBtn" style="width:90%;margin:10px auto 0;position:initial; text-align:right;">
+											<a class="btn btn-success" id="useCardA#{_mc.cardsInfo.cardCode}"  href="javascript:void(0);" style="height:25px; line-height:13px; display: #{orderOperate.useCardProductMap.containsKey(_mc.cardsInfo.cardCode) ? 'none' : ''}" onclick="cardUseAction('#{_mc.cardsInfo.cardCode}');">使用</a>
+											<a class="btn btn-default" id="cancelCardA#{_mc.cardsInfo.cardCode}" href="javascript:void(0);" style="height:25px; line-height:13px; display: #{orderOperate.useCardProductMap.containsKey(_mc.cardsInfo.cardCode) ? '' : 'none'}" onclick="cancelCardAction('#{_mc.cardsInfo.cardCode}');">取消</a>
+										</div>
+									</div>
+									<s:div rendered="#{_mc.expiryMsg != ''}" styleClass="expired_alarms">
+										<img src="../asset/images/orderManage/tiX.png" alt=""></img>#{_mc.expiryMsg}
+									</s:div>
+								</div>
+								</h:outputText>
+								<h:outputText rendered="#{_mc.cardsInfo.cardCategory.giftType eq 0}"> 
+								<div class="fl" style="margin-bottom:10px;">
+									<div class="cardBh" style="height:266px;margin-bottom:5px;">
+										<div class="cardTop">
+											<div class="cardTopL fl">会员卡编号：<span>#{_mc.cardsInfo.cardCode}</span></div>
+											<div class="cardTopC fr"><img src="../asset/images/orderManage/syu.png" alt="" style="margin-right:3px; margin-bottom:2px;"></img><span>剩余<i class="se" id="delNum#{_mc.cardsInfo.cardInfoId}">#{_mc.deliverNum+_mc.cardsInfo.deliverChangeNum}</i>次配送</span></div>
+										</div>  
+										<div class="bgTiao"></div> 
+										<div style="height: 86px;">
+											<p class="text_weight1">#{_mc.cardsInfo.cardCategory.name}（#{_mc.cardsInfo.cardCategory.weight}g）</p>
+											<p class="text_weight2"><img src="../asset/images/orderManage/icon_weight1.png" />单次可用重量：<font>#{_mc.cardsInfo.cardCategory.weight}+#{_mc.cardsInfo.cardCategory.fluctuations}（g）</font>
+											<h:outputText value=""  rendered="#{_mc.cardsInfo.cardUsedNum gt 1}">
+											<font id="red#{_mc.cardsInfo.cardInfoId}" style="color:red;">X#{_mc.cardsInfo.cardUsedNum}</font>
+											</h:outputText>
+											<h:outputText value=""  rendered="#{_mc.cardsInfo.cardUsedNum le 1}">
+											<font id="red#{_mc.cardsInfo.cardInfoId}" style="color:red;"></font>
+											</h:outputText>
+											</p>
+										</div>
+										<dl class="remark_dl">
+											<dt class="remark_dt">备注：</dt>
+											<dd class="remark_dd" id="text_title_#{_mc.cardsInfo.cardCode}" title="#{_mc.cardsInfo.remark}">
+												<p id="text_note_#{_mc.cardsInfo.cardCode}" class="text_note"><span>#{_mc.cardsInfo.remark2}</span><img class="icon_edit" style="margin-left: 5px;" src="../asset/images/orderManage/icon_edit_order.png" onclick="updateCardRem('#{_mc.cardsInfo.cardCode}');"/></p>
+						                        <div id="text_save_#{_mc.cardsInfo.cardCode}" class="text_save" style="display:none;">
+						                    		<input class="cardInfoId" type="hidden" value="#{_mc.cardsInfo.cardInfoId}" />
+						                        	<input class="form-control" style="float:left;width: 195px;height:24px;padding:0 5px;border-radius:0;" type="text" value="#{_mc.cardsInfo.remark}"/>
+						                            <button class="btn" style="margin:0 0 0 5px;height:24px;line-height:22px;border: 1px solid #ccc;box-sizing:border-box;padding:0 15px;" onclick="saveCardRem('#{_mc.cardsInfo.cardCode}');">保存</button>
+						                        </div>
+											</dd>
+										</dl>
+										<div class="useBtn" style="width:90%;margin:10px auto 0;position:initial; text-align:right;">
+										<div class="delivery_times">
+		                                	<span class="text_delivery">配送次数：</span>
+		                                    <div class="count_delivery">
+		                                    	<h:outputText value=""  rendered="#{_mc.cardsInfo.useState eq 0 or _mc.cardsInfo.useState eq null}">
+		                                        <i class="btn_sub" onclick="jian('UsedNum#{_mc.cardsInfo.cardInfoId}','red#{_mc.cardsInfo.cardInfoId}');">-</i>
+		                                        <input class="text_input" value="#{_mc.cardsInfo.cardUsedNum}" id="UsedNum#{_mc.cardsInfo.cardInfoId}" />
+		                                        <i class="btn_sup" onclick="jia('UsedNum#{_mc.cardsInfo.cardInfoId}','delNum#{_mc.cardsInfo.cardInfoId}','red#{_mc.cardsInfo.cardInfoId}');">+</i>
+		                                        </h:outputText>
+		                                        <h:outputText value=""  rendered="#{_mc.cardsInfo.useState eq 1}">
+		                                        	<input class="text_input" readonly="readonly" value="#{_mc.cardsInfo.cardUsedNum}" id="UsedNum#{_mc.cardsInfo.cardInfoId}" />
+		                                        </h:outputText>
+		                                    </div>
+		                                </div>
+											<h:outputText value=""  rendered="#{orderOperate.useCardProductMap.containsKey(_mc.cardsInfo.cardCode)}">
+											<a class="btn btn-default" id="cancelCardA#{_mc.cardsInfo.cardCode}" href="javascript:void(0);" style="height:25px; line-height:13px;" onclick="cancelUseAction('#{_mc.cardsInfo.cardInfoId}');">取消</a>
+											<input type="hidden" name="useWeight" value="#{(_mc.cardsInfo.cardCategory.weight + _mc.cardsInfo.cardCategory.fluctuations) * _mc.cardsInfo.cardUsedNum}"/>
+											</h:outputText>
+											<h:outputText value=""  rendered="#{!orderOperate.useCardProductMap.containsKey(_mc.cardsInfo.cardCode)}">
+												<a class="btn btn-success" id="useCardA#{_mc.cardsInfo.cardCode}"  href="javascript:void(0);" style="height:25px; line-height:13px; " onclick="cardUseAction2('#{_mc.cardsInfo.cardInfoId}','UsedNum#{_mc.cardsInfo.cardInfoId}');">使用</a>
+											</h:outputText>
+										</div>
+									</div>
+									<s:div rendered="#{_mc.expiryMsg != ''}" styleClass="expired_alarms">
+										<img src="../asset/images/orderManage/tiX.png" alt=""></img>#{_mc.expiryMsg}
+									</s:div>
+								</div>
+								</h:outputText>
+								</a:repeat>
+			                </div>
+		                </s:fragment>
+		                <script>
+		              		//<![CDATA[
+			                jQuery('.rightJt').click(function(e){
+			    	            var id=jQuery(e.target).parent().parent().attr('id');
+			    	            lunbo('right','#'+id);
+			    		    });
+			    		    jQuery('.leftJt').click(function(e){
+			    				var id=jQuery(e.target).parent().parent().attr('id'); 
+			    				lunbo('left','#'+id);
+			    		    });
+			    		  	//验证数量
+			    			function numMax(id ,nowNum, maxNum){
+				    			nowNum = nowNum.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+				    			nowNum = nowNum.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+				    			nowNum = nowNum.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+				    			nowNum = nowNum.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+			    				if (nowNum > maxNum) {
+			    					jQuery("#" + id).val(maxNum);
+			    				}else {
+			    					jQuery("#" + id).val(nowNum);
+								}
+			    			}
+			    		    function lunbo(action, mingzi) {
+			    			    //得到所有元素，目的就是后面的代码，不要老重复执行$函数。
+			    			    var carousel = jQuery(mingzi);
+			    			    var imageListLis = jQuery(mingzi).find(".tabList li");
+			    			    var btn_left = jQuery(mingzi).find(".leftJt");
+			    			    var btn_right = jQuery(mingzi).find(".rightJt");
+			    			    //图片总数
+			    			    var imageAmount = imageListLis.length;
+			    			    //信号量
+			    			    var nowimg = jQuery(mingzi + ' .cur').index();
+			    			    //右按钮事件监听
+			    			    if (action == 'left') {
+			    			        leftBtnFunc();
+			    			    } else {
+			    			        rightBtnFunc();
+			    			    }
+			    			    function rightBtnFunc() {
+			    			        //信号量的增加
+			    			        nowimg++;
+			    			        //验收。如果信号量增加，超过了图片总数减1，那么就让信号量重新置为0。
+			    			        //合法的信号量，最大最大就是图片总数减1。不能超过。
+			    			        if (nowimg > imageAmount - 1) {
+			    			            nowimg = 0;
+			    			        }
+			    			        //调用函数
+			    			        changePictureAndChangeCircles();
+			    			    }
+			    			    //左按钮事件监听
+			    			    function leftBtnFunc() {
+			    			        //信号量的增加
+			    			        nowimg--;
+			    			        //验收。如果信号量增加，超过了图片总数减1，那么就让信号量重新置为0。
+			    			        //合法的信号量，最大最大就是图片总数减1。不能超过。
+			    			        if (nowimg < 0) {
+			    			            nowimg = imageAmount - 1;
+			    			        }
+			    			        //调用函数
+			    			        changePictureAndChangeCircles();
+			    			    }
+
+			    			    function changePictureAndChangeCircles() {
+			    			        //让我们的图片和小圆点，都跟随信号量变化。信号量那个有cur，其余没cur。
+			    			        imageListLis.eq(nowimg).addClass("cur").siblings().removeClass("cur");
+			    			    }
+			    			}
+			    		  //]]>
+		                </script>
+			        </s:div> 
+			        <div class="clear">
+			    		<h2 class="titleH2 fl">商品清单</h2>
+			    		<div class="fl qingdan-selt ml10">
+							<select class="selectpicker productName" id="productInfoId" >
+								<a:repeat value="#{orderOperate.showProductList}" var="_p">
+									<option value="#{_p.productInfoId}_#{_p.goodsInfo.goodsUnit}" aaa="#{_p.available}">#{_p.productName}-#{_p.goodsInfo.goodsSpec eq null ? _p.productUnit : _p.goodsInfo.goodsSpec}</option>
+								</a:repeat>
+							</select>
+						</div>
+			    		<a class="btn btn-success fl mr15 ml15" href="javascript:void(0);" onclick="addProductCartAction();" style="display:inline;">添加商品</a>
+			    		<a class="btn btn-primary sortBtn" href="javascript:void(0);" onclick="sortControl(1);"  style="float:left; display:inline;"><img src="../asset/images/orderManage/singleManage_ico2.jpg" /> 排序</a>
+			        </div>
+			        <s:div styleClass="listGoods_con" id="productCartDiv">
+			        	<table class="tableModel ablt" width="100%" cellpadding="0" cellspacing="0">
+			                <thead>
+				                <tr>
+				                    <th width="5%"><span style="display:inline-block; line-height:40px;">序号</span></th>
+				                    <th width="10%">商品</th>
+				                    <th width="10%">规格</th>
+				                    <th width="8%">原价</th>
+				                    <th width="8%">单价</th>
+				                    <th width="8%">数量</th>
+				                    <th width="5%">折扣</th>
+				                    <th width="8%">库存</th>
+				                    <th width="8%">小计</th>
+									<th width="15%">备注</th>
+				                    <th width="15%">操作</th>
+				                </tr>
+			                </thead>
+		                </table>
+		                <div class="listGoods_height" id="showProductDiv" >
+		                	<table id="orderProductTable" class="tableModel aclr" width="100%" cellpadding="0" cellspacing="0" style="border-radius:0;">
+				                <tbody id="productMess">
+				                	<a:repeat value="#{orderOperate.orderProductList}" var="_orderProduct" rowKeyVar="_opIndex">
+				                		<tr class="odd" id="orderProductTr#{_orderProduct.cartCode}_#{_opIndex}">
+						                    <td width="5%">#{_opIndex + 1}
+							                    <input type="hidden" value="#{_orderProduct.goodsInfo.goodsUnit}" id="unit#{_orderProduct.cartCode}_#{_opIndex}" />
+							                    <input type="hidden" value="#{_orderProduct.goodsInfo.netContent}" id="content#{_orderProduct.cartCode}_#{_opIndex}" />
+						                    </td>
+						                    <td width="10%"><a href="javascript:void(0);" title="#{_orderProduct.productCode}" id="productName#{_orderProduct.cartCode}_#{_opIndex}">#{_orderProduct.productName}</a></td>
+						                    <td width="10%">#{_orderProduct.productUnit}</td>
+						                    <td width="8%">¥<span class="num_spyj">#{_orderProduct.originalPrice}</span></td>
+						                    <td width="8%"><span class="num_spdj">¥<input id="productPrice#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.price}" onkeyup="clearNoNum(2, this, event); calculates(event);"/></span></td>
+						                    <td width="8%">
+						                        <div class="numCount_block">
+						                            <span class="minusOne" onclick="modifyNum('#{_orderProduct.cartCode}_#{_opIndex}', 1);"></span>
+						                            <span class="inputText"><input name="productNum" id="productNum#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control #{_orderProduct.productInfoId.productInfoId}" value="#{_orderProduct.productNum}" onkeyup="clearNoNum(2, this, event); calculates(event);"/></span>
+						                            <span class="addOne" onclick="modifyNum('#{_orderProduct.cartCode}_#{_opIndex}', 2);"></span>
+						                        </div>
+						                    </td>
+						                    <td width="5%"><span class="num_spdj"><input id="discount#{_orderProduct.cartCode}_#{_opIndex}" name="discount" type="text" class="form-control" value="#{_orderProduct.discount}" onkeyup="clearNoNum2(2, this, event); calculates(event);"/></span></td>
+						                    <td width="8%"><h:outputText  class="stockNum#{_orderProduct.cartCode}_#{_opIndex}" value="#{_orderProduct.stockNum}"/></td>
+						                    <td width="8%">
+						                    	<s:fragment rendered="#{_orderProduct.sellType == orderConstant.getCartProductGeneral()}">
+						                    		¥<span class="num_dpzj" id="productTotalPrice#{_orderProduct.cartCode}_#{_opIndex}">#{_orderProduct.totalPrice}</span>
+						                    	</s:fragment>
+						                    	<s:fragment rendered="#{_orderProduct.sellType != orderConstant.getCartProductGeneral()}">
+						                    		<span class="num_dpzj" id="productTotalPrice#{_orderProduct.cartCode}_#{_opIndex}">赠品</span>
+						                    	</s:fragment>
+					                    	</td>
+						                    <td width="15%"><span class="num_spbz" ><input id="remark#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.remark}" onkeyup="words_deal(this);"/></span></td>
+						                    <td width="15%">
+						                    	<span class="delete">
+						                    		<a href="javascript:void(0);" onclick="removeProductAction('#{_opIndex}');">删除&#160;</a>
+						                    		<s:fragment rendered="#{_orderProduct.showGiftFlag == true}">
+						                    			<a href="javascript:void(0);" onclick="cartProductSettingAction('#{_orderProduct.cartCode}','#{_opIndex}');">设为赠品&#160;</a>
+						                    		</s:fragment>
+						                    	</span>
+					                    	</td>
+						                </tr>
+				                	</a:repeat>
+				                </tbody>
+			                </table>
+		                </div>
+		                <div class="atlr mb20" >
+	                        <div class="listGoods_total">
+	                        	<em class="clearShopCart">
+		                        	<input type="checkbox" class="icheck" id="tsdd" name="tsdd" value="tsdd"  />标记为特殊订单
+	                        	</em>
+	                        	<em class="clearShopCart" style="top: 55px;"><a href="javascript:void(0);" onclick="removeProductAction(-1);"><img src="../asset/images/orderManage/singleManage_ico3.jpg" />清空购物车</a></em>
+	                        	<ul>
+	                            	<li class="listGoods_li1">共<span class="num" style="color:inherit;" id="sumProductNum">0</span>件商品</li>
+	                            	<li class="listGoods_li2">商品总额：<span class="codeEle">¥</span><span class="num" id="totalPrice">0.00</span></li>
+	                                <li class="listGoods_li2">礼品卡金额：<span class="codeEle">¥</span><span class="num" id="cardPrice"><h:outputText value="#{orderOperate.cardTotalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></li>
+	                            	<li class="listGoods_li2">应付金额（不含运费）：<span class="codeEle" style="color: #d40001;">¥</span><span class="num" id="orderPrice" style="color: #d40001;">0.00</span></li>
+   									<li class="listGoods_li4">
+	                                    <div class="fr">
+	                                        <span class="fl">折扣幅度：</span>
+	                                        <span class="ml5 fr"><input id="aaa" type="text" onkeyup="clearNoNum2(2, this, event);calculates(event);" value="#{orderOperate.discount}" class="form-control"/></span>
+	                                        <span class="ml5 fl">折</span>
+	                                    </div>
+	                                </li>
+   									<li class="listGoods_li4">
+	                                    <div class="fr">
+	                                        <span class="fl">减免金额：</span>
+	                                        <span class="ml5 fr"><input id="bbb" type="text" onkeyup="clearNoNum(2, this, event);calculates(event); " value="#{orderOperate.subtractPrice}" class="form-control"/>元</span>
+	                                        <span class="ml5 fl">元</span>
+	                                    </div>
+	                                </li>
+	                            </ul>
+	                        </div>
+	                        <div class="listGoods_li5 clear">
+	                        	<div class="fr">
+	                        	<h:outputText rendered="#{orderOperate.useCardProductMap.size() eq 0 and orderOperate.memberCardList.size() gt 0}" >
+	                        		<span class="fl" style="margin-right: 20px;color:red;"><img src="#{request.contextPath}/asset/images/ico_errorTip.png" style="margin-right: 5px;"/>提示：您还有#{orderOperate.memberCardList.size()}张会员卡未使用</span>
+	                        	</h:outputText>
+	                        	<span class="fl">实付金额（不含运费）：</span>
+	                            <span class="codeEle fl">¥</span>
+	                            <span class="num fl" id="lastOrderPrice">0.00</span>
+	                            </div>
+	                        </div>
+                        </div>
+			            <div class="clear">
+			                	<button class="btn btn-primary fr ml5" onclick="saveAction();" id="next" >下一步</button>
+			                	<h:form id="submitOrderSearch" enctype="multipart/form-data">
+			                	<h:inputHidden id="productHidden" value="#{orderOperate.orderProductJson}" />
+			                	<h:inputHidden id="pdOrder" value="#{orderOperate.pdOrder}" />
+			                	<h:inputHidden value="#{orderOperate.special}" id="special" />
+			                	<h:inputHidden id="discountPrice" value="#{orderOperate.discountPrice}" />
+			                	<h:inputHidden id="discount" value="#{orderOperate.discount}" />
+			                	<h:inputHidden id="subtractPrice" value="#{orderOperate.subtractPrice}" />
+								<s:button view="/orderManage/OrderOperateList.xhtml" rendered="#{orderOperate.memberAddType eq 1}" propagation="end" styleClass="btn btn-default fr" value="返回" onclick="sessionStorage.clear();">
+				                	<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+				                </s:button>
+				                <s:button view="/order/MemberInfoListOne.xhtml" rendered="#{orderOperate.memberAddType eq 2}" propagation="end" styleClass="btn btn-default fr" value="返回" onclick="sessionStorage.clear();">
+				                	<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+				                </s:button>
+				                <s:button view="/order/OrderMemberList.xhtml" rendered="#{orderOperate.memberAddType eq 3}" propagation="end" styleClass="btn btn-default fr" value="返回" onclick="sessionStorage.clear();">
+				                	<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+				                </s:button>
+				                </h:form>
+			            </div>
+			        </s:div>
+			    </div>
+			</div>
+			<div class="modal fade" id="seltCustomModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width:670px; position:absolute; left:50%; margin-left:-335px; top:50%; margin-top:-230px; margin-bottom:0;">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" style="margin-top:5px;"></button>
+			        <h4 class="modal-title revisionGrxx" id="myModalLabel">选择客户</h4>
+			    </div>
+			    <div class="modal-body" style="padding:20px; height:406px; overflow:auto;">
+			    	<div class="search-header" style="margin:0 0 15px;">
+			            <div class="search-header-lt">
+			                <div class="public-search"><span class="octicon-search02"></span>
+			                	<input id="memberSearch" type="text" value="请输入客户姓名/联系方式/工作地址" class="form-control srarchfont" style="width:300px;"></input>
+			                </div>
+			                <button id="memberButton" class="btn btn-primary" type="button" onclick="memberSearchAction();">搜索</button>
+			            </div>
+			        </div>
+			        <s:div styleClass="customMess_wap" id="memberControlDiv">
+			        	<a:repeat value="#{orderOperate.memberInfoList}" var="_member">
+			        		<div id="memberInfo#{_member.memberInfoId}" class="items">
+				            	<p class="name" title="#{_member.realname}">客户姓名：#{_member.realname}</p>
+				                <p class="phone">联系方式：<span>#{_member.phone}</span></p>
+				                <p class="come">客户类型：<span>#{_member.mType.name}</span></p>
+				                <p class="type">销售人：<span>#{_member.farmerInfoId != null ? _member.farmerInfoId.name : ""}</span></p>
+				                <p class="addresses">工作地址：<span>#{_member.workAddress}</span></p>
+				                <em class="defaultIco"></em>
+				                <p title="#{_member.remark}">备注：<span>#{_member.remark2}</span></p>
+				            </div>
+			        	</a:repeat>
+			        </s:div>
+			        <div class="quick_addCustom">
+			        	<em class="quickHd">快速添加客户</em>
+			            <table class="modelTable" width="100%" cellpadding="0" cellspacing="0">
+			                <tr>
+			                    <td class="pr10" width="100" align="right"><i class="starColor">*</i>客户类型</td>
+			                    <td width="190">
+			                        <span class="bootSelt190">
+			                        	<h:selectOneMenu value="#{orderOperate.memberType}" id="memberType" styleClass="selectpicker" immediate="true">
+			                        		<s:selectItems value="#{orderOperate.memberTypeList}" var="_mt" itemValue="#{_mt.memberTypeId}" label="#{_mt.name}"></s:selectItems>
+			                        	</h:selectOneMenu>
+			                        </span>
+			                    </td>
+			                    <td class="pr10" width="100" align="right"><i class="starColor">*</i>客户来源</td>
+			                    <td>
+			                        <span class="bootSelt190">
+			                        	<h:selectOneMenu value="#{orderOperate.memberSource}" id="memberSource" styleClass="selectpicker" immediate="true">
+			                        		<s:selectItems value="#{orderOperate.memberSourceList}" var="_ms" itemValue="#{_ms.memberSourceId}" label="#{_ms.name}"></s:selectItems>
+			                        	</h:selectOneMenu>
+			                        </span>
+			                    </td>
+			                </tr>
+			                <tr>
+			                    <td class="pr10" width="100" align="right"><i class="starColor">*</i>客户姓名</td>
+			                    <td width="190">
+			                        <span class="bootText190" >
+			                        <input type="text" class="form-control" id="memberName" onblur="checkName()"/><span style="color:#FF0000" id="custNameText"></span>
+			                        </span> 
+			                    </td>
+			                    <td class="pr10" width="100" align="right"><i class="starColor">*</i>联系方式</td>
+			                    <td>
+			                        <span class="bootText190" >
+			                        <input type="text" class="form-control" id="memberPhone" onblur="checkCustPhone()"/><span style="color:#FF0000" id="phoneText"></span>
+			                        </span> 
+			                    </td>
+			                </tr>
+			                <tr id="farmerInfoTr">
+			                    <td class="pr10" width="100" align="right"><i class="starColor">*</i>销&#160;售&#160;人</td>
+			                    <td>
+			                        <span class="bootSelt190">
+			                        	<h:selectOneMenu value="#{orderOperate.farmerInfoId}" id="farmerInfoId" styleClass="selectpicker" immediate="true">
+			                        		<f:selectItems value="#{orderOperate.farmerInfoList}"/>
+			                        	</h:selectOneMenu>
+			                        </span>
+			                    </td>
+			                    <td></td>
+			                    <td></td>
+			                </tr>
+			                <tr>
+			                    <td class="pr10" width="100" align="right"><i class="starColor">*</i>工作地址</td>
+			                    <td colspan="3">
+			                        <textarea class="form-control" style="width:482px; height:34px;" id="workAddress" onkeyup="workAddressVerify(this);"></textarea>
+			                    </td>
+			                </tr>
+			                <tr>
+			                    <td colspan="4" align="right">
+			                        
+			        				<input type="button" id="presire" value="提交" class="btn btn-primary" onclick="addMemberAction();" />
+			        				<a class="btn btn-default mr20" href="javascript:void(0);" onclick="memberControl(2);">返回</a>
+			                    </td>
+			                </tr>
+			            </table>    
+			        </div>
+			    </div>
+			</div>
+			</div>
+			</div>
+			<div class="modal fade" id="sortDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width:670px; position:absolute; left:50%; margin-left:-335px; top:50%; margin-top:-234px; margin-bottom:0;">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"></button>
+			        <h4 class="modal-title revisionGrxx" id="myModalLabel">商品排序</h4>
+			    </div>
+			    <div class="modal-body" style="position:relative; padding:20px; max-height:350px; overflow:auto;">
+			    	<s:div styleClass="sp_px" id="sortProductDiv">
+			    		<div class="row">
+							<div class="col col-lg-6">
+								<div class="ordering-list select-list" tabindex="-1">
+									<div class="content with-handle">
+										<div class="scroll-box">
+											<ol id="list_dragselect" class="list ui-sortable ui-selectable">
+												<a4j:repeat value="#{orderOperate.orderProductList}" var="_sortPorduct" rowKeyVar="_index">
+													<li data-key="#{_index+1}" class="ui-selectee">#{_sortPorduct.productName}#{_sortPorduct.sellType == orderConstant.getCartProductGift() ? '-赠品' : ''}<input type="hidden" class="testClass" id="parIdObj_#{_index+1}" value="#{_sortPorduct.cartCode}_#{_index}" /></li>
+												</a4j:repeat>
+											</ol>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+			    	</s:div>
+			    </div>
+			    <div class="modal-footer">
+			        <a class="btn btn-success" href="javascript:void(0);" onclick="sortAction();">保存</a>
+			        <a class="btn btn-default" href="javascript:void(0);" onclick="sortControl(2);">取消</a>
+			    </div>
+			</div>
+			</div>
+			</div>
+			<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na" style="display: none;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="messageTitle">提示</h4>
+						</div>
+						<div class="modal-body">
+							<span id="messageValue"></span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</td>
+	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="addMemberFind" action="#{orderOperate.addMemberFind}" eventsQueue="default" reRender="memberInfoDiv,productCartDiv,historyOrderDiv,memberCardDiv" oncomplete="calculate();">
+			<a:actionparam name="memberType" assignTo="#{orderOperate.memberType}"/>
+			<a:actionparam name="memberSource" assignTo="#{orderOperate.memberSource}"/>
+			<a:actionparam name="farmerInfoId" assignTo="#{orderOperate.farmerInfoId}"/>
+			<a:actionparam name="memberName" assignTo="#{orderOperate.memberName}"/>
+			<a:actionparam name="memberPhone" assignTo="#{orderOperate.memberPhone}"/>
+			<a:actionparam name="workAddress" assignTo="#{orderOperate.workAddress}"/>
+		</a:jsFunction>
+		<a:jsFunction name="gainMemberList" action="#{orderOperate.gainMemberList}" eventsQueue="default" reRender="memberControlDiv" oncomplete="memberControl(1);">
+			<a:actionparam name="memberSearch" assignTo="#{orderOperate.memberSearch}"/>
+		</a:jsFunction>
+		<a:jsFunction name="memberSearchFind" action="#{orderOperate.gainMemberList}" eventsQueue="default" reRender="memberControlDiv" oncomplete="tidyJs();">
+			<a:actionparam name="memberSearch" assignTo="#{orderOperate.memberSearch}"/>
+		</a:jsFunction>
+		<a:jsFunction name="choiceMemberFind" action="#{orderOperate.choiceMemberFind}" eventsQueue="default" reRender="memberInfoDiv,productCartDiv,memberCardDiv,historyOrderDiv" oncomplete="memberControl(2);">
+			<a:actionparam name="memberInfoId" assignTo="#{orderOperate.memberInfoId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="nextType" assignTo="#{orderOperate.nextType}"/>
+		</a:jsFunction>
+		<a:jsFunction name="choiceMemberFind1" action="#{orderOperate.choiceMemberFind}" eventsQueue="default" reRender="memberInfoDiv,productCartDiv,memberCardDiv,historyOrderDiv" oncomplete="memberControl(2);">
+			<a:actionparam name="memberInfoId" assignTo="#{orderOperate.memberInfoId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="addProductCart" action="#{orderOperate.addProductCart}" eventsQueue="default" reRender="productCartDiv,sortProductDiv" oncomplete="addProductComplate();">
+			<a:actionparam name="productId" assignTo="#{orderOperate.productId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="removeOrderProduct" action="#{orderOperate.removeOrderProduct}" eventsQueue="default" reRender="productCartDiv,sortProductDiv" oncomplete="removeComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="sortPorduct" action="#{orderOperate.sortPorduct}" eventsQueue="default" reRender="productCartDiv,sortProductDiv" oncomplete="calculateComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="userCardProduct" action="#{orderOperate.userCardProduct}" eventsQueue="default" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.cardTotalPrice}" oncomplete="addCardComplate(data);">
+			<a:actionparam name="cardProductJson" assignTo="#{orderOperate.cardProductJson}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="cancelCardProduct" action="#{orderOperate.editCancelCardProduct}" eventsQueue="default" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.cardTotalPrice}" oncomplete="cardUseComplate(data);">
+			<a:actionparam name="cardProductJson" assignTo="#{orderOperate.cardProductJson}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="cartProductSettings" action="#{orderOperate.cartProductSettings}" eventsQueue="default" reRender="productCartDiv,sortProductDiv" oncomplete="removeComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="cartIndex" assignTo="#{orderOperate.cartIndex}"/>
+		</a:jsFunction>
+		<a:jsFunction name="checkCustName" action="#{orderOperate.checkCustName}" eventsQueue="default" data="#{orderOperate.isCustNameExist}" oncomplete="showNameMsg(data)">
+			<a:actionparam name="custName" assignTo="#{orderOperate.custName}"/>
+		</a:jsFunction>
+		<!-- 使用宅配卡 -->
+		<a:jsFunction name="userDistributionProduct" action="#{orderOperate.userDistributionProduct}" eventsQueue="default" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.showMessage}" oncomplete="userDistribution(data);">
+			<a:actionparam name="cardCode" assignTo="#{orderOperate.cardId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="cardUsedNum" assignTo="#{orderOperate.cardUsedNum}"/>
+		</a:jsFunction>
+		<!-- 取消宅配卡 -->
+		<a:jsFunction name="cancelDistributionProduct" action="#{orderOperate.cancelDistributionProduct}" eventsQueue="default" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.showMessage}" oncomplete="userDistribution(data);">
+			<a:actionparam name="cardCode" assignTo="#{orderOperate.cardId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<!-- 修改客户信息备注 -->
+		<a:jsFunction name="remarkUpdate" action="#{orderOperate.remarkUpdate}" reRender="memberInfoDiv" eventsQueue="default" data="#{orderOperate.memberInfoRemark}" oncomplete="remarkUp(data)">
+			<a:actionparam name="memberInfoRemark" assignTo="#{orderOperate.memberInfoRemark}"/>
+		</a:jsFunction>
+		
+		<a:jsFunction name="cardRemarkUpdate" action="#{orderOperate.cardRemarkUpdate}" eventsQueue="default" data="#{orderOperate.cardRemarkMess}" oncomplete="cardRemarkUp(data)">
+			<a:actionparam name="cardInfoId" assignTo="#{orderOperate.cardInfoId}"/>
+			<a:actionparam name="cardRemark" assignTo="#{orderOperate.cardRemark}"/>
+		</a:jsFunction>
+		<a:jsFunction name="checkPhone" action="#{orderOperate.checkPhone}" eventsQueue="default" data="#{orderOperate.isPhoneExist}" oncomplete="showPhoneMsg(data)">
+			<a:actionparam name="memPhone" assignTo="#{orderOperate.memPhone}"/>
+		</a:jsFunction>
+		<a:jsFunction name="refreshPageCard" action="#{orderOperate.refreshPageCard}" eventsQueue="default" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.cardTotalPrice}" oncomplete="addCardComplate(data);" >
+			<a:actionparam name="cardProductJson" assignTo="#{orderOperate.cardProductJson}"/>
+			<a:actionparam name="userCardFlag" assignTo="#{orderOperate.userCardFlag}"/>
+		</a:jsFunction>
+		<a:jsFunction name="next" action="#{orderOperate.saveOrderProduct}" eventsQueue="default" >
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="pdOrder" assignTo="#{orderOperate.pdOrder}"/>
+			<a:actionparam name="special" assignTo="#{orderOperate.special}"/>
+			<a:actionparam name="discountPrice" assignTo="#{orderOperate.discountPrice}"/>
+			<a:actionparam name="discount" assignTo="#{orderOperate.discount}"/>
+			<a:actionparam name="subtractPrice" assignTo="#{orderOperate.subtractPrice}"/>
+		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/richwidgets-demo.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		var level = '#{sessionTake.levelId}';
+		var adminFlag = '#{sessionTake.admin}';
+		var sellerMan = '#{sessionTake.sellerMan}';
+		var orderProductJson;
+		var pIds;
+		//订单内容更多跳转
+		function moreOrderAction(mId){
+			window.open('#{request.contextPath}/orderManage/MemberInfoView.seam?memberInfoId=' + mId + '&pageNum=1');
+		}
+		//设置商品销售类型默认
+		function cartProductSettingAction(cartCode,cartIndex){
+			joinResultJson();
+			cartProductSettings(cartCode, orderProductJson,cartIndex);
+		}
+		function words_deal(opRemark){ 
+			var curLength = opRemark.value.length;
+			if(curLength > 20){ 
+				var textVlaue = opRemark.value.substr(0,20); 
+				opRemark.value = textVlaue; 
+				alert("超过字数限制，最多输入20字！" ); 
+			}
+			joinResultJson();
+			sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+		}
+		//卡使用按钮获取选中卡商品数据
+		function cardUseAction(cardCode){
+			var jsonStr = "[";
+			var jsoncard="";
+			jQuery("#carousel" + cardCode).find(".tabList li").find("table tr").each(function(tabList_table_tr_index){
+				var resultId = this.id;
+				resultId = resultId.replace("sp_", "spNum_");
+				var idArr = resultId.split("_");// 0功能标识 1cardCode 2surplusPorductId
+				var number = jQuery("#" + resultId).val();
+				if (Number(number) > 0) {
+					jsonStr += "{";
+					jsonStr += "cardCode:'" + idArr[1];
+					jsonStr += "',productId:" + idArr[3];
+					jsonStr += ",surplusProductId:" + idArr[2];
+					jsonStr += ",number:" + number;
+					resultId = resultId.replace("spNum_", "spPrice_");
+					var price = jQuery("#" + resultId).text();
+					price = price.replace("元", "");
+					jsonStr += ",price:" + price;
+					jsonStr += "},";
+				}
+				if (Number(number) > 0) {
+					jsoncard += "{";
+					jsoncard += "cardCode:'" + idArr[1];
+					jsoncard += "',productId:" + idArr[3];
+					jsoncard += ",surplusProductId:" + idArr[2];
+					jsoncard += ",number:" + number;
+					resultId = resultId.replace("spNum_", "spPrice_");
+					var price = jQuery("#" + resultId).text();
+					price = price.replace("元", "");
+					jsoncard += ",price:" + price;
+					jsoncard += "},";
+				}
+			});
+            if (jsonStr != "[") {
+				jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+			}
+			jsonStr += "]";
+			if(jsonStr == '[]'){
+				jQuery("#messageValue").html("请添加会员卡使用商品数量!");
+				jQuery("#messageDiv").modal('show');
+			}else{
+				joinResultJson();
+				if(jsoncard.length>0){
+					jsoncard = jsoncard.substring(0, jsoncard.length - 1);
+				}
+				var json = sessionStorage.getItem("addOrder_cardJsonStr");
+				if(json==null){
+					sessionStorage.setItem("addOrder_cardJsonStr",jsonStr);
+				}else{
+					json = json.substring(0, json.length - 1)+","+jsoncard+"]";
+					sessionStorage.setItem("addOrder_cardJsonStr",json);
+				}
+				//本地存储用于回显
+				sessionStorage.setItem("addOrder_userCardFlag","1"); 
+				userCardProduct(jsonStr, orderProductJson);
+				jQuery("#login").show();
+			}
+		}
+		//宅配卡使用
+		function cardUseAction2(cardId,id){
+			joinResultJson();
+			var num = jQuery('#'+id).val(); 
+			var reg = /^[0-9]*[1-9][0-9]*$/; 
+			if(!reg.test(num)){
+	        	alert("配送次数请填写大于零的正整数");
+     		    return false;
+		    }
+			userDistributionProduct(cardId, orderProductJson, num);
+			jQuery("#login").show();
+		}
+
+		//宅配卡取消
+		function cancelUseAction(cardId){
+			joinResultJson();
+			cancelDistributionProduct(cardId, orderProductJson);
+			jQuery("#login").show();
+		}
+		//卡取消按钮取消选中卡商品数据
+		function cancelCardAction(cardCode){
+			joinResultJson();
+			var jsoncard="";
+			jQuery("#carousel" + cardCode).find(".tabList li").find("table tr").each(function(tabList_table_tr_index){
+				var resultId = this.id;
+				resultId = resultId.replace("sp_", "spNum_");
+				var idArr = resultId.split("_");// 0功能标识 1cardCode 2surplusPorductId
+				var number = jQuery("#" + resultId).val();
+				if (Number(number) > 0) {
+					jsoncard += "{";
+					jsoncard += "cardCode:'" + idArr[1];
+					jsoncard += "',productId:" + idArr[3];
+					jsoncard += ",surplusProductId:" + idArr[2];
+					jsoncard += ",number:" + number;
+					resultId = resultId.replace("spNum_", "spPrice_");
+					var price = jQuery("#" + resultId).text();
+					price = price.replace("元", "");
+					jsoncard += ",price:" + price;
+					jsoncard += "},";
+				}
+			});
+			if(jsoncard.length>0){
+				jsoncard = jsoncard.substring(0, jsoncard.length - 1);
+			}
+			var json = sessionStorage.getItem("addOrder_cardJsonStr");
+			if(json==null){
+				sessionStorage.setItem("addOrder_userCardFlag","0");
+			}else{
+				json = json.replace(jsoncard,'');
+				json = json.replace('[,','[');
+				json = json.replace(',]',']');
+				if(json != '[]'){
+					sessionStorage.setItem("addOrder_cardJsonStr",json);
+					sessionStorage.setItem("addOrder_userCardFlag","1");
+				}else{
+					sessionStorage.setItem("addOrder_userCardFlag","0");
+				}
+			}
+			cancelCardProduct(cardCode, orderProductJson);
+			jQuery("#login").show();
+		}
+		//取消卡回调
+		function cancelUseComplate(data){
+			var temp = data.toFixed(2);
+			jQuery("#cardPrice").html(temp);
+			calculateComplate();
+		}
+		//使用会员卡回调
+		function addCardComplate(data){
+			var temp = data.toFixed(2);
+			jQuery("#cardPrice").html(temp);
+			calculateComplate();
+			mouseFocue();
+			var mess=jQuery("#cardMessage").val();
+			if(mess!=''&& mess!=null){
+				//本地存储用于回显
+				jQuery("#messageValue").html(mess);
+				jQuery("#messageDiv").modal('show');
+			}
+			joinResultJson();
+			sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+			jQuery("#login").hide();
+		}
+		//使用卡回调
+		function cardUseComplate(data){
+			var temp = data.toFixed(2);
+			jQuery("#cardPrice").html(temp);
+			calculateComplate();
+			jQuery("#login").hide();
+		}
+		//验证 1数量 2金额
+		function clearNoNum(type, obj, event){
+			var keyCode = event.keyCode;
+			var val=obj.value;
+			var temp;
+			if (type == 1) {
+				if (keyCode < 37 || keyCode > 40) {
+					if(!(keyCode >=48 && keyCode <=57)){
+						obj.value = obj.value.replace(/[^\d]/,"");  //清除“数字”和“.”以外的字符  
+					}
+				}
+			} else {
+				if (keyCode < 37 || keyCode > 40) {
+					if(!(keyCode >=48 && keyCode <=57)){
+						obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+						obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+						obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+						obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+					}
+				}
+			}
+			joinResultJson();
+			sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+		}
+
+		//验证 1数量 2金额
+		function clearNoNum2(type, obj, event){
+			var keyCode = event.keyCode;
+			var val=obj.value;
+			var temp;
+			if (type == 1) {
+				if (keyCode < 37 || keyCode > 40) {
+					if(!(keyCode >=48 && keyCode <=57)){
+						obj.value = obj.value.replace(/[^\d]/,"");  //清除“数字”和“.”以外的字符  
+					}
+				}
+			} else {
+				if (keyCode < 37 || keyCode > 40) {
+					if(!(keyCode >=48 && keyCode <=57)){
+						obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+						obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+						obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+						obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+					}
+				}
+			}
+			if(obj.value > 10){
+				obj.value=9.9;
+			}
+			if(obj.value < 0){
+				obj.value= 0;
+			}
+			joinResultJson();
+			sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+		}
+		//工作地址长度验证
+		function workAddressVerify(obj){
+			if (obj.value.length > 200) {
+				obj.value = obj.value.substr(0, 200);
+			}
+		}
+		//排序模块 控制
+		function sortControl(type){
+			if (type == 1) {
+				jQuery("#sortDiv").modal('show');
+			} else {
+				jQuery("#sortDiv").modal('hide');
+			}
+		}
+		//排序保存
+		function sortAction(){
+			var productId = "";
+			jQuery(".ui-selectee").each(function(index){
+				var dk = jQuery(this).attr("data-key");
+				var obj = jQuery("#parIdObj_"+dk).val();
+				productId += obj+",";
+			});
+			if (productId != null && productId != '') {
+				productId = productId.substring(0, productId.length - 1);
+			}
+			joinResultJson();
+			sortPorduct(productId, orderProductJson);
+		}
+		//选择客户控制 1打开 2关闭 
+		function memberControl(type){
+			jQuery("#memberName").val("");
+			jQuery("#memberPhone").val("")
+			jQuery("#workAddress").val("");
+			jQuery("#farmerInfoId").val("");
+			jQuery("#memberSearch").val("请输入客户姓名/联系方式/工作地址");
+			if (type == 1) {
+				jQuery("#seltCustomModal").modal('show');
+				jQuery("#phoneText").html("");
+				jQuery("#custNameText").html("");
+				document.onkeydown=function(event){
+					var e = event || window.event || arguments.callee.caller.arguments[0];
+		            if(e && e.keyCode==13){ // enter 键
+		            	e.preventDefault();//
+		                //要做的事情
+		            	jQuery('#memberButton').click();
+		            }
+				}; 
+				
+				tidyJs();
+			} else {
+				jQuery("#seltCustomModal").modal('hide');
+				calculate();
+			}
+		}
+
+		//添加新客户
+		function addMemberAction(){
+			var memberType = jQuery("#memberType").val();
+			var memberSource = jQuery("#memberSource").val();
+			var farmerInfoId = jQuery("#farmerInfoId").val();
+			var memberName = jQuery("#memberName").val();
+			var memberPhone = jQuery("#memberPhone").val();
+			var workAddress = jQuery("#workAddress").val();
+			var flag = true;
+			if (jQuery.trim(memberType) == '') {
+				jQuery("#messageValue").html("请选择或添加客户类型!");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}
+			if (jQuery.trim(memberSource) == '') {
+				jQuery("#messageValue").html("请选择或添加客户来源!");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}
+			if ((level == 3 && adminFlag == true) || sellerMan == true) {
+				if (farmerInfoId == null) {
+					jQuery("#messageValue").html("请选择销售人信息！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+			}
+			if (jQuery.trim(memberName) == '') {
+				jQuery("#messageValue").html("请填写客户姓名！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}else{
+				if(memberName.length > 50){
+					jQuery("#messageValue").html("客户姓名输入过长！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+			}
+			
+			if (memberPhone == '') {
+				jQuery("#messageValue").html("请填写联系方式！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}else{
+				var reg = /^.{0,20}$/;
+				var regPhone = /((?:13\d|15\d|18\d|14\d|17\d)-?\d{5}(\d{3}|\*{3})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)/;
+	            if (reg.test(memberPhone) == false) {
+	                  jQuery("#messageValue").html("联系方式最长输入20位！");
+	                  jQuery("#messageDiv").modal('show');
+	                  flag = false;
+	            }
+	            if(!regPhone.test(memberPhone)){
+	            	 jQuery("#messageValue").html("请输入正确的联系方式");
+                     jQuery("#messageDiv").modal('show');
+                     flag = false;
+		        }
+			}
+			if (jQuery.trim(workAddress) == '') {
+				jQuery("#messageValue").html("请填写工作地址！");
+				jQuery("#messageDiv").modal('show');
+				flag = false;
+			}else{
+				if(workAddress.length > 200){
+					jQuery("#messageValue").html("工作地址输入过长！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+			}
+			
+			if (flag == true) {
+				memberControl(2);
+				addMemberFind(Number(memberType), Number(memberSource), Number(farmerInfoId), memberName, memberPhone, workAddress);
+			}
+		}
+
+		//客户搜索
+		function memberSearchAction(){
+			var memberSearch = jQuery("#memberSearch").val();
+			memberSearch = jQuery.trim(memberSearch).replace("请输入客户姓名/联系方式/工作地址", "");
+			memberSearchFind(memberSearch);
+		}
+
+		//保存 下一步
+		function saveAction(){
+			if(!weight()){
+				jQuery("#messageValue").html("选择商品超过宅配卡重量上限，请修改后重新操作！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			var lastOrderPrice = jQuery("#lastOrderPrice").text();
+			if(Number(lastOrderPrice) < 0){
+				jQuery("#messageValue").html("订单应付金额有误，请核对后重新操作！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			jQuery('input[name=discount]').each(function(){
+				var discount = jQuery(this).val();
+				if(discount != ''){
+					if(Number(discount) < 0 || Number(discount) > 10){
+						jQuery("#messageValue").html("商品折扣输入有误，请核对后重新操作！");
+						jQuery("#messageDiv").modal('show');
+						return false;
+					}
+				}
+			});
+			var aaa = jQuery('#aaa').val();
+			if(aaa != '' && (Number(aaa) < 0 || Number(aaa) > 10)){
+				jQuery("#messageValue").html("折扣幅度输入有误，请核对后重新操作！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			var str="";
+			var ids="";
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productIdArr = productId.split("_");
+					var id=productIdArr[0]
+					var stockNum=jQuery(".stockNum" + productId).text();
+					var totolNum=0;
+					if(ids==""){
+						ids=id+",";
+						jQuery("."+id).each(function(){
+							var num=jQuery(this).val();
+							totolNum +=Number(num);
+						});
+						if(Number(totolNum)>Number(stockNum)){
+							str=jQuery("#productName" + productId).text()+",";
+						}
+					}else{
+						var arr=ids.split(",");
+						var flag=true;
+						for(var i=0;i<arr.length;i++){
+							if(arr[i]==id){
+								flag=false;
+								break;
+							}
+						}
+						if(flag){
+							ids +=id+",";
+							jQuery("."+id).each(function(){
+								var num=jQuery(this).val();
+								totolNum +=Number(num);
+							});
+							if(Number(totolNum)>Number(stockNum)){
+								str +=jQuery("#productName" + productId).text()+",";
+							}
+						}
+					}
+				}
+			});
+			if(str!=""){
+				var str2=str.substring(0,str.length-1);
+				var flag=window.confirm(str2+":商品库存数量不足，确定继续完成订单？");
+				if(flag){
+					joinResultJson();
+					jQuery("#submitOrderSearch\\:productHidden").val(orderProductJson);
+					jQuery("#submitOrderSearch\\:pdOrder").val('1');
+				}else{
+					return false;
+				}
+			}else{
+				joinResultJson();
+				jQuery("#submitOrderSearch\\:productHidden").val(orderProductJson);
+			}
+			var totalPrice = jQuery("#orderPrice").html();
+			if(Number(totalPrice) > 100000000){
+				alert("单笔订单金额最多不可超过100，000，000元，请修改后重新提交订单！");
+				return false;
+			}
+			if(jQuery('#tsdd').is(':checked')){
+				jQuery('#submitOrderSearch\\:special').val(1);
+			}else{
+				jQuery('#submitOrderSearch\\:special').val(0);
+			}
+        	var productHidden = jQuery('#submitOrderSearch\\:productHidden').val();
+        	var pdOrder = jQuery('#submitOrderSearch\\:pdOrder').val();
+        	var special = jQuery('#submitOrderSearch\\:special').val();
+        	var discountPrice = jQuery('#submitOrderSearch\\:discountPrice').val();
+        	var discount = jQuery('#submitOrderSearch\\:discount').val();
+        	var subtractPrice = jQuery('#submitOrderSearch\\:subtractPrice').val();
+			next(productHidden,pdOrder,special,discountPrice,discount,subtractPrice);
+		}
+		function saveComplete(){
+			window.location.href = "../orderManage/OrderDetail.seam";
+		}
+		//商品数量 +-变化
+		function modifyNum(productId, modifyType){
+			var productNum = jQuery("#productNum" + productId).val();
+			if (modifyType == 1) {
+				if (productNum > 1) {
+					productNum = Number(productNum) - 1;
+					jQuery("#productNum" + productId).val(productNum.toFixed(2));
+				}
+			} else {
+				productNum = Number(productNum) + 1;
+				jQuery("#productNum" + productId).val(productNum.toFixed(2));
+			}
+			calculate();
+		}
+
+		//购物车删除单个商品
+		function removeProductAction(productId){
+			var flag=window.confirm("确定删除？");
+			if(flag){
+				joinResultJson();
+				removeOrderProduct(productId, orderProductJson);
+			}
+		}
+		//公共 计算价格
+		function calculate(){
+			var sumProductNum = 0;
+			var orderPrice = 0;
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productNum = jQuery("#productNum" + productId).val();
+					var productIdArr = productId.split("_");
+					var discount = jQuery("#discount" + productId).val();
+					var productPrice = 0;
+					if (productIdArr[1] == 1) {
+						productPrice = jQuery("#productPrice" + productId).val();
+					}
+					if (productNum == null || productNum == '') {
+						productNum = 1;
+					}
+					if (productPrice == null || productPrice == '') {
+						productPrice = 0;
+					}
+					jQuery("#productNum" + productId).val(productNum);
+					jQuery("#productPrice" + productId).val(productPrice);
+					if(discount == 0 || discount == ''){
+						discount = 10;
+					}
+					sumProductNum += Number(productNum);
+					orderPrice += Number(productNum * productPrice*(discount/10));
+					var totalPrice = Number(productNum * productPrice*(discount/10)).toFixed(2);
+					if (productIdArr[1] == 1) {
+						jQuery("#productTotalPrice" + productId).html(totalPrice);
+					}else {
+						jQuery("#productTotalPrice" + productId).html("赠品");
+					}
+				}
+			});
+			jQuery("#sumProductNum").html(sumProductNum.toFixed(2));
+			jQuery("#totalPrice").html(orderPrice.toFixed(2));
+			var cardPrice = jQuery("#cardPrice").text();
+			if(cardPrice=="NaN"){
+				cardPrice=0;
+			}
+			var temp = orderPrice - cardPrice;
+			var maxWeight=0;
+			jQuery('input[name=useWeight]').each(function(){
+				maxWeight+=Number(jQuery(this).val());
+			});
+			if (temp >= 0 && maxWeight==0) {
+				jQuery("#orderPrice").html(temp.toFixed(2));
+				if(jQuery("#cardPrice").text()=="NaN"){
+					jQuery("#cardPrice").html('#{orderOperate.cardTotalPrice}');
+				}
+			}else {
+				jQuery("#orderPrice").html(0);
+				temp = 0;
+			}
+			var aaa = jQuery("#aaa").val();//折扣幅度
+			var bbb = jQuery("#bbb").val();//减免金额
+			jQuery("#submitOrderSearch\\:discount").val(aaa);
+			jQuery("#submitOrderSearch\\:subtractPrice").val(bbb);
+			if(aaa == 0 || aaa == ''){
+				aaa = 10;
+			}
+			if(bbb == ''){
+				bbb = 0;
+			}
+			var lastPrice = temp*(aaa/10)-bbb;
+			jQuery("#lastOrderPrice").html(lastPrice.toFixed(2));
+			var discountPrice = temp-lastPrice;
+			jQuery("#submitOrderSearch\\:discountPrice").val(discountPrice.toFixed(2));
+		}
+		//计算价格
+		function calculates(event){
+			var sumProductNum = 0;
+			var orderPrice = 0;
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productNum = jQuery("#productNum" + productId).val();
+					var productIdArr = productId.split("_");
+					var discount = jQuery("#discount" + productId).val();
+					var productPrice = 0;
+					if (productIdArr[1] == 1) {
+						productPrice = jQuery("#productPrice" + productId).val();
+					}
+					if (productNum == null || productNum == '') {
+						productNum = 1;
+					}
+					if (productPrice == null || productPrice == '') {
+						productPrice = 0;
+					}
+					if(discount == 0 || discount == ''){
+						discount = 10;
+					}
+					sumProductNum += Number(productNum);
+					orderPrice += Number(productNum * productPrice*(discount/10));
+					var totalPrice = Number(productNum * productPrice*(discount/10)).toFixed(2);
+					if (productIdArr[1] == 1) {
+						jQuery("#productTotalPrice" + productId).html(totalPrice);
+					}else {
+						jQuery("#productTotalPrice" + productId).html("赠品");
+					}
+				}
+			});
+			jQuery("#sumProductNum").html(sumProductNum.toFixed(2));
+			jQuery("#totalPrice").html(orderPrice.toFixed(2));
+			var cardPrice = jQuery("#cardPrice").text();
+			var temp = orderPrice - cardPrice;
+			var maxWeight=0;
+			var useType=jQuery('#useType').val();
+			jQuery('input[name=useWeight]').each(function(){
+				maxWeight+=Number(jQuery(this).val());
+			});
+			if (temp >= 0 && maxWeight==0) {
+				jQuery("#orderPrice").html(temp.toFixed(2));
+			}else {
+				jQuery("#orderPrice").html(0);
+				temp = 0;
+			}
+			var aaa = jQuery("#aaa").val();//折扣幅度
+			var bbb = jQuery("#bbb").val();//减免金额
+			jQuery("#submitOrderSearch\\:discount").val(aaa);
+			jQuery("#submitOrderSearch\\:subtractPrice").val(bbb);
+			if(aaa == 0 || aaa == ''){
+				aaa = 10;
+			}
+			if(bbb == ''){
+				bbb = 0;
+			}
+			var lastPrice = temp*(aaa/10)-bbb;
+			jQuery("#lastOrderPrice").html(lastPrice.toFixed(2));
+			var discountPrice = temp-lastPrice;
+			jQuery("#submitOrderSearch\\:discountPrice").val(discountPrice.toFixed(2));
+		}
+		//拼接 保存购物车 json
+		function joinResultJson(){
+			var jsonStr = "[";
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productNum = jQuery("#productNum" + productId).val();
+					var productIdArr = productId.split("_");
+					var discount = jQuery("#discount" + productId).val();
+					var productPrice = 0;
+					if (productIdArr[1] == 1) {
+						productPrice = jQuery("#productPrice" + productId).val();
+					}
+					if (productPrice == null || productPrice == '') {
+						productPrice = 0;
+					}
+					if (productNum == null || productNum == '') {
+						productNum = 1;
+					}
+					var remark = jQuery("#remark" + productId).val();
+					jsonStr += "{";
+					jsonStr += "cartCode:" + productIdArr[0]+"_"+productIdArr[1];
+					jsonStr += ",productNum:" + productNum;
+					jsonStr += ",productPrice:" + productPrice;
+					jsonStr += ",discount:'" + discount;
+					jsonStr += "',remark:'" + remark;
+					jsonStr += "'},";
+				}
+			});
+			if (jsonStr != "[") {
+				jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+			}
+			jsonStr += "]";
+			orderProductJson = jsonStr;
+		}
+		//加入购物车
+		function addProductCartAction(){
+			var maxWeight=0;
+			jQuery('input[name=useWeight]').each(function(){
+				maxWeight+=Number(jQuery(this).val());
+			});
+			if(jQuery("#productInfoId").val() != null){
+				var productId = jQuery("#productInfoId").val().split("_")[0];
+				var unit = jQuery("#productInfoId").val().split("_")[1];
+				if(unit==7||unit==8||unit==9||unit==10||unit==11||maxWeight==0){
+					joinResultJson();
+					addProductCart(Number(productId), orderProductJson);
+				}else{
+					jQuery("#messageValue").html("使用宅配卡只能选择重量单位的商品！");
+					jQuery("#messageDiv").modal('show');
+				}
+			}else{
+				jQuery("#messageValue").html("请正确选择商品！");
+				jQuery("#messageDiv").modal('show');
+			}
+		}
+		//商品添加回调
+		function addProductComplate(){
+			tidyJs();
+			calculate();
+			mouseFocue();
+			joinResultJson();
+			sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+		}
+		//商品添加光标定位
+		function mouseFocue(){
+			var a=0;
+			jQuery("#orderProductTable tr").each(function(){
+				a++;
+			});
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productNum = jQuery("#productNum" + productId).val();
+					var productIdArr = productId.split("_");
+					if(productIdArr[2]==a-1){
+						document.getElementById("productNum"+productId).focus(); 
+					}
+				}
+			});
+		}
+		//删除商品回调
+		function removeComplate(){
+			tidyJs();
+			calculate();
+			joinResultJson();
+			sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+		}
+		//排序商品回调
+		function calculateComplate(){
+			tidyJs();
+			calculate();
+			sortControl(2);
+			joinResultJson();
+			sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+		}
+		//封装公共初始化js 
+		function tidyJs(){
+			jQuery('.tableModel tbody tr').mouseover(function(){  // 表格模板隔行换色
+				jQuery(this).addClass('hover');
+			});
+			jQuery('.tableModel tbody tr').mouseout(function(){
+				jQuery(this).removeClass('hover');
+			});	
+			jQuery("#memberSearch").focus(function(){  //文本框获取焦点失去焦点变化
+				var txt_value = jQuery(this).val();
+				if( txt_value == this.defaultValue ){
+					jQuery(this).val("");	
+				}	
+			});	
+			jQuery("#memberSearch").blur(function(){
+				var txt_value = jQuery(this).val();
+				if( txt_value == "" ){
+					jQuery(this).val(this.defaultValue);	
+				}	
+			});
+			jQuery('.customMess_wap .items').mouseover(function(){  //选择客户模态框里的选择客户信息滑过和点击状态
+				jQuery(this).addClass('itemsHv').siblings().removeClass('itemsHv');		
+			});
+			jQuery('.customMess_wap .items').mouseout(function(){
+				jQuery(this).removeClass('itemsHv');		
+			});
+			jQuery('.customMess_wap .items').click(function(){
+				var memberInfoId = jQuery(this).attr("id").replace("memberInfo", "");
+				joinResultJson();
+				choiceMemberFind(Number(memberInfoId), orderProductJson,0);
+				//本地存储用于页面回显
+				sessionStorage.setItem("addOrder_memberInfoId", memberInfoId);
+				sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+				sessionStorage.removeItem('addOrder_cardJsonStr');
+			});
+			jQuery('#list_dragselect').orderingList({
+				dragSelect: true
+			});
+			jQuery(".btn-first").text("置顶");
+			jQuery(".btn-up").text("向上");
+			jQuery(".btn-down").text("向下");
+			jQuery(".btn-last").text("置底");        
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+		}
+		function sss(){
+			jQuery("#table1 tr td input ").val();
+		}
+
+		//客户名称校验
+		function checkName(){
+			var custName = document.getElementById("memberName").value;
+			if(custName == ""){
+				jQuery("#messageValue").html("请填写客户姓名!");
+				jQuery("#messageDiv").modal('show');
+				   return false;
+				}
+			checkCustName(custName);
+		}
+		//客户名称校验结果回调
+		function showNameMsg(isExistName){
+			if(isExistName == "1"){
+				jQuery("#custNameText").html("*客户名已存在");
+			}else{
+				jQuery("#custNameText").html("");
+			}
+		}
+		//手机校验
+		function checkCustPhone(){
+			var phone = document.getElementById("memberPhone").value;
+			 var regPhone = /^(?:13\d|15\d|18\d|14\d|17\d)-?\d{5}(\d{3}|\*{3})$/;
+			 if(phone == ""){
+				 jQuery("#messageValue").html("请输入手机号!");
+					jQuery("#messageDiv").modal('show');
+				   return false;
+				}
+			   if(phone != "" && !regPhone.test(phone)){
+				   jQuery("#messageValue").html("请输入正确手机号!");
+					jQuery("#messageDiv").modal('show');
+				   return false;
+				}
+			checkPhone(phone);
+		}
+
+		//手机校验结果回调
+		function showPhoneMsg(isExistPhone){
+			if(isExistPhone == "1"){
+				jQuery("#phoneText").html("*手机号已存在");
+				document.getElementById("presire").disabled=true;
+			}else{
+				jQuery("#phoneText").html("");
+				document.getElementById("presire").disabled=false;
+			}
+		}
+		//计算重量
+		function weight(){
+			var shopWeight=0;//商品重量
+			var maxWeight=0;//宅配卡最大重量
+			jQuery("#orderProductTable tr").each(function(){
+				if (this.id != null && this.id != '') {
+					var orderProductTr = this.id;
+					var productId = orderProductTr.replace("orderProductTr", "");
+					var productNum = jQuery("#productNum" + productId).val();//数量
+					var unit = Number(jQuery("#unit" + productId).val());//规格
+					var content = jQuery("#content" + productId).val();//净含量
+					if(content==""||content=="0"||content==0){
+						content=1;
+					}
+					var productIdArr = productId.split("_");
+					//判断是否赠品
+					if (productIdArr[1] == 1) {
+						if(unit == 7){
+							shopWeight+= Number(productNum)*Number(content);
+						}else if(unit == 8){
+							shopWeight+= Number(productNum)*Number(content)*50;
+						}else if(unit == 9){
+							shopWeight+= Number(productNum)*Number(content)*500;
+						}else if(unit == 10){
+							shopWeight+= Number(productNum)*Number(content)*1000;
+						}else if(unit == 11){
+							shopWeight+= Number(productNum)*Number(content)*1000*1000;
+						}
+					}
+				}
+			});
+			jQuery('input[name=useWeight]').each(function(){
+				maxWeight+=Number(jQuery(this).val());
+			});
+			if(shopWeight <= maxWeight || maxWeight==0){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		function userDistribution(mess){
+			if(mess!='' && mess!=null){
+				jQuery("#messageValue").html(mess);
+				jQuery("#messageDiv").modal('show');
+			}else{
+				var mess=jQuery("#cardMessage").val();
+				if(mess!=''&& mess!=null){
+					jQuery("#messageValue").html(mess);
+					jQuery("#messageDiv").modal('show');
+				}
+			}
+			tidyJs();
+			calculate();
+			mouseFocue();
+			jQuery("#login").hide();
+		}
+		jQuery(function(){
+			jQuery("#productMess").empty();
+			jQuery("#productMess").append("#{orderOperate.productHtml}");
+			if ((level == 3 && adminFlag == 'true') || sellerMan == 'true') {
+				jQuery("#farmerInfoTr").css("display", "");
+			} else {
+				jQuery("#farmerInfoTr").css("display", "none");
+			}
+			tidyJs();
+			calculate();
+			mouseFocue();
+		});
+		jQuery(document).ready(function() { 
+			var showMessage = '#{orderOperate.showMessage}';
+			var showMessageCount = '#{orderOperate.showMessageCount}';
+			if (showMessage != '' && showMessage != null && Number(showMessageCount) == 1) {
+				jQuery("#messageValue").html(showMessage);
+				jQuery("#messageDiv").modal('show');
+			}
+			jQuery("#productInfoId").attr("data-live-search","true");
+			jQuery('.selectpicker').selectpicker();  // 下拉框控件
+			jQuery("#phoneText").html("");
+			jQuery("#custNameText").html("");
+			refreshPage();
+			jQuery('#productInfoId').find('option').each(function(index){
+				var a = jQuery(this).attr("aaa");
+				jQuery('.productName').find('li').each(function(i){
+					if(index == i){
+						jQuery(this).append('<span class="productNumClass">'+a+'</span>');
+					}
+				});
+			});
+		}); 
+
+		function updateRem(){
+			jQuery("#text_note").hide();	
+			jQuery("#text_save").show();	
+		}
+
+		function updateCardRem(code){
+			jQuery("#text_note_"+code).hide();	
+			jQuery("#text_save_"+code).show();	
+		}
+
+		function saveRem(){
+			var remark = jQuery("#text_save .form-control").val();
+			if(remark.length>200){
+				jQuery("#messageValue").html("备注输入过长!");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			jQuery("#text_note").show();	
+			jQuery("#text_save").hide();
+			remarkUpdate(remark);
+		}
+		
+		function saveCardRem(code){
+			var remark = jQuery("#text_save_"+code+" .form-control").val();
+			var cardInfoId = jQuery("#text_save_"+code+" .cardInfoId").val();
+			
+			if(remark.length>200){
+				jQuery("#messageValue").html("备注输入过长!");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			cardRemarkUpdate(cardInfoId,remark);
+		}
+		function remarkUp(data){
+			if(data!='error'){
+				jQuery("#text_note span").html(data);	
+				alert('修改成功！');
+			}else{
+				alert('修改失败！');
+			}
+		}
+		function cardRemarkUp(data){
+			if(data=='error'){
+				alert('修改失败！');
+			}else{
+				var json = eval('(' + data + ')');
+				var cardCode = json.cardCode;
+				var remark = json.remark;
+				var remark2 = json.remark2;
+				jQuery("#text_note_"+cardCode).show();	
+				jQuery("#text_save_"+cardCode).hide();
+				jQuery("#text_note_"+cardCode).find('span').html(remark);
+				jQuery("#text_title_"+cardCode).attr("title",remark);
+				alert('修改成功！');
+			}
+		}
+		function jian(id,id2){
+			var num = jQuery('#'+id).val();
+			if((Number(num)-1) >=1 ){
+				jQuery('#'+id).val(Number(num)-1);
+			}
+			if((Number(num)-1) >1 ){
+				jQuery('#'+id2).html('X'+(Number(num)-1));
+			}else{
+				jQuery('#'+id2).html("");
+			}
+		}
+		function jia(id1,id2,id3){
+			var num = jQuery('#'+id1).val();
+			var maxNum = jQuery('#'+id2).html();
+			if((Number(num)+1) <= maxNum){
+				jQuery('#'+id1).val(Number(num)+1);
+				if((Number(num)+1) >1 ){
+					jQuery('#'+id3).html('X'+(Number(num)+1));
+				}else{
+					jQuery('#'+id3).html("");
+				}
+			}
+		}
+
+		//刷新页面时回显
+		function refreshPage(){
+			var memberInfoId = sessionStorage.getItem("addOrder_memberInfoId");
+			var orderProductJson = sessionStorage.getItem("addOrder_orderProductJson");
+			var jsonStr = sessionStorage.getItem("addOrder_cardJsonStr",jsonStr);
+			var userCardFlag = sessionStorage.getItem("addOrder_userCardFlag");
+			if(memberInfoId != null){
+				choiceMemberFind1(Number(memberInfoId), orderProductJson);
+			}
+			if(orderProductJson != null){
+				addProductCart(0, orderProductJson);
+			}
+			if(userCardFlag == null){
+				userCardFlag = "2";
+			}
+			if(jsonStr != null){
+				refreshPageCard(jsonStr,userCardFlag);
+			}
+		}
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

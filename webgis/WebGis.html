@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>资源规划</title>
+		<link rel="stylesheet" href="/asset/css/webgis/jquery.splitter.css" />
+		<link rel="stylesheet" href="/asset/css/webgis/ol.css" />
+		<link rel="stylesheet" href="/asset/css/webgis/layout.css" />
+		<link rel="stylesheet" href="/asset/css/webgis/colorpicker.css" />
+		<link rel="stylesheet" href="/asset/css/bootstrap-select.min.css"/>
+      	<link rel="stylesheet" href="/asset/css/bootstrap3.min.css"/>
+	 	<link rel="stylesheet" href="/asset/css/datetimepicker.css" />
+	 	<link rel="stylesheet" href="/asset/js/jquery-ui4.css" />
+	 	<link rel="stylesheet" href="/asset/css/webgis/webgis.css" />
+	</head>
+	<body>
+	<!-- DrawControl -->
+	<div class="draw-control">
+		<div class="webgis-navbar clearfix">
+			<div class="nitem add-marker" id="add-marker" title="定位基地"></div>
+			<div class="nitem add-base" id="add-base" title="圈定基地"></div>
+			<div class="nitem add-partitions" id=add-partitions title="增加区域"></div>
+			<div class="nitem ntiem-group">
+				<span class="group-icon add-jiarws" id="add-jiarws" title="加热温室"></span>
+	        	<span class="group-icon add-rigws" id="add-rigws"  title="日光温室"></span>
+	        	<span class="group-icon add-liandws" id="add-liandws" title="连栋温室"></span>
+	        	<span class="group-icon add-chunqp" id="add-chunqp" title="春秋棚"></span>
+	        	<span class="group-icon add-dat" id="add-dat" title="大田"></span>
+	        	<span class="group-icon add-guos" id="add-guos" title="果树"></span>
+	        	<span class="group-icon add-shuim" id="add-shuim" title="水面"></span>
+				<span class="group-icon add-yangz" id="add-yangz" title="养殖"></span>
+			</div>
+			<div class="nitem ntiem-device">
+            	<span class="device-icon add-device" id="add-device" title="传感器"></span>
+            	<span class="device-icon add-weather" id="add-weather" title="气象站"></span>
+            	<span class="device-icon add-video" id="add-video" title="摄像头"></span>
+            	<span class="device-icon add-panorama" id="add-panorama" title="四季田景"></span>
+			</div>
+			<div class="search-controller">
+				<input class="ser-input" id="ser_input" type="text" value="请输入搜索地址" />
+				<span class="ser-btn gis_search_btn search_btn">搜索</span>
+			</div>
+			<div class="map-help" id="mapHelp">帮助</div>
+		</div>
+    </div>
+    <!-- 主体 -->
+    <div id="box">
+		<div id="foo" class="splitter_panel">
+			<!-- 左侧 -->
+		    <div id="leftPane" class="left_panel">
+		    <!-- 左侧地图 -->
+		    	<!-- 右上角导航 -->
+		    	<div class="map-btns" id="map-btns">
+		    		<div id="satellite-streets" class="item-div">
+	    				<div class="satellite-btn" id="satellite-btn"></div>
+	                    <div class="streets-btn" id="streets-btn"></div>
+		    		</div>
+		    		<a class="item-div goAPS-btn" href="/webgis/WebGisAPS.seam" id="goAPS" target="_top"></a>
+		    		<div class="item-div aerial-btn hide"></div>
+		        </div>
+		        <!-- 右上角导航结束 -->
+		    	<div class="map_canvas_main">
+				    <div id="map-canvas"></div>
+				    <div id="olmap" class="fill maphide"></div>  
+			    </div>
+			<!-- 左侧地图 -->
+		    </div>
+		    <div id="rightPane" class="rightPane">
+		    <!-- 右侧rightPane弹框 -->
+				<div class="rightpane-title">
+					<p class="txt-title" id="divtittle">编辑基地位置</p>
+				</div>
+				<!-- 右侧的资源列表 -->
+				<div class="rightNo rightNo0">
+				 	<!-- 搜索框 -->
+					<div class="resource-search clearfix">
+						<span class="re-icon" id="plotlist-search"></span>
+						<input type="text" class="re-input" id="tc_top_input" />
+					</div>
+					<!-- 搜索结果 -->
+					<div class="jScrollbar_mask _scroll">
+						<div class="_area0"></div>
+					</div>
+				</div>
+				<!-- 基地信息弹框 -->
+				<form class="rightNo rightNo1" id="markerForm">
+					<div class="jScrollbar_mask">
+						<div class="panel-table">
+			              	<div class="clear">
+			                  	<div class="tc_font">名称</div>
+			                  	<div class="tc_strong">
+		                      		<input type="hidden" value="" id="mark_info_id" name="base_id" />
+									<input type="hidden" value="" id="mark_info_index" name="mark_info_index"/>
+		                          	<input type="text" class="form-control nw170" id="marker_name" name="name" />
+			                    </div>
+			                </div>
+			                <div class="clear">
+			                  	<div class="tc_font">纬度</div>
+			                    <div class="tc_strong">
+			                        <input type="text" class="form-control nw170" id="mark_info_x" name="mark_info_x" readonly="readonly"/>
+			                    </div>
+			                </div>
+			                <div class="clear">
+			                  	<div class="tc_font">经度</div>
+		                        <div class="tc_strong">
+		                          	<input type="text" class="form-control nw170" id="mark_info_y" name="mark_info_y" readonly="readonly"/>
+		                        </div>
+			                </div>
+				        </div>
+					</div>
+					<div class="tc_bottom" >
+						<input type="button" class="btn btn-primary" id="save-markerinfo" value="保存" />
+						<input type="button" class="btn btn-default" id="cancel-markerinfo" value="取消" />
+				    	<input type="button" class="btn btn-default" id="delete-markerinfo" value="删除" />
+			        </div>
+				</form>
+				<!-- 基地信息弹框 结束-->
+				<!-- 基地边界弹框 -->
+				<form class="rightNo rightNo2" id="baseForm">
+	                <div class="jScrollbar_mask">
+                    	<div class="panel-table">
+                    		<div class="clear">
+                              	<div class="tc_font">名称</div>
+                                <div class="tc_strong">
+                              		<input type="hidden" id="mark_index" name="mark_index" value="" />
+									<input type="hidden" id="base_id" name="base_id" value="" />
+                                  	<input type="text" id="mark_name" name="name" class="base_name_a" readonly="readonly"/>
+                                  	<input type="hidden" id="mark_coordinate_group" name="coordinate_group"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                              	<div class="tc_font">面积</div>
+                                <div class="tc_strong">
+                                  	<input type="text" class="form-control nw170 fl mr5" id="mark_mu_number" name="mu_number"/>
+                                	<font class="font_txt">亩</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                              	<div class="tc_font">颜色</div>
+                                <div class="tc_strong" >
+                              		<input type="hidden" value="" id="mark_color" name="color"/>
+                                  	<div id="basecolor" class="formColorPicker"><div></div></div>
+                                </div>
+                            </div>
+                            <div class="clear">
+                              	<div class="tc_font">联系人</div>
+                                <div  class="tc_strong">
+                                    <input type="text" class="form-control nw170" id="mark_contact" name="contact"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                              	<div class="tc_font">电话</div>
+                                <div class="tc_strong">
+                                    <input type="text" class="form-control nw170" id="mark_phone" name="phone"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                              	<div class="tc_font">地址</div>
+                                <div class="tc_strong">
+                                    <input type="text" class="form-control nw170" id="mark_address" name="address"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                              	<div class="tc_font">描述</div>
+                            	<div class="tc_strong">
+                            		<textarea class="form-control nw200" id="mark_description" name="description"></textarea>
+                                </div>
+                            </div>
+                    	</div>
+	                </div>
+	                <div class="tc_bottom" >
+						<input type="button" class="btn btn-primary" id="save-boundaryinfo" value="保存" />
+						<input type="button" class="btn btn-default" id="cancel-boundaryinfo" value="取消" />
+				    	<input type="button" class="btn btn-default" id="delete-boundaryinfo" value="删除" />
+					</div>
+				</form>
+				<!-- 基地边界弹框结束 -->
+				<!-- 分区信息弹框 -->
+				<form class="rightNo rightNo3" id="partitionForm">
+					<div class="jScrollbar_mask">
+						<div class="panel-table">
+							<div class="clear">
+                            	<div class="tc_font">分区名称</div>
+                                <div class="tc_strong">
+                                	<input type="hidden" value="" id="partitions_id" name="partitions_id" />
+									<input type="hidden" value="" id="partitions_base_id" name="base_id"/>
+									<input type="hidden" value="" id="partitions_index" name="partition_index"/>
+									<input type="hidden" value="" id="partitions_coordinate_X" name="coordinate_X"/>
+									<input type="hidden" value="" id="partitions_coordinate_Y" name="coordinate_Y"/>
+                                	<input type="text" value="" id="partitions_name" name="name" class="form-control nw170" />
+                              		<input type="hidden" value="" id="partitions_coordinate_group" name="coordinate_group"></input>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">颜色</div>
+                                <div class="tc_strong">
+                            		<input type="hidden" value="" id="partitions_color" name="color"/>
+                            		<div id="partitionscolor" class="formColorPicker"><div></div></div>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">面积</div>
+								<div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="partitions_mu_number" name="mu_number"/>
+									<font class="font_txt">亩</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">描述</div>
+                                <div class="tc_strong">
+                                    <textarea class="form-control nw200" id="partitions_description" name="description"></textarea>
+                                </div>
+                            </div>
+						</div>
+						<!--土地使用记录、土地检测记录-->
+                        <div class="field-land-box">
+                        	<div class="use-field">土地使用记录 <div class="add-usefield" id="add-usefield">添加</div></div>
+                        	<div class="land-test">土地检测记录<div class="add-landtest" id="add-landtest">添加</div></div>
+						</div>
+						<!--土地使用记录、土地检测记录-->
+					</div>
+		            <div class="tc_bottom" >
+		            	<input type="button" class="btn btn-primary c_pointer" id="save-partitions" value="保存" />
+		            	<input type="button" class="btn btn-default c_pointer" id="cancel-partitions" value="取消" />
+		            	<input type="button" class="btn btn-default c_pointer" id="delete-partitions" value="删除" />
+					</div>
+				</form>
+				<!-- 分区信息弹框结束 -->
+				<!-- 分组信息弹框 -->
+				<form class="rightNo rightNo4" id="groupForm">
+	                <div class="jScrollbar_mask group-area">
+	                    <!-- 信息 开始 -->
+	                    <h2 class="baseMap_ttl noline">信息</h2>  
+	                    <div class="baseMap_con">
+                            <div class="clear">
+                                <div class="td_lt">区域名称</div>
+                                <div class="td_rt">
+                                	<div class="baseWidth148">
+		                                <input type="hidden" value="" id="tunnel_info_id" name="tunnel_info_id" />
+										<input type="hidden" value="" id="tunnel_info_index" name="tunnel_index"/>
+										<input type="hidden" value="" id="tunnel_info_base_id" name="base_id"/>
+		                               	<input type="text" id="tunnel_info_name" name="tunnel_name" class="form-control"/>
+		                                <input type="hidden" id="tunnel_info_coordinate_X" name="coordinate_X" />
+		                                <input type="hidden" id="tunnel_info_coordinate_Y" name="coordinate_Y" />
+		                                <input type="hidden" id="tunnel_info_coordinate_group" name="coordinate_group"></input>
+		                                <input type="hidden" id="tunnel_info_keeper_info" name="keeper_info" />
+		                                <input type="hidden" id="tunnel_info_master_info" name="master_info" />
+		                                <input type="hidden" id="tunnel_info_group" name="tunnel_group" />
+	                                </div>
+                                </div>
+                            </div>
+                            <div class="clear">
+                                <div class="td_lt">上次区域</div>
+                                <div class="td_rt">
+                                	<font class="base_name_a" id="upname"></font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                                <div class="td_lt">分区</div>
+                                <div class="td_rt">
+	                                <div class="baseWidth148">
+	                                    <select name="partitions_id" id="tunnel_info_partitions_id" class="selectpicker"></select>
+	                                </div>
+                                </div>
+                            </div>
+                            <div class="clear">
+                                <div class="td_lt">种植面积</div>
+                                <div class="td_rt">
+	                                <div class="baseWidth148 nw85">
+	                                	<input class="form-control fl nw85" type="text" id="tunnel_info_area" name="area"/>
+	                                </div>
+	                                <span class="tunnel_info_mu pl5" id="tunnel_info_mu_number_read"></span>
+	                                <input type="hidden" id="tunnel_info_mu_number" name="mu_number"  />
+                                </div>
+                            </div>
+                            <div class="clear">
+                                <div class="td_lt">设施类型</div>
+                                <div class="td_rt">
+                                	<div class="plantEnvir">
+                                        <div title="加热温室" class="active"><i class="icon_jiarws"></i></div>
+                                        <div title="日光温室"><i class="icon_rigws"></i></div>
+                                        <div title="连栋温室"><i class="icon_liandws"></i></div>
+                                        <div title="春秋棚" class="line-no"><i class="icon_chunqp"></i></div>
+                                        <div title="大田"><i class="icon_dat"></i></div>
+                                        <div title="果树"><i class="icon_guos"></i></div>
+                                        <div title="水面"><i class="icon_shuim"></i></div>
+                                        <div title="养殖" class="line-no"><i class="icon_yangz"></i></div>
+                                    </div>
+                                    <input type="hidden" name="plant_env_type" id="plant_env_type" ></input>
+                                </div>
+                            </div>
+                            <div class="clear">
+                                <div class="td_lt">颜色</div>
+                                <div class="td_rt">
+									<input type="hidden" value="" id="tunnel_info_color" name="color"/>
+                                    <div id="tunnelinfocolor" class="formColorPicker"><div></div></div>
+								</div>
+                            </div>
+	                    </div>  
+	                    <!-- 信息 结束 -->
+	                    <!-- 人员 开始 -->
+	                    <h2 class="baseMap_ttl plant_hide clear">人员</h2>  
+	                    <div class="baseMap_con plant_hide">
+                            <div class="clear">
+                                <div class="td_lt viewFarmer">农户</div>
+                                <div class="td_ct w148">
+                                    <div class="baseWidth148">
+                                    	<select name="group_farmer" id="group_farmer" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                                <div class="td_rt">
+                                    <div class="add-farmer" id="addbtn-nonghu"></div>
+                                </div>
+                            </div>
+                            <div class="clear">
+                                <div class="td_lt viewAdmin">种植管理员</div>
+                                <div class="td_ct w148">
+                                    <div class="baseWidth148">
+                                        <select name="group_farmer1" id="group_farmer1" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                                <div class="td_rt">
+                                    <div class="add-farmer" id="addbtn-zhongzgly"></div>
+                                </div>
+                            </div>
+                            <div class="clear fenzu">
+                            	<div class="td_lt">分组</div>
+                                <div class="td_ct">
+                                    <div class="baseWidth148">
+                                        <select name="group_groupId" id="group_groupId" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+	                    </div>  
+	                    <!-- 信息 结束 -->
+	                    <!-- 人员 开始 -->
+	                    <h2 class="baseMap_ttl animal_hide clear">人员</h2>  
+	                    <div class="baseMap_con animal_hide">
+                            <div class="clear">
+                                <div class="td_lt">饲养员</div>
+                                <div class="td_ct w148">
+                                    <div class="baseWidth148">
+                                    	<select name="group_farmer2" id="group_farmer2" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                                <div class="td_rt">
+                                    <div class="add-farmer" id="addbtn-feeder"></div>
+                                </div>
+                            </div>
+                            <div class="clear">
+                                <div class="td_lt">养殖负责人</div>
+                                <div class="td_ct">
+                                    <div class="baseWidth148">
+                                        <select name="group_farmer3" id="group_farmer3" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                                <div class="td_rt">
+                                    <div class="add-farmer" id="addbtn-principal"></div>
+                                </div>
+                            </div>
+                            <div class="clear fenzu">
+                            	<div class="td_lt">分组</div>
+                                <div class="td_ct">
+                                    <div class="baseWidth148">
+                                        <select name="group_groupId1" id="group_groupId1" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+	                    </div>
+	                    <!-- 信息 结束 -->
+	                    <!-- 人员 开始 -->
+	                    <h2 class="yz-species-title animal_hide">养殖种类</h2>  
+	                    <div class="yz-species-body animal_hide mb10">
+	                        <ul class="breedList clear"></ul>
+	                        <div class="noneani noBreed_records">暂无养殖记录</div>
+	                    </div>
+	                </div>
+					<div class="tc_bottom" >
+						<input type="button" class="btn btn-primary c_pointer" id="save-groupinginfo" value="保存" />
+	                 	<input type="button" class="btn btn-default c_pointer" id="cancel-groupinginfo" value="取消" />
+						<input type="button" class="btn btn-default c_pointer" id="delete-groupinginfo" value="删除" />
+					</div>
+				</form>
+				<!-- 分组信息弹框结束 -->
+				<!-- 设备信息弹框 -->
+				<form class="rightNo rightNo5" id="deviceForm">
+					<div class="jScrollbar_mask">
+						<div class="panel-table">
+							<div class="clear device_2">
+								<div class="tc_font">基地</div>
+								<div class="tc_strong">
+									<input type="hidden" id="device_deviceType" name="device_deviceType" value="" />
+									<input type="hidden" id="device_id" name="device_id" value="" /> 
+									<input type="hidden" id="device_base_id" name="base_id" value="" /> 
+									<input type="hidden" id="device_index" name="device_index" value="" />
+									<input type="hidden" id="device_coordinateX" name="coordinate_X" value="" /> 
+									<input type="hidden" id="device_coordinateY" name="coordinate_Y" value="" /> 
+									<input type="text" id="device_base_name" name="device_base_name" class="base_name_a" readonly="readonly" />
+								</div>
+							</div>
+							<div class="clear device_2">
+								<div class="tc_font">分区</div>
+								<div class="tc_strong">
+									<input type="hidden" id="device_partition_id" name="partition_id" /> 
+									<input type="text" id="device_partition_name" name="device_partition_name" class="base_name_a" readonly="readonly" />
+								</div>
+							</div>
+							<div class="clear device_1">
+								<div class="tc_font">区域</div>
+								<div class="tc_strong">
+									<input type="hidden" id="device_tunnel_id" name="tunnel_info_id" /> 
+									<input type="text" id="device_tunnel_name" name="device_tunnel_name" class="base_name_a" readonly="readonly" />
+								</div>
+							</div>
+							<div class="clear">
+								<div class="tc_font">编号</div>
+								<div class="tc_strong">
+									<input type="text" class="form-control nw170" id="device_sn" name="sn" />
+								</div>
+							</div>
+							<div class="clear">
+								<div class="tc_font">名称</div>
+								<div class="tc_strong">
+									<input type="text" class="form-control nw170" id="device_name" name="name" />
+								</div>
+							</div>
+							<div class="clear">
+								<div class="tc_font">出厂日期</div>
+								<div class="tc_strong">
+									<div class="input-append date factoryTime form_datetime newc">
+										<input type="text" value="" readonly="readonly" id="device_factoryTime" name="device_factoryTime" autocomplete="off" /> 
+										<span class="add-on"><i class="icon-th"></i></span>
+									</div>
+								</div>
+							</div>
+							<div class="clear device_typee">
+								<div class="tc_font">设备类型</div>
+								<div class="tc_strong">
+									<div class="se_selt170">
+										<select id="device_type_id" name="device_type_id">
+											<option value="101">奥科美二合一传感器</option>
+                                            <option value="102">奥科美四合一传感器</option>
+                                            <option value="103">奥科美六合一传感器</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="clear device_typee2">
+								<div class="tc_font">设备类型</div>
+								<div class="tc_strong">
+									<div class="se_selt170">
+										<select id="device_type_id2" name="device_type_id2">
+											<option value="601">奥科美气象站</option>
+                                            <option value="602">富奥通气象站</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="clear tc_li_beizhu">
+								<div class="tc_font">备注</div>
+								<div class="tc_strong">
+									<textarea class="form-control nw200" id="device_description" name="description"></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tc_bottom">
+						<input type="button" class="btn btn-primary" id="save-deviceinfo" value="保存" />
+						<input type="button" class="btn btn-default" id="cancel-deviceinfo" value="取消" />
+				    	<input type="button" class="btn btn-default" id="delete-deviceinfo" value="删除" />
+					</div>
+				</form>
+				<!-- 设备信息弹框结束 -->
+				<!-- 摄像头弹框 -->
+				<form class="rightNo rightNo6" id="videoForm">
+					<div class="jScrollbar_mask">
+						<input type="hidden" id="video_index" name="video_index" />
+						<input type="hidden" id="video_id" name="video_id" />
+						<iframe src="" aa="" id="video_iframe" frameborder="no" border="0" class="rightNo_iframe"></iframe>
+					</div>
+					<div class="tc_bottom">
+						<input type="button" class="btn btn-primary" id="save-videoinfo" value="保存" />
+						<input type="button" class="btn btn-default" id="cancel-videoinfo" value="取消" />
+				    	<input type="button" class="btn btn-default" id="delete-videoinfo" value="删除" />
+					</div>
+				</form>
+				<!-- 摄像头弹框结束 -->
+				<!-- 全景 弹框-->
+				<form class="rightNo rightNo7" id="krpanoForm">
+	              	<div class="jScrollbar_mask">
+	                   	<h2 class="baseMap_ttl">信息</h2> 
+	                   	<div class="baseMap_con">
+	                   		<div class="panel-table">
+	                     		<div class="clear">
+	                         		<div class="tc_font">名称</div>
+	                         		<div class="tc_strong">
+	            						<div class="baseWidth148">
+	                                   		<input type="hidden" value="" id="krpano_id" name="krpano_id"/>
+	                                   		<input type="hidden" value="" id="krpano_index" name="krpano_index" />
+	                                   		<input type="hidden" value="" id="krpano_file_type" name="krpano_file_type" />
+	                                       	<input type="text" class="form-control nw170" id="krpano_name" name="krpano_name" />
+										</div>
+	                        		</div>
+	                   			</div>
+	                   			<div class="clear">
+	                   				<iframe id="krpanoFile" src_bak="/webgis/UploadKrpanoOSS.html" class="krpanoForm_firame" src=""></iframe>
+	                   			</div>
+	                 		</div>
+						</div>
+						<h2 class="baseMap_ttl">图片属性</h2> 
+						<div class="baseMap_con">
+							<h4 class="ttl-h3"><span>图片信息</span><i></i></h4>
+	              			<div class="panel-table xx-table-t">
+	                            <div class="clear">
+	                            	<div class="tc_font">文件名</div>
+	                                <div class="tc_strong">
+	                               		<div class="baseWidth148">
+	                                    	<input type="text" id="krpano_file_name" name="krpano_file_name" readonly="readonly"/>
+	                               		</div> 
+	                               </div>
+	                            </div>
+	                            <div class="clear">
+	                            	<div class="tc_font">图片格式</div>
+	                                <div class="tc_strong">
+		                                <div class="baseWidth148">
+		                                    <input type="text" id="krpano_file_suffix" name="krpano_file_suffix" readonly="readonly"/>
+		                                </div> 
+	                                </div>
+	                            </div>
+	                            <div class="clear">
+	                            	<div class="tc_font">文件大小</div>
+	                                <div class="tc_strong">
+	                                    <div class="baseWidth148">
+	                                        <input type="text" id="krpano_file_size" name="krpano_file_size" readonly="readonly"/>
+	                                    </div> 
+	                                </div>
+	                            </div>
+	                            <div class="clear">
+	                            	<div class="tc_font">图像大小</div>
+	                                <div class="tc_strong">
+	                                    <div class="baseWidth148">
+	                                  		<input type="hidden" id="krpano_file_width" name="krpano_file_width" />
+	             							<input type="hidden" id="krpano_file_height" name="krpano_file_height" />
+	                                        <input type="text" id="krpano_file_width_height" name="krpano_file_width_height" readonly="readonly"/>
+	                                    </div> 
+	                                </div>
+	                            </div>
+	                            <div class="clear">
+	                            	<div class="tc_font">拍摄时间</div>
+	                                <div class="tc_strong">
+	                                	<div class="baseWidth148">
+	                                    	<input type="text" id="krpano_file_time" name="krpano_file_time" readonly="readonly"/>
+	                                	</div> 
+	                                </div>
+	                            </div>
+	                        </div>
+							<h4 class="ttl-h3"><span>位置信息</span><i></i></h4>
+	                        <div class="panel-table xx-table-t">
+	                            <div class="clear">
+	                            	<div class="tc_font">基地</div>
+	                                <div class="tc_strong">
+	                                    <div class="baseWidth148">
+	                                    	<input type="hidden" value="" id="krpano_base_id" name="base_id" />
+	                                        <input type="text" id="krpano_base_name" name="krpano_base_name" readonly="readonly"/>
+	                                    </div> 
+	                                </div>
+	                            </div>
+	                            <div class="clear">
+	                            	<div class="tc_font">分区</div>
+	                                <div class="tc_strong">
+		                                <div class="baseWidth148">
+		                                	<input type="hidden" id="krpano_partition_id" name="partition_id" /> 
+		                                    <input type="text" id="krpano_partition_name" name="krpano_partition_name" readonly="readonly"/>
+		                                </div> 
+	                                </div>
+	                            </div>
+	                            <div class="clear">
+	                            	<div class="tc_font">区域</div>
+	                                <div class="tc_strong">
+	                                    <div class="baseWidth148">
+	                            	        <input type="hidden" id="krpano_tunnel_id" name="tunnel_info_id" /> 
+	                                        <input type="text" id="krpano_tunnel_name" name="krpano_tunnel_name" readonly="readonly"/>
+	                                    </div> 
+	                                </div>
+	                            </div>
+	                            <div class="clear">
+	                            	<div class="tc_font">纬度</div>
+	                                <div class="tc_strong">
+	                                    <div class="baseWidth148">
+		                                  	<input type="hidden" id="krpano_coordinateX" name="coordinate_X" /> 
+		                                    <input type="text" id="krpano_coordinateX_name" name="" readonly="readonly"/>
+	                                    </div> 
+	                                </div>
+	                            </div>
+	                            <div class="clear">
+	                            	<div class="tc_font">经度</div>
+	                                <div class="tc_strong">
+		                                <div class="baseWidth148">
+		                             		<input type="hidden" id="krpano_coordinateY" name="coordinate_Y" /> 
+		                                    <input type="text" id="krpano_coordinateY_name" name="" readonly="readonly"/>
+		                                </div> 
+	                                </div>
+	                            </div>
+	     					</div>
+	        			</div>
+	            	</div>
+					<div class="tc_bottom">
+						<input type="button" class="btn btn-default" id="preview-krpanoinfo" value="预览" />
+						<input type="button" class="btn btn-primary" id="save-krpanoinfo" value="保存" />
+						<input type="button" class="btn btn-default" id="cancel-krpanoinfo" value="取消" />
+				    	<input type="button" class="btn btn-default" id="delete-krpanoinfo" value="删除" />
+					</div>
+				</form>
+				<!-- 全景 弹框结束-->
+				<!-- 农户信息弹框 -->
+				<form class="rightNo rightNo8" id="farmerForm">
+					<div class="jScrollbar_mask">
+						<div class="panel-table">
+			              	<div class="clear">
+			                  	<div class="tc_font">姓名</div>
+			                  	<div class="tc_strong">
+		                      		<input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_name" name="farmer_name"></input>
+	                    			<input type="hidden" value="" id="farmer_type" name="farmer_type"></input>
+	                              	<input type="hidden" value="" id="farmer_base_id" name="farmer_base_id"/>
+			                    </div>
+			                </div>
+			                <div class="clear">
+			                  	<div class="tc_font">年龄</div>
+			                    <div class="tc_strong">
+			                        <input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_age" name="farmer_age"></input>
+			                    </div>
+			                </div>
+			                <div class="clear">
+			                  	<div class="tc_font">从业年限</div>
+		                        <div class="tc_strong">
+		                          	<input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_age2" name="farmer_age2"></input>
+		                        </div>
+			                </div>
+			                <div class="clear">
+			                  	<div class="tc_font">电话</div>
+		                        <div class="tc_strong">
+		                          	<input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_phone" name="farmer_phone"></input>
+		                        </div>
+			                </div>
+			                <div class="clear">
+			                  	<div class="tc_font">荣誉</div>
+		                        <div class="tc_strong">
+		                          	<input type="text" class="form-control nw221" style="width:170px" value="" id="farmer_honor" name="farmer_honor"></input>
+		                        </div>
+			                </div>
+				        </div>
+					</div>
+					<div class="tc_bottom" >
+						<input type="button" class="btn btn-primary" id="save-farmerinfo" value="保存" />
+						<input type="button" class="btn btn-default" id="cancel-farmerinfo" value="取消" />
+			        </div>
+				</form>
+				<!-- 农户信息弹框 结束-->
+				<!-- 土地检测记录 -->
+				<form class="rightNo rightNo9" id="partitionTestForm">
+					<div class="jScrollbar_mask">
+						<div class="panel-table">
+							<div class="clear">
+                            	<div class="tc_font">分区名称
+                            		<input type="hidden" name="land_partition_id" id="land_partition_id" />
+                            		<input type="hidden" value="" id="land_id" name="land_id"/>
+                            	</div>
+                                <div class="tc_strong test_partition_name">
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">测试日期</div>
+                                <div class="tc_strong">
+                                	<div class="input-append date testTime form_datetime newc">
+										<input type="text" value="" readonly="readonly" id="land_testDate" name="land_testDate" autocomplete="off" /> 
+										<span class="add-on"><i class="icon-th"></i></span>
+									</div>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">测试机构</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_testOrg" name="land_testOrg"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">酸碱度</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_phVal" name="land_phVal"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">可溶性盐浓度（EC值）</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_ecVal" name="land_ecVal"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">土壤容重</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_soilBulkDensity" name="land_soilBulkDensity"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">土壤机械组成</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_soilComposition" name="land_soilComposition"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">土壤水分</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_soilWater" name="land_soilWater"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">全氮量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_nitrogen" name="land_nitrogen"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">全磷量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_phosphorus" name="land_phosphorus"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">全钾量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_potassium" name="land_potassium"/>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有机质含量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_organicVal" name="land_organicVal"/>
+                                	<font class="font_txt">%</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">阳离子交换量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_cec" name="land_cec"/>
+                                	<font class="font_txt">mol/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">氧化还原电位</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_redoxPotential" name="land_redoxPotential"/>
+                                	<font class="font_txt">mV</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">速效氮量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_availableNitrogen" name="land_availableNitrogen"/>
+                                	<font class="font_txt"></font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">速效磷量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_availablePhosphorus" name="land_availablePhosphorus"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">速效钾量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_availableK" name="land_availableK"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">交换性钙</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_exchangeCa" name="land_exchangeCa"/>
+                                	<font class="font_txt">cmol/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">交换性镁</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_exchangeMg" name="land_exchangeMg"/>
+                                	<font class="font_txt">cmol/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">全量钙</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_totalCa" name="land_totalCa"/>
+                                	<font class="font_txt">g/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">全量镁</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_totalMg" name="land_totalMg"/>
+                                	<font class="font_txt">g/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">全量钠</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_totalSodium" name="land_totalSodium"/>
+                                	<font class="font_txt">g/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">总汞</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_countMercury" name="land_countMercury"/>
+                                	<font class="font_txt">mg/L</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">总砷</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_countArsenic" name="land_countArsenic"/>
+                                	<font class="font_txt">mg/L</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">总铬</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_countChrome" name="land_countChrome"/>
+                                	<font class="font_txt">mg/L</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">总铅</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_countLead" name="land_countLead"/>
+                                	<font class="font_txt">mg/L</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">总镍</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_countNickel" name="land_countNickel"/>
+                                	<font class="font_txt">mg/L</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">总镉</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_countCadmium" name="land_countCadmium"/>
+                                	<font class="font_txt">mg/L</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有效硼</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_effectiveBoron" name="land_effectiveBoron"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有效钼</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_wffectiveMolybdenum" name="land_wffectiveMolybdenum"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有效锌</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_wffectiveZn" name="land_wffectiveZn"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有效锰</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_effectiveManganese" name="land_effectiveManganese"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有效铁</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_effectiveIron" name="land_effectiveIron"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有效铜</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_effectiveCopper" name="land_effectiveCopper"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">全硒</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_countSe" name="land_countSe"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有效硫</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_effectiveSulfur" name="land_effectiveSulfur"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">有效硅</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_effectiveSilicon" name="land_effectiveSilicon"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">氯离子含量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_chlorideIonContent" name="land_chlorideIonContent"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">除草剂残留量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_herbicideResidues" name="land_herbicideResidues"/>
+                                	<font class="font_txt">mg/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">硫酸根离子含量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_sulfateIonContent" name="land_sulfateIonContent"/>
+                                	<font class="font_txt">g/kg</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">交换性盐基及盐基总量</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="land_exchangeTotalBase" name="land_exchangeTotalBase"/>
+                                	<font class="font_txt">cmol/Kg</font>
+                                </div>
+                            </div>
+						</div>
+					</div>
+		            <div class="tc_bottom" >
+		            	<input type="button" class="btn btn-primary c_pointer" id="save-test" value="保存" />
+		            	<input type="button" class="btn btn-default c_pointer" id="cancel-test" value="取消" />
+					</div>
+				</form>
+				<!-- 土地检测记录结束 -->
+				<!-- 土地使用记录 -->
+				<form class="rightNo rightNo10" id="partitionSoilorm">
+					<div class="jScrollbar_mask">
+						<div class="panel-table">
+							<div class="clear">
+                            	<div class="tc_font">分区名称
+                            		<input type="hidden" name="soil_partition_id" id="soil_partition_id" />
+                            		<input type="hidden" value="" id="soil_id" name="soil_id"/>
+                            	</div>
+                                <div class="tc_strong" id="soil_partition_name">
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">土质类型</div>
+                                <div class="tc_strong sw170">
+                                	<select class="notCheck" id="soil_type1" name="soil_type1"></select>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">土壤类型</div>
+                                <div class="tc_strong sw170">
+                                	<select class="notCheck" id="soil_type2" name="soil_type2"></select>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">起始时间</div>
+                                <div class="tc_strong sw170">
+                                	<select class="notCheck" id="soil_begin" name="soil_begin"></select>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">结束时间</div>
+                                <div class="tc_strong sw170">
+                                	<select class="notCheck" id="soil_end" name="soil_end"></select>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">酸碱度(PH)</div>
+                                <div class="tc_strong">
+                                	<input type="text" class="form-control nw170 fl mr5" id="soil_ph" name="soil_ph"/>
+                                	<font class="font_txt">0--14</font>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">用途</div>
+                                <div class="tc_strong sw170">
+                                	<select class="notCheck" id="soil_route_of" name="soil_route_of"></select>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">污染状况</div>
+                                <div class="tc_strong sw170">
+                                	<select class="notCheck" id="soil_pollution_status" name="soil_pollution_status"></select>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">污染程度</div>
+                                <div class="tc_strong">
+                                	<textarea class="form-control nw200" id="soil_pollution_level" name="soil_pollution_level"></textarea>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">修复程度</div>
+                                <div class="tc_strong">
+                                	<textarea class="form-control nw200" id="soil_repair_status" name="soil_repair_status"></textarea>
+                                </div>
+                            </div>
+                            <div class="clear">
+                             	<div class="tc_font">备注</div>
+                                <div class="tc_strong">
+                                	<textarea class="form-control nw200" id="soil_description" name="soil_description"></textarea>
+                                </div>
+                            </div>
+                       	</div>
+                	</div>
+                	<div class="tc_bottom" >
+		            	<input type="button" class="btn btn-primary c_pointer" id="save-soil" value="保存" />
+		            	<input type="button" class="btn btn-default c_pointer" id="cancel-soil" value="取消" />
+					</div>
+             	</form>
+				<!-- 土地使用记录结束 -->
+			<!--右侧rightPane弹框-->
+			</div>
+		</div>
+	</div>
+	<iframe src="" aa="/map/Krpano2.seam" id="krpano_iframe"></iframe>
+	<div id="previewDiv">
+		<img class="big_images" />
+		<div class="img_box"></div>
+	</div>
+	<!-- 新手指导 -->
+	<div class="ts6bdiv new-guidance-model">
+		<div class="tstitle">
+	    	<div class="tstfont">建立自己的数字农场</div>
+	    	<div class="tscolse"></div>
+	    	<div class="suofang">
+	    	 	<i class="sf_btn" id="zoom-btn"></i>
+	    	</div>
+	    </div>
+	    <div class="tsbgco" id="help-zoom">
+	    	<div class="tsbzdTarget">
+	            <div class="ts_1"></div>
+	            <div class="ts_2"></div>
+	            <div class="ts_3"></div>
+	            <div class="ts_4"></div>
+	            <div class="ts_5"></div>
+	    	</div>
+	        <div class="tsbzd">
+	            <span class="ts_step2"></span>
+	            <span class="ts_step1"></span>
+	            <span class="ts_step1"></span>
+	            <span class="ts_step1"></span>
+	            <span class="ts_step1"></span>
+	        </div>
+	    </div>
+	</div>
+    <div id="mapHelpTips" class="mapHelpTips modal">
+    	<div class="help_box">
+    		<div class="help_head">确定退出新手指导？</div>
+    		<div class="help_body">
+    			<input class="checkbox-xs" type="checkbox" id="mapHelpCheckbox" />不再显示新手指导
+    		</div>
+    		<div class="help_foot">
+	    		<input type="button" class="btn btn-primary" id="mapHelpOk" value="确定" />
+				<input type="button" class="btn btn-default" id="mapHelpNo" value="返回" />
+    		</div>
+    	</div>
+    </div>
+    <!--基地信息弹框-->
+	<div id="basePointHtml">
+		<div class="farmIntro_header">
+			<h2 class="cm_name"></h2>
+    		<div class="close"></div>
+		</div>
+    	<div class="farmIntro_body clear">
+    		<div class="editInfo" style="top:10px">
+        		<button class="editBtn">编辑</button>
+				<ul class="dropdown-menu2" id="dropdown-menu2" style="display: none; z-index: 102;">
+					<li><a class="toEdit" href="javascript:void(0)">编辑基地信息</a></li>
+					<li><a class="moveXy" href="javascript:void(0)">移动基地坐标</a></li>
+					<!-- <li><a class="moveAll" href="javascript:void(0)">整体移动基地</a></li> -->
+				</ul>
+			</div>
+    		<div class="companyPic">
+    			<img id="baseurl" width="114" height="90" aa="/asset/images/textPic01.png" src="/asset/images/textPic01.png" />
+    		</div>
+    		<div class="text-name">联系人：<span class="fl_concat"></span></div>
+    		<div class="text-name">电&nbsp;&nbsp;&nbsp;&nbsp;话：<span class="phone"></span></div>
+    		<div class="text-name">地&nbsp;&nbsp;&nbsp;&nbsp;址：<span class="cm_address"></span></div>
+    	</div>
+    	<div class="farmIntro_footer clear">
+    		<span class="supIco"></span>
+    		<p class="briefing cm_mark"></p>
+	    </div>
+	</div>
+	<div class="group-farmer-box">
+		农户 <select id="group_farmer_" class="notselect"></select> 
+		生产负责人 <select id="group_farmer1_" class="notselect"></select>
+		饲养员 <select id="group_farmer2_" class="notselect"></select> 
+		养殖负责人 <select id="group_farmer3_" class="notselect"></select> 
+		分组 <select id="group_groupId_" class="notselect"></select>
+	</div>
+	<div class="box_back" id="login">
+    	<div class="tip_box" id="login2">
+          	<img src="/asset/images/loginda.gif" />
+        	<p class="tip_txt" id="fileTips">正在转换四季田景，请耐心等待！</p>
+		</div>
+	</div>
+	<script type="text/javascript" src="/asset/js/jquery.min.js" ></script>
+	<script type="text/javascript" src="/asset/js/webgis/jquery-ui4.js" ></script>
+	<script type="text/javascript" src="/asset/js/webgis/colorpicker.min.js" ></script>
+	<script type="text/javascript" src="/asset/new/bootstrap.min.js" ></script>
+	<script type="text/javascript" src="/asset/new/bootstrap-select.min.js" ></script>
+	<script type="text/javascript" src="/asset/new/bootstrap-datetimepicker.js" ></script>
+	<script type="text/javascript" src="/asset/new/bootstrap-datetimepicker.zh-CN.js" ></script>
+	<script type="text/javascript" src="/asset/js/webgis/jquery.splitter.js" ></script>
+	<script type="text/javascript" src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script> 
+	<script type="text/javascript" src="/asset/js/webgis/ol-4.1.1.js" ></script>
+	<script type="text/javascript" src="/asset/js/webgis/webgis.js" ></script>
+	</body>
+</html>

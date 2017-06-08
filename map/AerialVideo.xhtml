@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   xmlns:a4j="http://richfaces.org/a4j"
+   contentType="text/html">
+   
+<html  xmlns="http://www.w3.org/1999/xhtml" lang="en" ng-app="app">
+<!--  #{aerialVideoGroupHome.checkAerialGroup()} -->
+   <head>
+      <title>#{aerialVideoGroupHome.aerialVideoGroup.shareTitle}</title>
+      <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui" />
+	  <meta name="apple-mobile-web-app-capable" content="yes" />
+	  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+	
+      <link rel="shortcut icon" href="#{request.contextPath}/favicon.ico"/>
+	  <script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.10.2.min.js"></script>
+	  <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+
+	<style>
+		.div_bg{position:fixed;width: 100%;height: 100%; background: url(../../asset/images/aerialphoto/empay_video.png) no-repeat center top; background-size: cover; }
+		.div_phone_bg{position:fixed;width: 100%;height: 100%; background: url(../../asset/images/aerialphoto/empty_video_phone.jpg) no-repeat center top; background-size: cover; }		
+		html,body{min-height:100%;height:100%;}
+	</style>
+   </head>
+   <body style="margin:0;position:relative;overflow: hidden;">
+   <a4j:form>
+		<a4j:jsFunction name="saveForward" action="#{aerviceDataAnalysisHome.saveForward}">
+			<a4j:actionparam name="id" assignTo="#{aerviceDataAnalysisHome.aid}"/>
+			<a4j:actionparam name="type" assignTo="#{aerviceDataAnalysisHome.type}"/>
+			<a4j:actionparam name="enterpriseInfoId" assignTo="#{aerviceDataAnalysisHome.enterpriseInfoId}"/>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="saveVisit" action="#{aerviceDataAnalysisHome.saveVisit}">
+			<a4j:actionparam name="id" assignTo="#{aerviceDataAnalysisHome.aid}"/>
+			<a4j:actionparam name="type" assignTo="#{aerviceDataAnalysisHome.type}"/>
+			<a4j:actionparam name="enterpriseInfoId" assignTo="#{aerviceDataAnalysisHome.enterpriseInfoId}"/>
+		</a4j:jsFunction>
+	</a4j:form>
+   <s:fragment rendered="#{aerialVideoGroupHome.showFlag}">
+	    <!-- 航拍视频查看-->
+		<div id="aerialVideoDiv" style="position:absolute;  left:0; top:0;width:100%; height:100%;">
+		 	<iframe id="aerialIframe" scrolling="yes" frameborder="0" src="" width="100%" height="100%" ></iframe>	
+		</div>
+		<script type="text/javascript">
+ 			//<![CDATA[
+ 			jQuery = jQuery.noConflict();
+ 			
+ 			var url = "#{dataDicConstant.getWxDomainNameUrl()}/weixinservice/farmeasy/adopter?callback=?&method=js_ticket";
+ 			var myurl = window.location.href.split("#")[0];
+ 			var myname="#{aerialVideoGroupHome.aerialVideoGroup.shareTitle}";
+ 			var mydesc="#{aerialVideoGroupHome.aerialVideoGroup.shareDescription}";
+ 			var gid="#{aerialVideoGroupHome.aerialVideoGroup.aerialVideoGroupId}";
+ 			var enId="#{aerialVideoGroupHome.aerialVideoGroup.enterpriseInfoId}";
+ 			var myImg="#{aerialVideoGroupHome.videoImg}";
+ 			var appId = "";
+ 			saveVisit(gid,4,enId);
+ 			jQuery.ajax({
+ 				url : url,
+ 				data : {url:myurl},
+ 				dataType: 'jsonp',  
+ 				crossDomain: true,  
+ 				success: function (data) { 
+ 					var wNoncestr=data.noncestr;
+ 					var wTimestamp=data.timestamp;
+ 					var wsignature=data.signature;
+ 					appId = data.appid;
+ 							wx.config({      
+ 								debug:false,
+ 								appId:appId,
+ 								timestamp:wTimestamp,
+ 								nonceStr:wNoncestr,
+ 								signature:wsignature,
+ 								jsApiList: ['checkJsApi',
+ 											'onMenuShareTimeline',
+ 											'onMenuShareAppMessage',
+ 								            'onMenuShareQQ',
+ 								            'onMenuShareWeibo','startRecord'
+ 											]  });
+
+ 							 //步骤四：通过ready接口处理成功验证    
+ 							    wx.ready(function(){  
+ 							    	wx.checkJsApi({                
+ 							            jsApiList: ['onMenuShareTimeline']
+ 							    		});
+ 							    	wx.onMenuShareTimeline({
+ 										title: myname,
+ 										desc: mydesc,
+ 										link: myurl,
+ 										imgUrl: myImg,
+ 										trigger: function(res) {// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+ 											},
+ 										success: function(res) {
+ 											 saveForward(gid,4,enId);
+ 										},
+ 										cancel: function(res) {
+ 										}
+ 									});
+ 							    	wx.onMenuShareAppMessage({
+ 							    		title:  myname,
+ 										desc:  mydesc,
+ 										link: myurl,
+ 										imgUrl: myImg,
+ 							    	      trigger: function (res) {
+ 							    	        // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+ 									    	      },
+ 							    	      success: function (res) {
+ 							    	    	 saveForward(gid,4,enId);
+ 							    	      },
+ 							    	      cancel: function (res) {
+ 							    	      },
+ 							    	      fail: function (res) {
+ 							    	      }
+ 							    	    });
+ 							    	wx.onMenuShareQQ({
+ 							    		title:  myname,
+ 										desc:  mydesc,
+ 										link: myurl,
+ 										imgUrl: myImg,
+ 								          trigger: function (res) {
+ 								          },
+ 								          complete: function (res) {
+ 								          },
+ 								          success: function (res) {
+ 								        	 saveForward(gid,4,enId);
+ 								          },
+ 								          cancel: function (res) {
+ 								          },
+ 								          fail: function (res) {
+ 								          }
+ 								        });
+ 								})
+ 								
+ 								
+ 		    	},
+ 		    	error: function(XMLHttpRequest, textStatus, errorThrown){
+ 		    	}
+ 			})
+			jQuery(function(){
+				var type=getPgjs();	
+				if(type=="pc" || type=="wp"){
+					//jQuery('#aerialIframe').attr("src","#{request.contextPath}/AerialVideoPhone/aerial/AerialvideoView.html?groupId=#{aerialVideoGroupHome.groupId}&amp;domainUrl=#{dataDicConstant.getDomainNameUrl()}&amp;operType=2");
+					jQuery('#aerialIframe').attr("src","#{request.contextPath}/map/AerialvideoView.html?groupId=#{aerialVideoGroupHome.groupId}&amp;domainUrl=#{dataDicConstant.getDomainNameUrl()}&amp;operType=2&amp;closeBtn=0");	
+			    }else{
+			    	jQuery('#aerialIframe').attr("src","#{request.contextPath}/AerialVideoPhone/aerial/AerialvideoView.html?groupId=#{aerialVideoGroupHome.groupId}&amp;domainUrl=#{dataDicConstant.getDomainNameUrl()}&amp;operType=2");	
+				}						
+			});
+			
+			//]]>
+    	</script>
+   </s:fragment>
+   <s:fragment rendered="#{!aerialVideoGroupHome.showFlag}">
+	    <!-- 航拍视频查看-->
+		<div id="emptyVideoDiv">
+		</div>
+		  <script type="text/javascript">
+				jQuery(function(){
+					var type=getPgjs();	
+					if(type=="pc" || type=="wp"){
+						jQuery("#emptyVideoDiv").addClass("div_bg");
+					}else{
+						jQuery("#emptyVideoDiv").addClass("div_phone_bg");
+					}
+				});
+		</script>
+   </s:fragment>
+   <script type="text/javascript">
+		function getPgjs(){
+			    var agent = navigator.userAgent.toLowerCase();
+			    var res = agent.match(/android/);
+			    if(res == "android")
+			        return res;
+			    res = agent.match(/iphone/);
+			    if(res == "iphone")
+			        return "ios";
+			    res = agent.match(/ipad/);
+			    if(res == "ipad")
+			        return "ios";
+			    res = agent.match(/windows/);
+			    if(res == "windows")
+			        return "wp";
+			    return "pc";
+			} 
+</script>
+   </body>
+
+
+</html>
+</f:view>

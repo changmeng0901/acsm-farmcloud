@@ -1,0 +1,261 @@
+<krpano>
+	<events name="util_events" keep="true"
+	        onxmlcomplete="set(events[util_events].onxmlcomplete,null); util_startup();"
+	        />
+	<layer name="scene_list" visible="false" type="container" keep="true" align="left" x="100" y="0" width="200" height="400" bgcapture="true" boder="true" bgborder="3 0x3C3C3C" bgcolor="0x272727" bgalpha="0.4" maskchildren="true" ondown="draglayer();">
+		<layer name="top_title" url="%SWFPATH%/plugins/textfield.swf" html="选择一个目标场景" align="top" edge="top" width="140" y="5" backgroundalpha="0"
+		height="50" autoheight="true"  zorder="4" enabled="false" css="text-align:left; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:16px;" textshadow="1"/>
+		<layer name="scene_list_info" type="container" bgcolor="0x000000" bgalpha="0.5" align="lefttop" width="100%" height="300" x="0" y="50" maskchildren="true">
+			<layer name="scene_list_container" url="%SWFPATH%/plugins/scrollarea.swf" alturl="%SWFPATH%/plugins/scrollarea.js" mwheel="true" 
+			direction="v" x="-5" align="top" width="50%" height="100%" zorder="1" onloaded="skin_updatescroll();" 
+			onscroll="if(hoverflow GT 0, div(yp,toverflow,hoverflow);Math.min(yp,1);Math.max(yp,0); copy(th,layer[scrollbar].pixelheight);sub(th,layer[scrollup].pixelheight);sub(th,layer[scrolldown].pixelheight);sub(th,layer[scrollslider].pixelheight); mul(yp,th);add(yp,layer[scrollup].pixelheight); copy(layer[scrollslider].y,yp); );" >
+			</layer>
+			<layer name="scrollbar" type="container" bgcolor="0x000000" bgalpha="0.25" align="righttop" x="5" y="5" width="19" height="-10">
+				<layer name="scrollup"     url="dirbutton.png"    align="righttop"    x="19" rotate="-90" crop="0|0|19|19" onovercrop="0|19|19|19" ondowncrop="0|38|19|19" ondown="asyncloop(pressed, layer[scene_list_container].scrollby(0,+1));" />
+				<layer name="scrolldown"   url="dirbutton.png"    align="rightbottom" x="19" rotate="+90" crop="0|0|19|19" onovercrop="0|19|19|19" ondowncrop="0|38|19|19" ondown="asyncloop(pressed, layer[scene_list_container].scrollby(0,-1));" />
+				<layer name="scrollslider" url="sliderbutton.png" align="righttop"    x="0"  y="19"       crop="0|0|19|19" onovercrop="0|19|19|19" ondowncrop="0|38|19|19" ondown="if(layer[scene_list_container].hoverflow GT 0, copy(cy,y);copy(sy,mouse.stagey);dragging(); );" dragging="if(pressed, sub(dy,mouse.stagey,sy);add(ny,cy,dy);Math.max(ny,layer[scrollup].pixelheight); copy(th,layer[scrollbar].pixelheight);sub(th,layer[scrolldown].pixelheight);sub(th,layer[scrollslider].pixelheight);Math.min(ny,th); copy(y,ny); sub(ny,layer[scrollup].pixelheight);sub(th,layer[scrollslider].pixelheight);div(ny,th); copy(fh,layer[scene_list_container].hoverflow); mul(fh,-1); mul(ny,fh); layer[scene_list_container].stopscrolling(); copy(layer[scene_list_container].y,ny); delayedcall(0,dragging()); );" />
+			</layer>
+		</layer>
+		<layer name="bottom_button" type="container"  align="top" edge="top" width="100%" height="50" y="350" zorder="4"  >
+			<layer name="button_ok" url="%SWFPATH%/plugins/textfield.swf" html="确定" align="lefttop" width="40" zorder="5" backgroundcolor="0x333FFF" backgroundalpha="0.1"
+					 autoheight="true" x="20" y="12" css="text-align:left; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:16px;" 
+					 onclick="savepots()"/>
+			<layer name="button_no" url="%SWFPATH%/plugins/textfield.swf" html="取消" align="righttop" width="40" zorder="5" backgroundcolor="0x333FFF" backgroundalpha="0.1"
+					 autoheight="true" x="20" y="12" css="text-align:left; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:16px;" 
+					 onclick="checkTarget()"/>
+		</layer>
+	</layer>
+	
+	<style name="hotspot_ani_white"
+	       url="../black_64x64x20.png"
+	       crop="0|0|64|64"
+	       framewidth="64" frameheight="64" frame="0" lastframe="19"
+	       onloaded="hotspot_animate();"
+	       />
+
+	<action name="hotspot_animate">
+		inc(frame,1,get(lastframe),0);
+		mul(ypos,frame,frameheight);
+		txtadd(crop,'0|',get(ypos),'|',get(framewidth),'|',get(frameheight));
+		delayedcall(0.03, if(loaded, hotspot_animate() ) );
+	</action>
+
+	<!-- the 'tooltip' style - show tooltip textfield and update positions as long as hovering -->
+	<style name="tooltip"
+	       onover="copy(layer[tooltip].html, tooltip);
+	               set(layer[tooltip].visible, true);
+	               tween(layer[tooltip].alpha, 1.0, 0.5);
+	               asyncloop(hovering, copy(layer[tooltip].x,mouse.stagex); copy(layer[tooltip].y,mouse.stagey); );"
+	       onout="tween(layer[tooltip].alpha, 0.0, 0.25, default, set(layer[tooltip].visible,false), copy(layer[tooltip].x,mouse.stagex); copy(layer[tooltip].y,mouse.stagey); );"
+	       />
+
+
+	<!-- the 'tooltip' textfield -->
+	<layer name="tooltip" keep="true"
+	       url="%SWFPATH%/plugins/textfield.swf"
+	       parent="STAGE"
+	       visible="false" alpha="0"
+	       enabled="false"
+	       align="lefttop"
+	       edge="bottom"
+	       oy="-2"
+	       autowidth="true"
+	       autoheight="true"
+	       background="false" backgroundcolor="0xFFFFFF" backgroundalpha="1.0"
+	       border="false" bordercolor="0x000000" borderalpha="1.0"
+	       borderwidth="1.0" roundedge="0"
+	       shadow="0.0" shadowrange="4.0" shadowangle="45" shadowcolor="0x000000" shadowalpha="1.0"
+	       textshadow="1" textshadowrange="6.0" textshadowangle="90" textshadowcolor="0x000000" textshadowalpha="1.0"
+	       css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:14px;"
+	       html=""
+	       />
+
+	<action name="util_startup">
+			set(targetlink,'_');
+			set(targetlinkid,'_');
+			set(thumbwidth2, 120);
+			set(thumbheight2, 80);
+			set(thumbpadding2, 10);
+			set(thumbcrop2, "0|40|240|160");
+	
+			add(thumbxoffset2, thumbheight2, thumbpadding2);
+			mul(thumbxcenter2, thumbxoffset2, 0.5);
+			add(thumbbarwidth2, thumbwidth2, thumbpadding2);
+			mul(thumbbarheight2, thumbxoffset2, scene.count);
+			add(thumbbarheight2, thumbpadding2);
+	
+			copy(layer[scene_list_container].height, thumbbarheight2);
+			copy(layer[scene_list_container].width, thumbbarwidth2);
+	
+			trace(layer[scene_list_container].height);
+			trace(layer[scene_list_container].width);
+
+			mul(halfheight2, thumbbarheight2, 0.5);
+			copy(layer[skin_thumbs_scrollleft].y, halfheight2);
+			copy(layer[skin_thumbs_scrollright].y, halfheight2);
+	
+			for(set(i,0), i LT scene.count, inc(i),
+				txtadd(thumbname2,'util_thumb_',get(scene[get(i)].name));
+				addlayer(get(thumbname2));
+				copy(layer[get(thumbname2)].url, scene[get(i)].thumburl);
+				set(layer[get(thumbname2)].keep, true);
+				set(layer[get(thumbname2)]._index, get(i));
+				set(layer[get(thumbname2)].parent, 'scene_list_container');
+				set(layer[get(thumbname2)].align, lefttop);
+				copy(layer[get(thumbname2)].width, thumbwidth2);
+				copy(layer[get(thumbname2)].height, thumbheight2);
+				set(layer[get(thumbname2)].scene_id, get(scene[get(i)].scene_id));
+				mul(thumbx2, i, thumbxoffset2);
+				add(thumbx2, thumbpadding2);
+				copy(layer[get(thumbname2)].x, thumbpadding2);
+				copy(layer[get(thumbname2)].y, thumbx2);
+				add(scene[get(i)].thumby2, thumbx2, thumbxcenter2);
+				copy(scene[get(i)].thumbx2, thumbpadding2);
+				set(layer[get(thumbname2)].linkedscene, get(scene[get(i)].name) );
+				set(layer[get(thumbname2)].onclick, 
+					copy(layer[skin_thumbborder2].parent, name); 
+					set(layer[skin_thumbborder2].visible, true);
+					trace(get(linkedscene));
+					set(targetlink,get(linkedscene));
+					set(targetlinkid,get(scene_id));
+					
+				);
+				if(true,
+					txtadd(thumbtext2, scene.name, get(i));
+					addlayer(get(thumbtext2));
+					layer[get(thumbtext2)].loadstyle(skin_thumbtext_style);
+					set(layer[get(thumbtext2)].keep, true);
+					set(layer[get(thumbtext2)].parent, get(thumbname2));
+					set(layer[get(thumbtext2)].html, get(scene[get(i)].title));
+				  );
+			   );
+
+	</action>
+
+	<action name="draglayer">
+		if(%1 != dragging,
+			copy(drag_currentx, x);
+			copy(drag_currenty, y);
+			copy(drag_stagex, mouse.stagex);
+			copy(drag_stagey, mouse.stagey);
+			set(drag_sx, +1);
+			set(drag_sy, +1);
+			if(align == righttop,    set(drag_sx,-1); );
+			if(align == right,       set(drag_sx,-1); );
+			if(align == rightbottom, set(drag_sx,-1); set(drag_sy,-1); );
+			if(align == bottom,      set(drag_sy,-1); );
+			if(align == leftbottom,  set(drag_sy,-1); );
+			draglayer(dragging);
+		  ,
+			if(pressed,
+				sub(dx, mouse.stagex, drag_stagex);
+				sub(dy, mouse.stagey, drag_stagey);
+				mul(dx, drag_sx);
+				mul(dy, drag_sy);
+				add(x, drag_currentx, dx);
+				add(y, drag_currenty, dy);
+				delayedcall(0, draglayer(dragging) );
+			  );
+		  );
+	</action>
+
+	<action name="draghotspot">
+	<![CDATA[
+	trace(get(pressed),100000,%1);
+		if(%1 != dragging,
+			spheretoscreen(ath, atv, hotspotcenterx, hotspotcentery);
+			sub(drag_adjustx, mouse.stagex, hotspotcenterx); 
+			sub(drag_adjusty, mouse.stagey, hotspotcentery); 
+			trace(111111);
+			draghotspot(dragging);
+		  ,
+			if(pressed,
+				sub(dx, mouse.stagex, drag_adjustx);
+				sub(dy, mouse.stagey, drag_adjusty);
+				screentosphere(dx, dy, ath, atv);
+				copy(print_ath, ath);
+				copy(print_atv, atv);
+				roundval(print_ath, 3);
+				roundval(print_atv, 3);
+				trace(22222);
+				delayedcall(0, draghotspot(dragging) );
+			  );
+		  );
+	]]>
+	</action>
+
+	<!-- 按钮添加热点 -->
+	<action name="addpots">
+		set(newspot,"temphotspots");
+		addhotspot(get(newspot));
+		set(hotspot[get(newspot)].style,"hotspot_ani_white");
+		set(hotspot[get(newspot)].ath,get(view.hlookat));
+		set(hotspot[get(newspot)].atv,get(view.vlookat));
+		set(hotspot[get(newspot)].scale,0.5);
+		set(hotspot[get(newspot)].zoom,true);
+		set(hotspot[get(newspot)].ondown,"draghotspot()");
+		hotspot[get(newspot)].loadstyle();
+		set(layer[skin_thumbborder2].visible, false);
+		set(layer[scene_list_container].y,0);
+		set(layer[scrollslider].y,19);
+		set(layer[scene_list].visible,true);
+	</action>
+	
+	<action name="resethotspot">
+		if(hots_id != null ,
+			txtadd(thumbname3,'util_thumb_',get(linked_name));
+			trace(thumbname3);
+			set(layer[skin_thumbborder2].parent, get(thumbname3));
+			set(layer[skin_thumbborder2].visible, true);
+			mul(yyy,-3,get(layer[get(thumbname3)]._index));
+			set(layer[scene_list].visible,true);
+			set(layer[scene_list_container].y,0);
+			set(layer[scrollslider].y,19);
+			layer[scene_list_container].scrollby(0,get(yyy));
+		)
+	</action>
+	
+	<!-- 场景加载是添加所有的热点 -->
+	<action name="addpots2">
+		txtadd(jsnewspot,get(xml.scene),"_h_",%1);
+		addhotspot(get(jsnewspot));
+		set(hotspot[get(jsnewspot)].style,"hotspot_ani_white|tooltip");
+		set(hotspot[get(jsnewspot)].tooltip,%6);
+		set(hotspot[get(jsnewspot)].ath,%2);
+		set(hotspot[get(jsnewspot)].atv,%3);
+		set(hotspot[get(jsnewspot)].scale,0.5);
+		set(hotspot[get(jsnewspot)].zoom,true);
+		set(hotspot[get(jsnewspot)].hots_id,%5);
+		set(hotspot[get(jsnewspot)].linked_name,%4);
+		set(hotspot[get(jsnewspot)].ondown,"");
+		set(hotspot[get(jsnewspot)].onclick,if(isdelete,js(deleteHotspots(%5)) ,skin_buttonglow(null);set(layer[tooltip].visible,false); tween(scale,0.25,0.5); tween(oy,-20,0.5); tween(alpha,0,0.5); looktohotspot();loadscene(%4,null,get(skin_settings.loadscene_flags),get(skin_settings.loadscene_blend)); ););
+		hotspot[get(jsnewspot)].loadstyle();
+	</action>
+
+	<action name="checkTarget">
+			if(layer[scene_list].visible==true,
+				set(layer[scene_list].visible,false);
+				removehotspot("temphotspots");
+				set(targetlink,'_');
+				set(targetlinkid,'_');
+				set(isdelete,false);
+				skin_buttonglow(null);
+				set(layer[tooltip].visible,false);
+			)
+	</action>
+
+	<action name="savepots">
+		if(layer[skin_thumbborder2].visible == false,
+			js(alert("请先选择目标场景!"));,
+			js(savepots(get(hotspot["temphotspots"].ath),get(hotspot["temphotspots"].atv),get(targetlink),get(targetlinkid),get(xml.scene),get(scene[get(xml.scene)].scene_id),get(scene[get(targetlink)].title)))
+			)
+
+	</action>
+	
+		
+	<action name="deletepots">
+		if(isdelete,set(isdelete,false);skin_buttonglow(null);if(skin_lockglow === name, ifnot(pressed, skin_buttonglow(null);delete(skin_lockglow); ));,
+		set(isdelete,true);copy(skin_lockglow,name); skin_buttonglow(get(name)); if(ondown2, ondown2() ););
+		
+	</action>
+</krpano>

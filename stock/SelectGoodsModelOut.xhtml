@@ -1,0 +1,165 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	  <!--添加物料内容-->
+	<div class="modal fade" id="AddMaterial" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog material_dialog">
+    <!--(1)添加物料内容-->
+    <div class="modal-content">
+        <div class="modal-header clear">
+            <h4 class="modal-title fl">选择物料</h4>
+            <i class="i_close" data-dismiss="modal"></i>
+        </div>
+        <h:panelGroup id="goodsInfoId">
+        <div class="modal-body modal_body">
+            <!--搜索-->
+            <div class="search_header mb15 clear">
+                <div class="search_selected clear">
+                    <div class="public-search fl">
+                        <span class="octicon-search02"></span>
+                        <input id="searchStr" class="form-control nw300 srarchfont" type="text" value="请输入物料编号/物料名称" onfocus="if(this.value=='请输入物料编号/物料名称'){this.value=''}" onblur="if(this.value==''){this.value='请输入物料编号/物料名称'}"/>
+                    </div>
+                    <button class="btn btn-primary" type="button" onclick="serach();" id="searchButton">搜索</button>
+                </div>
+            </div>
+            <!--物料列表-->
+            <table class="material_list" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <th><input id="goodsCheckAll" class="iCheck" type="checkbox"  name="goodsCheckAll" onclick="checkAllChange(this)"/></th>
+                    <th width="190">物料编号</th>
+                    <th width="160">物料名称</th>
+                    <th width="160">单位规格</th>
+                    <th width="160">库存数量</th>
+                </tr>
+                <a:repeat value="#{outStorageHome.materialList}" var="_batch" rowKeyVar="_index">
+                    <tr class="odd goodsTr_#{_index+1}">
+                    	<td style="display: none">#{_batch[12]}</td>
+                    	<td class="bg1"><input class="iCheck" id="iCheck_#{_index+1}" name="goodsCheck" type="checkbox" onclick="checkBoxChange(this)" /></td>
+                        <td id="goods_code_#{_index+1}">#{_batch[7]}</td>
+                        <td id="goods_name_#{_index+1}">#{_batch[2]}</td>
+                        <td id="unit_info_#{_index+1}">
+                        	#{_batch[20]}
+                       </td>
+                        <td id="batch_count_#{_index+1}">
+                        	<s:fragment rendered="#{_batch[14] eq 1}">
+				                        <h:outputText value="#{unitStranfer.outStranfer(_batch[12],_batch[3])}"  >
+							                   	<f:convertNumber pattern="#####.###"/>
+							            </h:outputText>
+							        </s:fragment>
+							        <s:fragment rendered="#{_batch[14] ne 1}">
+							               #{_batch[3]}
+							        </s:fragment>
+                        </td>
+                        <td style="display: none">
+                        	<table>
+	                        	<a:repeat value="#{outStorageHome.goodsMap.get(_batch[17])}" var="_batch" rowKeyVar="_indexs">
+				                    <tr class="odd goodsHiddenTr_#{_index+1} goodsHiddenTr_#{_index+1}_#{_indexs+1}">
+				                        <td id="hidden_batch_id_#{_index+1}_#{_indexs+1}">#{_batch[0]}</td>
+				                        <td id="hidden_batch_code_#{_index+1}_#{_indexs+1}">#{_batch[1]}</td>
+				                        <td id="hidden_batch_count_#{_index+1}_#{_indexs+1}">
+				                        	<s:fragment rendered="#{_batch[14] eq 1}">
+							             <h:outputText value="#{unitStranfer.outStranfer(_batch[12],_batch[3])}" >
+							                   	<f:convertNumber pattern="#####.###"/>
+							            </h:outputText> 
+							        </s:fragment>
+							        <s:fragment rendered="#{_batch[14] ne 1}">
+							               #{_batch[3]}
+							        </s:fragment>
+				                        </td>
+				                        <td id="hidden_level_name_#{_index+1}_#{_indexs+1}">#{_batch[4]}</td>
+				                        <td id="hidden_batch_price_#{_index+1}_#{_indexs+1}">
+				                        	<s:fragment rendered="#{_batch[14] eq 1}">
+				                        		<h:outputText value="#{unitStranfer.outStranferPrice(_batch[12],_batch[6])}" >
+							                   		<f:convertNumber pattern="#####.###"/>
+							            		</h:outputText>
+				                        	</s:fragment>
+							        		<s:fragment rendered="#{_batch[14] ne 1}">
+							               		#{_batch[6]}
+							        		</s:fragment>
+				                        </td>
+				                        <td id="hidden_tunnel_name_#{_index+1}_#{_indexs+1}">#{_batch[13]}</td>
+				                        <td id="hidden_purchase_name_#{_index+1}_#{_indexs+1}">#{_batch[19]}</td>
+				                        <td id="hidden_expire_date_#{_index+1}_#{_indexs+1}">
+				                        	<s:fragment rendered="#{_batch[21]== null or _batch[21] eq 0}">
+				                        		#{_batch[9]}
+				                        	</s:fragment>
+				                        	<s:fragment rendered="#{_batch[21]!= null and  _batch[21] ne 0}">
+				                        		#{_batch[21]}
+				                        	</s:fragment>
+				                        </td>
+				                         <td id="hidden_storage_change_type_#{_index+1}_#{_indexs+1}">#{_batch[18]}</td>
+				                    </tr>
+				                 </a:repeat>
+			                 </table>
+						</td>
+                    </tr>
+                 </a:repeat>
+                
+            </table>
+            <!--分页-->
+             <div class="pageModel_wap" style="padding:-1px 0 30px;">
+                           <h:form id="pageFrom" rendered="#{null ne outStorageHome.materialList and outStorageHome.materialList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!outStorageHome.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{outStorageHome.hasPreviousPage and outStorageHome.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{outStorageHome.hasPreviousPage and outStorageHome.totalPages > 1}" >首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{outStorageHome.previousPage})"  >&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{outStorageHome.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le outStorageHome.totalPages}">
+											<td class="td_t_b #{outStorageHome.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq outStorageHome.thisPage ? 'onp' : ''}" >
+												<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{outStorageHome.hasNextPageFlag}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{outStorageHome.nextPage})" rendered="#{outStorageHome.hasNextPage and outStorageHome.totalPages > 1}" >&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{outStorageHome.totalPages})" rendered="#{outStorageHome.hasNextPage and outStorageHome.totalPages > 1}" >尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{outStorageHome.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+                        </div> 
+            <!--分页-->
+        </div>
+         </h:panelGroup>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="choiceMaterial()">添加物料</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+        </div>
+    </div>
+    <!--(1)添加物料内容-->
+	</div>
+	</div> 
+	<a:form>
+		<a:jsFunction name="findMaterial" action="#{outStorageHome.findMaterialList()}" reRender="goodsInfoId" data="#{outStorageHome.serachStr}" oncomplete="findMaterialHd(data);">
+			<a:actionparam name="goodsType" assignTo="#{outStorageHome.goodsType}"/>
+			<a:actionparam name="serachStr" assignTo="#{outStorageHome.serachStr}"/>
+		</a:jsFunction>
+		<a:jsFunction name="getListByPage" action="#{outStorageHome.getGoodsInfoByPage()}" reRender="goodsInfoId" data="#{outStorageHome.serachStr}" oncomplete="findMaterialHd(data);">
+			<a:actionparam name="goodsType" assignTo="#{outStorageHome.goodsType}"/>
+			<a:actionparam name="serachStr" assignTo="#{outStorageHome.serachStr}"/>
+			<a:actionparam name="thisPage" assignTo="#{outStorageHome.thisPage}"/>
+			<a:actionparam name="storageRoomId" assignTo="#{outStorageHome.storageRoomId}"/>
+		</a:jsFunction>
+	</a:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/OutStorageModel.js"></script>
+</ui:composition>

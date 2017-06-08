@@ -1,0 +1,197 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_img.xhtml">
+
+<ui:define name="body">
+	<style>
+		body {    font-size: 14px;
+	    color: #000;
+	    font-family:"微软雅黑"; height:100%;
+	    line-height: 150%;
+	    margin: 0;
+	    padding: 0;
+	}
+	a:focus {
+	    outline:none;
+	    -moz-outline:none;
+	} 
+	html{ height:100%;}
+	h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form, img, p,input {
+	    border: medium none;
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	}
+	a{text-decoration:none;}
+	.photo_box2{ width:650px; }
+	.photo_box2 li{ float:left; width:135px; height:128px;margin-right:5px;  margin-top: 10px}
+	.photo_box2 li img{width:128px;height:128px;border:1px solid #d1d1d1;}
+	.photo001{ position:absolute; z-index:2;}
+	.dkzzedit007{width:130px;height:21px; z-index:3; display:none;  top: -128px;position:relative; }
+	.photo001 .dkzzedit007 img{z-index:4;float:right;;position:relative; border:none;width:27px; height:23px; }
+	.div1{float: left;height: 144px;width: 128px;position:relative;}
+	.div2{text-align:center;font-size:15px;font-weight:800}
+	.logoUrl{ width: 144px;height: 144px;cursor: pointer; font-size: 30px;outline: medium none;position: absolute;filter:alpha(opacity=0); -moz-opacity:0;opacity:0; left:0px;top: 0px;}
+	.plant_bd{width:128px;height:128px; display:block;}
+	</style>
+	<script  type="text/javascript">
+	//<![CDATA[
+	jquery(function(){
+		jquery(window.parent.document).find("#login").hide();
+		var msg="#{inputsStockHome.promptMessage}";
+		var url="#{inputsStockHome.url}";
+		if(""!=url && ""==msg){//保存成功，提交投入品
+			jquery(window.parent.document).find("#inputs\\:url").val(url);
+			jquery(window.parent.document).find("#inputs\\:submitBtn").click();
+		}
+		ailist();
+	})
+	ailist = function(){
+		jquery('.photo001').hover(function(){
+			jquery(this).find('.dkzzedit007').show();
+		},function(){
+			jquery(this).find('.dkzzedit007').hide();
+		})
+   	}
+	del = function(){
+		deleteObj();
+   	}
+   	/*
+	function previewImage(){
+		jquery("#inputsImages\\:insertImages").click();
+		jquery(window.parent.document).find("#login").show();
+	}*/
+	function previewImage(file){
+        var MAXWIDTH  = 150; 
+        var MAXHEIGHT = 140;
+        var div = document.getElementById('preview');
+        if (file.files && file.files[0]){
+            div.innerHTML ='<img id=imghead>';
+            var img = document.getElementById('imghead');
+            img.onload = function(){
+              var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+              img.width  =  rect.width;
+              img.height =  rect.height;
+//               img.style.marginLeft = rect.left+'px';
+              img.style.marginTop = rect.top+'px';
+            }
+            var reader = new FileReader();
+            reader.onload = function(evt){img.src = evt.target.result;}
+            reader.readAsDataURL(file.files[0]);
+        }else{//兼容IE
+          var sFilter='filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
+          file.select();
+          file.blur();
+          var src = document.selection.createRange().text;
+          div.innerHTML = '<img id=imghead>';
+          var img = document.getElementById('imghead');
+          //img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
+          img.src = src;
+          var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+          status =('rect:'+rect.top+','+rect.left+','+rect.width+','+rect.height);
+          div.innerHTML = "<div id=divhead style='width:"+MAXWIDTH+"px;height:"+MAXHEIGHT+"px;"+sFilter+src+"\"'></div>";
+          //alert(jquery("#preview").html());
+        }
+        //jquery("#uploadMsg").html(name);
+        jquery("#imgshow").show();
+        jquery("#imgadd").hide();
+      }
+	function clacImgZoomParam( maxWidth, maxHeight, width, height ){
+        var param = {top:0, left:0, width:width, height:height};
+        if( width>maxWidth || height>maxHeight )
+        {
+            rateWidth = width / maxWidth;
+            rateHeight = height / maxHeight;
+             
+            if( rateWidth > rateHeight )
+            {
+                param.width =  maxWidth;
+                param.height = Math.round(height / rateWidth);
+            }else
+            {
+                param.width = Math.round(width / rateHeight);
+                param.height = maxHeight;
+            }
+        }
+         
+        param.left = Math.round((maxWidth - param.width) / 2);
+        param.top = Math.round((maxHeight - param.height) / 2);
+        return param;
+    }
+    function delImg(){
+        jquery("#logoUrl").val("");
+        jquery("#preview").html("");
+        jquery(".photo_box2 li:eq(0)").hide();
+        jquery(".photo_box2 li:eq(1)").show();
+    }
+	//]]>
+	</script>	
+    <h:form id="inputsImages" styleClass="edit" enctype="multipart/form-data">
+		<div class="all_da all_w01" style="width:724px;">
+			<table cellpadding="0" cellspacing="0">
+				<tr>
+			    	<td >
+			        	<ul class="photo_box2">
+			         		<li style="#{inputsStockHome.url==''||inputsStockHome.url==null?'display:none':''}" id="imgshow">
+			          			<div class="photo001">
+			            			<div class="imgBox" style="width: 128px;height: 128px;">   
+			              				<a href="#pic_0" class="plant_bd" id="preview">
+			            					<img id="plant0" class="plant_imgbd" src="#{inputsStockHome.url}"  width="60" height="60" />
+			            				</a>
+			            			</div>
+			            			<div class="dkzzedit007">
+			                      		<a href="#1" onclick="delImg()"><img src="#{request.contextPath}/asset/images/del03.jpg" width="27" height="23" /></a>
+			                    	</div>
+			         			</div>
+			         		</li>
+							<li style="#{inputsStockHome.url!=null and inputsStockHome.url!=''?'display:none':''}" id="imgadd">
+								<div class="div1" >
+								    <div class="div2" id="input_img"><img src="#{request.contextPath}/asset/images/dpadd.jpg" width="60" height="60"/></div>
+								   	<s:fileUpload id="logoUrl" styleClass="logoUrl"
+										size="40" accept="image/png,image/jpeg,image/gif"
+										contentType="image/png,image/jpeg,image/gif"
+										fileName="#{inputsStockHome.pictureName}"
+										onchange="previewImage(this);"
+										data="#{inputsStockHome.picture}">
+									</s:fileUpload>
+								</div>
+			        		</li>
+			       		</ul>                                                                          
+					</td>
+				</tr>
+			</table>
+		</div>
+		<h:commandButton id="insertImages"  styleClass="edit_save" action="#{inputsStockHome.upload}" style="display:none;" />
+    </h:form>
+    <a:form>
+        <a:jsFunction name="deleteObj" action="#{inputsStockHome.deletedInfo()}" reRender="agriculturalImages" oncomplete="res();">
+        </a:jsFunction>
+    </a:form> 
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.2.6.pack.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/content_zoom.js"></script>
+	<script  type="text/javascript">
+	//<![CDATA[
+	 	$ = jQuery.noConflict();
+		$(function(){
+			var msg="#{inputsStockHome.promptMessage}";
+			if(""!=msg){
+				alert(msg);
+			}			
+			//$('div.imgBox a').fancyZoom({scaleImg: true, closeOnClick: true});
+		});
+		function res(){
+			$(".photo_box2 li:eq(0)").hide();
+			$(".photo_box2 li:eq(1)").show();
+		}
+	//]]>
+	</script>
+</ui:define>
+
+</ui:composition>

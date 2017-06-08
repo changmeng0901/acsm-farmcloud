@@ -1,0 +1,827 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_map.xhtml">
+
+<ui:define name="body">
+   
+<td valign="top" >
+<div style="z-index: 0; position: absolute;*left:77px" id="map-canvas"></div>
+<style>  
+     html, body, #map-canvas {  
+       height: 100%;  
+       margin: 0px;  
+       padding: 0px  
+     }  
+     .nothing{
+     position: absolute;
+     }
+     .rich-color-picker-icon{right:-25px; top:6px; }
+    .rich-color-picker-span img{float:right;}
+.tc_cont {
+    margin: 0 auto;
+    padding-left: 10px;
+    width: auto;
+}
+	 .fr{float:right;}
+	.r_ulli1{float:right;}
+	</style>
+<script type="text/javascript">
+document.getElementById("selectBaseDiv").style.display="none";
+</script>  
+ <!-- #{mapHome.partitionWork()} -->
+  
+<div id="mark_info_div"  class="nothing" style="display:none">
+<a4j:form >
+<a4j:jsFunction name="delete_mark_info"  action="#{mapHome.delete_mark_info}" >
+   <a4j:actionparam name="baseId" assignTo="#{mapHome.mark_info_id}"/>
+</a4j:jsFunction>
+</a4j:form>
+</div>
+	
+<div id="mark_div"  class="nothing" style="display:none">
+<a4j:form >
+<a4j:jsFunction name="mark_delete"  action="#{mapHome.deleteFirstPolygon}">
+   <a4j:actionparam name="baseId" assignTo="#{mapHome.mark_info_id}"/>
+</a4j:jsFunction>
+</a4j:form>
+
+<a4j:form >
+<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+<a4j:jsFunction name="delsoil" eventsQueue="mainQueue" action="#{mapHome.deleteSoil}" data="#{mapHome.re_soil_json}" oncomplete="delsoil_next(data)">
+		<a4j:actionparam name="param1" assignTo="#{mapHome.soil_id}"></a4j:actionparam>
+</a4j:jsFunction>
+<a4j:jsFunction name="delland" eventsQueue="mainQueue" action="#{mapHome.deleteLand}" data="#{mapHome.re_land_json}" oncomplete="delland_next(data)">
+		<a4j:actionparam name="param1" assignTo="#{mapHome.land_id}"></a4j:actionparam>
+</a4j:jsFunction>
+</a4j:form>
+
+</div>
+					<!--右侧弹出框开始-->
+                                <ul class="map_search">
+                                    <li>
+  <table id="floatTools" class="float0831" cellpadding="0" cellspacing="0">
+                           <tr> 
+                            <td valign="middle" align="right" class="floatL" style="display:none;">
+                            	<a  id="aFloatTools_Show" class="btnOpen"  style="cursor:pointer">
+                    			展开
+                                </a>
+                    	   </td>
+                          <td valign="middle" id="divFloatToolsView_"  class="floatR">
+                           		<div class="tc_top_03"><div style="width:130px;" id="divtittle">编辑区域信息</div></div> 
+                                <div class="tc_cont">
+                                <a4j:form ajaxSubmit="true" id="soilForm">
+                                <div class="rightNo rightNo9" style="display:none">
+                                <div class="tc_rw_rw2" z-height="330">
+	                                <ul class="tc_ul">
+	                                  	<li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">区域</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  		<input type="hidden" value="" id="soil_partitionId" name="soil_partitionId" />
+	                                                  		<input type="hidden" value="" id="soil_id" name="soil_id" />
+	                                                      	<input type="text" id="soil_partitionName" name="soil_partitionName" style="background: none repeat scroll 0 0 #FFFFFF;font-family: '微软雅黑';font-size: 14px;" readonly="readonly"/>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">土质类型</td>
+	                                                  <td align="left" class="tc_strong150">
+	                                                  <div class="sw170">
+	                                                  	<select id="soil_type1" name="soil_type1">
+	                                                  	<a4j:repeat value="#{mapHome.type1List}" var="var" >
+	                                                      	<option value="#{var.dataDicId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                      	</div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">土壤类型</td>
+	                                                  <td align="left" class="tc_strong150">
+	                                                  <div class="sw170">
+	                                                  	<select id="soil_type2" name="soil_type2">
+	                                                  	<a4j:repeat value="#{mapHome.type2List}" var="var" >
+	                                                      	<option value="#{var.dataDicId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select></div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">起始时间</td>
+	                                                  <td align="left" class="tc_strong150">
+	                                                  <div class="sw170">
+	                                                  	<select id="soil_begin" name="soil_begin">
+	                                                      	</select>
+	                                                      	</div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0" width="100%">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">结束时间</td>
+	                                                  <td align="left" class="tc_strong" >
+	                                                  <div class="sw170">
+	                                                      	<select id="soil_end" name="soil_end">
+	                                                      	</select></div>
+	                                                      	<script type="text/javascript">
+	                                                      //<![CDATA[
+															var ttt__ = "";
+															var da = new Date();
+															var yea = da.getFullYear();
+	                                                      	for(var i = 2000;i<2050;i++){
+		                                                      	if(i==yea)
+																	ttt__ +="<option selected='selected' value='"+i+"'>"+i+"年</option>";
+																else
+																	ttt__ +="<option value='"+i+"'>"+i+"年</option>";
+	                                                      	}
+	                                                      	document.getElementById("soil_begin").innerHTML = ttt__;
+	                                                      	document.getElementById("soil_end").innerHTML = ttt__;
+	                                                      //]]>
+	                                                      	</script>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">酸碱度(PH)</td>
+	                                                  <td  valign="middle" align="left" class="tc_strong"> 
+	                                                      	<input type="text"  class="form-control nw221" style="width:74px;float:left" id="soil_ph" name="soil_ph"/>
+	                                                      <span style="line-height:30px">&#160;&#160;0--14</span>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:45px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">用途</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                      	<select id="soil_route_of" name="soil_route_of">
+	                                                      	<a4j:repeat value="#{mapHome.routeOfList}" var="f" >
+	                                                      		<option value="#{f.dataDicId}">#{f.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select></div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:45px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">污染状况</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                      	<select id="soil_pollution_status" name="soil_pollution_status">
+	                                                      	<a4j:repeat value="#{mapHome.polluteList}" var="f" >
+	                                                      		<option value="#{f.dataDicId}">#{f.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select></div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:45px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">污染程度</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                      <table cellpadding="0" cellspacing="0">
+                                                              <tr>
+                                                                  <td><img src="#{request.contextPath}/asset/images/textarea_01.jpg" width="4" height="4" /></td>
+                                                                  <td width="100%" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_03.jpg) repeat-x;"></td>
+                                                                  <td><img src="#{request.contextPath}/asset/images/textarea_05.jpg" width="4" height="4" /></td>
+                                                              </tr>
+                                                              <tr>
+                                                                  <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_09.jpg) repeat-y;"></td>
+                                                                  <td class="" valign="top" style="background: none repeat scroll 0 0 #FFFFFF;"><textarea style="resize: none; width:160px; height:51px; border:none;" id="soil_pollution_level" name="soil_pollution_level"></textarea>
+                                                                  </td>
+                                                                  <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_11.jpg) repeat-y;"></td>
+                                                              </tr>
+                                                              <tr>
+                                                                  <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_13.jpg" width="4" height="4" /></td>
+                                                                  <td width="100%" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_14.jpg) repeat-x;"></td>
+                                                                  <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_16.jpg" width="4" height="4" /></td>
+                                                              </tr>
+                                                          </table>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:45px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">修复程度</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                      <table cellpadding="0" cellspacing="0">
+                                                              <tr>
+                                                                  <td><img src="#{request.contextPath}/asset/images/textarea_01.jpg" width="4" height="4" /></td>
+                                                                  <td width="100%" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_03.jpg) repeat-x;"></td>
+                                                                  <td><img src="#{request.contextPath}/asset/images/textarea_05.jpg" width="4" height="4" /></td>
+                                                              </tr>
+                                                              <tr>
+                                                                  <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_09.jpg) repeat-y;"></td>
+                                                                  <td class="" valign="top" style="background: none repeat scroll 0 0 #FFFFFF;"><textarea style="resize: none; width:160px; height:51px; border:none;" id="soil_repair_status" name="soil_repair_status"></textarea>
+                                                                  </td>
+                                                                  <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_11.jpg) repeat-y;"></td>
+                                                              </tr>
+                                                              <tr>
+                                                                  <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_13.jpg" width="4" height="4" /></td>
+                                                                  <td width="100%" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_14.jpg) repeat-x;"></td>
+                                                                  <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_16.jpg" width="4" height="4" /></td>
+                                                              </tr>
+                                                          </table>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:45px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">备注</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                      <table cellpadding="0" cellspacing="0">
+                                                              <tr>
+                                                                  <td><img src="#{request.contextPath}/asset/images/textarea_01.jpg" width="4" height="4" /></td>
+                                                                  <td width="100%" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_03.jpg) repeat-x;"></td>
+                                                                  <td><img src="#{request.contextPath}/asset/images/textarea_05.jpg" width="4" height="4" /></td>
+                                                              </tr>
+                                                              <tr>
+                                                                  <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_09.jpg) repeat-y;"></td>
+                                                                  <td class="" valign="top" style="background: none repeat scroll 0 0 #FFFFFF;"><textarea style="resize: none; width:160px; height:51px; border:none;" id="soil_description" name="soil_description"></textarea>
+                                                                  </td>
+                                                                  <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_11.jpg) repeat-y;"></td>
+                                                              </tr>
+                                                              <tr>
+                                                                  <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_13.jpg" width="4" height="4" /></td>
+                                                                  <td width="100%" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_14.jpg) repeat-x;"></td>
+                                                                  <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_16.jpg" width="4" height="4" /></td>
+                                                              </tr>
+                                                          </table>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                </ul>
+                                </div>
+                                <div class="clear"></div>
+                                <div class="tc_bottom">
+                                <table style="margin:auto;">
+                                 <tr>
+                                <td width="50%" align="right" style="padding-right:2px">
+                                        <a4j:commandButton styleClass="btn btn-primary" value="保存" onclick="if(!checkSoil())return false;" style="cursor: pointer;" action="#{mapHome.updateSoil}" data="#{mapHome.re_soil_json}" oncomplete="soil_ok(data)"/>
+								</td>
+								<td width="50%" align="left">	
+	                            	<input type="button" class="btn btn-default" value="取消" style="  cursor:pointer"  onclick="soil_no()"/>
+	                            </td>
+                              </tr>
+                                 </table>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+                                <a4j:form ajaxSubmit="true" id="landForm">
+                                <div class="rightNo rightNo12" style="display:none">
+                                <div class="tc_rw_rw2" z-height="330">
+	                                <ul class="tc_ul">
+	                                	<li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">分区</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                      	<input type="text" id="land_partitionName" name="land_partitionName" style="background: none repeat scroll 0 0 #FFFFFF;font-family: '微软雅黑';font-size: 14px;" readonly="readonly"/>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">测试日期</td>
+	                                                 <td align="left" class="tc_strong" width="200">
+	                                                 <input type="hidden" value="" id="land_partitionId" name="land_partitionId"/>
+	                                                 <input type="hidden" value="" id="land_id" name="land_id"/>
+   													<div class="input-append date land_testDate form_datetime "  >
+    <input size="23" type="text" value="" readonly="readonly" id="landForm:land_testDateInputDate" name="landForm:land_testDateInputDate" autocomplete="off" />
+    <span class="add-on" style="height:14px"><i class="icon-th"></i></span>
+    </div>  
+    <script type="text/javascript">
+    _Q(document).ready(function(){
+    	_Q(".land_testDate").datetimepicker({
+    	    format: "yyyy-mm-dd",
+    	    autoclose: true,
+    		 weekStart: 1,
+    		 language:  'zh-CN',
+    	   minView:2,
+    	    pickerPosition: "bottom-left"
+    	    });
+    });
+    </script>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                    <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">测试机构</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px" id="land_testOrg" name="land_testOrg" /></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">酸碱度</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px" id="land_phVal" name="land_phVal" /></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">可溶性盐浓度（EC值）</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px" id="land_ecVal" name="land_ecVal" /></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">土壤容重</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px" id="land_soilBulkDensity" name="land_soilBulkDensity" /></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">土壤机械组成</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px" id="land_soilComposition" name="land_soilComposition" /></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">土壤水分</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_soilWater" name="land_soilWater" /><font style="position:relative; top:5px; font-size:14px">%</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">全氮量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_nitrogen" name="land_nitrogen" /><font style="position:relative; top:5px; font-size:14px">%</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">全磷量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_phosphorus" name="land_phosphorus" /><font style="position:relative; top:5px; font-size:14px">%</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">全钾量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_potassium" name="land_potassium" /><font style="position:relative; top:5px; font-size:14px">%</font></td></tr></table>
+	                                     </li>
+	                                     
+	                                     
+	                                     
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有机质含量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_organicVal" name="land_organicVal" /><font style="position:relative; top:5px; font-size:14px">%</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">阳离子交换量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_cec" name="land_cec" /><font style="position:relative; top:5px; font-size:14px">mol/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">氧化还原电位</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_redoxPotential" name="land_redoxPotential" /><font style="position:relative; top:5px; font-size:14px">mV</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">速效氮量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_availableNitrogen" name="land_availableNitrogen" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">速效磷量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_availablePhosphorus" name="land_availablePhosphorus" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">速效钾量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_availableK" name="land_availableK" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">交换性钙</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_exchangeCa" name="land_exchangeCa" /><font style="position:relative; top:5px; font-size:14px">cmol/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">交换性镁</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_exchangeMg" name="land_exchangeMg" /><font style="position:relative; top:5px; font-size:14px">cmol/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">全量钙</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_totalCa" name="land_totalCa" /><font style="position:relative; top:5px; font-size:14px">g/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">全量镁</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_totalMg" name="land_totalMg" /><font style="position:relative; top:5px; font-size:14px">g/kg</font></td></tr></table>
+	                                     </li>
+	                                     
+	                                     
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">全量钠</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_totalSodium" name="land_totalSodium" /><font style="position:relative; top:5px; font-size:14px">g/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">总汞</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_countMercury" name="land_countMercury" /><font style="position:relative; top:5px; font-size:14px">mg/L</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">总砷</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_countArsenic" name="land_countArsenic" /><font style="position:relative; top:5px; font-size:14px">mg/L</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">总铬</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_countChrome" name="land_countChrome" /><font style="position:relative; top:5px; font-size:14px">mg/L</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">总铅</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_countLead" name="land_countLead" /><font style="position:relative; top:5px; font-size:14px">mg/L</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">总镍</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_countNickel" name="land_countNickel" /><font style="position:relative; top:5px; font-size:14px">mg/L</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">总镉</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_countCadmium" name="land_countCadmium" /><font style="position:relative; top:5px; font-size:14px">mg/L</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有效硼</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_effectiveBoron" name="land_effectiveBoron" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有效钼</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_wffectiveMolybdenum" name="land_wffectiveMolybdenum" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有效锌</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_wffectiveZn" name="land_wffectiveZn" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     
+	                                     
+	                                     
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有效锰</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_effectiveManganese" name="land_effectiveManganese" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有效铁</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_effectiveIron" name="land_effectiveIron" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有效铜</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_effectiveCopper" name="land_effectiveCopper" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">全硒</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_countSe" name="land_countSe" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有效硫</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_effectiveSulfur" name="land_effectiveSulfur" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">有效硅</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_effectiveSilicon" name="land_effectiveSilicon" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">氯离子含量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_chlorideIonContent" name="land_chlorideIonContent" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">除草剂残留量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_herbicideResidues" name="land_herbicideResidues" /><font style="position:relative; top:5px; font-size:14px">mg/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">硫酸根离子含量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_sulfateIonContent" name="land_sulfateIonContent" /><font style="position:relative; top:5px; font-size:14px">g/kg</font></td></tr></table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0"><tr><td align="right" class="tc_font">交换性盐基及盐基总量</td><td align="left" class="tc_strong">
+                                             	<input type="text" class="form-control nw221" style="width:170px;float:left" id="land_exchangeTotalBase" name="land_exchangeTotalBase" /><font style="position:relative; top:5px; font-size:14px">cmol/Kg</font></td></tr></table>
+	                                     </li>
+	                                </ul>
+                                </div>
+                                <div class="clear"></div>
+                                <div class="tc_bottom">
+                                <table style="margin:0 auto;">
+                                 <tr>
+                                <td width="50%" align="right" style="padding-right:2px">
+                                        <a4j:commandButton styleClass="btn btn-primary" value="保存"  onclick="if(!checkland())return false;" eventsQueue="mainQueue" style="cursor: pointer;" action="#{mapHome.updateLand}" data="#{mapHome.re_land_json}" oncomplete="land_ok(data)"/>
+								</td>
+								<td  width="50%" align="left">	
+	                            	<input type="button" class="btn btn-default" value="取消" style=" cursor:pointer"  onclick="land_no()"/>
+	                            </td>
+                              </tr>
+                                 </table>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+                                <a4j:form ajaxSubmit="true" id="partitionForm">
+                                <div class="rightNo rightNo3">
+                                <div class="tc_rw_rw2" z-height="146">
+	                                <ul class="tc_ul">
+	                                  	<li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">分区名称</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  		<input type="hidden" value="" id="partition_id" name="partition_id" />
+															<input type="hidden" value="" id="base_id" name="base_id"/>
+															<input type="hidden" value="" id="partition_index" name="partition_index"/>
+															   <input type="hidden" value="2" id="partbtype" name="partbtype"/>
+	                                                      	<input type="text" class="form-control nw221" style="width:170px" id="partition_name" name="partition_name" />
+	                                                      	<input type="hidden" id="partition_x" name="partition_x" />
+	                                                      	<input type="hidden" id="partition_y" name="partition_y" />
+	                                                      	<input type="hidden" id="partition_group" name="partition_group"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">颜色</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                      	<rich:colorPicker colorMode="hex" id="color"></rich:colorPicker>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">面积</td>
+	                                                  <td align="left" class="tc_strong150">
+	                                                      	<input type="text" class="form-control nw221" style="width:170px;float:left" id="partition_area" name="partition_area"/>
+	                                                    	 <font style="position:relative; top:5px; font-size:14px">亩</font>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">描述</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                      <table cellpadding="0" cellspacing="0">
+                                                              <tr>
+                                                                  <td><img src="#{request.contextPath}/asset/images/textarea_01.jpg" width="4" height="4" /></td>
+                                                                  <td width="100%" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_03.jpg) repeat-x;"></td>
+                                                                  <td><img src="#{request.contextPath}/asset/images/textarea_05.jpg" width="4" height="4" /></td>
+                                                              </tr>
+                                                              <tr>
+                                                                  <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_09.jpg) repeat-y;"></td>
+                                                                  <td class="" valign="top"><textarea style="width:160px; height:50px; border:none;" id="partition_description" name="partition_description" ></textarea>
+                                                                  </td>
+                                                                  <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_11.jpg) repeat-y;"></td>
+                                                              </tr>
+                                                              <tr>
+                                                                  <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_13.jpg" width="4" height="4" /></td>
+                                                                  <td width="100%" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_14.jpg) repeat-x;"></td>
+                                                                  <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_16.jpg" width="4" height="4" /></td>
+                                                              </tr>
+                                                          </table>
+	                                                      
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li><table>
+	                                     <tr><td>
+	                                     <div style="margin-top: 24px;font-size:14px">
+	                                              	土地使用记录
+	                                                       	&#160;&#160;&#160;&#160;&#160;&#160;<a href="#" onclick="addsoil()">添加</a>
+	                                                       	</div>
+	                                     </td></tr><tr><td>
+	                                     <table cellspacing="0" cellpadding="0" class="spctab_le soil_table" style="width:95%; float:left;"> 
+                                         </table></td></tr><tr><td>
+	                                     <div style="font-size:14px">
+	                                              	土地检测记录
+	                                                       	&#160;&#160;&#160;&#160;&#160;&#160;<a href="#" onclick="addland()">添加</a>
+	                                                       	</div>
+	                                     </td></tr><tr><td>
+                                         <table cellspacing="0" cellpadding="0" class="spctab_le land_table" style="width:95%; float:left;"> 
+                                         </table></td></tr>
+                                         </table>
+                                         </li>
+	                                </ul>
+                                </div>
+                                <div class="clear"></div>
+                                <div class="tc_bottom" >
+                                <table style="margin:auto;">
+                                <tr><td style="padding-right:2px">
+                                        <a4j:commandButton  styleClass="btn btn-primary" value="保存"  eventsQueue="default" style="cursor: pointer;" onclick="if(!checkSecond())return false;if(!productCountclick()){return false;};" action="#{mapHome.updatePartition}" data="#{mapHome.re_part_id}" oncomplete="_Q('#partition_id').val(data);part_ok('#{request.contextPath}/map/PartitionList.seam')"/>
+								</td><td><input type="button" class="btn btn-default" value="取消" style="  cursor:pointer"  onclick="part_no('#{request.contextPath}/map/PartitionList.seam');"/>
+                                       <input type="button" value="delete" onclick="part_delete()" style="display:none;"/>
+                                 </td></tr>	 </table>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+                                    </div>
+                          </td>
+                      </tr>
+                    </table>
+  </li>
+                                </ul>
+                    <!--右侧弹出框结束-->
+                
+                <script type="text/javascript">
+                var markstr = #{mapHome.baseString};
+                var secondstr = #{mapHome.partitionString};
+                var soilStr = #{mapHome.soilStr};
+                var landStr = #{mapHome.landStr};
+                var _center = "#{mapHome.center}";
+                </script>
+                <script src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script> 
+   <script type="text/javascript" src="#{request.contextPath}/asset/js/map/map_partition.js"> </script>  
+<script type="text/javascript">
+//<![CDATA[
+var noneOption = "<option value='0'>暂无数据</option>";
+
+function checkSecond(){
+	if(_Q("#partition_name").val().length>45){
+		alert("分区名称长度不能超过45个字符!")
+		return false;
+	}
+	
+	if(_Q("#partition_description").val().length>500){
+		alert("分区描述文字不能超过500个字符!")
+		return false;
+	}
+	
+	var val = _Q("#partition_area").val();
+	if(isNaN(val)){
+		alert("请填写正确的亩数!")
+		return false;
+	}
+	return true;
+}
+ window.flag = 0;
+	function productCountclick(){
+		if(window.flag == 0){
+		 	window.flag = 1;
+	   	 	return true;
+		}
+		return false;
+	}
+	
+_Q(document).ready(function(){
+	
+	_Q("select").each(function(){
+			if(_Q(this).find("option").length==0){
+				_Q(this).append(noneOption);
+			}
+		});
+	_Q('select').selectpicker();
+	_Q(".tc_rw_rw2").not(".yanshi").each(function(index){
+		var _height = document.body.clientHeight- 161;
+		_Q(this).css("height",_height +"px ");
+	});
+	_Q("#map-canvas").css("height", document.body.clientHeight- 60 +"px ");
+	_Q("#map-canvas").css("width", document.body.clientWidth- 80 +"px ");
+	_Q("#floatTools").css("height",document.body.clientHeight- 60 +"px ");
+	_Q("#partitionForm\\:color").attr("class","formcolor");
+	_Q("input[name='partitionForm:color']").attr("name","partitionFormColor").attr("id","partitionFormColor").hide();
+	_Q("#partitionFormColor").parent().find(".rich-color-picker-icon").bind("click",function(){
+		setTimeout('colorPic2(_Q("#partitionFormColor"))',10);
+		});
+	_Q("#divFloatToolsView_").css("height",document.body.clientHeight- 60+"px ");
+	_Q("#divFloatToolsView_").css("width",368+"px");
+	
+	
+});  
+var ie7 = navigator.userAgent.split(";")[1].toLowerCase().indexOf("msie 7.0")=="-1"?false:true;
+
+function colorPic2(obj){
+	_Q(obj).parent().parent().find(".rich-color-picker-wrapper").css({"top":"85px","left":"70px","position":"absolute"}).show();
+	if(ie7)
+		_Q(obj).parent().parent().find(".rich-color-picker-wrapper").css({"top":"94px","left":"70px","position":"absolute"}).show();
+	}
+
+		_Q(document).resize(function(){
+				_Q(".tc_rw_rw2").css("height",document.body.clientHeight- 161 +"px ");
+				_Q(".floatL").css("height", document.body.clientHeight- 60 +"px ");
+			});
+		_Q(document).ready(function()
+				{
+			_Q(".rich-color-picker-new-color").remove();
+			_Q(".rich-color-picker-new-color").remove();
+			_Q(".rich-color-picker-current-color").remove();
+			_Q(".rich-color-picker-rgb-r").remove();
+			_Q(".rich-color-picker-rgb-g").remove();
+			_Q(".rich-color-picker-rgb-b").remove();
+			_Q(".rich-color-picker-hsb-h").remove();
+			_Q(".rich-color-picker-hsb-s").remove();
+			_Q(".rich-color-picker-hsb-b").remove();
+			_Q(".rich-color-picker-colors-input").remove();
+			_Q(".rich-color-picker-hex-wrapper").remove();
+			_Q(".rich-color-picker-ext").css("height","195px");
+			_Q(".rich-color-picker-wrapper").css("left","10px");
+			_Q(".rich-color-picker-wrapper").css("width","200px");
+			_Q(".rich-color-picker-submit").css({"top":"170px","left":"30px","width": "50px", "height": "20px"}).html("确定");
+			_Q(".rich-color-picker-cancel").css({"top":"170px","left":"120px","width": "50px", "height": "20px"}).html("取消");
+				});
+
+		function checkSoil(){
+			var obj = document.getElementById("soil_ph");
+			var test = /^[+]?(([1-9]\d*[.]?)|(0.))(\d{0,2})?$/;
+			
+			var a = parseFloat(obj.value);
+			if(!test.test(obj.value)||a<=0||a>14){
+				alert("请填写0--14之间的数字!");
+				return false;
+			}
+			return true;
+		}
+		function checkland(){
+			var obj = document.getElementById("land_phVal");
+			var test = /^[+]?(([1-9]\d*[.]?)|(0.))(\d{0,2})?$/;
+			var a = parseFloat(obj.value);
+			if(!test.test(obj.value)||a<=0||a>14){
+				alert("酸碱度请填写0--14之间的数字!");
+				return false;
+			}
+			return true;
+		}
+					//]]>
+</script>
+<style>
+.datetimepicker-dropdown-bottom-left:before {
+    border-bottom: 7px solid rgba(0, 0, 0, 0.2);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 6px;
+    top: -7px;
+}
+.datetimepicker-dropdown-bottom-left:after {
+    border-bottom: 6px solid #ffffff;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 7px;
+    top: -6px;
+}
+.sw170{width:170px;}
+.sw170 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+    width: 170px;
+}
+
+
+.icon-th {
+    background-position: -240px 0;
+}
+.form_datetime input{border:1px solid #CCC; height:30px; line-height:30px;width:170px}
+.icon-arrow-left { background-position: -240px -96px; } .icon-arrow-right { background-position: -264px -96px; } .dropdown-menu { position: absolute; top: 100%; left: 0; z-index: 1000; display: none; float: left; min-width: 160px; padding: 5px 0; margin: 2px 0 0; font-size: 14px; text-align: left; list-style: none; background-color: #fff; -webkit-background-clip: padding-box; background-clip: padding-box; border: 1px solid #ccc; border: 1px solid rgba(0, 0, 0, .15); border-radius: 4px; -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175); box-shadow: 0 6px 12px rgba(0, 0, 0, .175); } .form_datetime input { border: 1px solid #ccc; height: 30px; line-height: 30px; }
+.input-append.date .add-on i, .input-prepend.date .add-on i {
+  cursor: pointer;
+    height: 14px;
+    margin-left: -41px;
+    margin-top:9px; /* IE8支持 */ 
+    width: 14px;
+}
+@media all and (-webkit-min-device-pixel-ratio:0){
+.add-on {height:14px;
+position: relative;
+z-index:10;
+
+display: block;
+
+}
+ .input-append.date .add-on i, .input-prepend.date .add-on i {
+  cursor: pointer;
+    height: 14px;
+    /*margin-left: -49px;*/  
+    width: 14px;
+ 
+ }
+}
+
+.map_sele4 li{ float: none;
+    height: 26px;
+    margin-right: 0px;
+    width:auto;
+   }
+.add-on{height: 14px; float: left; position: relative; z-index: 10; left: 194px;
+
+}
+</style>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/tab.js"></script>
+<script type="text/javascript">
+</script>
+            </td> 
+</ui:define>
+</ui:composition>

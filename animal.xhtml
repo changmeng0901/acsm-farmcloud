@@ -1,0 +1,1095 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib" contentType="text/html">
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title>畜牧履历</title>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/map/idangerous.swiper.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/record/commons.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/livestock/animalResume.css" />
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/map/idangerous.swiper.min.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/map/swiper.animate1.0.2.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+    
+    <style>
+
+div.tck_modal{ position:fixed; width:100%; max-width:100%; max-height:100%; height:100%; left:0; top:0;display:none;  background: url(../asset/images/tck.png) repeat;}
+.modal_wap{ position:fixed; left:50%; top:50%; width:290px; height:220px; margin-left:-145px; margin-top:-110px; background:#fff; border-radius:5px;}
+.modal_block{ position:relative; width:100%; height:100%; padding:10px 15px; box-sizing:border-box;}
+.modal_block .redEnvelope_logo{ position:absolute; left:50%; top:-30px; margin-left:-115px; width:230px; height:55px;}
+.modal_block .tck_close{ position:absolute; right:-14px; top:-14px; width:28px; height:28px; cursor:pointer;}
+.modal_block .tck_close img{ width:100%; height:100%;}
+.modal_block .p_tip{ line-height:22px; margin:30px 0 20px 0; font-size:16px; text-indent:32px; font-weight:bold; color:#959595;}
+.modal_block .input_txt{ width:100%; height:40px; margin-bottom:10px; padding:0 20px; border:1px solid #efefef; border-radius:5px; box-shadow:inset 0 2px 2px #e2e2e2; box-sizing:border-box; background-color:#f7f7f7; font-size:16px; color:#aaa;}
+.modal_block .input_btn{ width:100%; height:40px; padding:0 20px; border:none; border-radius:5px; box-shadow:inset 0 -2px 2px #3ba33b; box-sizing:border-box; background-color:#5cb85c; font-size:18px; color:#fff; cursor:pointer;}
+.modal_block .input_btn:hover,
+.modal_block .input_btn:focus{ background-color:#4ea24e;}
+
+/* 分享提示样式 */
+.share_block{ position:fixed; right:20px; top:10px; width:206px; padding:62px 0 10px 0; box-sizing:border-box; background:url(../asset/images/redEnvelope_share1.png) no-repeat;}
+.share_block .know_btn{ margin-left:36px; display:inline-block; height:34px; line-height:20px; padding:6px 19px; border:1px solid #7dd47d; border-radius:4px; box-sizing:border-box; background-color:#5db75d;color:#fff;}
+.share_block .know_btn:hover{ background-color:#339c33;}
+.krpano_iframe{ position:fixed; left:0; top:0;z-index:2000; display:none; background:#000;}
+
+.cookbook_block img{ max-width: 100%;}
+.tck_modal{z-index:2;}
+
+/* 权限弹出框 */
+.maturity_block .tip_pic {padding-bottom: 10px;text-align: center;}
+.maturity_block .tip_txt1 {line-height: 22px;text-align: center;}
+.maturity_block {position: fixed;left: 50%;top: 50%;z-index: 502;width: 300px;margin:-73px 0 0-150px;padding: 20px 10px;border-radius: 8px;box-shadow: 0 0 15px -2px #564f3d;box-sizing: content-box;background-color: #fff;font-size: 14px;color: #333;}
+.black_op50 {position: fixed;left: 0;top: 0;right: 0;bottom: 0;z-index: 501;background-color: #000;opacity: 0.5;filter: alpha(opacity=50);} 
+/* 全景 */
+.return_iframB {position: absolute;left: 10px;top: 96px;z-index: 2002;height: 32px;line-height: 32px;padding: 0 10px;background-color: #b0d562;border-radius: 16px;font-size: 14px;color: #fff;}
+</style>
+</head>	
+
+<body>
+<div class="wechat_wapper">
+
+	<div class="maturity_block" style="display:none;">
+    	<p class="tip_pic"><img src="/asset/images/map/maturity_ico2.png" /></p>
+        <p class="tip_txt1">抱歉，您的履历不存在！</p>
+	</div>
+	<div class="black_op50" style="display:none;"></div>
+	<!-- 头部 -->
+	<div class="resume_header clear" id="logo_s2">
+    	<a class="logo_link fl" href="#">
+    		<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.topPicUrl!=null}">
+				<img style="margin-left: 15px; max-width:100px;max-height:100px;display:" src="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.topPicUrl}" id="logo_s"/>
+			</ui:fragment>
+			<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.topPicUrl==null}">
+				<img style="margin-left: 15px;max-width:100px;max-height:100px; display:" src="#{request.contextPath}/asset/images/logo_yt.png" id="logo_s" />
+			</ui:fragment>
+    	</a>
+        <i class="btn_share fr" id="click_b_showbtn1" onClick="BottomModalShow(1)"><img width="100%" height="100%" src="#{request.contextPath}/asset/images/return.png" /></i>
+    </div>
+    <!-- 畜牧基础信息 -->
+    <div class="base_info_wap">
+    	<div class="growing_season" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.statusShow &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.animalStatusId!=null &amp;&amp; animalRecordHome.ageDay &gt; -1?'':'display:none;'}">
+        	<i class="pos_bg"><img src="#{request.contextPath}/asset/images/livestock/resume_icon_season.png" /></i>
+            <p class="text_name" style="overflow:hidden;word-break:break-all;white-space:nowrap;">#{animalRecordHome.livestockHistory.animalsArchivesInfoId.animalStatusId.name}</p>
+            <p class="text_day"><font class="font16">#{animalRecordHome.ageDay}</font>天</p>
+        </div>
+        <div class="resume_pics">
+        	<i class="icon_qual" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.detectShow?'':'display:none;'}"><img src="#{request.contextPath}/asset/images/livestock/animalResume_icon_qual1.png" /></i>
+        	<ui:fragment rendered="#{animalRecordHome.livestockHistory.animalImage!=null &amp;&amp; animalRecordHome.livestockHistory.animalImage!=''}">
+				<img src="#{animalRecordHome.livestockHistory.animalImage}@1000-1ci.png" class="img_pics" /> 
+			</ui:fragment>
+			<ui:fragment rendered="#{animalRecordHome.livestockHistory.animalImage==null || animalRecordHome.livestockHistory.animalImage==''}">
+	        	<ui:fragment rendered="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=null &amp;&amp;animalRecordHome.livestockHistory.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=''}">
+		       		<img  class="img_pics"  src="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.animalBreedId.imgRoundUrl}@1000-1ci.png"/> 
+		        </ui:fragment>
+		        <ui:fragment rendered="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.animalBreedId.imgRoundUrl==null || animalRecordHome.livestockHistory.animalsArchivesInfoId.animalBreedId.imgRoundUrl==''}">
+		        	<img class="img_pics"   src="#{request.contextPath}/asset/images/livestock/animalResume_pic1.png"/>
+		        </ui:fragment> 
+	        </ui:fragment>
+        </div>
+        <p class="text_rebrand font18">#{animalRecordHome.livestockHistory.animalsArchivesInfoId.animalBreedId.name}</p>
+        <p class="text_number font12">编号&nbsp;#{animalRecordHome.livestockHistory.animalsArchivesInfoId.eartagNumber}</p>
+        <img class="bg_nczda" src="#{request.contextPath}/asset/images/livestock/animalResume_bg1.png" />
+    </div>
+    <div class="base_info_list con_box">
+    	<dl class="dl_item clear" style="display:#{animalRecordHome.animalPosition==''?'none':''};">
+        	<dt class="dl_dt">
+            	<img src="#{request.contextPath}/asset/images/livestock/animalResume_icon_info1.png" />
+            </dt>
+            <dd class="dl_dd font14">
+            	<p class="text_name">#{animalRecordHome.animalPosition}</p>
+            </dd>
+        </dl>
+        <dl class="dl_item clear" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.birthdayShow &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.bornTime != null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.bornTime!=''?'':'display:none;'}">
+        	<dt class="dl_dt">
+            	<img src="#{request.contextPath}/asset/images/livestock/animalResume_icon_info2.png" />
+            </dt>
+            <dd class="dl_dd font14">
+            	<p class="text_name">出生日期：<h:outputText value="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.bornTime}" ><f:convertDateTime pattern="yyyy年MM月dd日" timeZone="GMT+8"/> </h:outputText></p>
+            </dd>
+        </dl>
+        <dl class="dl_item clear">
+        	<dt class="dl_dt">
+            	<img src="#{request.contextPath}/asset/images/livestock/animalResume_icon_info3.png" />
+            </dt>
+            <dd class="dl_dd font14">
+            	<p class="text_name">圈舍：#{animalRecordHome.livestockHistory.animalsArchivesInfoId.tunnelInfoId.tunnelName}</p>
+            </dd>
+        </dl>
+    </div>
+    <!-- 会员加入、分享红包、我要购买、四季田景 -->
+    <ul class="purchase_again clear">
+        <li class="items">
+           	<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.membershipShow}">
+	            <ui:fragment rendered="#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow}">
+	            	<a href="javascript:;" id="tckLink_btn1">
+	                	<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoA31.jpg" />
+	                </a>
+	            </ui:fragment>
+           		<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow}">
+	            	<a href="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.membershipAddress eq ''?'#':animalRecordHome.livestockHistory.livestockHistoryTemplateId.membershipAddress}">
+	                	<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoA31.jpg" />
+	                </a>
+	            </ui:fragment>
+			</ui:fragment>
+              <ui:fragment rendered="#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.membershipShow}">
+            	<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoB3.jpg" />
+				</ui:fragment>
+            <p class="txt font14">会员加入</p>
+        </li>
+        <li class="items">
+            <ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountShow}">
+               	<ui:fragment rendered="#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow}">
+	            	<a href="javascript:;" id="tckLink_btn2">
+                		<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoA2.jpg" />
+	                </a>
+	            </ui:fragment>
+           		<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow}">
+	            	<a href="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountAddress eq ''?'#':animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountAddress}">
+                		<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoA2.jpg" />
+	                </a>
+	            </ui:fragment>
+             </ui:fragment>
+             <ui:fragment rendered="#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountShow}">
+                	<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoB2.jpg" />
+             </ui:fragment>
+            <p class="txt font14">分享红包</p>
+        </li>
+        <li class="items">
+            <ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.twiceBuyShow}">
+        	 	<ui:fragment rendered="#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow}">
+	            	<a href="javascript:;" id="tckLink_btn3">
+                	<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoA1.jpg" />
+	                </a>
+	            </ui:fragment>
+           		<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow}">
+	                <ui:fragment rendered="#{animalRecordHome.livestockHistory.twiceBuyAddress == '' || animalRecordHome.livestockHistory.twiceBuyAddress==null}">
+		                <a href="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.twiceBuyAddress}">
+                			<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoA1.jpg" />
+		                </a>
+	                </ui:fragment>
+	                <ui:fragment rendered="#{animalRecordHome.livestockHistory.twiceBuyAddress != '' &amp;&amp; animalRecordHome.livestockHistory.twiceBuyAddress!=null}">
+	                 	<a href="#{animalRecordHome.livestockHistory.twiceBuyAddress}">
+                			<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoA1.jpg" />
+		                </a>
+	                </ui:fragment>
+	            </ui:fragment>
+        	 </ui:fragment>
+        	  <ui:fragment rendered="#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.twiceBuyShow}">
+               	 <img class="icoA" src="#{request.contextPath}/asset/images/peach_icoB1.jpg" />
+        	 </ui:fragment>
+        	 <p class="txt font14">我要购买</p>
+        </li>
+        <li class="items itemsNo"> 
+            <ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.krpanosShow &amp;&amp; animalRecordHome.krpanosList.size() &gt; 0}">
+        	 	<a onclick="openJj('#{animalRecordHome.livestockHistory.enterpriseInfoId}')" style="cursor: pointer;">
+        	 		<img class="icoA krpanosShow" src="#{request.contextPath}/asset/images/peach_icoA4.jpg" />
+        	 	</a>
+        	 </ui:fragment>
+        	  <ui:fragment rendered="#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.krpanosShow || animalRecordHome.krpanosList.size() == 0}">
+                <img class="icoA krpanosShow1" src="#{request.contextPath}/asset/images/peach_icoB4.jpg" />
+        	 </ui:fragment>
+            <p class="txt font14">四季田景</p>
+        </li>
+    </ul>
+    <!-- 农场档案 -->
+    <div class="con_box" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.archivesShow?'':'display:none;'}">
+    	<div class="record_hd clear">
+        	<div class="record_title font14">
+            	<i class="pos_bg"><img src="#{request.contextPath}/asset/images/livestock/animalResume_bg2.png" /></i>农场档案
+            </div>
+        </div>
+       	<img class="archive_pic" src="#{animalRecordHome.ei.entImageUrl}@200h_302w.src" style="display:#{animalRecordHome.ei.entImageUrl eq null or animalRecordHome.ei.entImageUrl eq ''?'none':'block'};width: 302px;height: 200px;"/>
+        <dl class="archive_info clear">
+        	<dt class="ar_dt" style="display:#{animalRecordHome.ei.entPictureUrl eq null or animalRecordHome.ei.entPictureUrl eq ''?'none':'block'}">
+            	<img src="#{animalRecordHome.ei.entPictureUrl}" />
+            </dt>
+            <dd class="ar_dd" style="display:#{animalRecordHome.ei.description eq null or animalRecordHome.ei.description eq ''?'none':'block'}">
+            	<p class="text_con font14">#{animalRecordHome.ei.description}
+                </p>
+            </dd>
+        </dl>
+        <table class="farm_contact" width="100%" cellpadding="0" cellspacing="0">
+        	<tr style="display:#{animalRecordHome.ei.microBlog eq null or animalRecordHome.ei.microBlog eq ''?'none':'block'}">
+            	<td class="text_icon"><img src="#{request.contextPath}/asset/images/farmico_11.png" />新浪微博：</td>
+                <td class="text_name">#{animalRecordHome.ei.microBlog}</td>
+            </tr>
+        	<tr style="display:#{animalRecordHome.ei.microMessage eq null or animalRecordHome.ei.microMessage eq ''?'none':'block'}">
+            	<td class="text_icon"><img src="#{request.contextPath}/asset/images/farmico_14.png" />腾讯微博：</td>
+                <td class="text_name">#{animalRecordHome.ei.microMessage}</td>
+            </tr>
+        	<tr style="display:#{animalRecordHome.ei.website eq null or animalRecordHome.ei.website eq ''?'none':'block'}">
+            	<td class="text_icon"><img src="#{request.contextPath}/asset/images/farmico_17.png" />网<span class="two12"></span>址：</td>
+                <td class="text_name">#{animalRecordHome.ei.website}</td>
+            </tr>
+        	<tr style="display:#{animalRecordHome.ei.contact eq null or animalRecordHome.ei.contact eq ''?'none':'block'}">
+            	<td class="text_icon"><img src="#{request.contextPath}/asset/images/farmico_18.png" />联<span class="half12"></span>系<span class="half12"></span>人：</td>
+                <td class="text_name">#{animalRecordHome.ei.contact} </td>
+            </tr>
+        	<tr style="display:#{animalRecordHome.ei.contactPhone eq null or animalRecordHome.ei.contactPhone eq ''?'none':'block'}">
+            	<td class="text_icon"><img src="#{request.contextPath}/asset/images/farmico_21.png" />联系电话：</td>
+                <td class="text_name">#{animalRecordHome.ei.contactPhone}</td>
+            </tr>
+        </table>
+        <div class="farm_envior clear" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.growthShow &amp;&amp; animalRecordHome.lhiList.size()!=0?'':'display:none;'}">
+        	<p class="f_pic_total">环境<font>#{animalRecordHome.lhiList.size()}</font>张</p>
+        	<a4j:repeat value="#{animalRecordHome.lhiList}" var="_var" rowKeyVar="_index">
+	        	<div class="f_pic"><img src="#{_var.imageUrl}" /></div>
+        	</a4j:repeat>
+        </div>
+    </div>
+    <!-- 养殖记录 -->
+    <div class="con_box">
+    	<div class="record_hd clear">
+        	<div class="record_title font14" style="#{empty animalRecordHome.recordList?'display:none;':''}">
+            	<i class="pos_bg"><img src="#{request.contextPath}/asset/images/livestock/animalResume_bg2.png" /></i>养殖记录
+            </div>
+            <a class="record_link font13 feedids" href="#" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.feedShow  &amp;&amp; animalRecordHome.feedsList.size()>0 ?'':'display:none;'}"><img src="#{request.contextPath}/asset/images/livestock/resume_icon1.png" />饲料信息</a>
+        </div>
+        <div class="breeding_note">
+        	<span class="bb_line"></span>
+        	<span class="bb_top"></span>
+        	<a4j:repeat value="#{animalRecordHome.recordList}" var="_var" rowKeyVar="_index">								
+	        	<dl class="note_item #{(_index+1)%2==0?'note_two':'note_one'} clear">
+	            	<dt class="note_dt fl clear">
+	                	<div class="br_date fl">
+	                    	<p class="text_day font16">
+		                    	<h:outputText value="#{_var[2]}" >
+									<s:convertDateTime type="both" dateStyle="short" pattern="dd" />
+							    </h:outputText></p>
+	                        <p class="text_month">
+		                        <h:outputText value="#{_var[2]}" >
+									<s:convertDateTime type="both" dateStyle="short" pattern="yyyy.MM" />
+							    </h:outputText>
+					    	</p>
+	                    </div>
+	                    <img class="br_icon" src="#{request.contextPath}/asset/images/livestock/animalResume_icon1.png" />
+	                </dt>
+	                <dd class="note_dd">
+	                	<div class="br_graphics">
+	                    	<div class="graphics_hd">
+	                    		<ui:fragment rendered="#{_var[6]==1 or _var[6]==2}">
+		                        	<p class="font14">#{_var[3]}记录</p>
+	                        	</ui:fragment>
+	                        	<ui:fragment rendered="#{_var[6]!=1 &amp;&amp; _var[6]!=2 &amp;&amp; _var[6]!=6}">
+		                        	<p class="font14">#{_var[3]}</p>
+		                        	<strong>操作人：#{_var[4]}</strong>
+	                        	</ui:fragment>
+	                        	<ui:fragment rendered="#{_var[6]==6}">
+		                        	<p class="font14">#{_var[3]}</p>
+		                        	<strong>#{_var[4]}℃</strong>
+	                        	</ui:fragment>
+	                        </div>
+	                        <ui:fragment rendered="#{_var[7]!=null &amp;&amp; _var[7]!=''}">
+		                        <ol class="graphics_bd clear" id="graphics_bd1" onclick="nongshiClick('#{_var[0]}#{_var[6]}')">
+		                        	<a4j:repeat value="#{_var[7].split(',')}" var="_var2" rowKeyVar="_index2">
+		                            	<li><img src="#{_var2}" /></li>
+		                        	</a4j:repeat>
+		                        </ol>
+	                        </ui:fragment>
+	                    </div>
+	                </dd>
+	            </dl>
+	       	</a4j:repeat>
+        </div>
+    </div>
+    <!-- 出栏-->
+    <div class="con_box" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.slaughterShow &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqDept!=null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqDept!=''?'':'display:none;'}">
+    	<div class="record_hd clear">
+        	<div class="record_title font14">
+            	<i class="pos_bg"><img src="#{request.contextPath}/asset/images/livestock/animalResume_bg2.png" /></i>出栏检疫
+            </div>
+            <a class="record_link font13" href="#{request.contextPath}/AnimalQuarantine.seam?useBatch=#{animalRecordHome.useBatch}" style="#{animalRecordHome.outfencesAqsiqUrlsCount &gt; 2?'':'display:none'}"><img src="#{request.contextPath}/asset/images/livestock/resume_icon2.png" />#{animalRecordHome.outfencesAqsiqUrlsCount}份</a>
+        </div>
+        <table class="report_table font14" width="100%" cellpadding="0" cellspacing="0">
+        	<tr style="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqContent!=null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqContent!=''?'':'display:none'}">
+            	<td class="text_rep1">检疫内容：</td>
+                <td class="text_rep2">#{animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqContent}</td>
+            </tr>
+            <tr style="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqDept!=null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqDept!=''?'':'display:none'}">
+            	<td class="text_rep1">检疫机构：</td>
+                <td class="text_rep2">#{animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqDept}</td>
+            </tr>
+            <tr style="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqResults!=null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqResults!=''?'':'display:none'}">
+            	<td class="text_rep1">检疫结果：</td>
+                <td class="text_rep2">#{animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqResults==1?'合格':'不合格'}</td>
+            </tr>
+            <tr style="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqUrls.length()!=0?'':'display:none;'}">
+            	<td colspan="2" align="center">
+	            	<a4j:repeat value="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.outfencesAqsiqUrls.split(',')}" var="_var" rowKeyVar="_index">
+			        	<ui:fragment rendered="#{_index &lt; 2}">
+			        		<img class="honor_certificate" src="#{_var}@246h_246w.src" />
+			        	</ui:fragment>
+			       	</a4j:repeat>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 屠宰 -->
+    <div class="con_box" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.quarantineShow &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterDept!=null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterDept!=''?'':'display:none;'}">
+    	<div class="record_hd clear">
+        	<div class="record_title font14">
+            	<i class="pos_bg"><img src="#{request.contextPath}/asset/images/livestock/animalResume_bg2.png" /></i>屠宰检疫
+            </div>
+            <a class="record_link font13" href="#{request.contextPath}/AnimalAuthentication.seam?useBatch=#{animalRecordHome.useBatch}" style="#{animalRecordHome.slaughterUrlsCount &gt; 2?'':'display:none'}"><img src="#{request.contextPath}/asset/images/livestock/resume_icon2.png" />#{animalRecordHome.slaughterUrlsCount}份</a>
+        </div>
+        <table class="report_table font14" width="100%" cellpadding="0" cellspacing="0">
+        	<tr style="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterContent!=null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterContent!=''?'':'display:none'}">
+            	<td class="text_rep1">检疫内容：</td>
+                <td class="text_rep2">#{animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterContent}</td>
+            </tr>
+            <tr style="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterDept!=null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterDept!=''?'':'display:none'}">
+            	<td class="text_rep1">检疫机构：</td>
+                <td class="text_rep2">#{animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterDept}</td>
+            </tr>
+            <tr style="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterResults!=null &amp;&amp; animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterResults!=''?'':'display:none'}">
+            	<td class="text_rep1">检疫结果：</td>
+                <td class="text_rep2">#{animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterResults==1?'合格':'不合格'}</td>
+            </tr>
+            <tr style="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterUrls.length()!=0?'':'display:none;'}">
+            	<td colspan="2" align="center">
+	            	<a4j:repeat value="#{animalRecordHome.livestockHistory.animalsArchivesInfoId.slaughterUrls.split(',')}" var="_var" rowKeyVar="_index">
+			        	<ui:fragment rendered="#{_index &lt; 2}">
+			        		<img class="honor_certificate" src="#{_var}@246h_246w.src" />
+			        	</ui:fragment>
+			       	</a4j:repeat>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 荣誉资质 -->
+    <div class="con_box" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.honorShow &amp;&amp; animalRecordHome.honorCont !=0?'':'display:none;'}">
+    	<div class="record_hd clear">
+        	<div class="record_title font14">
+            	<i class="pos_bg"><img src="#{request.contextPath}/asset/images/livestock/animalResume_bg2.png" /></i>企业荣誉
+            </div>
+            <a class="record_link font13" href="#{request.contextPath}/AnimalHonor.seam?useBatch=#{animalRecordHome.useBatch}" style="#{animalRecordHome.honorCont &gt; 10?'':'display:none;'}"><img src="#{request.contextPath}/asset/images/livestock/resume_icon2.png" />#{animalRecordHome.honorCont}份</a>
+        </div>
+        <a4j:repeat value="#{animalRecordHome.honorList}" var="_var" rowKeyVar="_index">
+        	<img class="honor_certificate" src="#{_var}@246h_246w.src" />
+       	</a4j:repeat>
+    </div>
+    <!-- 食用方法 -->
+    <div class="con_box" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.edibleShow &amp;&amp; animalRecordHome.menuContent !=''?'':'display:none;'}">
+    	<div class="record_hd clear">
+        	<div class="record_title font14">
+            	<i class="pos_bg"><img src="#{request.contextPath}/asset/images/livestock/animalResume_bg2.png" /></i>食用方法
+            </div>
+        </div>
+        <div class="cookbook_block">
+        	 <h:outputText escape="false" value="#{animalRecordHome.menuContent}" />
+        </div>
+    </div>
+    
+    <!-- 评价 -->
+    <div class="con_box" style="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.evaluationShow?'':'display:none;'}">
+    	<div class="record_hd clear">
+        	<div class="record_title font14">
+            	<i class="pos_bg"><img src="#{request.contextPath}/asset/images/livestock/animalResume_bg2.png" /></i>评<span class="one14"></span>价
+            </div>
+        </div>
+        <h:panelGroup id="ctList">
+        <table class="rating_total_table" width="100%" cellpadding="0" cellspacing="0">
+        	<tr>
+            	<td class="total_td1" rowspan="3">
+                	<p class="text_percent color_ye"><span>#{animalRecordHome.favorableComment}</span>%</p>
+                    <p class="text_name color_gr">好评度</p>
+                </td>
+                <td class="total_td2">
+                	<p class="text_name2">好评<font class="color_gr">(#{animalRecordHome.favorableComment}%)</font></p>
+                </td>
+                <td class="total_td3">
+                	<div class="ra_progress">
+                    	<span class="ra_bar" style="width:#{animalRecordHome.favorableComment}%"></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="total_td2">
+                	<p class="text_name2">中评<font class="color_gr">(#{animalRecordHome.average}%)</font></p>
+                </td>
+                <td class="total_td3">
+                	<div class="ra_progress">
+                    	<span class="ra_bar" style="width:#{animalRecordHome.average}%"></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="total_td2">
+                	<p class="text_name2">差评<font class="color_gr">(#{animalRecordHome.poor}%)</font></p>
+                </td>
+                <td class="total_td3">
+                	<div class="ra_progress">
+                    	<span class="ra_bar" style="width:#{animalRecordHome.poor}%"></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <ol class="score_list">
+        	<a4j:repeat rendered="#{not empty animalRecordHome.commentList}" value="#{animalRecordHome.commentList}" var="_var" rowKeyVar="_index">
+	        	<li>
+	            	<dl class="score_item">
+	                	<dt class="dl_name">评分:</dt>
+	                    <dd class="dl_con">
+	                    	<p class="star_score">
+	                            <img src="#{request.contextPath}/asset/images/star1_0#{_var.score ge 1?1:3}.png"/>
+	                      		<img src="#{request.contextPath}/asset/images/star1_0#{_var.score ge 2?1:3}.png"/>
+	                      		<img src="#{request.contextPath}/asset/images/star1_0#{_var.score ge 3?1:3}.png"/>
+	                      		<img src="#{request.contextPath}/asset/images/star1_0#{_var.score ge 4?1:3}.png"/>
+	                      		<img src="#{request.contextPath}/asset/images/star1_0#{_var.score ge 5?1:3}.png"/>
+	                        </p>
+	                    </dd>
+	                    <dd class="dl_date"><img src="#{request.contextPath}/asset/images/livestock/resume_icon_time.png" /><h:outputText value="#{_var.commentTime}">
+											<s:convertDateTime type="both" dateStyle="short" pattern="yyyy/MM/dd"/>
+										</h:outputText>
+	                                </dd>
+	                </dl>
+	            	<dl class="score_item">
+	                	<dt class="dl_name">心得:</dt>
+	                    <dd class="dl_con">
+	                    	<p class="p_text">#{_var.experience}</p>
+	                    </dd>
+	                </dl>
+	            </li>
+            </a4j:repeat>
+        </ol>
+        <div class="please_score">
+        	<div class="clear">
+            	<p class="text_name font13">评分:</p>
+                <p class="star_score fl">
+                    <img class="star1" onClick="changeImg(1)" src="#{request.contextPath}/asset/images/star1_01.png" />
+                    <img class="star2" onClick="changeImg(2)" src="#{request.contextPath}/asset/images/star1_01.png" />
+                    <img class="star3" onClick="changeImg(3)" src="#{request.contextPath}/asset/images/star1_01.png" />
+                    <img class="star4" onClick="changeImg(4)" src="#{request.contextPath}/asset/images/star1_01.png" />
+                    <img class="star5" onClick="changeImg(5)" src="#{request.contextPath}/asset/images/star1_01.png" />
+                </p>
+                <input type="hidden" id="scoreId" value="5" />
+            </div>
+            <textarea class="area_block">请填写您评价</textarea>
+            <p class="clear">
+            <button class="btn_primary fr" onclick="insertc()">发送</button>
+            </p>
+        </div>
+        </h:panelGroup>
+    </div>
+    <!-- 脚部 -->
+    <div class="resume_footer clear" id="foot_s2">
+    	<a href="#">
+    		<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.downPicUrl !=null}">
+				<img class="comp_logo" src="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.downPicUrl}" id="foot_s" style="width:100%;height:66px;"/>
+			</ui:fragment>
+			<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.downPicUrl==null}">
+				<img class="comp_logo" src="#{request.contextPath}/asset/images/foot_02.jpg" id="foot_s" style="width:100%;height:66px;"/>
+			</ui:fragment>
+    	</a>
+    </div>
+    <!-- 脚部结束 -->
+    
+   	<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountShow}">
+   		<div style="bottom: 50px;position:fixed;width: 80px;z-index:9999;left: 50%;margin-left: 83px;">
+	    	<ui:fragment rendered="#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow}">
+		    	<a onclick="jQuery('#tckLink_btn2').click();">
+					<img src="/asset/images/red_pack.gif" style="float: right;width: 80px;"></img>
+		        </a>
+		    </ui:fragment>
+	  		<ui:fragment rendered="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow}">
+		    	<a href="#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountAddress eq ''?'#':animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountAddress}">
+		       		<img src="/asset/images/red_pack.gif" style="float: right;width: 80px;"></img>
+		        </a>
+		    </ui:fragment>
+		</div>
+    </ui:fragment>
+</div>
+
+<!-- 分享到 -->
+<div class="modal_b_block modal_share" id="modal_b_block1" style="display:none;z-index:2;">
+	<h3 class="share_title font18">分享</h3>
+    <ol class="share_list clear">
+    	<li>
+        <a class="a_link" href="">
+        	<img src="#{request.contextPath}/asset/images/fenx2.png" />
+            <p class="p_text">腾讯微博</p>
+        </a>
+        </li>
+        <li>
+        <a class="a_link" href="">
+        	<img src="#{request.contextPath}/asset/images/fenx1.png" />
+            <p class="p_text">新浪微博</p>
+        </a>
+        </li>
+    </ol>
+	<button type="button" class="click_hidebtn font16" id="click_b_hidebtn1" onClick="BottomModalHide(1)">取消</button>
+</div>
+
+
+<!-- 环境swiper -->
+<div class="swiper-container" id="swiper_envior" style="display:none;">
+    <div class="swiper-wrapper">
+        <a4j:repeat value="#{animalRecordHome.lhiList}" var="_var" rowKeyVar="_index">
+	        <div class="swiper-slide">
+	        	<div class="slide_img">
+	            	<img class="en_pic" src="#{_var.imageUrl}" /><i class="i_space"></i>
+	            </div>
+	        </div>
+       	</a4j:repeat>
+    </div>
+
+    <div class="pos_pagination">
+        <span class="opacity_c3"></span>
+        <p class="text_num"><span class="n_cur font14">1</span>/<span class="n_total">#{animalRecordHome.lhiList.size()}</span></p>
+    </div>
+</div>
+<!-- 环境swiper -->
+
+<div class="swiper-container" id="swiper_feed" style="display:none;">
+    <div class="swiper-wrapper">
+         <a4j:repeat value="#{animalRecordHome.feedsList}" var="_var" rowKeyVar="_index">
+	        <div class="swiper-slide">
+	        	<div class="slide_img">
+	            	<img class="en_pic" src="#{_var[0]}" /><i class="i_space"></i>
+	            </div>
+	            <div class="pos_pagination">
+			        <span class="opacity_c3"></span>
+			        <em class="encior_title font14">#{_var[1]}</em>
+			        <p class="text_introduce">介绍：<span>#{_var[2]}</span></p>
+			        <p class="text_num"><span class="n_cur font14">1</span>/<span class="n_total">#{animalRecordHome.feedsList.size()}</span></p>
+			    </div>
+	        </div>
+		    
+       	</a4j:repeat>
+    </div>
+</div>
+<!-- 饲料swiper -->
+
+<!-- 养殖树swiper  -->
+<a4j:repeat value="#{animalRecordHome.recordList}" var="_var" rowKeyVar="_index">
+	<ui:fragment rendered="#{_var[7]!=null &amp;&amp; _var[7]!=''}">
+		<a4j:repeat value="#{_var[7].split(',')}" var="_var2" rowKeyVar="_index2">
+			<div class="swiper-container" id="animal_record#{_var[0]}#{_var[6]}" style="display:none;" an="ani">
+			    <div class="swiper-wrapper">
+			         <a4j:repeat value="#{_var[7].split(',')}" var="_var2" rowKeyVar="_index2">
+				        <div class="swiper-slide">
+				        	<div class="slide_img">
+				            	<img class="en_pic" src="#{_var2}" /><i class="i_space"></i>
+				            </div>
+				        </div>
+					    
+			       	</a4j:repeat>
+			    </div>
+			</div>
+		</a4j:repeat>
+	</ui:fragment>
+</a4j:repeat>
+<!-- 养殖树swiper  -->
+
+
+
+
+<!-- 会员加入弹窗 开始 -->
+    <div class="tck3 tck_modal" id="tck_modal1">
+        <div class="modal_wap">
+        	<div class="modal_block" style="left:auto;top:auto;">
+            	<img class="redEnvelope_logo" src="#{request.contextPath}/asset/images/redEnvelope_img1.png" />
+                <em class="tck_close"><img src="#{request.contextPath}/asset/images/redEnvelope_ico1.png" /></em>
+                <p class="p_tip">成为农场会员，可享受更多优惠服务哦！</p>
+                <input class="input_txt" id="hyjr" type="text" value="请输入手机号" />
+                <button class="input_btn" type="button" onclick="hySave('#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.membershipAddress}','#{animalRecordHome.livestockHistory.historyId}')">
+                #{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow &amp;&amp; animalRecordHome.livestockHistory.livestockHistoryTemplateId.membershipAddress ne '' &amp;&amp; animalRecordHome.livestockHistory.livestockHistoryTemplateId.membershipAddress ne 0?'加入并领取红包':'会员加入'}
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- 会员加入弹窗 结束 -->
+    <!-- 我要购买弹窗 开始 -->
+    <div class="tck3 tck_modal" id="tck_modal3">
+        <div class="modal_wap">
+        	<div class="modal_block" style="left:auto;top:auto;">
+            	<img class="redEnvelope_logo" src="#{request.contextPath}/asset/images/redEnvelope_img2.png" />
+                <em class="tck_close"><img src="#{request.contextPath}/asset/images/redEnvelope_ico1.png" /></em>
+                <p class="p_tip">如果您想购买，请留下您的联系方式，我们的客服人员会与您联系！</p>
+                <input class="input_txt" type="text" id="zcgm" value="请输入手机号" />
+                <button class="input_btn" type="button" onclick="gmSave('#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.twiceBuyAddress}','#{animalRecordHome.livestockHistory.historyId}')">
+               	#{!animalRecordHome.livestockHistory.livestockHistoryTemplateId.microMartShow &amp;&amp; animalRecordHome.livestockHistory.livestockHistoryTemplateId.twiceBuyAddress ne ''  &amp;&amp; animalRecordHome.livestockHistory.livestockHistoryTemplateId.twiceBuyAddress ne 0?'提交并领取红包':'会员加入'}
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- 我要购买弹窗 结束 -->
+    <!-- 分享提示 开始 -->
+   <!-- <div class="tck3 tck_modal" id="tck_modal_share">
+        <div class="share_block">
+        	<a class="tck_close know_btn" href="#">我知道了</a>
+        </div>
+    </div>-->
+    <!-- 分享提示 结束 -->
+<div class="iframe-block">
+	<em class="return_iframB" style="display:none;cursor: pointer;">
+    	<img src="/asset/images/map/page8-return.gif" />返回
+    </em>
+	<iframe src="" class="krpano_iframe"  id="krpano_iframe" frameborder="no" border="0" style="width:100%;height:100%;" ></iframe>
+</div>
+<a4j:form>
+ 	<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+ 	<a4j:jsFunction name="insertComent" action="#{animalRecordHome.insertComment}" reRender="ctList" oncomplete="huidiao()">
+		<a4j:actionparam name="score" assignTo="#{animalRecordHome.score}"/>
+		<a4j:actionparam name="experience" assignTo="#{animalRecordHome.experience}"/>
+		<a4j:actionparam name="lhId" assignTo="#{animalRecordHome.lhId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="customer" action="#{redPacketHome.customer}" data="#{redPacketHome.returnCustomer}" oncomplete="returnPack(data)">
+		<a4j:actionparam name="phone" assignTo="#{redPacketHome.phone}"/>
+		<a4j:actionparam name="couId" assignTo="#{redPacketHome.couId}"/>
+		<a4j:actionparam name="prId" assignTo="#{redPacketHome.prId}"/>
+		<a4j:actionparam name="typeAorP" assignTo="#{redPacketHome.typeAorP}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="saveForward" action="#{aerviceDataAnalysisHome.saveForward}">
+		<a4j:actionparam name="id" assignTo="#{aerviceDataAnalysisHome.aid}"/>
+		<a4j:actionparam name="type" assignTo="#{aerviceDataAnalysisHome.type}"/>
+		<a4j:actionparam name="enterpriseInfoId" assignTo="#{aerviceDataAnalysisHome.enterpriseInfoId}"/>
+	</a4j:jsFunction>
+</a4j:form>
+
+<script>
+//<![CDATA[
+           
+    var enId="#{animalRecordHome.livestockHistory.enterpriseInfoId}";
+	var lhId="#{animalRecordHome.livestockHistory.historyId}";
+     /*
+		微信分享  开始  放在所有方法前面为了第一个加载
+		url 请求微信接口 获取微信验证所要的数据 token,时间戳
+		myurl 当前URL(分享的链接)
+		myname 分项名称
+		enName 描述
+		imgUrl 图片
+	*/
+	var url = "#{dataDicConstant.getWxDomainNameUrl()}/weixinservice/farmeasy/adopter?callback=?&method=js_ticket";
+	var myurl = window.location.href.split("#")[0];
+	var myname="";
+	myname='#{animalRecordHome.livestockHistory.historyName}';
+	var enName="#{animalRecordHome.ei.name}"+'\n ---义田全程追溯---';
+	var imgUrl=jQuery('.img_pics').attr('src');
+	var shareName='#{animalRecordHome.livestockHistory.shareName}';
+	var shareDescribe='#{animalRecordHome.livestockHistory.shareDescribe}';
+	if(shareName!="" && shareName!=null){
+		myname=shareName;
+		enName=shareDescribe.replace(/<\/br\>/g,"\n");
+	}
+	/*调取微信方法 */
+	fenxiang(myname,enName,imgUrl,myurl);
+           
+           
+    jQuery(function(){
+    	jQuery('textarea').focus(function(){
+   	        var txt_val = this.defaultValue;
+   	        if( jQuery(this).val() == txt_val ){
+   	        	jQuery(this).val('');
+   	        }
+   	        jQuery(this).css('color','#333')
+   	    });
+    	jQuery('textarea').blur(function(){
+   	        var txt_val = this.defaultValue;
+   	        if( jQuery(this).val() == '' ){
+   	        	jQuery(this).val( this.defaultValue );
+   	        	jQuery(this).css('color','#aaa')
+   	        }else{
+   	        	jQuery(this).css('color','#333')
+   	        }
+   	    });
+
+
+    	/* 会员加入，我要购买文本框获取焦点和失去焦点状态变化 开始 */
+	    jQuery('input[type=text]').focus(function(){
+	        var txt_val = this.defaultValue;
+	        if( jQuery(this).val() == txt_val ){
+	        	jQuery(this).val('');
+	        }
+	        jQuery(this).css('color','#333')
+	    });
+		jQuery('input[type=text]').blur(function(){
+	        var txt_val = this.defaultValue;
+	        if( jQuery(this).val() == '' ){
+	        	jQuery(this).val( this.defaultValue );
+	        	jQuery(this).css('color','#aaa')
+	        }else{
+	        	jQuery(this).css('color','#333')
+	        }
+	    });
+	    /* 会员加入，我要购买文本框获取焦点和失去焦点状态变化 结束 */
+   	    
+    	jQuery('.bb_line').css('height',((jQuery('.note_item').length-1)*jQuery('.note_item').height())+27+"px");
+
+
+
+		 /* 判断履历是否有权限 开始 */
+		var resumeService="#{animalRecordHome.valueAdded.resumeService}";
+	 	if(resumeService==-1 || resumeService==0 || resumeService==2){
+	 		jQuery('.maturity_block').show();
+	 		jQuery('.black_op50').show();
+	 		jQuery('body').css('overflow','hidden');
+	     }else{
+	    	 jQuery('body').css({
+	   	  		'position':'',
+	   	  		'left':'',
+	   	  		'margin-left':'auto',
+	   	  		'width':''
+	   	  	 });
+	     }
+	 	
+	 	/* 判断履历是否有权限 结束 */
+     })  
+     var windowH = jQuery(window).height();
+	 	jQuery('.maturity_block').css('top',windowH/2);     
+           
+    function BottomModalShow(id){
+		jQuery('#modal_b_block'+id).show();
+		jQuery('body').css('overflow','hidden');	//禁掉网页滑动
+	}
+    function BottomModalHide(id){
+    	jQuery('#modal_b_block'+id).hide();
+    	jQuery('body').css('overflow','auto'); //开启网页滑动	
+	}
+
+  	//农场主档案板块--环境图片
+	var EnLen = jQuery('.farm_envior .f_pic').length;
+	jQuery('.farm_envior font').html( EnLen );
+	jQuery('.farm_envior .f_pic').each(function(f_index, elem) {
+        jQuery(elem).click(function(){
+			jQuery('#swiper_envior').show();
+			jQuery('body').css('overflow','hidden');
+			jQuery('.swiper-container').css('height','100%');  // 最外层的swiper
+			var EnSwiper = new Swiper('#swiper_envior', {
+				pagination: false,  //分页器去掉
+				spaceBetween: 30,
+				centeredSlides: true, //默认false第一块居左，设置为true后居中
+				autoplay: false,
+				autoplayDisableOnInteraction: false,
+				//mode : 'vertical',
+				mousewheelControl: true,
+				onFirstInit: function( EnSwiper ){ //Swiper2.x的回调函数，首次初始化后执行,初始化是onFirstInit,
+					swiperAnimateCache( EnSwiper ); //隐藏动画元素 
+					swiperAnimate( EnSwiper ); //初始化完成开始动画
+					jQuery('#swiper_envior .n_cur').html( jQuery(elem).index());
+					jQuery('#swiper_envior .n_total').html( EnLen );
+				}, 
+				onSlideChangeEnd: function(swiper){ 
+					swiperAnimate(swiper); //每个slide切换结束时也运行当前slide动画
+					jQuery('#swiper_envior .n_cur').html( EnSwiper.activeIndex+1);
+					jQuery('#swiper_envior .n_total').html( EnLen );
+				},
+				initialSlide : f_index   //设定初始化时slide的索引
+			});
+		});
+    });
+	jQuery('#swiper_envior .slide_img').click(function(){
+		//点击图片让其关闭slider，但点击文字不关闭slider
+		jQuery('#swiper_envior').hide();
+		jQuery('body').css('overflow','auto');
+	});
+
+
+	//农场主档案板块--饲料
+    jQuery('.feedids').click(function(){
+		jQuery('#swiper_feed .en_pic').each(function(g_index, elem) {
+			jQuery('#swiper_feed').show();
+			jQuery('body').css('overflow','hidden');
+			jQuery('.swiper-container').css('height','100%');  // 最外层的swiper
+			var FeedSwiper = new Swiper('#swiper_feed', {
+				pagination: false,  //分页器去掉
+				spaceBetween: 30,
+				centeredSlides: true, //默认false第一块居左，设置为true后居中
+				autoplay: false,
+				autoplayDisableOnInteraction: false,
+				mousewheelControl: true,
+				onFirstInit: function( FeedSwiper ){ //Swiper2.x的回调函数，首次初始化后执行,初始化是onFirstInit,
+					swiperAnimateCache( FeedSwiper ); //隐藏动画元素 
+					swiperAnimate( FeedSwiper ); //初始化完成开始动画
+				},
+				onSlideChangeEnd: function(swiper){ 
+					swiperAnimate( swiper ); //每个slide切换结束时也运行当前slide动画
+					jQuery('#swiper_feed .n_cur').html( FeedSwiper.activeIndex+1);
+				},
+				initialSlide : 0   //设定初始化时slide的索引
+			});
+		});
+    });
+	jQuery('#swiper_feed .slide_img').click(function(){
+		//点击图片让其关闭slider，但点击文字不关闭slider
+		jQuery('#swiper_feed').hide();
+		jQuery('body').css('overflow','auto');
+	});
+
+
+
+	/* 履历树上面农事图片点击轮播  开始 */
+	function nongshiClick(i){
+		jQuery('#animal_record'+i+' .en_pic').each(function(g_index, elem) {
+			jQuery('#animal_record'+i).show();
+			jQuery('body').css('overflow','hidden');
+			jQuery('.swiper-container').css('height','100%');  // 最外层的swiper
+			var FeedSwiper = new Swiper('#animal_record'+i, {
+				pagination: false,  //分页器去掉
+				spaceBetween: 30,
+				centeredSlides: true, //默认false第一块居左，设置为true后居中
+				autoplay: false,
+				autoplayDisableOnInteraction: false,
+				mousewheelControl: true,
+				onFirstInit: function( FeedSwiper ){ //Swiper2.x的回调函数，首次初始化后执行,初始化是onFirstInit,
+					swiperAnimateCache( FeedSwiper ); //隐藏动画元素 
+					swiperAnimate( FeedSwiper ); //初始化完成开始动画
+				},
+				onSlideChangeEnd: function(swiper){ 
+					swiperAnimate( swiper ); //每个slide切换结束时也运行当前slide动画
+					jQuery('#animal_record'+i+' .n_cur').html( FeedSwiper.activeIndex+1);
+				},
+				initialSlide : 0   //设定初始化时slide的索引
+			});
+		});
+	}
+	/* 履历树上面农事图片点击轮播  开始 */
+	jQuery('[an=ani]').click(function(){
+		//点击图片让其关闭slider，但点击文字不关闭slider
+		jQuery('[an=ani]').hide();
+		jQuery('body').css('overflow','auto');
+	});
+	
+	
+	/* 评论星星判断 开始 */
+	function changeImg(indexParam){
+		jQuery("#scoreId").val(indexParam);
+		 for ( var i = 1; i < 6; i++) {
+			if(parseInt(i)<=parseInt(indexParam)){
+				jQuery(".star" + i).attr("src","#{request.contextPath}/asset/images/star1_01.png");
+			}else{
+				jQuery(".star" + i).attr("src","#{request.contextPath}/asset/images/star1_03.png");
+			}
+		}
+	}
+
+	/* 评论星星提交 开始*/
+	function insertc(){
+		var score = jQuery("#scoreId").val();
+		if(jQuery(".area_block").val().length>100 || jQuery(".area_block").val()=='' || jQuery(".area_block").val()=='请填写您评价'){
+			alert("不能为空且最多只能100字！");
+		}else{
+			var experience = jQuery(".area_block").val();
+			insertComent(score,experience,'#{animalRecordHome.livestockHistory.historyId}');
+		}
+	}
+	function huidiao(){
+		changeImg(5);
+		jQuery('textarea').focus(function(){
+   	        var txt_val = this.defaultValue;
+   	        if( jQuery(this).val() == txt_val ){
+   	        	jQuery(this).val('');
+   	        }
+   	        jQuery(this).css('color','#333')
+   	    });
+    	jQuery('textarea').blur(function(){
+   	        var txt_val = this.defaultValue;
+   	        if( jQuery(this).val() == '' ){
+   	        	jQuery(this).val( this.defaultValue );
+   	        	jQuery(this).css('color','#aaa')
+   	        }else{
+   	        	jQuery(this).css('color','#333')
+   	        }
+   	    });
+	}
+
+	/* 打开，关闭全景图 开始*/
+	function openJj(id){
+		jQuery("#krpano_iframe").attr("src", "#{dataDicConstant.getDomainNameUrl()}#{request.contextPath}/map/Krpano.seam?type=1&enterid="+id);
+	    var height = jQuery(window).height();
+	    var width =  jQuery(window).width();
+	    jQuery(".krpano_iframe").show();
+	    jQuery(".krpano_iframe").css({"width":width,"height":height});
+	    jQuery('body').css('overflow','hidden');
+	    jQuery(".return_iframB").css("border-radius",0);
+	    jQuery(".iframe-block").show();
+	    jQuery(".iframe-block .return_iframB").css('display','block');
+	}
+
+	//全景 履历关闭
+	jQuery(".return_iframB").click(function(){
+		jQuery(".return_iframB").hide();
+		jQuery(".iframe-block").hide();
+		jQuery("#krpano_iframe").attr("src","");
+		jQuery('#krpano_iframe').contents().find('.tab-content-wap').css('display','none');
+		jQuery('body').css('overflow','');
+	});
+	
+
+	/* 会员加入和我要购买 关闭弹出框 结束 */
+	addModal('#tck_modal1','#tckLink_btn1');//打开会员加入
+	addModal('#tck_modal3','#tckLink_btn3');//打开我要购买
+	addModal('#tck_modal_share','#tckLink_btn2');//打开分享红包
+
+	/* 会员加入和我要购买 关闭弹出框 开始 */
+	jQuery('.tck_close').click(function(){
+		jQuery(this).parents('.tck_modal').hide();	
+		jQuery('body').css({
+			'overflow':'auto'
+		});
+	});
+
+	/* 会员加入和我要购买事件函数 ，点击后分享红包 开始 */
+	function addModal(obj,clickBtn){
+		jQuery(clickBtn).click(function(){
+			jQuery(obj).addClass('city_hovers');
+			if(obj!="#tck_modal_share"){
+				jQuery(obj).show();
+			}
+			jQuery('body').css({
+				'overflow':'hidden'
+			});
+			jQuery(obj).find('.input_txt').val('请输入手机号');
+			var hb='#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountAddress}';
+			var pr='#{animalRecordHome.livestockHistory.historyId}';
+			//myname='#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.packShareName}';
+			//enName='#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.packShareDescribe}';
+			if(obj=="#tck_modal_share" && hb!='' && hb!=null){
+				window.location.href="#{dataDicConstant.getDomainNameUrl()}/RedPacket.seam?num=5&couId="+hb+"&prId="+pr+"&typeAorP=2"
+				//if(myname!=''){
+				//	enName=enName.replace(/<\/br\>/g,"\n");
+				//}else{
+				//	myname="Hi 朋友，送您一个红包，农产品就要买好的！";
+				//	enName="我只购买有绿色履历的农产品，生长环境、生产过程，想看啥就看啥，同为吃货的你懂的~";
+				//}
+				//myurl = "#{dataDicConstant.getDomainNameUrl()}/RedPacket.seam?couId="+hb+"&prId="+pr+"&typeAorP=2";
+				//imgUrl="#{dataDicConstant.getDomainNameUrl()}/asset/images/redEnvelope_img14.jpg";
+				//fenxiang(myname,enName,imgUrl,myurl);
+			}
+		});	
+	}
+
+	function hySave(couId,prId){
+		var reg =/^(13|15|17|18)[0-9]{9}$/;
+		if(jQuery('#hyjr').val()=='' || !reg.test(jQuery('#hyjr').val())){
+			alert("请输入正确的手机号！")
+		}else{
+			customer(jQuery('#hyjr').val(),couId,prId,2);
+		}
+	}
+	
+	function gmSave(couId,prId){
+		var reg =/^(13|15|17|18)[0-9]{9}$/;
+		if(jQuery('#zcgm').val()=='' || !reg.test(jQuery('#zcgm').val())){
+			alert("请输入正确的手机号！")
+		}else{
+			customer(jQuery('#zcgm').val(),couId,prId,2);
+		}
+	}
+	/* 会员加入hySave和我要购买gmSave手机验证 结束 */
+	
+	/* 会员加入和我要购买手机验证成功后走ajax保存后台回调跳转页面 开始*/
+	function returnPack(obj){
+		var hb='#{animalRecordHome.livestockHistory.livestockHistoryTemplateId.discountAddress}';
+		var pr='#{animalRecordHome.livestockHistory.historyId}';
+	
+		var url="RedPacket.seam"
+		if(obj.split('_')[0]==2){
+			window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&typeAorP=2";
+		}else if(obj.split('_')[0]==3){
+			window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&typeAorP=2";
+		}else if(obj.split('_')[0]==4){
+			window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&typeAorP=2";
+		}else if(obj==5){
+			jQuery('.tck_close').click();
+		}else{
+			window.location.href=url+"?num="+obj.split('_')[0]+"&phone="+obj.split('_')[1]+"&couId2="+obj.split('_')[2]+"&couId="+hb+"&prId="+pr+"&typeAorP=2";
+		}
+	}
+
+
+
+	
+	
+
+	/* 微信接口 开始 */
+	function fenxiang(myname1,enName1,imgUrl1,myurl1){
+		jQuery.ajax({
+			url : url,
+			data : {url:myurl1},
+			dataType: 'jsonp',  
+			crossDomain: true,  
+			success: function (data) { 
+				var wNoncestr=data.noncestr;
+				var wTimestamp=data.timestamp;
+				var wsignature=data.signature;
+				var appId = data.appid;
+				wx.config({
+					debug:false,
+					appId:appId,
+					timestamp:wTimestamp,
+					nonceStr:wNoncestr,
+					signature:wsignature,
+					jsApiList: ['checkJsApi',
+							'onMenuShareTimeline',
+							'onMenuShareAppMessage',
+							'onMenuShareQQ',
+							'onMenuShareWeibo','startRecord'
+							]
+				});
+				//步骤四：通过ready接口处理成功验证    
+				wx.ready(function(){            
+					wx.checkJsApi({                
+						jsApiList: ['onMenuShareTimeline']
+					});
+					wx.onMenuShareTimeline({
+						title: myname1,
+						desc: enName1,
+						link: myurl1,
+						imgUrl: imgUrl1,
+						trigger: function(res) {// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+						},
+						success: function(res) {
+							saveforward(lhId,5,enId);
+						},
+						cancel: function(res) {
+						}
+					});
+					wx.onMenuShareAppMessage({
+						title: myname1,
+						desc: enName1,
+						link: myurl1,
+						imgUrl: imgUrl1,
+						trigger: function (res) {// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+						},
+						success: function (res) {
+							saveforward(lhId,5,enId);
+						},
+						cancel: function (res) {
+						},
+						fail: function (res) {
+						}
+					});
+					wx.onMenuShareQQ({
+						title: myname1,
+						desc: enName1,
+						link: myurl1,
+						imgUrl: imgUrl1,
+						trigger: function (res) {
+						},
+						complete: function (res) {
+						},
+						success: function (res) {
+							saveForward(lhId,5,enId);
+						},
+						cancel: function (res) {
+						},
+						fail: function (res) {
+						}
+					});
+				})
+			},
+		    error: function(XMLHttpRequest, textStatus, errorThrown){
+			}
+		})
+	}
+//]]>
+</script>
+</body>
+</f:view>

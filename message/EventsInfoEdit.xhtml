@@ -1,0 +1,182 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+	<link href="#{request.contextPath}/asset/css/message/select2.css" rel="stylesheet" />
+	<link href="#{request.contextPath}/asset/css/message/jquery-picklist.css" rel="stylesheet" />	
+	<link href="#{request.contextPath}/asset/css/message/xxgl.css" rel="stylesheet" />
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/message/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/message/jquery-picklist.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/message/select2.js"></script>
+<style>
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+   width: 220px;
+}
+ .select2-container-multi .select2-choices{min-height:33px;}
+
+
+.cm_eventsTtl > span{ display:inline-block; line-height:30px;}	
+	</style>
+<script type="text/javascript">
+//<![CDATA[
+	jquery = jQuery.noConflict();
+	/* 模态框 */
+	jquery(function()
+	{
+		jquery("#nonnumeric").pickList();
+		jquery('#cm_close').click(function(){
+			jquery('#myModal').slideUp(function(){
+				jquery('.modal-backdrop ').slideUp(1000);
+			});	
+		});
+	});
+	//]]>	
+</script>
+
+<!-- 发件箱的js 开始 -->
+<script>
+//<![CDATA[
+jQuery = jQuery.noConflict();
+jQuery(document).ready(function() { 
+	 jquery('.selectpicker').selectpicker();
+	jQuery("#e15").select2({tags:[]});
+    jQuery("#e15").on("change", function() { jQuery("#e15_val").html(jQuery("#e15").val());});
+ });
+jquery(function(){
+	// 时间控件 开始
+	
+	jquery(".form_datetime").datetimepicker({
+	    format: "yyyy-mm-dd hh:ii",
+	    autoclose: true,
+		 weekStart: 1,
+		  //startDate: "2014-08-14 10:00",
+		 language:  'zh-CN',
+	    
+	    pickerPosition: "bottom-left"
+	    });
+});
+//]]>
+</script>
+<!-- 发件箱js 结束 -->
+<style>
+.infoType select{ width:100%; height:35px; border-radius:4px; border:1px solid #dadada ;}
+.infoType option{ padding:6px 3px;}
+</style>
+ 
+	<td valign="top">
+	<h:form id="siteNewsform">
+
+
+				 <!-- right_c 开始 -->
+                 <div class="right_c fontS" style="min-height:30px;">
+                    <div class="r_title">
+                        <div class="r_t_l cm_r_t_l"><a href="#{request.contextPath}#{sessionTake.urlTemp}">个人主页</a>&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/message/EventsInfoList.seam">大事记</a>&#160;&gt;&#160;&#160;<font size="3">写大事记</font></div>
+                    </div>
+                    <div class="clear"></div> 
+				 <!-- #{eventsInfoHome.work()} -->
+                 
+                     <div class="cm_eventsTtl clear pt25">
+                     
+                     	<h:panelGroup rendered="#{sessionTake.levelId le 3}">
+                     	<span>选择基地：</span>
+                    	<h:selectOneMenu immediate="true" id="basicId"  styleClass="selectpicker nw200" value="#{eventsInfoHome.baseId}" >
+									<s:selectItems value="#{eventsInfoHome.basicList}" var="var" label="#{var.name}" itemValue="#{var.id}" noSelectionLabel="全部"/>
+						</h:selectOneMenu>
+                     	</h:panelGroup>
+                     	
+                     	<h:panelGroup rendered="#{sessionTake.levelId ge 4}">
+                     	<span>基地名称：</span>
+                     	  <h:outputText value="#{eventsInfoHome.baseName}" />
+                     	</h:panelGroup>
+                    </div>
+
+                   <div class="cm_eventsTtl clear pt25">
+                    	<span style="float:left;">标&#160;&#160;&#160;&#160;题：</span>
+                    	<h:inputText type="text" styleClass="form-control nw300 cm_commonIpt" value="#{eventsInfoHome.instance.title}" style="height:30px;"/> 
+                    </div>
+                    <div class="cm_eventsTtl clear pt25 pb20">
+                        <span class="bootTxt21 fl">发生时间：</span>
+                        <span class="bootData21">
+                            <div class="input-append date form_datetime " style="position:relative;" >
+								<h:inputText  id="befallTime" styleClass="new_time befallTime" value="#{eventsInfoHome.instance.befallTime}" style="height:34px;">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+								</h:inputText>
+                                <span class="add-on" style="position:absolute; right:10px; top:10px;"><i class="icon-th" style="margin:0;"></i></span>
+                            </div>
+                         </span>
+                    </div>
+                    <div class="cm_eventsCon">
+                    	<h:inputTextarea style="width:100%;height:400px;float:left;"  id="customContent" name="customContent" value="#{eventsInfoHome.instance.content}">
+					</h:inputTextarea>
+                    </div>
+                    <div class="cm_BtnWap3 mt50">
+                        <a:commandButton  data-toggle="modal" data-target="#myModal" id="persist"  styleClass="btn btn-primary save" value="提交" action="#{eventsInfoHome.persist}" rendered="#{!eventsInfoHome.managed}" onclick="if(!checkSubmit())return false;jquery('.save').prop('disabled','true');" />
+		            			<a:commandButton  data-toggle="modal" data-target="#myModal" id="update" styleClass="btn btn-primary upda" value="提交"  action="#{eventsInfoHome.update}" rendered="#{eventsInfoHome.managed}" onclick="if(!checkSubmit())return false;jquery('.upda').prop('disabled','true');"/>
+		    					&#160;<s:link view="/message/EventsInfoList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" >
+		    					<f:param name="pageNum" value="#{eventsInfoHome.pageNum}"/>
+		    					</s:link>
+                    </div>
+                 </div>
+   </h:form>
+</td> 
+                 <!-- right_c 结束 -->
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/kindeditor.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/lang/zh_CN.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery-1.10.2.js"></script>
+ <script type="text/javascript">
+   //<![CDATA[
+		function preview(){
+			jquery(".phon_div").empty().append(editor.html());
+		}
+		var editor;
+		var param = "?param=param";//非此页面不需要
+		KindEditor.ready(
+			function(K) {
+				editor = K.create('textarea[name="siteNewsform:customContent"]', {
+				resizeType : 1,
+				uploadJson : '#{request.contextPath}/asset/js/kindeditor/upload_json.jsp?directoryType=15&businessType=3&enterpriseId=#{sessionTake.getEnterpriseInfoId()}',
+				allowPreviewEmoticons : false,
+				allowImageUpload : true,
+				items:[
+				        'source', '|', 'undo', 'redo', '|', 'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+				        'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+				        'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+				        'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
+				        'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+				        'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat','image'
+				],
+				afterChange : function() {
+					jquery(".phon_div").empty().append(this.html());
+            	}
+			});
+				jquery(".ke-edit-iframe ").contents().find(".ke-content").css("height","328")
+		});
+	//]]>
+		</script>
+<script type="text/javascript">
+function checkSubmit(){
+			if(jquery(".cm_commonIpt").val() == ""){
+				alert("标题不能为空！");
+				return false;
+			}
+			if(jquery(".befallTime").val() == ""){
+				alert("发生时间不能为空！");
+				return false;
+			}
+			jquery('#siteNewsform\\:customContent').val(editor.html());
+
+			return true;
+		}
+</script> 
+</ui:define>
+
+</ui:composition>

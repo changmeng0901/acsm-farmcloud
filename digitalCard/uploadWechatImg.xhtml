@@ -1,0 +1,156 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_img.xhtml">
+
+<ui:define name="body">
+	<style>
+		body {    font-size: 14px;
+	    color: #000;
+	    font-family:"微软雅黑"; height:100%;
+	    line-height: 150%;
+	    margin: 0;
+	    padding: 0;
+	}
+	a:focus {
+	    outline:none;
+	    -moz-outline:none;
+	} 
+	html{ height:100%;}
+	h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form, img, p,input {
+	    border: medium none;
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	}
+	a{text-decoration:none;}
+	.photo_box2{ width:650px; }
+	.photo_box2 li{ float:left; width:100px; height:100px;margin-right:5px;  margin-top: 10px}
+	.photo_box2 li img{width:100px;height:100px;border:0;}
+	.photo001{ position:absolute; z-index:2;}
+	.dkzzedit007{width:27px;height:23px; z-index:3; display:none; position:absolute;right:0px;top:0px; }
+	.photo001 .dkzzedit007 img{z-index:4;float:right;;position:relative; border:none;width:27px; height:23px; }
+	.photo_box2 .div1{float: left;height: 100px;width: 100px;position:relative;}
+	.div2{text-align:center;font-size:15px;font-weight:800}
+	.logoUrl{ width: 100px;height: 100px;cursor: pointer; font-size: 30px;outline: medium none;position: absolute;filter:alpha(opacity=0); -moz-opacity:0;opacity:0; left:0px;top: 0px;}
+	.plant_bd{width:100px;height:100px; display:block;}
+	.photo_box2 li{margin:0 10px 10px 0;}
+	.star_red{ display:inline-block;height:100px; line-height:100px; padding-left:5px; font-size:12px; color:red;}
+	</style>
+	#{uploadBusinessImg.initBaseWechatImgUrl()}
+	<script  type="text/javascript">
+	//<![CDATA[
+	jquery(function(){
+		ailist();
+	})
+	ailist = function(){
+		jquery('.photo001').hover(function(){
+			jquery(this).find('.dkzzedit007').show();
+		},function(){
+			jquery(this).find('.dkzzedit007').hide();
+		})
+		if(jquery(".photo001").length>0){
+			parent.document.getElementById("baseWechatImgframe").style.height=document.body.scrollHeight+"px";
+		}
+   	}
+	del = function(aiIndex){
+		deleteObj(aiIndex);
+		window.parent.jquery("#wechatImgUrl").val("");
+   	}
+	function previewImage(){
+		jquery("#agriculturalImages\\:insertImages").click();
+	}
+	//]]>
+	</script>
+	
+    <h:form id="agriculturalImages" styleClass="edit" enctype="multipart/form-data">
+		<div class="all_da all_w01" style="width:285px-;">
+			<table cellpadding="0" cellspacing="0">
+				<tr>
+			    	<td >
+			        	<ul class="photo_box2" style="width:594px">
+			        		<a:repeat value="#{uploadBusinessImg.baseWechatImgUrlList}" var="_ai" id="shis"  rowKeyVar="_index">
+			         		<li>
+			          			<div class="photo001">
+			            			<div class="imgBox" style="width: 100px;height: 100px;">   
+			              				<a href="#pic_#{_index}" class="plant_bd" >
+			            					<img id="plant#{_index}" class="plant_imgbd" src="#{_ai}"  />
+			            				</a>
+			            			</div>
+			            			<div class="dkzzedit007">
+			                      		<a href="#1" onclick="del(#{_index})" aa="#{_index}"><img src="#{request.contextPath}/asset/images/del03.jpg" width="27" height="23" /></a>
+			                    	</div>
+			         			</div>
+			         		</li>
+			         		</a:repeat>
+							<li style="width:100px;">
+								<div class="div1 fl">
+								    <div class="div2"><img src="#{request.contextPath}/asset/images/dpadd.jpg" /></div>
+								   	<s:fileUpload id="logoUrl" styleClass="logoUrl"
+										size="40" accept="image/png,image/jpeg,image/gif"
+										contentType="image/png,image/jpeg,image/gif"
+										fileName="#{uploadBusinessImg.newWechatPictureName}"
+										onchange="previewImage();"
+										data="#{uploadBusinessImg.newWechatPictureByte}">
+									</s:fileUpload>
+								</div>
+			        		</li>
+			       		</ul>
+			       		                                                                         
+					</td>
+				</tr>
+			</table>
+		</div>
+		<h:commandButton id="insertImages"  styleClass="edit_save" action="#{uploadBusinessImg.updateBaseWechatImgUrl()}" style="display:none;" />
+    </h:form>
+    <a:repeat value="#{uploadBusinessImg.baseWechatImgUrlList}" var="_ai" rendered="#{not empty uploadBusinessImg.baseWechatImgUrlList}" rowKeyVar="_index">
+    	<div id="pic_#{_index}" style="display:none;">
+    		<img src="#{_ai}"/>
+    	</div>
+    </a:repeat>
+    <a:form>
+        <a:jsFunction name="deleteObj" action="#{uploadBusinessImg.deletedBaseWechatImgUrl()}" reRender="agriculturalImages" oncomplete="ailist();">
+        	<a:actionparam name="imgWechatIndex" assignTo="#{uploadBusinessImg.imgWechatIndex}"/>
+        </a:jsFunction>
+    </a:form> 
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.2.6.pack.js"></script>
+	<script  type="text/javascript">
+	//<![CDATA[
+	 	jquery = jQuery.noConflict();
+		jquery(function(){
+			if(jquery(".photo001").length>0){
+				parent.document.getElementById("baseWechatImgframe").style.height=document.body.scrollHeight+"px"; 
+			}
+			
+		});
+	//]]>
+	</script>
+	
+	<script language="javascript" type="text/javascript">  
+
+        jquery(function(){
+			var imgMess = '#{uploadBusinessImg.messageStr}';
+			if(imgMess.length > 0){
+				jquery('#productMsg', window.parent.document).html(imgMess);
+				window.parent.jquery("#myModal").modal('show');
+				return;
+			}
+			/* var imgurl = '#{uploadBusinessImg.baseWechatImgUrlList}'.replace('[', '').replace(']', '');
+			if(imgurl.length > 0){
+				window.parent.jquery("#wechatImgUrl").val(imgurl);
+				window.parent.jQuery("#wechatImgUrlDiv").css("background","url(" + imgurl + ")").css("background-size","100% 100%");
+			}else{
+				window.parent.jquery("#wechatImgUrl").val("");
+			} */
+		}); 
+    </script>
+      
+</ui:define>
+
+</ui:composition>

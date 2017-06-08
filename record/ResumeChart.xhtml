@@ -1,0 +1,340 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_analysisnew.xhtml">
+
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script> 
+<style type="text/css">
+.cm_resumeDiv{ display:block; margin-left:20px; padding:20px; border:1px solid #e7e7e7; border-radius:5px; color:#525252;font-weight:bold;}
+.cm_resumeDiv:hover{ }
+a:link, a:visited, a:hover, a:active, a:focus {
+    text-decoration: none;color:#525252;cursor: default;
+}
+</style>
+	<!--右边开始-->
+    <td valign="top">
+    <!--#{resumeChartHome.selectResumeChart()} -->
+    <div style=" width:100%;">
+        <div class="right_c clear">
+        	<!-- 公用头部 开始 -->
+        	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">履历使用统计分析</font></div>
+                    	
+            </div>
+			<!-- 公用头部 结束 -->
+            <!-- 使用效果内容 开始 -->
+			<div class="cm_resumeCon pb40">
+				<h:panelGroup id="sumAll">
+               	<ul class="cm_resumeDate clear pt20">
+                   	<li>
+                        <a href="#" class="cm_resumeDiv">
+                            <span>使用数量</span>
+                            <em>#{resumeChartHome.rcsum}</em>
+                        </a>
+                    </li>
+                    <li>
+                    	<a href="#" class="cm_resumeDiv">
+                            <span>访问次数</span>
+                            <em>#{resumeChartHome.views}</em>
+                        </a>
+                    </li>
+                    <li>
+                    	<a href="#" class="cm_resumeDiv">
+                            <span>评论数</span>
+                            <em>#{resumeChartHome.countcomm}</em>
+                        </a>
+                    </li>
+                    <li>
+                    	<a href="#" class="cm_resumeDiv">
+                            <span>履历扫描</span>
+                            <em>#{resumeChartHome.resumeSum}</em>
+                        </a>
+                    </li>
+                </ul>
+                </h:panelGroup>
+                <div class="cm_visitedQu pt20">
+                   	<div class="commomHd20 borderBt02">
+                       <span>使用情况走势图</span>
+                       <div class="cm_checkList mt10">
+                           <ul class="cm_checkUl">
+                           	<li><a href="javascript:;" onclick="selectBytype(1);jquery('#login').show();" style="cursor : pointer;">一周</a>|</li>
+                               <li><a href="javascript:;" onclick="selectBytype(2);jquery('#login').show();" style="cursor : pointer;">一月</a>|</li>
+                               <li><a href="javascript:;" onclick="selectBytype(3);jquery('#login').show();" style="cursor: pointer; background: rgb(83, 106, 152) none repeat scroll 0% 0%; color: rgb(255, 255, 255); border-color: rgb(83, 106, 152);">一年</a></li>
+                           </ul>
+                       </div>
+
+                       </div>
+                       <div class="pt30">
+                       	<div id="containerZhe" style="width:90%; margin-left:5%;"></div>
+                    </div>
+                </div>
+                <div class="pt30 clear">
+                	<div class="cm_visetedYuan fl">
+                    	<div class="commomHd20 borderBt02"><span>使用量组成</span></div>
+                        <div class="pt20">
+                        	<div id="containerBing"></div>
+                        </div>
+                    </div>
+                    <div class="cm_visitedTiao fl">
+                    	<div class="commomHd20 borderBt02"><span>访问量排名</span></div>
+                        <div class="pt30">
+                        	<div id="containerZhu"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 使用效果内容 结束 -->
+        </div><!--right_c结束-->
+    </div>
+    </td>  
+    <a:form>
+		<a:queue requestDelay="10" ignoreDupResponses="true" />
+		<a:jsFunction name="selectBytype" action="#{resumeChartHome.selectBytype}" reRender="sumAll" data="#{resumeChartHome.rcsumString}_#{resumeChartHome.topString}_#{resumeChartHome.quSums1}_#{resumeChartHome.quSums2}_#{resumeChartHome.vNameString}_#{resumeChartHome.minsum}_#{resumeChartHome.viewsString}_#{resumeChartHome.minsum2}_#{resumeChartHome.forwardingStr}" oncomplete="onclickdate(data);jquery('#login').hide();">
+			<a:actionparam name="typeInfo" assignTo="#{resumeChartHome.typeInfo}" />
+		</a:jsFunction>
+	</a:form>  
+    <!--右边结束-->
+    <script type="text/javascript">
+    //<![CDATA[
+    $(function () {
+    	onclickdate(1);
+    	$('.cm_checkUl a').click(function(){
+    		
+    		$(this).css({'background':'#536a98','color':'#fff','border-color':'#536a98'});
+    		$(this).parent().siblings().children('a').css({'background':'#fff','color':'#3f3f3f','border-color':'#fff'});
+    		
+    	});	
+    });	
+    function onclickdate(data){
+        var rcsumString="";
+        var topString="";
+        var quSums1="";
+		var quSums2="";
+		var vNameString="";
+        var minsum=0;
+        var minsum2=0;
+        var viewsString="";
+        var dataAll = "";
+        var forwardingStr = "";
+        if(data == 1){
+        	rcsumString= #{resumeChartHome.rcsumString};
+            topString=#{resumeChartHome.topString};
+            quSums1=#{resumeChartHome.quSums1};
+    		quSums2=#{resumeChartHome.quSums2};
+    		vNameString=#{resumeChartHome.vNameString};
+            minsum=#{resumeChartHome.minsum};
+            minsum2=#{resumeChartHome.minsum2};
+            viewsString=#{resumeChartHome.viewsString};
+            forwardingStr=#{resumeChartHome.forwardingStr};
+        }else{
+			if(data !=""){
+				dataAll = data.split("_");
+				eval("rcsumString = "+dataAll[0]);
+				eval("topString = "+dataAll[1]);
+				eval("quSums1 = "+dataAll[2]);
+				eval("quSums2 = "+dataAll[3]);
+				eval("vNameString = "+dataAll[4]);
+				eval("minsum = "+dataAll[5]);
+				eval("viewsString = "+dataAll[6]);
+				eval("minsum2 = "+dataAll[7]);
+				eval("forwardingStr = "+dataAll[8]);
+			}
+    	}
+        
+    	$('#containerBing').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            colors: ["#a3dc66","#ff59ab", "#5ae1e9", "#16a00f", "#07999b",  "#f99246", 
+                  	"#b24fff", "#afc83b","#42b7df","#efdd43"] ,
+            title: {
+                text: ''
+            },
+            tooltip: {
+        	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            series: [{
+                type: 'pie',
+                name: '百分比',
+                //{
+                    //name: 'Chrome',
+                    //y: 12.8
+                    //sliced: true,
+                    //selected: true
+                //}
+                data: rcsumString
+            }]
+        });
+    	$('#containerZhu').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                categories: vNameString,
+                min:minsum
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '次'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y} 次</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: '访问',
+                data: viewsString
+
+            }],
+            scrollbar: {
+    			enabled: true
+    		}
+        });
+    	Highcharts.setOptions({
+    	    colors: ['#71c52d','#058DC7','#64E572','#50B432', '#ED561B', '#DDDF00', '#24CBE5',  '#FF9655', 
+    	'#FFF263', '#6AF9C4'] 
+    	});
+        $('#containerZhe').highcharts({
+        	chart: {
+	            type: 'spline',
+	            	backgroundColor: {
+	    			linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+	    			stops: [
+	    				[0, 'rgb(255, 255, 255)'],
+	    				[1, 'rgb(255, 255, 255)']
+	    			]
+	    		},
+	    		plotShadow: true,
+	        },
+            title: {
+                text: '',
+                x: -20 //center
+            },
+            subtitle: {
+                text: '',
+                x: -20
+            },
+            xAxis: {
+                
+                categories: topString,
+                min:minsum2
+            },
+            yAxis: [{
+            	min:0,
+                title: {
+                    text: '履历使用量',
+                    
+                    	rotation: 90 // 默认值为270
+                },
+                labels: {
+                    format: '{value} 张'}
+                    ,
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },{
+            	min:0,
+                title: {
+                    text: '履历访问量'
+                },labels: {
+                    format: '{value} 次'}
+                ,
+                opposite:true,
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },{
+            	min:0,
+                title: {
+                    text: '履历转发量'
+                },labels: {
+                    format: '{value} 次'}
+                ,
+                opposite:true,
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            }],
+            tooltip: {
+            	formatter: function() {
+            		var _a = this.series.name=="履历使用量"?"张":"次";
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                    this.x +'：'+ this.y + _a;
+            	}
+            },
+            legend: {   
+	        	itemStyle: {
+				font: '9pt Trebuchet MS, Verdana, sans-serif',
+				color: 'black'
+
+				},
+				itemHoverStyle: {
+					color: '#039'
+				},
+				itemHiddenStyle: {
+					color: 'gray'
+				}
+	        },  
+	        lang: {
+	            noData: "暂无数据!"
+	        },
+            series: [{
+                name: '履历使用量',
+                
+                data: quSums1
+            }, {
+                name: '履历访问量',
+                yAxis: 1,
+                data: quSums2
+            }, {
+                name: '履历转发量',
+                yAxis: 2,
+                data: forwardingStr
+            }],
+            scrollbar: {
+    			enabled: true
+    		}
+        });
+        if($.browser.ie){
+        	$('#containerZhe').find(".highcharts-yaxis-title").css("writing-mode","tb-rl")
+        }
+        //$('#containerZhe').find(".highcharts-yaxis-title").css("writing-mode","tb-rl")
+    }
+    //]]>
+    </script>
+    
+</ui:define>
+
+</ui:composition>

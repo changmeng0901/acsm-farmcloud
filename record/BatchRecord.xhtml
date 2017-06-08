@@ -1,0 +1,209 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+<link href="#{request.contextPath}/asset/css/record/commons.css" rel="stylesheet" />
+<link href="#{request.contextPath}/asset/css/record/batchRecord.css" rel="stylesheet" />
+<td valign="top">
+	<!-- #{batchRecordHome.begins()} #{resumeExamineHome.getResumeNumber()}  -->
+    <div class="right_c" style="min-height:30px; padding-bottom:15px; padding-top:15px;">
+    	<!-- 履历制作打印内容 --> 
+        <div class="breadNav_wap mb15 clear">
+            <div class="breadNav_lt">精准营销&gt;<a href="#">履历</a><span>&gt;</span><strong>履历制作</strong></div>
+            <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+                <ul class="resumeList clear">
+                <h:panelGroup rendered="#{param.source==1}">
+                    <li>
+                    	<a  href="#{request.contextPath}/record/ProductBaseInfoList.seam?lvliType=1"><img src="#{request.contextPath}/asset/images/cm_lsllIco01.jpg"/><span>履历设计</span></a>
+                    </li>
+                    <li>
+                    	<a  href="#{request.contextPath}/record/ProductBaseInfoList.seam?lvliType=2"><img src="#{request.contextPath}/asset/images/lvliyl-ico1.jpg"/><span>履历预览</span></a>
+                    </li>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{param.source==2}">
+                    <li>
+                    	<a  href="#{request.contextPath}/resume/NewPhoneModelInfoList.seam"><img src="../asset/images/resume/icon6.png" /><span>履历列表</span></a>
+                    </li>
+                </h:panelGroup>
+                	<li>
+                    	<a href="#{request.contextPath}/record/UsedResume.seam?source=#{param.source}" class="borderBt" ><img src="#{request.contextPath}/asset/images/cm_lsllIco02.jpg" /><span>履历制作</span></a>
+                    </li>
+                    <li>
+                    	<a href="#{request.contextPath}/record/ResumeTracing.seam?source=#{param.source}" ><img src="#{request.contextPath}/asset/images/cm_lsllIco05.png" /><span>履历追溯</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 打印信息 -->
+        <div class="print_title">
+        	<div class="print_center">
+            	<img src="#{request.contextPath}/asset/images/record/batchRecord_icon1.jpg" />
+                <p>空签</p>
+            </div>
+        </div>
+        <div class="crop_list">
+        	<div class="search_selected clear alldiv">
+            	<dl style="width:360px;" class="se_selt180 fl">
+                    <dt style="width:90px;"><img src="#{request.contextPath}/asset/images/record/batchRecord_icon4.png" />数量</dt>
+                    <dd class="inline_block bootSelt220">
+                        <input type="text" class="form-control nw220 num" />
+                    </dd>
+                    <dd class="inline_block c_text">张</dd>
+                </dl>
+                <dl style="width:410px;" class="se_selt180 fl">
+                    <dt style="width:90px;">作物名称</dt>
+                    <dd class="inline_block bootSelt220">
+                        <select style="display: none;" class="selectpicker plantName" data-live-search="true" onchange="numValue()">
+                        	<option value="0">请选择</option>
+                        	<a4j:repeat value="#{batchRecordHome.plantList}" var="var">
+                            	<option value="#{var[0]}">#{var[1]}</option>
+                            </a4j:repeat>
+                        </select>
+                    </dd>
+                    <dd class="inline_block bootSelt180">
+                        <span class="add_crop" onclick="addPlant()">添加</span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="crop_count mt30">
+       	  <div class="crop_center">
+            	<p class="text_name mr30">    
+                     <img src="#{request.contextPath}/asset/images/record/batchRecord_icon2.png" />作物种类：<span class="color_y">0</span>
+                </p>
+                <p class="text_name">                         	
+                	<img src="#{request.contextPath}/asset/images/record/batchRecord_icon3.png" />数量总计：<span class="color_y">0</span>
+               </p>
+            </div>
+        </div>
+        
+        
+        <!-- 按钮 -->
+        <div style="padding:50px 0;text-align:center;">
+        	<a href="#" class="btn btn-primary" onclick="save()">生成</a>
+        	<s:button view="/record/UsedResume.xhtml" styleClass="btn btn-default goback" value="返回" id="bn_left6" />
+        </div>
+        <!-- 履历制作打印内容 --> 
+    </div>
+    
+    
+    
+<script  type="text/javascript">
+//<![CDATA[
+    jQuery('#selectBaseDiv .siteSelection .siteSeleBd').attr("style","display:none;");
+	jQuery('#selectBaseDiv .siteSelection .siteSeleBd').attr("class","");
+           
+	jQuery('.selectpicker').selectpicker(); 
+	function begin(){
+		jQuery('.num').blur(function(){
+			var num=0;
+			jQuery('.num').each(function(){
+				if(jQuery(this).val()!=""){
+					num+=parseInt(jQuery(this).val());
+				}
+			})
+			jQuery('.color_y').eq(1).text(num);
+		}) 
+	}
+	begin();
+	
+	function addPlant(){
+		jQuery(".crop_list").append(jQuery(".crop_list div").eq(0).clone());
+		jQuery(".crop_list .add_crop").eq(1).attr('onclick','delPlant(this)');
+		jQuery(".crop_list .add_crop").eq(1).text('删除');
+		jQuery('.selectpicker').selectpicker(); 
+		jQuery(".crop_list .add_crop").eq(1).parent().parent().find(".bootstrap-select").eq(1).remove();
+		jQuery(".crop_list .add_crop").eq(1).parent().parent().parent().find(".num").val('');
+		jQuery(".crop_list .add_crop").eq(1).attr('class','delete_crop');
+		numValue();
+		begin();
+	}
+
+	function delPlant(obj){
+		jQuery(obj).parent().parent().parent().remove();
+		numValue();
+		var num=0;
+		jQuery('.num').each(function(){
+			if(jQuery(this).val()!=""){
+				num+=parseInt(jQuery(this).val());
+			}
+		})
+		jQuery('.color_y').eq(1).text(num);
+	}
+
+	function numValue(){
+		var num=0;
+		var numStr="";
+		jQuery('.plantName').each(function(){
+			if(jQuery(this).val()!="" && jQuery(this).val()!=0){
+				if(numStr.indexOf(","+jQuery(this).val()+",")==-1){
+					num++;
+					numStr+=","+jQuery(this).val()+",";
+				}
+			}
+		})
+		jQuery('.color_y').eq(0).text(num);
+	}
+    var countNumbers=#{resumeExamineHome.countNumbers};
+    var govState="#{resumeExamineHome.enterpriseInfo.govState}";
+	function save(){
+		var flag=1;
+		var num=0;
+		jQuery('.num').each(function(){
+			if(jQuery(this).val()!=""){
+				num+=parseInt(jQuery(this).val());
+			}else{
+				flag=0;
+			}
+		})
+		
+		
+		if(flag==0 || num>110000){
+			alert("张数不能为空 并且最多只能生成110000张！");
+		}if(govState=="true" && num>countNumbers){
+			alert("张数不能超过履历申请剩余张数！");
+		}else{
+			jQuery('#login').show();
+			var allJson = "";
+			var count=0;
+			jQuery('.crop_list .alldiv').each(function(){
+				var oneJson="";
+				oneJson +="{num:"+jQuery(this).find('.num').val()+",";
+				oneJson +="name:"+jQuery(this).find('.plantName').val()+"}";
+				allJson +=oneJson+",";
+				count+=parseInt(jQuery(this).find('.num').val());
+			})
+			
+			if(allJson!=""){
+				allJson=allJson.substring(0,allJson.length-1);
+				allJson="{allJson:["+allJson+"],enterpriseId:#{batchRecordHome.enterpriseInfoId},baseId:#{batchRecordHome.baseId},userId:#{batchRecordHome.userId},total:"+count+"}"
+				jQuery.ajax({
+	                url: "#{dataDicConstant.getDomainImgUrl()}/generateResume",
+	                dataType: "jsonp",
+	                jsonp: "callback",
+	                data:{allJson},
+	                success: function (data) {
+	                	window.location.href="/record/UsedResume.seam";
+	                }
+	            })
+			}
+		}
+	}
+	
+//]]>
+</script>
+</td>  
+</ui:define>
+
+</ui:composition>

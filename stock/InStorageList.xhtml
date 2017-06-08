@@ -1,0 +1,400 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+
+
+<title>入库明细</title>
+<style>
+.name{display:inline-block;max-width:90px;height:20px; line-height:20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+</style>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/stock/InventoryFile.css" />
+#{inStorageList.init()}
+            <td valign="top">
+            <div class="inbentory_file_main">
+            	<!-- 库存左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first1">
+                            <a href="javascript:;" onclick="window.open('#{request.contextPath}/stock/InventoryFile.seam','_self')" ><i class="icon_L icon_kcda"></i>库存档案</a>
+                        </strong>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_rkgl"></i>入库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item sed_cur" onclick="window.open('#{request.contextPath}/stock/InStorageList.seam','_self')" ><i class="icon_sed"></i>入库明细</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/InStockAdd.seam','_self')"><i class="icon_sed"></i>入库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_ckgl"></i>出库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/OutStorageList.seam','_self')"><i class="icon_sed"></i>出库明细</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/OutStorage.seam','_self')"><i class="icon_sed"></i>出库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_zkgl"></i>在库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/ExpireWarning.seam','_self')"><i class="icon_sed"></i>过期预警</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/AllocationRecord.seam','_self')"><i class="icon_sed"></i>调拨记录</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/AllocationBill.seam','_self')"><i class="icon_sed"></i>调拨单</li>
+                        	<h:panelGroup rendered="#{sessionTake.tempType eq 9}">
+							<li class="sed_item" onclick="window.open('#{request.contextPath}/stock/StorageRecord.seam','_self')"><i class="icon_sed"></i>贮藏记录</li>
+							</h:panelGroup>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pdgl"></i>盘点管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/InventoryRecord.seam','_self')"><i class="icon_sed"></i>盘点记录</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/InventoryBill.seam','_self')"><i class="icon_sed"></i>盘点单</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 库存左侧二级导航 -->
+                <!-- 库存档案右侧 -->
+                <div class="inbentory_content">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt" style="margin-left:20px;"><a href="#">采销存</a><span>&gt;</span><a href="#">库存</a><span>&gt;</span><strong>入库明细</strong></div>
+                    </div>
+                    <div class="inbentory_search_wap">
+                    	<!-- 库存档案搜索头部 -->
+                    	<div class="search_header clear">
+                        	<div class="clear">
+                                <div class="search_selected fl">
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">仓库</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <select class="selectpicker" style="display: none;" id="storageRoomId" onchange="storageChange()">
+                                                	<option selected="selected" value="-1">全部</option>
+                                                <a:repeat value="#{inStorageList.initStorageRoomList()}" var="_room">
+                                                	<h:outputText  rendered="#{inStorageList.storageRoomId eq  _room[0]}">
+                                    					<option value="#{_room[0]}" selected="selected">#{_room[1]}</option>
+                                    				</h:outputText>
+                                    				<h:outputText  rendered="#{inStorageList.storageRoomId ne _room[0]}">
+                                    					<option value="#{_room[0]}" >#{_room[1]}</option>
+                                    				</h:outputText>
+                                    			</a:repeat>
+                                            </select>
+                                        </dd>
+                                    </dl>
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">物料类型</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <select class="selectpicker" style="display: none;" id="goodsType" onchange="queryByCond()">
+                                                <option selected="selected" value="-1">全部</option>
+                                               <a:repeat value="#{inStorageList.initGoodsType()}" var="_sc" rowKeyVar="_index">
+                                               <h:outputText  rendered="#{inStorageList.goodsType ne null and inStorageList.goodsType eq _sc.id}">
+                                                	<option value="#{_sc.id}" selected="selected">
+								   						<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+														<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>									   
+								  					 </option>
+								  				</h:outputText>
+								  				<h:outputText  rendered="#{inStorageList.goodsType eq null or inStorageList.goodsType ne _sc.id}">
+                                                	<option value="#{_sc.id}" >
+								   						<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+														<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>									   
+								  					 </option>
+								  				</h:outputText>
+							 					 </a:repeat>
+                                            </select>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="search_selected fl">
+                                    <dl style="width:488px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">入库时间</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <div class="bootData220 fl">
+                                                <div class="input-append date form_datetime " style="position:relative;" >
+                                                <input size="26" type="text" value="#{inStorageList.beginTime}"  style="border-radius:4px;" id="beginTime" onchange="queryByCond()"/> 
+                                                <span class="add-on" style="position:absolute; right:10px; top:10px;"><i class="icon-th" style="margin:0;"></i></span>
+                                                </div>
+                                            </div>
+                                            <span class="fl pl5 pr5" style="line-height:34px;">--</span>
+                                            <div class="bootData220 fl">
+                                                <div class="input-append date form_datetime " style="position:relative;" >
+                                                <input size="26" type="text" value="#{inStorageList.endTime}"  style="border-radius:4px;" id="endTime" onchange="queryByCond()"/> 
+                                                <span class="add-on" style="position:absolute; right:10px; top:10px;"><i class="icon-th" style="margin:0;"></i></span>
+                                                </div>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="clear" style="position:relative; padding-right:100px;">
+                                <div class="search_selected fl">
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">经办人</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <select class="selectpicker" style="display: none;" id="operaterId" onchange="queryByCond()">
+                                                <option selected="selected" value="-1">全部</option>
+                                                <a:repeat value="#{inStorageList.initOperatorListInOut()}" var="_operater">
+                                                	<h:outputText  rendered="#{inStorageList.operaterId ne null and inStorageList.operaterId eq _operater[0]}">
+                                    					<option value="#{_operater[0]}" selected="selected">#{_operater[1]}</option>
+                                    				</h:outputText>
+                                    				<h:outputText  rendered="#{inStorageList.operaterId eq null or inStorageList.operaterId ne _operater[0]}">
+                                    					<option value="#{_operater[0]}" >#{_operater[1]}</option>
+                                    				</h:outputText>
+                                    		</a:repeat>
+                                            </select>
+                                        </dd>
+                                    </dl>
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">入库类型</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <select class="selectpicker" style="display: none;" id="storageType" onchange="queryByCond()">
+                                                <option selected="selected" value="-1">全部</option>
+                                               <a:repeat value="#{inStorageList.inStorageTypeList}" var="storage">
+                                               		<h:outputText  rendered="#{inStorageList.storageType ne null and inStorageList.storageType eq storage.id}">
+														<option value="#{storage.id}" selected="selected">#{storage.name}</option>
+													</h:outputText>
+													<h:outputText  rendered="#{inStorageList.storageType eq null or inStorageList.storageType ne storage.id}">
+														<option value="#{storage.id}" >#{storage.name}</option>
+													</h:outputText>
+												</a:repeat>
+                                            </select>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="search_selected fl">
+                                    <dl style="width:340px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">搜索</dt>
+                                        <dd class="inline_block bootSelt180">
+                                        <h:outputText  rendered="#{inStorageList.searchStr == null or inStorageList.searchStr eq ''}">
+                                            <input type="text" style="width:180px;font-size:12px;" value="物料名称/批次编号/物料编号" class="form-control mr5 fl" id="searchStr"/>
+                                        </h:outputText>
+                                        <h:outputText  rendered="#{inStorageList.searchStr != null and inStorageList.searchStr ne ''}">
+                                            <input type="text" style="width:180px;font-size:12px;" value="#{inStorageList.searchStr}" class="form-control mr5 fl" id="searchStr"/>
+                                        </h:outputText>
+                                            <input type="button" value="搜索" class="btn btn-primary" onclick="queryByCond()" id="searchButton"/>
+                                        </dd>
+                                    </dl>
+                                    <div >
+                                    <rich:panel id="exp" style="margin:0; border:none; padding: 0;position:absolute;right:0;top:14px;">
+                        			<s:link   view="/stock/InStorageList.xhtml" action="#{inStorageList.expExcel()}" onclick="checkTime()">
+                        				<f:param name="storageRoomId" value="#{inStorageList.storageRoomId}" />
+										<f:param name="goodsType" value="#{inStorageList.goodsType}" />
+										<f:param name="beginTime" value="#{inStorageList.beginTime}" />
+										<f:param name="endTime" value="#{inStorageList.endTime}" />
+										<f:param name="operaterId" value="#{inStorageList.operaterId}" />
+										<f:param name="storageType" value="#{inStorageList.storageType}" />
+										<f:param name="searchStr" value="#{inStorageList.searchStr}" />
+										<f:param name="thisPage" value="#{inStorageList.thisPage}" />
+                        				<img src="#{request.contextPath}/asset/images/stock/commons/icon_exportExcel.jpg"  /> 
+									</s:link>
+								</rich:panel> 
+								</div>
+                                </div>
+                            </div>
+                        </div>
+                        <rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+                        <!-- 库存档案搜索列表 -->
+                        <table class="inventory_modal_table mt20" width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<th>序号</th>
+                                <th>入库编号</th>
+                                <th>入库类型</th>
+                                <th>物料名称</th>
+                                <th>仓库</th>
+                                <th>经办人</th>
+                                <th>入库时间</th>
+                                <th>操作</th>
+                            </tr>
+                            <a:repeat value="#{inStorageList.resultList}" var="_batch" rowKeyVar="_index">
+                            <tr class="odd">
+                            	<td>#{_index+1}</td>
+                                <td>#{_batch[1]}</td>
+                                <td>#{_batch[3]}</td>
+                                <td><span title="#{_batch[4]}" class="name">#{_batch[4]}</span></td>
+                                <td>#{_batch[6]}</td>
+                                <td>#{_batch[8]}</td>
+                                <td>#{_batch[9]}</td>
+                                <td>
+                                	<!-- <a class="icon_link" title="查看" href="#{request.contextPath}/stock/InStorageDetail.seam?storageChangeFormId=#{_batch[0]}&paraStorageRoomId=#{inStorageList.storageRoomId}&paraGoodsType=#{inStorageList.goodsType}&paraBeginTime=#{inStorageList.beginTime}&paraEndTime=#{inStorageList.endTime}&paraOperaterId=#{inStorageList.operaterId}&paraStorageType=#{inStorageList.storageType}&paraSearchStr=#{inStorageList.searchStr}&paraThisPage=#{inStorageList.thisPage}"><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_view2.png" /></a> -->
+                                    <s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}" view="/stock/InStorageDetail.xhtml" styleClass="list_view"  id="detailId" title="查看">
+										<f:param name="storageChangeFormId" value="#{_batch[0]}" />
+										<f:param name="paraStorageRoomId" value="#{inStorageList.storageRoomId}" />
+										<f:param name="paraGoodsType" value="#{inStorageList.goodsType}" />
+										<f:param name="paraBeginTime" value="#{inStorageList.beginTime}" />
+										<f:param name="paraEndTime" value="#{inStorageList.endTime}" />
+										<f:param name="paraOperaterId" value="#{inStorageList.operaterId}" />
+										<f:param name="paraStorageType" value="#{inStorageList.storageType}" />
+										<f:param name="paraSearchStr" value="#{inStorageList.searchStr}" />
+										<f:param name="paraThisPage" value="#{inStorageList.thisPage}" />
+									</s:link>
+									<h:outputText  rendered="#{_batch[2] ne 14 and _batch[11] ne true and _batch[12] eq null}">
+									<h:outputText  rendered="#{_batch[2] ne 10}">
+	                                    <s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}" view="/stock/InStockAdd.xhtml" styleClass="list_edit"  title="编辑">
+											<f:param name="isEditFlag" value="1" />
+											<f:param name="storageChangeFormId" value="#{_batch[0]}" />
+											<f:param name="paraStorageRoomId" value="#{inStorageList.storageRoomId}" />
+											<f:param name="paraGoodsType" value="#{inStorageList.goodsType}" />
+											<f:param name="paraBeginTime" value="#{inStorageList.beginTime}" />
+											<f:param name="paraEndTime" value="#{inStorageList.endTime}" />
+											<f:param name="paraOperaterId" value="#{inStorageList.operaterId}" />
+											<f:param name="paraStorageType" value="#{inStorageList.storageType}" />
+											<f:param name="paraSearchStr" value="#{inStorageList.searchStr}" />
+											<f:param name="paraThisPage" value="#{inStorageList.thisPage}" />
+											<f:param name="goodsJsonOld" value="" />
+										</s:link>
+									</h:outputText>
+									<h:outputText  rendered="#{_batch[2] eq 10}">
+	                                    <s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}" view="/stock/AllocationBill.xhtml" styleClass="list_edit"  title="编辑">
+											<f:param name="isEditFlag" value="1" />
+											<f:param name="transferId" value="#{_batch[10]}" />
+											<f:param name="paraStorageRoomId" value="#{inStorageList.storageRoomId}" />
+											<f:param name="paraGoodsType" value="#{inStorageList.goodsType}" />
+											<f:param name="paraBeginTime" value="#{inStorageList.beginTime}" />
+											<f:param name="paraEndTime" value="#{inStorageList.endTime}" />
+											<f:param name="paraOperaterId" value="#{inStorageList.operaterId}" />
+											<f:param name="paraStorageType" value="#{inStorageList.storageType}" />
+											<f:param name="paraSearchStr" value="#{inStorageList.searchStr}" />
+											<f:param name="paraThisPage" value="#{inStorageList.thisPage}" />
+										</s:link>
+									</h:outputText>
+									</h:outputText>
+									<h:outputText  rendered="#{_batch[2] ne 10 and  _batch[2] ne 14 and _batch[11] ne true  and _batch[12] eq null}">
+	                                    <s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}"  view="/stock/InStorageList.xhtml"    styleClass="list_delete" action="#{inStorageList.delTransfer()}" title="删除" onclick="return confirm('确定删除吗？');" id="delStorage">
+				                           <f:param name="storageChangeFormId" value="#{_batch[0]}" />
+											<f:param name="paraStorageRoomId" value="#{inStorageList.storageRoomId}" />
+											<f:param name="paraGoodsType" value="#{inStorageList.goodsType}" />
+											<f:param name="paraBeginTime" value="#{inStorageList.beginTime}" />
+											<f:param name="paraEndTime" value="#{inStorageList.endTime}" />
+											<f:param name="paraOperaterId" value="#{inStorageList.operaterId}" />
+											<f:param name="paraStorageType" value="#{inStorageList.storageType}" />
+											<f:param name="paraSearchStr" value="#{inStorageList.searchStr}" />
+											<f:param name="paraThisPage" value="#{inStorageList.thisPage}" />
+			                           </s:link>
+			                         </h:outputText>
+                                    <a class="icon_link" title="打印" href="#" onclick="batchPrintMember(#{_batch[0]});return false;"><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_print2.png" /></a>
+                                </td>
+                            </tr>
+                            </a:repeat>
+                        </table>
+                        <div class="pageModel_wap" style="padding:50px 0 30px;">
+                           <h:form id="pageFrom" rendered="#{null ne inStorageList.resultList and inStorageList.resultList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!inStorageList.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{inStorageList.hasPreviousPage and inStorageList.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{inStorageList.hasPreviousPage and inStorageList.totalPages > 1}" >首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{inStorageList.previousPage})"  >&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{inStorageList.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le inStorageList.totalPages}">
+											<td class="td_t_b #{inStorageList.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq inStorageList.thisPage ? 'onp' : ''}" >
+												<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{inStorageList.hasNextPageFlag}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{inStorageList.nextPage})" rendered="#{inStorageList.hasNextPage and inStorageList.totalPages > 1}" >&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{inStorageList.totalPages})" rendered="#{inStorageList.hasNextPage and inStorageList.totalPages > 1}" >尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{inStorageList.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+                        </div> 
+                        <!-- 库存档案搜索列表 -->
+                        </rich:panel>
+                    </div>
+                </div>
+                <!-- 库存档案右侧 -->
+            </div>   
+            </td>    
+<a:form>
+	<a:jsFunction name="getListByPage" action="#{inStorageList.getInfoByPage()}"  reRender="showPanel,exp"  oncomplete="windowHeight()">
+		<a:actionparam name="storageRoomId" assignTo="#{inStorageList.storageRoomId}"/>
+		<a:actionparam name="goodsType" assignTo="#{inStorageList.goodsType}"/>
+		<a:actionparam name="beginTime" assignTo="#{inStorageList.beginTime}"/>
+		<a:actionparam name="endTime" assignTo="#{inStorageList.endTime}"/>
+		<a:actionparam name="operaterId" assignTo="#{inStorageList.operaterId}"/>
+		<a:actionparam name="storageType" assignTo="#{inStorageList.storageType}"/>
+		<a:actionparam name="searchStr" assignTo="#{inStorageList.searchStr}"/>
+		<a:actionparam name="thisPage" assignTo="#{inStorageList.thisPage}"/>
+		<a:actionparam name="selectSearch" assignTo="#{inStorageList.selectSearch}"/>
+	</a:jsFunction>
+	<a:jsFunction name="init" action="#{inStorageList.init()}"  reRender="showPanel,exp"  oncomplete="windowHeight()">
+		<a:actionparam name="storageRoomId" assignTo="#{inStorageList.storageRoomId}"/>
+		<a:actionparam name="goodsType" assignTo="#{inStorageList.goodsType}"/>
+		<a:actionparam name="beginTime" assignTo="#{inStorageList.beginTime}"/>
+		<a:actionparam name="endTime" assignTo="#{inStorageList.endTime}"/>
+		<a:actionparam name="operaterId" assignTo="#{inStorageList.operaterId}"/>
+		<a:actionparam name="storageType" assignTo="#{inStorageList.storageType}"/>
+		<a:actionparam name="searchStr" assignTo="#{inStorageList.searchStr}"/>
+		<a:actionparam name="selectSearch" assignTo="#{inStorageList.selectSearch}"/>
+	</a:jsFunction>
+	<a:jsFunction name="changeStorage" action="#{inStorageList.changeStorage()}"  data="#{inStorageList.goodsType}" reRender="showPanel,exp" oncomplete="reGoodType(data);"  >
+		<a:actionparam name="storageRoomId" assignTo="#{inStorageList.storageRoomId}"/>
+		<a:actionparam name="goodsType" assignTo="#{inStorageList.goodsType}"/>
+		<a:actionparam name="beginTime" assignTo="#{inStorageList.beginTime}"/>
+		<a:actionparam name="endTime" assignTo="#{inStorageList.endTime}"/>
+		<a:actionparam name="operaterId" assignTo="#{inStorageList.operaterId}"/>
+		<a:actionparam name="storageType" assignTo="#{inStorageList.storageType}"/>
+		<a:actionparam name="searchStr" assignTo="#{inStorageList.searchStr}"/>
+		<a:actionparam name="selectSearch" assignTo="#{inStorageList.selectSearch}"/>
+	</a:jsFunction>
+</a:form>
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryFile.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InStorageList.js"></script>
+<script type="text/javascript">
+//导出时间判断
+function checkTime(){
+	var start = jQuery("#beginTime").val();
+	var end = jQuery("#endTime").val();
+	var beginDate = new Date(start);
+	var endDate = new Date(end);
+	var year = parseInt(start.substring(0,4));
+	var month = start.substring(start.indexOf("-")+1,start.indexOf("-")+3);
+	month = parseInt(month.replace("0",""));
+	var days = Math.floor((endDate.getTime() - beginDate.getTime())/(60*60*24*1000));
+	if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
+		if(days > 31){
+			alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+		}
+	}else if(month == 2){
+		if(year%4 ==0){
+			if(days > 29){
+				alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+			}
+		}else{
+			if(days > 28){
+				alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+			}
+		}
+	}else{
+		if(days > 30){
+			alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+		}
+	}
+}
+</script>
+	</ui:define>
+
+</ui:composition>

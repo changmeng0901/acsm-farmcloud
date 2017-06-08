@@ -1,0 +1,348 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+
+
+<title>调拨记录</title>
+<style>
+.name{display:inline-block;max-width:90px;height:20px; line-height:20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+</style>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/stock/InventoryFile.css" />
+#{allocationRecordList.init()}
+            <td valign="top">
+            <div class="inbentory_file_main">
+            	<!-- 库存左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first1">
+                            <a href="javascript:;" onClick="window.open('#{request.contextPath}/stock/InventoryFile.seam','_self')" ><i class="icon_L icon_kcda"></i>库存档案</a>
+                        </strong>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_rkgl"></i>入库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item sed_item" onClick="window.open('#{request.contextPath}/stock/InStorageList.seam','_self')" ><i class="icon_sed"></i>入库明细</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/InStockAdd.seam','_self')"><i class="icon_sed"></i>入库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_ckgl"></i>出库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/OutStorageList.seam','_self')"><i class="icon_sed"></i>出库明细</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/OutStorage.seam','_self')"><i class="icon_sed"></i>出库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_zkgl"></i>在库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/ExpireWarning.seam','_self')"><i class="icon_sed"></i>过期预警</li>
+                            <li class="sed_item sed_cur" onClick="window.open('#{request.contextPath}/stock/AllocationRecord.seam','_self')"><i class="icon_sed"></i>调拨记录</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/AllocationBill.seam','_self')"><i class="icon_sed"></i>调拨单</li>
+                        	<h:panelGroup rendered="#{sessionTake.tempType eq 9}">
+							<li class="sed_item" onClick="window.open('#{request.contextPath}/stock/StorageRecord.seam','_self')"><i class="icon_sed"></i>贮藏记录</li>
+							</h:panelGroup>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pdgl"></i>盘点管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/InventoryRecord.seam','_self')"><i class="icon_sed"></i>盘点记录</li>
+                            <li class="sed_item" onClick="window.open('#{stockUtil.getInventoryNoBatch(sessionTake.enterpriseInfoId) ? '/stock/InventoryBillAll.seam' : '/stock/InventoryBill.seam'}','_self')"><i class="icon_sed"></i>盘点单</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 库存左侧二级导航 -->
+                <!-- 库存档案右侧 -->
+                <div class="inbentory_content">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt" style="margin-left:20px;"><a href="#">采销存</a><span>&gt;</span><a href="#">库存</a><span>&gt;</span><strong>调拨记录</strong></div>
+                    </div>
+                    <div class="inbentory_search_wap">
+                    	<!-- 库存档案搜索头部 -->
+                    	<div class="search_header clear">
+                        	<div class="clear">
+                                <div class="search_selected fl">
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">调出仓库</dt>
+                                        <dd class="inline_block bootSelt180">
+                                             <rich:panel id="outStoragePanel" style="margin:0; border:none; padding: 0;">
+                                             <select class="selectpicker"    title="请选择" id="outStorageRoom" onchange="outStorageChange()">
+                                                  <option value="-1" >请选择</option>
+                                                   <a:repeat value="#{allocationRecordList.outStorageRoomList}" var="storage">
+                                                   		<h:outputText rendered="#{allocationRecordList.outStorageRoomId eq storage[0]}" >
+															<option value="#{storage[0]}" selected="selected">#{storage[1]}</option>
+														</h:outputText>
+														<h:outputText rendered="#{allocationRecordList.outStorageRoomId ne storage[0]}" >
+															<option value="#{storage[0]}" >#{storage[1]}</option>
+														</h:outputText>
+												</a:repeat>
+                                            </select>
+                                          </rich:panel>
+                                        </dd>
+                                    </dl>
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">调入仓库</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <rich:panel id="inStoragePanel" style="margin:0; border:none; padding: 0;">
+                                           <select class="selectpicker" title="请选择" id="inStorageRoom" onchange="inStorageChange()">
+                                           		<option value="-1" >请选择</option>
+                                                <a:repeat value="#{allocationRecordList.inStorageRoomList}" var="storage">
+													<h:outputText rendered="#{allocationRecordList.inStorageRoomId eq storage[0]}" >
+															<option value="#{storage[0]}" selected="selected">#{storage[1]}</option>
+														</h:outputText>
+														<h:outputText rendered="#{allocationRecordList.inStorageRoomId ne storage[0]}" >
+															<option value="#{storage[0]}" >#{storage[1]}</option>
+														</h:outputText>
+												</a:repeat>
+                                            </select>
+                                            </rich:panel>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="search_selected fl">
+                                    <dl style="width:488px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">调拨时间</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <div class="bootData220 fl">
+                                                <div class="input-append date form_datetime " style="position:relative;" >
+                                                <input size="26" type="text" value="#{allocationRecordList.allocationBeginTime}"  style="border-radius:4px;" id="beginTime" onchange="search()"/> 
+                                                <span class="add-on" style="position:absolute; right:10px; top:10px;"><i class="icon-th" style="margin:0;"></i></span>
+                                                </div>
+                                            </div>
+                                            <span class="fl pl5 pr5" style="line-height:34px;">--</span>
+                                            <div class="bootData220 fl">
+                                                <div class="input-append date form_datetime " style="position:relative;" >
+                                                <input size="26" type="text" value="#{allocationRecordList.allocationEndTime}"  style="border-radius:4px;" id="endTime" onchange="search()"/> 
+                                                <span class="add-on" style="position:absolute; right:10px; top:10px;"><i class="icon-th" style="margin:0;"></i></span>
+                                                </div>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="clear" style="position:relative; padding-right:100px;">
+                                <div class="search_selected fl">
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">经办人</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <select class="selectpicker" style="display: none;" id="operaterId" onchange="search()">
+                                                <option selected="selected" value="-1">全部</option>
+                                                <a:repeat value="#{allocationRecordList.initOperatorListInOut()}" var="_operater">
+                                    				<h:outputText rendered="#{allocationRecordList.operatorId eq _operater[0]}" >
+                                    					<option value="#{_operater[0]}" selected="selected">#{_operater[1]}</option>
+                                    				</h:outputText>
+                                    				<h:outputText rendered="#{allocationRecordList.operatorId ne _operater[0]}" >
+                                    					<option value="#{_operater[0]}">#{_operater[1]}</option>
+                                    				</h:outputText>
+                                    			</a:repeat>
+                                            </select>
+                                        </dd>
+                                    </dl>
+                                    <dl style="width:340px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">搜索</dt>
+                                        <dd class="inline_block bootSelt180">
+                                        	<h:outputText  rendered="#{allocationRecordList.searchStr == null or allocationRecordList.searchStr eq ''}">
+                                            	<input type="text" style="width:180px;font-size:12px;" value="物料名称/批次编号/物料编号" class="form-control mr5 fl" id="searchStr"/>
+                                        	</h:outputText>
+                                        	<h:outputText  rendered="#{allocationRecordList.searchStr != null and allocationRecordList.searchStr ne ''}">
+                                            	<input type="text" style="width:180px;font-size:12px;" value="#{allocationRecordList.searchStr}" class="form-control mr5 fl" id="searchStr"/>
+                                        	</h:outputText>
+                                            <input type="button" value="搜索" class="btn btn-primary" onclick="search()" id="searchButton"/>
+                                        </dd>
+                                    </dl>
+                                    <div  >
+                                     <rich:panel id="exp" style="margin:0; border:none; padding: 0;position:absolute;right:0;top:14px;">
+                        			<s:link   view="/stock/AllocationRecord.xhtml" action="#{allocationRecordList.exportStorageExcel()}" onclick="checkTime()">
+                        				<f:param name="outStorageRoomId" value="#{allocationRecordList.outStorageRoomId}" />
+										<f:param name="inStorageRoomId" value="#{allocationRecordList.inStorageRoomId}" />
+										<f:param name="allocationBeginTime" value="#{allocationRecordList.allocationBeginTime}" />
+										<f:param name="allocationEndTime" value="#{allocationRecordList.allocationEndTime}" />
+										<f:param name="operatorId" value="#{allocationRecordList.operatorId}" />
+										<f:param name="searchStr" value="#{allocationRecordList.searchStr}" />
+                        				<img src="#{request.contextPath}/asset/images/stock/commons/icon_exportExcel.jpg"  /> 
+									</s:link>
+								</rich:panel>
+								</div>
+                                </div>
+                            </div>
+                        </div>
+                        <rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+                        <!-- 库存档案搜索列表 -->
+                        <table class="inventory_modal_table mt20" width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<th>序号</th>
+                                <th>调拨批次</th>
+                                <th>调出仓库</th>
+                                <th>调入仓库</th>
+                                <th>经办人</th>
+                                <th>调拨时间</th>
+                                <th>操作</th>
+                            </tr>
+                            <a:repeat value="#{allocationRecordList.resultList}" var="_batch" rowKeyVar="_index">
+                            <tr class="odd">
+                            	<td>#{_index+1}</td>
+                                <td>#{_batch[1]}</td>
+                                <td>#{_batch[3]}</td>
+                                <td>#{_batch[5]}</td>
+                                <td>#{_batch[7]== null ? "--":_batch[7]}</td>
+                                <td>#{_batch[8]}</td>
+                                <td>
+                                	<!-- <a class="icon_link" title="查看" href="#"><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_view2.png" /></a> -->
+                                     <s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}" view="/stock/AllocationDetail.xhtml" styleClass="list_view"  id="detailId" title="查看">
+										<f:param name="transferId" value="#{_batch[0]}" />
+										<f:param name="outStorageRoomId" value="#{allocationRecordList.outStorageRoomId}" />
+										<f:param name="inStorageRoomId" value="#{allocationRecordList.inStorageRoomId}" />
+										<f:param name="allocationBeginTime" value="#{allocationRecordList.allocationBeginTime}" />
+										<f:param name="allocationEndTime" value="#{allocationRecordList.allocationEndTime}" />
+										<f:param name="operatorId" value="#{allocationRecordList.operatorId}" />
+										<f:param name="searchStr" value="#{allocationRecordList.searchStr}" />
+										<f:param name="pageNum" value="#{allocationRecordList.pageNum}" />
+									</s:link>
+                                    <!-- <a class="icon_link" title="编辑" href="#{request.contextPath}/stock/AllocationBill.seam?isEditFlag=1"><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_edit2.png" /></a> -->
+                                    <s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}" view="/stock/AllocationBill.xhtml" styleClass="list_edit"  title="编辑">
+										<f:param name="isEditFlag" value="1" />
+										<f:param name="transferId" value="#{_batch[0]}" />
+										<f:param name="paraOutStorageRoomId" value="#{allocationRecordList.outStorageRoomId}" />
+										<f:param name="paraInStorageRoomId" value="#{allocationRecordList.inStorageRoomId}" />
+										<f:param name="paraAllocationBeginTime" value="#{allocationRecordList.allocationBeginTime}" />
+										<f:param name="paraAllocationEndTime" value="#{allocationRecordList.allocationEndTime}" />
+										<f:param name="paraOperatorId" value="#{allocationRecordList.operatorId}" />
+										<f:param name="paraSearchStr" value="#{allocationRecordList.searchStr}" />
+										<f:param name="paraPageNum" value="#{allocationRecordList.pageNum}" />
+									</s:link>
+                                   <!--  <a class="icon_link" title="删除" href="#"><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_delect2.png" /></a> -->
+                                   <s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}"  view="/stock/AllocationRecord.xhtml"    styleClass="list_delete" action="#{allocationRecordList.delTransfer}" title="删除" onclick="return confirm('确定删除吗？');" id="delStorage">
+			                               <f:param name="transferId" value="#{_batch[0]}" />
+			                               <f:param name="outStorageRoomId" value="#{allocationBillHome.outStorageRoomId}" />
+										<f:param name="inStorageRoomId" value="#{allocationBillHome.inStorageRoomId}" />
+										<f:param name="allocationBeginTime" value="#{allocationBillHome.allocationBeginTime}" />
+										<f:param name="allocationEndTime" value="#{allocationBillHome.allocationEndTime}" />
+										<f:param name="operatorId" value="#{allocationBillHome.operatorId}" />
+										<f:param name="searchStr" value="#{allocationBillHome.searchStr}" />
+										<f:param name="pageNum" value="#{allocationBillHome.pageNum}" />
+		                           </s:link>
+                                     <a class="icon_link" title="打印" href="#" onclick="batchPrintMember(#{_batch[0]});return false;"><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_print2.png" /></a>
+                                </td>
+                            </tr>
+                            </a:repeat>
+                        </table>
+                        <div class="pageModel_wap" style="padding:50px 0 30px;">
+                        <h:form id="pageFrom" rendered="#{null ne allocationRecordList.resultList and allocationRecordList.resultList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!allocationRecordList.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{allocationRecordList.hasPreviousPage and allocationRecordList.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{allocationRecordList.hasPreviousPage and allocationRecordList.totalPages > 1}" >首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{allocationRecordList.prePageNum})"  >&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{allocationRecordList.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le allocationRecordList.totalPages}">
+											<td class="td_t_b #{allocationRecordList.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq allocationRecordList.pageNum ? 'onp' : ''}" >
+												<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{allocationRecordList.flag}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{allocationRecordList.nextPageNum})"  >&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{allocationRecordList.totalPages})" >尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{allocationRecordList.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+						</div>
+                        <!-- 库存档案搜索列表 -->
+                        </rich:panel>
+                    </div>
+                </div>
+                <!-- 库存档案右侧 -->
+            </div>   
+            </td>    
+<a:form>
+	<a:jsFunction name="refreshOutStorage" action="#{allocationRecordList.refreshOutStorage()}"   reRender="inStoragePanel"  oncomplete="complete()">
+		<a:actionparam name="outStorageRoomId" assignTo="#{allocationRecordList.outStorageRoomId}"/>
+		<a:actionparam name="inStorageRoomId" assignTo="#{allocationRecordList.inStorageRoomId}"/>
+	</a:jsFunction>
+	<a:jsFunction name="refreshInStorage" action="#{allocationRecordList.refreshInStorage()}"   reRender="outStoragePanel" oncomplete="complete()">
+		<a:actionparam name="outStorageRoomId" assignTo="#{allocationRecordList.outStorageRoomId}"/>
+		<a:actionparam name="inStorageRoomId" assignTo="#{allocationRecordList.inStorageRoomId}"/>
+	</a:jsFunction>
+	<a:jsFunction name="queryResult" action="#{allocationRecordList.queryResult()}"   reRender="showPanel,exp" oncomplete="windowHeight()">
+		<a:actionparam name="outStorageRoomId" assignTo="#{allocationRecordList.outStorageRoomId}"/>
+		<a:actionparam name="inStorageRoomId" assignTo="#{allocationRecordList.inStorageRoomId}"/>
+		<a:actionparam name="allocationBeginTime" assignTo="#{allocationRecordList.allocationBeginTime}"/>
+		<a:actionparam name="allocationEndTime" assignTo="#{allocationRecordList.allocationEndTime}"/>
+		<a:actionparam name="operatorId" assignTo="#{allocationRecordList.operatorId}"/>
+		<a:actionparam name="searchStr" assignTo="#{allocationRecordList.searchStr}"/>
+	</a:jsFunction>
+	<a:jsFunction name="pageFind" action="#{allocationRecordList.pageFind()}"   reRender="showPanel" oncomplete="windowHeight()">
+		<a:actionparam name="outStorageRoomId" assignTo="#{allocationRecordList.outStorageRoomId}"/>
+		<a:actionparam name="inStorageRoomId" assignTo="#{allocationRecordList.inStorageRoomId}"/>
+		<a:actionparam name="allocationBeginTime" assignTo="#{allocationRecordList.allocationBeginTime}"/>
+		<a:actionparam name="allocationEndTime" assignTo="#{allocationRecordList.allocationEndTime}"/>
+		<a:actionparam name="operatorId" assignTo="#{allocationRecordList.operatorId}"/>
+		<a:actionparam name="searchStr" assignTo="#{allocationRecordList.searchStr}"/>
+		<a:actionparam name="pageNum" assignTo="#{allocationRecordList.pageNum}"/>
+	</a:jsFunction>
+</a:form>
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryFile.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/AllocationRecord.js"></script>
+<script type="text/javascript">
+//导出时间判断
+function checkTime(){
+	var start = $("#beginTime").val();
+	var end = $("#endTime").val();
+	var beginDate = new Date(start);
+	var endDate = new Date(end);
+	var year = parseInt(start.substring(0,4));
+	var month = start.substring(start.indexOf("-")+1,start.indexOf("-")+3);
+	month = parseInt(month.replace("0",""));
+	var days = Math.floor((endDate.getTime() - beginDate.getTime())/(60*60*24*1000));
+	if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
+		if(days > 31){
+			alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+		}
+	}else if(month == 2){
+		if(year%4 ==0){
+			if(days > 29){
+				alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+			}
+		}else{
+			if(days > 28){
+				alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+			}
+		}
+	}else{
+		if(days > 30){
+			alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+		}
+	}
+}
+</script>
+	</ui:define>
+
+</ui:composition>

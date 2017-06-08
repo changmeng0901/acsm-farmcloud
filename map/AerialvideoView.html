@@ -1,0 +1,282 @@
+﻿<!doctype html>
+<html>
+<head>
+    <title>航拍视频查看</title>
+      <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui" />
+	  <meta name="apple-mobile-web-app-capable" content="yes" />
+	  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+	  
+    <link type="text/css" rel="stylesheet" href="/asset/css/spgs/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="/asset/css/style.css"/>
+    <link type="text/css" rel="stylesheet" href="/asset/css/commons/commons.css"/>
+    <link type="text/css" rel="stylesheet" href="/asset/js/videojsPlug/video-js.css" />  
+    <link type="text/css" rel="stylesheet" href="/asset/js/danmu/videojs_ABdm.css" />
+    <link type="text/css" rel="stylesheet" href="/asset/css/aerialphoto/AerialvideoView.css" />
+
+</head>
+<body>
+<div class="aerialvideo_body">
+    <!--(1)航拍头部-->
+    <div class="video_header_wap">
+        <ul class="video_header_list video_header_list1 fl clear">
+            <li class="item1">
+                <img id="BarOnoff" class="onoff" src="/asset/images/aerialphoto/AerialvideoView_onoff.png" title="播放列表开关" />
+            </li>
+        </ul>
+        <ul class="video_header_list video_header_list2 clear">
+            <li class="item1" id="qy_logo_li" style="padding-left: 0px; padding-right: 0px;">
+                <img class="qy_logo" id="qy_logo" src="" />
+            </li>
+            <li class="item2">
+                <p class="p_text" title="经度">
+                    <img class="sm_icon" src="/asset/images/aerialphoto/AerialvideoView_E.png" />
+                    <span class="jd_cor" id="longitude"></span>
+                </p>
+            </li>
+            <li class="item2">
+                <p class="p_text" title="纬度">
+                    <img class="sm_icon" src="/asset/images/aerialphoto/AerialvideoView_N.png" />
+                    <span class="wd_cor" id="latitude"></span>
+                </p>
+            </li>
+            <li class="item2">
+                <p class="p_text" title="高度">
+                    <img class="sm_icon" src="/asset/images/aerialphoto/AerialvideoView_G.png" />
+                    <span class="gd_cor" id="altitude"></span>
+                </p>
+            </li>
+            <li class="item2 item_ISO">
+                <p class="p_text">
+                    <img class="km_icon" src="/asset/images/aerialphoto/AerialvideoView_ISO.png" />
+                    <span class="iso_cor" id="isoitude"></span>
+                </p>
+            </li>
+            <li class="item2">
+                <p class="p_text">
+                    <img class="km_icon" src="/asset/images/aerialphoto/AerialvideoView_km.png" />
+                    <span class="km_cor" id="kmitude"></span>
+                </p>
+            </li>
+            <li class="item2 item_EV">
+                <p class="p_text">
+                    <img class="sm_icon" src="/asset/images/aerialphoto/AerialvideoView_EV.png" />
+                    <span class="ev_cor" id="evitude"></span>
+                </p>
+            </li>
+            <li class="item2">
+                <p class="p_text">
+                    <img class="sm_icon" src="/asset/images/aerialphoto/AerialvideoView_gy.png" />
+                    <span class="gy_cor" id="gyitude"></span>
+                </p>
+            </li>
+            <li class="item2 item_qycard">
+                <p class="p_text mp_text" data-target="#CardModal" data-toggle="modal">
+                    <img class="mp_icon" src="/asset/images/aerialphoto/AerialvideoView_mp.png" />
+                    <span class="mp_cor">企业名片</span>
+                </p>
+            </li>
+            <li class="item2 item_scence">
+                <p class="p_text cj_text" data-target="#SceneModal" data-toggle="modal">
+                    <img class="cj_icon" src="/asset/images/aerialphoto/AerialvideoView_cj.png" />
+                    <span class="cj_cor">场景介绍</span>
+                </p>
+            </li>
+        </ul>
+        <i class="close_btn" style="display:none;" onclick="hideAerialvideo();"><img src="/asset/images/aerialphoto/AerialvideoView_close.png" /></i>
+    </div>
+    
+    <!--(2)左侧播放列表-->
+    <div class="aerial_playlist" style="left: -210px;">
+        <ol class="playlist_list"></ol>
+    </div>
+    
+    <!--(3)视频主体-->
+    <div class="video_main_wap">
+        <div id="AerialPlayer">  
+        	<!--<span class="mark"><i></i></span>-->
+        	<div id="video_block"></div>
+        </div>
+        <!--航拍地图-->
+        <div class="aerial_map" style="display:none;">
+        	<i class="smallbtn_map"><img src="/asset/images/aerialphoto/smallbtn_map.png" /></i>
+        	<div id="map-canvas" style="width:100%;height:100%"></div>
+        </div>
+        <i class="bigbtn_map"><img src="/asset/images/aerialphoto/bigbtn_map.png" /></i>
+    </div>
+ 	<!--(4)航拍底部-->
+    <div class="video_footer_wap clear" style="display:none-;">
+        <div class="barrage_block">
+            <span class="s_text" id="s_text">弹幕</span>
+            <div class="danmu_switch fl" id="danmu_switch">
+                <div class="tanmu_bar"></div>
+                <span></span>
+            </div>
+        </div>
+        <div class="barrage_set_block fl">
+        	<button class="barrage_set">设置</button>
+        	<div class="barrage_setmodal" style="display:none;">
+            	<div class="barrage_lt">
+                	<strong class="text_h3">我的弹幕<span>编辑自己发送的弹幕</span></strong>
+                    <dl class="font_block">
+                    	<dt class="text_h4">字号</dt>
+                        <dd id="font_set">
+                            <span class="f_big" data-barrage-size="30">大</span>
+                            <span class="f_medium" data-barrage-size="20">中</span>
+                            <span class="f_small" data-barrage-size="10">小</span>
+                        </dd>
+                    </dl>
+                    <dl class="color_block">
+                        <dt class="clear">
+                            <p class="text_h4 fl">颜色</p>
+                            <div class="fr">
+                                <input type="text" value="#FFFFFF" class="ipt_link fl" id="Color_InputSet" />
+                                <span class="xs_cor fl" id="Color_XsSet" style="color:#f00-;"></span>
+                            </div>
+                        </dt>
+                        <dd>
+                        	<div class="color_list" id="Color_ListSet" style="display:block;">
+                            	<span class="bgcor1 dq_cor" data-barrage-color="FCF400"><i></i></span>
+                                <span class="bgcor2" data-barrage-color="F50900"><i></i></span>
+                                <span class="bgcor3" data-barrage-color="FFFFFF"><i></i></span>
+                                <span class="bgcor4" data-barrage-color="000000"><i></i></span>
+                                <span class="bgcor5" data-barrage-color="F79B00"><i></i></span>
+                                
+                                <span class="bgcor6" data-barrage-color="4AFF00"><i></i></span>
+                                <span class="bgcor7" data-barrage-color="53FCFF"><i></i></span>
+                                <span class="bgcor8" data-barrage-color="3488F7"><i></i></span>
+                                <span class="bgcor9" data-barrage-color="8B00FF"><i></i></span>
+                                <span class="bgcor10" data-barrage-color="F66600"><i></i></span>
+                                
+                                <span class="bgcor11" data-barrage-color="F60498"><i></i></span>
+                                <span class="bgcor12" data-barrage-color="900086"><i></i></span>
+                                <span class="bgcor13" data-barrage-color="61058B"><i></i></span>
+                                <span class="bgcor14" data-barrage-color="2913AB"><i></i></span>
+                                <span class="bgcor15" data-barrage-color="7D4F11"><i></i></span>
+                                
+                                <span class="bgcor16" data-barrage-color="9B6B31"><i></i></span>
+                                <span class="bgcor17" data-barrage-color="DB8C22"><i></i></span>
+                                <span class="bgcor18" data-barrage-color="90C700"><i></i></span>
+                                <span class="bgcor19" data-barrage-color="30AE1B"><i></i></span>
+                                <span class="bgcor20" data-barrage-color="279329"><i></i></span>
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="tanmu_send_block">
+            <input type="text" value="发送弹幕一起high!" class="iclass text_ipt" id="text_tanmu"/>
+            <div class="btn_face" style="display:none;"></div>
+            <button type="button" class="btn_send" id="Send_Danmu">发送</button>
+        </div>
+        <div class="fr" id="share_btn_div">
+            <p class="Opt_count"><img class="icon_fx" id="Opt_btn" onoff="true" src="/asset/images/aerialphoto/icon_opt.png" /><span id="Opt_count"></span></p>
+            <p class="share_text" data-target="#ShareModal" data-toggle="modal"><img src="/asset/images/aerialphoto/icon_share.png" />分享</p>
+        </div>
+    </div>
+    <!--(4)航拍底部-->
+</div>
+
+
+<!--（0-1）企业名片模态框-->
+<div class="modal fade" id="CardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog card_dialog">
+<div class="modal-content">
+	<div class="modal-header clear">
+        <h4 class="modal-title fl"><img src="/asset/images/aerialphoto/icon_qycard.png" />企业名片</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+    
+        <dl class="card_dl">
+        	<dt class="card_dt">
+            	<img id="qycard_logo" src="" />
+            </dt>
+            <dd class="card_dd">
+            	<p class="qycard_name" id="qycard_name">北京北菜园农业科技发展有限公司</p>
+                <p class="qycard_phone"><img src="/asset/images/aerialphoto/icon_phone.png "/><span class="color_y" id="qycard_phone">400-8166-589</span></p>
+                <p class="qycard_mail"><img src="/asset/images/aerialphoto/icon_mail.png "/><span id="qycard_mail">1010001001@acsm.com</span></p>
+                <p class="qycard_weibo"><img src="/asset/images/aerialphoto/icon_come.png "/><span id="qycard_weibo">北菜园</span></p>
+                <p class="qycard_addr"><img src="/asset/images/aerialphoto/icon_addr.png "/><span id="qycard_addr">北京市延庆县康庄镇小丰营村委会办公楼西2000米</span></p>
+            </dd>
+        </dl>
+        <strong class="title_intro">企业介绍</strong>
+        <p class="text_intro" id="qycard_intro">北菜园有机蔬菜基地位于北京的上风上水之地延庆，拥有有机认证基地470亩，实行“六统一”原则进行管</p>
+        
+    </div>
+</div>
+</div>
+</div>
+<!--（0-2）场景介绍模态框-->
+<div class="modal fade" id="SceneModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog scene_dialog">
+<div class="modal-content">
+	<i class="i_close" data-dismiss="modal"></i>
+    <div class="modal-body modal_body" style="overflow: auto;">
+
+       <p class="text_company" id="scene_description"></p>
+       
+    </div>
+</div>
+</div>
+</div>
+<!--（0-3）分享模态框-->
+<div class="modal fade" id="ShareModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog share_dialog">
+<div class="modal-content">
+	<i class="i_close" data-dismiss="modal"></i>
+    <div class="modal-body modal_body">
+    
+       <strong class="text_company" id="share_company"></strong>
+       <p class="text_tip">扫描二维码，将链接分享给好友</p>
+       <img class="code_pic" id="share_code_img" src="/asset/images/aerialphoto/code_pic1.jpg" />
+       <input class="ipt_link" id="share_link" type="text" value="http://app.farmeasy.cn/map/PropagandasShow." style="background-color:#fff;color:#f00;" />
+       <button class="btn_copy" onclick="copyShareUrl();"><img src="/asset/images/aerialphoto/icon_copylink.png" />复制链接</button>
+       
+    </div>
+</div>
+</div>
+</div>
+<!--（0-3）分享模态框-->
+<script type="text/javascript" src="/asset/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/asset/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/asset/js/jquery.nicescroll.min.js"></script>
+<!-- <script type="text/javascript" src="http://ditu.google.cn/maps/api/js?sensor=false"></script> -->
+<script src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script>
+<script type="text/javascript" src="/asset/js/aerialphoto/map_base_functions.js"></script>
+<script type="text/javascript" src="/asset/js/aerialphoto/map_controller.js"></script>
+
+	<!--[if lt IE 9]>
+	<script src="../js/videojsPlugvideojs-ie8.js"></script>
+	<![endif]-->
+    <script src="/asset/js/videojsPlug/video.js"></script>
+	<script src="/asset/js/videojsPlug/videojs-contrib-hls.js"></script>
+	<script src="/asset/js/videojsPlug/m3u8-parser.js"></script>
+	
+	<script src="/asset/js/danmu/CommentCoreLibrary.js"></script>
+	<script src="/asset/js/danmu/videojs_ABdm.js"></script>
+	<script type="text/javascript" src="/asset/js/aerialphoto/AerialvideoView.js"></script>
+	
+	<script type="text/javascript">
+		function hideAerialvideo(){
+			jQuery(window.parent.document).find("#aerialVideoDiv").css("display","none");
+		}		
+		//复制链接
+		function copyShareUrl(){
+			var Url2=document.getElementById("share_link");
+			Url2.select();
+			var supportFlag=document.execCommand("Copy");
+			if(supportFlag){
+				alert('已复制该内容');
+			}else{
+				alert('此浏览器不支持复制功能，请手动复制一下吧！');
+			}	
+		}
+	</script>
+</body>
+</html>
+
+
+

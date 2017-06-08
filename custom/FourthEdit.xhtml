@@ -1,0 +1,139 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="#{sessionTake.loginStep==6?'/layout/template.xhtml':'/layout/template_custom.xhtml'}">
+
+	<ui:define name="body">
+	 	<td valign="top" width="195" style=" border-right:1px solid #e1e4eb;">
+                <div style="width:165px; text-align:center; margin-top:35px;">
+                	<img src="#{request.contextPath}/asset/images/new_033.jpg" width="80" height="739" />
+                </div>
+        </td>
+		<td valign="top">
+			<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">
+                    	<font size="3">
+						选择作物
+						</font>
+						</div>
+                     </div>
+                     <div class="retent_03">
+			            	<a href="#{request.contextPath}/custom/Fourth.seam"><img src="#{request.contextPath}/asset/images/retent_03.jpg" width="30" height="25" /></a>
+			            </div>
+					 <div class="z_r_ser" style="margin-top:60px;">
+                     <h:form id="plantEnterpriseSearch">
+                    	<table cellpadding="0" cellspacing="0" width="476" style="margin:0 auto;">
+                        	<tr>
+                        		<td style="font-size:14px;" >查询条件：</td>
+                                <td><h:inputText id="plantName" class="z_r_ser_i" value="#{plantEnterpriseHome.plantName}"/></td>
+                                <td>
+                                   <h:commandButton id="search" action="/model/PlantEnterpriseEdit.xhtml"  styleClass="search_btn_search"/>
+                                </td>
+                           </tr>
+                       </table>  
+                      </h:form>                        
+                    </div>
+                    <!--茄果类开始-->
+                    <a:repeat value="#{plantEnterpriseHome.fList}" var="_floristics" rendered="#{not empty plantEnterpriseHome.fList}" rowKeyVar="_floristicsindex">
+                    	<s:div styleClass="ybp_02" style="margin-top:35px;" id="persistList" >
+                    		<div class="zw_fl_#{_floristicsindex % 3}">
+                            	<font class="zw_font_#{_floristicsindex % 3}">#{_floristics.name}</font><font class="zw_font_hui">#{_floristics.englishName}</font>
+                            </div>
+                            <!--黄瓜开始-->
+                            <a:repeat value="#{plantEnterpriseHome.getFListInfo(_floristics.floristicsId)}" var="_fartherFloristics" rowKeyVar="_fartherFloristicsindex">
+                            <s:div styleClass="zw_cont" rendered="#{plantEnterpriseHome.getPListInfo(_fartherFloristics.floristicsId).size>0}">
+                              <div class="zw_tit2">#{_fartherFloristics.name}</div>
+                              	<ul class="zw_ul">
+                                    <a:repeat value="#{plantEnterpriseHome.getPListInfo(_fartherFloristics.floristicsId)}" var="_plant" rowKeyVar="_index">
+	                                      <li class="zw_libg">
+	                                           	<a href="javascript:void(0);" onclick="plantPersistInfo(#{_plant.plantId},'#{plantEnterpriseHome.plantMap.get(_plant.plantId)}');" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image#{_plant.plantId}','','../asset/images/image2.png',1)">
+													<img class="zw_bgt" src="../asset/images/image_bg#{plantEnterpriseHome.plantMap.get(_plant.plantId)}.png" width="177" height="177" id="Image#{_plant.plantId}" />
+	                                           	</a>
+	                                            <a class="zw_libg_img" href="#">
+	                                                <s:graphicImage value="#{_plant.picture}" width="177" height="177" rendered="#{_plant.picture ne null}">
+														<s:transformImageSize width="177" maintainRatio="true" />
+													</s:graphicImage>
+	                                				<img src="../asset/images/851.jpg" width="177" style="display:#{_plant.picture eq null?'black':'none'}"/>
+	                                            </a>
+	                                           <div class="zw_text">#{_plant.name}</div>
+	                                      </li>
+                                    </a:repeat>
+                              	</ul>
+                            </s:div>
+                            </a:repeat>
+                            <!--黄瓜结束-->
+                        <div class="clear"></div>
+                    </s:div>
+                    </a:repeat>
+                    <!--茄果类开始-->
+                    <!--植物分类结束-->
+            <!--分类下结束-->
+            <div class="clear"></div>
+		</div><!--right_c结束-->
+		<a:form>
+	  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+			<a:jsFunction name="insertPE" action="#{plantEnterpriseHome.insertPE}" reRender="persistList">
+				<a:actionparam name="plantId" assignTo="#{plantEnterpriseHome.plantId}"/>
+			</a:jsFunction>
+			<a:jsFunction name="deletePe" action="#{plantEnterpriseHome.deletePe}" reRender="persistList">
+				<a:actionparam name="plantId" assignTo="#{plantEnterpriseHome.plantId}"/>
+			</a:jsFunction>
+		</a:form>
+		
+
+	 	</td> 
+	 	<script type="text/javascript" src="#{request.contextPath}/asset/js/DD_belatedPNG.js" ></script>
+
+<script type="text/javascript">
+DD_belatedPNG.fix('.zw_bgt img');
+
+</script>
+
+<!--鼠标移上圆圈去-->
+<script type="text/javascript">
+//<![CDATA[
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+
+function plantPersistInfo(plant,typeinfo){
+	if(typeinfo == 2){
+		if (confirm("确定删除模型!")){
+			deletePe(plant);
+		}
+	}else{
+		if (confirm("确定添加模型!")){
+			insertPE(plant);
+		}
+	}
+}
+//]]>
+</script>
+	</ui:define>
+
+</ui:composition>

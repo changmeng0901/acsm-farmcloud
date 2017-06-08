@@ -1,0 +1,206 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+	<style>
+		.catd {
+		    font-size: 12px;
+		    line-height: 25px;
+		    padding: 5px 0;
+		    text-align: center;
+		}
+		.form_datetime input {
+		    border: 1px solid #ccc;
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		    width: 220px;
+		}	
+		a:focus {
+			outline:none;
+			-moz-outline:none;
+		}
+		.new_da {
+		    display: inline-block;
+		    float: none;
+		    margin-bottom: 15px;
+		    margin-right: 50px;
+		    min-height: 30px;
+		    min-width: 310px;
+		}
+		.dr-pnl {
+		    padding: 0px;
+		    border: none;
+		}
+		.dr-pnl-b {
+		    padding: 0px;
+		    border: none;
+		}
+	</style>
+	<script type="text/javascript">
+		jquery(document).ready(function(){  //这个就是传说的ready
+			jquery(".str_t tr:even").addClass("alt");
+		});
+	</script>
+	#{createGoodsBatchCheckControl.goodsBatchCheckDetailInit()}
+	<td valign="top">
+		<div class="right_c">
+			<div class="r_title">
+				<div class="r_t_l">加工&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/inOut/StockRecord.seam">库存</a>&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/inOut/InventoryRecordControl.seam">盘点</a>&#160;&gt;&#160;&#160;<font size="3">盘点详细信息</font>
+				</div>
+			</div>
+			<div class="str_box">
+				<table width="100%" cellpadding="0" cellspacing="0" class="str_t">
+					<tr>
+						<td valign="middle" class="str_td">盘点编号：</td>
+						<td valign="middle" class="str_text">
+							<h:outputText value="#{createGoodsBatchCheckControl.inventoryDetail.inventoryBatch}" />
+						</td>
+						<td class="str_td">所属库房：</td>
+						<td class="str_text">
+							<h:outputText value="#{createGoodsBatchCheckControl.inventoryDetail.storageRoomId.name}" />
+						</td>
+					</tr>
+					<tr>
+						<td valign="middle" class="str_td">盘点时间：</td>
+						<td valign="middle" class="str_text">
+							<h:outputText value="#{createGoodsBatchCheckControl.inventoryDetail.inventoryTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText>
+						</td>
+						<td class="str_td">操作人：</td>
+						<td class="str_text">
+							<h:outputText value="#{createGoodsBatchCheckControl.inventoryDetail.inventoryPeople}" />
+						</td>
+					</tr>
+				</table>
+				<div class="clear"></div>
+				<div class="tree_dis" style="margin-top: 15px;">
+					<div class="box2">
+						<div>
+							<rich:panel id="totalPenal" style="width:100%; margin-top:35px;">
+								<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b2" style="border-top:1px solid #ddd;">
+									<tr>
+										<td class="tree_th" width="5%">ID</td>
+										<td class="tree_th" width="20%">物料名称</td>
+										<td class="tree_th" width="20%">批次编号</td>
+										<td class="tree_th" width="20%">物料规格</td>
+										<td class="tree_th" width="10%">系统库存</td>
+										<td class="tree_th" width="10%">实际库存</td>
+										<td class="tree_th" width="15%">盘点原因</td>
+									</tr>
+								</table>
+								<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b" id="cartList">
+									<a:repeat value="#{createGoodsBatchCheckControl.inventoryBatchList}" var="_ib" rowKeyVar="_index">
+										<tr class="cm_nottt #{_index % 2 == 0 ? 'alt' : ''}">
+											<td height="48" width="5%" align="center">#{_ib.inventoryRecordId}
+												<input type="hidden" value="#{_ib.inventoryRecordId}" id="hiddenGoodsKey#{_index}"></input>
+											</td>
+											<td width="20%" align="center">#{_ib.goodsInfoName}</td>
+											<td width="20%" align="center">#{_ib.batchCode}</td>
+											<td width="20%" align="center">#{_ib.goodsSpec}</td>
+											<td width="10%" align="center"><h:outputText value="#{_ib.oldGoodsNum}"><f:convertNumber pattern="#.###"/></h:outputText></td>
+											<td width="10%" align="center">
+												<input class="_number form-control" onblur="updateNum(#{_ib.inventoryRecordId},this.value,this.id);" style="width: 95%; text-align: center;" id="updateNum#{_ib.inventoryRecordId}" type="text" value="#{_ib.goodsNum}"/>
+											</td>
+											<td width="15%" align="center">
+												<input class="_number form-control" onblur="updateCause(#{_ib.inventoryRecordId},this.value);" style="width: 95%; text-align: center;" id="updateCause#{_ib.inventoryRecordId}" type="text" value="#{_ib.checkBatchCause}"/>
+											</td>
+										</tr>
+									</a:repeat>
+								</table>
+							</rich:panel>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+				<h:form id="saveFrom">
+					<a:commandLink id="refreshToral" reRender="totalPenal"></a:commandLink>
+					<h:inputHidden value="#{createGoodsBatchCheckControl.pageNum}" />
+					<h:inputHidden id="goodsBatchStringsHidden" value="#{createGoodsBatchCheckControl.goodsBatchStrings}" />
+					<table width="180" style="margin:35px auto 0 auto;">
+						<tr>
+							<td style="vertical-align: middle;">
+								<a:commandButton id="save" style="width:77px; height:32px; float: left; " image="../asset/images/cm_safe_04.jpg" onclick="getAddGoodsInfo();jquery('#saveFrom\\:save').attr('disabled','true');" 
+									action="#{createGoodsBatchCheckControl.goodsBatchCheckConfirm}" oncomplete="jquery('#saveFrom\\:save').removeAttr('disabled');"/>&#160;
+								<s:button view="/inOut/InventoryRecordControl.seam" styleClass="edit_back" id="bn_left6" style="margin-left:10px" propagation="none">
+									<f:param name="page" value="#{createGoodsBatchCheckControl.pageNum}" />
+								</s:button>
+							</td>
+						</tr>
+					</table> 
+				</h:form>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</td>
+	<a:form>
+		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="checkGoodsNumber" action="#{createGoodsBatchCheckControl.checkGoodsNumber}" oncomplete="modifyNumComplete();" >
+			<a:actionparam name="goodsBatchId" assignTo="#{createGoodsBatchCheckControl.goodsBatchId}"/>
+			<a:actionparam name="modifyNumber" assignTo="#{createGoodsBatchCheckControl.modifyNumber}"/>
+		</a:jsFunction>
+		<a:jsFunction name="checkGoodsCause" action="#{createGoodsBatchCheckControl.checkGoodsCause}" oncomplete="modifyNumComplete();" >
+			<a:actionparam name="goodsBatchId" assignTo="#{createGoodsBatchCheckControl.goodsBatchId}"/>
+			<a:actionparam name="modifyNumber" assignTo="#{createGoodsBatchCheckControl.cause}"/>
+		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript">
+	//<![CDATA[
+	//获取物料数据和报损原因
+    function getAddGoodsInfo(){   	
+		var updateNum="";
+		var updateCause="";
+        var goodsBatchStrings='{"resultDatas":[';
+ 	    var trObj=jquery("#cartList").children("tbody").children("tr");
+ 	    trObj.each(function(i){     
+ 	 	    	var goodsKey=jquery("#hiddenGoodsKey"+i).val();  	
+ 	 	    	updateNum=jquery("#updateNum"+goodsKey).val();
+ 	 	    	updateCause=jquery("#updateCause"+goodsKey).val();
+				goodsBatchStrings+='{"goodsKey":"' + goodsKey + '","updateNum":"' + updateNum + '","updateCause":"' + updateCause + '"},';							
+     	});
+     	if(trObj.length>0){
+     		goodsBatchStrings = goodsBatchStrings.substring(0, goodsBatchStrings.length-1);
+        }
+ 	   goodsBatchStrings = goodsBatchStrings+']}';
+ 	  jquery("#saveFrom\\:goodsBatchStringsHidden").val(goodsBatchStrings);  	  
+    }
+	//修改商品数量
+	function updateNum(productId,num,Numberid){
+		if (productId != null && productId != 0) {
+			if(isNaN(num) || num <0){
+				alert("实际库存必须为正数");
+				document.getElementById(Numberid).value=1;
+				return false;
+			}else if(""==num){
+				document.getElementById(Numberid).value=0;
+			}
+			//if (!isNaN(num)) {
+				//checkGoodsNumber(Number(productId), num);
+			//}
+		}
+	}
+	//修改原因
+	function updateCause(batchId,cause){
+		if (batchId != null && batchId != 0) {
+			//checkGoodsCause(Number(batchId), cause);
+		}
+	}
+
+	//修改数量回调
+	function modifyNumComplete(){
+		document.getElementById("saveFrom:refreshToral").onclick();
+	}
+//]]>
+</script>
+</ui:define>
+</ui:composition>

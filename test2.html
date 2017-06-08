@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml" lang="en" ng-app="app">
+  <head>
+    <title>test.html</title>
+    <meta http-equiv="description" content="this is my page" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link href="/asset/css/webgis/select2.css" rel="stylesheet" />
+	<script type="text/javascript" src="/asset/new/jquery.js"></script>
+	
+	<script type="text/javascript" src="/asset/js/webgis/select2.full.js" ></script>
+	<script type="text/javascript" src="/asset/js/webgis/i18n/zh-CN.js" ></script>
+  </head>
+  
+  <body>
+  <div style="width:250px">
+  <input type="button" value="getVal" onclick="getVal()"/>
+	<select id="plant" class="select-picker" style="width:250px" data-placeholder="Select an option" onchange="alert(this.value)">
+	</select>
+	<br/>
+	<br/>
+	<select id="plant2" class="select-picker" style="width:250px">
+	<option value="name">name</option>
+	<option value="name1">name1</option>
+	<option value="name2">name2</option>
+	</select>
+	<img src="/11111.jpg"/>
+	<a href="http://weixin.qq.com/r/Azjt9XXEgij9rTGW920R" ></a>
+	<a href="weixin://contacts/profile/gh_204936aea56d"></a>
+	<a href="#" onclick="WeiXinAddContact('maltLTD')">关注</a>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<a href="https://mp.weixin.qq.com/s/a0qURdM0IGS5gcq37DofaA" > xixixixxixi</a>
+</div>	
+	<script type="text/javascript">
+	
+		function formatData(result) {
+			if (result.loading) return result.text;
+      		var html = '<div>'+result.plantName+"-"+result.breedName+'</div>';
+	        return html;
+		}
+
+		function formatDataSelection(data) {
+			if(data.id == "")
+				return '搜索作物或品种的名称！';
+			return data.plantName+"-"+data.breedName;
+		}
+		var plant_select = $('#plant').select2({
+			
+			//placeholder: {
+			//    id: '-1',
+			//    text: '搜索作物或品种的名称！'
+			//  },
+			language : "zh-CN",
+			//language : {  inputTooShort: function () {
+			//    return "You must enter more characters...";
+			//  }},
+			//cache : true,
+			//debug:true,
+			//allowClear: true
+			ajax : {
+				url : "/rest/1.0/breedList",
+				delay : 450,
+				dataType : 'json',
+				data : function(params) {
+					var param = "";
+					var page = "";
+					if(typeof(params.term) != "undefined"){
+						param = params.term;
+						param = param.replace("'","\'");
+					}
+					if(typeof(params.page) != "undefined"){
+						page = params.page;
+					}
+					return {
+						'method' : 'breed_plant_list',
+						'field' : "{'enterprise_info_id':85,'search':'"+param+"','page':'"+page+"'}",
+					};
+				},
+				cache : true,
+				processResults : function(data, params) {
+					console.log(data)
+					if(typeof(params.page) == "undefined"){
+						params.page = 0
+					}
+					return {
+						results : data.result_data,
+						pagination : {
+							more : (params.page * 200) < data.total_count
+						}
+					};
+				}
+			},
+			escapeMarkup : function(markup) {
+				return markup;
+			}, // let our custom formatter work
+			//minimumInputLength : 2,
+			templateResult : formatData,
+			templateSelection : formatDataSelection
+		});
+		function  getVal(){
+			console.log(plant_select.find(":selected").data("id"));
+			//plant_select.select2("data")[0].id
+		}
+		var options = new Array();
+		var tempOption = "";
+		function initPlant2 (){
+			if(options.length == 0)
+				for(var i = 0;i<7000 ;i++){
+					options.push({id:i,text:"name"+i});
+					tempOption+="<option value='"+i+"'>name"+i+"</option>";
+				}
+			$('#plant2').empty();
+			$('#plant2').append(tempOption);
+			$('#plant2').select2();
+			//$('#plant2').select2({
+			 //   data: options
+			//});
+		}
+		$('#plant2').select2();
+		
+		//plant_select.select2("trigger", "select", {
+		//    data:{id: 100, breedName:"黄瓜",plantId:123,plantName:"大黄瓜",type:"2"}
+		//});
+	</script>
+  </body>
+</html>

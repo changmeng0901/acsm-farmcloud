@@ -1,0 +1,173 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	>
+	<style>
+	</style>
+	  <!--添加物料内容-->
+    <div class="modal fade" id="accessModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog material_dialog">
+     <rich:panel id="addAccess" style="margin:0; border:none; padding: 0;">
+        <div class="modal-header clear">
+            <h4 class="modal-title fl" id="modelToAddAccess">新增辅料及其它物料</h4>
+            <i class="i_close" onclick="closeAccessModal()"></i>
+        </div>
+        <h:inputHidden value="#{addAccessHome.enterpriseInfoId}" id="enterpriseId_access"/>
+        <h:inputHidden value="#{addAccessHome.baseId}" id="baseId_access"/>
+        <h:inputHidden value="#{addAccessHome.levelId}" id="levelId_access"/>
+        <h:inputHidden value="#{addAccessHome.userId}" id="userId_access"/>
+        <h:form id="accessInfo" enctype="multipart/form-data">
+        <div class="modal-body modal_body" style="padding-bottom:20px;">
+        	<table class="edit_infor_table" cellpadding="0" style="width:100%;margin:20px auto;">
+                <tr>
+                    <td class="td_lt" style="width:100px;">物料名称</td>
+                    <td class="td_rt" style="width:260px;">
+                    	<h:inputText value="#{addAccessHome.goodsInfoName}" styleClass="form-control w220 fl" id="accessName"/>
+                        <span class="star_red">*</span>
+                    </td>
+                    <td class="td_lt">存储类型</td>
+                    <td class="td_rt">
+                        <div class="inline_block bootSelt220 fl">
+                            <select class="selectpicker" id="accessStoreType">
+                                <option value="-1">请选择</option>
+                                <a:repeat value="#{addAccessHome.storeTypeList}" var="stl">
+									<option value="#{stl.goodsStorageTypeId}" >#{stl.name}</option>
+								</a:repeat>
+                            </select>
+                        </div>                                        
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td_lt">保质期</td>
+                    <td class="td_rt">
+                       <h:inputText value="#{addAccessHome.shelfLife}" styleClass="form-control w220 fl" id="accessShelfLife"/>
+                        <span style="float:left;padding-left:2px;line-height:34px;">天</span>
+                        <span class="star_red">*</span>
+                    </td>
+                </tr>
+                <tr>
+                   <td class="td_lt">物料规格</td>
+                    <td class="td_rt" colspan="3">
+                     <h:inputText value="#{addAccessHome.netContent}" styleClass="form-control fl mr5" id="accessnetContent" style="width:80px;" />
+                        <div class="inline_block bootSelt80 fl">
+                            <select class="selectpicker" id="accessSpec">
+                                <option value="-1">请选择</option>
+                                <a:repeat value="#{addAccessHome.specList}" var="spec">
+									<option value="#{spec.id}" >#{spec.name}</option>
+								</a:repeat>
+                            </select>
+                        </div>
+                        <span style="float:left;padding:0 2px;line-height:34px;">/</span>
+                         <h:inputText value="#{addAccessHome.packSpec}" styleClass="form-control fl mr5" id="accesspackSpec" style="width:80px;" />
+                        <span class="star_red">(净含量 单位规格/包装规格)*</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td_lt">图片</td>
+                    <td class="td_rt" colspan="3">
+                        <h:inputHidden  id="pictureUrl3" value=""/>
+                        <iframe src="#{request.contextPath}/stock/AccePicUp.seam" id="acceframe" class="fl" name="acceframe" frameBorder="0" scrolling="no" width="600" onLoad="" ></iframe>
+                    </td>
+                </tr>
+                <tr>
+                	<td class="td_lt">描述：</td>
+                    <td class="td_rt" colspan="3">
+                       <h:inputTextarea value="#{addAccessHome.descript}" id="description" class="form-control" style="width:80%;height:60px;" />
+                    </td>
+                </tr> 
+            </table>
+            </div>
+        </h:form>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="accessCheckSubmit()" id="accessSubBut">提交</button>
+            <button type="button" class="btn btn-default" onclick="closeAccessModal()">返回</button>
+        </div>
+        </rich:panel>
+    </div>
+    </div>
+     <a:form>
+		<a:jsFunction name="initAccessAddModel" action="#{addAccessHome.initAccessAddModel()}"  reRender="addAccess" oncomplete="showAddAccess()">
+			<a:actionparam name="enterpriseInfoId" assignTo="#{addAccessHome.enterpriseInfoId}"/>
+			<a:actionparam name="baseId" assignTo="#{addAccessHome.baseId}"/>
+			<a:actionparam name="levelId" assignTo="#{addAccessHome.levelId}"/>
+			<a:actionparam name="userId" assignTo="#{addAccessHome.userId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="saveAccess"  action="#{addAccessHome.saveAccess()}" data="#{addAccessHome.message}"  oncomplete="accessCheckSubmitComplete(data)">
+			<a:actionparam name="accessName" assignTo="#{addAccessHome.goodsInfoName}"/>
+			<a:actionparam name="storeType" assignTo="#{addAccessHome.storeType}"/>
+			<a:actionparam name="shelfLife" assignTo="#{addAccessHome.shelfLife}"/>
+			<a:actionparam name="netContent" assignTo="#{addAccessHome.netContent}"/>
+			<a:actionparam name="unit" assignTo="#{addAccessHome.unit}"/>
+			<a:actionparam name="spackSpec" assignTo="#{addAccessHome.packSpec}"/>
+			<a:actionparam name="description" assignTo="#{addAccessHome.descript}"/>
+			<a:actionparam name="picture" assignTo="#{addAccessHome.packingImagesUrl}"/>
+			<a:actionparam name="enterpriseInfoId" assignTo="#{addAccessHome.enterpriseInfoId}"/>
+			<a:actionparam name="baseId" assignTo="#{addAccessHome.baseId}"/>
+			<a:actionparam name="levelId" assignTo="#{addAccessHome.levelId}"/>
+			<a:actionparam name="userId" assignTo="#{addAccessHome.userId}"/>
+		</a:jsFunction>
+	</a:form>
+	<script>
+	//<![CDATA[
+	function showAddAccess(){
+		$('.selectpicker').selectpicker();
+		$("#goodsModel").modal("hide");
+		$("#accessSubBut").attr("disabled",false);
+		$("#accessModal").modal("show");
+	}
+	function closeAccessModal(){
+		$("#accessModal").modal("hide");
+		$("#goodsModel").modal("show");
+	}
+	//提交前校验
+	function accessCheckSubmit(){
+		var accessName = $("#accessInfo\\:accessName").val();
+		var storeType = $("#accessStoreType").val();
+		var shelfLife = $("#accessInfo\\:accessShelfLife").val();
+		var netContent = $("#accessInfo\\:accessnetContent").val();
+		var spackSpec = $("#accessInfo\\:accesspackSpec").val();
+		var unit = $("#accessSpec").val();
+		var description = $("#accessInfo\\:description").val();
+		var picture = $('#acceframe').contents().find('#mateImage').attr("src");
+		var enterpriseInfoId = $("#enterpriseId_access").val();
+		var baseId = $("#baseId_access").val();
+		var levelId = $("#levelId_access").val();
+		var userId = $("#userId_access").val();
+		if(accessName==""){
+			alert("请输入物料名称");
+			return;
+		}
+		if(storeType=="-1"){
+			alert("请选择存储类型");
+			return;
+		}
+		if(shelfLife==""){
+			alert("请输入保质期");
+			return;
+		}
+		if(unit=="-1"){
+			alert("请选择单位规格");
+			return;
+		}
+		$("#accessInfo\\:stype").val(storeType);
+		$("#accessInfo\\:aunit").val(unit);
+		$("#accessSubBut").attr("disabled",true);
+		saveAccess(accessName,storeType,shelfLife,netContent,unit,spackSpec,description,picture,enterpriseInfoId,baseId,levelId,userId);
+	}
+
+	 function accessCheckSubmitComplete(data){
+		 if(data!="ok"){
+				alert(data);
+			}else{
+				var inStockType = $("#inStockType").attr("myInStockTypeId");
+				findByPage(4,inStockType,1,"",1);
+				closeAccessModal();
+			}
+	}
+	//]]>
+	</script>
+</ui:composition>

@@ -1,0 +1,219 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+	<ui:define name="body">
+	<style>
+	.form-control{
+		float:left;
+	}
+	.all_da{
+	margin-left:165px;
+	}
+	 
+		.fr{float:right;}
+	.r_ulli1{float:right;}
+	</style>
+	<script type="text/javascript">
+	document.getElementById("selectBaseDiv").style.display="none";
+	</script>
+	<td valign="top" width="210" style=" border-right:1px solid #e1e4eb;">
+                <div class="left_c2">
+                	<ul class="lt_c_ul">
+			    		<li>
+			            	<a href="#{request.contextPath}/agricultural/InputsInfoList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/trp2.png"/>&#160;投入品信息</a>
+			            </li>
+			            <li>
+			            	<a href="#{request.contextPath}/agricultural/InputsRecordList.seam" class="fon_07" ><strong><img class="tbimg"  src="#{request.contextPath}/asset/images/far_jilu_21.png"/>&#160;投入品记录</strong></a>
+			            </li>
+			        </ul>
+                	<div class="clear"></div>
+                </div>
+            </td>
+		<td valign="top">
+		<h:form id="user" enctype="multipart/form-data">
+		<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+        
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+        <div class="right_c">
+	    	<div class="r_title">
+	        	<div class="r_t_l"><font size="4">投入品记录</font><rich:messages styleClass="messages"></rich:messages></div>
+	        </div>
+				<!--入库订单列表开始-->
+				<!--#{inputsRecordHome.work()}-->
+			<div class="all_d3">
+                <div class="all_da all_w01">
+	              	<table>
+	                	<tr>
+	                    	<td class="all_te">种植区域：</td>
+	                    	<td>
+								<h:inputHidden id="realPlantId" value="#{inputsRecordHome.realPlantId}"  />
+								<select  style="display: none;" id="combobox2" class="selectpicker" data-live-search="true">
+								    <a:repeat value="#{inputsRecordHome.getRealPlantList()}" var="_rp">
+								    	<h:panelGroup rendered="#{inputsRecordHome.realPlantId eq _rp.realPlantId}">
+								    		<option value="#{_rp.realPlantId}" selected="selected">#{_rp.tunnelInfoId.tunnelName}--#{_rp.breedBreedId.plant.name}</option>
+								    	</h:panelGroup>
+								    	<h:panelGroup rendered="#{inputsRecordHome.realPlantId ne _rp.realPlantId}">
+								    		<option value="#{_rp.realPlantId}" >#{_rp.tunnelInfoId.tunnelName}--#{_rp.breedBreedId.plant.name}</option>
+								    	</h:panelGroup>
+								    </a:repeat>
+								</select>
+	                   		</td>
+	                	</tr>
+	           		</table>
+                </div>
+               <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">投入品类型：</td>
+                                    <td>
+                                    	<h:panelGroup id="arit">
+										<h:selectOneMenu styleClass="selectpicker"  id="plantingPattern" style="width:146px;"  value="#{inputsRecordHome.inputsType}" valueChangeListener="#{inputsRecordHome.getNameByType}">
+											<f:selectItem itemLabel="农药" itemValue="2" />
+											<f:selectItem itemLabel="肥料" itemValue="3" />
+											<f:selectItem itemLabel="其它" itemValue="4" />
+											<a:support event="onchange" reRender="inputsId" eventsQueue="default" ajaxSingle="true" bypassUpdates="true" oncomplete="jquery('.selectpicker').selectpicker();changeUnit();"/>
+										</h:selectOneMenu>
+										</h:panelGroup>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">投入品名称：</td>
+                                    <td>
+                                    	<h:panelGroup id="inputsId">
+										<h:selectOneMenu  styleClass="selectpicker" id="rfidTypeId" style="width:146px;"  value="#{inputsRecordHome.instance.inputsInfoId}" >
+											<s:selectItems value="#{inputsRecordHome.iiList}" var="var" label="#{var.name}#{var.spec eq null or var.spec eq ''?'':'-'}#{var.spec}#{var.manufacturers eq null or var.manufacturers eq ''?'':'-'}#{var.manufacturers}"/>
+										<s:convertEntity/>
+										</h:selectOneMenu>
+										</h:panelGroup>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">使用量：</td>
+                                    <td>
+										 <h:inputText id="sn" styleClass="form-control nw221"  value="#{inputsRecordHome.instance.amount}"/>
+										  <span class="finput" id="unit">ml</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+	            <div class="all_da all_w01" style="width:530px;">
+                	<table>
+                     	<tr>
+                    		<td class="all_te">备注：</td>
+                            <td>
+								<h:inputTextarea id="remarks" styleClass="form-control nw420" rows="3" value="#{inputsRecordHome.instance.remarks}" />
+                         	</td>
+                     	</tr>
+            		</table>
+       			</div>
+       			
+	            <div class="clear"></div>
+            </div>
+            <table width="280" style="margin:35px auto 0 auto;">
+				<tr>
+					<td>
+						<h:commandButton data-toggle="modal" data-target="#myModal" id="persist"  styleClass="btn btn-primary"  value="提交" action="#{inputsRecordHome.persist}" rendered="#{!inputsRecordHome.managed}"  onclick="return checkSubmit()"/>
+		            	<h:commandButton data-toggle="modal" data-target="#myModal"  id="update"  styleClass="btn btn-primary" value="提交" action="#{inputsRecordHome.update}" rendered="#{inputsRecordHome.managed}"   onclick="return checkSubmit()"/>
+		    			&#160;<s:link view="/agricultural/InputsRecordList.xhtml" styleClass="btn btn-default" value="返回"  id="bn_left6" style="margin-left:10px" >
+		    			<f:param name="baseId" value="#{inputsRecordHome.baseId}"></f:param>
+		    			<f:param name="pageNum" value="#{inputsRecordHome.pageNum}"></f:param>
+		    			</s:link>
+                 	</td>
+				</tr>
+     		</table> 
+			<!--入库订单列表结束-->
+            <div class="clear"></div>
+		</div><!--right_c结束-->
+		<div class="clear"></div>
+	</h:form>
+<script type="text/javascript">
+//<![CDATA[
+
+           function checkSubmit(){
+	   var realPlantId = document.getElementById("combobox2").value; 
+	   var unit = document.getElementById("user:sn").value; 
+	   var checkNFloat = /^\d+(\.\d+)?$/;
+	   
+	   if(realPlantId ==null || realPlantId == ""){
+			document.getElementById("productMsg").innerHTML = "请选择种植区域！";
+			jquery("#myModal").modal('show');
+			return false;
+		}
+		if(unit != ""){
+			if(!checkNFloat.test(unit)){
+			document.getElementById("productMsg").innerHTML = "使用量只能输入数字或小数(小数点后最多只能保留三位)！";
+			jquery("#myModal").modal('show');
+			return false;
+			}
+		}
+		
+	   document.getElementById("user:realPlantId").value = realPlantId;
+	   return true;
+	}
+	function closeMethod(){
+		
+		var realPlantId = document.getElementById("combobox2").value; 
+		if(realPlantId == ""){
+		   document.getElementById("combobox2").focus();
+		   return false;
+		}
+	}
+	function changeUnit(){
+		var xlVal = jquery("#user\\:plantingPattern").val();
+		var spanVal;
+		if(xlVal == 2){
+			spanVal = "ml";
+		}else if(xlVal == 3){
+			spanVal = "kg";
+		}else if(xlVal == 4){
+			spanVal = "";
+		}
+		
+		jquery("#unit").html(spanVal);
+		}
+
+	jquery(document).ready(function(){
+		changeUnit();
+	});
+//]]>
+</script>
+<script type="text/javascript">
+  window.onload = function () {
+    jquery('.selectpicker').selectpicker();
+  };
+</script>
+</td> 
+</ui:define>
+
+</ui:composition>

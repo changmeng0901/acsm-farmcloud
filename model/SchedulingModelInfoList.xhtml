@@ -1,0 +1,139 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+       <td valign="top" >
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="4">作物模型</font></div>
+                    </div>
+					<br/>
+                    <div class="z_r_ser">
+                    <h:form id="storageTypeSearch">
+                    	<table cellpadding="0" cellspacing="0">
+                        	<tr>
+                        		<td style="font-size:14px;">查询条件：</td>
+                                <td>
+                                	<h:inputText id="tunnelName" class="z_r_ser_i" value="#{schedulingModelInfoList.searchParam}"/>
+                                </td>
+                                <td>
+                                <h:commandButton id="search" action="/model/SchedulingModelInfoList.xhtml"  styleClass="search_btn_search"/>
+                                </td>
+                           </tr>
+                       </table> 
+                    </h:form>                         
+                    </div>
+                     <!--添加按钮开始-->
+                    <div class="tjan_02">
+                    	<s:link view="/model/SchedulingModelInfoEdit.xhtml" propagation="none"><f:param name="schedulingModelInfoId" />
+                    	<img src="#{request.contextPath}/asset/images/tj_03.jpg" width="44" height="30" /></s:link>
+                    </div>
+                    <!--添加按钮结束-->
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="6" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                    		<th class="ze_bg" width="15%">名称</th>
+                    		<th class="ze_bg" width="15%">作物种类</th>
+                    		<th class="ze_bg" width="15%">品种</th>
+                    		<th class="ze_bg" width="20%">种植环境</th>
+                    		<th class="ze_bg" width="15%">种植模式</th>
+                    		<th class="ze_bg" width="20%">操作</th>
+                            
+                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                    	</tr>
+						<ui:repeat value="#{schedulingModelInfoList.resultList}" var="_modelInfo" rendered="#{not empty schedulingModelInfoList.resultList}" rowKeyVar="_index">
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            <td class="ze_bg2"><h:outputText  value="#{_modelInfo.name}" /></td>
+                            <td class="ze_bg2"><h:outputText  value="#{_modelInfo.plantId.name}" /></td>
+                            <td class="ze_bg2"><h:outputText  value="#{_modelInfo.breedId.name}" /></td>
+                    		<td class="ze_bg2"><h:outputText  value="#{_modelInfo.plantEnvTypeId.name}" /></td>
+						    <td class="ze_bg2">
+						    	<h:outputText value="#{_modelInfo.plantingPattern eq 1 ? '有机':''}"/>
+						    	<h:outputText value="#{_modelInfo.plantingPattern eq 2 ? '非有机':''}"/>
+						    	<h:outputText value="#{_modelInfo.plantingPattern eq 3 ? '无公害':''}"/>
+						    </td>
+                    		<td class="ze_bg2">
+                            	<s:link propagation="none"  view="/#{empty from ? 'model/SchedulingModelInfo' : from}.xhtml" styleClass="list_view"  id="plantInfoViewId" title="查看">
+								<f:param name="schedulingModelInfoId" value="#{_modelInfo.id}" />
+								</s:link>&#160;
+                                <s:link propagation="none"  view="/model/SchedulingModelInfoEdit.xhtml"     styleClass="list_edit" id="ModelInfoEdit" rendered="#{empty from}" title="编辑">
+                                <f:param name="schedulingModelInfoId" value="#{_modelInfo.id}" />
+								</s:link>&#160;
+								<s:link propagation="none"  view="/model/SchedulingModelInfoEdit.xhtml"   title="删除"  styleClass="list_delete" action="#{schedulingModelInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="plantInfoDelete" rendered="#{empty from}">
+                                <f:param name="schedulingModelInfoId" value="#{_modelInfo.id}" />
+                                
+                                </s:link>
+                            </td>
+                            
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</ui:repeat>
+                    </table>
+                    <!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty schedulingModelInfoList.resultList}"> 
+			                <s:decorate rendered="#{!schedulingModelInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{schedulingModelInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{schedulingModelInfoList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/model/SchedulingModelInfoList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/model/SchedulingModelInfoList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{schedulingModelInfoList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{schedulingModelInfoList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{schedulingModelInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq schedulingModelInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/model/SchedulingModelInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{schedulingModelInfoList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/model/SchedulingModelInfoList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{schedulingModelInfoList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/model/SchedulingModelInfoList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{schedulingModelInfoList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{schedulingModelInfoList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+		
+</td>
+	</ui:define>
+
+</ui:composition>

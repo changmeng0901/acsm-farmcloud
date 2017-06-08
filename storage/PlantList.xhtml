@@ -1,0 +1,193 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+
+	<td valign="top" width="210" style=" border-right:1px solid #e1e4eb;">
+                <div class="left_c2">
+                	<ul class="lt_c_ul">
+                		<ui:fragment rendered="#{sessionTake.getLevelId() == 1}">
+                    	<li><a href="#{request.contextPath}/archive/FloristicsList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/fenlei.png"/>&#160;植物分类</a></li>
+                    	</ui:fragment>
+                		<li><a href="#{request.contextPath}/storage/PlantList.seam" class="fon_07" ><strong><img class="tbimg"  src="#{request.contextPath}/asset/images/wuliao.png"/>&#160;作物种类</strong></a></li>
+                    	<li>
+                        	<a href="#{request.contextPath}/storage/BreedList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/02_65.png"/>&#160;品种信息</a>
+                        </li>
+                        <ui:fragment rendered="#{sessionTake.getLevelId() == 1}">
+                		<li><a href="#{request.contextPath}/archive/PlantEnvTypeList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/sheshi.png"/>&#160;设施条件管理</a></li>
+                    	</ui:fragment>
+                    </ul>
+                	<div class="clear"></div>
+                </div>
+            </td>
+       <td valign="top" >
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="4">作物种类</font></div>
+                    </div>
+					<br/>
+                    <div class="z_r_ser">
+                    <h:form id="storageTypeSearch">
+                    	<table cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                <div class="public-search">   
+                                	<span class="octicon-search02"></span>
+                                	<h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="name" styleClass="form-control nw300 srarchfont" value="#{plantList.searchParam}"/>
+                                </div>
+                                	<h:commandButton id="search" styleClass="btn btn-primary" value="搜索" action="/storage/PlantList.xhtml">                                	
+	                                </h:commandButton>
+                                </td>
+                           </tr>
+                       </table> 
+                    </h:form>                         
+                    </div>
+                    
+                     <!--添加按钮开始-->
+                    <div class="tjan_01">
+                    	<s:link styleClass="btn btn-success" value="添加" view="/storage/PlantEdit.xhtml" propagation="none">
+                    	<f:param name="plantPlantId" />
+                    	<f:param name="fType" value="1"/>
+                    	<f:param name="pageNum" value="#{plantList.pageNum}" />
+                    	</s:link>
+                    </div>
+                    <!--添加按钮结束-->
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="5" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                    		<th class="ze_bg" width="20%">种名</th>
+                    		<th class="ze_bg" width="20%">拉丁文名</th>
+                    		<th class="ze_bg" width="20%">作物种类</th>
+                    		<th class="ze_bg" width="20%">审核状态</th>
+                    		<th class="ze_bg" width="20%">操作</th>
+                            
+                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                    	</tr>
+						<ui:repeat value="#{plantList.resultList}" var="_plant" rendered="#{not empty plantList.resultList}" rowKeyVar="_index">
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            <td class="ze_bg2"><h:outputText  value="#{stringUtil.shortString(_plant.name,14)}" /></td>
+                            <td class="ze_bg2"><h:outputText  value="#{stringUtil.shortString(_plant.formalName,14)}" /></td>
+                            <td class="ze_bg2"><h:outputText  value="#{_plant.floristicsId.name}" /></td>
+                            
+                            <td class="ze_bg2">
+	                            <h:outputText  rendered="#{_plant.audit eq 0}" value="审核未通过"/>
+	       					    <h:outputText  rendered="#{_plant.audit eq 1}" value="审核已通过"/>
+                    		</td>
+                    		<td class="ze_bg2">
+                    		  <s:div rendered="#{sessionTake.getLevelId() ne 1}">
+                    		    <s:link propagation="none"  view="/#{empty from ? 'storage/Plant' : from}.xhtml"  styleClass="list_view"  id="breedViewId1" title="查看">
+								<f:param name="plantPlantId" value="#{_plant.plantId}" />
+								</s:link>&#160;
+                                <s:link propagation="none"  view="/storage/PlantEdit.xhtml" styleClass="list_edit" id="PlantEdit1" title="编辑">
+                                <f:param name="plantPlantId" value="#{_plant.plantId}" />
+                                <f:param name="editOrAudit" value="1" />
+                                <f:param name="fType" value="1"/>
+								</s:link>&#160;
+								<s:link propagation="none"  view="/storage/PlantEdit.xhtml" title="删除" styleClass="list_delete" action="#{plantHome.remove}" onclick="return confirm('确定删除吗？');" id="breedDelete1">
+                                <f:param name="plantPlantId" value="#{_plant.plantId}" />
+                                </s:link>
+							  </s:div>
+                              <s:div rendered="#{sessionTake.getLevelId() eq 1}">
+                            	<s:link propagation="none"  view="/#{empty from ? 'storage/Plant' : from}.xhtml" rendered="#{_plant.audit eq 1}" styleClass="list_view"  id="breedViewId2" title="查看">
+								<f:param name="plantPlantId" value="#{_plant.plantId}" />
+								<f:param name="pageNum" value="#{plantList.pageNum}" />
+								</s:link>&#160;
+                                <s:link propagation="none"  view="/storage/PlantEdit.xhtml" styleClass="list_edit" rendered="#{_plant.audit eq 1}" id="PlantEdit" title="编辑">
+                                <f:param name="plantPlantId" value="#{_plant.plantId}" />
+                                <f:param name="editOrAudit" value="1" />
+                                <f:param name="fType" value="1"/>
+                                <f:param name="pageNum" value="#{plantList.pageNum}" />
+								</s:link>&#160;
+								<s:link propagation="none"  view="/storage/PlantEdit.xhtml" title="删除"  rendered="#{_plant.audit eq 1}" styleClass="list_delete" action="#{plantHome.remove}" onclick="return confirm('确定删除吗？');" id="breedDelete">
+                                <f:param name="plantPlantId" value="#{_plant.plantId}" />
+                                <f:param name="pageNum" value="#{plantList.pageNum}" />
+                                </s:link>
+                                <s:link propagation="none"  view="/storage/PlantEdit.xhtml" title="审核"  rendered="#{_plant.audit eq 0}" styleClass="list_audit" id="plantAudit">
+                                <f:param name="editOrAudit" value="2" />
+                                <f:param name="plantPlantId" value="#{_plant.plantId}" />
+                                <f:param name="fType" value="1"/>
+                                <f:param name="pageNum" value="#{plantList.pageNum}" />
+                                </s:link>
+                              </s:div>
+                            </td>
+                            
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</ui:repeat>
+                    </table>
+                    <!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty plantList.resultList}"> 
+			                <s:decorate rendered="#{!plantList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{plantList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{plantList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/storage/PlantList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/storage/PlantList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{plantList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{plantList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{plantList.previousExists or _index >0 ?'td_t_t':''} #{_page eq plantList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/storage/PlantList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{plantList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/storage/PlantList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{plantList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/storage/PlantList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{plantList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{plantList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+		
+</td>
+<script type="text/javascript">
+			  jquery(document).ready(function(){
+					var v = document.getElementById("storageTypeSearch:name").value;
+					if(v == ""){
+						document.getElementById("storageTypeSearch:name").value = "请输入搜索条件";
+						}
+					});
+			</script>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,1058 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap3.min.css" />
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap-select.min.css" />
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/style.css"/>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/orderManage/TallyManage.css" />
+	#{orderOperate.tallyInit()}
+	<style>
+		 .customMess_wap .items p.show {overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+		 .modalTable_minni td.pr10{ padding-right:10px;}
+		 body{ height: auto;}
+		 .modal{ z-index: 300;}
+		 #classselect .dropdown-menu li.active span.text{background:#428BCA;padding:4px 0;}
+		 #classselect .dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus{background:none;}
+	</style>
+	
+	<td valign="top" >
+		 <div class="right_c" style="min-height:30px; padding:20px 0;">
+			 <div class="pl30 pr30">
+                    <div class="r_title clear" style="margin-top:0;">
+                        <div class="r_t_l fl"><span>采销存</span><em>&gt;</em><font size="3">订单管理</font></div>
+                    </div>
+                </div>
+                <input type="hidden" id="orderInventorySimplify" value="#{orderOperate.enterpriseSettings.orderInventorySimplify}" />
+                <input type="hidden" id="negativeInventoryType" value="#{orderOperate.enterpriseSettings.negativeInventoryType}" />
+                <input type="hidden" id="negativeInventory" value="#{orderOperate.enterpriseSettings.negativeInventory}" />
+				<div class="storage-process-wap mt10">
+                	<div class="storage-ttl">
+                    	<h2 style="background:url(../asset/images/orderManage/TallyManage_icos1.jpg) no-repeat left center; padding-left:25px;">订单编号<span style="color:#323232; font-size:14px; padding-left:15px;">#{orderOperate.orderInfo.orderCode}</span></h2>
+                    </div>
+                    <div class="mb20 mt20">
+                        <div class="customMess_wap" style="margin-left:40px;height:110px;">
+                            <div class="items itemsCur" data-dismiss="modal" style="cursor:default; margin-bottom:0;height:110px;">
+                                <p class="name show">客户姓名：<span title="#{orderOperate.orderInfo.memberInfo.realname}">#{orderOperate.orderInfo.memberInfo.realname}</span></p>
+                                <p class="phone show">联系方式：<span title="#{orderOperate.orderInfo.memberInfo.phone}">#{orderOperate.orderInfo.memberInfo.phone}</span></p>
+                                <p class="come">客户来源：<span>#{orderOperate.orderInfo.memberInfo.mSource.name}</span></p>
+                                <p class="type">客户类型：<span>#{orderOperate.orderInfo.memberInfo.mType.name}</span></p>
+                                <p class="addresses show">工作地址：<span title="{orderOperate.orderInfo.memberInfo.workAddress}">#{orderOperate.orderInfo.memberInfo.workAddress}</span></p>
+                                <em class="defaultIco"></em>
+                                <p title="#{orderOperate.orderInfo.memberInfo.remark}">备注：<span>#{orderOperate.orderInfo.memberInfo.remark2}</span></p>
+                            </div>
+                        </div> 
+                        <div class="TallyMess_wap" style="margin-left:40px; margin-top:20px;">
+                            <div class="items itemsCur" data-dismiss="modal" style="cursor:default;">
+                                <p class="single-time">下单时间：<span>#{orderOperate.orderInfo.insertTime}</span></p>
+                                <p class="name show">收货人：<span title="#{orderOperate.orderInfo.receiveName}">#{orderOperate.orderInfo.receiveName}</span></p>
+                                <p class="phone show" style="word-break: break-all;">联系方式：<span title="#{orderOperate.orderInfo.receivePhone}">#{orderOperate.orderInfo.receivePhone}</span></p>
+                                <p class="price show">￥<span style="font-size:14px; color:#f00;" title="#{orderOperate.orderInfo.paymentAccount}">#{orderOperate.orderInfo.paymentAccount}</span></p>
+                                <p class="single-time">配送时间：
+                                	<span>#{orderOperate.orderInfo.deliverTime}</span>
+                                	<span class="sendStatues">
+					        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 0}">全天</s:fragment>
+					        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 1}">上午</s:fragment>
+					        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 2}">下午</s:fragment>
+					        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 3}">晚上</s:fragment>
+					        		</span>
+                                </p>
+                                <p class="addresses show">工作地址：<span title="#{orderOperate.orderInfo.receiveAddress}">#{orderOperate.orderInfo.receiveAddress}</span></p>
+                                <em class="defaultIco"></em>
+                            </div>
+                        </div> 
+                    </div>
+                     <div class="storage-process-wap mt30">
+                        <div class="pl30 pr30 mt20">
+                        	<table class="ze_table" width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;">
+                            <tr class="alt">
+                                <td height="4" width="5"><img src="../asset/images/orderManage/table_d_40.jpg" height="4" width="5"/></td>
+                                <h:outputText rendered="#{!orderOperate.enterpriseSettings.orderInventorySimplify}" >
+                                <td colspan="10" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                </h:outputText>
+                                <h:outputText rendered="#{orderOperate.enterpriseSettings.orderInventorySimplify}" >
+                                <td colspan="11" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                </h:outputText>
+                                <td height="4" width="5"><img src="../asset/images/orderManage/table_d_43.jpg" height="4" width="5"/></td>
+                            </tr>
+                            <tr class="">
+                             <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+                                <h:outputText rendered="#{orderOperate.enterpriseSettings.orderInventorySimplify}" >
+                                <th class="ze_bg" width="5%">序号</th>
+                                </h:outputText>
+                                <h:outputText rendered="#{!orderOperate.enterpriseSettings.orderInventorySimplify}" >
+                                <th class="ze_bg" width="11%">序号</th>
+                                </h:outputText>
+                                <th class="ze_bg" width="10%">商品名称</th>
+                                <th class="ze_bg" width="10%">规格</th>
+                                <th class="ze_bg" width="5%">订单数量</th>
+                                <th class="ze_bg" width="6%">商品包装数</th>
+                                <th class="ze_bg" width="15%">入库批次编号</th>
+                                <h:outputText rendered="#{orderOperate.enterpriseSettings.orderInventorySimplify}" >
+                                <th class="ze_bg" width="8%">原料总重</th>
+                                </h:outputText>
+                                <th class="ze_bg" width="13%">履历名称</th>
+                                <th class="ze_bg" width="10%">二维码编号</th>
+                                <th class="ze_bg" width="10%">有机追溯码</th>
+                                <th class="ze_bg" width="10%">操作</th>
+                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <a:repeat value="#{orderOperate.orderProductList}" var="order" rowKeyVar="_index">
+                            <tr id="tr_#{_index}" class="alt_#{_index} #{_index}">
+                                <td class="ze_bg2 ze_bt_le row" height="4" width="5"></td>
+                                <td class="ze_bg2 bord-rt row" >#{_index+1}</td>
+                                <td class="ze_bg2 bord-rt row zzzz" >#{order.productName}</td>
+                                <td class="ze_bg2 bord-rt row" >#{order.productUnit}</td>    
+                                <td class="ze_bg2 bord-rt row kkkk" id="#{order.orderProductId}" >
+                                    <span style="color:#4d9dd3;" class="productNum_#{_index}">#{order.productNum}</span>
+                                </td>    
+                                    
+                                <td class="ze_bg2 bord-rt">
+                                	<input type="hidden" id="productId_#{_index}" value="#{order.orderProductId}"/>
+                                	<input id="num_#{_index}" class="form-control form-cotol55  productNum" type="text" value="0.0"  onfocus="oldValue(this);" onkeyup="clearNoNum(1,this, event),materialWeight(this);" onchange="calculates(this);"/>
+                                </td>     
+                                <td class="ze_bg2 bord-rt" id="classselect">
+                                	<span class="bootSelt-160  selectb" style="float:none;">
+                                	   <input type="hidden" value="" id="inpbatchId_#{_index}" name="inpbatchId_#{_index}"/>
+                                       <select class="selectpicker batch" name="batchId_#{_index}" id="batchId_#{_index}"  onchange="batchChange(this,this.value),materialWeight2(this);">
+                                       		<h:outputText rendered="#{orderOperate.batchList.get(_index).size() gt 0}" >
+                                       		<option value="-1" disabled="disabled">商品</option>
+                                       		</h:outputText>
+                                       		<a:repeat value="#{orderOperate.batchList.get(_index)}" var="var">
+                                       			<option  value="#{var.goodsBatchId}_1" title="#{var.batchCode},#{var.productSource},#{var.goodsCount}">#{var.batchCode},#{var.productSource},#{var.goodsCount} </option>
+                                       		</a:repeat>
+                                       		<h:outputText rendered="#{orderOperate.batchList2.get(_index).size() gt 0}" >
+                                       		<option value="-2" disabled="disabled">原料</option>
+                                       		</h:outputText>
+                                       		<a:repeat value="#{orderOperate.batchList2.get(_index)}" var="var">
+                                       			<option  value="#{var.goodsBatchId}_2_#{var.rawMaterialCount}" title="#{var.batchCode},#{var.productSource},#{var.goodsCount}">#{var.batchCode},#{var.productSource},#{var.goodsCount} </option>
+                                       		</a:repeat>
+                                       		<option value="0_0">无入库批次</option>
+										</select>
+                                    </span>
+                                </td>  
+                                <h:outputText rendered="#{orderOperate.enterpriseSettings.orderInventorySimplify}" >
+                                <td class="ze_bg2 bord-rt">
+                                	<input id="ylTotal_#{_index}" class="form-control form-cotol55  productNum" onkeyup="material(this)" type="text" value="0.0" />
+                                </td> 
+                                </h:outputText>
+                                <td class="ze_bg2 bord-rt" >
+	                                <span class="bootSelt-160 selectp" style="float:none;">
+	                                	<select class="selectpicker pr"   id="prId_#{_index}"  onchange="prChange(this.id,this.value);">
+											<a:repeat value="#{orderOperate.prList.get(_index)}" var="var">
+											<option   value="#{var.productInfoId}">#{var.plantName}</option>
+											</a:repeat>
+											<option  value="0">无对应履历</option>
+										</select>
+                                     </span>
+                                </td> 
+                               
+                                <td class="ze_bg2 bord-rt">
+                                	<input id="hidden_#{_index}" type="hidden" value=""/>
+                                	<input id="qrcode_#{_index}"  class="form-control form-cotol140 qrcode" type="text" onfocus="this.blur()" value="" onclick="showView(1,this.id);" />
+                                </td>  
+                                <td class="ze_bg2 bord-rt">
+                                	<input id="tracingCode_#{_index}" class="form-control form-cotol140" type="text" onfocus="this.blur()"  value="" onclick="showView(2,this.id);"/>
+                                </td> 
+                                <td class="ze_bg2"><span class="storage-add contral"  onclick="addTally(#{_index})">添加</span></td>      
+                                <td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+                            </tr> 
+                            </a:repeat>
+                            </table>
+                        </div>
+                    </div>
+                     <div  align="center" style="margin-top: 20px;">
+                    	    <input type="button" id="toSend" style="margin-right:20px;"  class="btn btn-primary" value="完成" onclick="productJson();"/>
+                    	    <h:outputText rendered="#{orderOperate.orderInfo.viewStatus eq 1}" >
+				            	<s:button view="/orderManage/OrderOperateList.xhtml" styleClass="btn btn-default"  propagation="end" value="返回">
+			            		    <f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+				            		<f:param name="pages" value="#{orderOperate.page}"></f:param>
+				            		<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+				            		<f:param name="screenType" value="#{orderOperateList.screenType}"/>
+									<f:param name="selectType" value="#{orderOperateList.selectType}"/>
+									<f:param name="orderPayStatus" value="#{orderOperateList.orderPayStatus}"/>
+									<f:param name="orderType" value="#{orderOperateList.orderType}"/>
+									<f:param name="beginTime" value="#{orderOperateList.beginTime}"/>
+									<f:param name="endTime" value="#{orderOperateList.endTime}"/>
+			            		</s:button>
+			            	</h:outputText>
+                    	    <h:outputText rendered="#{orderOperate.orderInfo.viewStatus eq 2}" >
+				            	<s:button view="/orderManage/OrderTallyList.xhtml" styleClass="btn btn-default"  propagation="end" value="返回">
+				            		 <f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+				            		<f:param name="pages" value="#{orderOperate.page}"></f:param>
+				            		<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+				            		<f:param name="screenType" value="#{orderOperateList.screenType}"/>
+									<f:param name="selectType" value="#{orderOperateList.selectType}"/>
+									<f:param name="orderPayStatus" value="#{orderOperateList.orderPayStatus}"/>
+									<f:param name="orderType" value="#{orderOperateList.orderType}"/>
+									<f:param name="beginTime" value="#{orderOperateList.beginTime}"/>
+									<f:param name="endTime" value="#{orderOperateList.endTime}"/>
+				            	</s:button>
+			            	</h:outputText>
+                    </div>
+                    <h:form id="save">
+                    	<div>
+                    		<h:inputHidden  id="saveTally" value="#{orderOperate.tallyJson}"/>
+                    		<h:commandButton action="#{orderOperate.orderTally()}"  id="formTally"/>
+                    	</div>
+                    </h:form>
+                </div>
+                </div>
+    <!-- 输入二维码编号模态框 开始 -->
+	<div class="modal fade" id="myModal_QRcode" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="position:fixed; left:50%; top:50%; width:510px; margin-left:-255px; margin-top:-197px; margin-bottom:0;">
+	<div class="modal-content">
+	    <div class="modal-header" id="QRcode">
+	        <button type="button" class="close" data-dismiss="modal"></button>
+	        <h4 class="modal-title" id="myModalLabel">输入二维码编号</h4>
+	    </div>
+	    <div class="modal-body clear" style="padding:10px 30px;">
+	      <p style="font-size:12px;margin-bottom: 10px" align="right"><img src="../asset/images/orderManage/jinggao.png"/>扫描二维码时请将输入法切换为英文状态</p> 
+	    	<textarea id="qrCodeId" class="form-control" style="box-sizing:border-box; height:154px; margin-bottom:20px; resize:none;" onkeyup="clearNoNum(2,this, event);"></textarea>
+	        <p style="font-size:12px; color:#f67b43;">二维码编号可以输入多个，用“，”隔开，也可以使用“-”，表示区间。</p>  
+	        <p style="font-size:12px;">例如：北京奥科美公司第一批印刷批次的第一个编码到第三个编码，输入格式为：”0001000100000001-0001000100000003”<br />表示：“000100010000001、000100010000002、000100010000003“</p>   
+	    </div>
+	    <div class="modal-footer">
+	    	<input type="hidden" id="hiddenqr" value=""></input>
+	        <a class="btn btn-success" href="#" onclick="qrCodeValidate();">提交</a>
+	        <a class="btn btn-default" data-dismiss="modal" href="juesegl.html">返回</a>
+	    </div>
+	</div>
+	</div>
+	</div>
+	<!--  输入二维码编号模态框 结束 -->
+	<!-- 输入二维码编号模态框 开始 -->
+	<div class="modal fade" id="myModal_ZScode" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="position:fixed; left:50%; top:50%; width:510px; margin-left:-255px; margin-top:-197px; margin-bottom:0;">
+	<div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"></button>
+	        <h4 class="modal-title" id="myModalLabel">输入有机追溯码编号</h4>
+	    </div>
+	    <div class="modal-body clear" style="padding:20px 30px;">
+	    	<textarea id="tracingCode" class="form-control" style="box-sizing:border-box; height:154px; margin-bottom:20px; resize:none;" onkeyup="clearNoNum(2, this, event);"></textarea>
+	        <p style="font-size:12px; color:#f67b43;">追溯码编号可以输入多个，用“，”隔开，也可以使用“-”，表示区间。</p>  
+	        <p style="font-size:12px;">例如：北京奥科美公司第一批印刷批次的第一个编码到第三个编码，输入格式为：”0001000100000001-0001000100000003”<br />表示：“000100010000001、000100010000002、000100010000003“</p>     
+	    </div>
+	    <div class="modal-footer">
+	        <a class="btn btn-success" href="#" onclick="tracingValidate();">提交</a>
+	        <a class="btn btn-default" data-dismiss="modal" href="juesegl.html">返回</a>
+	    </div>
+	</div>
+	</div>
+	</div>
+	<!--  输入二维码编号模态框 结束 -->
+	<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title" id="messageTitle">提示</h4>
+				</div>
+				<div class="modal-body">
+					<span id="messageValue"></span>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div aria-hidden="false" id="messageDiv2" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title" id="messageTitle">提示</h4>
+				</div>
+				<div class="modal-body">
+					<span id="messageValue2"></span>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="submitButton();">确认</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	</td>
+
+	<a:form>
+ 		<a:queue id="mainQueue" requestDelay="10" ignoreDupResponses="true"/>
+  		<a:jsFunction  eventsQueue="mainQueue" name="tallyChange" action="#{orderOperate.getProductRecord()}" data="#{orderOperate.options}" oncomplete="reBack(data);">
+  			<a:actionparam name="batchId" assignTo="#{orderOperate.batchId}" />
+  			<a:actionparam name="tallyIndex" assignTo="#{orderOperate.tallyIndex}" />
+  		</a:jsFunction>
+  		<a:jsFunction  eventsQueue="mainQueue" name="rqcode" action="#{orderOperate.qrcodeValidate()}" data="#{orderOperate.reStr}" oncomplete="qrBack(data);">
+  			<a:actionparam name="qrCodeStr" assignTo="#{orderOperate.qrCodeStr}" />
+  			<a:actionparam name="allCode" assignTo="#{orderOperate.allCode}" />
+  			<a:actionparam name="prId" assignTo="#{orderOperate.prId}" />
+  		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	jQuery = jQuery.noConflict();
+	var productRecordId;
+	var hiddenQrId;
+	var qrCodeId;
+	var oldNum;
+    var numIndex;
+    
+    //得到焦点时保存原始包装数量值
+    function oldValue(obj){
+    	oldNum=obj.value;
+		numIndex=obj.id;
+    }
+  //计算来源数量与订单数量大小
+	function totalNum(){
+		var totalNum=0;
+		
+		var arr=numIndex.split("_");
+		jQuery("."+arr[1]).each(function(){
+			var val=jQuery(this).find(".productNum").val();
+			totalNum +=Number(val);
+		});
+		var orderProductNum=jQuery(".productNum_"+arr[1]).text();
+		if(totalNum>Number(orderProductNum)){
+			jQuery("#"+numIndex).val(oldNum);
+			jQuery("#messageValue").html("对应商品包装数之和大于订单商品数量!");
+            jQuery("#messageDiv").modal('show');
+            return false;
+		}
+		
+	}
+
+  	function materialWeight(obj){
+		var totalNum=0;
+		var arr=numIndex.split("_");
+
+		var simple = jQuery('#orderInventorySimplify').val();//是否启用订单-库存简化流程
+		var fkc = jQuery('#negativeInventory').val();//是否启用负库存
+	    var fkcType = jQuery('#negativeInventoryType').val();//负库存类型 1商品库2原料库
+
+	    var goodBatchId = numIndex.replace('num','inpbatchId');
+		var goodsBatchVal = jQuery('#'+goodBatchId).val();//得到选择批次的ID
+		var gbatch = numIndex.replace('num','batchId');
+		
+		if(goodsBatchVal == ''){
+			goodsBatchVal = jQuery('#'+gbatch).val();
+		}
+		
+		var a = jQuery('#'+gbatch+' option:selected').text();
+		var batchVal = goodsBatchVal.split('_')[1];//批次类型，1商品，2原料
+		var batchNum=a.split(",")[2];//当前批次库存量
+		var pack = jQuery(obj).val();//商品包装数
+		
+		if(fkc == 'true'){//启用负库存
+			if(fkcType == '1'){//商品负
+				if(batchVal == '1' || batchVal == 1){
+					
+				}else if(batchVal == '2' || batchVal == 2){
+					var proNum = goodsBatchVal.split('_')[2]; //1个商品包含物料数量
+					var ylId = numIndex.replace('num','ylTotal');
+					jQuery('#'+ylId).val((Number(pack)*Number(proNum)));
+					if((Number(pack)*Number(proNum)) > Number(batchNum)){
+						jQuery(obj).val(0);//商品包装数
+						jQuery('#'+ylId).val(0);//原料总重
+						jQuery("#messageValue").html("商品包装数大于所选批次库存量!");
+			            jQuery("#messageDiv").modal('show');
+			            return false;
+					}
+				}else{
+					jQuery(obj).val(0);//商品包装数
+					jQuery('#'+ylId).val(0);//原料总重
+				}
+			}else{//原料负
+				if(batchVal == '1' || batchVal == 1){
+					if(Number(pack) > Number(batchNum)){
+						jQuery("#messageValue").html("商品包装数大于所选批次库存量!");
+			            jQuery("#messageDiv").modal('show');
+			            jQuery(obj).val(0);//商品包装数
+			            return false;
+					}
+				}else if(batchVal == '2' || batchVal == 2){
+					var proNum = goodsBatchVal.split('_')[2]; //1个商品包含物料数量
+					var ylId = numIndex.replace('num','ylTotal');
+					jQuery('#'+ylId).val((Number(pack)*Number(proNum)));
+				}else{
+					jQuery(obj).val(0);//商品包装数
+					jQuery('#'+ylId).val(0);//原料总重
+				}
+			}
+		}else{
+			if(batchVal == '1' || batchVal == 1){
+				if(Number(pack) > Number(batchNum)){
+					jQuery("#messageValue").html("商品包装数大于所选批次库存量!");
+		            jQuery("#messageDiv").modal('show');
+		            jQuery(obj).val(0);//商品包装数
+		            return false;
+				}
+			}else if(batchVal == '2' || batchVal == 2){
+				var proNum = goodsBatchVal.split('_')[2]; //1个商品包含物料数量
+				var ylId = numIndex.replace('num','ylTotal');
+				jQuery('#'+ylId).val((Number(pack)*Number(proNum)));
+				if((Number(pack)*Number(proNum)) > Number(batchNum)){
+					jQuery(obj).val(0);//商品包装数
+					jQuery('#'+ylId).val(0);//原料总重
+					jQuery("#messageValue").html("商品包装数大于所选批次库存量!");
+		            jQuery("#messageDiv").modal('show');
+		            return false;
+				}
+			}else{
+				jQuery(obj).val(0);//商品包装数
+				jQuery('#'+ylId).val(0);//原料总重
+			}
+		}
+		
+  	}
+
+  	function materialWeight2(obj){
+		var totalNum=0;
+
+		var simple = jQuery('#orderInventorySimplify').val();//是否启用订单-库存简化流程
+		var fkc = jQuery('#negativeInventory').val();//是否启用负库存
+	    var fkcType = jQuery('#negativeInventoryType').val();//负库存类型 1商品库2原料库
+
+	    //alert(jQuery('#batchId_0').val());
+	    
+		var numId = obj.id;
+		var gNum = numId.replace('batchId','num');
+		var a = jQuery(obj).find('option:selected').text();
+		var batchVal = jQuery(obj).val().split('_')[1];//批次类型，1商品，2原料
+		var batchNum=a.split(",")[2];//当前批次库存量
+		var pack = jQuery('#'+gNum).val();//商品包装数
+		var goodBatchId = numId.replace('batchId','inpbatchId');
+		jQuery('#'+goodBatchId).val(jQuery(obj).val());
+		if(fkc == 'true'){//启用负库存
+			if(fkcType == '1'){//商品负
+				if(batchVal == '1' || batchVal == 1){
+					
+				}else if(batchVal == '2' || batchVal == 2){
+					var proNum = jQuery(obj).val().split('_')[2];//1个商品包含物料数量
+					var ylId = numId.replace('batchId','ylTotal');
+					jQuery('#'+ylId).val((Number(pack)*Number(proNum)));
+					if((Number(pack)*Number(proNum)) > Number(batchNum)){
+						jQuery('#'+gNum).val(0);//商品包装数
+						jQuery('#'+ylId).val(0);//原料总重
+						jQuery("#messageValue").html("商品包装数大于所选批次库存量!");
+			            jQuery("#messageDiv").modal('show');
+			            
+			            return false;
+					}
+				}else{
+					var ylId = numId.replace('batchId','ylTotal');
+					jQuery('#'+gNum).val(0);//商品包装数
+					jQuery('#'+ylId).val(0);//原料总重
+				}
+			}else{//原料负
+				if(batchVal == '1' || batchVal == 1){
+					if(Number(pack) > Number(batchNum)){
+						jQuery("#messageValue").html("商品包装数大于所选批次库存量!");
+			            jQuery("#messageDiv").modal('show');
+			            jQuery('#'+gNum).val(0);//商品包装数
+			            return false;
+					}
+				}else if(batchVal == '2' || batchVal == 2){
+					var proNum = jQuery(obj).val().split('_')[2];//1个商品包含物料数量
+					var ylId = numId.replace('batchId','ylTotal');
+					jQuery('#'+ylId).val((Number(pack)*Number(proNum)));
+				}else{
+					var ylId = numId.replace('batchId','ylTotal');
+					jQuery('#'+gNum).val(0);//商品包装数
+					jQuery('#'+ylId).val(0);//原料总重
+				}
+			}
+		}else{
+			if(batchVal == '1' || batchVal == 1){
+				if(Number(pack) > Number(batchNum)){
+					jQuery("#messageValue").html("商品包装数大于所选批次库存量!");
+		            jQuery("#messageDiv").modal('show');
+		            jQuery('#'+gNum).val(0);//商品包装数
+		            return false;
+				}
+			}else if(batchVal == '2' || batchVal == 2){
+				var proNum = jQuery(obj).val().split('_')[2];//1个商品包含物料数量
+				var ylId = numId.replace('batchId','ylTotal');
+				jQuery('#'+ylId).val((Number(pack)*Number(proNum)));
+				if((Number(pack)*Number(proNum)) > Number(batchNum)){
+					jQuery('#'+gNum).val(0);//商品包装数
+					jQuery('#'+ylId).val(0);//原料总重
+					jQuery("#messageValue").html("商品包装数大于所选批次库存量!");
+		            jQuery("#messageDiv").modal('show');
+		            return false;
+				}
+			}else{
+				var ylId = numId.replace('batchId','ylTotal');
+				jQuery('#'+gNum).val(0);//商品包装数
+				jQuery('#'+ylId).val(0);//原料总重
+			}
+		}
+		
+  	}
+
+	function material(obj){
+		var ylId = obj.id;
+		var fkc = jQuery('#negativeInventory').val();//是否启用负库存
+	    var fkcType = jQuery('#negativeInventoryType').val();//负库存类型 1商品库2原料库
+		if(fkc == 'true'){
+			if(fkcType == '2'){
+				//负库存启用了，不管
+			}
+		}else{
+			var batchId = ylId.replace("ylTotal","batchId");
+			var inpbatchId = ylId.replace("ylTotal","inpbatchId");
+			var num = ylId.replace("ylTotal","num");
+			var bzNum = jQuery('#'+num).val();//商品包装数
+			var inpbatchNum = jQuery('#'+inpbatchId).val().split("_")[2];//原料组成商品的数量
+			var a = jQuery("#"+batchId).find('option:selected').text().split(",")[2];
+			var ylNum = jQuery(obj).val();
+			if(Number(a) < Number(ylNum)){
+				var yls = Number(bzNum)*Number(inpbatchNum);
+				jQuery("#messageValue").html("原料总重大于所选批次库存量!");
+	            jQuery("#messageDiv").modal('show');
+	            jQuery(obj).val(yls);//原料总重
+	            return false;
+			}
+		}
+	} 
+	
+	function calculates(obj){
+		var value=Number(obj.value).toFixed(2);
+		var qId=numIndex.replace("num","qrcode");
+		var tId=numIndex.replace("num","tracingCode");
+		var qVal=jQuery("#"+qId).val();
+				if(qVal!="该入库批次没有来源，无法填写二维码编号。" && qVal!="该入库批次没有可选择履历，无法填写二维码编号。" && qVal!=""){
+					var arr=qVal.split(",");
+					var sumNum=0;
+					for(var i=0;i<arr.length;i++){
+						if(arr[i].indexOf("-")>0){
+							var arr2=arr[i].split("-");
+							var end1=Number(arr2[0].substring(8,16));
+							var end2=Number(arr2[1].substring(8,16));
+							sumNum +=end2-end1+1;
+						}else{
+							sumNum+=1;
+						}
+					}
+					if(Number(sumNum)>value){
+						jQuery("#"+numIndex).val(oldNum);
+						jQuery("#messageValue").html("来源数量不能小于填写二维码数量！");
+			            jQuery("#messageDiv").modal('show');
+			            return false;
+					}
+				}
+				var tVal=jQuery("#"+tId).val();
+				if(tVal!=""){
+					var arr=tVal.split(",");
+					var sumNum=0;
+					for(var i=0;i<arr.length;i++){
+						if(arr[i].indexOf("-")>0){
+							var arr2=arr[i].split("-");
+							sumNum +=Number(arr2[1])-Number(arr2[0])+1;
+						}else{
+							sumNum+=1;
+						}
+					}
+					if(Number(sumNum)>value){
+						jQuery("#"+numIndex).val(oldNum);
+						jQuery("#messageValue").html("来源数量不能小于填写有机追溯码数量！");
+			            jQuery("#messageDiv").modal('show');
+			            return false;
+					}
+				}
+		
+		jQuery("#"+obj.id).val(value);
+	}
+	//二维码值验证
+	function qrCodeValidate(){
+		var qrCode=jQuery("#qrCodeId").val();
+		if(qrCode!="" && qrCode.charAt(qrCode.length - 1) == ","){
+			qrCode = qrCode.substring(0, qrCode.length - 1);
+		}
+		var prId=jQuery("#"+productRecordId).val();
+		var sumNum=0;
+		var numId=productRecordId.replace("prId","num");
+		var num=jQuery("#"+numId).val();
+		if(jQuery.trim(qrCode)==""||qrCode==null){
+			 jQuery("#messageValue").html("二维码不能为空！");
+             jQuery("#messageDiv").modal('show');
+             return false;
+		}else{
+			var arr=qrCode.split(",");
+			var reg=/^[\d]{16}$|^[\d]{18}$/;
+			for(var i=0;i<arr.length;i++){
+				if(arr[i].indexOf("-")>0){
+					var arr2=arr[i].split("-");
+					if(arr2.length!=2){
+						 jQuery("#messageValue").html("二维码:"+arr[i]+"格式错误！");
+		                 jQuery("#messageDiv").modal('show');
+		                 return false;
+					}else{
+						for(var j=0;j<arr2.length;j++){
+							if(!reg.test(arr2[j])){
+								 jQuery("#messageValue").html("二维码:"+arr[i]+"格式错误！");
+				                 jQuery("#messageDiv").modal('show');
+				                 return false;
+							}
+						}
+						var begin1=arr2[0].substring(0,8);
+						var end1=Number(arr2[0].substring(8,16));
+						var begin2=arr2[1].substring(0,8);
+						var end2=Number(arr2[1].substring(8,16));
+						if(begin1!=begin2 || end1>end2){
+							jQuery("#messageValue").html("二维码:"+arr[i]+"格式错误！");
+			                 jQuery("#messageDiv").modal('show');
+			                 return false;
+						}else{
+							sumNum +=end2-end1+1;
+						}
+					}
+					
+				}else{
+					if(!reg.test(arr[i])){
+						 jQuery("#messageValue").html("二维码:"+arr[i]+"格式错误！");
+		                 jQuery("#messageDiv").modal('show');
+		                 return false;
+					}else{
+						sumNum+=1;
+					}
+				}
+				
+			}
+		}
+		if(Number(sumNum)>Number(num)){
+			jQuery("#messageValue").html("填写二维码数量不能大于来源数量！");
+            jQuery("#messageDiv").modal('show');
+            return false;
+		}else{
+			var allCode="";
+			var tempId=hiddenQrId.replace("hidden","qrcode");
+			jQuery(".qrcode").each(function(){
+				var id=this.id;
+				if(id!=tempId){
+					var val=jQuery(this).val();
+					if(val!=""){
+						allCode +=val+",";
+					}
+					
+				}
+			});
+			if(allCode!=""){
+				allCode = allCode.substring(0, allCode.length - 1);
+			}
+			rqcode(qrCode,allCode,prId);
+		}
+		
+		
+	}
+	//追溯码验证
+	function tracingValidate(){
+		var tracCode=jQuery("#tracingCode").val();
+		var numId=productRecordId.replace("prId","num");
+		var num=jQuery("#"+numId).val();
+		var sumNum=0;
+		if(jQuery.trim(tracCode)==""||tracCode==null){
+			 jQuery("#messageValue").html("追溯码不能为空！");
+            jQuery("#messageDiv").modal('show');
+            return false;
+		}else{
+			var arr=tracCode.split(",");
+			var reg=/^[\d]*$/;
+			for(var i=0;i<arr.length;i++){
+				if(arr[i].indexOf("-")>0){
+					var arr2=arr[i].split("-");
+					if(arr2.length!=2){
+						 jQuery("#messageValue").html("追溯码:"+arr[i]+"格式错误！");
+		                 jQuery("#messageDiv").modal('show');
+		                 return false;
+					}else{
+						if(arr2[0].length!=arr2[1].length){
+							 jQuery("#messageValue").html("追溯码:"+arr[i]+"格式错误！");
+			                 jQuery("#messageDiv").modal('show');
+			                 return false;
+						}else if(Number(arr2[0])>Number(arr2[1])){
+							jQuery("#messageValue").html("追溯码:"+arr[i]+"格式错误！");
+			                 jQuery("#messageDiv").modal('show');
+			                 return false;
+						}else{
+							sumNum +=Number(arr2[1])-Number(arr2[0])+1;
+						}
+						
+						
+					}
+					
+				}else{
+					sumNum+=1;
+				}
+				
+			}
+		}
+		if(Number(sumNum)>Number(num)){
+			jQuery("#messageValue").html("填写追溯码数量不能大于来源数量！");
+           jQuery("#messageDiv").modal('show');
+           return false;
+		}else{
+			jQuery("#"+qrCodeId).val(tracCode);
+			jQuery("#"+qrCodeId).attr("title",tracCode);
+			jQuery("#myModal_ZScode").modal("hide");
+		}
+		
+	}
+	//二维码提交回调
+	function qrBack(data){
+		if(data!=null && data!=""){
+			jQuery("#messageValue").html(data);
+            jQuery("#messageDiv").modal('show');
+            return false;
+		}else{
+			var qrCode=jQuery("#qrCodeId").val();
+			jQuery("#"+qrCodeId).val(qrCode);
+			jQuery("#"+qrCodeId).attr("title",qrCode);
+			jQuery("#myModal_QRcode").modal("hide");
+		}
+		
+	}
+	//履历名称改变级联二维码变化
+	function prChange(id,obj){
+		var qr=id.replace("prId","qrcode");
+		var batchId=id.replace("prId","batchId");
+		if(obj==0){
+			var batchVal=jQuery("#"+batchId).find("option:selected").text();
+			var arr=batchVal.split(",");
+			if(arr[1]==""){
+				jQuery("#"+qr).val("该入库批次没有来源，无法填写二维码编号。");
+				jQuery("#"+qr).attr("title","该入库批次没有来源，无法填写二维码编号。");
+			}else{
+				jQuery("#"+qr).val("该入库批次没有可选择履历，无法填写二维码编号。");
+				jQuery("#"+qr).attr("title","该入库批次没有可选择履历，无法填写二维码编号。");
+			}
+			jQuery("#"+qr).attr("disabled","disabled");
+			
+		}else{
+			jQuery("#"+qr).removeAttr("disabled");
+			jQuery("#"+qr).val("");
+		}
+	}
+	//检查履历是否有对应值控制二维码
+	function enableText(){
+		jQuery(".pr").each(function(){
+			var id=this.id;
+			var val=jQuery(this).val();
+			var qr=id.replace("prId","qrcode");
+			var batchId=id.replace("prId","batchId");
+			var tracId=id.replace("prId","tracingCode");
+			if(val==0){
+				var batchVal=jQuery("#"+batchId).find("option:selected").text();
+				var arr=batchVal.split(",");
+				if(arr[1]==""){
+					jQuery("#"+qr).val("该入库批次没有来源，无法填写二维码编号。");
+					jQuery("#"+qr).attr("title","该入库批次没有来源，无法填写二维码编号。");
+				}else{
+					jQuery("#"+qr).val("该入库批次没有可选择履历，无法填写二维码编号。");
+					jQuery("#"+qr).attr("title","该入库批次没有可选择履历，无法填写二维码编号。");
+				}
+				jQuery("#"+qr).attr("disabled","disabled");
+			}else{
+				jQuery("#"+qr).removeAttr("disabled");
+				var qrval=jQuery("#"+qr).val();
+				if(qrval=="该入库批次没有来源，无法填写二维码编号。" || qrval=="该入库批次没有可选择履历，无法填写二维码编号。"){
+					jQuery("#"+qr).val("");
+				}else{
+					jQuery("#"+qr).attr("title",qrval);
+				}
+			}
+			var tracVal=jQuery("#"+tracId).val();
+			jQuery("#"+tracId).attr("title",tracVal);
+			
+		});
+		jQuery('.batch').each(function(){
+			jQuery(this).attr("data-live-search","true");
+		}); 
+	}
+
+	//验证输入值
+	function clearNoNum(num,obj, event){
+		var keyCode = event.keyCode;
+		var val=obj.value;
+		if(keyCode==188){
+			obj.value=obj.value.replace("，",",");
+		}
+		if(keyCode == 108 || keyCode == 13){
+			obj.value = obj.value + ",";
+		}
+		if(num==1){
+			if (keyCode < 37 || keyCode > 40) {
+				if(!(keyCode >=48 && keyCode <=57)){
+					obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+					obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+					obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+					obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+				}
+			}
+			totalNum();
+		}else{
+			if (keyCode < 37 || keyCode > 40) {
+				if(!(keyCode >=48 && keyCode <=57)){
+					obj.value = obj.value.replace(/[^\d,-]/g,"");  //清除“数字”和“.”以外的字符  
+					obj.value = obj.value.replace(/^\,/g,"");  //验证第一个字符是数字而不是. 
+					obj.value = obj.value.replace(/^\-/g,"");
+				}
+				
+			}
+		}
+		
+	}
+	
+	
+	//修改入库批次级联履历
+	function batchChange(num,obj){
+		var n=jQuery(".selectb").index(jQuery(num).closest(".selectb"));
+		var selectIndex=n;
+		var val = obj.split('_');
+		if(val[1] == '1' || val[1] == '0'){
+			var id = num.id.replace('batchId','ylTotal');;
+			jQuery('#'+id).val(0);
+			jQuery('#'+id).attr("disabled","true");
+		}else{
+			var id = num.id.replace('batchId','ylTotal');;
+			jQuery('#'+id).removeAttr("disabled");
+		}
+		tallyChange(val[0],selectIndex);
+	}
+	//入库批次修改回调
+	function reBack(data){
+		var arr=data.split("@");
+		var n=arr[0];
+		jQuery(".pr").each(function(i){
+			if(i==(2*n)){
+				jQuery(this).empty().append(arr[1]);
+				jQuery(this).selectpicker("refresh");
+			}
+		});
+		enableText();
+	}
+
+	//展现添加窗口
+	function showView(num,id){
+		qrCodeId=id;
+		if(num==1){
+			productRecordId=id.replace("qrcode","prId");
+			hiddenQrId=id.replace("qrcode","hidden");
+			jQuery("#qrCodeId").val(jQuery("#"+id).val());
+			jQuery("#myModal_QRcode").modal("show");
+			jQuery("#myModal_QRcode").show(function(){
+				jQuery('#qrCodeId').focus();
+				})
+		}else{
+			productRecordId=id.replace("tracingCode","prId");
+			jQuery("#tracingCode").val(jQuery("#"+id).val());
+			jQuery("#myModal_ZScode").modal("show");
+		}
+	}
+	//插入一条新数据
+	function addTally(index){
+		var simple = jQuery('#orderInventorySimplify').val();//是否启用订单-库存简化流程
+		
+		var size=jQuery("."+index).size();
+		var op1="";
+		var op2="";
+		op1=jQuery("#batchId_"+index).html();
+		op2=jQuery("#prId_"+index).html();
+		var productId=jQuery("#productId_"+index).val();
+		var str="";
+		str+="<tr id='tr_"+index+"_"+size+"' class='alt_"+index+"_"+size+" "+index+"'>";
+		str+="<td class='ze_bg2 bord-rt'>";
+		str+="<input type='hidden' id='productId_"+index+"_"+size+"' value='"+productId+"'/>";
+		str+="<input id='num_"+index+"_"+size+"' class='form-control form-cotol55 productNum' type='text' value='0.0' onfocus='oldValue(this);' onkeyup='clearNoNum(1,this, event),materialWeight(this);' onchange='calculates(this);'/>";
+		str+="</td>";
+		str+="<td class='ze_bg2 bord-rt'>";
+		str+="<span class='bootSelt-160 selectb' style='float:none;' >";
+		str+="<input type='hidden' name='inpbatchId_"+index+"_"+size+"' id='inpbatchId_"+index+"_"+size+"' value=''/>";
+		str+="<select class='selectpicker batch' name='batchId_"+index+"_"+size+"' id='batchId_"+index+"_"+size+"'  onchange='batchChange(this,this.value),materialWeight2(this);'>";
+		str+=op1;
+		str+="</select>";
+		str+="</span>";
+		str+="</td> ";
+
+		if(simple == 'true'){
+			str+="<td class='ze_bg2 bord-rt'>";
+			str+="<input id='ylTotal_"+index+"_"+size+"' class='form-control form-cotol55 productNum' type='text' value='0.0' />";
+			str+="</td>";
+		}
+
+		str+="<td class='ze_bg2 bord-rt'>";
+		str+="<span class='bootSelt-160 selectp' style='float:none;'>";
+		str+="<select class='selectpicker pr' name='prId_"+index+"_"+size+"' id='prId_"+index+"_"+size+"'  onchange='prChange(this.id,this.value);'>";
+		str+=op2;
+		str+="</select>";
+		str+="</span>";
+		str+="</td> ";	
+		str+="<td class='ze_bg2 bord-rt'>";
+		var a="qrcode_"+index+"_"+size;
+		var b="tracingCode_"+index+"_"+size;
+		str+="<input type='hidden' id='hidden_"+index+"_"+size+"' value='' />";
+		str+="<input class='form-control form-cotol140 qrcode'   id='qrcode_"+index+"_"+size+"' type='text'  onfocus='this.blur()' value='' onclick='showView(1,this.id);'/>";
+		str+="</td>";
+		str+="<td class='ze_bg2 bord-rt'>";
+		str+="<input class='form-control form-cotol140' id='tracingCode_"+index+"_"+size+"' type='text' value='' onfocus='this.blur()' onclick='showView(2,this.id);'/>";
+		str+="</td>";
+		str+="<td class='ze_bg2 '>";
+		str+="<span class=' contral' style='cursor: pointer;' onclick='deleteTally("+index+","+size+")'>删除</span>";
+		str+="</td>";
+		str+="<td class='ze_bg2 ze_bt_ri' height='4' width='5'></td>";
+		str+="</tr>";
+		if(size==1){
+			jQuery(".alt_"+index).after(str);
+		}else{
+			jQuery("."+index).each(function(i){
+				if(i==(size-1)){
+					jQuery(this).after(str);
+				}
+			});
+		}
+		jQuery(".alt_"+index).find(".row").each(function(j){
+				jQuery(this).attr("rowspan",(size+1));
+		});
+		enableText();
+		fz();
+		jQuery('.selectpicker').selectpicker();
+		
+	}
+	//删除一条数据
+	function deleteTally(index,i){
+		jQuery(".alt_"+index+"_"+i).remove();
+		var num=jQuery("."+index).size();
+		jQuery(".alt_"+index).find(".row").each(function(i){
+			jQuery(this).attr("rowspan",num);
+		});
+	}
+
+	function fz(){//inpbatchId  批次id初始化赋值
+		jQuery("tr").each(function(){
+			if (this.id != null && this.id != '') {
+				var trId=this.id;
+				var inpbatchId=trId.replace("tr","inpbatchId");
+				var batchId=trId.replace("tr","batchId");
+				var val = jQuery('#'+inpbatchId).val();
+
+				var ylId = trId.replace("tr","ylTotal");
+				var batchVal = jQuery('#'+batchId).val().split('_');
+				if(batchVal[1] != '2' && batchVal[1] != 2){
+					jQuery('#'+ylId).attr("disabled","true");
+				}
+				
+        		if(val == ''){
+        			jQuery('#'+inpbatchId).val(jQuery('#'+batchId).val());
+            	}
+			}
+		});
+
+		
+
+	}
+	
+	function productJson(){
+		var jsonStr = "[";
+		jQuery("tr").each(function(){
+			if (this.id != null && this.id != '') {
+				var trId=this.id;
+				productId=trId.replace("tr","productId");
+				numId=trId.replace("tr","num");
+				batchId=trId.replace("tr","inpbatchId");
+				prId=trId.replace("tr","prId");
+        		qrCode=trId.replace("tr","qrcode");
+				tracId=trId.replace("tr","tracingCode");
+        		yl = trId.replace("tr","ylTotal");
+				var productVal=jQuery("#"+productId).val();
+				var numVal=jQuery("#"+numId).val();
+
+				var batchVal=jQuery("#"+batchId).val().split(',');
+
+				var batchCode=jQuery("#"+batchId).html();
+        		var a = jQuery('#batchId_0 option:selected').text();
+        		var num = a.split(',')[2];
+				var prVal=jQuery("#"+prId).val();
+				var qrVal=jQuery("#"+qrCode).val();
+				var tracVal=jQuery("#"+tracId).val();
+        		var ylval = jQuery("#"+yl).val();
+
+           		jsonStr +="{";
+				jsonStr +="'productId':'"+productVal;
+				jsonStr +="','sourceNum':'"+numVal;
+				jsonStr +="','batchId':'"+batchVal[0];
+				jsonStr +="','prId':'"+prVal;
+				if(qrVal==""||qrVal==null||qrVal=="该入库批次没有来源，无法填写二维码编号。" || qrVal=="该入库批次没有可选择履历，无法填写二维码编号。"){
+					qrVal="0";
+				}
+				if(tracVal==""||tracVal==null){
+					tracVal="0";
+				}
+				jsonStr +="','qrCode':'"+qrVal;
+				jsonStr +="','tracId':'"+tracVal;
+        		jsonStr +="','ylTotal':'"+ylval;
+				jsonStr +="'},";
+			}
+		});
+
+		if (jsonStr != "[") {
+			jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+		}
+		jsonStr += "]";
+		//alert(jsonStr);
+		jQuery("#save\\:saveTally").val(jsonStr);
+
+		var a = eval(jsonStr);
+		var productName = '';
+		jQuery('.kkkk').each(function (index){
+		  var sNum = 0;
+		  for(var i=0;i<a.length;i++){
+		    if(this.id == a[i].productId ){
+		      sNum += Number(a[i].sourceNum);
+		    }
+		  }
+		  var ordNum = jQuery(this).find('span').html();
+		  if(ordNum != sNum){    
+		    productName += jQuery('.zzzz').eq(index).html()+'，';
+		  }  
+		});
+		if(productName != ''){
+		  jQuery("#messageValue2").html(productName.substring(0,productName.length-1) + "的商品包装数不够，如继续操作会造成出库记录与销售数量数据误差！确定继续？");
+          jQuery("#messageDiv2").modal('show');
+          return false;
+		}else{
+			jQuery("#save\\:formTally").click();
+		}
+	}
+
+	function submitButton(){
+		jQuery("#save\\:formTally").click();
+	}
+	
+	jQuery(document).ready(function(){
+		enableText();
+		// 下拉框 开始
+		jQuery('.selectpicker').selectpicker();
+		// 表格模板隔行换色 开始 
+		jQuery('.tableModel tbody tr').mouseover(function(){
+			jQuery(this).addClass('hover');
+		});
+		jQuery('.tableModel tbody tr').mouseout(function(){
+			jQuery(this).removeClass('hover');
+		});	
+		fz();
+	});
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

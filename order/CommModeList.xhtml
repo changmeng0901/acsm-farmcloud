@@ -1,0 +1,202 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="commModeSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="CommMode Search Filter" switchType="ajax">
+
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">Content</ui:define>
+                <h:inputText id="content" value="#{commModeList.commMode.content}"/>
+            </s:decorate>
+
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{commModeList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Search" action="/CommModeList.xhtml"/>
+            <s:button id="reset" value="Reset" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">CommMode Search Results (#{empty commModeList.resultList ? 0 : (commModeList.paginated ? commModeList.resultCount : commModeList.resultList.size)})</f:facet>
+    <div class="results" id="commModeList">
+
+    <h:outputText value="The commMode search returned no results."
+               rendered="#{empty commModeList.resultList}"/>
+
+    <rich:dataTable id="commModeList"
+                var="_commMode"
+              value="#{commModeList.resultList}"
+           rendered="#{not empty commModeList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commModeList}"/>
+                    <ui:param name="propertyLabel" value="Comm mode id"/>
+                    <ui:param name="propertyPath" value="commMode.commModeId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_commMode.commModeId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commModeList}"/>
+                    <ui:param name="propertyLabel" value="Member info member info id"/>
+                    <ui:param name="propertyPath" value="commMode.memberInfo.memberInfoId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_commMode.memberInfo.memberInfoId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commModeList}"/>
+                    <ui:param name="propertyLabel" value="Comm mode type"/>
+                    <ui:param name="propertyPath" value="commMode.commModeType"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_commMode.commModeType}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commModeList}"/>
+                    <ui:param name="propertyLabel" value="Child mode type"/>
+                    <ui:param name="propertyPath" value="commMode.childModeType"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_commMode.childModeType}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commModeList}"/>
+                    <ui:param name="propertyLabel" value="Content"/>
+                    <ui:param name="propertyPath" value="commMode.content"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_commMode.content}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commModeList}"/>
+                    <ui:param name="propertyLabel" value="Insert time"/>
+                    <ui:param name="propertyPath" value="commMode.insertTime"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_commMode.insertTime}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commModeList}"/>
+                    <ui:param name="propertyLabel" value="User info id"/>
+                    <ui:param name="propertyPath" value="commMode.userInfoId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_commMode.userInfoId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commModeList}"/>
+                    <ui:param name="propertyLabel" value="Deleted"/>
+                    <ui:param name="propertyPath" value="commMode.deleted"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_commMode.deleted}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'CommMode' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="commModeViewId">
+                <f:param name="commModeCommModeId"
+                        value="#{_commMode.commModeId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/CommModeEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="commModeEdit"
+                rendered="#{empty from}">
+                <f:param name="commModeCommModeId"
+                        value="#{_commMode.commModeId}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link propagation="none"  view="/CommModeList.xhtml"
+            rendered="#{commModeList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/CommModeList.xhtml"
+            rendered="#{commModeList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{commModeList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/CommModeList.xhtml"
+            rendered="#{commModeList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{commModeList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/CommModeList.xhtml"
+            rendered="#{commModeList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{commModeList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/CommModeEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create commMode">
+            <f:param name="commModeCommModeId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

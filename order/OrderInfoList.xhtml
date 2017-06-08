@@ -1,0 +1,717 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new2.xhtml">
+
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+       <td valign="top" >
+       <style>
+			.ts_div2{width:240px; height: 125px; border: 1px solid #81C5E9; margin: 0px auto; padding: 0 15px 15px;  background: url(#{request.contextPath}/asset/images/tck_bg_14.jpg) #ffffff repeat-x scroll center top;}
+			.dr-mpnl-shadow{background:none;}
+			.dr-mpnl-pnl{background:none; border:none;}
+			.dr-mpnl-pnl-b{padding:0;}
+			.dr-mpnl-shadow{top:0; left:0;}
+			.rich-picklist-source-items{margin:0;}
+			
+			.bootstrap_set160 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:160px;}
+			.modalTable_minni td{padding-bottom:inherit}
+		</style>
+          <!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="spanValue">*号部分为必填项！</span>
+        
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- Modal 编辑履历显示内容 开始 -->
+ <div class="modal" id="myModalExport" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width: 540px; position: absolute; left: 50%; top: 50%; margin-left: -270px; margin-top: -100px;;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" style="float:right; width:11px; height:11px; margin-top:5px; background:url('#{request.contextPath}/asset/images/weather/farmingIco16.jpg') no-repeat scroll 0 0 rgba(0, 0, 0, 0);"></button>
+        <h4 class="modal-title" id="myModalLabel">导出订单信息</h4>
+    </div>
+    <div class="modal-body" style="padding:20px 0 0;">
+        <table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="pr10" width="110" align="right" style="padding-right: 10px; vertical-align: top; line-height: 32px">开始时间</td>
+                <td width="262" style="padding-bottom:20px;">
+                   <div class="input-append date ymstart form_datetime " style="position: relative; width:220px;">
+					    <input size="23" type="text" class="new_time" readonly="readonly" id="beginTime" name="beginTime" autocomplete="off" />
+					    <span class="add-on" style="position:absolute; right:5px; top:7px;" ><i class="icon-th" style="margin:0;"></i></span>
+					</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="pr10" width="110" align="right" style="padding-right: 10px; vertical-align: top; line-height: 32px">结束时间</td>
+                <td width="262" style="padding-bottom:20px;">
+                   <div class="input-append date ymstart form_datetime" style="position: relative; width:220px;">
+						    <input size="23" type="text" class="new_time" readonly="readonly" id="endTime" name="endTime" autocomplete="off" />
+						   
+						    <span class="add-on" style="position:absolute; right:5px; top:7px;"><i class="icon-th" style="margin:0;"></i></span>
+				  </div>
+                </td>
+            </tr>
+            
+        </table>     
+    </div>
+    <div class="modal-footer">
+        <h:commandButton id="persist"  styleClass="btn btn-success" value="提交" onclick="return inputTime();" action="#{positionsHome.persist}"/>
+        <a class="btn btn-default" data-dismiss="modal" href="javascript:;">返回</a>
+    </div>
+</div>
+</div>
+</div>
+<!-- Modal 编辑履历显示内容 结束 -->
+ <!-- Modal 编辑履历显示内容 开始 -->
+ <a4j:form>
+ <div class="modal" id="myModalEdit" tabindex="-1" role="dialog" aria-labelledby="myModalEditLabel" aria-hidden="true">
+<div class="modal-dialog" style="width: 540px; position: absolute; left: 50%; top: 50%; margin-left: -270px; margin-top: -100px;;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" style="float:right; width:11px; height:11px; margin-top:5px; background:url('#{request.contextPath}/asset/images/weather/farmingIco16.jpg') no-repeat scroll 0 0 rgba(0, 0, 0, 0);"></button>
+        <h4 class="modal-title" id="myModalEditLabel">修改配送时间</h4>
+    </div>
+    <div class="modal-body" style="padding:20px 0 0;">
+        <table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="pr10" width="110" align="right" style="padding-right: 10px; vertical-align: top; line-height: 32px">开始时间</td>
+                <td width="370" style="padding-bottom:20px;">
+                	<input type="hidden" id="edit_id" name="edit_id"/>
+                   <div class="input-append date ymstart form_datetime " style="position: relative; width:160px; float:left; margin-right:10px;">
+					    <input size="23" type="text" class="new_time" readonly="readonly" id="edit_time" name="edit_time" autocomplete="off" style="width:160px;" />
+					    <span class="add-on" style="position:absolute; right:5px; top:7px;" ><i class="icon-th" style="margin:0;"></i></span>
+					</div>
+					<span class="bootstrap_set160">
+					<select id="edit_am" name="edit_am">
+						<option value="0">全天</option>
+						<option value="1">上午</option>
+						<option value="2">下午</option>
+					</select>
+					</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pr10" width="110" align="right" style="padding-right: 10px; vertical-align: top; line-height: 32px">备注</td>
+                <td style="padding-bottom:20px;">
+	               <table cellpadding="0" cellspacing="0">
+                      <tr>
+                          <td><img src="#{request.contextPath}/asset/images/textarea_01.jpg" width="4" height="4" /></td>
+                          <td width="" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_03.jpg) repeat-x;"></td>
+                          <td><img src="#{request.contextPath}/asset/images/textarea_05.jpg" width="4" height="4" /></td>
+                      </tr>
+                      <tr>
+                          <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_09.jpg) repeat-y;"></td>
+                          <td class="" valign="top" style="background: none repeat scroll 0 0 #FFFFFF;"><textarea style="width:320px; height:50px; border:none;" id="edit_mark" name="edit_mark"></textarea>
+                          </td>
+                          <td width="4" height="100%" style="background:url(#{request.contextPath}/asset/images/textarea_11.jpg) repeat-y;"></td>
+                      </tr>
+                      <tr>
+                          <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_13.jpg" width="4" height="4" /></td>
+                          <td width="" height="4" style="background:url(#{request.contextPath}/asset/images/textarea_14.jpg) repeat-x;"></td>
+                          <td width="4" height="4"><img src="#{request.contextPath}/asset/images/textarea_16.jpg" width="4" height="4" /></td>
+                      </tr>
+                  </table>
+                </td>
+            </tr>
+            
+        </table>     
+    </div>
+    <div class="modal-footer">
+        <a4j:commandButton   styleClass="btn btn-success" value="提交" onclick="" action="#{orderInfoList.updateOrderInfo}" oncomplete="window.location.href='#{request.contextPath}/order/OrderInfoList.seam?pageNum=#{pageNum}&amp;orderCode=#{orderCode}'"/>
+        <a class="btn btn-default" data-dismiss="modal" href="javascript:;">返回</a>
+    </div>
+</div>
+</div>
+</div>
+</a4j:form>
+<script type="text/javascript">
+function openEdit(id){
+	var oid = jquery("#id"+id).html();
+	var time = jquery("#time"+id).html();
+	var am = jquery("#am"+id).html();
+	var mark = jquery("#mark"+id).html();
+	jquery("#edit_id").val(oid);
+	jquery("#edit_time").val(time);
+	jquery("#edit_am").selectpicker("val",am);
+	jquery("#edit_mark").val(mark);
+	jquery("#myModalEdit").modal('show');
+}
+function editSubmit(){
+	
+}
+</script>
+<!-- Modal 编辑履历显示内容 结束 -->
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">采销存&#160;&gt;&#160;&#160;<font size="3">订单管理</font>
+						</div>
+                    		<div class="r_t_r">
+	                        	<ul>
+	                        		<li>
+										<a href="#{request.contextPath}/order/OrdersPrintRecordList.seam" style="text-decoration:none;color:black;" >
+					                 		<img src="#{request.contextPath}/asset/images/newlvli_05.jpg" width="11" height="9" />
+					              			订单打印历史记录
+					              		</a>
+				        			</li>
+	                        		<li style="border-right:1px solid #ccc;">
+										<a href="#{request.contextPath}/record/ProcessRecordList.seam" style="text-decoration:none;color:black;" >
+					                 		<img src="#{request.contextPath}/asset/images/pass_03.jpg" width="11" height="9" />
+					              			处理历史记录
+					              		</a>
+				        			</li>
+				        			<li style="border-right:1px solid #ccc;">
+										<a href="#{request.contextPath}/order/MemberInfoListOne.seam" style="text-decoration:none;color:black;" >
+					                 		<img src="#{request.contextPath}/asset/images/index_06_07.jpg" width="11" height="9" />
+					              			客户管理
+					              		</a>
+				        			</li>
+								</ul>
+	                        </div>
+                    	
+                    </div>
+					 <div class="r_z_e" style="height: 20px;">
+                    	<!--本周订单总额开始-->
+                        <div style="height:54px; float:left; margin:0 20px;">
+                              <div class="ze_13">
+                                    <img src="#{request.contextPath}/asset/images/ze_13.jpg" width="10" height="54" />
+                                </div>
+                                <div class="ze_15">
+                                    <table border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td rowspan="2" class="ze_l5_li"><img src="#{request.contextPath}/asset/images/pic_19.jpg" width="62" height="52" /></td>
+                                            <td width="130" height="26" class="ze_l5_td" valign="bottom">￥<h:outputText value="#{orderInfoList.weekSum}"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="130" height="26" class="ze_l5_td2">本周订单总额</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                              <div class="ze_13">
+                                    <img src="#{request.contextPath}/asset/images/ze_17.jpg" width="10" height="54" />
+                                </div>
+                        </div>        
+                    	<!--本周订单总额结束-->
+                    	<!--本月订单总额开始-->
+                        <div style="height:54px; float:left; margin:0 20px;">
+                              <div class="ze_13">
+                                    <img src="#{request.contextPath}/asset/images/ze_13.jpg" width="10" height="54" />
+                                </div>
+                                <div class="ze_15">
+                                    <table border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td rowspan="2" class="ze_l5_li"><img src="#{request.contextPath}/asset/images/pic_20.jpg" width="62" height="52" /></td>
+                                            <td width="130" height="26" class="ze_l5_td" valign="bottom">￥<h:outputText value="#{orderInfoList.monthSum}"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="130" height="26" class="ze_l5_td2">本月订单总额</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                              <div class="ze_13">
+                                    <img src="#{request.contextPath}/asset/images/ze_17.jpg" width="10" height="54" />
+                                </div>
+                        </div>        
+                    	<!--本月订单总额结束-->
+                    	<!--本月订单总额开始-->
+                        <div style="height:54px; float:left; margin:0 20px; _display:inline;">
+                              <div class="ze_13">
+                                    <img src="#{request.contextPath}/asset/images/ze_13.jpg" width="10" height="54" />
+                                </div>
+                                <div class="ze_15">
+                                    <table border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td rowspan="2" class="ze_l5_li"><img src="#{request.contextPath}/asset/images/pic_21.jpg" width="62" height="52" /></td>
+                                            <td width="130" height="26" class="ze_l5_td" valign="bottom">￥<h:outputText value="#{orderInfoList.yearSum}"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="130" height="26" class="ze_l5_td2">本年订单总额</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                              <div class="ze_13">
+                                    <img src="#{request.contextPath}/asset/images/ze_17.jpg" width="10" height="54" />
+                                </div>
+                        </div>        
+                    	<!--本月订单总额结束-->
+                  </div>
+                  <h:form id="storageTypeSearch">
+                    <div class="z_r_ser" style="margin-top:60px;">
+                    	<table cellpadding="0" cellspacing="0" width="476" style="margin:0 auto;">
+                           <tr>
+                           		<td style="font-size:14px;" >订单编号：</td>
+                                <td>
+                                <div class="public-search">   
+                                	<span class="octicon-search02"></span>
+                                	<h:inputText id="name" styleClass="form-control nw300 srarchfont" value="#{orderInfoList.orderInfo.orderCode}"/>
+                                </div>
+                                <h:inputHidden name="bTime" id="bTime" value="#{orderInfoList.beginTime}"/>
+                                <h:inputHidden name="eTime" id="eTime" value="#{orderInfoList.endTime}" />
+                                	<h:commandButton id="search" styleClass="btn btn-primary" value="搜索" action="/order/OrderInfoList.xhtml">                                	
+	                                </h:commandButton>
+                                </td>
+                           </tr>
+                       </table>  
+                                            
+                    </div>
+                     <!--添加按钮开始-->
+                    <div class="tjan_01" style="margin-top:0px; margin-bottom:20px">
+                    	<s:div rendered="#{sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 }">
+	                    	<a class="btn btn-success" style="float: left;#{s:hasRole('deal_with_order')?'':'display:none;'}" href="#" onclick="packageAll('#{request.contextPath}/order/OrderInfoProcess.seam?orderInfoIds=','')"><strong style="cursor: pointer;">批量处理</strong></a>	
+	                    	<a class="btn btn-success" style="float: left;margin-left:10px;#{s:hasRole('print_tetragenous_order')?'':'display:none;'}" href="javascript:void(0);" onclick="return batchPrintLogistics(1,''); return false;" > <strong style="cursor: pointer;">批量打印四联订单</strong></a>
+                    	</s:div>
+                    	<s:link rendered="#{s:hasRole('order_add')}" propagation="none"  view="/order/MemberInfoList.xhtml" styleClass="btn btn-success">添加<f:param name="workParam" value="1"/></s:link>
+                    	<a href="javascript:void(0);" onclick="jquery('#myModalExport').modal('show');" class="btn btn-default">导出</a>
+                    	<h:commandButton id="export" action="#{orderInfoList.exportExcel()}" value="导出" style="display:none">
+	                    </h:commandButton> 
+                    </div>
+                     </h:form> 
+                    <!--添加按钮结束-->
+                    <h:panelGroup id="orderList">
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:0px;">
+                    	<tr>
+                    		<td width="5" height="4" ><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="11" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    	
+                    		<th class="ze_bg ze_bt_le" width="5" height="4" ></th> 	
+                    		<th class="ze_bg" width="2%" ><input type="checkbox" name="checkAll" id="th"/></th>
+                    		<th class="ze_bg" width="12%">订单编号</th>
+                    		<th class="ze_bg" width="8%">销售人</th>
+                    		<th class="ze_bg" width="8%">收货人姓名</th>
+                    		<th class="ze_bg" width="9%">手机号码</th>
+                    		<th class="ze_bg" width="8%">金额(元)</th>
+                    		<th class="ze_bg" width="12%">下单时间</th>
+                    		<th class="ze_bg" width="11%">配送时间</th>
+                    		<th class="ze_bg" width="10%">订单状态</th>
+                    		<th class="ze_bg" width="8%">支付状态</th>
+                    		<th class="ze_bg" width="12%">操作</th>
+                            <th class="ze_bg ze_bt_ri" width="5" height="4" ></th>
+                    	</tr>
+                    	<s:decorate rendered="#{empty orderInfoList.resultList}">
+	                    	<tr>
+	                    		<td class="ze_bg2" colspan="13"><h:outputText value="没有找到符合条件的记录" /></td>
+	                    	</tr>
+						</s:decorate>
+						<a4j:repeat value="#{orderInfoList.todayList}" var="_orderInfo" rendered="#{not empty orderInfoList.todayList}" rowKeyVar="_index">
+						<s:decorate rendered="#{_index == 0}">
+							<tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td colspan="11" align="left" class="ze_bg3"><b>今天</b><font color="#62ace9">（#{orderInfoList.todaycount}单）</font></td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                    	</tr>
+	                    </s:decorate>
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                    		<td class="ze_bg2">
+								<input type="checkbox"  name="td1" id="td1" value="#{_orderInfo.orderInfoId}"/>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.orderCode}" /></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText rendered="#{_orderInfo.farmerInfoId ne null}" value="#{_orderInfo.farmerInfoId.name}"/>
+                    			<h:outputText rendered="#{_orderInfo.farmerInfoId eq null}" value="无"/>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.receiveName}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.receivePhone}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="￥#{_orderInfo.totalAccount}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.insertTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText value="#{_orderInfo.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText>
+                    			<h:outputText value="全天" rendered="#{_orderInfo.timeSlot eq 0}"/>
+                    			<h:outputText value="上午" rendered="#{_orderInfo.timeSlot eq 1}"/>
+                    			<h:outputText value="下午" rendered="#{_orderInfo.timeSlot eq 2}"/>
+                    		</td>
+                    		<td class="ze_bg2">
+	                    		<span class="#{orderTypeUtil.formatObjectStr(_orderInfo.orderStatus).className}" ><strong style="padding-left: 4px; padding-right:4px; margin-right:-2px;" ><h:outputText value="#{orderTypeUtil.formatObjectStr(_orderInfo.orderStatus).name}"/></strong></span>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.paymentStatus?'已支付':'未支付'}" /></td>
+                    		<td class="ze_bg2" align="center">
+                    			<span id="idtoday#{_index}" style="display:none">#{_orderInfo.orderInfoId}</span>
+                    			<span id="timetoday#{_index}" style="display:none"><h:outputText value="#{_orderInfo.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></span>
+                    			<span id="amtoday#{_index}" style="display:none">#{_orderInfo.timeSlot}</span>
+                    			<textarea id="marktoday#{_index}" style="display:none">#{_orderInfo.orderRemark}</textarea>
+                            	<s:link rendered="#{s:hasRole('order_show')}" propagation="none"  view="/order/OrderInfo.xhtml" styleClass="list_view"  id="View" title="查看">
+									<f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+								</s:link>&#160;
+								 <a href="javascript:;" style="display: #{sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 and s:hasRole('order_pay_state_edit') ?'black':'none'}" class="#{_orderInfo.paymentStatus?'list_unpay':'list_pay'}"  title="修改支付状态" onclick="changeStatus(#{_orderInfo.orderInfoId},#{_orderInfo.paymentStatus});" />&#160;
+	                                <a class="list_prin_1" href="javascript:void(0);" onclick="return batchPrintLogistics(2,#{_orderInfo.orderInfoId}); return false;" title="打印四联订单" style="display: #{sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 and s:hasRole('print_tetragenous_order') ?'black':'none'}"></a>&#160;
+			                    	<a class="list_02_66" style="display: #{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 and s:hasRole('deal_with_order')?'':'none'};" href="#" onclick="packageAll('#{request.contextPath}/order/OrderInfoProcess.seam?orderInfoIds=',#{_orderInfo.orderInfoId})" title="处理" ></a>
+			                    	#{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 ?'&#160;':''}
+			                    	<a href="#" class="list_edit" style="display: #{_orderInfo.orderStatus gt 30 ?'':'none'}" title="编辑"  onclick="openEdit('today#{_index}')"></a>#{_orderInfo.orderStatus gt 30 ?'&#160;':''}
+			                    	<s:link propagation="none"  view="/order/OrderInfoUpdate.xhtml" styleClass="list_edit" action="#{sessionTake.setProductCart(null)}" id="Edit" title="编辑" rendered="#{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and s:hasRole('order_edit')}">
+		                                <f:param name="memberInfoId" value="#{_orderInfo.memberInfo.memberInfoId}" />
+		                                <f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+									</s:link>&#160;
+			                    	<s:link propagation="none"  view="/order/OrderInfoEdit.xhtml" styleClass="list_delete" action="#{orderInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="Delete" immediate="true" title="删除" rendered="#{(_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 or sessionTake.getLevelId() eq 3) and s:hasRole('order_del')}">
+										<f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+	                                </s:link>
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</a4j:repeat>
+						<a4j:repeat value="#{orderInfoList.yesterdayList}" var="_orderInfo" rendered="#{not empty orderInfoList.yesterdayList}" rowKeyVar="_index">
+						<s:decorate rendered="#{_index == 0}">
+							<tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td colspan="11" align="left" class="ze_bg3"><b>昨天</b><font color="#62ace9">（#{orderInfoList.yesterdaycount}单）</font></td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                    	</tr>
+	                    </s:decorate>
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                    		<td class="ze_bg2">
+								<input type="checkbox"  name="td1" id="td1" value="#{_orderInfo.orderInfoId}"/>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.orderCode}" /></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText rendered="#{_orderInfo.farmerInfoId ne null}" value="#{_orderInfo.farmerInfoId.name}"/>
+                    			<h:outputText rendered="#{_orderInfo.farmerInfoId eq null}" value="无"/>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.receiveName}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.receivePhone}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="￥#{_orderInfo.totalAccount}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.insertTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText>
+								<h:outputText value="全天" rendered="#{_orderInfo.timeSlot eq 0}"/>
+                    			<h:outputText value="上午" rendered="#{_orderInfo.timeSlot eq 1}"/>
+                    			<h:outputText value="下午" rendered="#{_orderInfo.timeSlot eq 2}"/>
+							</td>
+                    		<td class="ze_bg2">
+                    			<span class="#{orderTypeUtil.formatObjectStr(_orderInfo.orderStatus).className}" ><strong style="padding-left: 4px; padding-right:4px; margin-right:-2px;" ><h:outputText value="#{orderTypeUtil.formatObjectStr(_orderInfo.orderStatus).name}"/></strong></span>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.paymentStatus?'已支付':'未支付'}" /></td>
+                    		<td class="ze_bg2" align="center">
+                    			<span id="idyest#{_index}" style="display:none">#{_orderInfo.orderInfoId}</span>
+                    			<span id="timeyest#{_index}" style="display:none"><h:outputText value="#{_orderInfo.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></span>
+                    			<span id="amyest#{_index}" style="display:none">#{_orderInfo.timeSlot}</span>
+                    			<textarea id="markyest#{_index}" style="display:none">#{_orderInfo.orderRemark}</textarea>
+                            	<s:link propagation="none" rendered="#{s:hasRole('order_show')}" view="/order/OrderInfo.xhtml" styleClass="list_view"  id="View" title="查看">
+									<f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+								</s:link>&#160;
+								<a href="javascript:;" style="display: #{sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14  and s:hasRole('order_pay_state_edit') ?'black':'none'}" class="#{_orderInfo.paymentStatus?'list_unpay':'list_pay'}"  title="修改支付状态" onclick="changeStatus(#{_orderInfo.orderInfoId},#{_orderInfo.paymentStatus});" />&#160;
+	                                <a class="list_prin_1" href="javascript:void(0);" onclick="return batchPrintLogistics(2,#{_orderInfo.orderInfoId}); return false;" title="打印四联订单" style="display: #{sessionTake.getLevelId() ne 1  and sessionTake.communityId ne 14 and s:hasRole('print_tetragenous_order') ?'black':'none'}"></a>&#160;
+			                    	<a class="list_02_66" style="display: #{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14  and s:hasRole('deal_with_order')?'':'none'};" href="#" onclick="packageAll('#{request.contextPath}/order/OrderInfoProcess.seam?orderInfoIds=',#{_orderInfo.orderInfoId})" title="处理"></a>#{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 ?'&#160;':''}
+			                    	<a href="#" class="list_edit" style="display: #{_orderInfo.orderStatus gt 30 ?'':'none'}" title="编辑"  onclick="openEdit('yest#{_index}')"></a>#{_orderInfo.orderStatus gt 30 ?'&#160;':''}
+			                    	<s:link propagation="none"  view="/order/OrderInfoUpdate.xhtml" styleClass="list_edit" action="#{sessionTake.setProductCart(null)}" id="Edit" title="编辑" rendered="#{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and s:hasRole('order_edit')}">
+		                                <f:param name="memberInfoId" value="#{_orderInfo.memberInfo.memberInfoId}" />
+		                                <f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+									</s:link>&#160;
+									
+			                    	<s:link propagation="none"  view="/order/OrderInfoEdit.xhtml" styleClass="list_delete" action="#{orderInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="Delete" immediate="true" title="删除" rendered="#{(_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1  or sessionTake.getLevelId() eq 3) and s:hasRole('order_del')}">
+										<f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+	                                </s:link>
+                            </td>
+                            
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</a4j:repeat>
+						<a4j:repeat value="#{orderInfoList.weekList}" var="_orderInfo" rendered="#{not empty orderInfoList.weekList}" rowKeyVar="_index">
+						<s:decorate rendered="#{_index == 0}">
+							<tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td colspan="11" align="left" class="ze_bg3"><b>#{orderInfoList.week}</b><font color="#62ace9">（#{orderInfoList.weekcount}单）</font></td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                    	</tr>
+                    	</s:decorate>
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            <td class="ze_bg2">
+								<input type="checkbox"  name="td1" id="td1" value="#{_orderInfo.orderInfoId}"/>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.orderCode}" /></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText rendered="#{_orderInfo.farmerInfoId ne null}" value="#{_orderInfo.farmerInfoId.name}"/>
+                    			<h:outputText rendered="#{_orderInfo.farmerInfoId eq null}" value="无"/>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.receiveName}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.receivePhone}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="￥#{_orderInfo.totalAccount}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.insertTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText> 
+                    			<h:outputText value="全天" rendered="#{_orderInfo.timeSlot eq 0}"/>
+                    			<h:outputText value="上午" rendered="#{_orderInfo.timeSlot eq 1}"/>
+                    			<h:outputText value="下午" rendered="#{_orderInfo.timeSlot eq 2}"/>
+                    		</td>
+                    		<td class="ze_bg2">
+                    			<span class="#{orderTypeUtil.formatObjectStr(_orderInfo.orderStatus).className}" ><strong style="padding-left: 4px; padding-right:4px; margin-right:-2px;" ><h:outputText value="#{orderTypeUtil.formatObjectStr(_orderInfo.orderStatus).name}"/></strong></span>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.paymentStatus?'已支付':'未支付'}" /></td>
+                    		<td class="ze_bg2" align="center">
+                    			<span id="idweek#{_index}" style="display:none">#{_orderInfo.orderInfoId}</span>
+                    			<span id="timeweek#{_index}" style="display:none"><h:outputText value="#{_orderInfo.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></span>
+                    			<span id="amweek#{_index}" style="display:none">#{_orderInfo.timeSlot}</span>
+                    			<textarea id="markweek#{_index}" style="display:none">#{_orderInfo.orderRemark}</textarea>
+                            	<s:link propagation="none" rendered="#{s:hasRole('order_show')}" view="/order/OrderInfo.xhtml" styleClass="list_view"  id="View" title="查看">
+									<f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+								</s:link>&#160;
+								<a href="javascript:;" style="display: #{sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 and s:hasRole('order_pay_state_edit') ?'black':'none'}" class="#{_orderInfo.paymentStatus?'list_unpay':'list_pay'}"  title="修改支付状态" onclick="changeStatus(#{_orderInfo.orderInfoId},#{_orderInfo.paymentStatus});" />&#160;
+                                <a class="list_prin_1" href="javascript:void(0);" onclick="return batchPrintLogistics(2,#{_orderInfo.orderInfoId}); return false;" title="打印四联订单" style="display: #{sessionTake.getLevelId() ne 1  and sessionTake.communityId ne 14 and s:hasRole('print_tetragenous_order') ?'black':'none'}"></a>&#160;
+		                    	<a class="list_02_66" style="display: #{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14  and s:hasRole('deal_with_order')?'':'none'};" href="#" onclick="packageAll('#{request.contextPath}/order/OrderInfoProcess.seam?orderInfoIds=',#{_orderInfo.orderInfoId})" title="处理"></a>#{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 ?'&#160;':''}
+		                    	<a href="#" class="list_edit" style="display: #{_orderInfo.orderStatus gt 30 ?'':'none'}" title="编辑"  onclick="openEdit('week#{_index}')"></a>#{_orderInfo.orderStatus gt 30 ?'&#160;':''}
+		                    	<s:link propagation="none"  view="/order/OrderInfoUpdate.xhtml" styleClass="list_edit" action="#{sessionTake.setProductCart(null)}" id="Edit" title="编辑" rendered="#{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and s:hasRole('order_edit')}">
+	                                <f:param name="memberInfoId" value="#{_orderInfo.memberInfo.memberInfoId}" />
+	                                <f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+								</s:link>&#160;
+		                    	<s:link propagation="none"  view="/order/OrderInfoEdit.xhtml" styleClass="list_delete" action="#{orderInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="Delete" immediate="true" title="删除" rendered="#{(_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1  or sessionTake.getLevelId() eq 3) and s:hasRole('order_del')}">
+									<f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+                                </s:link>
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</a4j:repeat>
+						<a4j:repeat value="#{orderInfoList.earlierList}" var="_orderInfo" rendered="#{not empty orderInfoList.earlierList}" rowKeyVar="_index">
+						<s:decorate rendered="#{_index == 0}">
+							<tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td colspan="11" align="left" class="ze_bg3"><b>更早</b><font color="#62ace9"></font></td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                    	</tr>
+	                    </s:decorate>
+                    	<tr> 
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            <td class="ze_bg2">
+								<input type="checkbox"  name="td1" id="td1" value="#{_orderInfo.orderInfoId}"/>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.orderCode}" /></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText rendered="#{_orderInfo.farmerInfoId ne null}" value="#{_orderInfo.farmerInfoId.name}"/>
+                    			<h:outputText rendered="#{_orderInfo.farmerInfoId eq null}" value="无"/>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.receiveName}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.receivePhone}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="￥#{_orderInfo.totalAccount}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.insertTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText> 
+                    			<h:outputText value="全天" rendered="#{_orderInfo.timeSlot eq 0}"/>
+                    			<h:outputText value="上午" rendered="#{_orderInfo.timeSlot eq 1}"/>
+                    			<h:outputText value="下午" rendered="#{_orderInfo.timeSlot eq 2}"/>
+                    		</td>
+                    		<td class="ze_bg2">
+                    			<span class="#{orderTypeUtil.formatObjectStr(_orderInfo.orderStatus).className}" ><strong style="padding-left: 4px; padding-right:4px; margin-right:-2px;" ><h:outputText value="#{orderTypeUtil.formatObjectStr(_orderInfo.orderStatus).name}"/></strong></span>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_orderInfo.paymentStatus?'已支付':'未支付'}" /></td>
+                    		<td class="ze_bg2" align="center">
+                    			<span id="idmore#{_index}" style="display:none">#{_orderInfo.orderInfoId}</span>
+                    			<span id="timemore#{_index}" style="display:none"><h:outputText value="#{_orderInfo.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></span>
+                    			<span id="ammore#{_index}" style="display:none">#{_orderInfo.timeSlot}</span>
+                    			<textarea id="markmore#{_index}" style="display:none">#{_orderInfo.orderRemark}</textarea>
+                            	<s:link propagation="none" rendered="#{s:hasRole('order_show')}" view="/order/OrderInfo.xhtml" styleClass="list_view"  id="View" title="查看">
+									<f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+								</s:link>&#160;
+								<a href="javascript:;" style="display: #{sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 and s:hasRole('order_pay_state_edit') ?'black':'none'}" class="#{_orderInfo.paymentStatus?'list_unpay':'list_pay'}"  title="修改支付状态" onclick="changeStatus(#{_orderInfo.orderInfoId},#{_orderInfo.paymentStatus});" />&#160;
+                                
+                                <a class="list_prin_1" href="javascript:void(0);" onclick="return batchPrintLogistics(2,#{_orderInfo.orderInfoId}); return false;" title="打印四联订单" style="display: #{sessionTake.getLevelId() ne 1  and sessionTake.communityId ne 14 and s:hasRole('print_tetragenous_order') ?'black':'none'}"></a>&#160;
+		                    	<a class="list_02_66" style="display: #{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14  and s:hasRole('deal_with_order')?'':'none'};" href="#" onclick="packageAll('#{request.contextPath}/order/OrderInfoProcess.seam?orderInfoIds=',#{_orderInfo.orderInfoId})" title="处理"></a>#{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and sessionTake.communityId ne 14 ?'&#160;':''}
+		                    	<a href="#" class="list_edit" style="display: #{_orderInfo.orderStatus gt 30 ?'':'none'}" title="编辑"  onclick="openEdit('more#{_index}')"></a>#{_orderInfo.orderStatus gt 30 ?'&#160;':''}
+		                    	<s:link propagation="none"  view="/order/OrderInfoUpdate.xhtml" styleClass="list_edit" action="#{sessionTake.setProductCart(null)}" id="Edit" title="编辑" rendered="#{_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 and s:hasRole('order_edit')}">
+	                                <f:param name="memberInfoId" value="#{_orderInfo.memberInfo.memberInfoId}" />
+	                                <f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+								</s:link>&#160;
+		                    	<s:link propagation="none"  view="/order/OrderInfoEdit.xhtml" styleClass="list_delete" action="#{orderInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="Delete" immediate="true" title="删除" rendered="#{(_orderInfo.orderStatus eq 30 and sessionTake.getLevelId() ne 1 or sessionTake.getLevelId() eq 3) and s:hasRole('order_del')}">
+									<f:param name="orderInfoOrderInfoId" value="#{_orderInfo.orderInfoId}" />
+                                </s:link>
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</a4j:repeat>
+                    </table>
+                    </h:panelGroup>
+                    <!--翻页开始-->
+                    <s:decorate rendered="#{not empty orderInfoList.resultList}">
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+			                <s:decorate rendered="#{!orderInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{orderInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{orderInfoList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/order/OrderInfoList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/order/OrderInfoList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{orderInfoList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{orderInfoList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{orderInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq orderInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/order/OrderInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{orderInfoList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/order/OrderInfoList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{orderInfoList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/order/OrderInfoList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{orderInfoList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{orderInfoList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</tr>
+                    </table>
+					</s:decorate>
+					
+                    <!--翻页结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+  <a4j:form>
+  <a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+	        <a4j:jsFunction name="changeStatusMe" action="#{orderInfoList.changeStatus}">
+	        <a4j:actionparam name="orderId" assignTo="#{orderInfoList.orderId}"/>
+	        <a4j:actionparam name="orderStatus" assignTo="#{orderInfoList.orderStatus}"/>
+	        </a4j:jsFunction>
+        </a4j:form>             
+<script src="#{request.contextPath}/asset/js/utils.js" type="text/javascript"></script> 
+<script>
+//<![CDATA[
+jquery = jQuery.noConflict();
+
+//批量包装
+function packageAll(url,obj){
+	var str = "";
+	if(obj == "") {
+		jquery("input[name='td1']:checked").each(function(){
+			str+=this.value+",";			
+		});
+	}else{
+		str = obj;
+	}
+	if(str==""){
+		document.getElementById("spanValue").innerHTML = "请选择需要的订单!";
+		jquery("#myModal").modal('show');
+		return;
+	}
+	window.location.href=url+str;
+}
+//搜索商品回调
+function searchOnComplete(){
+	window.location.href="#{request.contextPath}/order/OrderInfoList.seam?pageNum=#{pageNum}";
+}
+//批量打印物流配送单
+function batchPrintLogistics(typeinfo,obj){
+	if (typeinfo == 1) {
+		if (orderInformationIds == ""){
+			alert("请选择需要处理的配送单!");
+			return false;
+		}
+		if (confirm("确定批量打印四联订单!")){
+			var orderInformationIds = "";
+			jquery("input[name='td1']:checked").each(function(){
+				orderInformationIds+=this.value+",";		
+			});
+			window.open('#{request.contextPath}/record/PrintTransportationOrderInfoList.seam?orderInfoId=' + orderInformationIds);
+		} else {
+			return false;
+		}
+	}else{
+		if (confirm("确定打印四联订单!")){
+			window.open('#{request.contextPath}/record/PrintTransportationOrderInfoList.seam?orderInfoId=' + obj+",");
+		} else {
+			return false;
+		}
+	}
+}
+
+jquery(document).ready(function(){
+	jquery("select").selectpicker();
+	jquery('input').iCheck({
+	    checkboxClass: 'icheckbox_minimal-blue',
+	    radioClass: 'iradio_minimal-blue',
+	    increaseArea: '20%' // optional
+	  });
+	jquery('input[name=checkAll]').on("ifClicked", function(event){
+		if (this.checked) {
+			jquery("input[name='td1']").iCheck("uncheck"); 
+		} else {
+			jquery("input[name='td1']").iCheck("check"); 
+		}
+	});
+	})
+	
+	function changeStatus(orderId,orderStatus){
+		if(orderId != null){
+			if(orderStatus){
+				if(confirm('确定改为未支付？')){
+					changeStatusMe(orderId,1);
+				}
+			}else{
+				if(confirm('确定改为已支付？')){
+					changeStatusMe(orderId,0);
+				}
+			}
+		}
+	}
+
+jquery(".form_datetime").datetimepicker({
+    format: "yyyy-mm-dd",
+    autoclose: true,
+	 weekStart: 1,
+	  //startDate: "2014-08-14 10:00",
+	 language:  'zh-CN',
+    minView:2,
+    pickerPosition: "bottom-left"
+    });
+
+function inputTime(){
+	var bTime = jquery("#beginTime").val();
+
+	var eTime = jquery("#endTime").val();
+	if(bTime == ""){
+		alert("开始时间不能为空！");
+		return false;
+	}else if(new Date(bTime).getTime() > new Date().getTime()){
+		alert("开始时间不能今天！");
+		return false;
+	}else if(eTime != "" && bTime > eTime){
+			alert("开始时间不能大于结束时间！");
+			return false;
+	}
+	jquery('#myModalExport').modal('hide');
+	jquery("#storageTypeSearch\\:bTime").val(bTime);
+	jquery("#storageTypeSearch\\:eTime").val(eTime);
+	jquery('#storageTypeSearch\\:export').trigger('click');
+	return true;
+}
+
+//]]>
+</script>
+		</td>
+		
+	</ui:define>
+
+</ui:composition>

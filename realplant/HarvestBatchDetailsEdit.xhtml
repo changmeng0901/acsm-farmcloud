@@ -1,0 +1,150 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<style>
+.form-control{
+	float:left;
+}
+</style>
+		<td valign="top">
+		<h:form id="user">
+						<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+                <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">生产
+                    	&#160;&gt;&#160;&#160;<font size="3">采收管理</font></div>
+                    </div>
+                    <div class="sp_d_iv">
+                                    <span class="spn_01">区域：#{realPlantHome.instance.tunnelInfoId.tunnelName}</span>
+									<span class="spn_01">作物：#{realPlantHome.instance.breedBreedId.plant.name}</span>
+								    <span class="spn_01">品种：#{realPlantHome.instance.breedBreedId.name}</span>
+								</div>
+                    <!-- #{harvestBatchDetailsHome.work()} -->
+				<!--入库订单列表开始-->
+					<table width="650px;" class="r_c_table" cellpadding="0" cellspacing="0">
+					   
+						<tr>
+							<td class="r_c_td">编号：</td>
+							<td>
+								<h:outputText  id="code" value="#{harvestBatchDetailsHome.instance.code}"/>
+                            </td>
+						</tr>
+						<tr>
+							<td colspan="2" height="30"></td>
+						</tr>
+						<tr>
+							<td class="r_c_td">重量：</td>
+							<td>
+								<h:inputText styleClass="form-control nw221" id="weight" value="#{harvestBatchDetailsHome.instance.weight}"/>
+								<span class="finput" style="color:#FF0000">*</span>
+                            </td>
+						</tr>
+						<tr>
+							<td colspan="2" height="30"></td>
+						</tr>
+						<tr>
+							<td class="r_c_td">采收人：</td>
+							<td>
+								<h:inputText styleClass="form-control nw221" id="harvestPerson" value="#{harvestBatchDetailsHome.instance.harvestPerson}"/>
+                            </td>
+						</tr>
+						<tr>
+							<td colspan="2" height="30"></td>
+						</tr>
+						<tr>
+							<td class="r_c_td">采收时间：</td>
+							<td>
+                            	<div class="input-append date form_datetime " >
+								    <h:inputText id="harvestTime" styleClass="new_time" value="#{harvestBatchDetailsHome.instance.harvestTime}">
+								    <f:convertDateTime  pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+								    </h:inputText>
+								    <span class="add-on"><i class="icon-th"></i></span>
+								    </div>
+                            </td>
+						</tr>
+						<tr>
+							<td colspan="2" height="30"></td>
+						</tr>
+                       <tr>
+							<td class="r_c_td"></td>
+							<td>
+						<h:commandButton id="persist" value="提交" styleClass="btn btn-primary" action="#{harvestBatchDetailsHome.persist}" rendered="#{!harvestBatchDetailsHome.managed}" onclick="return checkSubmit();" />
+		            	<h:commandButton id="update" value="提交" styleClass="btn btn-primary" action="#{harvestBatchDetailsHome.update}" rendered="#{harvestBatchDetailsHome.managed}" onclick="return checkSubmit();" />
+		    			&#160;<s:link view="/realplant/HarvestBatchDetailsList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" >
+		    			<f:param name="baseId" value="#{harvestBatchDetailsHome.baseId}"/>
+		    			<f:param name="pageNum" value="#{harvestBatchDetailsHome.pageNum}"/>
+		    			<f:param name="pageNumh" value="#{harvestBatchDetailsHome.pageNumh}"/>
+		    			</s:link>
+                            </td>
+						</tr>
+					</table>
+				<!--入库订单列表结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div class="clear"></div>
+              </h:form>
+	 <script type="text/javascript">
+		var regNum = /^\d+(\.\d+)?$/;
+	function checkSubmit(){
+		var a1 =  document.getElementById("user:weight").value;
+		   if(a1 == ""){
+			   document.getElementById("productMsg").innerHTML = "重量不能为空";
+			   jquery("#myModal").modal('show');return false;
+			   
+		   }else if(!regNum.test(a1)){
+				document.getElementById("productMsg").innerHTML = "请输入正确的采收重量!";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+	}
+	
+	function closeMethod(){
+		var a1 =  document.getElementById("user:weight");
+	    if(a1.value=="" || !regNum.test(a1.value)){
+	   		a1.focus();
+	   }
+	}
+</script>
+<script type="text/javascript">
+				jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd hh:ii",
+			    autoclose: true,
+				 weekStart: 1,
+				  //startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+			    pickerPosition: "bottom-left"
+			    });
+			  window.onload = function () {
+			    jquery('.selectpicker').selectpicker();
+			  };
+			</script>
+            </td> 
+	</ui:define>
+
+</ui:composition>

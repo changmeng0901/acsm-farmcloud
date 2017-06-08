@@ -1,0 +1,1097 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml"
+                >
+	<ui:define name="foot">
+	<!-- 选择基地 开始 -->
+	<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+	<!-- 选择基地 结束 -->  
+	</ui:define>
+	<ui:define name="body">
+		<style>
+			.btnCenter span{display: inline-block; height:28px; line-height:18px; box-sizing:border-box; padding: 4px 20px; cursor: pointer;}
+			.btnCenter span.cur{display: inline-block; border: 1px solid rgb(167, 201, 121); border-radius: 40px; padding: 4px 20px; background-color: rgb(167, 201, 121); color: rgb(255, 255, 255);}
+			.modal .modal-header .close, .modal .modal-header .close:link {background:url("../asset/images/farmingIco16.jpg") no-repeat scroll 0 0;filter:alpha(opacity=100);
+   					 border: medium none;float: right;height: 11px;margin-top: 5px;opacity: 1;width: 11px;}
+			.modal .modal-header .close:hover, .modal-header .close:focus {background:url("../asset/images/farmingIco17.jpg") no-repeat scroll 0 0;opacity: 1;filter:alpha(opacity=100);}
+			.baseFile_onload{ display:block; float:left; width:130px; height:130px; margin:25px 50px 25px 0;border:none;background: url("../asset/images/upload_file.png") no-repeat scroll 0 0; cursor:pointer;}
+			.baseFile_onload:hover{ background: url("../asset/images/upload_file.png") no-repeat scroll 0 0; border:none;}
+			.baseFile_onload input{ position:absolute; right:0; top:0; width:130px; height:130px; opacity:0; filter:alpha(opacity=0); cursor:pointer;font-size: 100px;}
+			.baseFile_pic194 img{ width:194px; height:94px;}
+			.modal-header h4{font-family: 微软雅黑;}
+			.excelName,.msgSource{ margin:0 50px; line-height:20px;}
+			.stay{ margin-left:10px; padding-left:20px; background:url(../asset/images/orderManage/order_ico101.png) no-repeat 0 center; font-size:12px; color:#ff7427;}
+			p.fl{display:inline;}
+			.ze_table, .ze_table22 { border-collapse: initial;}
+			.shaiSelect .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:120px;}
+			.newFl .bootstrap-select:not([class*=span]):not([class*=col-]):not([class*=form-control]):not(.input-group-btn){float:left;}
+			.selects{display: none;}
+			.tooltip_state{display:inline-block;width:19px;height:19px;background: url(/asset/images/order/custorminfo_icons02.jpg) no-repeat;cursor:pointer;}
+			.tooltip_order{display:inline-block;width:19px;height:19px;background: url(/asset/images/order/custorminfo_icons01.jpg) no-repeat;cursor:pointer;}
+			.tooltip.in{filter:alpha(opacity=50);opacity:.5}
+		</style>
+		<!-- #{cardsInfoList.findInit()} -->
+		<td valign="top" >
+			<div class="right_c">
+				<div class="r_title">
+					<div class="r_t_l">采销存<span style="padding:0 5px;">&gt;</span>订单管理<span style="padding:0 5px;">&gt;</span><font size="3">会员卡管理</font></div>
+                    <div class="fr" style="margin-bottom:-1px;">
+	                    <ul class="cm_resumeList clear">
+	                    	<li>
+	                            <a href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg" /><span>订单管理</span></a>
+	                        </li>
+	                        <li>
+	                    		<a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                    		<a class="borderBt" href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                           </h:panelGroup>
+	                    </ul>
+	                </div>
+                </div>
+				<div class="z_r_ser clear" style="position:relative;padding-right:220px; margin:10px 0;height:auto;">
+				<h:outputText rendered="#{cardsInfoList.cardType ne 3}" >
+					<h:form id="storageTypeSearch" style="float:left;">
+						<h:inputHidden value="#{cardsInfoList.searchType}" id="searchType"/>
+					
+						<h:inputHidden value="#{cardsInfoList.salesDate}" id="salesDate"/>
+						<h:inputHidden value="#{cardsInfoList.expireDate}" id="expireDate"/>
+						<h:inputHidden value="#{cardsInfoList.salesPeople}" id="salesPeople"/>
+						<h:inputHidden value="#{cardsInfoList.serCardType}" id="serCardType"/>
+						<h:inputHidden value="#{cardsInfoList.validityDate}" id="validityDate"/>
+						<table cellpadding="0" cellspacing="0">
+							<tr>
+								<td style="padding:5px 0;">
+									<div class="public-search">   
+										<span class="octicon-search02"></span>
+										<h:inputText id="serarchStr" styleClass="form-control nw300 srarchfont" value="#{cardsInfoList.serarchStr}" style="color:#000"/>
+									</div>
+									<h:commandButton id="search" styleClass="btn btn-primary" onclick="return storageType();" value="搜索" action="/card/CardInfoList.xhtml"></h:commandButton>
+								</td>
+								<td><span class="gjss_a gjtop fl" style="height:30px; line-height:30px; margin-left:10px;">筛选</span></td>
+								<td width="70" align="right" style="padding:5px 10px 5px 0;">卡状态</td>
+								<td style="padding:5px 0;">
+									<div class="shaiSelect">
+										<h:selectOneMenu id="cardTypeId"  styleClass="selectpicker nw200" value="#{cardsInfoList.cardStatus}"  onchange="getMess();"> 
+											<f:selectItem itemLabel="全部" itemValue="0"/>												
+											<f:selectItem itemLabel="未售出" itemValue="10"/>	
+											<f:selectItem itemLabel="已售出" itemValue="20"/>												
+											<f:selectItem itemLabel="已使用" itemValue="40"/>
+											<f:selectItem itemLabel="已冻结" itemValue="50"/>
+											<f:selectItem itemLabel="已使用完" itemValue="60"/>	
+											<f:selectItem itemLabel="已过期" itemValue="70"/>							 					
+										</h:selectOneMenu>
+					                </div>
+				                </td>
+							</tr>
+						</table> 
+					</h:form>    
+					</h:outputText>
+					<h:outputText rendered="#{cardsInfoList.cardType eq 3}" >
+					<h:form id="storageTypeSearch2" style="float:left;">
+						<table cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<div class="public-search">   
+										<span class="octicon-search02"></span>
+										<h:inputText id="serarchStr2" styleClass="form-control nw300 srarchfont" value="#{cardBatchList.serarchStr}"/>
+									</div>
+									<h:commandButton id="search2" styleClass="btn btn-primary" value="搜索" action="/card/CardInfoList.xhtml"></h:commandButton>
+								</td>
+								<!-- <td width="70" align="right" style="padding:5px 10px 5px 0;">卡状态</td>
+								<td style="padding:5px 0;">
+									<div class="shaiSelect">
+										<h:selectOneMenu id="cardTypeId"  styleClass="selectpicker nw200" value="1" > 
+											<f:selectItem itemLabel="订单配送时间" itemValue="1"/>												
+											<f:selectItem itemLabel="下单时间" itemValue="2"/>												
+											<f:selectItem itemLabel="订单签收时间" itemValue="3"/>
+											<f:selectItem itemLabel="冻结时间" itemValue="4"/>												
+										</h:selectOneMenu>
+					                </div>
+				                </td> -->
+							</tr>
+							
+						</table> 
+					</h:form>      
+					</h:outputText>  
+					
+					<div class="btnCenter" style=" float:left;margin-left:10px;padding:5px 0;">
+						<span id="cardType0" class="#{cardsInfoList.cardType == 0 ? 'cur' : ''}" onclick="cardTypeAction(0);">全部</span>
+						<span id="cardType1" class="#{cardsInfoList.cardType == 1 ? 'cur' : ''}" onclick="cardTypeAction(1);">礼品卡</span>
+						<span id="cardType2" class="#{cardsInfoList.cardType == 2 ? 'cur' : ''}" onclick="cardTypeAction(2);">储值卡</span>
+						<span id="cardType3" class="#{cardsInfoList.cardType == 3 ? 'cur' : ''}" onclick="cardTypeAction2(3);">批次</span>
+					</div>
+					<div class="tjan_01" style="position:absolute;right:0; top:5px;margin:0;">
+						<s:link styleClass="btn btn-success" value="添加" view="/card/CardInfoAddEdit.xhtml" propagation="none" onclick="return checkBase(this);">
+							<f:param name="cardInfoId" />
+							<f:param name="pageNum" value="#{cardsInfoList.pageNum}" />
+							<f:param name="cardType" value="1" />
+							<f:param name="msg" value="" />
+						</s:link>
+						<h:outputText rendered="#{cardsInfoList.cardType ne 3}" >
+						<a class="btn btn-default" onclick="deletedCards();">批量删除</a>
+						<div class="btn-group bootstrap_select fr" style="margin-left:5px;">
+                            <button type="button" class="btn dropdown-toggle selectpicker btn-default" data-toggle="dropdown"><span id="">导入导出</span><span class="caret"></span></button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a  href="javascript:void(0);" onclick="importInit();" ><strong style="cursor: pointer;">导入会员信息</strong></a></li>
+								<li>
+						      		 <s:link propagation="none" view="/card/CardInfoList.xhtml" action="#{cardsInfoList.exportExcelFind}" >
+						      		 <strong style="cursor: pointer;">导出会员信息</strong></s:link>
+		                       	</li>
+		                        
+						  	</ul>
+                        </div>
+						</h:outputText>
+					</div>    
+				</div>
+				<div class="selects clear">
+					<div class="fl" style="width: 560px;padding-bottom:10px;">
+	                   	<span class="fl" style="line-height:30px;">卡类型：</span>
+	                   	<div class="newFl">
+	                   		<select id="carType" data-live-search="true" class="selectpicker fl" title="全部">
+		                    	<option value="0" >全部</option>
+		                    	<a4j:repeat value="#{cardsInfoList.cardTypeList}" var="_cardType" rowKeyVar="_index">
+		                    		<option value="#{_cardType[0]}">#{_cardType[1]}</option>
+		                    	</a4j:repeat>
+	                    	</select>
+	                   	</div>
+	                   	<span class="fl" style="line-height:30px;">销售人：</span>
+	                   	<div class="newFl">
+	                   		<select id="memberId" data-live-search="true" class="selectpicker fl" title="全部">
+		                    	<option value="全部" >全部</option>
+		                    	<a4j:repeat value="#{cardsInfoList.salesPeopleList}" var="_salesPeople" rowKeyVar="_index">
+		                    		<option value="#{_salesPeople}">#{_salesPeople}</option>
+		                    	</a4j:repeat>
+	                    	</select>
+	                   	</div>
+                   	</div>
+                   	<div class="fl" style="padding-bottom:10px;">
+	                   	<span class="fl" style="line-height:30px;">销售日期：</span>
+	                     	<div class="input-append date form_datetime fl" id="salesDate" style="width:190px;position:relative;margin-right:10px;">
+						    <input type="text" size="26" id="salesTime" class="new_time" value="#{cardsInfoList.salesDate}"  data-format="yyyy-MM-dd" style="width:188px;" />
+						    <span class="add-on" style="position:absolute;right:10px;top:8px;"><i class="icon-th" style="margin:0;"></i></span>
+						</div>
+						<span class="fl" style="line-height:30px;">截止日期：</span>
+	                     	<div class="input-append date form_datetime fl" id="expireDate" style="width:190px;position:relative;margin-right:10px;">
+						    <input type="text" size="26" id="expireTime" class="new_time" value="#{cardsInfoList.expireDate}"  data-format="yyyy-MM-dd" style="width:188px;" />
+						    <span class="add-on" style="position:absolute;right:10px;top:8px;"><i class="icon-th" style="margin:0;"></i></span>
+						</div>
+	                    <span class="fl" style="line-height:30px;">有效期：</span>
+	                   	<select id="validity_time" class="selectpicker fl" title="全部">
+	                   		<option value="全部" >全部</option>
+	                    	<a4j:repeat value="#{cardsInfoList.validitList}" var="_validit" rowKeyVar="_index">
+		                    	<option value="#{_validit}">#{_validit}月</option>
+		                    </a4j:repeat>
+	                   	</select>
+                   	</div>
+                </div>
+				<s:div id="showCardList">
+				<h:outputText rendered="#{cardsInfoList.cardType eq 0}" >
+				<table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+					<tr>
+						<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+						<td colspan="11" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+						<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+					</tr>
+					<tr>
+						<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+						<th class="ze_bg" width="5%"><input id="cardCheckAll" style="float: left; margin-right: -23px; margin-left: 3px;" type="checkbox" class="iCheckbox" name="cardCheckAll" />序号</th>
+						<th class="ze_bg" width="10%">卡编号</th>
+						<th class="ze_bg" width="10%">卡种类</th>
+						<th class="ze_bg" width="10%">卡类型</th>
+						<th class="ze_bg" width="10%">有效期</th>
+						<th class="ze_bg" width="10%">卡状态</th>
+						<th class="ze_bg" width="10%">绑定会员</th>
+						<th class="ze_bg" width="10%">销售人</th>
+						<th class="ze_bg" width="10%">销售日期</th>
+						<th class="ze_bg" width="10%">截止日期</th>
+						<th class="ze_bg" width="10%">操作</th>
+						<th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+					</tr>
+					<a4j:repeat value="#{cardsInfoList.resultList}" var="_cardsInfo" rendered="#{not empty cardsInfoList.resultList}" rowKeyVar="_index">
+						<tr>
+							<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+							<td class="ze_bg2">
+							<h:outputText rendered="#{_cardsInfo.cardStatus lt cardConstant.getAlreadyUseCardStatus()}" >
+							<input style="float: left; margin-left: 3px; margin-right: -42px;" id="cardCheck_#{_cardsInfo.cardInfoId}" value="#{_cardsInfo.cardInfoId}" type="checkbox" class="iCheckbox" name="cardCheck"/>
+							</h:outputText>
+							#{_index+1}</td>
+							<td class="ze_bg2">
+								<h:outputText  value="#{_cardsInfo.cardCode}"/>
+								<h:outputText rendered="#{_cardsInfo.expire}">
+										<a class="stay" title="已过期" />
+									</h:outputText>
+							</td>
+							<td class="ze_bg2"><h:outputText  value="#{_cardsInfo.cardCategoryName}" /></td>
+							<td class="ze_bg2"><h:outputText  value="#{_cardsInfo.cardCategory.name}" /></td>
+							<td class="ze_bg2">
+								<h:outputText rendered="#{cardsInfoList.cardType eq '1'}"  value="#{_cardsInfo.cardCategory.deliverNum+_cardsInfo.deliverChangeNum}" ></h:outputText>
+								<h:outputText rendered="#{cardsInfoList.cardType eq '1'}" >次</h:outputText>
+								<h:outputText rendered="#{cardsInfoList.cardType eq '2'}"  value="#{_cardsInfo.amount}" ><f:convertNumber pattern="#0.00"/></h:outputText>
+								
+								<h:outputText rendered="#{cardsInfoList.cardType eq '0'}" >
+									<h:outputText rendered="#{_cardsInfo.cardType eq '1'}" >
+										<h:outputText rendered="#{cardsInfoList.cardType eq '0'}" value="#{_cardsInfo.cardCategory.expiryDate+_cardsInfo.expiryChangeNum}" ></h:outputText>月
+									</h:outputText>
+									<h:outputText rendered="#{_cardsInfo.cardType eq '2'}" >
+										--
+									</h:outputText>
+								</h:outputText>
+							</td>
+							<td class="ze_bg2"><h:outputText  value="#{cardConstant.getCardStatusLabel(_cardsInfo.cardStatus)}" /></td>
+							<td class="ze_bg2">
+								<h:outputText value="#{_cardsInfo.memberName}" rendered="#{_cardsInfo.memberName ne null and _cardsInfo.memberName ne ''}"/>
+								<h:outputText value="-" rendered="#{cardsInfoList.cardType eq null or cardsInfoList.cardType eq ''}"/>
+							</td>
+							<td class="ze_bg2">
+								<h:outputText value="#{_cardsInfo.saleName}" rendered="#{_cardsInfo.saleName ne null and _cardsInfo.saleName ne ''}"/>
+								<h:outputText value="-" rendered="#{_cardsInfo.saleName eq null or _cardsInfo.saleName eq ''}"/>
+							</td>
+							<td class="ze_bg2">
+								<h:outputText value="#{_cardsInfo.saleTime}" rendered="#{_cardsInfo.saleTime ne null and _cardsInfo.saleTime ne ''}"/>
+								<h:outputText value="-" rendered="#{_cardsInfo.saleTime eq null or _cardsInfo.saleTime eq ''}"/>
+							</td>
+							<td class="ze_bg2">
+								<h:outputText value="#{_cardsInfo.endTime}" rendered="#{_cardsInfo.endTime ne null and _cardsInfo.endTime ne ''}"/>
+								<h:outputText value="-" rendered="#{_cardsInfo.endTime eq null or _cardsInfo.endTime eq ''}"/>
+							</td>
+							<td class="ze_bg2">
+								<s:link propagation="none" view="/#{empty from ? 'card/CardInfo' : from}.xhtml" styleClass="list_view"  id="cardsInfoViewId" title="查看">
+									<f:param name="cardInfoId" value="#{_cardsInfo.cardInfoId}" />
+									<f:param name="pageNum" value="#{cardsInfoList.pageNum}" />
+								</s:link>&#160;
+								<s:fragment rendered="#{_cardsInfo.cardStatus lt cardConstant.getAlreadyUseCardStatus()}">
+									<s:link propagation="none" view="/card/CardInfoEdit.xhtml"   title="删除"  styleClass="list_delete" action="#{cardsInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="cardsInfoDelete" rendered="#{empty from}">
+										<f:param name="cardInfoId" value="#{_cardsInfo.cardInfoId}" />
+										<f:param name="pageNum" value="#{cardsInfoList.pageNum}" />
+										<f:param name="cardType" value="0" />
+									</s:link>
+								</s:fragment>
+								
+							</td>
+							<td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+						</tr>
+					</a4j:repeat>
+				</table>
+				<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<s:div rendered="#{not empty cardsInfoList.resultList}"> 
+							<s:decorate rendered="#{!cardsInfoList.previousExists }">
+								<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+							</s:decorate>
+							<s:decorate rendered="#{cardsInfoList.previousExists }">
+								<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+							</s:decorate>
+							<s:decorate rendered="#{cardsInfoList.previousExists }">
+								<td class="td_t_b">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" >首页
+										<f:param name="pageNum" value="0" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+								<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml"  styleClass="no_n" >
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+										<f:param name="pageNum" value="#{cardsInfoList.previousFirstResult}"/>&lt;
+									</s:link>
+								</td>
+							</s:decorate>
+							<a4j:repeat var="_page" value="#{cardsInfoList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{cardsInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq cardsInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+										<f:param name="msg" value="" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{cardsInfoList.nextExists}">
+								<td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml"   styleClass="no_d" >
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+										<f:param name="pageNum" value="#{cardsInfoList.nextFirstResult}" />&gt;
+									</s:link>
+								</td>
+								<td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" >尾页
+										<f:param name="pageNum" value="#{cardsInfoList.PAGE_COUNT}" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{cardsInfoList.PAGE_COUNT}页</td>
+							<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+						</s:div>
+					</tr>
+				</table>
+				</h:outputText>
+				
+				<h:outputText rendered="#{cardsInfoList.cardType eq 1}" >
+				<table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+					<tr>
+						<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+						<td colspan="9" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+						<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+					</tr>
+					<tr>
+						<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+						<th class="ze_bg" width="5%"><input id="cardCheckAll" style="float: left; margin-right: -23px; margin-left: 3px;" type="checkbox" class="iCheckbox" name="cardCheckAll" />序号</th>
+						<th class="ze_bg" width="15%">卡编号</th>
+						<th class="ze_bg" width="15%">卡种类</th>
+						<th class="ze_bg" width="15%">卡类型</th>
+						<th class="ze_bg" width="10%">配送次数</th>
+						<th class="ze_bg" width="10%">卡状态</th>
+						<th class="ze_bg" width="10%">绑定会员</th>
+						<th class="ze_bg" width="10%">剩余配送次数</th>
+						<th class="ze_bg" width="10%">操作</th>
+						<th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+					</tr>
+					<a4j:repeat value="#{cardsInfoList.resultList}" var="_cardsInfo" rendered="#{not empty cardsInfoList.resultList}" rowKeyVar="_index">
+						<tr>
+							<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+							<td class="ze_bg2">
+							<h:outputText rendered="#{_cardsInfo.cardStatus lt cardConstant.getAlreadyUseCardStatus()}" >
+							<input style="float: left; margin-left: 3px; margin-right: -42px;" id="cardCheck_#{_cardsInfo.cardInfoId}" value="#{_cardsInfo.cardInfoId}" type="checkbox" class="iCheckbox" name="cardCheck"/>
+							</h:outputText>
+							#{_index+1}</td>
+							<td class="ze_bg2">
+								<h:outputText  value="#{_cardsInfo.cardCode}"/>
+								<h:outputText rendered="#{_cardsInfo.expire}">
+										<a class="stay" title="已过期" />
+									</h:outputText>
+							</td>
+							<td class="ze_bg2"><h:outputText  value="#{_cardsInfo.cardCategoryName}" /></td>
+							<td class="ze_bg2"><h:outputText  value="#{_cardsInfo.cardCategory.name}" /></td>
+							<td class="ze_bg2">
+								<h:outputText rendered="#{cardsInfoList.cardType eq '1'}"  value="#{_cardsInfo.cardCategory.deliverNum+_cardsInfo.deliverChangeNum}" ></h:outputText>
+								<h:outputText rendered="#{cardsInfoList.cardType eq '1'}" >次</h:outputText>
+								<h:outputText rendered="#{cardsInfoList.cardType eq '2'}"  value="#{_cardsInfo.amount}" ><f:convertNumber pattern="#0.00"/></h:outputText>
+								
+								<h:outputText rendered="#{cardsInfoList.cardType eq '0'}" >
+									<h:outputText rendered="#{_cardsInfo.cardType eq '1'}" >
+										<h:outputText rendered="#{cardsInfoList.cardType eq '0'}" value="#{_cardsInfo.cardCategory.expiryDate+_cardsInfo.expiryChangeNum}" ></h:outputText>月
+									</h:outputText>
+									<h:outputText rendered="#{_cardsInfo.cardType eq '2'}" >
+										--
+									</h:outputText>
+								</h:outputText>
+							</td>
+							<td class="ze_bg2"><h:outputText  value="#{cardConstant.getCardStatusLabel(_cardsInfo.cardStatus)}" /></td>
+							<td class="ze_bg2">
+								<h:outputText value="#{_cardsInfo.memberName}" />
+							</td>
+							<td class="ze_bg2">
+								<h:outputText value="#{_cardsInfo.surplusNum}" />
+							</td>
+							<td class="ze_bg2">
+								<s:link propagation="none" view="/#{empty from ? 'card/CardInfo' : from}.xhtml" styleClass="list_view"  id="cardsInfoViewId" title="查看">
+									<f:param name="cardInfoId" value="#{_cardsInfo.cardInfoId}" />
+									<f:param name="pageNum" value="#{cardsInfoList.pageNum}" />
+								</s:link>&#160;
+								<s:fragment rendered="#{_cardsInfo.cardStatus lt cardConstant.getAlreadyUseCardStatus()}">
+									<s:link propagation="none" view="/card/CardInfoEdit.xhtml"   title="删除"  styleClass="list_delete" action="#{cardsInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="cardsInfoDelete" rendered="#{empty from}">
+										<f:param name="cardInfoId" value="#{_cardsInfo.cardInfoId}" />
+										<f:param name="pageNum" value="#{cardsInfoList.pageNum}" />
+										<f:param name="cardType" value="0" />
+									</s:link>
+								</s:fragment>
+								
+							</td>
+							<td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+						</tr>
+					</a4j:repeat>
+				</table>
+				<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<s:div rendered="#{not empty cardsInfoList.resultList}"> 
+							<s:decorate rendered="#{!cardsInfoList.previousExists }">
+								<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+							</s:decorate>
+							<s:decorate rendered="#{cardsInfoList.previousExists }">
+								<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+							</s:decorate>
+							<s:decorate rendered="#{cardsInfoList.previousExists }">
+								<td class="td_t_b">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" >首页
+										<f:param name="pageNum" value="0" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+								<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml"  styleClass="no_n" >
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+										<f:param name="pageNum" value="#{cardsInfoList.previousFirstResult}"/>&lt;
+									</s:link>
+								</td>
+							</s:decorate>
+							<a4j:repeat var="_page" value="#{cardsInfoList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{cardsInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq cardsInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+										<f:param name="msg" value="" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{cardsInfoList.nextExists}">
+								<td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml"   styleClass="no_d" >
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+										<f:param name="pageNum" value="#{cardsInfoList.nextFirstResult}" />&gt;
+									</s:link>
+								</td>
+								<td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" >尾页
+										<f:param name="pageNum" value="#{cardsInfoList.PAGE_COUNT}" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{cardsInfoList.PAGE_COUNT}页</td>
+							<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+						</s:div>
+					</tr>
+				</table>
+				</h:outputText>
+				
+				<h:outputText rendered="#{cardsInfoList.cardType eq 2}" >
+				<table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+					<tr>
+						<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+						<td colspan="8" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+						<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+					</tr>
+					<tr>
+						<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+						<th class="ze_bg" width="10%"><input id="cardCheckAll" style="float: left; margin-right: -23px; margin-left: 3px;" type="checkbox" class="iCheckbox" name="cardCheckAll" />序号</th>
+						<th class="ze_bg" width="15%">卡编号</th>
+						<th class="ze_bg" width="15%">卡种类</th>
+						<th class="ze_bg" width="15%">卡类型</th>
+						<th class="ze_bg" width="10%">卡金额</th>
+						<th class="ze_bg" width="10%">卡状态</th>
+						<th class="ze_bg" width="15%">绑定会员</th>
+						<th class="ze_bg" width="10%">操作</th>
+						<th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+					</tr>
+					<a4j:repeat value="#{cardsInfoList.resultList}" var="_cardsInfo" rendered="#{not empty cardsInfoList.resultList}" rowKeyVar="_index">
+						<tr>
+							<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+							<td class="ze_bg2">
+							<h:outputText rendered="#{_cardsInfo.cardStatus lt cardConstant.getAlreadyUseCardStatus()}" >
+							<input style="float: left; margin-left: 3px; margin-right: -42px;" id="cardCheck_#{_cardsInfo.cardInfoId}" value="#{_cardsInfo.cardInfoId}" type="checkbox" class="iCheckbox" name="cardCheck"/>
+							</h:outputText>
+							#{_index+1}</td>
+							<td class="ze_bg2">
+								<h:outputText  value="#{_cardsInfo.cardCode}"/>
+								<h:outputText rendered="#{_cardsInfo.expire}">
+										<a class="stay" title="已过期" />
+									</h:outputText>
+							</td>
+							<td class="ze_bg2"><h:outputText  value="#{_cardsInfo.cardCategoryName}" /></td>
+							<td class="ze_bg2"><h:outputText  value="#{_cardsInfo.cardCategory.name}" /></td>
+							<td class="ze_bg2">
+								<h:outputText rendered="#{cardsInfoList.cardType eq '1'}"  value="#{_cardsInfo.cardCategory.deliverNum+_cardsInfo.deliverChangeNum}" ></h:outputText>
+								<h:outputText rendered="#{cardsInfoList.cardType eq '1'}" >次</h:outputText>
+								<h:outputText rendered="#{cardsInfoList.cardType eq '2'}"  value="#{_cardsInfo.amount}" ><f:convertNumber pattern="#0.00"/></h:outputText>
+								
+								<h:outputText rendered="#{cardsInfoList.cardType eq '0'}" >
+									<h:outputText rendered="#{_cardsInfo.cardType eq '1'}" >
+										<h:outputText rendered="#{cardsInfoList.cardType eq '0'}" value="#{_cardsInfo.cardCategory.expiryDate+_cardsInfo.expiryChangeNum}" ></h:outputText>月
+									</h:outputText>
+									<h:outputText rendered="#{_cardsInfo.cardType eq '2'}" >
+										--
+									</h:outputText>
+								</h:outputText>
+							</td>
+							<td class="ze_bg2"><h:outputText  value="#{cardConstant.getCardStatusLabel(_cardsInfo.cardStatus)}" /></td>
+							<td class="ze_bg2">
+								<h:outputText value="#{_cardsInfo.memberName}" />
+							</td>
+							<td class="ze_bg2">
+								<s:link propagation="none" view="/#{empty from ? 'card/CardInfo' : from}.xhtml" styleClass="list_view"  id="cardsInfoViewId" title="查看">
+									<f:param name="cardInfoId" value="#{_cardsInfo.cardInfoId}" />
+									<f:param name="pageNum" value="#{cardsInfoList.pageNum}" />
+								</s:link>&#160;
+								<s:fragment rendered="#{_cardsInfo.cardStatus lt cardConstant.getAlreadyUseCardStatus()}">
+									<s:link propagation="none" view="/card/CardInfoEdit.xhtml"   title="删除"  styleClass="list_delete" action="#{cardsInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="cardsInfoDelete" rendered="#{empty from}">
+										<f:param name="cardInfoId" value="#{_cardsInfo.cardInfoId}" />
+										<f:param name="pageNum" value="#{cardsInfoList.pageNum}" />
+										<f:param name="cardType" value="0" />
+									</s:link>
+								</s:fragment>
+								
+							</td>
+							<td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+						</tr>
+					</a4j:repeat>
+				</table>
+				<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<s:div rendered="#{not empty cardsInfoList.resultList}"> 
+							<s:decorate rendered="#{!cardsInfoList.previousExists }">
+								<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+							</s:decorate>
+							<s:decorate rendered="#{cardsInfoList.previousExists }">
+								<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+							</s:decorate>
+							<s:decorate rendered="#{cardsInfoList.previousExists }">
+								<td class="td_t_b">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" >首页
+										<f:param name="pageNum" value="0" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+								<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml"  styleClass="no_n" >
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+										<f:param name="pageNum" value="#{cardsInfoList.previousFirstResult}"/>&lt;
+									</s:link>
+								</td>
+							</s:decorate>
+							<a4j:repeat var="_page" value="#{cardsInfoList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{cardsInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq cardsInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+										<f:param name="msg" value="" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{cardsInfoList.nextExists}">
+								<td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml"   styleClass="no_d" >
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+										<f:param name="pageNum" value="#{cardsInfoList.nextFirstResult}" />&gt;
+									</s:link>
+								</td>
+								<td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" >尾页
+										<f:param name="pageNum" value="#{cardsInfoList.PAGE_COUNT}" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{cardsInfoList.PAGE_COUNT}页</td>
+							<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+						</s:div>
+					</tr>
+				</table>
+				</h:outputText>
+				
+				<h:outputText rendered="#{cardsInfoList.cardType eq 3}" >
+				<table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+					<tr>
+						<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+						<td colspan="6" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+						<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+					</tr>
+					<tr>
+						<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+						<th class="ze_bg" width="6%">序号</th>
+						<th class="ze_bg" width="30%">会员卡编号</th>
+						<th class="ze_bg" width="18%">会员卡种类</th>
+						<th class="ze_bg" width="18%">会员卡类型</th>
+						<th class="ze_bg" width="18%">卡密码类型</th>
+						
+						<th class="ze_bg" width="10%">操作</th>
+						<th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+					</tr>
+					<!-- #{cardBatchList.resultList} -->
+					<a4j:repeat value="#{cardBatchList.cardBatchLists}" var="_cardsBatch" rendered="#{not empty cardBatchList.cardBatchLists}" rowKeyVar="_index">
+						<tr>
+							<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+							<td class="ze_bg2">#{_index+1}</td>
+							<td class="ze_bg2"><h:outputText  value="#{_cardsBatch.batchCode}" /></td>
+							<td class="ze_bg2">
+								<h:outputText  rendered="#{_cardsBatch.cardType eq 1}" >
+									礼品卡
+								</h:outputText>
+								<h:outputText  rendered="#{_cardsBatch.cardType eq 2}" >
+									储值卡
+								</h:outputText>
+							</td>
+							<td class="ze_bg2">
+								<h:outputText  value="#{_cardsBatch.cardCategory}" />
+							</td>
+							<td class="ze_bg2"><h:outputText  value="" />
+								<h:outputText  rendered="#{_cardsBatch.passwdType eq 1}" >
+									随机生成
+								</h:outputText>	
+								<h:outputText  rendered="#{_cardsBatch.passwdType eq 2}" >
+									固定密码
+								</h:outputText>		
+								<h:outputText  rendered="#{_cardsBatch.passwdType eq 3}" >
+									不生成密码
+								</h:outputText>	</td>
+							<td class="ze_bg2">
+								
+								<s:fragment rendered="#{_cardsBatch.cardType2 eq 0 }">
+								<s:link propagation="none"  view="/card/CardInfoEdit.xhtml" styleClass="list_edit" id="cardsInfoEdit"  title="编辑">
+	                                <f:param name="pageNum" value="#{cardBatchList.pageNum}" />
+	                                <f:param name="cardBatchId" value="#{_cardsBatch.cardBatchId}" />
+	                                <f:param name="cardType" value="#{cardsInfoList.cardType}" />
+	                                <f:param name="type" value="2"/>
+								</s:link>&#160;
+									<s:link propagation="none" view="/card/CardInfoList.xhtml"   title="删除"  styleClass="list_delete" action="#{cardsInfoHome.removeCardBatch}" onclick="return confirm('确定删除吗？');" id="cardsInfoDelete" rendered="#{empty from}">
+										<f:param name="cardBatchId" value="#{_cardsBatch.cardBatchId}" />
+										<f:param name="pageNum" value="#{cardBatchList.pageNum}" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+									</s:link>
+								</s:fragment>
+							</td>
+							<td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+						</tr>
+					</a4j:repeat>
+				</table>
+				<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<s:div rendered="#{not empty cardBatchList.cardBatchLists}"> 
+							<s:decorate rendered="#{!cardBatchList.previousExists }">
+								<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+							</s:decorate>
+							<s:decorate rendered="#{cardBatchList.previousExists }">
+								<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+							</s:decorate>
+							<s:decorate rendered="#{cardBatchList.previousExists }">
+								<td class="td_t_b">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" >首页
+										<f:param name="num" value="0" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+								<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml"  styleClass="no_n" >
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+										<f:param name="num" value="#{cardBatchList.previousFirstResult}"/>&lt;
+									</s:link>
+								</td>
+							</s:decorate>
+							<a4j:repeat var="_page" value="#{cardBatchList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{cardBatchList.previousExists or _index >0 ?'td_t_t':''} #{_page eq cardBatchList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="num" value="#{_page}" />
+										<f:param name="msg" value="" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{cardBatchList.nextExists}">
+								<td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml"   styleClass="no_d" >
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+										<f:param name="num" value="#{cardBatchList.nextFirstResult}" />&gt;
+									</s:link>
+								</td>
+								<td class="td_t_b td_t_t">
+									<s:link propagation="none"  view="/card/CardInfoList.xhtml" >尾页
+										<f:param name="num" value="#{cardBatchList.PAGE_COUNT}" />
+										<f:param name="cardType" value="#{cardsInfoList.cardType}" />
+										<f:param name="msg" value="" />
+									</s:link>
+								</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{cardBatchList.PAGE_COUNT}页</td>
+							<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+						</s:div>
+					</tr>
+				</table>
+				</h:outputText>
+				</s:div>
+				
+				<div class="clear"></div>
+			</div>
+			
+			 <div class="modal fade" id="changeSaleTime" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				      <div class="modal-dialog kuanDu" style="width:300px; margin:0; left:50%; margin-left:-150px; top:50%; margin-top:-180px;position: absolute;">
+				        <div class="modal-content ">
+				          <div class="modal-header">
+				            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				            <h4 class="modal-title" id="myModalLabel">修改售出时间</h4>
+				          </div>
+				          <div class="modal-body">
+				          	<table width="100%" cellpadding="0" cellspacing="0">
+				          		<tbody>
+				          			<tr >
+				          				<td >
+				          					<div class="fl bootSelt105" style="margin-left: 23px;">
+				          					<h:panelGroup id="showTime">
+												<div class="input-append date form_datetime " >
+												    <h:inputText id="saleTimeId" styleClass="new_time" readonly="true" value="#{cardsInfoHome.saleTime}">
+												    <f:convertDateTime pattern="yyyy-MM-dd"/>   
+												    </h:inputText>
+												    <span class="add-on"><i class="icon-th" style="margin-top:6px;"></i></span>
+											    </div>
+											    </h:panelGroup>
+											</div>
+											
+											<h:inputHidden id="subTime" value="#{cardsInfoHome.saleTime}" />
+											<h:inputHidden id="infoId" value="#{cardsInfoHome.cardInfoId}" />
+				          				</td>
+				          			</tr>
+				          			
+				          		</tbody>
+				          	</table>
+				          </div>
+				          <div class="modal-footer">
+				            <button type="button" class="btn btn-success" onclick="changeSaleTime();">提交</button>
+				            <button type="button" class="btn btn-default" onclick="exchangeSaleTime(2,'',0);">返回</button>
+				          </div>
+				        </div>
+				      </div>
+				    </div>
+			<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+									<h4 class="modal-title" id="messageTitle">提示</h4>
+								</div>
+								<div class="modal-body">
+									<span id="messageValue"></span>
+								</div>
+								<div class="modal-footer">
+									<button type="button" id="queren" class="btn btn-primary" data-dismiss="modal">确认</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+			<div class="modal fade" id="excelModelDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog kuandu" style="width:446px; margin:0; left:50%; margin-left:-223px; top:50%; margin-top:-180px; position: absolute;">
+				<div class="modal-content ">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel">导入会员卡</h4>
+					</div>
+					<div class="modal-body" style="padding-bottom: 30px;width: 429px;">							
+						<div style="overflow: hidden;">
+							<p style="margin-bottom: 0;overflow:hidden;">
+								<span style="float:left; width:130px;margin:0 50px;text-align:center;">第一步</span>
+								<span style="float:left; width:130px;text-align:center;">第二步</span>
+							</p>
+							<s:link style="float:left; width:130px; height:130px; margin:10px 50px 25px 50px;" propagation="none" view="/card/CardInfoList.xhtml" action="#{cardsInfoHome.exportExcelTemplate}" >
+						      	<img src="#{request.contextPath}/asset/images/download_template.png" />
+						    </s:link>
+							<span class="baseFile_onload" style="margin-top: 10px;">
+								<h:form id="excelForm" enctype="multipart/form-data">
+									<s:fileUpload id="uploadFile" accept="application/vnd.ms-excel,application/ms-excel" contentType="application/vnd.ms-excel,application/ms-excel" fileName="#{cardsInfoHome.fileName}" data="#{cardsInfoHome.fileData}" style="background-img:../image/pl_03.jpg" onchange="changeExcelName(this.value);"></s:fileUpload>
+									<h:commandButton id="excelTemplateImport" style="display:none;"  value="导入" action="#{cardsInfoHome.excelTemplateImport}" />
+								</h:form>
+							</span>
+							<p class="excelName">文件名称：<span id="showFileName"></span></p>
+							<s:span id="msgSource" styleClass="msgSource"></s:span>
+						</div>
+					</div>
+					<div class="modal-footer">
+				        <a href="javascript:void(0);" class="btn btn-success" onclick="submitFile();">确定</a>
+				        <a href="javascript:void(0);" class="btn btn-default" onclick="excelModelControl(2);">返回</a>
+				    </div>
+				</div>
+			</div>
+		</div>
+		<a4j:form>
+	  		<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+			<a4j:jsFunction name="updateSaleTime"  action="#{cardsInfoHome.updateTime}"  data="#{cardsInfoHome.msg}" oncomplete="reupdateTime(data);">
+				<a4j:actionparam name="cardInfoId" assignTo="#{cardsInfoHome.cardInfoId}"/>
+				<a4j:actionparam name="saleTime" assignTo="#{cardsInfoHome.saleTime}"/>
+			</a4j:jsFunction>
+			<a4j:jsFunction name="timeShow"  action="#{cardsInfoHome.timeShow}" reRender="showTime" oncomplete="reshowTime()">
+				<a4j:actionparam name="cardInfoId" assignTo="#{cardsInfoHome.cardInfoId}"/>
+			</a4j:jsFunction>
+			
+			<a4j:jsFunction name="deleteCardlist"  action="#{cardsInfoHome.deleteCards}" data="#{cardsInfoHome.msg}"  oncomplete="deleteHuidiao(data)">
+				<a4j:actionparam name="cardsId" assignTo="#{cardsInfoHome.cardsId}"/>
+			</a4j:jsFunction>
+		</a4j:form>
+		
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+		<script type="text/javascript">
+		//<![CDATA[
+		jQuery(function(){
+			var serarch = jQuery('#storageTypeSearch\\:serarchStr').val();
+			if(serarch=='undefined'){
+				jQuery('#storageTypeSearch\\:serarchStr').val("");
+			}
+			
+			jQuery(".selectpicker").selectpicker();
+			//jQuery("#storageTypeSearch\\:serarchStr").val("");
+			jQuery("#storageTypeSearch2\\:serarchStr2").val("");
+
+			jQuery("#cardCheckAll").click(function(){
+				if (this.checked) {
+					jQuery("input[name=cardCheck]").iCheck("check"); 
+				} else {
+					jQuery("input[name=cardCheck]").iCheck("uncheck"); 
+				}
+			});
+
+			jQuery("input[name=cardCheck]").click(function(){
+				jQuery('input[name=cardCheck]').each(function () {
+					if(!this.checked){
+						jQuery("#cardCheckAll").iCheck("uncheck"); 
+					}
+				});
+			});
+
+           	var screenType='#{cardsInfoList.searchType}';
+			if(screenType==1){
+				 jQuery('.selects').css('display','block');
+		         jQuery('.gjss_a').addClass('gjbottom').removeClass('gltop');
+			}else{
+				 jQuery('.selects').css('display','none');    
+		         jQuery('.gjss_a').addClass('gltop').removeClass('gjbottom');
+			}
+            jQuery('.gjss_a').click(function(){/* 高级搜索 */
+		        if(jQuery('.selects').is(':hidden')){
+		            jQuery('.selects').css('display','block');
+		            jQuery('.gjss_a').addClass('gjbottom').removeClass('gltop');
+		            jQuery("#storageTypeSearch\\:searchType").val(1);
+		        }else{
+		            jQuery('.selects').css('display','none');    
+		            jQuery('.gjss_a').addClass('gltop').removeClass('gjbottom');
+		            jQuery("#storageTypeSearch\\:searchType").val(0);
+		        }
+		    });
+
+			var memberId = jQuery('#storageTypeSearch\\:salesPeople').val();
+			var carType = jQuery('#storageTypeSearch\\:serCardType').val();
+			var validity_time = jQuery('#storageTypeSearch\\:validityDate').val();
+
+			jQuery("#carType").selectpicker("val",carType);
+			jQuery("#memberId").selectpicker("val",memberId);
+			jQuery("#validity_time").selectpicker("val",validity_time);
+
+			
+		})
+		
+		
+		function reshowTime(){
+			jQuery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd",
+			    autoclose: true,
+			    weekStart: 1,
+				 language:  'zh-CN',
+				 minView:2,
+			    pickerPosition: "bottom-left"
+			    });
+		}
+			//修改售出时间回调
+			function reupdateTime(data){
+				if (data != '') {
+					if (data == '修改成功') {
+						window.location.href = "#{request.contextPath}/card/CardInfoList.seam?pageNum="+#{cardsInfoList.pageNum}+"&cardType="+#{cardsInfoList.cardType};
+					}else {
+						jQuery("#messageValue").html(data);
+						jQuery("#messageDiv").modal('show');
+					}
+				} else {
+					exchangeSaleTime(2,'',0);
+				}
+			}
+			function changeSaleTime(){
+				var infoId=jQuery("#infoId").val();
+				var saletime=jQuery("#saleTimeId").val();
+				if(saletime!=''&&saletime!=null){
+					jQuery("#subTime").val(saletime);
+					updateSaleTime(infoId,saletime);
+				}else{
+					jQuery("#messageValue").html("售出时间不能为空！");
+					jQuery("#messageDiv").modal('show');
+				}
+				
+			}
+			//修改售出时间弹出框赋值
+			function exchangeSaleTime(type,saletime,cardInfoId){
+				timeShow(cardInfoId);
+				if (type == 1) {
+					if(saletime!="0"){
+						var arr=saletime.split(" ");
+						jQuery("#saleTimeId").val(arr[0]);
+					}else{
+						jQuery("#saleTimeId").val("");
+
+					} 
+					jQuery("#changeSaleTime").modal('show');
+					jQuery("#infoId").val(cardInfoId);
+					
+				} else {
+					jQuery("#changeSaleTime").modal('hide');
+					
+				}
+
+			}
+			function showFileUp(){
+				jQuery("#excelForm\\:uploadFile").trigger('click');
+			}
+		
+			jQuery(document).ready(function(){
+				var msg = '#{cardsInfoList.msg}';
+				if (msg != null && msg != '') {
+					excelModelControl(1);
+					jQuery("#showFileName").html("");
+					jQuery("#msgSource").html(msg);
+				}
+			});
+
+			//excelImport 控制
+			function importInit(){
+				jQuery("#showFileName").html("");
+				jQuery("#msgSource").html("");
+				excelModelControl(1);
+			}
+
+			//excel模版div控制
+			function excelModelControl(type){
+				if (type == 1) {
+					jQuery("#excelModelDiv").modal('show');
+				} else {
+					jQuery("#excelModelDiv").modal('hide');
+				}
+			}
+
+			//获取文件名称
+			function changeExcelName(excelName){
+				jQuery("#showFileName").html(excelName);
+			}
+
+			//确定提交excel
+			function submitFile(){
+				var fileName = jQuery("#excelForm\\:uploadFile").val();
+				if (fileName == null || fileName == '') {
+					alert("请选择上传文件！");
+				} else {
+					 var msg = fileName.substring(fileName.lastIndexOf("."), fileName.length);
+					 if (msg == ".xls") {
+						jQuery("#excelForm\\:excelTemplateImport").trigger('click');
+					} else {
+						alert("上传文件格式不正确！");
+					}
+				}
+			}
+
+			//切换 卡种类
+			function cardTypeAction(type){
+				jQuery(".btnCenter span").removeClass("cur");
+				jQuery("#cardType" + type).addClass("cur");
+				var serarchStr = jQuery("#storageTypeSearch\\:serarchStr").val();
+				window.location.href = "#{request.contextPath}/card/CardInfoList.seam?serarchStr=" + serarchStr + "&pageNum=1&msg=&cardType=" + type;
+			}
+			//切换 卡种类
+			function cardTypeAction2(type){
+				jQuery(".btnCenter span").removeClass("cur");
+				jQuery("#cardType" + type).addClass("cur");
+				var serarchStr = jQuery("#storageTypeSearch2\\:serarchStr2").val();
+				window.location.href = "#{request.contextPath}/card/CardInfoList.seam?serarchStr=" + serarchStr + "&pageNum=1&msg=&cardType=" + type;
+			}
+			//卡状态搜索
+			function getMess(){
+				jQuery("#storageTypeSearch\\:search").click();
+			}
+
+			//批量删除会员卡
+			function deletedCards(){
+				var ids='';
+				jQuery('input[name=cardCheck]').each(function () {
+				  if(this.checked){
+				    ids += jQuery(this).val()+','; 
+				  }
+				});
+				if(ids==''){
+					jQuery("#messageValue").html("请选择要删除的会员卡！");
+					jQuery("#messageDiv").modal('show');
+				}else{
+					if (confirm("确认删除选中会员卡？")) {  
+						deleteCardlist(ids);
+			        }
+				}
+			}
+
+			function deleteHuidiao(data){
+				if (data != null && data == '批量删除成功') {
+					jQuery("#messageValue").html(data);
+					jQuery("#messageDiv").modal('show');
+
+					jQuery('#messageDiv').click(function(){
+						jQuery('input[type=checkbox]').iCheck("uncheck"); 
+						window.location.reload();//刷新当前页面
+					});
+				}else if(data != null && data == '批量删除失败'){
+					jQuery("#messageValue").html(data);
+					jQuery("#messageDiv").modal('show');
+				}
+				
+			}
+
+			function storageType(){
+				var carType = jQuery('#carType').val();
+				var memberId = jQuery('#memberId').val();
+				var salesTime = jQuery('#salesTime').val();
+				var expireTime = jQuery('#expireTime').val();
+				var validity_time = jQuery('#validity_time').val();
+
+				jQuery('#storageTypeSearch\\:salesDate').val(salesTime);
+				jQuery('#storageTypeSearch\\:expireDate').val(expireTime);
+				jQuery('#storageTypeSearch\\:salesPeople').val(memberId);
+				jQuery('#storageTypeSearch\\:serCardType').val(carType);
+				jQuery('#storageTypeSearch\\:validityDate').val(validity_time);
+
+			}
+			
+		//]]>
+		</script>
+		<script type="text/javascript">
+		jQuery(document).ready(function(){
+			jQuery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd",
+			    autoclose: true,
+			    weekStart: 1,
+				 language:  'zh-CN',
+				 minView:2,
+			    pickerPosition: "bottom-left"
+			    });
+		    
+			//回车搜索事件
+			jQuery("#storageTypeSearch\\:serarchStr").keydown(function(e){
+				if(e.keyCode==13){
+					jquery('#storageTypeSearch\\:search').trigger("click");
+				}
+			}); 
+		    
+		});
+			  window.onload = function () {
+				  jQuery('.selectpicker').selectpicker();
+			  };
+		
+			</script>
+		</td>
+		
+	</ui:define>
+</ui:composition>
+

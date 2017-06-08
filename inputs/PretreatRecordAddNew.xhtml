@@ -1,0 +1,308 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+<!-- 公共Style开始 -->
+<!-- <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/> -->
+<style>
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:220px;}
+</style>
+<!-- 公共Style结束 -->
+<!-- 新增Style开始 -->
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap/bootstrap-select.min.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap/bootstrap-datetimepicker.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap/skinBlue.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/style.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/information/FarmInformation.css" />
+<!-- 新增Style结束 -->
+<!-- 初始化开始 -->
+#{pretreatRecordList.savePretreatRecordInit()}
+<!-- 初始化结束-->
+<td valign="top" width="100%">
+	<div class="right_c">
+		<!-- 公用头部 开始 -->
+                	<div class="r_title clear" style="margin-bottom: 30px;">
+                    	<div class="r_t_l fl">生产管理&#160;&gt;&#160;&#160;<font size="3">初加工</font></div>
+                    </div>
+		<!-- 公用头部 结束 -->
+		<!-- 新增模块开始 -->
+		<h:form id="saveFrom" enctype="multipart/form-data">
+		<ul class="edit-table-wap clear" style="padding-left:124px;">
+                	<li class="td-items td-items1">
+                    <table width="90%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">选择作物</td>
+                            <td class="td-rt">
+                           <h:inputHidden value="#{pretreatRecordList.preRecord.plantId}" id="plantIdH"/>
+                           <div class="inline_block bootSelt220 fl">  
+								<select class="selectpicker"  id="plantId"  data-live-search="true" >
+                                   <option value="请选择">请选择</option>
+                                <a:repeat value="#{pretreatRecordList.plantList}" var="_plant">
+                                   <option value="#{_plant[0]}">#{_plant[1]}</option>
+                                </a:repeat>
+                                </select>								
+                            </div>
+                            <span style="float: left;height: 34px;line-height: 34px;padding: 0 5px;color: #f00;">*</span> 
+                          </td>
+                        </tr>
+                    </table>
+                    </li>
+                    <li class="td-items td-items1">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">加工方法</td>
+                            <td class="td-rt">
+                                 <div class="inline_block bootSelt220 fl">
+							<select id="preMethod" class="selectpicker"  style="display: none;" multiple="multiple"  onchange="methodChange('preMethod')">
+							<a:repeat value="#{pretreatRecordList.preMethodList}" var="_vars">
+								<option value="#{_vars}">#{_vars}</option>
+							</a:repeat>
+                        	</select>
+                            	</div> 
+                            	<span style="float: left;height: 34px;line-height: 34px;padding: 0 5px;color: #f00;">*</span>                       
+                            </td>
+                        </tr>
+                    </table>
+                    <h:inputHidden value="#{pretreatRecordList.preRecord.preMethod}" id="preMethodHid"/>
+                    </li>
+                    <li id="td-dryMethod" class="td-items td-items1" style="display: none">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">干燥方法</td>
+                            <td class="td-rt"> 
+                            <h:inputHidden value="#{pretreatRecordList.preRecord.dryMethod}" id="dryMethodH"/>
+                            <div class="inline_block bootSelt220 fl"> 
+                                <select class="selectpicker"  id="dryMethod">
+                                	<a:repeat value="#{pretreatRecordList.dryMethodList}" var="_dry">
+                                   <option value="#{_dry}">#{_dry}</option>
+                                	</a:repeat>
+                                </select>                                	                            	                          	
+                            </div>
+                            <span style="float: left;height: 34px;line-height: 34px;padding: 0 5px;color: #f00;">*</span> 
+                            </td>
+                        </tr>
+                    </table>
+                    </li>
+                    <li id ="td-dryTime" class="td-items td-items1" style="display: none">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">干燥时间</td>
+                            <td class="td-rt">
+                            	<div class="inline_block bootSelt220 fl" style="position:relative; width:310px;">
+                            		<h:inputText styleClass="form-control fl" value="#{pretreatRecordList.preRecord.dryTime}" id="dryTime" maxlength="6" />
+                                   <p style="position:absolute; left:225px; top:0;height:34px;line-height:34px; font-size:12px; ">小时</p>
+                                   <!-- <span class="finput" style="color:#ff0000;margin-left: 30px;">*</span> -->
+                                </div>                                  
+                            </td>
+                        </tr>
+                    </table>
+                    </li>
+                    <li id="td-otherMethod" class="td-items td-items1" style="display: none">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">其它加工方法</td>
+                            <td class="td-rt">
+                            	<h:inputText styleClass="form-control fl" value="#{pretreatRecordList.preRecord.otherMethod}" id="otherMethod" maxlength="20"/>
+                            	 <!-- <span style="float: left;height: 34px;line-height: 34px;padding: 0 5px;color: #f00;">*</span> -->                         	
+                            </td>
+                        </tr>
+                    </table>
+                    </li>
+                    <li class="td-items td-items1">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">加工工艺</td>
+                            <td class="td-rt">
+                            	<h:inputText styleClass="form-control fl" value="#{pretreatRecordList.preRecord.technic}" id="technic" maxlength="20"/>
+                            	<!-- <span style="float: left;height: 34px;line-height: 34px;padding: 0 5px;color: #f00;">*</span>  -->
+                            </td>
+                        </tr>
+                    </table>
+                   </li>
+                    <li class="td-items td-items1">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">加工温度</td>
+                           <td class="td-rt" style="padding-bottom: 19px;">
+                                <div class="clear" style="position:relative; width:250px;">
+                                    <h:inputText styleClass="form-control fl" value="#{pretreatRecordList.preRecord.temperature}" id="temperature" maxlength="50" />
+                                   <!-- <p style="position:absolute; left:224px; top:0;height:34px;line-height:34px; font-size:12px; ">°C</p> -->
+                                   <!-- <span class="finput" style="color:#ff0000;margin-left: 19px;">*</span> -->
+                                </div>                                                         
+                            </td>
+                        </tr>
+                    </table>
+                    </li>
+                    <li class="td-items td-items1" >
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">加工设备</td>
+                            <td class="td-rt" >
+                            	<h:inputText styleClass="form-control fl" value="#{pretreatRecordList.preRecord.facility}" id="facility" maxlength="20"/>
+                            	<!-- <span style="float: left;height: 34px;line-height: 34px;padding: 0 5px;color: #f00;">*</span>  -->
+                            </td>
+                        	
+                        </tr>
+                    </table>
+                    </li>
+                    <li class="td-items td-items1">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-lt">操作人</td>
+                            <td class="td-rt">
+                            	<h:inputText styleClass="form-control fl" value="#{pretreatRecordList.preRecord.operateName}" id="operateName" maxlength="20" />
+                            	 <!-- <span style="float: left;height: 34px;line-height: 34px;padding: 0 5px;color: #f00;">*</span>  -->
+                            </td>
+                        </tr>
+                    </table>
+                    </li>
+                </ul>
+                <ul class="edit-table-wap clear" style="padding-left:124px; width: 40%; display: inline-block;">
+                    <li class="td-items td-items1" style="position:relative">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="td-lt" style="padding-bottom: 0;">操作时间</td>
+                           <td>
+                            <div class="bootData220">
+                                <div class="input-append date form_datetime " style="position:relative; width: 125px;" >
+                                <h:inputText size="26" readonly="#{facesContext.renderResponse}" style="border-radius:4px;"  value="#{pretreatRecordList.preRecord.operateTime}" id="operateTime" > 
+                                	<f:convertDateTime pattern="yyyy-MM-dd"/>
+                                </h:inputText>
+                                <span class="add-on" style="position:absolute; right:10px; top:10px;"><i class="icon-th" style="margin:0;"></i></span>
+                                </div>
+                            </div>
+                            <span  style="display:inline; position:absolute; top:9px ;right:166px;">--</span>
+                        </td>
+                          <td>
+                            <div class="bootData220">
+                                <div class="input-append date form_datetime " style="position:relative; width: 125px;" >
+                                <h:inputText size="26" readonly="#{facesContext.renderResponse}" style="border-radius:4px;"  value="#{pretreatRecordList.preRecord.operateEndTime}" id="operateEndTime" > 
+                                	<f:convertDateTime pattern="yyyy-MM-dd"/>
+                                </h:inputText>
+                                <span class="add-on" style="position:absolute; right:10px; top:10px;"><i class="icon-th" style="margin:0; "></i></span>
+                                </div>
+                            </div>
+                        </td>
+                        </tr>
+                    </table>
+                    </li>
+                    </ul>
+                
+                <div class="edit-table-wap clear" style="margin-left: 124px;margin-top: 20px">
+                	<table width="100%" cellpadding="0" cellspacing="0" >
+                        <tr>
+                        			<td class="td-lt">加工图片</td>
+                                    <td colspan="3">
+                                    	<h:inputHidden value="#{pretreatRecordList.preRecord.picture}" id="productImage"/>
+	                                    <iframe src="#{request.contextPath}/inputs/PretreatRecordImages.seam?aaiId=#{pretreatRecordList.preRecord.id==null ? 0 :pretreatRecordList.preRecord.id}" id="myframe2" name="myframe2" frameBorder="0" scrolling="no" width="" height="165" onLoad="" style="width:560px; height:165px"></iframe>                                   	
+                                    </td>                                                                                                           	                       
+                        </tr>
+                        </table>
+                <div class="edit-table-wap clear">
+                	<table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                        	<td class="td-lt">备注</td>
+                            <td class="td-rt">
+                            	<h:inputTextarea class="form-control" style="width:310px; height:74px;" value="#{pretreatRecordList.preRecord.annotation}" id="annotation" onkeyup="inputTextareaChange('annotation')" ></h:inputTextarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="padding:50px 0; margin-left:-22px" class="mes_mailBtn">
+                	                <h:commandButton id="savePretreatRecord" value="保存" styleClass="btn btn-primary" action="#{pretreatRecordList.savePretreatRecord()}" onclick="return subSave()" />
+					&#160;
+					<s:button view="/inputs/PretreatRecordNew.seam" value="返回" styleClass="btn btn-default">
+						<!-- <f:param name="selectPageNum" value="#{pretreatRecordList.selectPageNum}"></f:param> -->
+					</s:button>
+                </div>
+            </div>		
+            </h:form>							
+		<!-- 新增模块结束 -->		
+		<div class="clear"></div>
+	</div>
+</td>
+<!-- ajax开始 -->
+<!-- ajax结束 -->
+<!-- 新增javascript开始 -->
+<!--[if IE 8]>
+<script type="text/javascript" src="{request.contextPath}/asset/js/bootstrap/respond.js"></script>
+<![endif]-->
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/PretreatRecordAdd.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/commons/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/bootstrap.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/bootstrap/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/bootstrap/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/bootstrap/icheck.js"></script>
+<!-- <script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryFile.js"></script> -->
+<!-- <script type="text/javascript" src="#{request.contextPath}/asset/js/inputs/SeedInput.js"></script> -->
+<!-- 新增javascript结束-->
+<script type="text/javascript">
+//<![CDATA[
+	//刷新
+	jQuery(document).ready(function(){
+		var addOrUpdate = "#{pretreatRecordList.addOrUpdate}";
+		if(addOrUpdate=="update"){
+			$("#plantId").prop('disabled', true);
+		}
+		callBack();
+	    $(".form_datetime").datetimepicker({ // 时间插件
+	        format: "yyyy-mm-dd",  
+	        autoclose: true,
+	        weekStart: 1,
+	        language:  'zh-CN',
+	        startView: 3,
+	        minView: 2,
+	        maxView: 2,     
+	        pickerPosition: "bottom-left"
+	    });
+		
+	});
+	function callBack(){
+	   	jquery('.selectpicker').selectpicker();
+	   	jquery('.selectpicker').selectpicker('deselectAll'); 
+	   	jquery('.selectpicker').selectpicker({noneSelectedText:"请选择"});
+	    jquery('#preMethod').selectpicker({noneSelectedText:"请选择"});
+	    jquery('#preMethod').selectpicker('deselectAll'); 
+	   	var v = new Array();
+	   	v = "#{pretreatRecordList.preRecord.preMethod}".split(",");
+	   	jquery("#preMethod").selectpicker("val",v);	
+		var dryMethod = "#{pretreatRecordList.preRecord.dryMethod}";
+	   	if(dryMethod!=null&&dryMethod!=""){
+	   		jquery("#dryMethod").selectpicker("val",dryMethod);
+		   	}
+	   	var p ="#{pretreatRecordList.preRecord.plantId}";
+	   	if(p!=null&&p!=""){
+	   		jquery("#plantId").selectpicker("val",p);
+		   	}	   	
+	   	var preMethodStr = "#{pretreatRecordList.preRecord.preMethod}"
+	    if(preMethodStr.indexOf("干燥") > -1 ){
+	    	$("#td-dryMethod").css("display","");
+	    	$("#td-dryTime").css("display","");
+	    }
+	    else{
+	    	$("#td-dryMethod").css("display","none");
+	    	$("#td-dryTime").css("display","none");
+	    }
+	    if(preMethodStr.indexOf("其它") > -1 ){
+	    	$("#td-otherMethod").css("display","");
+	    } 
+	    else{
+	    	$("#td-otherMethod").css("display","none");
+	    }
+	   }	
+//]]>
+</script>
+</ui:define>
+</ui:composition>

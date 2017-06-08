@@ -1,0 +1,240 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	#{orderOperate.orderViewInit()}
+	<style>
+		.r_title{ font-size: 14px; color:#525252;}
+		.cm_resumeList{}
+		.cm_resumeList li{ float:left;}
+		.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'微软雅黑';}
+		.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+		.cm_resumeList li img{ float:left; margin-top:16px;}
+		.cm_resumeList li span{ float:left; text-indent:10px;}
+		.borderBt{ border-bottom:2px solid #33aedc;}
+		.borderBt02{ border-bottom:1px solid #cbcbcb;}
+		 .customMess_wap .items p.name {overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+		div#menu .helpSeleHd{ float:left; overflow:hidden; width:65px; height:24px; line-height:24px; padding:0 20px 0 5px; background:url(#{request.contextPath}/asset/images/sitIco2.png) no-repeat 50px 12px; color:#cfe3fe;}
+	</style>
+	<td valign="top" >
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%; padding:20px 30px;">
+				<div class="breadNav_wap clear">
+					<div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam?orderStatus=#{orderStatus}"><strong>订单管理</strong></a></div>
+					<div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+						<ul class="resumeList clear">
+							<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+			                <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+						</ul>
+					</div>
+				</div>
+				<div class="singleManage_con">
+					<div class="orderTrack_heade mb20">
+						<p class="mr70">订单编号：<span class="number">#{orderOperate.orderInfo.orderCode}</span></p>
+			            <p class="mr70">订单状态：<span class="statues">#{orderConstant.getOrderStatusLabel(orderOperate.orderInfo.orderStatus)}</span></p>
+		            	<p class="#{orderOperate.orderInfo.paymentStatus == true ? 'payStatues' : 'payStatues2'}">#{orderOperate.orderInfo.paymentStatus == true ? '已支付' : '未支付'}</p>
+					</div>
+					<div class="orderTrack_body">
+						<table class="tableGz" width="100%" cellpadding="0" cellspacing="0">
+							<thead>
+								<tr>
+									<th colspan="3">订单跟踪</th>
+								</tr>
+							</thead>
+			                <tbody>
+								<tr>
+									<th width="25%" height="50" align="left" style="padding-left:70px; font-weight:bold;">处理时间</th>
+			                        <th width="60%" align="left" style="font-weight:bold;">处理信息</th>
+			                        <th width="15%" align="center" style="font-weight:bold; text-align: center;">操作人</th>
+			                    </tr> 
+			                    <a:repeat value="#{orderOperate.orderRecordList}" var="_orderRecord" rowKeyVar="_index">
+		                    		<tr>
+				                    	<td class="dateTd #{_index + 1 != orderOperate.orderRecordList.size() ? 'bg' : ''}" height="50">
+				                    		<i class="ico_bg"></i>
+				                    		<h:outputText value="#{_orderRecord.insertTime}">
+						        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss" />
+						        			</h:outputText>
+			                    		</td>
+				                        <td>
+				                            <div style="overflow:hidden;">
+				                            <span style="float:left;">#{orderConstant.getOrderStatusLabel(_orderRecord.orderStatus)}</span>
+				                            <div class="InOrdePass_tip">
+				                            	<p>#{_orderRecord.description}</p>
+				                            </div>
+				                            </div>
+				                        </td>
+				                        <td align="center" style="text-align: center;">#{_orderRecord.operater}</td>
+				                    </tr>
+			                    </a:repeat>
+			                </tbody>
+			            </table>
+			        </div>
+			        <h2 class="titleH2">客户信息</h2>
+			        <div class="mb20 mt20">
+			        	<div class="customMess_wap" style="margin-left:40px;">
+			                <div class="items itemsCur" style="cursor:default;">
+			                    <p class="name" title="#{orderOperate.orderInfo.memberInfo.realname}">客户姓名：<span>#{orderOperate.orderInfo.memberInfo.realname}</span></p>
+			                    <p class="phone">联系方式：<span>#{orderOperate.orderInfo.memberInfo.phone}</span></p>
+			                    <p class="come">客户来源：<span>#{orderOperate.orderInfo.memberInfo.mSource.name}</span></p>
+			                    <p class="type">客户类型：<span>#{orderOperate.orderInfo.memberInfo.mType.name}</span></p>
+			                    <p class="addresses">工作地址：<span>#{orderOperate.orderInfo.memberInfo.workAddress}</span></p>
+			                    <em class="defaultIco"></em>
+			                    <p title="#{orderOperate.orderInfo.memberInfo.remark}">备注：<span>#{orderOperate.orderInfo.memberInfo.remark2}</span></p>
+			                </div>
+			            </div> 
+			        </div>
+			        <h2 class="titleH2">收货人信息</h2>
+			        <div class="mb20">
+				        <table class="W_addresses" cellpadding="0" cellspacing="0" style="margin-left:40px;">
+					        <tr>
+					            <td>
+					                <div class="W_addresses_list">
+					                	<div class="addrItems" style=" cursor: default;">
+					                    	<div class="inner innerCur">
+					                        	<div class="addr_hd">
+													<span class="name" title="#{orderOperate.orderInfo.receiveName}" style=" font-weight:bold;cursor: pointer;">#{orderOperate.orderInfo.receiveName}&#160;&#160;</span><span title="#{orderOperate.orderInfo.receivePhone}" style="cursor: pointer;" class="phone">#{orderOperate.orderInfo.receivePhone}</span>
+					                            </div>
+					                            <div class="addr_bd">
+					                            	<span class="street">#{orderOperate.orderInfo.receiveAddress}</span>
+					                            </div>
+					                            <i class="curmarker"></i>
+					                        </div>
+					                    </div>
+					                </div>
+					            </td>
+					        </tr>
+				        </table>
+			        </div>
+			        <h2 class="titleH2">配送时间</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">配送时间：
+			        		<span class="date">
+			        			<h:outputText value="#{orderOperate.orderInfo.deliverTime}">
+			        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+			        			</h:outputText>
+			        		</span>&#160;|&#160;
+			        		<span class="sendStatues">
+			        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 0}">全天</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 1}">上午</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 2}">下午</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 3}">晚上</s:fragment>
+			        		</span></p>
+			        </div>
+			        <h2 class="titleH2">付款方式</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">#{orderConstant.getPayTypeLabel(orderOperate.orderInfo.paymentMode)}</p>
+			        </div>
+			        <h2 class="titleH2"><span style="display:inline-block; width:28px;"></span>备注</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">#{orderOperate.orderInfo.orderRemark}</p>
+			        </div>
+			    	<h2 class="titleH2">商品清单</h2>
+			        <div class="listGoods_con">
+			            <table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+			                <thead>
+			                <tr>
+			                	<th width="10%">序号</th>
+			                    <th width="20%">商品</th>
+			                    <th width="10%">规格</th>
+			                    <th width="10%">原价</th>
+			                    <th width="10%">单价</th>
+			                    <th width="10%">数量</th>
+			                    <th width="10%">小计</th>
+								<th width="20%">备注</th>
+			                </tr>
+			                </thead>
+			            </table>
+			            <div class="tableFixed_scroll" id="showProductDiv">
+				            <table class="tableModel tbody" width="100%" cellpadding="0" cellspacing="0">
+				                <tbody>
+				                	<a:repeat value="#{orderOperate.orderProductList}" var="_orderProduct" rowKeyVar="_opIndex">
+				                		<tr class="odd">
+						                    <td width="10%">#{_opIndex + 1}</td>
+						                    <td width="20%">#{_orderProduct.productName}</td>
+						                    <td width="10%">#{_orderProduct.productUnit}</td>
+						                    <td width="10%">¥<span class="num_spyj"><h:outputText value="#{_orderProduct.originalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="10%">¥<span class="num_spdj2"><h:outputText value="#{_orderProduct.price}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="10%">#{_orderProduct.productNum}</td>
+						                    <td width="10%">
+						                    		¥<h:outputText value="#{_orderProduct.totalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText>
+					                    	</td>
+						                    <td width="20%"><a  title="#{_orderProduct.remark}"  href="javascript:void(0);" style="display:inline-block; max-width:80px; overflow:hidden; white-space: nowrap;">#{_orderProduct.remark}</a></td>
+						                </tr>
+				                	</a:repeat>
+				                </tbody>
+				            </table>
+			            </div>
+			            <div class="tfoot mb20">
+			                <div class="listGoods_total">
+			                    <ul>
+			                        <li class="listGoods_li1">共<span class="num"><h:outputText value="#{orderOperate.sumProductNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></span>件商品</li>
+			                        <li class="listGoods_li2">商品总额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num"><h:outputText value="#{orderOperate.orderInfo.productAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                    </ul>
+			                </div>
+			                <div class="listGoods_li5 clear">
+			                    <div class="fr">
+			                    <span class="fl">应付总额：</span>
+			                    <span class="codeEle fl">¥</span>
+			                    <span class="num fl">#{orderOperate.orderInfo.paymentAccount}</span>
+			                    </div>
+			                </div>
+			            </div>
+			            <div>
+			            	<s:button view="/orderManage/OrderOperateList.xhtml" styleClass="btn btn-default fr" propagation="end" value="返回" rendered="#{orderOperate.backType == 1}">
+			            		<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+			            		<f:param name="pages" value="#{orderOperate.page}"></f:param>
+			            		<f:param name="screenType" value="#{orderOperateList.screenType}"/>
+								<f:param name="selectType" value="#{orderOperateList.selectType}"/>
+								<f:param name="orderPayStatus" value="#{orderOperateList.orderPayStatus}"/>
+								<f:param name="orderType" value="#{orderOperateList.orderType}"/>
+								<f:param name="beginTime" value="#{orderOperateList.beginTime}"/>
+								<f:param name="endTime" value="#{orderOperateList.endTime}"/>
+								<f:param name="productId" value="#{orderOperateList.productId}"/>
+			            	</s:button>
+			            	<s:button view="/orderManage/MemberInfoView.xhtml" styleClass="btn btn-default fr" propagation="end" value="返回" rendered="#{orderOperate.backType == 2}">
+			            		<f:param name="memberInfoId" value="#{orderOperate.orderInfo.memberInfo.memberInfoId}"></f:param>
+			            	</s:button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</td>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		jQuery(function(){
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+
+			if(#{orderOperate.orderProductList.size()>20}){
+				jQuery('.tableFixed_scroll').attr('style',jQuery('.tableFixed_scroll').attr('style')+'height:760px;');
+			}else{
+				jQuery('.tableFixed_scroll').attr('style',jQuery('.tableFixed_scroll').attr('style')+'height:'+#{orderOperate.orderProductList.size()}*38+'px;')
+			}
+		});
+
+		
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

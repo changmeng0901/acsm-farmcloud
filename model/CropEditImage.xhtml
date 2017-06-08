@@ -1,0 +1,77 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_img.xhtml">
+<ui:define name="body">
+	<style>
+		html,body{height:100%;min-height:100%;}
+		body{overflow:hidden;margin:0;padding:0;}
+		.cropImgForm,.cropImgdiv{ position:relative;width:128px;height:128px; }
+		.cropImgForm input[type=file]{position: absolute;right:0;top:0;z-index:3; width:100%;height:100%;
+		opacity:0;filter:alpha(opacity=0); font-size:30px; cursor:pointer;}
+		.file_btn{position:relative;z-index:0; display:block; width:100%;height:100%;line-height:22px;text-align:center;
+		border:1px solid #ccc;border-radius:5px;box-sizing:border-box;cursor:pointer;}
+		 .closed{width: 29px; height: 29px; position: absolute; z-index: 5; right: 0; top: 0; background: url(#{request.contextPath}/asset/images/purchase/close.png); }
+	</style>
+		<h:form id="cropImgForm" class="cropImgForm"  enctype="multipart/form-data">
+		<div class="cropImgdiv">
+			<div style="cursor:pointer; width:128px;height:128px" id="imghide">
+				<img src="#{request.contextPath}/asset/images/dpadd.jpg"  style="cursor:pointer" width="128" height="128" />
+                <s:fileUpload id="img_" size="30"
+					fileName="#{modelInfoTwoHome.cropImgName}"
+					data="#{modelInfoTwoHome.cropImgData}"  onchange="previewImage();">
+				</s:fileUpload>
+				
+			 </div>
+			 <div style="cursor:pointer; width:128px;height:128px;display:none" id="imgshow" >
+				<img src=""  style="cursor:pointer" width="128" height="128" id="cropImg"/>
+				 <span class="closed" onclick="delImg()"></span>
+			 </div>
+		<h:commandButton id="insertImages"   action="#{modelInfoTwoHome.uploadImg()}" style="display:none;" />
+		</div>
+		</h:form>
+		<script type="text/javascript">
+		//<![CDATA[
+		jQuery(function(){
+			var promptMessage = "#{modelInfoTwoHome.promptMessage}";
+			var url = "#{modelInfoTwoHome.imgurl}";
+			var imgName = "#{modelInfoTwoHome.cropImgName}"
+			window.parent.showMesg(promptMessage);
+			if(promptMessage != ""){
+				return;
+			}else{
+				if(url != ""){
+					jQuery("#cropImg").attr("src",url);
+					jQuery("#imgshow").show();
+					jQuery("#imghide").hide();
+					window.parent.document.getElementById("cropForm:imgName").value = imgName;
+					window.parent.document.getElementById("cropForm:imgurl").value = url;
+				}
+			}
+		});
+	    function previewImage(){
+			jQuery("#cropImgForm\\:insertImages").click();	
+		}
+		function delImg(){
+			jQuery("#imgshow").hide();
+			jQuery("#imghide").show();
+			window.parent.document.getElementById("cropForm:imgName").value = "";
+			window.parent.document.getElementById("cropForm:imgurl").value = "";
+		}
+
+		function showImg(url){
+			jQuery("#cropImg").attr("src",url);
+			jQuery("#imgshow").show();
+			jQuery("#imghide").hide();
+		}
+		
+		//]]>
+		</script>
+    </ui:define>
+</ui:composition>

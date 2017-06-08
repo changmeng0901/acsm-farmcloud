@@ -1,0 +1,244 @@
+<krpano>
+	<events name="hotspot_events" keep="true"
+	        onxmlcomplete="set(events[hotspot_events].onxmlcomplete,null);js(init());"
+	        />
+	
+	<style name="new_skin_hotspotstyle" scale="0.5" edge="top" oy="0" distorted="false"
+	       onclick="hotspot_click();"
+	       onloaded="add_all_the_time_tooltip();hotspot_animate();"
+	       />
+	<style name="hotspot_type_scene"  crop="0|0|128|128" 
+	       framewidth="128" frameheight="128" frame="0" lastframe="25" />
+	<action name="hotspot_click">
+		
+	</action>
+
+	<action name="seekhotspot">
+		moveto(get(hotspot[%1].ath),get(hotspot[%1].atv));
+	
+	</action>
+
+	 <action name="add_all_the_time_tooltip">
+	if(showtitle ,
+		txtadd(tooltipname, 'tooltip_', get(name));
+		addplugin(get(tooltipname));
+		txtadd(plugin[get(tooltipname)].parent, 'hotspot[', get(name), ']');
+		set(plugin[get(tooltipname)].url,'%SWFPATH%/plugins/textfield.swf');
+		set(plugin[get(tooltipname)].align,top);
+		set(plugin[get(tooltipname)].edge,bottom);
+		set(plugin[get(tooltipname)].x,0);
+		set(plugin[get(tooltipname)].y,10);
+		set(plugin[get(tooltipname)].autowidth,true);
+		set(plugin[get(tooltipname)].autoheight,true);
+		set(plugin[get(tooltipname)].background,true);
+		set(plugin[get(tooltipname)].backgroundcolor,0x000000);
+		set(plugin[get(tooltipname)].roundedge,5);
+		set(plugin[get(tooltipname)].backgroundalpha,0.5);
+		set(plugin[get(tooltipname)].border,true);
+		set(plugin[get(tooltipname)].glow,4);
+		set(plugin[get(tooltipname)].glowcolor,0xFFFFFF);
+		set(plugin[get(tooltipname)].css,'text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:16px;');
+		set(plugin[get(tooltipname)].textshadow,1);
+		set(plugin[get(tooltipname)].textshadowrange,6.0);
+		set(plugin[get(tooltipname)].textshadowangle,90);
+		set(plugin[get(tooltipname)].html,get(name));
+		set(plugin[get(tooltipname)].enabled,false);	
+	)
+	</action>
+
+	<action name="hotspot_animate">
+	if(isgif,
+		inc(frame,1,get(lastframe),0);
+		mul(ypos,frame,frameheight);
+		txtadd(crop,'0|',get(ypos),'|',get(framewidth),'|',get(frameheight));
+		delayedcall(0.03, if(loaded, hotspot_animate() ) );
+		,
+		set(crop,'');
+		set(scale,0.8);
+		);
+	</action>
+	<action name="draglayer">
+		if(%1 != dragging,
+			copy(drag_currentx, x);
+			copy(drag_currenty, y);
+			copy(drag_stagex, mouse.stagex);
+			copy(drag_stagey, mouse.stagey);
+			set(drag_sx, +1);
+			set(drag_sy, +1);
+			if(align == righttop,    set(drag_sx,-1); );
+			if(align == right,       set(drag_sx,-1); );
+			if(align == rightbottom, set(drag_sx,-1); set(drag_sy,-1); );
+			if(align == bottom,      set(drag_sy,-1); );
+			if(align == leftbottom,  set(drag_sy,-1); );
+			draglayer(dragging);
+		  ,
+			if(pressed,
+				sub(dx, mouse.stagex, drag_stagex);
+				sub(dy, mouse.stagey, drag_stagey);
+				mul(dx, drag_sx);
+				mul(dy, drag_sy);
+				add(x, drag_currentx, dx);
+				add(y, drag_currenty, dy);
+				delayedcall(0, draglayer(dragging) );
+			  );
+		  );
+	</action>
+
+	<action name="draghotspot">
+	<![CDATA[
+		if(%1 != dragging,
+			spheretoscreen(ath, atv, hotspotcenterx, hotspotcentery);
+			sub(drag_adjustx, mouse.stagex, hotspotcenterx); 
+			sub(drag_adjusty, mouse.stagey, hotspotcentery); 
+			draghotspot(dragging);
+		  ,
+			if(pressed,
+				sub(dx, mouse.stagex, drag_adjustx);
+				sub(dy, mouse.stagey, drag_adjusty);
+				screentosphere(dx, dy, ath, atv);
+				copy(print_ath, ath);
+				copy(print_atv, atv);
+				roundval(print_ath, 3);
+				roundval(print_atv, 3);
+				delayedcall(0, draghotspot(dragging) );
+			  );
+		  );
+	]]>
+	</action>
+
+	<!-- 按钮添加热点 -->
+	<action name="addpots">
+		txtadd(newspot,"hotspot",%1);
+		addhotspot(get(newspot));
+		if(%3 == 2,
+			set(hotspot[get(newspot)].isgif,true);
+		,
+			set(hotspot[get(newspot)].isgif,false);
+		);
+		set(hotspot[get(newspot)].showtitle,false);
+		set(hotspot[get(newspot)].style,"new_skin_hotspotstyle|hotspot_type_scene");
+		txtadd(imgurl,'%SWFPATH%/skin/',%4,'.png');
+		set(hotspot[get(newspot)].url,get(imgurl));
+		set(hotspot[get(newspot)].ath,%5);
+		set(hotspot[get(newspot)].atv,%6);
+		set(hotspot[get(newspot)].scale,0.5);
+		set(hotspot[get(newspot)].zoom,true);
+		set(hotspot[get(newspot)].ondown,"draghotspot()");
+		hotspot[get(newspot)].loadstyle();
+	</action>
+	
+	<action name="resethotspot">
+		if(hots_id != null ,
+			txtadd(thumbname3,'util_thumb_',get(linked_name));
+			set(layer[skin_thumbborder2].parent, get(thumbname3));
+			set(layer[skin_thumbborder2].visible, true);
+			mul(yyy,-3,get(layer[get(thumbname3)]._index));
+			set(layer[scene_list].visible,true);
+			set(layer[scene_list_container].y,0);
+			set(layer[scrollslider].y,19);
+			layer[scene_list_container].scrollby(0,get(yyy));
+		)
+	</action>
+	
+	<!-- 场景加载是添加所有的热点 -->
+	<action name="addpots2">
+		txtadd(jsnewspot,get(xml.scene),"_h_",%1);
+		addhotspot(get(jsnewspot));
+		set(hotspot[get(jsnewspot)].style,"hotspot_ani_white|tooltip");
+		set(hotspot[get(jsnewspot)].tooltip,%6);
+		set(hotspot[get(jsnewspot)].ath,%2);
+		set(hotspot[get(jsnewspot)].atv,%3);
+		set(hotspot[get(jsnewspot)].scale,0.5);
+		set(hotspot[get(jsnewspot)].zoom,true);
+		set(hotspot[get(jsnewspot)].hots_id,%5);
+		set(hotspot[get(jsnewspot)].linked_name,%4);
+		set(hotspot[get(jsnewspot)].ondown,"");
+		set(hotspot[get(jsnewspot)].onclick,if(isdelete,js(deleteHotspots(%5)) ,skin_buttonglow(null);set(layer[tooltip].visible,false); tween(scale,0.25,0.5); tween(oy,-20,0.5); tween(alpha,0,0.5); looktohotspot();loadscene(%4,null,get(skin_settings.loadscene_flags),get(skin_settings.loadscene_blend)); ););
+		hotspot[get(jsnewspot)].loadstyle();
+	</action>
+	
+	<action name="show_add_tip">
+		set(layer[add_tip_container].visible,true);
+		delayedcall(1.5, set(layer[add_tip_container].visible,false); );
+	</action>
+	<layer name="add_tip_container" type="container" keep="true" align="center" x="0" y="90" width="190" height="40" bgcapture="true" onclick="setHotspotVisible();" visible="false"
+		>
+		<layer name="add_tip_txt1" url="%SWFPATH%/plugins/textfield.swf" html="添加成功"		 align="left"  backgroundcolor="0xff9900" backgroundalpha="0.7" padding="10 5"
+		css="font-family:Arial; font-size:14px; color:#FFFFFF;"/>
+		<layer name="add_tip_txt2" url="%SWFPATH%/plugins/textfield.swf" html="拖动图标调整位置" align="right" backgroundcolor="0x000000" backgroundalpha="0.2" padding="10 5" x="2"
+		css="font-family:Arial; font-size:14px; color:#FFFFFF;"/>
+	</layer>
+	
+	<style name="text"
+	       url="%SWFPATH%/plugins/textfield.swf"
+	       background="false"
+	       css="color:#FFFFFF;"
+	       enabled="false"
+	       />
+
+<layer name="scene_view_top"        keep="true" visible="true" zorder="3500" x="0"   y="0"      capture="false" width="100%" height="25%" enabled="false"   bgalpha="0.5"  bgcolor="0x000000"  type="container" 
+	align="lefttop"	
+></layer>
+<layer name="scene_view_left"       keep="true" visible="true" zorder="3500" x="0"   y="25%"    capture="false" width="25%"  height="75%" enabled="false"   bgalpha="0.5"  bgcolor="0x000000"  type="container"
+	align="lefttop"	
+></layer>
+<layer name="scene_view_bottom"     keep="true" visible="true" zorder="3500" x="25%" y="75%"    capture="false" width="50%"  height="25%" enabled="false"   bgalpha="0.5"  bgcolor="0x000000"  type="container"
+	align="lefttop"	
+></layer>
+<layer name="scene_view_right"      keep="true" visible="true" zorder="3500" x="75%" y="25%"    capture="false" width="25%"  height="75%" enabled="false"   bgalpha="0.5"  bgcolor="0x000000"  type="container"
+	align="lefttop"	
+></layer>
+<layer name="cut_view_top_left"     keep="true" visible="true" zorder="3500" x="25%" y="25%"    capture="false" width="50"   height="10"  enabled="false"   bgalpha="1"    bgcolor="0x3385ff"  type="container"
+	align="lefttop"	
+></layer>
+<layer name="cut_view_left_top"     keep="true" visible="true" zorder="3500" x="25%" y="25%"    capture="false" width="10"   height="50"  enabled="false"   bgalpha="1"    bgcolor="0x3385ff"  type="container"
+	align="lefttop"	
+></layer>
+<layer name="cut_view_left_bottom"  keep="true" visible="true" zorder="3500" x="25%" y="25%"    capture="false" width="10"   height="50"  enabled="false"   bgalpha="1"    bgcolor="0x3385ff"  type="container"
+	align="leftbottom"
+></layer>
+<layer name="cut_view_bottom_left"  keep="true" visible="true" zorder="3500" x="25%" y="25%"    capture="false" width="50"   height="10"  enabled="false"   bgalpha="1"    bgcolor="0x3385ff"  type="container"
+	align="leftbottom"
+></layer>
+<layer name="cut_view_bottom_right" keep="true" visible="true" zorder="3500" x="25%" y="25%"    capture="false" width="50"   height="10"  enabled="false"   bgalpha="1"    bgcolor="0x3385ff"  type="container"
+	align="rightbottom"
+></layer>
+<layer name="cut_view_right_bottom" keep="true" visible="true" zorder="3500" x="25%" y="25%"    capture="false" width="10"   height="50"  enabled="false"   bgalpha="1"    bgcolor="0x3385ff"  type="container"
+	align="rightbottom"
+></layer>
+<layer name="cut_view_right_top"    keep="true" visible="true" zorder="3500" x="25%" y="25%"    capture="false" width="10"   height="50"  enabled="false"   bgalpha="1"    bgcolor="0x3385ff"  type="container"
+	align="righttop"
+></layer>
+<layer name="cut_view_top_right"    keep="true" visible="true" zorder="3500" x="25%" y="25%"    capture="false" width="50"   height="10"  enabled="false"   bgalpha="1"    bgcolor="0x3385ff"  type="container"
+	align="righttop"
+></layer>
+<layer name="cut_txt" type="container" keep="true" align="center" x="0" y="-15%" width="150" height="40" bgcolor="0x44AADD" bgalpha="1.0" bgcapture="true"  bgroundedge="5" onclick="setHotspotVisible();"
+	onover="set(bgcolor,0x44BBDD)" onout="set(bgcolor,0x44AADD)">
+	<layer name="cut_txt2" style="text" html="设为初始视角" align="center" />
+</layer>
+
+<action name="setCutVisible">
+	set(layer[scene_view_top].visible,%1);
+	set(layer[scene_view_left].visible,%1);
+	set(layer[scene_view_bottom].visible,%1);
+	set(layer[scene_view_right].visible,%1);
+	set(layer[cut_view_top_left].visible,%1);
+	set(layer[cut_view_left_top].visible,%1);
+	set(layer[cut_view_left_bottom].visible,%1);
+	set(layer[cut_view_bottom_left].visible,%1);
+	set(layer[cut_view_bottom_right].visible,%1);
+	set(layer[cut_view_right_bottom].visible,%1);
+	set(layer[cut_view_right_top].visible,%1);
+	set(layer[cut_view_top_right].visible,%1);
+	set(layer[cut_txt].visible,%1);
+</action>
+
+<action name="setHotspotVisible">
+	for(set(i,0),i LT hotspot.count,inc(i),
+		if(hotspot[get(i)].needhide,
+			set(hotspot[get(i)].visible,%1);
+		);
+    );
+</action>
+	
+</krpano>

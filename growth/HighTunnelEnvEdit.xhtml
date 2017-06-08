@@ -1,0 +1,886 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_growth.xhtml">
+
+	<ui:define name="body">
+
+		<!--复选框切换开始-->
+		<script type="text/javascript">
+	//<![CDATA[
+	jq(function(){
+			jq("select").selectmenu({style:'dropdown'});
+			jq(".rich-calendar-input").addClass("r_c_text_date");
+		    jq(".rich-calendar-input").removeClass("rich-calendar-input");
+		    jq(".ui-selectmenu-dropdown").addClass("small2");
+		    jq(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+		    jq(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall2");
+		    jq(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+		});
+	function checkedclick(obj1,obj2,obj3,obj4){
+		jq("#"+obj1).hide(); 
+		jq("#"+obj2).show();
+		document.getElementById(obj3).checked=obj4;
+	}
+	
+	function valid(obj){
+		var v = obj.value;
+		if(v!=''){
+			var reg = /^\d+(\.\d+)?$/;
+			if (!reg.test(v)){
+				alert("警报线数值输入有误,请重新输入!");
+				obj.value = "";
+				obj.focus();
+			}
+		}
+	}
+	
+	function mobileValid(obj){
+		mobiles = obj.value.replace("，",",");
+		if(mobiles.length>0){
+			var reg = /^(?:1[3458]\d)-?\d{5}(\d{3}|\*{3})$/;
+			var arraystr = mobiles.split(",");
+			for(var i=0;i<arraystr.length;i++){
+				var mobile = arraystr[i];
+				if (!reg.test(mobile)){
+					alert("手机号输入有误，请重新输入!");
+					obj.focus();
+				}
+			}
+		} 
+	}
+	function coment(){
+		var airTempHigh = document.getElementById("highTunnelEnv:airTempHigh");
+		var airTempLow = document.getElementById("highTunnelEnv:airTempLow");
+		if(parseInt(airTempHigh.value) < parseInt(airTempLow.value)){
+			alert("高温报警线不能低于低温报警线!");
+			airTempHigh.value = "";
+			airTempLow.value = "";
+			airTempHigh.focus();
+			return false;
+		}
+		var airHumidityHigh = document.getElementById("highTunnelEnv:airHumidityHigh");
+		var airHumidityLow = document.getElementById("highTunnelEnv:airHumidityLow");
+		if(parseInt(airHumidityHigh.value) < parseInt(airHumidityLow.value)){
+			alert("高湿报警线不能低于低湿报警线!");
+			airHumidityHigh.value = "";
+			airHumidityLow.value = "";
+			airHumidityHigh.focus();
+			return false;
+		}
+		var soilTempHigh = document.getElementById("highTunnelEnv:soilTempHigh");
+		var soilTempLow = document.getElementById("highTunnelEnv:soilTempLow");
+		if(parseInt(soilTempHigh.value) < parseInt(soilTempLow.value)){
+			alert("高温报警线不能低于低温报警线!");
+			soilTempHigh.value = "";
+			soilTempLow.value = "";
+			soilTempHigh.focus();
+			return false;
+		}
+		var soilHumidityHigh = document.getElementById("highTunnelEnv:soilHumidityHigh");
+		var soilHumidityLow = document.getElementById("highTunnelEnv:soilHumidityLow");
+		if(parseInt(soilHumidityHigh.value) < parseInt(soilHumidityLow.value)){
+			alert("高湿警线不能低于低湿报警线!");
+			soilHumidityHigh.value = "";
+			soilHumidityLow.value = "";
+			soilHumidityHigh.focus();
+			return false;
+		}
+		var illuminationHigh = document.getElementById("highTunnelEnv:illuminationHigh");
+		var illuminationLow = document.getElementById("highTunnelEnv:illuminationLow");
+		if(parseInt(illuminationHigh.value) < parseInt(illuminationLow.value)){
+			alert("光照报警上限不能低于光照报警下限!");
+			illuminationHigh.value = "";
+			illuminationLow.value = "";
+			illuminationHigh.focus();
+			return false;
+		}
+		var co2High = document.getElementById("highTunnelEnv:co2High");
+		var co2Low = document.getElementById("highTunnelEnv:co2Low");
+		if(parseInt(co2High.value) < parseInt(co2Low.value)){
+			alert("二氧化碳报警上限不能低于二氧化碳报警下限!");
+			co2High.value = "";
+			co2Low.value = "";
+			co2High.focus();
+			return false;
+		}
+		document.getElementById("highTunnelEnv:timerOne").value = jq("#combobox  option:selected").val(); 
+		document.getElementById("highTunnelEnv:timerTwo").value = jq("#combobox0  option:selected").val(); 
+		document.getElementById("highTunnelEnv:timerThree").value = jq("#combobox2  option:selected").val(); 
+		document.getElementById("highTunnelEnv:timerFour").value = jq("#combobox3  option:selected").val(); 
+		return true;
+	}
+	//]]>
+	</script>
+		<td valign="top" width="100%">
+			<!---作物生长情况开始-->
+			<div class="zuowbg">
+				<table cellpadding="0" cellspacing="0" width="100%"
+					style="table-layout: fixed;">
+					<tr>
+						<td valign="top" class="zwleftmenu">
+							<!--menu 开始-->
+							<div class="menutree"
+								style="height: #{cropGrowthHome.videoId ne 0 ?(cropGrowthHome.imgFlag?1968:1320):(cropGrowthHome.imgFlag?1733:1090)}px;">
+								<table width="100%" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="nav_span" style="padding-top: 8px;">
+											<div class="slist_2" style="#{cropGrowthHome.tunnelInfo.partition.base eq _base or cropGrowthHome.deviceInfo.baseId.id eq _base or cropGrowthHome.videoInfo.baseId.id eq _base?'display: block;':'display:none;'}">
+												<a:repeat value="#{sessionTake.parList}" var="_par">
+													<h2
+														class="ltow #{cropGrowthHome.tunnelInfo.partition.id eq _par.id or cropGrowthHome.deviceInfo.pid eq _par.id or cropGrowthHome.videoInfo.partitionId.id eq _par.id?'currentltow':''}">
+														<h:outputText value="#{_par.name}" />
+													</h2>
+													<ul class="sslist" style="#{cropGrowthHome.tunnelInfo.partition.id eq _par.id or cropGrowthHome.deviceInfo.pid eq _par.id or cropGrowthHome.videoInfo.partitionId.id eq _par.id?'display: block;':'display:none;'}">
+														<a:repeat value="#{sessionTake.tiMap.get(_par.id)}"
+															var="_tinfo">
+															<li
+																class="lthree #{cropGrowthHome.keyString eq _tinfo[0]?'currentlthree':''}">
+																<h:outputText escape="false" value="#{_tinfo[1][0]}" />
+															</li>
+														</a:repeat>
+													</ul>
+												</a:repeat>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</div> <!--menu 结束-->
+						</td>
+						<td valign="top" class="charttd"><h:form id="highTunnelEnv">
+								<div class="set_title">
+									<div class="set_ctit">修改温室告警设置</div>
+									<div class="set_time">
+										<h:outputText value="#{highTunnelEnvHome.instance.updateTime}">
+											<s:convertDateTime type="both" dateStyle="short"
+												pattern="yyyy-MM-dd" />
+										</h:outputText>
+										&#160;&#160;&#160;&#160;#{cropGrowthHome.tunnelInfo.tunnelName}
+									</div>
+								</div>
+								<!--环境告警预设信息开始-->
+								<div class="set_box">
+									<div class="set_ctit2">环境告警预设信息</div>
+									<div class="set_div">
+
+										<div class="set_tabbox">
+											<div class="set_tabtitle">
+												<ul>
+													<li class="set_tabli">空气温度检测</li>
+													<li class="set_tabli">空气湿度检测</li>
+													<li class="set_tabli">土壤温度检测</li>
+													<li class="set_tabli">土壤湿度检测</li>
+													<li class="set_tabli">光照检测</li>
+													<li class="set_tabli">二氧化碳检测</li>
+												</ul>
+											</div>
+											<div class="set_tab_cont">
+												<div class="set_tab_div">
+													<div class="qiyong">
+														<table cellpadding="0" cellspacing="0">
+															<tr>
+																<td width="50" align="center" class="set_font">启用：</td>
+																<td id="btn"><h:selectBooleanCheckbox
+																		id="airTempEnable"
+																		value="#{highTunnelEnvHome.instance.airTempEnable}"
+																		style="display:none;" /> <a id="t1"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t1','t2','highTunnelEnv:airTempEnable',true);"
+																	style="#{highTunnelEnvHome.instance.airTempEnable?'display:none;':''}"><img
+																		src="#{request.contextPath}/asset/images/growth/checout.png"
+																		border="0" width="16" height="16" /></a> <a id="t2"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t2','t1','highTunnelEnv:airTempEnable',false);"
+																	style="#{highTunnelEnvHome.instance.airTempEnable?'':'display:none;'}"><img
+																		src="#{request.contextPath}/asset/images/growth/checouton.png"
+																		border="0" width="16" height="16" /></a></td>
+															</tr>
+														</table>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">高温报警线</div>
+														<div class="tab_coninput">
+															<h:inputText id="airTempHigh" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.airTempHigh}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">℃</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">高温报警内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="airTempHighContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.airTempHighContent}" />
+														</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">低温报警线</div>
+														<div class="tab_coninput">
+															<h:inputText id="airTempLow" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.airTempLow}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">℃</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">低温报警内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="airTempLowContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.airTempLowContent}" />
+														</div>
+													</div>
+													<div class="clear"></div>
+												</div>
+												<div class="set_tab_div">
+													<div class="qiyong">
+														<table cellpadding="0" cellspacing="0">
+															<tr>
+																<td width="50" align="center" class="set_font">启用：</td>
+																<td id="btntow"><h:selectBooleanCheckbox
+																		id="airHumidityEnable"
+																		value="#{highTunnelEnvHome.instance.airHumidityEnable}"
+																		style="display:none;" /> <a id="t1tow"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t1tow','t2tow','highTunnelEnv:airHumidityEnable',true);"
+																	style="#{highTunnelEnvHome.instance.airHumidityEnable?'display:none;':''}"><img
+																		src="#{request.contextPath}/asset/images/growth/checout.png"
+																		border="0" width="16" height="16" /></a> <a id="t2tow"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t2tow','t1tow','highTunnelEnv:airHumidityEnable',false);"
+																	style="#{highTunnelEnvHome.instance.airHumidityEnable?'':'display:none;'}"><img
+																		src="#{request.contextPath}/asset/images/growth/checouton.png"
+																		border="0" width="16" height="16" /></a></td>
+															</tr>
+														</table>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">高湿报警线</div>
+														<div class="tab_coninput">
+															<h:inputText id="airHumidityHigh" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.airHumidityHigh}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">%</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">高湿报警内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="airHumidityHighContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.airHumidityHighContent}" />
+														</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">低湿报警线</div>
+														<div class="tab_coninput">
+															<h:inputText id="airHumidityLow" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.airHumidityLow}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">%</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">低湿报警内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="airHumidityLowContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.airHumidityLowContent}" />
+														</div>
+													</div>
+													<div class="clear"></div>
+												</div>
+												<div class="set_tab_div">
+													<div class="qiyong">
+														<table cellpadding="0" cellspacing="0">
+															<tr>
+																<td width="50" align="center" class="set_font">启用：</td>
+																<td id="btnthree"><h:selectBooleanCheckbox
+																		id="soilTempEnable"
+																		value="#{highTunnelEnvHome.instance.soilTempEnable}"
+																		style="display:none;" /> <a id="t1three"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t1three','t2three','highTunnelEnv:soilTempEnable',true);"
+																	style="#{highTunnelEnvHome.instance.soilTempEnable?'display:none;':''}"><img
+																		src="#{request.contextPath}/asset/images/growth/checout.png"
+																		border="0" width="16" height="16" /></a> <a id="t2three"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t2three','t1three','highTunnelEnv:soilTempEnable',false);"
+																	style="#{highTunnelEnvHome.instance.soilTempEnable?'':'display:none;'}"><img
+																		src="#{request.contextPath}/asset/images/growth/checouton.png"
+																		border="0" width="16" height="16" /></a></td>
+															</tr>
+														</table>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">高温报警线</div>
+														<div class="tab_coninput">
+															<h:inputText id="soilTempHigh" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.soilTempHigh}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">℃</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">高温报警内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="soilTempHighContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.soilTempHighContent}" />
+														</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">低温报警线</div>
+														<div class="tab_coninput">
+															<h:inputText id="soilTempLow" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.soilTempLow}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">℃</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">低温报警内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="soilTempLowContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.soilTempLowContent}" />
+														</div>
+													</div>
+													<div class="clear"></div>
+												</div>
+												<div class="set_tab_div">
+													<div class="qiyong">
+														<table cellpadding="0" cellspacing="0">
+															<tr>
+																<td width="50" align="center" class="set_font">启用：</td>
+																<td id="btnsoilHumidity"><h:selectBooleanCheckbox
+																		id="soilHumidityEnable"
+																		value="#{highTunnelEnvHome.instance.soilHumidityEnable}"
+																		style="display:none;" /> <a id="t1soilHumidity"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t1soilHumidity','t2soilHumidity','highTunnelEnv:soilHumidityEnable',true);"
+																	style="#{highTunnelEnvHome.instance.soilHumidityEnable?'display:none;':''}"><img
+																		src="#{request.contextPath}/asset/images/growth/checout.png"
+																		border="0" width="16" height="16" /></a> <a
+																	id="t2soilHumidity" href="javascript:void(0)"
+																	onclick="checkedclick('t2soilHumidity','t1soilHumidity','highTunnelEnv:soilHumidityEnable',false);"
+																	style="#{highTunnelEnvHome.instance.soilHumidityEnable?'':'display:none;'}"><img
+																		src="#{request.contextPath}/asset/images/growth/checouton.png"
+																		border="0" width="16" height="16" /></a></td>
+															</tr>
+														</table>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">高湿报警线</div>
+														<div class="tab_coninput">
+															<h:inputText id="soilHumidityHigh" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.soilHumidityHigh}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">%</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">高湿报警内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="soilHumidityHighContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.soilHumidityHighContent}" />
+														</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">低湿报警线</div>
+														<div class="tab_coninput">
+															<h:inputText id="soilHumidityLow" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.soilHumidityLow}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">%</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">低湿报警内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="soilHumidityLowContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.soilHumidityLowContent}" />
+														</div>
+													</div>
+													<div class="clear"></div>
+												</div>
+												<div class="set_tab_div">
+													<div class="qiyong">
+														<table cellpadding="0" cellspacing="0">
+															<tr>
+																<td width="50" align="center" class="set_font">启用：</td>
+																<td id="btnfour"><h:selectBooleanCheckbox
+																		id="illuminationEnable"
+																		value="#{highTunnelEnvHome.instance.illuminationEnable}"
+																		style="display:none;" /> <a id="t1four"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t1four','t2four','highTunnelEnv:illuminationEnable',true);"
+																	style="#{highTunnelEnvHome.instance.illuminationEnable?'display:none;':''}"><img
+																		src="#{request.contextPath}/asset/images/growth/checout.png"
+																		border="0" width="16" height="16" /></a> <a id="t2four"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t2four','t1four','highTunnelEnv:illuminationEnable',false);"
+																	style="#{highTunnelEnvHome.instance.illuminationEnable?'':'display:none;'}"><img
+																		src="#{request.contextPath}/asset/images/growth/checouton.png"
+																		border="0" width="16" height="16" /></a></td>
+															</tr>
+														</table>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">光照报警上限</div>
+														<div class="tab_coninput">
+															<h:inputText id="illuminationHigh" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.illuminationHigh}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">LUX</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">光照报警上限内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="illuminationHighContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.illuminationHighContent}" />
+														</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">光照报警下限</div>
+														<div class="tab_coninput">
+															<h:inputText id="illuminationLow" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.illuminationLow}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">LUX</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">光照报警下限内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="illuminationLowContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.illuminationLowContent}" />
+														</div>
+													</div>
+													<div class="clear"></div>
+												</div>
+												<div class="set_tab_div">
+													<div class="qiyong">
+														<table cellpadding="0" cellspacing="0">
+															<tr>
+																<td width="50" align="center" class="set_font">启用：</td>
+																<td id="btnco2"><h:selectBooleanCheckbox
+																		id="co2Enable"
+																		value="#{highTunnelEnvHome.instance.co2Enable}"
+																		style="display:none;" /> <a id="t1co2"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t1co2','t2co2','highTunnelEnv:co2Enable',true);"
+																	style="#{highTunnelEnvHome.instance.co2Enable?'display:none;':''}"><img
+																		src="#{request.contextPath}/asset/images/growth/checout.png"
+																		border="0" width="16" height="16" /></a> <a id="t2co2"
+																	href="javascript:void(0)"
+																	onclick="checkedclick('t2co2','t1co2','highTunnelEnv:co2Enable',false);"
+																	style="#{highTunnelEnvHome.instance.co2Enable?'':'display:none;'}"><img
+																		src="#{request.contextPath}/asset/images/growth/checouton.png"
+																		border="0" width="16" height="16" /></a></td>
+															</tr>
+														</table>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">二氧化碳报警上限</div>
+														<div class="tab_coninput">
+															<h:inputText id="co2High" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.co2High}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">PPM</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">二氧化碳报警上限内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="co2HighContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.co2HighContent}" />
+														</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">二氧化碳报警下限</div>
+														<div class="tab_coninput">
+															<h:inputText id="co2Low" type="text"
+																styleClass="tab_inputl"
+																value="#{highTunnelEnvHome.instance.co2Low}"
+																onblur="valid(this)" />
+														</div>
+														<div class="tab_con">PPM</div>
+													</div>
+
+													<div class="tab_main">
+														<div class="tab_con">二氧化碳报警下限内容</div>
+														<div class="tab_coninput">
+															<h:inputText id="co2LowContent" type="text"
+																styleClass="tab_inputr"
+																value="#{highTunnelEnvHome.instance.co2LowContent}" />
+														</div>
+													</div>
+													<div class="clear"></div>
+												</div>
+												<div class="clear"></div>
+											</div>
+
+											<div class="clear"></div>
+										</div>
+										<div class="set_tab_cont">
+											<table width="100%" cellpadding="0" cellspacing="0"
+												class="set_areabox">
+												<tr>
+													<td width="80" align="right" valign="top" class="set_area">抄送人：</td>
+													<td><h:inputTextarea id="ccEnv"
+															styleClass="set_textarea" onblur="mobileValid(this)"
+															value="#{highTunnelEnvHome.instance.ccEnv}"></h:inputTextarea>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</div>
+									<div class="clear"></div>
+								</div>
+								<!--set_box结束-->
+								<!--环境告警预设信息结束-->
+								<!--成熟度告警预设信息开始-->
+								<div class="set_box">
+									<div class="set_ctit2">成熟度告警预设信息</div>
+									<div class="set_div">
+										<div class="set_infor">启用该设置后，作物生长发育阶段达到成熟期时会给以下“抄送人”栏中的手机号码发送信息。信息内容格式为：某某棚，某作物已进入成熟阶段
+											。</div>
+										<table width="100%" cellspacing="2" class="set_table2">
+											<tr>
+												<td width="200" class="set_tdl" align="right" height="44">成熟度告警设置：</td>
+												<td class="set_tdr">
+													<table cellpadding="0" cellspacing="0">
+														<tr>
+															<td width="50" align="center" class="set_font">启用：</td>
+															<td id="btn2"><h:selectBooleanCheckbox id="growOpen"
+																	value="#{highTunnelEnvHome.instance.growOpen}"
+																	style="display:none;" /> <a id="t3"
+																href="javascript:void(0)"
+																onclick="checkedclick('t3','t4','highTunnelEnv:growOpen',true);"
+																style="#{highTunnelEnvHome.instance.growOpen?'display:none;':''}"><img
+																	src="#{request.contextPath}/asset/images/growth/checout.png"
+																	border="0" width="16" height="16" /></a> <a id="t4"
+																href="javascript:void(0)"
+																onclick="checkedclick('t4','t3','highTunnelEnv:growOpen',false);"
+																style="#{highTunnelEnvHome.instance.growOpen?'':'display:none;'}"><img
+																	src="#{request.contextPath}/asset/images/growth/checouton.png"
+																	border="0" width="16" height="16" /></a></td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+											<tr>
+												<td class="set_tdl" align="right" valign="middle"
+													height="120">抄送人：</td>
+												<td class="set_tdr" valign="middle"><h:inputTextarea
+														id="ccGrow" styleClass="set_textarea"
+														value="#{highTunnelEnvHome.instance.ccGrow}"
+														onblur="mobileValid(this)"></h:inputTextarea></td>
+											</tr>
+										</table>
+									</div>
+									<div class="clear"></div>
+								</div>
+								<!--set_box结束-->
+								<!--成熟度告警预设信息结束-->
+								<!--病虫害告警预设信息开始-->
+								<div class="set_box">
+									<div class="set_ctit2">病虫害告警预设信息</div>
+									<div class="set_div">
+										<div class="set_infor">启用该设置后，大棚中作物病害爆发概率达到10%、20%、40%、60%、80%时，会给以下“抄送人”栏中的手机号码发送信息。信息内容格式为：某某棚，某作物病害爆发概率已达某数值，请密切关注并合理防治。</div>
+										<table width="100%" cellspacing="2" class="set_table2">
+											<tr>
+												<td width="200" class="set_tdl" align="right" height="44">病虫害告警设置：</td>
+												<td class="set_tdr">
+													<table cellpadding="0" cellspacing="0">
+														<tr>
+															<td width="50" align="center" class="set_font">启用：</td>
+															<td id="btn3"><h:selectBooleanCheckbox
+																	id="illnessOpen"
+																	value="#{highTunnelEnvHome.instance.illnessOpen}"
+																	style="display:none;" /> <a id="t5"
+																href="javascript:void(0)"
+																onclick="checkedclick('t5','t6','highTunnelEnv:illnessOpen',true);"
+																style="#{highTunnelEnvHome.instance.illnessOpen?'display:none;':''}"><img
+																	src="#{request.contextPath}/asset/images/growth/checout.png"
+																	border="0" width="16" height="16" /></a> <a id="t6"
+																href="javascript:void(0)"
+																onclick="checkedclick('t6','t5','highTunnelEnv:illnessOpen',false);"
+																style="#{highTunnelEnvHome.instance.illnessOpen?'':'display:none;'}"><img
+																	src="#{request.contextPath}/asset/images/growth/checouton.png"
+																	border="0" width="16" height="16" /></a></td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+											<tr>
+												<td class="set_tdl" align="right" valign="middle"
+													height="148">病虫害危险度选择：</td>
+												<td class="set_tdr" valign="middle"><rich:pickList
+														value="#{highTunnelEnvHome.illnessProbabilityValue}"
+														sourceListWidth="80px" targetListWidth="80px"
+														listsHeight="113px" copyAllControlLabel="全部选择"
+														removeAllControlLabel="全部清除" copyControlLabel="选择"
+														removeControlLabel="清除">
+														<f:selectItems
+															value="#{highTunnelEnvHome.illnessProbabilityList()}" />
+													</rich:pickList></td>
+											</tr>
+											<tr>
+												<td class="set_tdl" align="right" valign="middle"
+													height="120">抄送人：</td>
+												<td class="set_tdr" valign="middle"><h:inputTextarea
+														id="ccIllness" styleClass="set_textarea"
+														value="#{highTunnelEnvHome.instance.ccIllness}"
+														onblur="mobileValid(this)"></h:inputTextarea></td>
+											</tr>
+										</table>
+									</div>
+									<div class="clear"></div>
+								</div>
+								<!--set_box结束-->
+								<!--病虫害告警预设信息结束-->
+								<!--定时告警预设信息开始-->
+								<div class="set_box">
+									<div class="set_ctit2">定时告警预设信息</div>
+									<div class="set_div">
+										<div class="set_infor">启用该设置后，本温室大棚在设定时间点的实时环境参数信息（如：空气温、湿度，土壤温度，光照强度等）会发送到所选定用户的手机号码上。</div>
+										<table width="100%" cellspacing="2" class="set_table2">
+											<tr>
+												<td width="200" class="set_tdl" align="right" height="44">定时告警设置：</td>
+												<td class="set_tdr">
+													<table cellpadding="0" cellspacing="0">
+														<tr>
+															<td width="50" align="center" class="set_font">启用：</td>
+															<td id="btn4"><h:selectBooleanCheckbox
+																	id="timerOpen"
+																	value="#{highTunnelEnvHome.instance.timerOpen}"
+																	style="display:none;" /> <a id="t7"
+																href="javascript:void(0)"
+																onclick="checkedclick('t7','t8','highTunnelEnv:timerOpen',true);"
+																style="#{highTunnelEnvHome.instance.timerOpen?'display:none;':''}"><img
+																	src="#{request.contextPath}/asset/images/growth/checout.png"
+																	border="0" width="16" height="16" /></a> <a id="t8"
+																href="javascript:void(0)"
+																onclick="checkedclick('t8','t7','highTunnelEnv:timerOpen',false);"
+																style="#{highTunnelEnvHome.instance.timerOpen?'':'display:none;'}"><img
+																	src="#{request.contextPath}/asset/images/growth/checouton.png"
+																	border="0" width="16" height="16" /></a></td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+											<tr>
+												<td class="set_tdl" align="right" valign="middle"
+													height="148">发送时间选择：</td>
+												<td class="set_tdr" valign="middle">
+
+													<div class="tab_main2">
+														<div class="tab_con2">定时发送时间一：</div>
+														<div class="ui-widget">
+															<h:inputHidden id="timerOne"
+																value="#{highTunnelEnvHome.instance.timerOne}" />
+															<select id="combobox">
+																<a:repeat value="#{highTunnelEnvHome.timeList()}"
+																	var="time">
+																	<h:panelGroup
+																		rendered="#{highTunnelEnvHome.instance.timerOne eq time.id}">
+																		<option value="#{time.id}" selected="selected">#{time.name}</option>
+																	</h:panelGroup>
+																	<h:panelGroup
+																		rendered="#{highTunnelEnvHome.instance.timerOne ne time.id}">
+																		<option value="#{time.id}">#{time.name}</option>
+																	</h:panelGroup>
+																</a:repeat>
+															</select>
+														</div>
+													</div>
+
+													<div class="tab_main2">
+														<div class="tab_con2">定时发送时间二：</div>
+														<div class="ui-widget">
+															<h:inputHidden id="timerTwo"
+																value="#{highTunnelEnvHome.instance.timerTwo}" />
+															<select id="combobox0">
+																<a:repeat value="#{highTunnelEnvHome.timeList()}"
+																	var="time">
+																	<h:panelGroup
+																		rendered="#{highTunnelEnvHome.instance.timerTwo eq time.id}">
+																		<option value="#{time.id}" selected="selected">#{time.name}</option>
+																	</h:panelGroup>
+																	<h:panelGroup
+																		rendered="#{highTunnelEnvHome.instance.timerTwo ne time.id}">
+																		<option value="#{time.id}">#{time.name}</option>
+																	</h:panelGroup>
+																</a:repeat>
+															</select>
+														</div>
+													</div>
+
+													<div class="tab_main2">
+														<div class="tab_con2">定时发送时间三：</div>
+														<div class="ui-widget">
+															<h:inputHidden id="timerThree"
+																value="#{highTunnelEnvHome.instance.timerThree}" />
+															<select id="combobox2">
+																<a:repeat value="#{highTunnelEnvHome.timeList()}"
+																	var="time">
+																	<h:panelGroup
+																		rendered="#{highTunnelEnvHome.instance.timerThree eq time.id}">
+																		<option value="#{time.id}" selected="selected">#{time.name}</option>
+																	</h:panelGroup>
+																	<h:panelGroup
+																		rendered="#{highTunnelEnvHome.instance.timerThree ne time.id}">
+																		<option value="#{time.id}">#{time.name}</option>
+																	</h:panelGroup>
+																</a:repeat>
+															</select>
+														</div>
+													</div>
+													<div class="tab_main2">
+														<div class="tab_con2">定时发送时间四：</div>
+														<div class="ui-widget">
+															<h:inputHidden id="timerFour"
+																value="#{highTunnelEnvHome.instance.timerFour}" />
+															<select id="combobox3">
+																<a:repeat value="#{highTunnelEnvHome.timeList()}"
+																	var="time">
+																	<h:panelGroup
+																		rendered="#{highTunnelEnvHome.instance.timerFour eq time.id}">
+																		<option value="#{time.id}" selected="selected">#{time.name}</option>
+																	</h:panelGroup>
+																	<h:panelGroup
+																		rendered="#{highTunnelEnvHome.instance.timerFour ne time.id}">
+																		<option value="#{time.id}">#{time.name}</option>
+																	</h:panelGroup>
+																</a:repeat>
+															</select>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="set_tdl" align="right" valign="middle"
+													height="120">抄送人：</td>
+												<td class="set_tdr" valign="middle"><h:inputTextarea
+														id="ccTime" styleClass="set_textarea"
+														value="#{highTunnelEnvHome.instance.ccTimer}"
+														onblur="mobileValid(this)"></h:inputTextarea></td>
+											</tr>
+											<tr>
+												<td colspan="2" align="center">
+													<div class="set_infor">
+														<h:commandButton id="update" value="保存"
+															action="#{highTunnelEnvHome.update}"
+															image="../asset/images/growth/bc.png"
+															onclick="return coment()" />
+														&#160;&#160;&#160;
+														<s:button id="cancelEdit" value="返回" propagation="end"
+															view="/growth/CropGrowth.xhtml"
+															image="#{request.contextPath}/asset/images/growth/fh.png" />
+													</div>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<div class="clear"></div>
+								</div>
+								<!--set_box结束-->
+								<!--定时告警预设信息结束-->
+
+							</h:form>
+						<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/growth/jquery-ui.js"></script>
+								<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/growth/jquery-ui-select.js"> </script>
+								<a:form>
+									<a:queue requestDelay="10" ignoreDupResponses="true" />
+									<a:jsFunction name="getTreeList"
+										action="#{cropGrowthHome.getTreeList}"
+										data="#{cropGrowthHome.urlString}"
+										oncomplete="linkagebinfoid(data);">
+										<a:actionparam name="baseId" assignTo="#{cropGrowthHome.baseId}" />
+									</a:jsFunction>
+									<a:jsFunction name="loginTunnel"
+										action="#{cropGrowthHome.loginTunnel}"
+										ignoreDupResponses="true"
+										data="#{cropGrowthHome.airTempFolt}_#{cropGrowthHome.airHumidityFolt}_#{cropGrowthHome.soilTempFolt}_#{cropGrowthHome.soilHumidityFolt}_#{cropGrowthHome.illuminationFolt}_#{cropGrowthHome.co2Folt}_#{cropGrowthHome.tickSize}_#{cropGrowthHome.airTFlag}_#{cropGrowthHome.str};"
+										oncomplete="dateimg(data);">
+										<a:actionparam name="tunnelInfoId"
+											assignTo="#{cropGrowthHome.tunnelInfoId}" />
+										<a:actionparam name="dateType"
+											assignTo="#{cropGrowthHome.dateType}" />
+									</a:jsFunction>
+								</a:form> <script type="text/javascript">
+				function linkagebinfoid (data){
+					location.href = "#{request.contextPath}"+data;
+				}
+			</script>	
+						</td>
+					</tr>
+				</table>
+				<div class="clear"></div>
+			</div> <!---作物生长情况结束-->
+		</td>
+		<!--右边结束-->
+		<script type="text/javascript">
+	jq(function(){
+	    jq(".set_tabtitle").jTab({
+	        menutag: ".set_tabtitle li",
+	        boxtag: ".set_tab_cont > .set_tab_div",
+	        cur: 0
+			
+	    });
+	});
+	</script>
+		<!--下拉框开始-->
+	</ui:define>
+</ui:composition>

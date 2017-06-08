@@ -1,0 +1,106 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/sort.css"/>
+  <script type="text/javascript" src="#{request.contextPath}/asset/js/richwidgets-demo.min.js"></script>
+
+  <script type="text/javascript" src="#{request.contextPath}/asset/js/dropdown.js"></script>
+	<style>
+	.rich-picklist-source-cell, .rich-picklist-target-cell, .rich-picklist-source-cell *, .rich-picklist-target-cell *,.rich-picklist-source-cell-selected, .rich-picklist-target-cell-selected, .rich-picklist-source-cell-selected *, .rich-picklist-target-cell-selected *{font-size:12px;}
+	
+.fa-arrows {
+	background-image: url("#{request.contextPath}/asset/images/yd.png") ;
+	margin-top:11px;
+	width:13px;
+	height:13px
+	}
+	
+	.select-list .btn-group-vertical .btn {
+		width: 50px;
+		height: 30px;
+	}
+	button{cursor: pointer;}
+	</style>
+	<td valign="top">
+		<h:form id="sorting">
+		<div class="right_c">
+		<div class="r_title">
+                    	<div class="r_t_l"><font size="4"><h:outputText value="分区排序" rendered="#{partitionHome.typeId eq 1}"/><h:outputText value="区域排序" rendered="#{partitionHome.typeId eq 2}"/></font></div>
+                    </div>
+             <!-- #{partitionHome.sortMe()} -->
+  <div class="row">
+    <div class="col col-lg-6">
+    <div class="ordering-list select-list" tabindex="-1">
+    <div class="content with-handle"><div class="scroll-box">
+    <h:inputHidden id="typeIdObj" value="#{partitionHome.typeId}" />
+    <h:inputHidden id="idString" value="#{partitionHome.idString}" />
+    <ol id="list_dragselect" class="list ui-sortable ui-selectable">
+    <a4j:repeat value="#{partitionHome.sortList2}" var="_var" rendered="#{not empty partitionHome.sortList2 and partitionHome.typeId eq 1}" rowKeyVar="_index">
+   	 <li data-key="#{_index+1}" class="ui-selectee">#{_var.name}<input type="hidden" class="testClass" id="parIdObj_#{_index+1}" value="#{_var.id}" /></li>
+    </a4j:repeat>
+    
+    <a4j:repeat value="#{partitionHome.tunList}" var="_var" rendered="#{not empty partitionHome.tunList and partitionHome.typeId eq 2}" rowKeyVar="_index">
+   	 <li data-key="#{_index+1}" class="ui-selectee">#{_var.tunnelName}<input type="hidden" class="testClass2" id="tunnelIdObj_#{_index+1}" value="#{_var.tunnelInfoId}" /></li>
+    </a4j:repeat>
+	</ol></div></div></div>
+  </div>
+  </div>
+  
+  <div class="seach_bn t8" style="text-align: center;">
+				<h:commandButton styleClass="btn btn-primary" value="提交" action="#{partitionHome.saveInfo}" onclick="return checkSubmit();"></h:commandButton> &#160;&#160;
+				 <s:button
+				id="cancelEdit" propagation="end"  styleClass="btn btn-default" value="返回"
+				view="/map/PartitionList.xhtml"
+				 >
+				 <f:param name="baseId" value="#{partitionHome.paramId}"/>
+				 </s:button>
+				 </div>
+  </div>
+		</h:form>
+  <script type="text/javascript">
+  jQuery('#list_dragselect').orderingList({
+  dragSelect: true
+});
+
+  jQuery(".btn-first").text("置顶");
+  jQuery(".btn-up").text("向上");
+  jQuery(".btn-down").text("向下");
+  jQuery(".btn-last").text("置底");
+
+  function checkSubmit(){
+	  var typeId = jquery("#sorting\\:typeIdObj").val();
+	  var idString = "";
+	  if(typeId == 1){
+		  jQuery(".ui-selectee").each(function(index){
+				var dk = jquery(this).attr("data-key");
+				var obj = jquery("#parIdObj_"+dk).val();
+				idString += obj+",";
+			});
+		  jquery("#sorting\\:idString").val(idString);
+		  return true;
+	  }else if(typeId == 2){
+		  jQuery(".ui-selectee").each(function(index){
+			    var dk = jquery(this).attr("data-key");
+				var obj = jquery("#tunnelIdObj_"+dk).val();
+				idString += obj+",";
+			});
+		  jquery("#sorting\\:idString").val(idString);
+		  return true;
+		  }
+	  
+	  return false;
+  }
+  </script>
+</td>
+	</ui:define>
+
+</ui:composition>

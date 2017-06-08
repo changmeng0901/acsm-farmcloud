@@ -1,0 +1,511 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/tubiaoFx.css" />
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/contract/superTables_compressed.js"></script>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/superTables_compressed.css" />
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/contractMenu.css" />
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/contract/contractLeftMenu.js"></script> 
+	<style>
+  body{ overflow:hidden;}
+  /*缺口产量表格样式*/
+  .fakeContainer
+  {
+    margin: 20px 0;
+    padding: 0px;
+    border: none;
+    width: 700px; /* Required to set */
+    height: 400px; /* Required to set */
+    overflow: hidden; /* Required to set */
+  }
+  .fakeContainer .total{ display:block; text-align:left; color:#429ad0;}
+  .sData table{ border:1px solid #eee; }
+  .sDefault-Fixed{ background:#fff;}
+  
+  .sDefault th,.sDefault td{ padding:8px 15px; line-height:14px; text-align:center; border:1px solid #f1f1f1;}
+  .sDefault th.borderBNone,.sDefault td.borderBNone{ border-bottom:none;}
+  .sDefault th{ background:#fff; color:#737373; font-size:12px; font-family:'微软雅黑';}
+  .sDefault td{ /*font-family:'微软雅黑';*/font-family:'微软雅黑';  font-size:13px; font-weight:bold; color:#737373;}
+  
+  .zuowuTime{ position:relative; width:115px; height:53px; left:0; top:0;}
+  .zuowuTime .zuowu{ position:absolute; z-index:3; bottom:0; left:0; font-size:14px;}
+  .zuowuTime .time{ position:absolute; z-index:3; top:0; right:0; font-size:14px;}
+  .zuowuTime .xianBg{ position:absolute; z-index:2; width:144px; height:69px; top:-8px; left:-15px;}
+  .zuowuTime .xianBg img{ width:144px; height:69px;}
+  
+  .zhezhaoWp{ float:left; width:29px; height:29px; position:relative; display:inline; margin-right:10px;}
+  .zhezhaoWp .zhezhao{ width:29px; height:29px; position:absolute; left:0; top:0; z-index:5;}
+  .zhezhaoWp .zhezhaoImg{ width:29px; height:29px; position:absolute; left:0; top:0; z-index:4;}
+  .zhezhaoTxt{ float:left; line-height:29px; text-align:left; color:#429ad0; font-size:12px; font-family:'微软雅黑'; width:76px;overflow:hidden;}
+  
+  .colorB{ color:#317aaf; font-weight:normal;}
+  .colorG{ color:#4cb35c; font-weight:normal;}
+  .colorP{ color:#6567a8; font-weight:normal;}
+  .colorR{ color:#d9534f; font-weight:normal;}
+  
+  .baseDateWap{margin-right: 15px;}
+  .exportDiv{float: right;display: inline;margin-top: 10px;margin-left: 20px;margin-right: 20px;}
+  .btn{padding: 7px 20px}
+</style>
+
+       <td valign="top" >
+		<div class="inbentory_file_main">
+                   	<!-- 左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pc"></i>排产</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/map/GanttSum.seam','_self')" ><i class="icon_sed"></i>产量汇总</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/map/PlantInfoList.seam','_self')"><i class="icon_sed"></i>排产管理</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/map/Gantt.seam','_self')"><i class="icon_sed"></i>计划表</li>
+                        </ol>                    
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_qk"></i>缺口</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item sed_cur" onClick="window.open('#{request.contextPath}/contract/LackSum.seam','_self')"><i class="icon_sed"></i>缺口产量表</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/contract/LackChartAnalysis.seam','_self')"><i class="icon_sed"></i>图表分析</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 左侧二级导航 -->
+				<div class="inbentory_content">      
+                	<div class="r_title clear">
+                	<!-- 公用头部 start-->
+                    	<div class="r_t_l fl">&#160;&#160;生产计划&#160;&gt;&#160;&#160;缺口&#160;&gt;&#160;&#160;<font size="3">缺口产量表</font></div>
+                   <!-- 公用头部 end -->
+                    </div>
+                    <a4j:status id="ajaxStatus" forceId="true" onstart="jquery('#login').show()" onstop="jquery('#login').hide()" />
+                      <!-- 缺口内容 开始 -->
+					<div class="">
+                        <div class="quekouAytjt_wap pt10">
+                        	<div class="clear">
+                            <h:form id="search">
+                            	<div class="fl mt10">
+                                    <ul class="selectpickerList">
+                                        <!-- 	#{plantSelects.queryPlantSelects()} -->
+                                        <li class="selectpickerLi">
+											<select id="plantIdStr"  name="plantIdStr2"  data-live-search="true"  class="selectpicker nw100"  onchange="gainResult()">
+													<a4j:repeat value="#{plantSelects.plantList}" var="var">
+														<optgroup label="#{var}">
+															<a4j:repeat value="#{plantSelects.allPlant[var]}" var="_var">
+																<option value="#{_var.plantId}">#{_var.name}</option>
+															</a4j:repeat>
+														</optgroup>
+													</a4j:repeat>
+											</select>
+                                        </li>
+                                        <li class="selectpickerLi">
+											<select id="and_planted"  name="and_planted"  class="selectpicker nw100"  onchange="gainResult()">
+													<option value="0">包含种植</option>
+													<option value="1">不包含种植</option>
+											</select>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="exportDiv">
+                                     	<input type="hidden" value="#{lackSum.plantIdStr}" id="plantIdStrHidden" name="plantIdStr"/>
+                                       	<h:commandButton rendered="#{s:hasRole('lack_exp')}" id="export" styleClass="btn btn-default" onclick="exportCheck();" action="#{lackSum.exportExcel()}" value="导出" style="">                                	
+                               			</h:commandButton> 
+	                              </div>
+                                 <div class="baseDateWap fr">
+	                                    <div class="baseDateLt" onclick="reset_gantt(1)" ></div>
+	                                    <div class="baseDateCt" id="baseDateCt"> </div>
+	                                    <div class="baseDateRt" onclick="reset_gantt(2)"></div>
+	                              </div>
+                              </h:form>
+                                <script type="text/javascript">
+                                    function reset_gantt(ty){
+        
+                                        var year = document.getElementById("baseDateCt").innerHTML;
+                                        if(ty==1){
+                                            year = parseInt(year,10)-1;
+                                        }else{
+                                            year = parseInt(year,10)+1;
+                                        }
+                                        document.getElementById("baseDateCt").innerHTML = year;
+                                        
+                                        gainResult();
+                                    };
+                                    jquery(function(){
+                                        document.getElementById("baseDateCt").innerHTML = new Date().getFullYear();		
+                                    })
+                                </script>
+
+                            </div>
+<!--  #{lackSum.queryContractSum()} -->
+                            <div class="clear">
+                             <h:form id="contractSumFrom">
+									<a4j:commandLink id="refreshShow"  reRender="showPanel"></a4j:commandLink>
+								</h:form>
+<!-- ajax 刷新部分start -->
+								<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;margin-left: 10px;">
+                            	<div class="fakeContainer">
+                                <table cellpadding="0" cellspacing="0" id="demoTable" style="margin-top: -23px; margin-left: -99px;" class=" sDefault sDefault-Main">
+                                    <colgroup>
+                                        <col width="98" />
+                                        <col width="91" />
+                                        <col width="89" />
+                                        <col width="40" />
+                                        <col width="83" />
+                                        <col width="217" />
+                                        <col width="115" />
+                                        <col width="130" />
+                                        <col width="115" />
+                                        <col width="130" />
+                                        <col width="115" />
+                                        <col width="130" />
+                                     </colgroup>
+                                  <tbody>
+                                      <tr>
+                                          <th rowspan="2" style="border-top:2px solid #f37f73; border-bottom:none;">
+                                          <div class="zuowuTime">
+                                          <span class="zuowu">作物</span>
+                                          <span class="time">时间</span>
+                                          <span class="xianBg"><img src="#{request.contextPath}/asset/images/contract/bg_paichanH.png" /></span>
+                                          </div>
+                                          </th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #babbe4;">一月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #9dd6a6;">二月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #84b9e0;">三月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #babbe4;">四月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #9dd6a6;">五月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #84b9e0;">六月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #babbe4;">七月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #9dd6a6;">八月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #84b9e0;">九月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #babbe4;">十月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #9dd6a6;">十一月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #84b9e0;">十二月(kg)</th>   
+                                      </tr>
+                                      <tr>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                       </tr>
+                                       
+                                      <a4j:repeat value="#{lackSum.resultData}" var="_result" rowKeyVar="_index" rendered="#{lackSum.resultData.size > 0}"> 
+                                      <tr>
+                                          <td align="left" title="#{_result.name}">
+	                                          <span class="zhezhaoWp">
+		                                          <img class="zhezhao" src="#{request.contextPath}/asset/images/contract/zhezhao.png" width="29" height="29" />
+		                                          <img class="zhezhaoImg" src="#{_result.imgUrl}" />
+	                                          </span>
+                                          <span class="zhezhaoTxt">#{_result.name}</span>
+                                          </td>
+                                          
+                                           <a4j:repeat value="#{_result.datads}" var="_arrValue" rowKeyVar="_index2">
+                                           		 <a4j:repeat value="#{_arrValue}" var="_arrs" >
+                                           		 	<td><h:outputText value="#{_arrs[0]}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                           		 	<td><h:outputText value="#{_arrs[1]}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                           		 	<td><h:outputText value="#{_arrs[2]}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                           		 	<td><h:outputText value="#{_arrs[3]}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                           		 </a4j:repeat>
+                                         </a4j:repeat>
+                                      </tr>
+                                     </a4j:repeat>
+                                 	<ui:fragment rendered="#{lackSum.resultData.size == 0}">    
+                                     <tr style="visibility:hidden;height: 2px;">
+                                          <td style="visibility:hidden;height: 2px;" >
+                                          </td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                      </tr>
+                                      </ui:fragment>
+                                  </tbody>
+                                </table>
+                                </div>
+                                </rich:panel>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <!-- 缺口内容 结束 -->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+         </div>         
+<a4j:form>
+	<a4j:queue requestDelay="100" ignoreDupResponses="true"/>
+	<a4j:jsFunction status="ajaxStatus" name="queryResult" action="#{lackSum.queryContractSum}" reRender="showPanel"   oncomplete="refreshAction();" >
+		<a4j:actionparam name="searchTime" assignTo="#{lackSum.searchTime}"/>
+		<a4j:actionparam name="baseId" assignTo="#{lackSum.baseId}"/>
+		<a4j:actionparam name="plantIdStr" assignTo="#{lackSum.plantIdStr}"/>
+		<a4j:actionparam name="andPlanted" assignTo="#{lackSum.andPlanted}"/>
+	</a4j:jsFunction>
+</a4j:form>     
+	
+<script src="#{request.contextPath}/asset/js/utils.js" type="text/javascript"></script> 
+<script>
+//<![CDATA[
+           
+ function exportCheck(){
+	var plantIdStr = "";
+	if(jquery("#plantIdStr").val() != null){
+		plantIdStr = jquery("#plantIdStr").val().toString();
+	}
+   	jquery("#plantIdStrHidden").val(plantIdStr);
+	return true;	
+ }
+
+/* 计算表格宽高一屏显示 */
+function change(){
+	var oCliHei = jquery(window).outerHeight();
+	var  tr_height_sum = 0;
+	jquery("div.sData #demoTable tr").each(
+			function(){
+				tr_height_sum += jquery(this).height();
+			}
+		);
+	var height_c = 0;
+	if(tr_height_sum < (oCliHei -220)){
+		height_c = oCliHei -220 - tr_height_sum - 25;
+	}
+	
+	var oCliWidth = jquery(window).outerWidth();
+	
+	var oFakeContainerWid = oCliWidth -140;
+	var oFakeContainerHei = oCliHei -220 - height_c;
+
+	
+// 	var oCliWidth = jquery(window).outerWidth();
+// 	var oCliHei = jquery(window).outerHeight();
+// 	var oFakeContainerWid = oCliWidth -140;
+// 	var oFakeContainerHei = oCliHei -220;
+	
+	jquery('.fakeContainer').css({
+		width : oFakeContainerWid + 1 ,
+		height : oFakeContainerHei	
+	});
+	
+	jquery('.sFHeader .sDefault-FixedHeaders').css({
+		width : oFakeContainerWid		
+	});
+	jquery('.sFHeader colgroup').css({
+		width : oFakeContainerWid		
+	});
+	jquery('.sHeader').css({
+		width : oFakeContainerWid + 1		
+	});
+	jquery('.sHeaderInner').css({
+		width : oFakeContainerWid		
+	});
+	jquery('.sHeaderInner .sDefault-Headers').css({
+		width : oFakeContainerWid		
+	});
+	jquery('.sFData').css({
+		width : oFakeContainerWid
+	});
+	
+	jquery('.sFHeader').css('width',147);
+	jquery('col:first-child').css('width',146);
+	jquery('.sData').css({
+		width : oFakeContainerWid-285,
+		height :  oFakeContainerHei - 72,
+		marginLeft : 147,	
+	});
+	jquery('.sData .sDefault-Main').css({
+		width : oFakeContainerWid+146,
+		marginLeft : -147	
+	});
+	
+	jquery('.sData .sDefault-Main colgroup').css({
+		width : oFakeContainerWid,
+		marginLeft : -147	
+	});
+};
+
+//搜索提交方法 
+function gainResult(){
+	var baseId = '#{sessionTake.baseModel.baseId}';
+	var and_planted = jquery("#and_planted").val();
+	var plantIdStr = "";
+	if(jquery("#plantIdStr").val() != null){
+		plantIdStr = jquery("#plantIdStr").val().toString();
+	}
+	var searchTime = document.getElementById("baseDateCt").innerHTML;
+// 	console.log(searchTime+ "baseid=" + baseId+ ";platnid="+plantIdStr + ";and_planted = " + and_planted);
+	queryResult( searchTime, baseId,plantIdStr,and_planted);
+    return true;
+}
+
+function noSelectedTOall(){
+	jquery(".filter-option").each(
+			function(){
+				if(jquery(this).text() == "无可选择项目"){
+					
+					jquery(this).text('全部');
+				}
+			}
+		);
+}
+
+//刷新
+function refreshAction(){
+ 		createTable();
+ 		change();
+ 		noSelectedTOall();
+}
+
+/* 表格控件 */
+function createTable(){
+	var oWindowWid = jquery(window).width();
+	var num = oWindowWid/200;
+	new superTable("demoTable", {
+		cssSkin: "sDefault",
+		headerRows : 2,
+		fixedCols: 1,
+		colWidths:[
+		146,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num
+		]
+	});
+}
+
+
+
+
+
+jquery(function(){
+	/* 表格控件 */
+	createTable();
+	
+	/* 下拉框 */
+	 jquery('#plantIdStr').attr("multiple","multiple");
+	jquery('.selectpicker').selectpicker('deselectAll');
+	
+	
+	change();
+	noSelectedTOall();
+	
+	/* 隔行换色 */
+	function changColor(){
+		jquery('.sFDataInner tbody tr:even').css('background','#fafafa');	
+		jquery('.sData tbody tr:even').css('background','#fafafa');
+	};
+	changColor();
+	
+	/* 改变浏览器窗口 */
+	jquery(window).resize(function(){
+		change();	
+		changColor();
+	});	
+
+
+});	
+//]]>
+</script>
+		</td>
+		
+	</ui:define>
+
+</ui:composition>

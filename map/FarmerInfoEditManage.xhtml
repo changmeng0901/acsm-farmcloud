@@ -1,0 +1,1141 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/skinBlue.css"/>	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+    
+	<style>
+	.form-control{
+			float:left;
+		}
+	.enableAcct .icheckbox_minimal-blue{}
+	.enableAcctCon{}
+	.iptName132{ float:left; width:132px; margin-right:10px; font-family:'宋体'; text-align:right;}
+	.modal .modal-header .close, .modal .modal-header .close:link {background: rgba(0, 0, 0, 0) url("../asset/images/farmingIco16.jpg") no-repeat scroll 0 0; border: medium none;float: right;height: 11px;margin-top: 5px;opacity: 1;width: 11px;filter:alpha(opacity=100);padding:auto;}
+	.modal .modal-header .close:hover, .modal-header .close:focus {background: rgba(0, 0, 0, 0) url("../asset/images/farmingIco17.jpg") no-repeat scroll 0 0;opacity: 1;filter:alpha(opacity=100);padding:auto;}
+	</style>
+	<script type="text/javascript">
+	document.getElementById("selectBaseDiv").style.display="none";
+		jquery = jQuery.noConflict();
+		  window.onload = function () {
+              var _base_id = "#{sessionTake.baseModel.baseId}";
+              if(_base_id!="" &amp;&amp; _base_id!=null &amp;&amp; _base_id!="0"){
+                  jQuery("#basicId").val(_base_id);
+              }
+		    jquery('.selectpicker').selectpicker();
+		    jquery('.tunnel').each(function(){
+			    jquery(this).selectpicker({noneSelectedText:"无选项"});
+	    	   	jquery(this).selectpicker('deselectAll');
+			    })
+			jquery('.tun3').find('.dropdown-toggle').attr('disabled','disabled');
+		  };
+		</script>
+<script>//<![CDATA[
+/* 单选按钮 复选框js */
+jquery(document).ready(function(){
+	jquery('input[name=iCheck]').iCheck({
+	  checkboxClass: 'icheckbox_minimal-blue',
+	  radioClass: 'iradio_minimal-blue',
+	  increaseArea: '20%' // optional
+	});
+	jquery('.enableAcctCon').hide();
+	jquery('input[name=iCheck]').on("ifClicked", function(event){
+		/*
+		if(this.checked){
+			jquery("#user\\:checkHide").val(0);
+		}else{
+			jquery("#user\\:checkHide").val(1);
+		}*/
+		if(this.checked){				
+			jquery("#user\\:checkHide").val(0);
+			jquery('.enableAcctCon').hide();
+		}else{
+			checkAccount("");			
+		}
+	});
+	/*
+	jquery('.enableAcct input').on('ifClicked', function(){
+	  if(jquery('.enableAcctCon').is(':hidden')){
+		  jquery('.enableAcctCon').show();
+	  }else{
+		  jquery('.enableAcctCon').hide();
+	  }
+	});
+	*/
+});
+function accountLimit(msg){				
+	if(null!=msg && ""!=msg){
+		jquery("#user\\:checkHide").val(0);
+		jquery('input[name=iCheck]').iCheck('uncheck');		
+		jquery('.enableAcctCon').hide();
+		jquery("#spanValue").html(msg);
+		jquery("#mySubmitModal").modal('show');
+	}else{
+		jquery("#user\\:checkHide").val(1);
+		jquery('.enableAcctCon').show();
+	}
+	
+}
+function closeMsgModal(){
+	jquery("#mySubmitModal").modal('hide');
+}
+//]]>
+</script>
+	<td valign="top">              
+		<h:form id="user" enctype="multipart/form-data" style="height: 100%;">
+		 <!-- Modal -->
+		<div aria-hidden="false" aria-labelledby="mySubmitModalLabel" role="dialog" tabindex="-1" id="mySubmitModal" class="modal fade in w600na" style="display: none;width:310px;top:30%;z-index:9999;">
+		  <div class="modal-dialog" style="width:310px;">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title" id="mySubmitModalLabel">提示</h4>
+		      </div>
+		      <div class="modal-body">
+		      	<p style="text-align:center;margin-bottom: 10px;"><img src="#{request.contextPath}/asset/images/farmingIco20_1.png" alt="" /></p>
+		       	<p style="text-align:center;line-height: 20px;" id="spanValue">
+		       		
+				</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="closeMsgModal()">知道了</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+                <div class="right_c" style="height:100%;">
+                	<div class="r_title">
+                    	<div class="r_t_l">
+						数字农场<span style="padding:0 5px;">&gt;</span><font size="3"><font size="3">人员档案</font>
+						</font></div>
+                    </div>
+				<!--入库订单列表开始-->
+				<!-- #{farmerInfoHome.getBaseEdit()} -->
+				<div class="all_d3">
+                        <div class="all_da all_w01" style="display:#{farmerInfoHome.baseId eq null or farmerInfoHome.baseId eq 0?'none':''}">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">基地名称：</td>
+                                    <td>
+                                        <select id="basicId" class="selectpicker nw200" name="baseId" onchange="changeBase(this.value)">
+                                        <option value="-1">全部</option>
+                                        <a:repeat value="#{sessionTake.baseModel.baseList}" var="var" >
+                                            <option value="#{var.id}">#{var.name}</option>
+                                        </a:repeat>
+                                        </select>
+                                       
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+						
+                    	<div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">姓名：</td>
+                                    <td>
+                                       <h:inputText styleClass="form-control nw221" value="#{farmerInfoHome.instance.name}" id="name"/>
+                                       <span class="finput" style="color:#ff0000;">*</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">职位：</td>
+                                    <td>
+                                    <span style="float:left">
+										<h:selectOneMenu id="positionsId" style="float:left" styleClass="selectpicker" value="#{farmerInfoHome.positionsId}">
+											<s:selectItems value="#{farmerInfoHome.posList}" var="_pos" itemValue="#{_pos.id}" label="#{_pos.name}"/>
+										</h:selectOneMenu></span>
+										<span class="finput" style="color:#ff0000;">*</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">角色：</td>
+                                    <td>
+                                    <span style="float:left">
+										<h:selectOneMenu id="type" styleClass="selectpicker" value="#{farmerInfoHome.instance.type}" onchange="changeFarmer(this)">
+											<s:selectItems value="#{farmerInfoHome.ftList}" var="_ftype" label="#{_ftype[0]}" itemValue="#{_ftype[1]}"/>
+										</h:selectOneMenu></span>
+										<span class="finput" style="color:#ff0000;">*</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="all_da all_w01 tun6" style="display: none">
+                        	<table>
+                                <tr>
+                                    <td class="all_te" >分配地块：</td>
+                                    <td>
+                                    <span style="float:left">
+										<select class="selectpicker tunnel" style="display: none;" data-live-search="true" multiple="multiple" onchange="changeTun6(event)">
+								      		<a:repeat value="#{farmerInfoHome.newParList}" var="par" >
+												<option value="#{par[0]}" ty="#{par[2]}" pid="#{par[3]}" style="padding-left:#{par[2]=='tunnelInfo'?'60px;':'40px;'}">#{par[1]}</option>
+								      		</a:repeat>
+										</select>
+									 </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                         <div class="all_da all_w01 tun3">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">分配地块：</td>
+                                    <td>
+                                    <span style="float:left">
+										<select class="selectpicker tunnel" style="display: none;" data-live-search="true" multiple="multiple" onchange="changeTun3(event)">
+								      		<a:repeat value="#{farmerInfoHome.newParList2}" var="par" >
+										    	<option value="#{par[0]}" ty="#{par[2]}" pid="#{par[3]}" style="padding-left:#{par[2]=='tunnelInfo'?'60px;':'40px;'}">#{par[1]}</option>
+								      		</a:repeat>
+										</select>
+									 </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="all_da all_w01 tun781" style="display: none">
+                        	<table>
+                                <tr>
+                                    <td class="all_te" >分配地块：</td>
+                                    <td>
+                                    <span style="float:left">
+										<select class="selectpicker tunnel" style="display: none;" data-live-search="true" multiple="multiple" onchange="changeTun781(event)">
+								      		<a:repeat value="#{farmerInfoHome.newParList3}" var="par" >
+												<option value="#{par[0]}" ty="#{par[2]}" pid="#{par[3]}" style="padding-left:#{par[2]=='tunnelInfo'?'60px;':'40px;'}">#{par[1]}</option>
+								      		</a:repeat>
+										</select>
+									 </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <h:inputHidden value="#{farmerInfoHome.tunnelIds}" id="tunnelIds"/>
+                    	<div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">年龄：</td>
+                                    <td>
+                                        <h:inputText id="age"  value="#{farmerInfoHome.instance.age}" styleClass="form-control nw221" />
+                                        <span class="finput">岁</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">学历：</td>
+                                    <td>
+	                                    <span style="float:left">
+											<h:selectOneMenu  id="qualification" styleClass="selectpicker" value="#{farmerInfoHome.instance.dataDicId}" >
+												<f:selectItem  itemLabel="请选择" itemValue="-1"/>
+												<s:selectItems value="#{farmerInfoHome.xlList}" var="var_xl" label="#{var_xl.name}" itemValue="#{var_xl.dataDicId}"/>
+											</h:selectOneMenu>
+										</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    	<div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">从业年限：</td>
+                                    <td>
+                                     <h:inputText id="workAge"  value="#{farmerInfoHome.instance.workAge}" styleClass="form-control nw221"/>
+                                     <span class="finput">年</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    	<div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">荣誉：</td>
+                                    <td>
+                                       <h:inputText id="honour" maxlength="255"  value="#{farmerInfoHome.instance.honour}" styleClass="form-control nw221" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">员工卡：</td>
+                                    <td>
+										<select class="selectpicker nw200" data-live-search="true" id="ariId"  style="display: none;">
+											<option value="0">无</option>
+											<a:repeat value="#{farmerInfoHome.getAmRfidInfoList()}" var="_ari" >
+												<option value="#{_ari.id}">#{_ari.rfidSn}</option>
+								      		</a:repeat>
+										</select>
+										<h:inputHidden id="hidAriId" value="#{farmerInfoHome.ariId}"  />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01" style="width:auto; display:block;">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">IE版图片：</td>
+                                     <td width="250" align="left">
+										<s:fileUpload id="iePitcure" size="30"
+											accept="image/png,image/jpeg,image/gif"
+											contentType="image/png,image/jpeg,image/gif"
+											fileName="#{farmerInfoHome.instance.iePitcureName}"
+											data="#{farmerInfoHome.instance.iePitcureByte}">
+										</s:fileUpload>
+									</td>
+									<td align="left" style="padding-left:10px;">	
+										<font color="#FF0000">图片宽高标准：144x144(像素) 支持格式：jpg,gif,png,jpeg,bmp,3gp</font>
+						            </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01" style="width:auto; display:block;">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">手机版图片：</td>
+                                    <td width="250" align="left">
+                                      <s:fileUpload id="picture" size="30"
+											accept="image/png,image/jpeg,image/gif"
+											contentType="image/png,image/jpeg,image/gif"
+											fileName="#{farmerInfoHome.instance.pictureName}"
+											data="#{farmerInfoHome.instance.pictureByte}">
+										</s:fileUpload>
+                                    </td>
+                                    <td align="left" style="padding-left:10px;">	
+										<font color="#FF0000">图片宽高标准：152x92(像素) 支持格式：jpg,gif,png,jpeg,bmp,3gp</font>
+						            </td>
+                                </tr>
+                            </table>
+                        </div>
+                         <div class="all_da all_w01" style="width:85%;">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">农务感言：</td>
+                                    <td >
+                                       <h:inputTextarea id="wards" styleClass="form-control nw420" rows="3"  value="#{farmerInfoHome.instance.wards}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="all_da all_w01" style="width:85%;">
+                        	<table>
+                                <tr>
+							<td class="all_te">实践经验介绍：</td>
+							<td>
+								<h:inputTextarea id="description" styleClass="form-control nw420" rows="3"  value="#{farmerInfoHome.instance.description}" />
+                            </td>
+						</tr>
+                            </table>
+                        </div>
+                        <div id="borderBottomDiv" style="width:100%; height:10px; border-bottom:1px solid #ddd; margin-bottom:10px; overflow:hidden; zoom:1;"></div>
+                        	<!-- 启用账号 开始 -->
+		                    <div id="isEnableUser" class="pt20">
+		                    	<table class="enableAcct" width="100%" cellpadding="0" cellspacing="0">
+		                        	<tr>
+		                            	<td colspan="2">
+		                                	<div class="pb20">
+		                                    	<table>
+		                                        	<tr>
+		                                            	<td><span class="iptName132">启用账号：</span></td>
+		                                                <td>
+		                                                <ul>
+		                                                    <li class="fl">
+		                                                        <input type="checkbox" name="iCheck"/>
+		                                                         <h:inputHidden id="checkHide" value="#{farmerInfoHome.enable}" />
+		                                                        <label style="padding:0 15px 0 5px; margin-bottom:0; font-family:'宋体'; font-weight:normal;"/>
+		                                                    </li>
+		                                                </ul>   
+		                                                </td>
+		                                            </tr>
+		                                        </table>
+		                                    </div>
+		                                </td>
+		                            </tr>
+		                        </table>
+		                        <table class="enableAcctCon" width="100%" cellpadding="0" cellspacing="0" style="display:block;">
+		                        	<tr>
+		                                <td width="50%">
+		                                	<div class="pb20">
+		                                    	<table>
+		                                        	<tr>
+		                                            	<td><span class="iptName132">用户名：</span></td>
+		                                                <td>
+		                                                	<h:inputText id="userName" onfocus="nameFocus(this)" onblur="nameBlur(this)" value="#{farmerInfoHome.user.name}" styleClass="form-control" style="width:194px;"/>
+		                                                </td>
+		                                            </tr>
+		                                        </table>
+		                                    </div>
+		                                </td>
+		                                <td width="50%">
+		                                	<div class="pb20">
+		                                    	<table>
+		                                        	<tr>
+		                                            	<td><span class="iptName132">Email：</span></td>
+		                                                <td>
+		                                                	<h:inputText id="email" value="#{farmerInfoHome.user.email}" styleClass="form-control" style="width:194px;"/>
+		                                                </td>
+		                                            </tr>
+		                                        </table>
+		                                    </div>
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                            	<td width="50%">
+		                                	<div class="pb20">
+		                                    	<table>
+		                                        	<tr>
+		                                            	<td><span class="iptName132">密码：</span></td>
+		                                                <td>
+		                                                	<h:inputSecret id="password" value="#{farmerInfoHome.user.password}" styleClass="form-control" style="width:194px;"/>
+		                                                </td>
+		                                            </tr>
+		                                        </table>
+		                                    </div>
+		                                </td>
+		                                <td width="50%">
+		                                	<div class="pb20">
+		                                    	<table>
+		                                        	<tr>
+		                                            	<td><span class="iptName132">确认密码：</span></td>
+		                                                <td>
+		                                                	<h:inputSecret id="verify" value="#{farmerInfoHome.verify}" styleClass="form-control" style="width:194px;"/>
+		                                                </td>
+		                                            </tr>
+		                                        </table>
+		                                    </div>
+		                                </td>
+		                            </tr>
+		                        </table>
+		                    </div>
+		                    <!-- 启用账号 结束 -->
+                        
+                        
+                        <div class="clear"></div>
+                   </div>
+                    
+                         <table width="280" style="margin:35px auto 0 auto;">
+						<tr>
+							<td>
+						<h:commandButton id="persist2" styleClass="btn btn-primary" value="提交" rendered="#{!farmerInfoHome.managed}"  onclick="return haName()"/>
+						<h:commandButton id="persist" styleClass="btn btn-primary" value="提交" action="#{farmerInfoHome.persist}" rendered="#{!farmerInfoHome.managed}"  onclick="return checkSubmit()" style="display:none;"/>
+		            	<h:commandButton id="update"  styleClass="btn btn-primary" value="提交" action="#{farmerInfoHome.update}" rendered="#{farmerInfoHome.managed}"   onclick="return checkSubmit()"/>
+		    			&#160;<s:link view="/map/FarmerInfoManageList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" >
+			    				<f:param name="baseId" value="#{farmerInfoHome.baseId}"/>
+			    			</s:link>
+			    			
+                            </td>
+						</tr>
+                   </table> 
+				<!--入库订单列表结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div class="clear"></div>
+              </h:form>
+<a:form id="formid" >
+<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+<!-- 删除基地锚点 -->
+<a:jsFunction name="changeBase"  eventsQueue="mainQueue"  data="#{farmerInfoHome.returnStr}" action="#{farmerInfoHome.changeBase2}" oncomplete="changeBase_next(data)">
+   <a:actionparam name="param" assignTo="#{farmerInfoHome.bId}"/>
+</a:jsFunction>
+<a:jsFunction name="havename"  data="#{farmerInfoHome.nameStr}" action="#{farmerInfoHome.haveName}" oncomplete="nameHui(data)">
+   <a:actionparam name="nameNow" assignTo="#{farmerInfoHome.nameNow}"/>
+</a:jsFunction>
+<a:jsFunction eventsQueue="mainQueue" name="checkAccount"  action="#{farmerInfoHome.checkAccount()}" data="#{farmerInfoHome.errorMsg}" oncomplete="accountLimit(data)" >
+	<a:actionparam name="userId" assignTo="#{farmerInfoHome.userId}"/>
+</a:jsFunction>
+</a:form>
+<script type="text/javascript">
+	   //<![CDATA[	
+	          function changeBase_next(data){
+	        	  jquery("#user\\:positionsId").empty();
+	        	  jquery("#user\\:positionsId").append(data);
+	        	  jquery("#user\\:positionsId").selectpicker("refresh");
+	        	  
+	          }    
+	              
+	              
+jquery(".rich-calendar-input").addClass("r_c_text_date");
+jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+var m3="#{farmerInfoHome.chongfu}";
+if(m3!="" && m3 != "0"){
+	document.getElementById("productMsg").innerHTML = m3;
+	   jquery("#myModal").modal('show');
+}
+jquery(document).ready(function(){
+	document.getElementById("user:userName").value = "请将手机号设定为用户名";
+	document.getElementById("user:email").value = "";
+	document.getElementById("user:password").value = "";
+	var promptMessage = "#{farmerInfoHome.promptMessage}";
+	if(promptMessage != ""){
+		document.getElementById("productMsg").innerHTML = promptMessage;
+		jquery("#myModal").modal('show');
+	}
+});
+function  nameFocus(obj){
+	if(obj.value=="请将手机号设定为用户名"){
+			obj.value="";
+	}
+	
+} 
+function nameBlur(obj){
+   if(obj.value==""){
+		obj.value="请将手机号设定为用户名";
+	}
+}
+function trim(str){
+   	return str.replace(/(^\s+)|\s+$/g,"");
+ }
+	function checkSubmit(){
+		   var name = document.getElementById("user:name").value; 
+		   var positions = document.getElementById("user:positionsId").value; 
+		   var type = document.getElementById("user:type").value; 
+		   var age = document.getElementById("user:age").value; 
+		   var workAge = document.getElementById("user:workAge").value; 
+		   var regNum = /^[1-9]+[0-9]*]*$/; 
+			var obx = document.getElementById("user:checkHide").value;
+			var a1 = document.getElementById("user:userName").value;
+	        var m1 = document.getElementById("user:password").value;
+			var m2 = document.getElementById("user:verify").value;
+			var email = document.getElementById("user:email").value;
+			var wards = document.getElementById("user:wards").value;
+			var description = document.getElementById("user:description").value;
+			var emailReg = /^([a-z0-9A-Z]+[_-|\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\.)+[a-zA-Z]{2,}$/;
+			var passChe1 = /^[a-zA-Z0-9]+$/;
+			var passChe2 = /(^(.*\d+.*[a-zA-Z]+.*)$)|(^(.*[a-zA-Z]+.*\d+.*)$)/;
+			var re= /^(13[0-9]|17[0-9]|15[012356789]|18[0-9]|14[0-9])[0-9]{8}$/;
+		   if(trim(name) == ""){
+				document.getElementById("productMsg").innerHTML = "请输入姓名";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+		   if(name.length > 10 ){
+			   document.getElementById("productMsg").innerHTML = "姓名太长，不能超过10个字符!";
+				jquery("#myModal").modal('show');
+				return false;
+		   }
+		   if(positions == ""){
+				document.getElementById("productMsg").innerHTML = "请先添加职位";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+		   if(type == ""){
+				document.getElementById("productMsg").innerHTML = "请先添加角色";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+			if(age == ""){
+				
+			}else{
+				if(!regNum.test(age)){
+					document.getElementById("productMsg").innerHTML = "年龄只能是数字";
+					jquery("#myModal").modal('show');
+					return false;
+				}else if(age < 18 || age > 100){
+					document.getElementById("productMsg").innerHTML = "年龄添加错误";
+					jquery("#myModal").modal('show');
+					return false;
+				}
+			}
+			if(workAge != "" && !regNum.test(workAge)){
+				document.getElementById("productMsg").innerHTML = "从业年限只能是数字";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+			if(parseInt(workAge)>99){
+				document.getElementById("productMsg").innerHTML = "从业年限必须为2位正整数!";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+			if(parseInt(workAge) > parseInt(age)){
+				document.getElementById("productMsg").innerHTML = "从业年限不能大于年龄";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+
+			if(obx == 1){
+				if(a1=="" || a1 == "请将手机号设定为用户名"){
+		     		document.getElementById("productMsg").innerHTML = "用户名不能为空";
+		     		jquery("#myModal").modal('show');
+		     		return false;
+		     	}else if(!re.test(a1) || a1.length != 11){
+		     		document.getElementById("productMsg").innerHTML = "请将手机号设定为用户名!";
+					jquery("#myModal").modal('show');
+					return false;
+		     	}
+				if(m1==""){
+					document.getElementById("productMsg").innerHTML = "密码不能为空";
+	        		jquery("#myModal").modal('show');
+					return false;
+				}else if(m1.length <= 6 || !passChe1.test(m1) || !passChe2.test(m1)){
+					document.getElementById("productMsg").innerHTML = "密码长度必须大于6，并且只能由字母和数字组成!";
+					jquery("#myModal").modal('show');
+					return false;
+				}else if(a1 == m1){
+					document.getElementById("productMsg").innerHTML = "用户名密码不能相同!";
+					jquery("#myModal").modal('show');
+					return false;
+				}	
+				if(m2==""){
+					document.getElementById("productMsg").innerHTML = "确认密码不能为空";
+	        		jquery("#myModal").modal('show');
+					return false;
+				}
+				if(m1!=m2){
+					document.getElementById("productMsg").innerHTML = "两次密码不一致";
+	        		jquery("#myModal").modal('show');
+					return false;
+				}
+				if(email != "" && !emailReg.test(email)){
+					document.getElementById("productMsg").innerHTML = "请输入正确的电子邮件地址";
+					jquery("#myModal").modal('show');
+					return false;
+				}
+			}
+			if(wards.length>100){
+				document.getElementById("productMsg").innerHTML = "农务感言最多为100字";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+			if(description.length>100){
+				document.getElementById("productMsg").innerHTML = "实践经验介绍最多为100字";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+			//员工卡
+			jquery('#user\\:hidAriId').val(jquery('#ariId').val());
+			if(jquery('#user\\:type').val() == 6){
+				var tun6val=jquery('.tun6').find('.tunnel').val();
+				if(tun6val==null){
+					document.getElementById("productMsg").innerHTML = "请分配地块";
+					jquery("#myModal").modal('show');
+					return false;
+				}else{
+					var tunids=""
+					for(var i=0;i<tun6val.length;i++){
+						if(jquery("[value="+tun6val[i]+"]").attr("ty")!="partition" && tun6val[i]!=0){
+							tunids+=tun6val[i]+",";
+						}
+					}
+					jquery('#user\\:tunnelIds').val(tunids.split(','));
+				}
+			}else if(jquery('#user\\:type').val() == 3){
+				var tun3val=jquery('.tun3').find('.tunnel').val();
+				if(tun3val==null){
+					document.getElementById("productMsg").innerHTML = "请分配地块";
+					jquery("#myModal").modal('show');
+					return false;
+				}else{
+					var tunids=""
+					for(var i=0;i<tun3val.length;i++){
+						if(jquery("[value="+tun3val[i]+"]").attr("ty")!="partition" && tun3val[i]!=0){
+							tunids+=tun3val[i]+",";
+						}
+					}
+					jquery('#user\\:tunnelIds').val(tunids.split(','));
+				}
+			}else if(jquery('#user\\:type').val() == 781){
+				var tun781val=jquery('.tun781').find('.tunnel').val();
+				if(tun781val==null){
+					document.getElementById("productMsg").innerHTML = "请分配地块";
+					jquery("#myModal").modal('show');
+					return false;
+				}else{
+					var tunids=""
+					for(var i=0;i<tun781val.length;i++){
+						if(jquery("[value="+tun781val[i]+"]").attr("ty")!="partition" && tun781val[i]!=0){
+							tunids+=tun781val[i]+",";
+						}
+					}
+					jquery('#user\\:tunnelIds').val(tunids.split(','));
+				}
+			}else{
+				jquery('#user\\:tunnelIds').val(null);
+			}
+	}
+
+	
+	function closeMethod(){
+		 var name = document.getElementById("user:name").value; 
+		   var age = document.getElementById("user:age").value; 
+		   var workAge = document.getElementById("user:workAge").value; 
+		   var regNum = /^[1-9]+[0-9]*]*$/; 
+		   if(name == ""){
+			   document.getElementById("user:name").focus();
+			   return false;
+			}
+		   if(age != "" && !regNum.test(age)){
+				 document.getElementById("user:age").focus();
+				   return false;
+				}
+		   if(workAge != "" && !regNum.test(workAge)){
+				 document.getElementById("user:workAge").focus();
+				   return false;
+			}
+		}
+
+	function changeFarmer(obj){
+		if(jquery(obj).val() == 7){
+			document.getElementById("user:checkHide").value = 0;
+			jquery("#borderBottomDiv").hide();
+			jquery("#isEnableUser").hide();
+		}else{
+			jquery("#borderBottomDiv").show();
+			jquery("#isEnableUser").show();
+		}
+		if(jquery(obj).val() == 6){
+			jquery('.tun6').removeAttr('style');
+			jquery('.tun3').attr('style','display:none');
+			jquery('.tun781').attr('style','display:none');
+		}else if(jquery(obj).val() == 3){
+			jquery('.tun3').removeAttr('style');
+			jquery('.tun3').find('.dropdown-toggle').removeAttr('disabled');
+			jquery('.tun6').attr('style','display:none');
+			jquery('.tun781').attr('style','display:none');
+		}else if(jquery(obj).val() == 781){
+			jquery('.tun781').removeAttr('style');
+			jquery('.tun3').attr('style','display:none');
+			jquery('.tun6').attr('style','display:none');
+		}else{
+			jquery('.tun781').attr('style','display:none');
+			jquery('.tun6').attr('style','display:none');
+			jquery('.tun3').removeAttr('style');
+			jquery('.tun3').find('.dropdown-toggle').attr('disabled','disabled');
+		}
+	}
+
+	function haName(){
+	  if(trim(jquery('#user\\:name').val()) == ""){
+			document.getElementById("productMsg").innerHTML = "请输入姓名";
+			jquery("#myModal").modal('show');
+			return false;
+		}
+		havename(jquery('#user\\:name').val());
+		return false;
+	}
+	function nameHui(data){
+		if(data==1){
+			alert("姓名已存在！")
+		}else{
+			jquery("#user\\:persist").click();
+		}
+		
+		}
+
+	function changeTun3(event){
+		var tunnelIds=jquery('#user\\:tunnelIds').val();//历史数据
+
+		//没有选中数据
+		if(jquery(".tun3 .tunnel").val()==null){
+			jquery('#user\\:tunnelIds').val("");
+		}else{//选中数据
+			var ids3=jquery(".tun3 .tunnel").val();//选中数据
+			
+			//历史数据中长度为0  新增数据
+			if(tunnelIds.length==0){
+				var ids="";
+				/*循环选中数据  为0的  全部选中
+				    有attr("ty") =partition  区域选中
+				    其他为单独地块选中
+				*/
+				for(var i=0;i<ids3.length;i++){
+					if(ids3[i]==0){
+						ids="";
+						jquery(".tun3 .tunnel").find('option').each(function(){
+							ids+=jquery(this).val()+",";
+						})
+						break;
+					}
+					ids+=ids3[i]+",";
+					if(jquery(".tun3 .tunnel").find("[value="+ids3[i]+"]").attr("ty")=="partition"){
+						jquery(".tun3 .tunnel").find("[pid="+ids3[i]+"]").each(function(){
+							ids+=jquery(this).attr('value')+",";
+						})
+					}
+				}
+
+				/*选中长度 = 总长度-1
+				    如果选中数据中 没有 0（全部）
+				    把0加进去
+				*/
+				
+				//赋值
+				ids=ids.substring(0,ids.length-1);
+				jquery('.tun3 .tunnel').removeAttr('onchange');
+				jquery('.tun3 .tunnel').selectpicker('val',ids.split(','));
+				jquery('#user\\:tunnelIds').val(ids);
+				jquery('.tun3 .tunnel').attr('onchange','changeTun3(event)');
+			}else{//历史数据中长度！=0   修改数据
+				var tunnelIds_0=tunnelIds.split(","); //历史数据
+				var ids="";//新生成数据
+				//历史数据长度 > 新选中数据长度  为去掉勾选
+				if(tunnelIds_0.length>ids3.length){
+					var difference =""; //去掉勾选的value
+					//循环 查找被去掉勾选的值
+				    for (key in tunnelIds_0) {
+				        var stra = tunnelIds_0[key];
+				        var count = 0;  
+				        for(var j= 0; j < ids3.length; j++){  
+				            var strb = ids3[j];  
+				            if(stra == strb) {  
+				                count++;  
+				            }  
+				        }  
+				        if(count==0) {
+				        	difference=stra;  
+				        }  
+					}
+				  //去掉勾选值不为0
+					//去掉勾选值 为区域  把区域及其下级地块和全部去掉
+					if(jquery(".tun3 .tunnel").find("[value="+difference+"]").attr("ty")=="partition"){
+						for(var i=0;i<ids3.length;i++){
+							if(ids3[i]!=difference && jquery("[value="+ids3[i]+"]").attr('pid')!=difference && ids3[i]!=0){
+								ids+=ids3[i]+",";
+							}
+						}
+					}else{//去掉勾选值 为地块 把地块及其上级区域和全部去掉
+						for(var i=0;i<ids3.length;i++){
+							if(ids3[i]!=difference && jquery("[value="+difference+"]").attr('pid')!=ids3[i] && ids3[i]!=0){
+								ids+=ids3[i]+",";
+							}
+						}
+					}
+				}else{//历史数据长度 > 新选中数据长度  为添加勾选
+					var difference =""; //添加勾选的value
+					//循环 查找添加勾选的值
+				    for (key in ids3) {
+				        var stra = ids3[key];
+				        var count = 0;  
+				        for(var j= 0; j < tunnelIds_0.length; j++){  
+				            var strb = tunnelIds_0[j];  
+				            if(stra == strb) {  
+				                count++;  
+				            }  
+				        }  
+				        if(count==0) {
+				        	difference=stra;  
+				        }  
+					}
+				  	//添加勾选值不为0
+				    //添加勾选为 区域  区域及下级地块 全部添加
+					if(jquery(".tun3 .tunnel").find("[value="+difference+"]").attr("ty")=="partition"){
+						for(var i=0;i<ids3.length;i++){
+							if(jquery("[value="+ids3[i]+"]").attr('pid')!=difference && ids3[i]!=0){
+								ids+=ids3[i]+",";
+							}
+						}
+						jquery(".tun3 .tunnel").find("[pid="+difference+"]").each(function(){
+							ids+=jquery(this).attr('value')+",";
+						})
+					}else{//添加勾选 为 地块  单独添加
+						for(var i=0;i<ids3.length;i++){
+							ids+=ids3[i]+",";
+						}
+					}
+				}
+
+				//赋值
+				if(ids!=""){
+					ids=ids.substring(0,ids.length-1);
+					jquery('.tun3 .tunnel').removeAttr('onchange');
+					jquery('.tun3 .tunnel').selectpicker('val',ids.split(','));
+					jquery('#user\\:tunnelIds').val(ids);
+					jquery('.tun3 .tunnel').attr('onchange','changeTun3(event)');
+				}else{
+					jquery('.tun3 .tunnel').removeAttr('onchange');
+					jquery('.tun3 .tunnel').selectpicker('val',null);
+					jquery('#user\\:tunnelIds').val("");
+					jquery('.tun3 .tunnel').attr('onchange','changeTun3(event)');
+				}
+			}
+		}
+	}
+
+  	function changeTun6(event){
+  		var tunnelIds=jquery('#user\\:tunnelIds').val();
+
+		if(jquery(".tun6 .tunnel").val()==null){
+			jquery('#user\\:tunnelIds').val("");
+		}else{
+			var ids6=jquery(".tun6 .tunnel").val();
+			if(tunnelIds.length==0){
+				var ids="";
+				for(var i=0;i<ids6.length;i++){
+					if(ids6[i]==0){
+						ids="";
+						jquery(".tun6 .tunnel").find('option').each(function(){
+							ids+=jquery(this).val()+",";
+						})
+						break;
+						
+					}
+					ids+=ids6[i]+",";
+					if(jquery(".tun6 .tunnel").find("[value="+ids6[i]+"]").attr("ty")=="partition"){
+						jquery(".tun6 .tunnel").find("[pid="+ids6[i]+"]").each(function(){
+							ids+=jquery(this).attr('value')+",";
+						})
+					}
+				}
+				
+				
+				ids=ids.substring(0,ids.length-1);
+				jquery('.tun6 .tunnel').removeAttr('onchange');
+				jquery('.tun6 .tunnel').selectpicker('val',ids.split(','));
+				jquery('#user\\:tunnelIds').val(ids);
+				jquery('.tun6 .tunnel').attr('onchange','changeTun6(event)');
+			}else{
+				var tunnelIds_0=tunnelIds.split(",");
+				var ids="";
+
+				if(tunnelIds_0.length>ids6.length){
+					var difference =""; 
+				    for (key in tunnelIds_0) {
+				        var stra = tunnelIds_0[key];
+				        var count = 0;  
+				        for(var j= 0; j < ids6.length; j++){  
+				            var strb = ids6[j];  
+				            if(stra == strb) {  
+				                count++;  
+				            }  
+				        }  
+				        if(count==0) {
+				        	difference=stra;  
+				        }  
+					}
+					
+					if(jquery(".tun6 .tunnel").find("[value="+difference+"]").attr("ty")=="partition"){
+						for(var i=0;i<ids6.length;i++){
+							if(ids6[i]!=difference && jquery("[value="+ids6[i]+"]").attr('pid')!=difference && ids6[i]!=0){
+								ids+=ids6[i]+",";
+							}
+						}
+					}else{
+						for(var i=0;i<ids6.length;i++){
+							if(ids6[i]!=difference && jquery("[value="+difference+"]").attr('pid')!=ids6[i] && ids6[i]!=0){
+								ids+=ids6[i]+",";
+							}
+						}
+					}
+		
+				}else{
+					var difference =""; 
+				    for (key in ids6) {
+				        var stra = ids6[key];
+				        var count = 0;  
+				        for(var j= 0; j < tunnelIds_0.length; j++){  
+				            var strb = tunnelIds_0[j];  
+				            if(stra == strb) {  
+				                count++;  
+				            }  
+				        }  
+				        if(count==0) {
+				        	difference=stra;  
+				        }  
+					}
+					
+					if(jquery(".tun6 .tunnel").find("[value="+difference+"]").attr("ty")=="partition"){
+						for(var i=0;i<ids6.length;i++){
+							if(jquery(".tun6 .tunnel").find("[value="+ids6[i]+"]").attr('pid')!=difference && ids6[i]!=0){
+								ids+=ids6[i]+",";
+							}
+						}
+						jquery(".tun6 .tunnel").find("[pid="+difference+"]").each(function(){
+							ids+=jquery(this).attr('value')+",";
+						})
+					}else{
+						for(var i=0;i<ids6.length;i++){
+							ids+=ids6[i]+",";
+						}
+					}
+						
+				}
+				if(ids!=""){
+					ids=ids.substring(0,ids.length-1);
+					jquery('.tun6 .tunnel').removeAttr('onchange');
+					jquery('.tun6 .tunnel').selectpicker('val',ids.split(','));
+					jquery('#user\\:tunnelIds').val(ids);
+					jquery('.tun6 .tunnel').attr('onchange','changeTun6(event)');
+				}else{
+					jquery('.tun6 .tunnel').removeAttr('onchange');
+					jquery('.tun6 .tunnel').selectpicker('val',null);
+					jquery('#user\\:tunnelIds').val("");
+					jquery('.tun6 .tunnel').attr('onchange','changeTun6(event)');
+				}
+			}
+		}
+
+	 }
+
+
+  	function changeTun781(event){
+		var tunnelIds=jquery('#user\\:tunnelIds').val();//历史数据
+
+		//没有选中数据
+		if(jquery(".tun781 .tunnel").val()==null){
+			jquery('#user\\:tunnelIds').val("");
+		}else{//选中数据
+			var ids781=jquery(".tun781 .tunnel").val();//选中数据
+			
+			//历史数据中长度为0  新增数据
+			if(tunnelIds.length==0){
+				var ids="";
+				/*循环选中数据  为0的  全部选中
+				    有attr("ty") =partition  区域选中
+				    其他为单独地块选中
+				*/
+				for(var i=0;i<ids781.length;i++){
+					if(ids781[i]==0){
+						ids="";
+						jquery(".tun781 .tunnel").find('option').each(function(){
+							ids+=jquery(this).val()+",";
+						})
+						break;
+					}
+					ids+=ids781[i]+",";
+					if(jquery(".tun781 .tunnel").find("[value="+ids781[i]+"]").attr("ty")=="partition"){
+						jquery(".tun781 .tunnel").find("[pid="+ids781[i]+"]").each(function(){
+							ids+=jquery(this).attr('value')+",";
+						})
+					}
+				}
+
+				/*选中长度 = 总长度-1
+				    如果选中数据中 没有 0（全部）
+				    把0加进去
+				*/
+				
+				//赋值
+				ids=ids.substring(0,ids.length-1);
+				jquery('.tun781 .tunnel').removeAttr('onchange');
+				jquery('.tun781 .tunnel').selectpicker('val',ids.split(','));
+				jquery('#user\\:tunnelIds').val(ids);
+				jquery('.tun781 .tunnel').attr('onchange','changeTun781(event)');
+			}else{//历史数据中长度！=0   修改数据
+				var tunnelIds_0=tunnelIds.split(","); //历史数据
+				var ids="";//新生成数据
+				//历史数据长度 > 新选中数据长度  为去掉勾选
+				if(tunnelIds_0.length>ids781.length){
+					var difference =""; //去掉勾选的value
+					//循环 查找被去掉勾选的值
+				    for (key in tunnelIds_0) {
+				        var stra = tunnelIds_0[key];
+				        var count = 0;  
+				        for(var j= 0; j < ids781.length; j++){  
+				            var strb = ids781[j];  
+				            if(stra == strb) {  
+				                count++;  
+				            }  
+				        }  
+				        if(count==0) {
+				        	difference=stra;  
+				        }  
+					}
+				  //去掉勾选值不为0
+					//去掉勾选值 为区域  把区域及其下级地块和全部去掉
+					if(jquery(".tun781 .tunnel").find("[value="+difference+"]").attr("ty")=="partition"){
+						for(var i=0;i<ids781.length;i++){
+							if(ids781[i]!=difference && jquery("[value="+ids781[i]+"]").attr('pid')!=difference && ids781[i]!=0){
+								ids+=ids781[i]+",";
+							}
+						}
+					}else{//去掉勾选值 为地块 把地块及其上级区域和全部去掉
+						for(var i=0;i<ids781.length;i++){
+							if(ids781[i]!=difference && jquery("[value="+difference+"]").attr('pid')!=ids781[i] && ids781[i]!=0){
+								ids+=ids781[i]+",";
+							}
+						}
+					}
+				}else{//历史数据长度 > 新选中数据长度  为添加勾选
+					var difference =""; //添加勾选的value
+					//循环 查找添加勾选的值
+				    for (key in ids781) {
+				        var stra = ids781[key];
+				        var count = 0;  
+				        for(var j= 0; j < tunnelIds_0.length; j++){  
+				            var strb = tunnelIds_0[j];  
+				            if(stra == strb) {  
+				                count++;  
+				            }  
+				        }  
+				        if(count==0) {
+				        	difference=stra;  
+				        }  
+					}
+				  	//添加勾选值不为0
+				    //添加勾选为 区域  区域及下级地块 全部添加
+					if(jquery(".tun781 .tunnel").find("[value="+difference+"]").attr("ty")=="partition"){
+						for(var i=0;i<ids781.length;i++){
+							if(jquery("[value="+ids781[i]+"]").attr('pid')!=difference && ids781[i]!=0){
+								ids+=ids781[i]+",";
+							}
+						}
+						jquery(".tun781 .tunnel").find("[pid="+difference+"]").each(function(){
+							ids+=jquery(this).attr('value')+",";
+						})
+					}else{//添加勾选 为 地块  单独添加
+						for(var i=0;i<ids781.length;i++){
+							ids+=ids781[i]+",";
+						}
+					}
+				}
+
+				//赋值
+				if(ids!=""){
+					ids=ids.substring(0,ids.length-1);
+					jquery('.tun781 .tunnel').removeAttr('onchange');
+					jquery('.tun781 .tunnel').selectpicker('val',ids.split(','));
+					jquery('#user\\:tunnelIds').val(ids);
+					jquery('.tun781 .tunnel').attr('onchange','changeTun781(event)');
+				}else{
+					jquery('.tun781 .tunnel').removeAttr('onchange');
+					jquery('.tun781 .tunnel').selectpicker('val',null);
+					jquery('#user\\:tunnelIds').val("");
+					jquery('.tun781 .tunnel').attr('onchange','changeTun781(event)');
+				}
+			}
+		}
+	}
+	//]]>
+</script>
+            </td> 
+	</ui:define>
+
+</ui:composition>

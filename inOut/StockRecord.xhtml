@@ -1,0 +1,669 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<style>
+.fl{ float: left;}
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:220px;}
+.cm_select01 .btn-group .btn{ height:34px; line-height:20px; box-sizing:border-box;}
+.cm_select01 input.form-control{ height:34px; line-height:20px; box-sizing:border-box;}
+.fxy_ul{min-height:46px;}
+.reili{ padding:5px 0;}
+.box_back{ position: fixed; left:0; top:0; width:100%;height:100%;background:#fff; opacity:0.5;filter:alpha(opacity=50);}
+/* 新增高级搜索样式*/
+/* 单选按钮复选框 */
+.iradio_minimal-blue, .iradio_minimal-blue.checked { float: left;}
+.icheckbox_minimal-blue, .iradio_minimal-blue{ margin-top:8px;}
+
+.div200{ float:left; display:inline-block;}
+.div200 .bootstrap-select{  width:200px;}
+.div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){ width:200px;}
+.div200 .bootstrap-select span{ font-size:12px; font-family:'微软雅黑';}
+.div200 .bootstrap-select > .btn{ height:34px;}
+.div200 .bootstrap-select.btn-group .dropdown-menu{ max-width:200px;}/* 下拉框最大宽度控制 */
+.div200 .bootstrap-select.btn-group .btn .filter-option{ display:inline-block; height:20px; line-height:20px; overflow:hidden;}
+.datetimepicker{ margin-left:8px;}
+.bootData200{ position:relative; width:200px;}
+.bootData200 input{ width:100%; height:34px; line-height:20px; padding-left:10px; padding-right:10px; box-sizing:border-box; border-radius:4px;}
+.form_datetime .add-on{ position:absolute; right:5px; top:10px; width:14px; height:14px;}
+.input-append.date .add-on i, .input-prepend.date .add-on i{ margin:0;}
+
+.form-control{ height:34px; line-height:20px; box-sizing:border-box;}
+.bootstrap-select.btn-group:not(.input-group-btn), .bootstrap-select.btn-group[class*="span"]{ margin-bottom:0;}
+.iptSeletAuto .bootstrap-select{ float:left; width:86px; margin-right:0;}
+.iptSeletAuto .public-search{ float:left;}
+.iptSeletAuto .bootstrap-select > .btn {  padding-right:25px; width:86px; border-bottom-right-radius:0; border-top-right-radius:0;} 
+.iptSeletAuto .bootstrap-select.btn-group .btn .filter-option{ width:42px; text-align:center; overflow:hidden;}
+.search-header-lt .iptSeletAuto .form-control{ border-radius:0 4px 4px 0;}
+
+</style>
+#{stockControl.stockControlInit()}
+<td valign="top" width="100%">
+       	<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<div class="right_c">
+		<!-- 公用头部 开始 -->
+                	<div class="r_title clear" style="margin-bottom: 30px;">
+                    	<div class="r_t_l fl">加工&#160;&gt;&#160;&#160;<font size="3">库存管理</font></div>
+                        <div class="fr" style="margin-bottom:-1px;float:right;">
+                        	<ul class="cm_resumeList clear">
+                            	<li>
+                                	<a href="javascript:void(0)" disabled="true" class="borderBt" style="cursor:default;"><img src="../asset/images/tjsbg_01.jpg"/><span>库存</span></a>
+                                </li>
+                            	<li>
+                                	<a href="#{request.contextPath}/inOut/ExpireGoodsInfo.seam?dataType=0"><img src="../asset/images/tjsbg_02.jpg" /><span>过期</span></a>
+                                </li>
+                                	<li>
+                                	<a href="#{request.contextPath}/inOut/InOutRecord.seam?dataType=0"><img src="../asset/images/tjsbg_03.jpg" /><span>流水</span></a>
+                                </li>
+                            	<li>
+                                	<a href="#{request.contextPath}/inOut/InventoryRecordControl.seam?dataType=0"><img src="../asset/images/tjsbg_04.jpg" /><span>盘点</span></a>
+                                </li>
+                        	</ul>
+                        </div>
+                    </div>
+		<!-- 公用头部 结束 -->
+		<s:div styleClass="z_r_ser" id="refreshLink" style="height:34px;">
+			<table cellpadding="0" cellspacing="0" class="cxtja">
+				<tr>
+					<td style=" float:left;" width="380">
+						<div class="cm_select01 clear">
+							<select id="selectTypeObj" class="selectpicker" style="width:80px" onchange="switchTypeLi(this.value);">
+								<option value="0">全部</option>
+								<h:outputText rendered="#{sessionTake.levelId eq 3}">
+								<a:repeat value="#{publicStorageHome.goodsType}" var="_sc" rowKeyVar="_index">
+								   <option value="#{_sc.id}">
+								   	<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+									<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>									   
+								   </option>
+							 	 </a:repeat>
+							    </h:outputText>
+							  
+								  <h:outputText rendered="#{sessionTake.levelId ne 3}">
+									<a:repeat value="#{publicStorageHome.goodsTypes}" var="_sc" rowKeyVar="_index">
+									   <option value="#{_sc.id}">
+									   	<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+										<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>									   
+									   </option>
+								 	 </a:repeat>
+								  </h:outputText>
+							</select>
+							<input type="text" id="goodsName" class="form-control" ></input>
+						</div>
+					</td>
+					<td width="170" align="center" style="float:left;">
+						<button type="button" onclick="submitResult();" class="btn btn-primary fl" style="margin-left:5px;padding:6px 18px;height:34px; box-sizing:border-box;">搜索</button>
+						<a class="gjss_a gjtop fl" style="display:inline-block; margin-left:10px;" href="javascript:" onclick="op(this)" aa="1">高级搜索</a>
+					</td>
+					<td align="right" style="float:left;" width="80" valign="bottom" height="30"></td>
+					<td width="70" style="float:right;display:#{s:hasRole('inout_add')?'block':'none'}">
+						<div class="btn-group">
+							<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">报损
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" style="left:auto; right:0;">
+							<h:outputText rendered="#{sessionTake.levelId eq 3}">
+								<a:repeat value="#{publicStorageHome.goodsType}" var="_sc" rowKeyVar="_index">
+									<h:panelGroup rendered="#{_sc.id ne 5}">
+							  			<li><s:link view="/inOut/CreateBreakage.seam?dataType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >
+							  				<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+											<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>报损
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+								    </h:panelGroup>
+							  </a:repeat>
+							  </h:outputText>
+							  <h:outputText rendered="#{sessionTake.levelId ne 3}">
+								<a:repeat value="#{publicStorageHome.goodsTypes}" var="_sc" rowKeyVar="_index">
+									<h:panelGroup rendered="#{_sc.id ne 5}">
+							  			<li><s:link view="/inOut/CreateBreakage.seam?dataType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >
+							  				<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+											<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>报损
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+								    </h:panelGroup>
+							  </a:repeat>
+							  </h:outputText>
+							</ul>
+						</div>
+					</td>
+					<td width="70" style="float:right;display:#{s:hasRole('inout_add')?'block':'none'}">
+						<div class="btn-group">
+							<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">出库
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+							<h:outputText rendered="#{sessionTake.levelId eq 3}">
+								 <a:repeat value="#{publicStorageHome.goodsType}" var="_sc" rowKeyVar="_index">
+							  		<h:panelGroup rendered="#{_sc.id eq 1}">
+							  			<li><s:link view="/inOut/OutStorage.seam?dataType=2&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >#{_sc.name}出库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  		<h:panelGroup rendered="#{_sc.id eq 3}">
+							  			<li><s:link view="/inOut/OutFinishedStorage.seam?dataType=2&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >商品出库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  		
+							  		<h:panelGroup rendered="#{_sc.id ne 1 and _sc.id ne 3 and _sc.id ne 5}">
+							  			<li><s:link view="/inOut/OutAccessoryStorage.seam?dataType=2&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >#{_sc.name}出库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  </a:repeat>
+							 </h:outputText>
+							 <h:outputText rendered="#{sessionTake.levelId ne 3}">
+								 <a:repeat value="#{publicStorageHome.goodsTypes}" var="_sc" rowKeyVar="_index">
+							  		<h:panelGroup rendered="#{_sc.id eq 1}">
+							  			<li><s:link view="/inOut/OutStorage.seam?dataType=2&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >#{_sc.name}出库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  		<h:panelGroup rendered="#{_sc.id eq 3}">
+							  			<li><s:link view="/inOut/OutFinishedStorage.seam?dataType=2&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >商品出库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  		
+							  		<h:panelGroup rendered="#{_sc.id ne 1 and _sc.id ne 3 and _sc.id ne 5}">
+							  			<li><s:link view="/inOut/OutAccessoryStorage.seam?dataType=2&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >#{_sc.name}出库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  </a:repeat>
+							 </h:outputText>
+							</ul>
+						</div>
+					</td>
+					<td width="70" style="float:right;display:#{s:hasRole('inout_add')?'block':'none'}">
+						<div class="btn-group">
+							<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">入库
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+							<h:outputText rendered="#{sessionTake.levelId eq 3}">
+							  <a:repeat value="#{publicStorageHome.goodsType}" var="_sc" rowKeyVar="_index">
+							  		<h:panelGroup rendered="#{_sc.id eq 1}">
+							  			<li><s:link view="/inOut/InStorage.seam?dataType=1&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >#{_sc.name}入库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  		<h:panelGroup rendered="#{_sc.id eq 3}">
+							  			<li><s:link view="/inOut/InFinishedStorage.seam?dataType=1&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >商品入库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  		
+							  		<h:panelGroup rendered="#{_sc.id ne 1 and _sc.id ne 3 and _sc.id ne 5}">
+							  			<li><s:link view="/inOut/InAccessoryStorage.seam?dataType=1&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >#{_sc.name}入库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  </a:repeat>
+							  </h:outputText>
+							  <h:outputText rendered="#{sessionTake.levelId ne 3}">
+							  <a:repeat value="#{publicStorageHome.goodsTypes}" var="_sc" rowKeyVar="_index">
+							  		<h:panelGroup rendered="#{_sc.id eq 1}">
+							  			<li><s:link view="/inOut/InStorage.seam?dataType=1&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >#{_sc.name}入库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  		<h:panelGroup rendered="#{_sc.id eq 3}">
+							  			<li><s:link view="/inOut/InFinishedStorage.seam?dataType=1&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >商品入库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  		
+							  		<h:panelGroup rendered="#{_sc.id ne 1 and _sc.id ne 3 and _sc.id ne 5}">
+							  			<li><s:link view="/inOut/InAccessoryStorage.seam?dataType=1&amp;goodsType=#{_sc.id}"  action="#{sessionTake.setStockParam(1)}" propagation="none" >#{_sc.name}入库
+								        <f:param name="baseId" value="#{stockControl.baseId}"/></s:link></li>
+							  		</h:panelGroup>
+							  </a:repeat>
+							  </h:outputText>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			</table>                          
+		</s:div>
+		<div class="gjs" style="border-top:1px solid #dfedf7; border-bottom:0; padding:0 30px; margin-bottom:0; display:none; box-sizing:border-box;position:relative;">
+                	<h:form id="export">
+	                	<h:inputHidden id="batchCode" value="#{stockControl.batchCode}" />
+	                	<h:inputHidden id="storageRoom" value="#{stockControl.storageRoom}" />
+	                	<h:inputHidden id="operator" value="#{stockControl.operator}" />
+	                	<h:inputHidden id="goodsLevel" value="#{stockControl.goodsLevel}" />
+	                	<h:inputHidden id="goodsSource" value="#{stockControl.goodsSource}" />
+	                	<h:inputHidden id="storageStart" value="#{stockControl.storageStart}" />
+	                	<h:inputHidden id="storageEnd" value="#{stockControl.storageEnd}" />
+                		<s:button id="excelButton1" action="#{stockControl.exportStorageExcel()}" 
+                		style="display:none;" styleClass="btn btn-default fl" value="导出" onclick="if(!allExport())return false"/>
+                	</h:form>
+                	<a id="exportH" style="position:absolute; right:30px; top:22px;z-index:1;background:#fff;" href="javascript:exportExcel();">
+                		<img width="82" height="16" src="#{request.contextPath}/asset/images/fxdc.jpg" />
+                	</a>
+                    <ul class="fxy_ul clear">	
+                        <li class="reili fl">
+                        <table cellspacing="0" cellpadding="0" style="float:left;">
+                            <tr>
+                                <td align="right" class="tpcc_font">批次编号：</td>
+                                <td align="left" style="padding-left: 4px;">
+                                    <input type="text" class="form-control" style="width:200px;height:34px; box-sizing:border-box;" id="batchCode"></input>
+                                </td>
+                            </tr>
+                        </table>
+                        </li>
+                        <li class="reili fl">
+                        <table cellspacing="0" cellpadding="0" style="float:left;">
+                            <tr>
+                                <td align="right" class="tpcc_font">库房：</td>
+                                <td align="left" style="padding-left: 4px;">
+                                    <div class="div200">
+                                    <select class="selectpicker" data-live-search="true" style="display: none;" id="storageRoom">	
+                                    <option selected="selected" value="-1">全部</option>
+                                    <a:repeat value="#{stockControl.getStorageRoomList()}" var="_room">
+                                    	<option value="#{_room[0]}">#{_room[1]}</option>
+                                    </a:repeat>
+                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        </li>
+                        <li class="reili fl">
+                        <table cellspacing="0" cellpadding="0" style="float:left;">
+                            <tr>
+                                <td align="right" class="tpcc_font" width="100">经办人：</td>
+                                <td align="left" style="padding-left: 4px;">
+                                    <div class="div200">
+                                    <select class="selectpicker" data-live-search="true" style="display: none;" id="operator">	
+                                    <option selected="selected" value="-1">全部</option>
+                                    <a:repeat value="#{stockControl.getOperatorListInOut()}" var="_operater">
+                                    	<option value="#{_operater[0]}">#{_operater[1]}</option>
+                                    </a:repeat>
+                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        </li>	   
+                    </ul>
+                    <ul class="fxy_ul clear">	
+                        <li class="reili fl">
+                        <table cellspacing="0" cellpadding="0" style="float:left;">
+                            <tr>
+                                <td align="right" class="tpcc_font">物料等级：</td>
+                                <td align="left" style="padding-left: 4px;">
+                                    <div class="div200">
+                                    <select class="selectpicker" data-live-search="true" style="display: none;" id="goodsLevel">	
+                                    <option selected="selected" value="-1">全部</option>
+                                    <a:repeat value="#{stockControl.getGoodsLevelList()}" var="_goodslevel">
+                                    	<option value="#{_goodslevel[0]}">#{_goodslevel[1]}</option>
+                                    </a:repeat>
+                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        </li>
+                        <li class="reili fl">
+                        <table cellspacing="0" cellpadding="0" style="float:left;">
+                            <tr>
+                                <td align="right" class="tpcc_font">来源：</td>
+                                <td align="left" style="padding-left: 4px;">
+                                    <div class="div200">
+                                    <select class="selectpicker" data-live-search="true" style="display: none;" id="goodsSource">	
+                                    <option selected="selected" value="-1">全部</option>
+                                    <a:repeat value="#{stockControl.getGoodsSourceList()}" var="_goodssource">
+                                    	<option value="#{_goodssource[0]}">#{_goodssource[1]}</option>
+                                    </a:repeat>
+                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        </li>
+                        <li class="reili fl">
+                        <table cellspacing="0" cellpadding="0" style="float:left;">
+                            <tr>
+                                <td align="right" class="tpcc_font" width="100">入库时间：</td>
+                                <td align="left" style="padding-left: 4px;">
+                                    <div class="input-append date form_datetime bootData200" style="float:left;">
+                                        <input size="26" type="text" value="" readonly="readonly" id="storageStart"/>
+                                        <span class="add-on"><i class="icon-th"></i></span>
+                                    </div>
+                                    <span style="float: left; padding:0 5px; height:34px; line-height:34px;">-</span>
+                                    <div class="input-append date form_datetime bootData200" style="float:left;">
+                                        <input size="26" type="text" value="" readonly="readonly" id="storageEnd"/>
+                                        <span class="add-on"><i class="icon-th"></i></span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        </li>	   
+                    </ul>
+                </div>
+          <div class="box_back" id="login" style="display: none; z-index: 1000">
+			<div id="login2" style="width: 60px; height: 60px; margin: 220px auto 0 auto;">
+				<img src="../asset/images/loginda.gif" />
+			</div>
+		</div>
+		<div class="tree_dis">
+			<h:form id="stockControlFrom">
+				<a:commandLink id="refreshShow"  reRender="showPanel"></a:commandLink>
+			</h:form>
+			<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+				<div class="box2">
+					<div>						
+							<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b2" style="border-top:1px solid #ddd;">
+								<tr>
+									<td class="tree_th" width="10%">ID</td>
+									<td class="tree_th" width="12%">物料编号</td>
+									<td class="tree_th" width="12%">物料名称</td>
+									<td class="tree_th" width="10%">物料等级</td>
+									<td class="tree_th" width="9%">总库存</td>
+									<td class="tree_th" width="9%">冻结数量</td>
+									<td class="tree_th" width="9%">可销售数量</td>
+									<td class="tree_th" width="9%">实际库存</td>
+									<td class="tree_th" width="10%">物料规格</td>
+									<td class="tree_th" width="10%">操作</td>
+								</tr>
+							</table>
+							<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b">
+								<a:repeat value="#{stockControl.resultList}" var="_sc" rowKeyVar="_index">
+									<tr class="cm_nottt #{_index % 2 != 0 ? 'alt' : ''}">
+										<td height="48" width="10%">#{_sc[0]}</td>
+										<td width="12%">#{_sc[1]}</td>
+										<td width="12%">#{_sc[2]}</td>
+										<td width="10%">
+											<h:outputText value="--" rendered="#{null eq _sc[9]}"/>
+											<h:outputText value="#{_sc[9]}" rendered="#{null ne _sc[9]}"/>
+										</td>
+										<td width="9%">
+											<s:fragment rendered="#{_sc[3] eq 1}">
+												<h:outputText rendered="#{_sc[11] ge 7 and _sc[11] le 11}" >
+				                                	<h:outputText value="#{stringUtil.changeFloatMe(_sc[4],3)}" rendered="#{sessionTake.harvestUnit eq 1}">
+				                                		<f:convertNumber pattern="#####.###"/>
+				                                	</h:outputText>
+				                                	<h:outputText value="#{_sc[4]}" rendered="#{sessionTake.harvestUnit ne 1}"><f:convertNumber pattern="#####.###"/></h:outputText>
+						                    	</h:outputText>
+							                    <h:outputText value="#{unitStranfer.outStranfer(_sc[11],_sc[4])}" rendered="#{_sc[11] lt 7 or _sc[11] gt 11}" >
+							                    	<f:convertNumber pattern="#####.###"/>
+							                    </h:outputText>
+							                </s:fragment>
+							                <s:fragment rendered="#{_sc[3] ne 1}">
+							                	#{_sc[4]}
+							                </s:fragment>							                
+										</td>
+										<td width="9%">
+											<s:fragment rendered="#{_sc[3] eq 1}">
+												<h:outputText rendered="#{_sc[11] ge 7 and _sc[11] le 11}" >
+				                                	<h:outputText value="#{stringUtil.changeFloatMe(_sc[5],3)}" rendered="#{sessionTake.harvestUnit eq 1}">
+				                                		<f:convertNumber pattern="#####.###"/>
+				                                	</h:outputText>
+				                                	<h:outputText value="#{_sc[5]}" rendered="#{sessionTake.harvestUnit ne 1}"><f:convertNumber pattern="#####.###"/></h:outputText>
+						                    	</h:outputText>
+							                    <h:outputText value="#{unitStranfer.outStranfer(_sc[11],_sc[5])}" rendered="#{_sc[11] lt 7 or _sc[11] gt 11}" ><f:convertNumber pattern="#####.###"/></h:outputText>
+						                    </s:fragment>
+							                <s:fragment rendered="#{_sc[3] ne 1}">
+							                	#{_sc[5]}
+							                </s:fragment>	
+										</td>
+										<td width="9%">
+											<s:fragment rendered="#{_sc[3] eq 3}">
+												#{_sc[14]}
+							                </s:fragment>
+							                <s:fragment rendered="#{_sc[3] ne 3}">
+							                	<h:outputText value="0" />
+							                </s:fragment>	
+										</td>
+										<td width="9%">
+											<s:fragment rendered="#{_sc[3] eq 1}">
+												<h:outputText rendered="#{_sc[11] ge 7 and _sc[11] le 11}" >
+				                                	<h:outputText value="#{stringUtil.changeFloatMe(_sc[6],3)}" rendered="#{sessionTake.harvestUnit eq 1}"><f:convertNumber pattern="#####.###"/></h:outputText>
+				                                	<h:outputText value="#{_sc[6]}" rendered="#{sessionTake.harvestUnit ne 1}"><f:convertNumber pattern="#####.###"/></h:outputText>
+						                    	</h:outputText>
+							                    <h:outputText value="#{unitStranfer.outStranfer(_sc[11],_sc[6])}" rendered="#{_sc[11] lt 7 or _sc[11] gt 11}" ><f:convertNumber pattern="#####.###"/></h:outputText>
+							                </s:fragment>
+							                <s:fragment rendered="#{_sc[3] ne 1}">
+							                	#{_sc[6]}
+							                </s:fragment>	
+						                </td>
+										<td width="10%">
+											<s:fragment rendered="#{_sc[3] eq 1}">
+												<s:fragment rendered="#{_sc[11] ge 7 and _sc[11] le 11}">
+													#{sessionTake.harvestUnit eq 1? '斤':'公斤（kg）'}
+												</s:fragment>
+												<s:fragment rendered="#{_sc[11] lt 7 or _sc[11] gt 11}">
+													#{_sc[7]}
+												</s:fragment>
+											</s:fragment>
+											<s:fragment rendered="#{_sc[3] ne 1}">
+												#{_sc[12]}#{_sc[7]}
+												<s:fragment rendered="#{_sc[13] ne null and _sc[13] ne ''}">
+													/#{_sc[13]}
+												</s:fragment>
+											</s:fragment>
+										</td>
+										<td width="10%">
+											<s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}" view="/inOut/StockRecordDetail.xhtml" styleClass="list_view"  id="detailId" title="查看">
+												<f:param name="goodsInfoId" value="#{_sc[0]}" />
+												<f:param name="goodsInfoType" value="#{_sc[3]}" />
+												<f:param name="goodsLevelId" value="#{_sc[10]}" />
+												<f:param name="pageNum" value="#{stockControl.page}" />
+											</s:link>&#160;
+											
+											<s:link propagation="none" style="display:#{s:hasRole('inout_show')?'hidden':'none'}" view="/inOut/FrozenDetails.xhtml" styleClass="list_frozen"  id="frozenId" title="冻结详情">
+												<f:param name="goodsInfoId" value="#{_sc[0]}" />
+											</s:link>
+										</td>
+									</tr>
+								</a:repeat>
+							</table>
+						<h:form id="pageFrom" rendered="#{null ne stockControl.resultList and stockControl.resultList.size() gt 0}">
+							<h:inputHidden id="baseIdObj" value="#{stockControl.baseId}" />
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!stockControl.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" action="#{stockControl.pageFind(1)}" rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}" reRender="showPanel">首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" action="#{stockControl.pageFind(stockControl.previousPage)}" rendered="#{stockControl.hasPreviousPage and stockControl.totalPages > 1}" reRender="showPanel">&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{stockControl.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le stockControl.totalPages}">
+											<td class="td_t_b #{stockControl.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq stockControl.page ? 'onp' : ''}" >
+												<a:commandLink id="thisPage" action="#{stockControl.pageFind(_page)}" reRender="showPanel" >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{stockControl.hasNextPage}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" action="#{stockControl.pageFind(stockControl.nextPage)}" rendered="#{stockControl.hasNextPage and stockControl.totalPages > 1}" reRender="showPanel">&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" action="#{stockControl.pageFind(stockControl.totalPages)}" rendered="#{stockControl.hasNextPage and stockControl.totalPages > 1}" reRender="showPanel">尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{stockControl.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+			</rich:panel>
+		</div>
+		<div class="clear"></div>
+	</div>
+</td>
+<a:form>
+	<a:queue requestDelay="100" ignoreDupResponses="true"/>
+	<a:jsFunction name="queryResultFind" action="#{stockControl.queryResultFind}" reRender="refreshLink" oncomplete="refreshAction();" >
+		<a:actionparam name="goodsName" assignTo="#{stockControl.goodsCodeName}"/>
+		<a:actionparam name="dataType" assignTo="#{stockControl.dataType}"/>
+		<a:actionparam name="baseId" assignTo="#{stockControl.baseId}"/>
+		<a:actionparam name="batchCode" assignTo="#{stockControl.batchCode}"/>
+		<a:actionparam name="storageRoom" assignTo="#{stockControl.storageRoom}"/>
+		<a:actionparam name="operator" assignTo="#{stockControl.operator}"/>
+		<a:actionparam name="goodsLevel" assignTo="#{stockControl.goodsLevel}"/>
+		<a:actionparam name="goodsSource" assignTo="#{stockControl.goodsSource}"/>
+		<a:actionparam name="storageStart" assignTo="#{stockControl.storageStart}"/>
+		<a:actionparam name="storageEnd" assignTo="#{stockControl.storageEnd}"/>
+		<a:actionparam name="flag" assignTo="#{stockControl.newFlag}"/>
+	</a:jsFunction>
+	<a:jsFunction name="exportStorageExcel" action="#{stockControl.exportStorageExcel}" reRender="refreshLink" oncomplete="refreshAction();" >
+		<a:actionparam name="goodsName" assignTo="#{stockControl.goodsCodeName}"/>
+		<a:actionparam name="dataType" assignTo="#{stockControl.dataType}"/>
+		<a:actionparam name="baseId" assignTo="#{stockControl.baseId}"/>
+		<a:actionparam name="batchCode" assignTo="#{stockControl.batchCode}"/>
+		<a:actionparam name="storageRoom" assignTo="#{stockControl.storageRoom}"/>
+		<a:actionparam name="operator" assignTo="#{stockControl.operator}"/>
+		<a:actionparam name="goodsLevel" assignTo="#{stockControl.goodsLevel}"/>
+		<a:actionparam name="goodsSource" assignTo="#{stockControl.goodsSource}"/>
+		<a:actionparam name="storageStart" assignTo="#{stockControl.storageStart}"/>
+		<a:actionparam name="storageEnd" assignTo="#{stockControl.storageEnd}"/>
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript">
+//<![CDATA[
+var searchName = "";
+var baseObj = "#{sessionTake.baseModel.baseId}";
+	var goodsType = 0;//物料类型 1原料 2成品 3辅料 
+	jquery(function(){
+		jquery(".selectpicker").selectpicker();
+	  	document.getElementById("stockControlFrom:refreshShow").onclick();
+	  	jquery('#storageEnd').val('');
+	  	jquery(".form_datetime").datetimepicker({
+            format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+            autoclose: true,
+            weekStart: 1,
+            //startDate: "2014-08-14 10:00",
+            language:  'zh-CN',
+            startView: 3,
+            minView: 2,
+            maxView: 4,     
+            pickerPosition: "bottom-left"
+        });
+	});
+	//提交搜索数据信息
+	function submitResult(){
+		var flag = 1;
+		var goodsName = jquery("#goodsName").val();
+		searchName = goodsName;
+		
+		if(baseObj == "" || baseObj == null)
+			baseObj = 0;
+		var batchCode = jquery("#batchCode").val();
+		var storageRoom = jquery("#storageRoom").val();
+		var operator = jquery("#operator").val();
+		var goodsLevel = jquery("#goodsLevel option:selected").text();
+		var goodsSource = jquery("#goodsSource").val();
+		var storageStart = jquery("#storageStart").val();
+		var storageEnd = jquery("#storageEnd").val(); 
+		queryResultFind(goodsName, Number(goodsType),parseInt(baseObj),
+				batchCode,storageRoom,operator,goodsLevel,goodsSource,storageStart,storageEnd,flag);
+	}
+
+	//刷新
+	function refreshAction(data){
+		jquery("#selectTypeObj").val(goodsType);
+		jquery(".selectpicker").selectpicker();
+		jquery("#selectTypeObj").selectpicker("refresh");
+		if(searchName != ""){
+			jquery("#goodsName").val(searchName);
+		}
+		document.getElementById("stockControlFrom:refreshShow").onclick();
+	}
+
+	//切换类型标签 
+	function switchTypeLi(type){
+		goodsType = type;
+		submitResult();
+	}
+
+	op = function(ind){
+		if(ind.getAttribute("aa")=="1"){
+			jquery(".gjs").slideDown(800);
+			jquery(".gjss_a").attr("aa",2).removeClass("gjtop").addClass("gjbottom");
+			
+			/* document.getElementById("goodsInfoSearch:flag").value="2"; */
+		}else{
+			jquery(".gjs").slideUp(800);
+			jquery(".gjss_a").attr("aa",1).removeClass("gjbottom").addClass("gjtop");
+		}
+	}
+
+	function exportExcel(){
+		var goodsName = jquery("#goodsName").val();
+		searchName = goodsName;
+		if(baseObj == "" || baseObj == null)
+			baseObj = 0;
+		var batchCode = jquery("#batchCode").val();
+		var storageRoom = jquery("#storageRoom").val()+'';
+		var operator = jquery("#operator").val();
+		var goodsLevel = jquery("#goodsLevel").val();
+		var goodsSource = jquery("#goodsSource").val();
+		var storageStart = jquery("#storageStart").val();
+		var storageEnd = jquery("#storageEnd").val();
+		jquery("#export\\:picibianhao").val(batchCode);
+		jquery("#export\\:kufang").val(storageRoom);
+		jquery("#export\\:jingbanren").val(operator);
+		jquery("#export\\:wuliaodengji").val(goodsLevel);
+		jquery("#export\\:laiyuan").val(goodsSource);
+		jquery("#export\\:rukukaishi").val(storageStart);
+		jquery("#export\\:rukujieshu").val(storageEnd);
+		jquery('#export\\:excelButton1').click();
+		/* jquery('#exportH').attr('href','#'); */
+		/* exportStorageExcel(goodsName, Number(goodsType),parseInt(baseObj),
+				batchCode,storageRoom,operator,goodsLevel,goodsSource,storageStart,storageEnd); */
+	}
+
+	function allExport(){
+		jquery("#login").show();
+		jquery.extend({              
+			referesh1: function () {              
+				jquery.ajax({
+					type :'get',
+					url :'#{request.contextPath}/StockRecordServlet.do',
+					success : function(msg){
+						if(msg==1){
+							jquery("#login").hide();
+							window.clearInterval(timerID);
+						}
+					}
+				});
+			}       
+		});
+		timerID = setInterval("jquery.referesh1()", 1000 * 1);
+		return true;
+	}
+
+	function ifBaseId(){
+		var obj = checkSelectNew();
+	}
+//]]>
+</script>
+</ui:define>
+</ui:composition>

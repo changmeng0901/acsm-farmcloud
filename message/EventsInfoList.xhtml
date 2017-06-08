@@ -1,0 +1,225 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+		<link href="#{request.contextPath}/asset/css/message/Inbox.css" rel="stylesheet" />
+	
+ <td valign="top">
+            <!-- right_c 开始 -->
+            <div class="right_c" style="min-height:30px;">
+                <div class="r_title clear" style="margin-top:0; padding-top:20px;">
+                    <div class="r_t_l fl">个人主页<span style="padding:0 5px;">&gt;</span><font size="3">大事记</font></div>
+                </div>
+                <!-- 大事记搜索 开始 -->
+                <div class="mt20 mb20 clear">
+                
+                    <span class="fl" style="width:350px;margin-left:80px;">
+                    	<h:form class="public-search">
+                        <span class="octicon-search02" style="top:11px;"></span>
+                        <h:inputText id="searchParam" style="text-indent:0px;width:350px;" onfocus="objFocus(this)" onblur="objBlur(this)" class="form-control nw300 srarchfont" value="#{eventsInfoList.searchParam}" onchange="mysearch(this.value)" />
+                        </h:form>
+                    </span>
+                    <a href="#{request.contextPath}/message/EventsInfoEdit.seam" style="#{sessionTake.levelId ge 4?'display:none;':''}" class="btn btn-success fr">写大事记</a> 
+                </div>
+                <!-- 大事记搜索 结束 -->
+                <!-- 大事记内容 开始 -->
+                <div class="chronicleEvent">
+                	<ul>
+                	 <ui:repeat value="#{eventsInfoList.resultList}" var="_events" rendered="#{not empty eventsInfoList.resultList}" rowKeyVar="_index">
+                         <h:panelGroup rendered="#{eventsInfoList.resultSize gt 0}">
+	                    	<li class="chronicleEvent_li">
+	                        	<table width="100%" cellpadding="0" cellspacing="0">
+	                            	<tr>
+	                                	<td width="80" valign="top">
+	                                    	<div class="eventTimer">
+	                                            <span class="onlyMonth">
+		                                            <h:outputText value="#{_events.befallTime}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="dd" />
+									   				</h:outputText>
+								   				</span>
+								   				<span class="dateYear">
+		                                            <h:outputText value="#{_events.befallTime}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="MM/yyyy" />
+									   				</h:outputText>
+									   			</span>
+	                                        </div>
+	                                    </td>
+	                                    <td valign="top">
+	                                    	<div class="eventCont">
+	                                        	<h3 class="eventTital">#{_events.title}</h3>
+	                                            <p><h:outputText value="#{stringUtil.unHtmlEncoder(_events.content)}" escape="false"/></p>
+	                                            <div class="mainSpecl clear">
+	                                            	<span class="author">作者：#{eventsInfoList.userName(_events.insertUser)}</span>
+	                                                <span class="visitedNum">访问量（#{_events.views}）</span>
+	                                                <ui:fragment rendered="#{sessionTake.userId==_events.insertUser}">
+	                                                <s:link  propagation="none"  view="/message/EventsInfoEdit.xhtml"   title="删除"   action="#{eventsInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="breedDelete" rendered="#{empty from}">
+					                             	删除
+					                                <f:param name="eventsInfoId" value="#{_events.id}" />
+					                                </s:link>
+	                                                <s:link propagation="none"  view="/message/EventsInfoEdit.xhtml"  id="breedEditId" title="编辑">
+													编辑
+													<f:param name="eventsInfoId" value="#{_events.id}" />
+													</s:link>&#160;
+													</ui:fragment>
+	                                                <s:link propagation="none"  view="/#{empty from ? 'message/EventsInfo' : from}.xhtml" styleClass="colorLan1"  id="breedViewId" title="阅读全文">
+			                                		阅读全文
+													<f:param name="eventsInfoId" value="#{_events.id}" />
+													</s:link>&#160;
+	                                            </div>
+	                                        </div>
+	                                    </td>
+	                                </tr>
+	                            </table>
+	                        </li>
+                         </h:panelGroup>
+                       </ui:repeat>
+                       <h:panelGroup rendered="#{eventsInfoList.resultSize eq 0 and sessionTake.levelId lt dataDicConstant.getUserLevelBase()}">
+                         <div class="tip-nodata-wap">
+		                    <div class="tip-warning-nodata">
+		                        <em>很遗憾，没有任何大事记内容</em>
+		                        <p>详细大事记能帮助自己详细规划未来工作计划，并且可以记录重要事件的发生及完成情况，提高工作效率。遇到重要事情或安排，一定要记住哦。</p>
+		                    </div>
+		                </div>
+                        </h:panelGroup>	
+                        
+                        <h:panelGroup rendered="#{eventsInfoList.resultSize eq 0 and sessionTake.levelId ge dataDicConstant.getUserLevelBase()}" >
+                         <div class="tip-nodata-wap">
+		                    <div class="tip-warning-nodata">
+		                        <em>很遗憾，没有任何大事记内容</em>
+		                        <p>详细大事记能帮助自己详细规划未来工作计划，并且可以记录重要事件的发生及完成情况，提高工作效率。遇到重要事情或安排，一定要记住哦。</p>
+		                    </div>
+		                 </div>
+		                </h:panelGroup>	
+                    </ul>
+ 					<div class="cm_page2 pt20 clear">
+                        	 <!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty eventsInfoList.resultList}"> 
+			                <s:decorate rendered="#{!eventsInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{eventsInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{eventsInfoList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/message/EventsInfoList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/message/EventsInfoList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{eventsInfoList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{eventsInfoList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{eventsInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq eventsInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/message/EventsInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{eventsInfoList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/message/EventsInfoList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{eventsInfoList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/message/EventsInfoList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{eventsInfoList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{eventsInfoList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                            <td><s:link view="#{sessionTake.urlTemp}" styleClass="btn btn-default" value="返回">
+		    					</s:link></td>
+                    	</s:div>
+                    	<s:div rendered="#{empty eventsInfoList.resultList}">
+                    	<td><s:link view="#{sessionTake.urlTemp}" styleClass="btn btn-default" value="返回">
+		    					</s:link></td> 
+                    	</s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+                        </div>                  
+                </div>
+                <!-- 大事记内容 结束 -->
+            </div>
+            <!-- right_c 结束 -->
+            </td>    
+            
+ <a4j:form>
+    <a4j:jsFunction name="searchme" action="#{eventsInfoList.searchMe}">
+   <a4j:actionparam name="searchParam" assignTo="#{eventsInfoList.searchParam}"/>
+   </a4j:jsFunction>
+</a4j:form>
+ <script type="text/javascript">
+jQuery = jQuery.noConflict();
+jQuery(function(){	
+	var slidebarUl;
+	//左侧提示 开始
+	jQuery('.left_cul > li').mouseover(function(){
+		jQuery(this).css('background','url(images/lef_hover2.jpg)');
+		slidebarUl = jQuery(this).find('ul.sidebarUl') ;
+		if(slidebarUl){
+			slidebarUl.show();	
+			slidebarUl.mouseout(function(){
+				jQuery(this).hide();	
+			});
+		}						
+	});	
+	jQuery('.left_cul > li').mouseout(function(){
+		if(slidebarUl){
+			slidebarUl.hide();
+		}
+		if(jQuery(this).hasClass('on')){
+			jQuery(this).css('background','url("images/lef_hover.jpg")');	
+		}else{
+			jQuery(this).css('background','url("images/lefbg.jpg") repeat-y');	
+		}		
+	});
+	
+	//文本域控制
+
+	//删除事记内容
+	jQuery('.mainSpecl .deleteLi').click(function(){
+		jQuery(this).parents('.chronicleEvent_li').remove();	
+	});
+
+	//通用无数据显示计算高度
+	var $windowWid = jQuery(window).width();
+	var $windowHei = jQuery(window).height();
+	jQuery('.tip-nodata-wap').css({width:$windowWid - 138,height:$windowHei-230});
+
+});
+jQuery(window).resize( function(){  //当浏览器窗口改变时，结构组织图的宽高也改变
+	var $windowWid = jQuery(window).width();
+	var $windowHei = jQuery(window).height();
+	jQuery('.tip-nodata-wap').css({width:$windowWid - 138,height:$windowHei-230});	
+})
+
+});
+
+
+function mysearch(valu){
+		searchme(valu);
+}
+</script>
+
+
+
+	</ui:define>
+
+</ui:composition>

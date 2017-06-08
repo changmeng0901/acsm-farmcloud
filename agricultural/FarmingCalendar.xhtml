@@ -1,0 +1,1195 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template_new.xhtml">
+
+
+	<ui:define name="body">
+	<td valign="top">
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/js/agricultural/fullcalendar.css" />
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/agricultural/FarmingCalendar.css" />
+	<script type="text/javascript" src='#{request.contextPath}/asset/js/agricultural/moment.min.js'></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery-1.10.2.js"></script>
+	<script src='#{request.contextPath}/asset/js/agricultural/fullcalendar_FC.js'></script>  
+	<script src="#{request.contextPath}/asset/js/agricultural/FarmingCalendar.js"></script>
+	<script src='#{request.contextPath}/asset/js/agricultural/locale-all.js'></script>
+	<!--<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery-1.10.2.js"></script>
+			<script src='#{request.contextPath}/asset/js/jquery-ui.custom.min_Q.js'></script>
+			<script src='#{request.contextPath}/asset/js/fullcalendar_Q.js'></script>-->
+	<div class="pt22 pos-relative">
+		<!-- 面包屑 -->
+		<div class="r_title">
+			<div class="r_t_l"><span>生产管理</span><em>&nbsp;&gt;&nbsp;</em><font size="3">农事管理</font></div>
+			<ul class="cm_resumeList">
+				<li>
+                    <a href="#{request.contextPath}/agricultural/FarmingCalendar.seam"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon1.jpg"/><span>农事日历</span></a>
+				</li>
+                <li>
+                    <a class="borderBt" href="#{request.contextPath}/agricultural/Manager.seam"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon2.jpg"/><span>农事管理</span></a>
+                </li>
+                <li>
+                    <a href="#{request.contextPath}/agricultural/DiseaseControl.seam"><img src="#{request.contextPath}/asset/disease/images/binghaifz_ico2.jpg" /><span>病害防治</span></a>
+                </li>
+            </ul>
+		</div>
+		<!--日历头部信息-->
+		<div class="calendar-header-info">
+			<div class="fold-btn" id="foldBtn"></div>
+			<div class="fr">
+				<button type="button" class="btn btn-success" id="addFarmBtn">添加</button>
+				<button type="button" class="btn btn-success">指定计划</button>
+			</div>
+		</div>
+		<!-- 主体 -->
+		<div class="calendar-wrap">
+			<div class="calendar-left" id="calendarLeft">
+				<div class="filtrate-cont" id="filtrateCont">
+					<!-- 搜索 -->
+					<div class="public-search">
+						<span class="octicon-search02"></span>
+						<input type="text" class="form-control" value="输入农事内容搜索" />
+					</div>
+					<!-- 条件筛选 -->
+					<p class="filter-title">条件筛选</p>
+					<div class="filter-list">
+						<div class="fitem area-fitem" id="areaFitem">
+							<select class="selectpicker" data-live-search="true" multiple="multiple">
+							    <option selected="selected">全部区域</option>
+							    <option>北菜园</option>
+							</select>
+						</div>
+						<div class="fitem crop-fitem" id="cropFitem">
+							<select class="selectpicker" data-live-search="true" multiple="multiple">
+							    <option selected="selected">全部作物</option>
+							    <option>北菜园</option>
+							</select>
+						</div>
+						<div class="fitem operate-fitem" id="operateFitem">
+							<select class="selectpicker" data-live-search="true" multiple="multiple">
+							    <option selected="selected">操作人</option>
+							    <option>北菜园</option>
+							</select>
+						</div>
+					</div>
+					<!-- 状态 -->
+					<p class="st-btns st-default" id="stDefault"><span class="icur"></span>未发布</p>
+					<p class="st-btns st-danger" id="stDanger"><span class="icur"></span>待完成</p>
+					<p class="st-btns st-warning" id="stWarning"><span class="icur"></span>待考核</p>
+					<p class="st-btns st-success" id="stSuccess"><span class="icur"></span>已完成</p>
+					<!--  -->
+					<button type="button" class="btn btn-success" id="farmingListBtn">农事列表</button>
+					<button type="button" class="btn btn-success" id="completePlanBtn">完成农事计划</button>
+					<button type="button" class="btn btn-success" id="assessRecordBtn">考核农事记录</button>
+					<button type="button" class="btn btn-success" id="auditPlanBtn">审核农事计划</button>
+					<button type="button" class="btn btn-success" id="viewRecordBtn">查看农事记录</button>
+					<button type="button" class="btn btn-success" id="editPlanBtn">编辑农事计划</button>
+					<!--  -->
+				</div>
+			</div>
+			<div class="calendar-right">
+				<!--<div class="calendar-cont"></div>-->
+				<div id='calendar'></div>
+				<div class="content-rbottom">
+					<p><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon_trpcp.png" />投入品成品：&nbsp;<span>34.0元</span></p>
+					<p><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon_ryzgs.png" />人员总工时：&nbsp;<span>2小时30分</span></p>
+					<p><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon_njzgs.png" />农机总工时：&nbsp;<span>40分钟</span></p>
+				</div>
+			</div>
+		</div>
+		<!-- 主体 -->
+		<!-- 1.fixed 农事列表 -->
+		<div class="rfold-menu" id="farmingList">
+			<div class="rfold-header">
+				<h3>农事列表</h3>
+				<i>close</i>
+			</div>
+			<div class="rfold-body rfold-farminglist">
+				<!--字段信息-->
+				<dl class="farmlist-field">
+					<dd>
+						<p class="txt1"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon1.png"/><span class="txt-day">今天</span><span class="txt-week">周三</span></p>
+						<p class="txt2 cor-gray">2017年04月14日</p>
+					</dd>
+					<dd>
+						<p class="txt1"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon2.png"/>任务</p>
+						<p class="txt2">共<span class="cor-green">5</span>项</p>
+					</dd>
+					<dd class="noborder">
+						<p class="txt1"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon3.png"/>完成</p>
+						<p class="txt2"><span class="cor-red">5</span>项待完成</p>
+					</dd>
+				</dl>
+				<!--新增农事列表-->
+				<ul class="new-farminglist">
+					<li class="clearfix">
+						<span class="label label-default">未发布</span>
+						<p class="txt-center"><span class="txt-con">挂黄板</span>-<span class="txt-crop" title="9号大田玉米">9号大田玉米</span></p>
+						<p class="txt-operate"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon4.png" />审核</p>
+					</li>
+					<li class="clearfix">
+						<span class="label label-success">已完成</span>
+						<p class="txt-center"><span class="txt-con">挂黄板</span>-<span class="txt-crop" title="9号大田玉米">9号大田玉米</span></p>
+					</li>
+					<li class="clearfix">
+						<span class="label label-warning">待考核</span>
+						<p class="txt-center"><span class="txt-con">挂黄板</span>-<span class="txt-crop" title="9号大田玉米">9号大田玉米</span></p>
+						<p class="txt-operate"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon5.png" />考核</p>
+					</li>
+					<li class="clearfix">
+						<span class="label label-danger">待完成</span>
+						<p class="txt-center"><span class="txt-con">挂黄板</span>-<span class="txt-crop" title="9号大田玉米">9号大田玉米</span></p>
+						<p class="txt-operate"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon6.png" />完成</p>
+					</li>
+				</ul>
+				<div class="add-newfarm-btn"><img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon7.png" />添加农事</div>
+				<!-- end -->
+			</div>
+		</div>
+		<!-- 2.fixed 添加农事 -->
+		<div class="rfold-menu" id="addFarm">
+			<div class="rfold-header">
+				<h3>添加农事</h3>
+				<i>close</i>
+			</div>
+			<div class="rfold-body rfold-addfarm">
+				<ul class="tab-header">
+					<li class="icur">添加农事计划</li>
+					<li>添加农事记录</li>
+				</ul>
+				<!--tab-body 添加农事计划-->
+				<div class="tab-body dis-block">
+					<!--基本设置-->
+					<div class="rfold-title noborder"><p>基本设置</p></div>
+					<div class="rfold-content">
+						<dl>
+							<dt>区域</dt>
+							<dd>
+								<div class="select-w140">
+									<select class="selectpicker" multiple="multiple">
+									    <option>区域1</option>
+									    <option>区域2</option>
+									</select>
+								</div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>操作内容</dt>
+							<dd>
+								<div class="select-w140">
+									<select class="selectpicker" multiple="multiple">
+									    <option>选择农事操作</option>
+									    <option>除草</option>
+									</select>
+								</div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>操作时间</dt>
+							<dd>
+								<div class="datetime-w140">
+							        <div class="input-append date form_datetime" id="iDay1">
+							            <input size="26" type="text" value="2017-03-14" />
+							            <span class="add-on"><i class="icon-th"></i></span>
+							        </div>
+							    </div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>执行人</dt>
+							<dd>
+								<div class="select-w140">
+									<select class="selectpicker">
+									    <option selected="selected">张三</option>
+									    <option>李四</option>
+									</select>
+								</div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>操作工时</dt>
+							<dd>
+								<input class="form-control control-w94 fl mr5" type="text" value="1" />
+								<p class="txt-verbal">小时/亩</p>
+							</dd>
+						</dl>
+						<dl>
+							<dt>农机</dt>
+							<dd>
+								<div class="select-w140">
+									<select class="selectpicker">
+									    <option selected="selected">拖拉机</option>
+									    <option>拖拉机2</option>
+									</select>
+								</div>
+							</dd>
+						</dl>
+					</div>
+					<!--重复-->
+					<div class="rfold-title"><p>重复</p></div>
+					<div class="rfold-content">
+						<dl>
+							<dt>是否重复</dt>
+							<dd>
+								<ul class="readios-box" id="readiosBox1">
+									<li>
+										<div class="readio-blue"></div>
+										<span>重复</span>
+									</li>
+									<li>
+										<div class="readio-blue icheck"></div>
+										<span>不重复</span>
+									</li>
+								</ul>
+							</dd>
+						</dl>
+					</div>
+					<!--投入品添加-->
+					<div class="rfold-title"><p>投入品添加</p><div class="inputs-btn">添加</div></div>
+					<div class="rfold-content">
+						<div class="addinputs-table">
+							<table>
+								<tr>
+									<th>名称</th>
+									<th>使用量</th>
+									<th>操作</th>
+								</tr>
+								<tr>
+									<td><p class="ellipsis">植物原制剂</p></td>
+									<td><p class="ellipsis">500ml/亩</p></td>
+									<td><i class="delete-btn"></i></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<!--农事要求-->
+					<div class="rfold-title"><p>农事要求</p></div>
+					<div class="rfold-content">
+						<textarea class="form-control area-require mb15" id="addRequireArea">输入农事要求内容...</textarea>
+					</div>
+					<!--农事参考-->
+					<div class="rfold-title"><p>农事参考</p></div>
+					<div class="rfold-content mb10">
+						<div class="nsrefer-pic">
+							<i class="iclose"></i>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+						</div>
+					</div>
+					<!--备注-->
+					<div class="rfold-title"><p>备注</p></div>
+					<div class="rfold-content">
+						<textarea class="form-control area-require mb15" id="addRemarkArea">请输入备注</textarea>
+					</div>
+				</div>
+				<!--tab-body 添加农事记录-->
+				<div class="tab-body">
+					<!--基本设置-->
+					<div class="rfold-title noborder"><p>基本设置</p></div>
+					<div class="rfold-content">
+						<dl>
+							<dt>区域</dt>
+							<dd>
+								<div class="select-w140">
+									<select class="selectpicker" multiple="multiple">
+									    <option>区域1</option>
+									    <option>区域2</option>
+									</select>
+								</div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>操作内容</dt>
+							<dd>
+								<div class="select-w140">
+									<select class="selectpicker" multiple="multiple">
+									    <option>选择农事操作</option>
+									    <option>除草</option>
+									</select>
+								</div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>操作时间</dt>
+							<dd>
+								<div class="datetime-w140">
+							        <div class="input-append date form_datetime" id="iDay2">
+							            <input size="26" type="text" value="2017-03-14" />
+							            <span class="add-on"><i class="icon-th"></i></span>
+							        </div>
+							    </div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>执行人</dt>
+							<dd>
+								<div class="select-w140">
+									<select class="selectpicker">
+									    <option selected="selected">张三</option>
+									    <option>李四</option>
+									</select>
+								</div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>操作工时</dt>
+							<dd>
+								<input class="form-control control-w94 fl mr5" type="text" value="1" />
+								<p class="txt-verbal">小时/亩</p>
+							</dd>
+						</dl>
+						<dl>
+							<dt>农机</dt>
+							<dd>
+								<div class="select-w140">
+									<select class="selectpicker">
+									    <option selected="selected">拖拉机</option>
+									    <option>拖拉机2</option>
+									</select>
+								</div>
+							</dd>
+						</dl>
+					</div>
+					<!--投入品添加-->
+					<div class="rfold-title"><p>投入品添加</p><div class="inputs-btn">添加</div></div>
+					<div class="rfold-content">
+						<div class="addinputs-table">
+							<table>
+								<tr>
+									<th>名称</th>
+									<th>使用量</th>
+									<th>操作</th>
+								</tr>
+								<tr>
+									<td><p class="ellipsis">植物原制剂</p></td>
+									<td><p class="ellipsis">500ml/亩</p></td>
+									<td><i class="delete-btn"></i></td>
+								</tr>
+							</table>
+						</div>
+						<dl class="mt10">
+							<dt>农资成本</dt>
+							<dd>
+								<p class="txt-verbal">24元</p>
+							</dd>
+						</dl>
+						<dl>
+							<dt>环境温度</dt>
+							<dd>
+								<input class="form-control control-w124 fl mr5" type="text" value="" />
+								<p class="txt-verbal pl9">°C</p>
+							</dd>
+						</dl>
+						<dl>
+							<dt>环境湿度</dt>
+							<dd>
+								<input class="form-control control-w124 fl mr5" type="text" value="" />
+								<p class="txt-verbal">%</p>
+							</dd>
+						</dl>
+						<dl>
+							<dt>其他成本</dt>
+							<dd>
+								<input class="form-control control-w124 fl mr5" type="text" value="" />
+								<p class="txt-verbal">元</p>
+							</dd>
+						</dl>
+					</div>
+					<!--农事图片-->
+					<div class="rfold-title"><p>农事图片</p></div>
+					<div class="rfold-content mb10">
+						<div class="nsrecord-pic">
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+						</div>
+					</div>
+					<!--备注-->
+					<div class="rfold-title"><p>备注</p></div>
+					<div class="rfold-content">
+						<textarea class="form-control area-require mb15" id="addRemarkArea2">请输入备注</textarea>
+					</div>
+				</div>
+				<!--tab-body 添加农事记录 end-->
+			</div>
+			<div class="rfold-footer">
+				<div class="btn btn-primary mr5">提交</div>
+				<div class="btn btn-default">返回</div>
+			</div>
+		</div>
+		<!-- 3.fixed 完成农事计划 -->
+		<div class="rfold-menu" id="completePlan">
+			<div class="rfold-header">
+				<h3>完成农事计划</h3>
+				<i>close</i>
+			</div>
+			<div class="rfold-body">
+				<!--计划参考-->
+				<div class="rfold-title noborder"><p>计划参考</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>区域</dt>
+						<dd>
+							<p class="txt-verbal">大棚区</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作内容</dt>
+						<dd>
+							<p class="txt-verbal">除草</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农事要求</dt>
+						<dd>
+							<p class="txt-verbal">施肥.播种.田间管理</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农事参考</dt>
+						<dd>
+							<img class="nsrefer-img" src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+						</dd>
+					</dl>
+				</div>
+				<!--完成情况-->
+				<div class="rfold-title"><p>完成情况</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>操作时间</dt>
+						<dd>
+							<div class="datetime-w140">
+						        <div class="input-append date form_datetime" id="iDay3">
+						            <input size="26" type="text" value="2017-03-14" />
+						            <span class="add-on"><i class="icon-th"></i></span>
+						        </div>
+						    </div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>执行人</dt>
+						<dd>
+							<div class="select-w140">
+								<select class="selectpicker">
+								    <option selected="selected">张三</option>
+								    <option>李四</option>
+								</select>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作工时</dt>
+						<dd>
+							<input class="form-control control-w94 fl mr5" type="text" value="1" />
+							<p class="txt-verbal">小时/亩</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农机</dt>
+						<dd>
+							<div class="select-w140">
+								<select class="selectpicker">
+								    <option selected="selected">拖拉机</option>
+								    <option>拖拉机2</option>
+								</select>
+							</div>
+						</dd>
+					</dl>
+				</div>
+				<!--投入品添加-->
+				<div class="rfold-title"><p>投入品添加</p><div class="inputs-btn">添加</div></div>
+				<div class="rfold-content">
+					<div class="addinputs-table">
+						<table>
+							<tr>
+								<th>名称</th>
+								<th>使用量</th>
+								<th>操作</th>
+							</tr>
+							<tr>
+								<td><p class="ellipsis">植物原制剂</p></td>
+								<td><p class="ellipsis">500ml/亩</p></td>
+								<td><i class="delete-btn"></i></td>
+							</tr>
+						</table>
+					</div>
+					<dl class="mt10">
+						<dt>农资成本</dt>
+						<dd>
+							<p class="txt-verbal">24元</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>环境温度</dt>
+						<dd>
+							<input class="form-control control-w124 fl mr5" type="text" value="" />
+							<p class="txt-verbal pl9">°C</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>环境湿度</dt>
+						<dd>
+							<input class="form-control control-w124 fl mr5" type="text" value="" />
+							<p class="txt-verbal">%</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>其他成本</dt>
+						<dd>
+							<input class="form-control control-w124 fl mr5" type="text" value="" />
+							<p class="txt-verbal">元</p>
+						</dd>
+					</dl>
+				</div>
+				<!--农事图片-->
+				<div class="rfold-title"><p>农事图片</p></div>
+				<div class="rfold-content mb10">
+					<div class="nsplan-pic">
+						<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+					</div>
+				</div>
+				<!--备注-->
+				<div class="rfold-title"><p>备注</p></div>
+				<div class="rfold-content">
+					<textarea class="form-control area-require mb15" id="successRemarkArea">请输入备注</textarea>
+				</div>
+			</div>
+			<div class="rfold-footer">
+				<div class="btn btn-primary mr5">提交</div>
+				<div class="btn btn-default mr5">删除</div>
+				<div class="btn btn-default">返回</div>
+			</div>
+		</div>
+		<!-- 4.fixed 考核农事记录 -->
+		<div class="rfold-menu" id="assessRecord">
+			<div class="rfold-header">
+				<h3>考核农事记录</h3>
+				<i>close</i>
+			</div>
+			<div class="rfold-body">
+				<p class="rfold-tip">标记红色内容为操作员未按照指定计划执行的操作</p>
+				<!--计划参考-->
+				<div class="rfold-title noborder"><p>计划参考</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>区域</dt>
+						<dd>
+							<p class="txt-verbal">大棚区</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作内容</dt>
+						<dd>
+							<p class="txt-verbal">除草</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农事要求</dt>
+						<dd>
+							<p class="txt-verbal">施肥.播种.田间管理</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农事参考</dt>
+						<dd>
+							<img class="nsrefer-img" src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+						</dd>
+					</dl>
+				</div>
+				<!--完成情况-->
+				<div class="rfold-title"><p>完成情况</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>操作时间</dt>
+						<dd>
+							<p class="txt-verbal">2017-03-14</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>执行人</dt>
+						<dd>
+							<p class="txt-verbal">张三</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作工时</dt>
+						<dd>
+							<p class="txt-verbal">1小时/亩</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农机</dt>
+						<dd>
+							<p class="txt-verbal">拖拉机</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>语音备注</dt>
+						<dd>
+							<p class="voice-note">18"</p>
+						</dd>
+					</dl>
+				</div>
+				<!--重复-->
+				<div class="rfold-title"><p>重复</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>是否重复</dt>
+						<dd>
+							<p class="txt-verbal">不重复</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>重复间隔</dt>
+						<dd>
+							<p class="txt-verbal">23天</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>截止时间</dt>
+						<dd>
+							<p class="txt-verbal">2017-03-14</p>
+						</dd>
+					</dl>
+				</div>
+				<!--投入品添加-->
+				<div class="rfold-title"><p>投入品添加</p></div>
+				<div class="rfold-content">
+					<div class="addinputs-table">
+						<table>
+							<tr>
+								<th>名称</th>
+								<th>使用量</th>
+								<th>成本</th>
+							</tr>
+							<tr>
+								<td><p class="ellipsis">植物原制剂</p></td>
+								<td><p class="ellipsis">500ml/亩</p></td>
+								<td><p class="ellipsis">20元</p></td>
+							</tr>
+							<tr>
+								<td><p class="ellipsis cor-red">化肥</p></td>
+								<td><p class="ellipsis cor-red">500ml/亩</p></td>
+								<td><p class="ellipsis cor-red">5.4元</p></td>
+							</tr>
+						</table>
+					</div>
+					<ul class="khinputs-list mb20">
+						<li>
+							<p class="txt1">环境温度</p>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon15.png" />
+							<p class="txt2">23°C</p>
+						</li>
+						<li>
+							<p class="txt1">环境湿度</p>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon16.png" />
+							<p class="txt2">24%</p>
+						</li>
+						<li>
+							<p class="txt1">农资成本</p>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon17.png" />
+							<p class="txt2">25.4元</p>
+						</li>
+						<li class="ilast">
+							<p class="txt1">其他成本</p>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon18.png" />
+							<p class="txt2">100元</p>
+						</li>
+					</ul>
+				</div>
+				<!--农事图片-->
+				<div class="rfold-title"><p>农事图片</p></div>
+				<div class="rfold-content mb10">
+					<div class="khnsrecord-pics">
+						<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+						<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+					</div>
+				</div>
+				<!--备注-->
+				<div class="rfold-title"><p>备注</p></div>
+				<div class="rfold-content">
+					<p class="farmimg-bztxt">农事是值更低、施肥、播种；田间管理（除草、防倒伏、撒农药）收割。农事是值更低、施肥、播种；田间管理（除草、防倒伏、撒农药）收割。</p>
+				</div>
+				<!--评价-->
+				<div class="rfold-title"><p>评价</p></div>
+				<div class="rfold-content">
+					<ul class="evaluate-list">
+						<li>
+							<p class="ptxt">评价</p>
+							<div class="evaluate-stars">
+								<span></span>
+								<span></span>
+								<span></span>
+								<span></span>
+								<span></span>
+							</div>
+						</li>
+						<li>
+							<p class="ptxt ptxt2">评语</p>
+							<div class="khnsrecord-remark">
+								<textarea class="form-control" id="assessEvaluateArea">请输入评价内容</textarea>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="rfold-footer">
+				<div class="btn btn-success mr5">考核通过</div>
+				<div class="btn btn-warning mr5">驳回</div>
+				<div class="btn btn-default">返回</div>
+			</div>
+		</div>
+		<!-- 5.fixed 审核农事计划 -->
+		<div class="rfold-menu" id="auditPlan">
+			<div class="rfold-header">
+				<h3>审核农事计划</h3>
+				<i>close</i>
+			</div>
+			<div class="rfold-body">
+				<!--基本设置-->
+				<div class="rfold-title noborder"><p>基本设置</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>区域</dt>
+						<dd>
+							<p class="txt-verbal">大棚区</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作内容</dt>
+						<dd>
+							<p class="txt-verbal">除草</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作时间</dt>
+						<dd>
+							<div class="datetime-w140">
+						        <div class="input-append date form_datetime" id="iDay4">
+						            <input size="26" type="text" value="2017-03-14" />
+						            <span class="add-on"><i class="icon-th"></i></span>
+						        </div>
+						    </div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>执行人</dt>
+						<dd>
+							<div class="select-w140">
+								<select class="selectpicker">
+								    <option selected="selected">张三</option>
+								    <option>李四</option>
+								</select>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作工时</dt>
+						<dd>
+							<input class="form-control control-w94 fl mr5" type="text" value="1" />
+							<p class="txt-verbal">小时/亩</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农机</dt>
+						<dd>
+							<div class="select-w140">
+								<select class="selectpicker">
+								    <option selected="selected">拖拉机</option>
+								    <option>拖拉机2</option>
+								</select>
+							</div>
+						</dd>
+					</dl>
+				</div>
+				<!--重复-->
+				<div class="rfold-title"><p>重复</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>是否重复</dt>
+						<dd>
+							<ul class="readios-box" id="readiosBox2">
+								<li>
+									<div class="readio-blue"></div>
+									<span>重复</span>
+								</li>
+								<li>
+									<div class="readio-blue icheck"></div>
+									<span>不重复</span>
+								</li>
+							</ul>
+						</dd>
+					</dl>
+					<dl>
+						<dt>重复间隔</dt>
+						<dd>
+							<input class="form-control control-w124 fl mr5" type="text" value="" />
+							<p class="txt-verbal">天</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>截止时间</dt>
+						<dd>
+							<div class="datetime-w140">
+						        <div class="input-append date form_datetime" id="shenhejhDay">
+						            <input size="26" type="text" value="2017-03-14" />
+						            <span class="add-on"><i class="icon-th"></i></span>
+						        </div>
+						    </div>
+						</dd>
+					</dl>
+				</div>
+				<!--投入品添加-->
+				<div class="rfold-title"><p>投入品添加</p><div class="inputs-btn">添加</div></div>
+				<div class="rfold-content">
+					<div class="addinputs-table">
+						<table>
+							<tr>
+								<th>名称</th>
+								<th>使用量</th>
+								<th>操作</th>
+							</tr>
+							<tr>
+								<td><p class="ellipsis">植物原制剂</p></td>
+								<td><p class="ellipsis">500ml/亩</p></td>
+								<td><i class="delete-btn"></i></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<!--农事要求-->
+				<div class="rfold-title"><p>农事要求</p></div>
+				<div class="rfold-content">
+					<textarea class="form-control area-require mb15" id="auditRequireArea">输入农事要求内容...</textarea>
+				</div>
+				<!--农事参考-->
+				<div class="rfold-title"><p>农事参考</p></div>
+				<div class="rfold-content mb10">
+					<div class="nsrefer-pic">
+						<i class="iclose"></i>
+						<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+					</div>
+				</div>
+				<!--备注-->
+				<div class="rfold-title"><p>备注</p></div>
+				<div class="rfold-content">
+					<textarea class="form-control area-require mb15" id="auditRemarkArea">请输入备注</textarea>
+				</div>
+			</div>
+			<div class="rfold-footer">
+				<div class="btn btn-success mr5">审核通过</div>
+				<div class="btn btn-primary mr5">保存</div>
+				<div class="btn btn-default">删除</div>
+			</div>
+		</div>
+		<!-- 6.fixed 查看农事记录 -->
+		<div class="rfold-menu" id="viewRecord">
+			<div class="rfold-header">
+				<h3>查看农事记录</h3>
+				<i>close</i>
+			</div>
+			<div class="rfold-body">
+				<!--基本设置-->
+				<div class="rfold-title noborder"><p>基本设置</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>区域</dt>
+						<dd>
+							<p class="txt-verbal">大棚区</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作内容</dt>
+						<dd>
+							<p class="txt-verbal">除草</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作时间</dt>
+						<dd>
+							<p class="txt-verbal">2017-03-14</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>执行人</dt>
+						<dd>
+							<p class="txt-verbal">张三</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作工时</dt>
+						<dd>
+							<p class="txt-verbal">1小时/亩</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农机</dt>
+						<dd>
+							<p class="txt-verbal">拖拉机</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>语音备注</dt>
+						<dd>
+							<p class="voice-note">18"</p>
+						</dd>
+					</dl>
+				</div>
+				<!--重复-->
+				<div class="rfold-title"><p>重复</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>是否重复</dt>
+						<dd>
+							<p class="txt-verbal">不重复</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>重复间隔</dt>
+						<dd>
+							<p class="txt-verbal">23天</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>截止时间</dt>
+						<dd>
+							<p class="txt-verbal">2017-03-14</p>
+						</dd>
+					</dl>
+				</div>
+				<!--投入品添加-->
+				<div class="rfold-title"><p>投入品添加</p></div>
+				<div class="rfold-content">
+					<div class="addinputs-table">
+						<table>
+							<tr>
+								<th>名称</th>
+								<th>使用量</th>
+								<th>成本</th>
+							</tr>
+							<tr>
+								<td><p class="ellipsis">植物原制剂</p></td>
+								<td><p class="ellipsis">500ml/亩</p></td>
+								<td><p class="ellipsis">20元</p></td>
+							</tr>
+						</table>
+					</div>
+					<ul class="khinputs-list mb20">
+						<li>
+							<p class="txt1">环境温度</p>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon15.png" />
+							<p class="txt2">23°C</p>
+						</li>
+						<li>
+							<p class="txt1">环境湿度</p>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon16.png" />
+							<p class="txt2">24%</p>
+						</li>
+						<li>
+							<p class="txt1">农资成本</p>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon17.png" />
+							<p class="txt2">25.4元</p>
+						</li>
+						<li class="ilast">
+							<p class="txt1">其他成本</p>
+							<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_icon18.png" />
+							<p class="txt2">100元</p>
+						</li>
+					</ul>
+				</div>
+				<!--农事图片-->
+				<div class="rfold-title"><p>农事图片</p></div>
+				<div class="rfold-content mb10">
+					<div class="viewrecord-pics">
+						<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+						<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+					</div>
+				</div>
+				<!--备注-->
+				<div class="rfold-title"><p>备注</p></div>
+				<div class="rfold-content">
+					<p class="farmimg-bztxt">农事是值更低、施肥、播种；田间管理（除草、防倒伏、撒农药）收割。农事是值更低、施肥、播种；田间管理（除草、防倒伏、撒农药）收割。</p>
+				</div>
+				<!--农事参考-->
+				<div class="rfold-title"><p>农事参考</p></div>
+				<div class="rfold-content mb10">
+					<div class="viewrecord-refers">
+						<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+					</div>
+				</div>
+				<!--农事要求-->
+				<div class="rfold-title"><p>农事要求</p></div>
+				<div class="rfold-content">
+					<p class="farmimg-bztxt">农事是值更低、施肥、播种；田间管理（除草、防倒伏、撒农药）收割。农事是值更低、施肥、播种；田间管理（除草、防倒伏、撒农药）收割。</p>
+				</div>
+				<!--评价-->
+				<div class="rfold-title"><p>评价</p><div class="editpj-btn"></div></div>
+				<div class="rfold-content">
+					<div class="view-evaluate-box">
+						<div class="td-lt">
+							好评度<br /><img class="stars-img" src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_star4.png" />
+						</div>
+						<div class="td-rt">
+							<p class="evaluate-txt">干净、卫生</p>
+							<p class="issue-txt">发布人：自然之心</p>
+							<p class="source-txt">05-09 15:07 来自网站</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="rfold-footer">
+				<div class="btn btn-default mr5">删除</div>
+				<div class="btn btn-default">返回</div>
+			</div>
+		</div>
+		<!-- 7.fixed 编辑农事计划 -->
+		<div class="rfold-menu" id="editPlan">
+			<div class="rfold-header">
+				<h3>编辑农事计划</h3>
+				<i>close</i>
+			</div>
+			<div class="rfold-body">
+				<!--基本设置-->
+				<div class="rfold-title noborder"><p>基本设置</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>区域</dt>
+						<dd>
+							<p class="txt-verbal">大棚区</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作内容</dt>
+						<dd>
+							<p class="txt-verbal">除草</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作时间</dt>
+						<dd>
+							<div class="datetime-w140">
+						        <div class="input-append date form_datetime" id="iDay5">
+						            <input size="26" type="text" value="2017-03-14" />
+						            <span class="add-on"><i class="icon-th"></i></span>
+						        </div>
+						    </div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>执行人</dt>
+						<dd>
+							<div class="select-w140">
+								<select class="selectpicker">
+								    <option selected="selected">张三</option>
+								    <option>李四</option>
+								</select>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>操作工时</dt>
+						<dd>
+							<input class="form-control control-w94 fl mr5" type="text" value="" />
+							<p class="txt-verbal">小时/亩</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>农机</dt>
+						<dd>
+							<div class="select-w140">
+								<select class="selectpicker">
+								    <option selected="selected">拖拉机</option>
+								    <option>拖拉机2</option>
+								</select>
+							</div>
+						</dd>
+					</dl>
+				</div>
+				<!--重复-->
+				<div class="rfold-title"><p>重复</p></div>
+				<div class="rfold-content">
+					<dl>
+						<dt>是否重复</dt>
+						<dd>
+							<ul class="readios-box" id="readiosBox3">
+								<li>
+									<div class="readio-blue"></div>
+									<span>重复</span>
+								</li>
+								<li>
+									<div class="readio-blue icheck"></div>
+									<span>不重复</span>
+								</li>
+							</ul>
+						</dd>
+					</dl>
+					<dl>
+						<dt>重复间隔</dt>
+						<dd>
+							<input class="form-control control-w124 fl mr5" type="text" value="" />
+							<p class="txt-verbal">天</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>截止时间</dt>
+						<dd>
+							<div class="datetime-w140">
+						        <div class="input-append date form_datetime" id="iDay7">
+						            <input size="26" type="text" value="2017-03-14" />
+						            <span class="add-on"><i class="icon-th"></i></span>
+						        </div>
+						    </div>
+						</dd>
+					</dl>
+				</div>
+				<!--投入品添加-->
+				<div class="rfold-title"><p>投入品添加</p><div class="inputs-btn">添加</div></div>
+				<div class="rfold-content">
+					<div class="addinputs-table">
+						<table>
+							<tr>
+								<th>名称</th>
+								<th>使用量</th>
+								<th>操作</th>
+							</tr>
+							<tr>
+								<td><p class="ellipsis">植物原制剂</p></td>
+								<td><p class="ellipsis">500ml/亩</p></td>
+								<td><i class="delete-btn"></i></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<!--农事要求-->
+				<div class="rfold-title"><p>农事要求</p></div>
+				<div class="rfold-content">
+					<textarea class="form-control area-require mb15" id="auditRequireArea">输入农事要求内容...</textarea>
+				</div>
+				<!--农事参考-->
+				<div class="rfold-title"><p>农事参考</p></div>
+				<div class="rfold-content mb10">
+					<div class="nsrefer-pic">
+						<i class="iclose"></i>
+						<img src="#{request.contextPath}/asset/images/agricultural/FarmingCalendar_pic1.jpg" />
+					</div>
+				</div>
+				<!--备注-->
+				<div class="rfold-title"><p>备注</p></div>
+				<div class="rfold-content">
+					<textarea class="form-control area-require mb15" id="auditRemarkArea">请输入备注</textarea>
+				</div>
+			</div>
+			<div class="rfold-footer">
+				<div class="btn btn-primary mr5">确定</div>
+				<div class="btn btn-default">取消</div>
+			</div>
+		</div>
+		<!-- 7.fixed 编辑农事计划 -->
+	</div>	
+	</td>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,449 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	#{orderOperate.orderUpdateView()}
+	<style>
+		.r_title{ font-size: 14px; color:#525252;}
+		.cm_resumeList{}
+		.cm_resumeList li{ float:left;}
+		.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'微软雅黑';}
+		.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+		.cm_resumeList li img{ float:left; margin-top:16px;}
+		.cm_resumeList li span{ float:left; text-indent:10px;}
+		.borderBt{ border-bottom:2px solid #33aedc;}
+		.borderBt02{ border-bottom:1px solid #cbcbcb;}
+		 .customMess_wap .items p.name {overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+		div#menu .helpSeleHd{ float:left; overflow:hidden; width:65px; height:24px; line-height:24px; padding:0 20px 0 5px; background:url(#{request.contextPath}/asset/images/sitIco2.png) no-repeat 50px 12px; color:#cfe3fe;}
+	</style>
+	<td valign="top" >
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%; padding:20px 30px;">
+				<div class="breadNav_wap clear">
+					<s:fragment rendered="#{orderOperate.backType eq '2'}">
+						<div class="breadNav_lt">销售管理<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam?orderStatus=#{orderStatus}"><strong>客户信息</strong></a></div>
+	                    <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+		                    <ul class="resumeList clear">
+		                    	<li>
+		                            <a href="#{request.contextPath}/contract/PurchaseMemberList.seam"><img src="../asset/images/orderManage/qykh_btn.png" /><span>供应商企业</span></a>
+		                        </li>
+		                        <li>
+		                    		<a href="#{request.contextPath}/contract/DemandMemberList.seam"><img src="../asset/images/orderManage/qykh_btn.png" /><span>需求商企业</span></a>
+		                        </li>
+		                        <li>
+		                    		<a class="borderBt" href="#{request.contextPath}/order/OrderMemberList.seam"><img src="../asset/images/orderManage/ddkh_btn.png" /><span>订单客户</span></a>
+		                        </li>
+		                    </ul>
+		                </div>
+					</s:fragment>
+					<s:fragment rendered="#{orderOperate.backType ne '2'}">
+					<div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam?orderStatus=#{orderStatus}"><strong>订单管理</strong></a></div>
+					<div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+						<ul class="resumeList clear">
+							<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+			                <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                            </h:panelGroup>
+						</ul>
+					</div>
+					</s:fragment>
+				</div>
+				<div class="singleManage_con">
+					<div class="orderTrack_heade mb20">
+						<p class="mr70">订单编号：<span class="number">#{orderOperate.updateOrderInfo.orderCode}</span></p>
+			            <p class="mr70">订单状态：<span class="statues">#{orderConstant.getOrderStatusLabel(orderOperate.updateOrderInfo.orderStatus)}</span></p>
+		            	<p class="#{orderOperate.updateOrderInfo.payType eq '已支付'? 'payStatues' : 'payStatues2'}">#{orderOperate.updateOrderInfo.payType}</p>
+					</div>
+					<div class="orderTrack_body">
+						<table class="tableGz" width="100%" cellpadding="0" cellspacing="0">
+							<thead>
+								<tr>
+									<th colspan="3">订单跟踪</th>
+								</tr>
+							</thead>
+			                <tbody>
+								<tr>
+									<th width="25%" height="50" align="left" style="padding-left:70px; font-weight:bold;">处理时间</th>
+			                        <th width="60%" align="left" style="font-weight:bold;">处理信息</th>
+			                        <th width="15%" align="center" style="font-weight:bold; text-align: center;">操作人</th>
+			                    </tr> 
+			                    <a:repeat value="#{orderOperate.orderRecordList}" var="_orderRecord" rowKeyVar="_index">
+		                    		<tr>
+				                    	<td class="dateTd #{_index + 1 != orderOperate.orderRecordList.size() ? 'bg' : ''}" height="50">
+				                    		<i class="ico_bg"></i>
+				                    		<h:outputText value="#{_orderRecord.insertTime}">
+						        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss" />
+						        			</h:outputText>
+			                    		</td>
+				                        <td>
+				                            <div style="overflow:hidden;">
+				                            <span style="float:left;">#{orderConstant.getOrderStatusLabel(_orderRecord.orderStatus)}</span>
+				                            <div class="InOrdePass_tip">
+				                            	<p>#{_orderRecord.description}</p>
+				                            </div>
+				                            </div>
+				                        </td>
+				                        <td align="center" style="text-align: center;">#{_orderRecord.operater}</td>
+				                    </tr>
+			                    </a:repeat>
+			                </tbody>
+			            </table>
+			        </div>
+			        <h2 class="titleH2">客户信息</h2>
+			        <div class="mb20 mt20">
+			        	<div class="customMess_wap" style="margin-left:40px;">
+			                <div class="items itemsCur" style="cursor:default;">
+			                    <p class="name" title="#{orderOperate.updateOrderInfo.memberName}">客户姓名：<span>#{orderOperate.updateOrderInfo.memberName}</span></p>
+			                    <p class="phone">联系方式：<span>#{orderOperate.updateOrderInfo.memberPhone}</span></p>
+			                    <p class="come">客户来源：<span>#{orderOperate.updateOrderInfo.memberSource}</span></p>
+			                    <p class="type">客户类型：<span>#{orderOperate.updateOrderInfo.memberType}</span></p>
+			                    <p class="addresses">工作地址：<span>#{orderOperate.updateOrderInfo.memberAddress}</span></p>
+			                    <em class="defaultIco"></em>
+			                    <p title="#{orderOperate.updateOrderInfo.memberRemark}">备注：<span>#{orderOperate.updateOrderInfo.memberRemark}</span></p>
+			                </div>
+			            </div> 
+			        </div>
+			        <h2 class="titleH2">收货人信息</h2>
+			        <div class="mb20">
+				        <table class="W_addresses" cellpadding="0" cellspacing="0" style="margin-left:40px;">
+					        <tr>
+					            <td>
+					                <div class="W_addresses_list">
+					                	<div class="addrItems" style=" cursor: default;">
+					                    	<div class="inner innerCur">
+					                        	<div class="addr_hd">
+													<span class="name" title="#{orderOperate.updateOrderInfo.deliverName}" style=" font-weight:bold;cursor: pointer;">#{orderOperate.updateOrderInfo.deliverName}&#160;&#160;</span><span title="#{orderOperate.updateOrderInfo.deliverPhone}" style="cursor: pointer;" class="phone">#{orderOperate.updateOrderInfo.deliverPhone}</span>
+					                            </div>
+					                            <div class="addr_bd">
+					                            	<span class="street">#{orderOperate.updateOrderInfo.deliverRemark}</span>
+					                            </div>
+					                            <i class="curmarker"></i>
+					                        </div>
+					                    </div>
+					                </div>
+					            </td>
+					        </tr>
+				        </table>
+			        </div>
+			        <h2 class="titleH2">配送时间</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">配送时间：
+			        		<span class="date">
+			        			<h:outputText value="#{orderOperate.updateOrderInfo.deliverTime}">
+			        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+			        			</h:outputText>
+			        		</span>&#160;|&#160;
+			        		<span class="sendStatues">
+			        			#{orderOperate.updateOrderInfo.deliverTimeType}
+			        		</span></p>
+			        </div>
+			         <!-- 使用红包 开始 -->
+			        <h:outputText value="" rendered="#{orderOperate.coupons.size() gt 0}">
+                    <h2 class="titleH2">使用红包</h2>
+                    <div class="mb20">
+                    	<input type="hidden" value="#{orderOperate.coupons.get(0)[0]}" id="couponId"/>
+                        <div class="a_voucher cur">
+                        	<span class="v_bg"></span>
+                            <span class="v_hook"></span>
+                            <div class="a_voucher_lt">
+                            	<h:outputText rendered="#{orderOperate.coupons.get(0)[2] ne '' and orderOperate.coupons.get(0)[2] ne null}" >
+                            	<p class="p_txt1">消费满#{orderOperate.coupons.get(0)[2]}元可以使用！</p>
+                                </h:outputText>
+                                <p class="p_txt2">有效期：#{orderOperate.coupons.get(0)[4]}</p>
+                            </div>
+                            <div class="a_voucher_rt">
+                            	<span class="v_line"></span>
+                                <p class="p_txt3">#{orderOperate.coupons.get(0)[1]}<span>元</span></p>
+                            </div>
+                        </div>
+                    </div>
+			        </h:outputText>
+			        <h2 class="titleH2">付款方式</h2>
+			        <div class="mb20 mt20">
+			        <s:fragment rendered="#{orderOperate.updateOrderInfo.deliverTimeType eq '微信支付'}">
+			        	<img src="#{request.contextPath}/asset/images/purchase/wechatpay.png" alt="" />
+			        </s:fragment>
+			        <s:fragment rendered="#{orderOperate.updateOrderInfo.deliverTimeType ne '微信支付'}">
+			        	<p class="orderTextP">#{orderOperate.updateOrderInfo.deliverTimeType}</p>
+			        </s:fragment>
+			        </div>
+			        <h2 class="titleH2"><span style="display:inline-block; width:28px;"></span>备注</h2>
+			        <div class="mb20 mt20" style="height: 56px;">
+			        	<p class="orderTextP">#{orderOperate.updateOrderInfo.orderRemark}</p>
+			        </div>
+			        
+			        <h2 class="titleH2"><span style="display:inline-block; width:28px;"></span>会员卡使用情况</h2>
+			        <div class="mb20 mt20">
+			        	<s:fragment rendered="#{orderOperate.oldCardsInfos.size() > 0}">
+			        		<h2 class="titleH2" style="font-weight:normal; margin-left:16px;">会员卡信息 </h2>
+							<div class="W_addresses_list" style="margin-left:16px; display:inline-block;" >
+								<a:repeat value="#{orderOperate.oldCardsInfos}" var="_card" rowKeyVar="_i">
+								<h:outputText value="" rendered="#{_card.cardCategory.giftType eq 1}">
+								<div class="fl" style="margin-bottom:10px;">
+									<div class="cardBh" style="height:266px;margin-bottom:5px;">
+										<div class="cardTop">
+											<div class="cardTopL fl">会员卡编号：<span>#{_card.cardCode}</span></div>
+										</div> 
+										<div class="bgTiao">
+											<table>
+												<tr>
+													<td style="width:95px">商品名称</td>
+													<td style="width:130px">单价*剩余数量</td>
+													<td style="width:85px">使用数量</td>
+												</tr>
+											</table>
+										</div> 
+										<div class="cardContent" id="carousel#{_card.cardCode}" style="height: 100px;">
+											<ul class="tabList">
+												<a:repeat value="#{orderOperate.oldCardProductMap.get(_card.cardInfoId.toString())}" var="_result" rowKeyVar="_index">
+													<li class="#{_index == 0 ? 'cur' : ''}">
+														<table>
+															<a:repeat value="#{_result}" var="_sp">
+																<tr>
+																	<td style="width:95px"><a href="javascript:void(0);" title="#{_sp.productName}" class='w84'>#{_sp.productName}</a></td>
+																	<td style="width:130px"><span>#{_sp.productPrice}元</span>*<span>#{_sp.productUsedNum}</span></td>
+																	<td style="width:85px"><input type="text" readonly="readonly" class="form-control number" value="#{_sp.productUsedNum}" ></input></td>
+																</tr>
+															</a:repeat>
+														</table>                                   
+													</li>
+												</a:repeat>
+											</ul>
+											<div class="jiantou">
+												<span class="leftJt"></span>
+												<span class="rightJt"></span>
+											</div>
+										</div>
+										
+										<dl class="remark_dl">
+											<dt class="remark_dt">备注：</dt>
+											<dd class="remark_dd" title="#{_card.remark}">#{_card.remark2}</dd>
+										</dl>
+									</div>
+								</div>
+								</h:outputText>
+								<h:outputText rendered="#{_card.cardCategory.giftType eq 0}"> 
+								<div class="fl" style="margin-bottom:10px;">
+									<div class="cardBh" style="height:266px;margin-bottom:5px;">
+										<div class="cardTop">
+											<div class="cardTopL fl">会员卡编号：<span>#{_card.cardCode}</span></div>
+										</div>  
+										<div class="bgTiao"></div> 
+										<div style="height: 86px;">
+											<p class="text_weight1">#{_card.cardCategory.name}（#{_card.cardCategory.weight}g）</p>
+											<p class="text_weight2"><img src="../asset/images/orderManage/icon_weight1.png" />单次可用重量：<font>#{_card.cardCategory.weight}+#{_card.cardCategory.fluctuations}（g）</font>
+											
+											</p>
+										</div>
+										<dl class="remark_dl">
+											<dt class="remark_dt">备注：</dt>
+											<dd class="remark_dd" title="#{_card.remark}">#{_card.remark2}</dd>
+										</dl>
+										
+										<div class="useBtn" style="width:90%;margin:10px auto 0;position:initial; text-align:right;">
+										<div class="delivery_times">
+		                                	<span class="text_delivery">使用配送次数：</span>
+		                                    <div class="count_delivery" style="margin-top: 5px;">
+		                                    	#{_card.cardUsedNum}
+		                                    </div>
+		                                </div>
+											
+										</div>
+									</div>
+								</div>
+								</h:outputText>
+								</a:repeat>
+			                </div>
+		                </s:fragment>
+		                <script>
+		              		//<![CDATA[
+			                jQuery('.rightJt').click(function(e){
+			    	            var id=jQuery(e.target).parent().parent().attr('id');
+			    	            lunbo('right','#'+id);
+			    		    });
+			    		    jQuery('.leftJt').click(function(e){
+			    				var id=jQuery(e.target).parent().parent().attr('id'); 
+			    				lunbo('left','#'+id);
+			    		    });
+
+			    		  	//验证数量
+			    			function numMax(id ,nowNum, maxNum){
+
+				    			nowNum = nowNum.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+				    			nowNum = nowNum.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+				    			nowNum = nowNum.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+				    			nowNum = nowNum.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+			    				if (nowNum > maxNum) {
+			    					jQuery("#" + id).val(maxNum);
+			    				}else {
+			    					jQuery("#" + id).val(nowNum);
+								}
+			    			}
+
+			    		    function lunbo(action, mingzi) {
+			    			    //得到所有元素，目的就是后面的代码，不要老重复执行$函数。
+			    			    var carousel = jQuery(mingzi);
+			    			    var imageListLis = jQuery(mingzi).find(".tabList li");
+			    			    var btn_left = jQuery(mingzi).find(".leftJt");
+			    			    var btn_right = jQuery(mingzi).find(".rightJt");
+			    			    //图片总数
+			    			    var imageAmount = imageListLis.length;
+			    			    //信号量
+			    			    var nowimg = jQuery(mingzi + ' .cur').index();
+			    			    //右按钮事件监听
+			    			    if (action == 'left') {
+			    			        leftBtnFunc();
+			    			    } else {
+			    			        rightBtnFunc();
+			    			    }
+			    			    function rightBtnFunc() {
+			    			        //信号量的增加
+			    			        nowimg++;
+			    			        //验收。如果信号量增加，超过了图片总数减1，那么就让信号量重新置为0。
+			    			        //合法的信号量，最大最大就是图片总数减1。不能超过。
+			    			        if (nowimg > imageAmount - 1) {
+			    			            nowimg = 0;
+			    			        }
+			    			        //调用函数
+			    			        changePictureAndChangeCircles();
+			    			    }
+			    			    //左按钮事件监听
+			    			    function leftBtnFunc() {
+			    			        //信号量的增加
+			    			        nowimg--;
+			    			        //验收。如果信号量增加，超过了图片总数减1，那么就让信号量重新置为0。
+			    			        //合法的信号量，最大最大就是图片总数减1。不能超过。
+			    			        if (nowimg < 0) {
+			    			            nowimg = imageAmount - 1;
+			    			        }
+			    			        //调用函数
+			    			        changePictureAndChangeCircles();
+			    			    }
+
+			    			    function changePictureAndChangeCircles() {
+			    			        //让我们的图片和小圆点，都跟随信号量变化。信号量那个有cur，其余没cur。
+			    			        imageListLis.eq(nowimg).addClass("cur").siblings().removeClass("cur");
+			    			    }
+			    			}
+			    		  //]]>
+		                </script>
+			        </div>
+			        
+			    	<h2 class="titleH2">商品清单</h2>
+			        <div class="listGoods_con">
+			            <table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+			                <thead>
+			                <tr>
+			                	<th width="10%">序号</th>
+			                    <th width="20%">商品</th>
+			                    <th width="10%">规格</th>
+			                    <th width="10%">原价</th>
+			                    <th width="10%">单价</th>
+			                    <th width="10%">数量</th>
+			                    <th width="10%">折扣</th>
+			                    <th width="10%">小计</th>
+								<th width="20%">备注</th>
+			                </tr>
+			                </thead>
+			            </table>
+			            <div class="tableFixed_scroll" id="showProductDiv">
+				            <table class="tableModel tbody" width="100%" cellpadding="0" cellspacing="0">
+				                <tbody>
+				                	<a:repeat value="#{orderOperate.oldProductInfos}" var="_orderProduct" rowKeyVar="_opIndex">
+				                		<tr class="odd">
+						                    <td width="10%">#{_opIndex + 1}</td>
+						                    <td width="20%">#{_orderProduct.productName}</td>
+						                    <td width="10%">#{_orderProduct.productUnit}</td>
+						                    <td width="10%">¥<span class="num_spyj"><h:outputText value="#{_orderProduct.productOriginalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="10%">¥<span class="num_spdj2"><h:outputText value="#{_orderProduct.productPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="10%">#{_orderProduct.productNum}</td>
+						                    <td width="10%">#{_orderProduct.discount}</td>
+						                    <td width="10%">
+						                    	<s:span styleClass="num_dpzj" rendered="#{_orderProduct.productType == orderConstant.getCartProductGeneral()}">
+						                    		¥<h:outputText value="#{_orderProduct.productTotalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText>
+						                    	</s:span>
+						                    	<s:span styleClass="num_dpzj" rendered="#{_orderProduct.productType == orderConstant.getCartProductGift()}">
+						                    		<h:outputText value="赠品" ></h:outputText>
+						                    	</s:span>
+					                    	</td>
+						                    <td width="20%"><a  title="#{_orderProduct.productRemark}"  href="javascript:void(0);" style="display:inline-block; max-width:80px; overflow:hidden; white-space: nowrap;">#{_orderProduct.productRemark}</a></td>
+						                </tr>
+				                	</a:repeat>
+				                </tbody>
+				            </table>
+			            </div>
+			            <div class="tfoot mb20">
+			                <div class="listGoods_total">
+			                    <ul>
+			                        <li class="listGoods_li1">共<span class="num"><h:outputText value="#{orderOperate.updateOrderInfo.orderProductNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></span>件商品</li>
+			                        <li class="listGoods_li2">商品总额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num"><h:outputText value="#{orderOperate.updateOrderInfo.orderProductPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                        <h:outputText value="" rendered="#{orderOperate.coupons.size() gt 0}">
+			                        <li class="listGoods_li2">红包金额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num"><h:outputText value="#{orderOperate.coupons.get(0)[1]}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                        </h:outputText>
+			                        <li class="listGoods_li2">礼品卡金额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num"><h:outputText value="#{orderOperate.updateOrderInfo.cardPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                        <li class="listGoods_li2">折扣金额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num"><h:outputText value="#{orderOperate.updateOrderInfo.discountPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                        <li class="listGoods_li2">运费：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num"><h:outputText value="#{orderOperate.updateOrderInfo.freightPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                        <li class="listGoods_li2">使用余额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num"><h:outputText value="#{orderOperate.updateOrderInfo.usedBalance}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                    </ul>
+			                </div>
+			                <div class="listGoods_li5 clear">
+			                    <div class="fr">
+			                    <span class="fl">应付总额：</span>
+			                    <span class="codeEle fl">¥</span>
+			                    <span class="num fl">#{orderOperate.updateOrderInfo.payableAmount}</span>
+			                    </div>
+			                </div>
+			            </div>
+			            <div>
+ 	                        <s:button view="/orderManage/OrderView.xhtml" styleClass="btn btn-default fr" propagation="end" value="返回" >
+ 	                            <f:param name="from" value="#{empty from ? 'OrderOperateList' : from}"></f:param>
+ 	                            <f:param name="orderInfoId" value="#{orderOperate.updateOrderInfo.orderInfoId}"></f:param>
+ 	                            <f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+ 	                        </s:button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</td>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		jQuery(function(){
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+
+			if(#{orderOperate.orderProductList.size()>20}){
+				jQuery('.tableFixed_scroll').attr('style',jQuery('.tableFixed_scroll').attr('style')+'height:760px;');
+			}else{
+				jQuery('.tableFixed_scroll').attr('style',jQuery('.tableFixed_scroll').attr('style')+'height:'+#{orderOperate.orderProductList.size()}*38+'px;')
+			}
+		});
+
+		
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

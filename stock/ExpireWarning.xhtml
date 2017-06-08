@@ -1,0 +1,351 @@
+﻿<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_inventory.xhtml">
+
+	<ui:define name="body">
+
+
+<title>入库明细</title>
+<style>
+.name{display:inline-block;max-width:90px;height:20px; line-height:20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+.icheckbox_minimal-blue, .iradio_minimal-blue{ background:url(/asset/images/blue.png);}
+</style>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/bootstrap/skinBlue.css" />
+ <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/style.css"/>
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/stock/InventoryFile.css" />
+#{expireWarningList.init()}
+            <td valign="top">
+            <div class="inbentory_file_main">
+            	<!-- 库存左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first1">
+                            <a href="javascript:;" onClick="window.open('#{request.contextPath}/stock/InventoryFile.seam','_self')" ><i class="icon_L icon_kcda"></i>库存档案</a>
+                        </strong>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_rkgl"></i>入库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item sed_item" onClick="window.open('#{request.contextPath}/stock/InStorageList.seam','_self')" ><i class="icon_sed"></i>入库明细</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/InStockAdd.seam','_self')"><i class="icon_sed"></i>入库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_ckgl"></i>出库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/OutStorageList.seam','_self')"><i class="icon_sed"></i>出库明细</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/OutStorage.seam','_self')"><i class="icon_sed"></i>出库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_zkgl"></i>在库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item sed_cur" onClick="window.open('#{request.contextPath}/stock/ExpireWarning.seam','_self')"><i class="icon_sed"></i>过期预警</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/AllocationRecord.seam','_self')"><i class="icon_sed"></i>调拨记录</li>
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/AllocationBill.seam','_self')"><i class="icon_sed"></i>调拨单</li>
+                        	<h:panelGroup rendered="#{sessionTake.tempType eq 9}">
+							<li class="sed_item" onClick="window.open('#{request.contextPath}/stock/StorageRecord.seam','_self')"><i class="icon_sed"></i>贮藏记录</li>
+							</h:panelGroup>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pdgl"></i>盘点管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onClick="window.open('#{request.contextPath}/stock/InventoryRecord.seam','_self')"><i class="icon_sed"></i>盘点记录</li>
+                            <li class="sed_item" onClick="window.open('#{stockUtil.getInventoryNoBatch(sessionTake.enterpriseInfoId) ? '/stock/InventoryBillAll.seam' : '/stock/InventoryBill.seam'}','_self')"><i class="icon_sed"></i>盘点单</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 库存左侧二级导航 -->
+                <!-- 库存档案右侧 -->
+                <div class="inbentory_content">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt" style="margin-left:20px;"><a href="#">采销存</a><span>&gt;</span><a href="#">库存</a><span>&gt;</span><strong>过期预警</strong></div>
+                    </div>
+                    <div class="inbentory_search_wap">
+                    	<!-- 库存档案搜索头部 -->
+                    	<div class="search_header clear">
+                        	<div class="clear">
+                                <div class="search_selected fl">
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">仓库</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <rich:panel id="storageRoomPanel" style="margin:0; border:none; padding: 0;">
+                                            <select class="selectpicker" style="display: none;" id="storageRoom" onchange="conditionSearch()">
+                                                <option selected="selected" value="-1">全部</option>
+                                                <a:repeat value="#{expireWarningList.storageRoomList}" var="storage">
+													<option value="#{storage[0]}" >#{storage[1]}</option>
+												</a:repeat>
+                                            </select>
+                                            </rich:panel>
+                                        </dd>
+                                    </dl>
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">物料类型</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <select class="selectpicker" style="display: none;" id="goodsType" onchange="goodsTypeChange()">
+                                                <option selected="selected" value="-1">全部</option>
+                                                <a:repeat value="#{expireWarningList.getGoodsTypeList()}" var="_sc" rowKeyVar="_index">
+                                                	<option value="#{_sc.id}">
+								   						<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+														<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>									   
+								  					 </option>
+							 					 </a:repeat>
+                                            </select>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="search_selected fl">
+                                    <dl style="width:470px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">过期时间</dt>
+                                        <dd class="inline_block bootSelt180">
+                                             <select class="selectpicker" style="display: none;" id="expiration" onchange="conditionSearch()">
+                                                <option value="-1">全部</option>
+                                                <option value="1">未过期</option>
+                                                <option value="2">1天</option>
+                                                <option value="3">3天</option>
+                                                <option value="4" selected="selected">7天</option>
+                                                <option value="5">7天以上</option>
+                                            </select>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="clear" style="position:relative; padding-right:100px;">
+                                <div class="search_selected fl">
+                                    <dl style="width:340px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">搜索</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <input type="text" style="width:180px;font-size:12px;" value="物料名称/批次编号/物料编号" class="form-control mr5 fl" id="searchStr"/>
+                                            <input type="button" value="搜索" class="btn btn-primary" onclick="conditionSearch()" id="searchButton"/>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div >
+                               <rich:panel id="exp" style="margin:0; border:none; padding: 0;position:absolute;right:0;top:14px;">
+                        			<s:link   view="/stock/ExpireWarning.xhtml" action="#{expireWarningList.exportExcel()}" onclick="checkTime()">
+                        				<f:param name="exportFlag" value="1"/>
+                        				<f:param name="storageRoomId" value="#{expireWarningList.storageRoomId}"/>
+                        				<f:param name="goodsType" value="#{expireWarningList.goodsType}"/>
+                        				<f:param name="expiration" value="#{expireWarningList.expiration}"/>
+                        				<f:param name="searchStr" value="#{expireWarningList.searchStr}"/>
+                        				<img src="#{request.contextPath}/asset/images/stock/commons/icon_exportExcel.jpg"  /> 
+									</s:link>
+									<input type="button" value="批量报损" class="btn btn-primary" onclick="batchDamage()" id="damageButton"/>
+								</rich:panel> 
+								
+								</div>
+                            </div>
+                        </div>
+                        <!-- 库存档案搜索列表 -->
+                        <rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+                        <table class="inventory_modal_table mt20" width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                        		<th ><input class="iCheck" type="checkbox" allaa="unchecked" id="allCheck" onclick="commentAllCheck(this)"/></th>
+                            	<th>序号</th>
+                                <th>操作</th>
+                                <th>仓库</th>
+                                <th>物料编号</th>
+                                <th>物料名称</th>
+                                <th>批次编号</th>
+                                <th>规格</th>
+                                <th>剩余数量</th>
+                                <th>入库日期</th>
+                                <th>保质期（天）</th>
+                                <th>过期天数（天）</th>
+                            </tr>
+                            <a:repeat value="#{expireWarningList.resultList}" var="_sc" rowKeyVar="_index">
+                            <tr class="odd">
+                            	<td><input class="iCheck" type="checkbox"  storageid="#{_sc[18]}"  expireid="#{_sc[0]}" name="commentCheck"/></td>
+                            	<td>#{_index+1}</td>
+                                <td><span class="color_b" onclick="outStorage(#{_sc[0]});">报损</span></td>
+                                <td>#{_sc[17]}</td>
+                                <td>#{_sc[2]}</td>
+                                <td>#{_sc[3]}</td>
+                                <td>#{_sc[1]}</td>
+                                <td>
+                               		<s:fragment rendered="#{_sc[14] eq 1}">
+										<s:fragment rendered="#{_sc[13] ge 7 and _sc[13] le 11}">
+											#{sessionTake.harvestUnit eq 1? '斤':'公斤（kg）'}
+										</s:fragment>
+										<s:fragment rendered="#{_sc[13] lt 7 or _sc[13] gt 11}">
+											#{_sc[9]}
+										</s:fragment>
+									</s:fragment>
+									<s:fragment rendered="#{_sc[14] ne 1}">
+										#{_sc[15]}#{_sc[9]}
+										<s:fragment rendered="#{_sc[16] ne null and _sc[16] ne ''}">
+											/#{_sc[16]}
+										</s:fragment>
+									</s:fragment>
+                                </td>
+                                <td>
+                                	<s:fragment rendered="#{_sc[14] eq 1}">
+											<h:outputText rendered="#{_sc[13] ge 7 and _sc[13] le 11}" >
+			                                	<h:outputText value="#{stringUtil.changeFloatMe(_sc[5],3)}" rendered="#{sessionTake.harvestUnit eq 1}"><f:convertNumber pattern="#####.###"/></h:outputText>
+			                                	<h:outputText value="#{_sc[5]}" rendered="#{sessionTake.harvestUnit ne 1}"><f:convertNumber pattern="#####.###"/></h:outputText>
+					                    	</h:outputText>
+						                    <h:outputText value="#{unitStranfer.outStranfer(_sc[13],_sc[5])}" rendered="#{_sc[13] lt 7 or _sc[13] gt 11}" ><f:convertNumber pattern="#####.###"/></h:outputText>
+					                 </s:fragment>
+					                 <s:fragment rendered="#{_sc[14] ne 1}">
+											#{_sc[5]}
+					                 </s:fragment>
+                                </td>
+                                <td>
+                                	<h:outputText value="#{_sc[6]}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText>
+								</td>
+                                <td>#{_sc[7]}天</td>
+                                <td>#{_sc[8]}</td>
+                            </tr>
+                           </a:repeat>
+                        </table>
+                        <div class="pageModel_wap" style="padding:50px 0 30px;">
+                        <h:form id="pageFrom" rendered="#{null ne expireWarningList.resultList and expireWarningList.resultList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!expireWarningList.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{expireWarningList.hasPreviousPage and expireWarningList.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{expireWarningList.hasPreviousPage and expireWarningList.totalPages > 1}" >首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{expireWarningList.prePageNum})"  >&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{expireWarningList.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le expireWarningList.totalPages}">
+											<td class="td_t_b #{expireWarningList.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq expireWarningList.pageNum ? 'onp' : ''}" >
+												<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{expireWarningList.flag}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{expireWarningList.nextPageNum})"  >&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{expireWarningList.totalPages})" >尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{expireWarningList.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+						</div>
+                        <!-- 库存档案搜索列表 -->
+                        </rich:panel>
+                    </div>
+                </div>
+                <!-- 库存档案右侧 -->
+            </div>   
+            </td>    
+<a:form>
+	<a:jsFunction name="queryByGoodsType" action="#{expireWarningList.queryByGoodsType()}"  reRender="showPanel,storageRoomPanel,exp"  oncomplete="refresh()">
+		<a:actionparam name="goodsType" assignTo="#{expireWarningList.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{expireWarningList.storageRoomId}"/>
+		<a:actionparam name="expiration" assignTo="#{expireWarningList.expiration}"/>
+		<a:actionparam name="searchStr" assignTo="#{expireWarningList.searchStr}"/>
+	</a:jsFunction>
+	<a:jsFunction name="queryResultFind" action="#{expireWarningList.queryResultFind()}"  reRender="showPanel,exp"  oncomplete="refresh()">
+		<a:actionparam name="goodsType" assignTo="#{expireWarningList.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{expireWarningList.storageRoomId}"/>
+		<a:actionparam name="expiration" assignTo="#{expireWarningList.expiration}"/>
+		<a:actionparam name="searchStr" assignTo="#{expireWarningList.searchStr}"/>
+	</a:jsFunction>
+	<a:jsFunction name="pageFind" action="#{expireWarningList.pageFind()}"  reRender="showPanel" oncomplete="windowHeight()">
+		<a:actionparam name="goodsType" assignTo="#{expireWarningList.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{expireWarningList.storageRoomId}"/>
+		<a:actionparam name="expiration" assignTo="#{expireWarningList.expiration}"/>
+		<a:actionparam name="searchStr" assignTo="#{expireWarningList.searchStr}"/>
+		<a:actionparam name="pageNum" assignTo="#{expireWarningList.pageNum}"/>
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryFile.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/ExpireWarning.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/purchase/bootstrap/icheck.js"></script>
+<script type="text/javascript">
+	//<![CDATA[
+	
+	// (1)获取焦点和失去焦点状态
+    $('#searchStr').focus(function(){
+        var txt_value = $(this).val();
+        if(txt_value=="物料名称/批次编号/物料编号"){
+            $(this).val("");    
+        };  
+    });
+    $('#searchStr').blur(function(){
+        var txt_value = $(this).val();
+        if(txt_value==""){
+            $(this).val('物料名称/批次编号/物料编号'); 
+        };  
+    });
+//报损出库跳转
+function outStorage(id){
+	window.location.href = "#{request.contextPath}/stock/OutStorage.seam?expireGoodsBatchId=" + id;
+}
+function checkTime(){
+	var days = $("#expiration").val();
+	if(days == 5){
+		alert("最多可以导出过期一个月的数据！");
+	}
+}
+
+
+function batchDamage(){
+	var ids = "";
+	var roomid = "";
+	$("input[name='commentCheck']").each(function(i){
+		if($(this).is(':checked')){
+			if(roomid == ""){
+				roomid = $(this).attr("storageid");
+				return;
+			}
+		}
+	});
+	var falg = false;
+	var checkFlag = false;
+	$("input[name='commentCheck']").each(function(i){
+		if($(this).is(':checked')){
+			ids += $(this).attr("expireid") + ",";
+			if($(this).attr("storageid") != roomid){
+				falg = true;
+			}
+			checkFlag = true;
+		}
+	});
+	if(!checkFlag){
+		alert("请选择报损批次");
+	}else{
+		if(!falg){
+			ids = ids.substring(0,ids.length-1);
+			window.location.href = "#{request.contextPath}/stock/OutStorage.seam?expireGoodsBatchIdStr=" + ids;
+		}else{
+			alert("请选择同一个库存的物料进行报损！");
+			return;
+		}
+	}
+	
+}
+
+
+//]]>
+	</script>
+	</ui:define>
+
+</ui:composition>
+
+
+

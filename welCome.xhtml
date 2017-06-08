@@ -1,0 +1,715 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body"> 
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/phone/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+
+<link href="#{request.contextPath}/asset/css/homePage/newIndex.css" rel="stylesheet" />
+<link href="#{request.contextPath}/asset/css/menuHelpTip/introjs.css" rel="stylesheet" />
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/menuHelpTip/intro.js"> </script>  
+<script type="text/javascript" src="#{request.contextPath}/asset/js/homePage/newIndex.js"> </script> 
+<script type="text/javascript" src="#{request.contextPath}/asset/js/growth/echarts-all.js"></script>
+<style>
+.introjs-arrow-menu {display:none;}
+.introjs-tooltip-menu{
+  box-shadow: none;
+  background-color:none;
+}
+.introjs-step1_btn{
+	text-align: right;
+    margin-right: -50px;
+    margin-top:10px;
+    cursor: pointer;
+ }
+ .introjs-step2_btn{
+	text-align: right;
+    margin-right: -220px;
+    margin-top:10px;
+    cursor: pointer;
+ }
+</style>
+        	<!-- #{feeServiceHome.initData()} #{welComeHome.allBegin()} -->
+           <td valign="top">
+            <!-- 内容开始   -->
+            <div class="newIndex">
+                <div class="topHead clear">
+                    <div class="topHeadLeft fl">
+                        <img src="#{request.contextPath}/asset/images/homePage/notice.png" />
+                       	 系统公告：  <span id="systemNotice"></span>
+                    </div>
+                    <!-- 试用用户 切换版本 -->
+                    <s:fragment rendered="#{welComeHome.ei.uType eq 7 and sessionTake.admin and sessionTake.nowVersionService.basicService.serviceType eq 2}">
+                     <div class="select-version fr">
+						<p class="version-head">选择版本</p>
+						<div class="version-body" onoff="hide">
+							<ul class="list-vbox">
+								<a4j:repeat  value="#{welComeHome.basicServiceList}" var="var" >	
+	                                 <li><a href="javascript:;" val='#{var.basicServiceId}'>#{var.packageName}</a><i class="gs-icon"></i></li>    																						
+								</a4j:repeat>
+							</ul>
+						</div>
+					</div> 
+                    </s:fragment>
+                    <s:fragment rendered="#{not empty welComeHome.versioning}">
+                    	<div class="topHeadRight fr" data-toggle="modal" data-target="#update" onclick="jQuery('#update').modal('show');">更新公告</div>
+                    </s:fragment>
+                </div>
+                <!-- 运营情况 -->
+                <div class="business">
+                    <span class="iconB"></span>
+                    <ul class="present">
+                        <li class="cur">本周</li>
+                        <li>上周</li>
+                    </ul>
+                    <div class="dashboard current0">
+                        <ul>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="dial1"></div>
+                                    <p class='figure figure1'>#{welComeHome.thisOperateData[0]}位</p>
+                                    <p class="text1">新增会员</p>
+                                    <p class="text2">New member</p>
+                                </div>
+                            </li>
+                             <li>
+                                <div class="inner">
+                                    <div class="dial" id="dial2"></div>
+                                    <p class='figure figure2'>#{welComeHome.thisOperateData[1]}次</p>
+                                    <p class="text1">渠道浏览</p>
+                                    <p class="text2">Channel browsing</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="dial3"></div>
+                                    <p class='figure figure3 ellipsis'>￥#{welComeHome.thisOperateData[2]}</p>
+                                    <p class="text1">销售金额</p>
+                                    <p class="text2">Sales amount</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="dial4"></div>
+                                    <p class='figure figure4'>#{welComeHome.thisOperateData[3]}单</p>
+                                    <p class="text1">订单数量</p>
+                                    <p class="text2">Order quantity</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="dial5"></div>
+                                    <p class='figure figure5'>#{welComeHome.thisOperateData[4]}</p>
+                                    <p class="text1">包装数量</p>
+                                    <p class="text2">Packing quantity</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="dial6"></div>
+                                    <p class='figure figure6'>#{welComeHome.thisOperateData[5]}kg</p>
+                                    <p class="text1">采收数量</p>
+                                    <p class="text2">Harvest quantity</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="dial7"></div>
+                                    <p class='figure figure7'>#{welComeHome.thisOperateData[6]}件</p>
+                                    <p class="text1">农事数量</p>
+                                    <p class="text2">The number of farming</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dashboard current1" style="display:none;">
+                        <ul>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="lastDial1"></div>
+                                    <p class='figure figure1'>#{welComeHome.lastOperateData[0]}位</p>
+                                    <p class="text1">新增会员</p>
+                                    <p class="text2">New member</p>
+                                </div>
+                            </li>
+                             <li>
+                                <div class="inner">
+                                    <div class="dial" id="lastDial2"></div>
+                                    <p class='figure figure2'>#{welComeHome.lastOperateData[1]}次</p>
+                                    <p class="text1">渠道浏览</p>
+                                    <p class="text2">Channel browsing</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="lastDial3"></div>
+                                    <p class='figure figure3'>￥#{welComeHome.lastOperateData[2]}</p>
+                                    <p class="text1">销售金额</p>
+                                    <p class="text2">Sales amount</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="lastDial4"></div>
+                                    <p class='figure figure4'>#{welComeHome.lastOperateData[3]}单</p>
+                                    <p class="text1">订单数量</p>
+                                    <p class="text2">Order quantity</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="lastDial5"></div>
+                                    <p class='figure figure5'>#{welComeHome.lastOperateData[4]}</p>
+                                    <p class="text1">包装数量</p>
+                                    <p class="text2">Packing quantity</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="lastDial6"></div>
+                                    <p class='figure figure6'>#{welComeHome.lastOperateData[5]}kg</p>
+                                    <p class="text1">采收数量</p>
+                                    <p class="text2">Harvest quantity</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inner">
+                                    <div class="dial" id="lastDial7"></div>
+                                    <p class='figure figure7'>#{welComeHome.lastOperateData[6]}件</p>
+                                    <p class="text1">农事数量</p>
+                                    <p class="text2">The number of farming</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 个人信息 快速服务 -->
+                <div class="topContent">
+                	<!-- 快速服务 -->
+                    <div class="topContentMiddle">
+                        <div class="service">
+                            <span class="iconS"></span>
+                            <ul>
+                                <li>
+                                    <div class="warpBox">
+                                        <img src="#{request.contextPath}/asset/images/homePage/sev1.png" />
+                                        <p class="sup">发展会员</p>
+                                        <p class="sub">帮助您发展农场会员，提高用户数量！</p>
+                                        <a href="/homePage/developMember.seam" class="btn_view">点击查看</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="warpBox">
+                                        <img src="#{request.contextPath}/asset/images/homePage/sev2.png" />
+                                        <p class="sup">产品预售</p>
+                                        <p class="sub">帮助您有效提高产品销售情况！</p>
+                                        <a href="/homePage/productPresell.seam" class="btn_view">点击查看</a>
+                                    </div>      
+                                </li>
+                                <li>
+                                    <div class="warpBox">
+                                        <img src="#{request.contextPath}/asset/images/homePage/sev3.png" />
+                                        <p class="sup">宣传工具</p>
+                                        <p class="sub">多个农场宣传工具供您使用！</p>
+                                        <a href="/homePage/publicityToolList.seam" class="btn_view">点击查看</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="warpBox">
+                                        <img src="#{request.contextPath}/asset/images/homePage/sev4.png" />
+                                        <p class="sup">物流运输</p>
+                                        <p class="sub">完美物流对接,让您省时省力！</p>
+                                        <a href="" class="btn_view unclick">点击查看</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- 个人信息板块 -->
+                    <div class="topContentLeft">
+                    	<span class="iconBase"></span>
+                        <div class="topLine"></div>
+                        <p class="job">#{welComeHome.user.levelId.name}
+                        	<a href="user/UserInfoEdit.seam?userid=#{sessionTake.userId}">
+                        		<img style="margin-left: 5px;" src="#{request.contextPath}/asset/images/homePage/user_edit.png"/>
+                        	</a>
+                        </p>
+                        <div class="vip_info">
+                            <span class="rank rank#{feeServiceHome.enterprisePaymentInfo.basicService.sort mod 5}">#{sessionTake.nowVersionService.basicService.packageName}</span>
+                            <s:fragment rendered="#{feeServiceHome.baseObj[3][0] eq 1}"><span class="already"></span></s:fragment>
+                        	<s:fragment rendered="#{feeServiceHome.baseObj[3][0] eq 0}"><s:link propagation="none" styleClass="already unalready" view="/service/EnterpriseAuthService.xhtml" ></s:link></s:fragment>
+                        	<s:fragment rendered="#{feeServiceHome.baseObj[3][0] eq 2}"><s:link propagation="none" styleClass="audit" view="/service/EnterpriseAuthService.xhtml" ></s:link></s:fragment>
+                        </div>
+                        <dl class="progress_block">
+                        	<dt><p class="txt_date">(近30天)</p>管理评分</dt>
+                            <dd>
+                            	<div class="progress_bar">
+                                	<p class="bar_inner" style="width:#{welComeHome.titlePercent}%;"></p>
+                                    <p class="bar_val">当前成长值<span>#{welComeHome.monthPoints}</span></p>
+                                    <p class="cycle" style="left:20%;">
+                                    	<s:fragment rendered="#{welComeHome.monthPoints le 49}">破土而出</s:fragment>
+                                        <s:fragment rendered="#{welComeHome.monthPoints ge 50 and welComeHome.monthPoints le 99}">茁壮成长</s:fragment>
+                                        <s:fragment rendered="#{welComeHome.monthPoints ge 100 and welComeHome.monthPoints le 149}">枝繁叶茂</s:fragment>
+                                        <s:fragment rendered="#{welComeHome.monthPoints ge 150 and welComeHome.monthPoints le 199}">花香满园</s:fragment>
+                                        <s:fragment rendered="#{welComeHome.monthPoints ge 200 and welComeHome.monthPoints le 299}">硕果累累</s:fragment>
+                                        <s:fragment rendered="#{welComeHome.monthPoints ge 300}">古树参天</s:fragment>
+                                    </p>
+                                </div>
+                            </dd>
+                        </dl>
+                        <div class="sign_block clear">
+                            <span class="fl sign #{welComeHome.signFlag eq 'true'?'cur':''}">
+                                <em class="points">+5积分</em>
+                            </span>
+                            <div class="fr">
+                            	<p class="score">积分： #{welComeHome.allPoints}</p>
+                            	<p class="statu">
+                                	<a href="#{request.contextPath}/homePage/pointsList.seam"><img src="#{request.contextPath}/asset/images/homePage/statu.png" class="mr5" style="vertical-align: -3px;"/>进度：<i>#{welComeHome.finishTaskNum}</i>/#{welComeHome.allTaskNum}></a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 个人信息 快速服务 -->
+                <!-- 天气板块 -->
+                <div class="fixed_weather bg_weat#{welComeHome.weatherType}" style="display:#{empty welComeHome.weather ?'none':''}" id="fixed_weather">
+                	<div class="weat_sign">
+                		<s:fragment rendered="#{welComeHome.weather.dayNight == 'd'}">
+                        	<img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/#{empty welComeHome.weather.meteorologyTypeStr?'undefined':welComeHome.weather.meteorologyTypeStr}.png"/>
+                        </s:fragment>
+                        <s:fragment rendered="#{welComeHome.weather.dayNight == 'n'}">
+                        	<img class="icon_img" src="#{request.contextPath}/asset/images/weather/night/#{empty welComeHome.weather.meteorologyTypeStr?'undefined':welComeHome.weather.meteorologyTypeStr}.png"/>
+                        </s:fragment>
+                        <s:fragment rendered="#{welComeHome.weather.dayNight ne 'd' and welComeHome.weather.dayNight ne 'n'}">
+                        	<img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/undefined.png"/>
+                        </s:fragment>
+                	</div>
+                    <p class="weat_site">#{welComeHome.area.districtCn}</p>
+                    <s:fragment rendered="#{not empty welComeHome.weather.airTemp}">
+                    <p class="weat_qiwen"><h:outputText value="#{welComeHome.weather.airTemp}" ><f:convertNumber pattern="#0"/> </h:outputText>°</p>
+                    </s:fragment>
+                    <p class="weat_yunkuang">#{welComeHome.weather.theWeather}</p>
+                </div>
+                <div class="topContentRight bg_weat#{welComeHome.weatherType}" id="topContentRight">
+                	<div class="site_block">
+                        <p class="area">
+                        <img src="#{request.contextPath}/asset/images/homePage/address.png"/><span>#{welComeHome.area.districtCn}</span>
+                        </p>
+                        <p class="area_time">#{welComeHome.weekInfo[0]}&#160;#{welComeHome.dateInfo[0]}&#160;#{welComeHome.dateStr}</p>
+                    </div>
+                    <div class="weather_info">
+                     	<s:fragment rendered="#{welComeHome.weather.dayNight == 'd'}">
+                        	<img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/#{empty welComeHome.weather.meteorologyTypeStr?'undefined':welComeHome.weather.meteorologyTypeStr}.png"/>
+                        </s:fragment>
+                        <s:fragment rendered="#{welComeHome.weather.dayNight == 'n'}">
+                        	<img class="icon_img" src="#{request.contextPath}/asset/images/weather/night/#{empty welComeHome.weather.meteorologyTypeStr?'undefined':welComeHome.weather.meteorologyTypeStr}.png"/>
+                        </s:fragment>
+                        <s:fragment rendered="#{welComeHome.weather.dayNight ne 'd' and welComeHome.weather.dayNight ne 'n'}">
+                        	<img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/undefined.png"/>
+                        </s:fragment>
+                        <p class="txt1">#{welComeHome.weather.dayLow}~#{welComeHome.weather.dayHigh}℃<sup></sup></p>
+                        <p class="txt2">#{welComeHome.weather.theWeather}</p>
+                        <s:fragment rendered="#{not empty welComeHome.weather.PM25Grade}">
+	                        <p class="txt3">                    	
+	                        	<img alt="" src="#{request.contextPath}/asset/images/homePage/leaf.png"/>空气质量 #{welComeHome.weather.PM25Grade}                       	
+	                        </p>
+                        </s:fragment>
+                    </div>
+                    <ul class="a_week_weather">
+                    	<li>
+                        	<p class="text_week">#{welComeHome.weekInfo[1]}</p>
+                            <p class="text_day">#{welComeHome.dateInfo[1]}</p>
+                            <p class="text_img"><img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/#{empty welComeHome.weather.day2p?'undefined':welComeHome.weather.day2p}.png"/></p>
+                            <p class="text_qiwen">#{welComeHome.weather.day2Low}~#{welComeHome.weather.day2High}℃</p>
+                            <p class="text_yunkuang">#{welComeHome.weather.day2dTheWeather}</p>
+                            <p class="text_wind">#{welComeHome.weather.day2dWindd}</p>
+                        </li>
+                        <li>
+                        	<p class="text_week">#{welComeHome.weekInfo[2]}</p>
+                            <p class="text_day">#{welComeHome.dateInfo[2]}</p>
+                            <p class="text_img"><img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/#{empty welComeHome.weather.day3p?'undefined':welComeHome.weather.day3p}.png"/></p>
+                            <p class="text_qiwen">#{welComeHome.weather.day3Low}~#{welComeHome.weather.day3High}℃</p>
+                            <p class="text_yunkuang">#{welComeHome.weather.day3dTheWeather}</p>
+                            <p class="text_wind">#{welComeHome.weather.day3dWindd}</p>
+                        </li>
+                        <li>
+                        	<p class="text_week">#{welComeHome.weekInfo[3]}</p>
+                            <p class="text_day">#{welComeHome.dateInfo[3]}</p>
+                            <p class="text_img"><img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/#{empty welComeHome.weather.day4p?'undefined':welComeHome.weather.day4p}.png"/></p>
+                            <p class="text_qiwen">#{welComeHome.weather.day4Low}~#{welComeHome.weather.day4High}℃</p>
+                            <p class="text_yunkuang">#{welComeHome.weather.day4dTheWeather}</p>
+                            <p class="text_wind">#{welComeHome.weather.day4dWindd}</p>
+                        </li>
+                        <li>
+                        	<p class="text_week">#{welComeHome.weekInfo[4]}</p>
+                            <p class="text_day">#{welComeHome.dateInfo[4]}</p>
+                            <p class="text_img"><img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/#{empty welComeHome.weather.day5p?'undefined':welComeHome.weather.day5p}.png"/></p>
+                            <p class="text_qiwen">#{welComeHome.weather.day5Low}~#{welComeHome.weather.day5High}℃</p>
+                            <p class="text_yunkuang">#{welComeHome.weather.day5dTheWeather}</p>
+                            <p class="text_wind">#{welComeHome.weather.day5dWindd}</p>
+                        </li>
+                        <li>
+                        	<p class="text_week">#{welComeHome.weekInfo[5]}</p>
+                            <p class="text_day">#{welComeHome.dateInfo[5]}</p>
+                            <p class="text_img"><img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/#{empty welComeHome.weather.day6p?'undefined':welComeHome.weather.day6p}.png"/></p>
+                            <p class="text_qiwen">#{welComeHome.weather.day6Low}~#{welComeHome.weather.day6High}℃</p>
+                            <p class="text_yunkuang">#{welComeHome.weather.day6dTheWeather}</p>
+                            <p class="text_wind">#{welComeHome.weather.day6dWindd}</p>
+                        </li>
+                        <li>
+                        	<p class="text_week">#{welComeHome.weekInfo[6]}</p>
+                            <p class="text_day">#{welComeHome.dateInfo[6]}</p>
+                            <p class="text_img"><img class="icon_img" src="#{request.contextPath}/asset/images/weather/day/#{empty welComeHome.weather.day7p?'undefined':welComeHome.weather.day7p}.png"/></p>
+                            <p class="text_qiwen">#{welComeHome.weather.day7Low}~#{welComeHome.weather.day7High}℃</p>
+                            <p class="text_yunkuang">#{welComeHome.weather.day7dTheWeather}</p>
+                            <p class="text_wind">#{welComeHome.weather.day7dWindd}</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="recomend">
+                    <span class="iconR"></span>
+                     <!-- 推荐服务 -->
+                    <a class="gmjl_link" href="/service/ServiceOrderManage.seam">在线购买记录&nbsp;&gt;</a>
+                    <div class="web_slider_wap">
+                        <span class="btn_prev"></span>
+                        <div class="web_slider">
+                            <ul class="slider_list">
+                            	<!-- 增值服务 -->
+                        		<a4j:repeat value="#{feeServiceHome.addServiceList}" var="_add" rowKeyVar="_index">
+                        			<li class="sl_item">                               
+	                                	<i class="pos_line"></i>
+	                                	<div class="service_jj">
+	                                    	<i class="icon_tip">	                                    	
+	                                    		<s:fragment rendered="#{(_add[11] gt _add[12] or _add[13] eq 1) and (_add[10]) }">
+	                                    			<img src="#{request.contextPath}/asset/images/service/ServiceCenter_icon8.png" />
+	                                    		</s:fragment>
+	                                    		<s:fragment rendered="#{(_add[11] eq _add[12] and _add[13] ne 1) and _add[10]}">
+	                                    			<img src="#{request.contextPath}/asset/images/service/ServiceCenter_icon7.png" />
+	                                    		</s:fragment>	                                    		
+	                                    	</i>	   
+                                    		<strong class="jj_title #{_add[11] gt _add[12]?'color_g':'color_y'}">#{_add[1]}</strong> 
+	                                        <p class="p_text">#{_add[7]}</p>
+	                                    </div>
+	                                    <div class="service_img">
+	                                    	<img src="#{_add[5]}" width="244px" height="244px"/>
+	                                    </div>
+	                                    <!-- 开通服务和立即续费悬浮层 -->
+	                                    <div class="open_service">
+	                                    	<div class="service_con">
+	                                        	<strong class="s_title">#{_add[1]}</strong>
+	                                            <div class="p_txt4">
+	                                            	<h:outputText escape="false" value="#{_add[7]}" />
+	                                            </div>
+		                                        <button class="open_btn" type="button" onclick="window.location.href='#{request.contextPath}/service/AddService.seam?serviceId=#{_add[0]}'">
+		                                            <s:fragment rendered="#{_add[11] gt _add[12] and _add[10]}">
+		                                    			立即续费
+		                                    		</s:fragment>
+		                                    		<s:fragment rendered="#{_add[11] le _add[12] or  !_add[10]}">
+		                                    			我要购买
+		                                    		</s:fragment>	                                            		                                            	
+		                                        </button>
+	                                        </div>
+	                                    </div>	                                
+	                                </li>
+                        		</a4j:repeat>
+                            	<!-- 增值服务 -->                            
+                            </ul>
+                        </div>
+                        <span class="btn_next"></span>
+                    </div>
+                </div>
+                <!-- 新闻资讯 -->
+                <div class="news">
+                    <span class="iconN"></span>
+                    <ul class="item">
+                        <li class="cur">成功案例<span class="bgS"></span></li>
+                        <li>资讯<span class="bgS"></span></li>
+                        <li>精选问答<span class="bgS"></span></li>
+                     </ul>
+                     <div class="box current">
+                        <div class="newsBox">
+                            <div class="innerBox">
+                                <ul class="case">
+                                	<a4j:repeat value="#{welComeHome.successCaseList}" var="_sc">                                                               	
+	                                    <li>
+	                                        <a href="#{request.contextPath}/homePage/successCaseList.seam?infoId=#{_sc.id}">
+	                                            <img src="#{_sc.imgUrl}@175h_364w.src" alt=""/>
+	                                            <p class="name">#{_sc.name}</p>
+	                                            <p class="txt">
+	                                            	
+	                                            </p>
+	                                        </a>
+	                                    </li>
+                                    </a4j:repeat>                                   
+                                </ul>
+                            </div>
+                            
+                        </div>
+                        <div class="btns">
+                            <div class="inner">
+                                <span class="leftBtn"></span>
+                                <ol class="circleBtn">
+                                    <li class="cur"></li>
+                                    <li></li>
+                                </ol>
+                                <span class="rightBtn"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="newsBox">
+                            <ul class="case case2">
+                            	<a4j:repeat value="#{welComeHome.newsInfoList}" var="_sc">                                                               	
+                                    <li>
+	                                    <a href="#{request.contextPath}/homePage/newsInfoList.seam?infoId=#{_sc.newsInfoId}">
+	                                        <img src="#{_sc.newestInformationUrl}@175h_364w.src" alt=""/>
+	                                        <p class="info">#{_sc.newsTitle}</p>
+	                                        <p class="time">
+		                                        <h:outputText value="#{_sc.publishTime}">
+								            		<s:convertDateTime type="both" pattern="yyyy-MM-dd" />
+								            	</h:outputText>
+								            </p>
+	                                        <span class="tips" style="display:none;">新闻热点</span>
+	                                    </a>
+	                                </li>
+	                             </a4j:repeat>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="newsBox">
+                            <ul class="case case2">
+                            	<a4j:repeat value="#{welComeHome.harmfulHelpInfoList}" var="_hhi">                                                        	
+                                    <li>
+	                                    <a href="#{dataDicConstant.getYpDomainNameUrl()}/farmeasybbs/qa/qaInfo.jsp?showAcceptMsg=0&amp;questionId=#{_hhi.harmfulHelpInfoId}" target="_blank">
+	                                    	<s:fragment rendered="#{not  empty _hhi.imageUrls}">
+	                                    		<img src="#{_hhi.imageUrls.split(',')[0]}@175h_364w.src" alt=""/>
+	                                    	</s:fragment>
+	                                        <s:fragment rendered="#{empty _hhi.imageUrls}">
+	                                    		<img src="#{request.contextPath}/asset/images/homePage/empty_question.png" alt=""/>
+	                                    	</s:fragment>
+	                                        <p class="info">#{_hhi.description}</p>
+	                                        <p class="time">
+	                                        	<h:outputText value="#{_hhi.insertTime}">
+								            		<s:convertDateTime type="both" pattern="yyyy-MM-dd" />
+								            	</h:outputText>
+	                                        </p>
+	                                    </a>
+	                                </li>
+                                 </a4j:repeat>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- 新闻资讯 -->
+                <p class="copyRight"></p>
+            </div>
+               <!-- 更新公告模态框 -->
+			    <div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			      <div class="modal-dialog">
+			        <div class="modal-content update">
+			          <div class="modal-header">
+			            <button type="button" class="close" data-dismiss="modal" style="color: #ccc; margin-top: -2px;"><span aria-hidden="true">&times;</span></button>
+			            <h4 class="modal-title" id="myModalLabel" style="font-size:14px; color:#49aedd; font-weight:bold; font-family: '微软雅黑';">
+			            	<h:outputText value="#{welComeHome.versioning.versionTime}">
+			            		<s:convertDateTime type="both" pattern="yyyy年MM月dd日" />
+			            	</h:outputText>更新内容
+			            </h4>
+			          </div>
+			          <div class="modal-body" style="min-height:200px;">
+			        	 <h:outputText value="#{welComeHome.versioning.remarks}" escape="false"/>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+            </td>    
+ 
+<div class="clear"></div>
+<!--content结束-->
+<a4j:form>
+	<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+    <a4j:jsFunction name="userSign"  action="#{welComeHome.userSign()}" data="#{welComeHome.signFlag}" oncomplete="userSignComplete(data)" reRender="locationDiv,pointsDiv,scoreDiv">
+    </a4j:jsFunction>
+    <a4j:jsFunction name="changeVersion"  action="#{welComeHome.switchVersion()}" oncomplete="changeVersionComplete()">
+    	<a4j:actionparam name="versionId" assignTo="#{welComeHome.versionId}" />
+    </a4j:jsFunction>        
+</a4j:form>
+
+<script>
+//<![CDATA[
+var thisOperatePercent=#{welComeHome.thisOperateDataPercent};
+var lastOperatePercent=#{welComeHome.lastOperateDataPercent};
+
+jquery = jQuery.noConflict();
+//系统公告
+var announceString=#{welComeHome.announceString};
+var announceSize=announceString.length;	
+var i=0;
+if(announceSize>0){
+	showAnnounce();
+	setInterval(showAnnounce , 5000);
+}
+function showAnnounce(){		
+	if(i>=announceSize){
+		i=0;		
+	}	
+	jquery("#systemNotice").html(announceString[i].title);
+	i++;	
+}
+//签到
+var signFlag="#{welComeHome.signFlag}";
+
+//菜单新手指导
+var isAdmin =#{sessionTake.admin};
+var menuHelpTips = #{welComeHome.menuHelpTips};
+var fromPage = '#{welComeHome.fromPage}';
+var nowVersion='#{sessionTake.nowVersionService.basicService.basicServiceId}';
+var versionType='#{sessionTake.nowVersionService.basicService.serviceType}';
+//管理员及未显示过帮助提示，且为管理版本或旧版基础服务
+jquery(function(){
+	jQuery('.version-head').bind('click',function(event){
+		event.stopPropagation();
+		if(jQuery('.version-body').attr('onoff')=='hide'){
+			jQuery('.version-body').show();
+			jQuery('.version-body').attr('onoff','show');
+		}else{
+			jQuery('.version-body').hide();
+			jQuery('.version-body').attr('onoff','hide');
+		}
+	});
+	jQuery('.version-body').bind('click',function(event){
+		event.stopPropagation();
+		//$('.version-body').show();
+	});
+	jQuery('body').bind('click',function(event){
+		event.stopPropagation();
+		jQuery('.version-body').hide();
+		jQuery('.version-body').attr('onoff','hide');
+	});
+	jQuery('.version-body li').click(function(){
+		jQuery('.version-body').hide();
+		jQuery('.version-body').attr('onoff','hide');
+		jQuery(this).addClass('dqcur').siblings().removeClass('dqcur');
+		var selVersion=jQuery(".version-body .dqcur a").attr("val");
+		if(typeof(selVersion)!= "undefined" && selVersion!=""){
+			if(confirm("修改版本需要重新登录，确定修改？")){
+				changeVersion(selVersion);
+			}
+		}
+		
+		/* var selName=jQuery(".version-body .dqcur a").html();
+		if(typeof(selName)!= "undefined" && selName!=""){
+			jQuery(".version-head").html(selName);
+		}else{
+			jQuery(".version-head").html("选择版本");
+		} */
+	});
+	
+	if(menuHelpTips && isAdmin && (nowVersion=="10" || versionType=="1")){
+		startIntro();
+		if(fromPage=="module"){
+			jquery(".introjs-nextbutton").click();
+			now_step=1;//点击任意位置进入下一步标志
+		}
+		//菜单
+		jQuery(".left_culi>a").attr("href","javascript:void(0);");
+		jQuery(".left_culi>a").css("cursor","default");
+		var slidebarUl;
+		Q_jquery('.left_cul > li').mouseover(function(){
+			Q_jquery(this).css('background','url("#{request.contextPath}/asset/images/lefbg.jpg") repeat-y');	
+			slidebarUl = Q_jquery(this).find('ul.sidebarUl') ;
+			if(slidebarUl){
+				slidebarUl.hide();	
+				slidebarUl.mouseout(function(){
+					Q_jquery(this).hide();	
+				});
+			}
+										
+		});
+		Q_jquery('.sidebarUl li').mouseover(function(){
+			Q_jquery(this).removeClass('hover');
+			Q_jquery(this).siblings().removeClass('hover');
+		});
+		Q_jquery('.sidebarUl li').mouseout(function(){
+			Q_jquery(this).removeClass('hover');			
+		});
+	}		
+}); 
+
+var stepPosition='top';
+var now_step;//1时进入第三步 其它：进入第二步
+var leftHeight=jQuery("#step1").height();
+if(leftHeight<260){
+	stepPosition='bottom';
+}
+function startIntro(){
+    var intro = introJs();
+      intro.setOptions({
+		prevLabel:"上一步", 
+        nextLabel:"下一步",
+        skipLabel:"跳过",
+        doneLabel:"结束",
+		showStepNumbers: !1,
+		showProgress: !1,
+		showBullets: !1,
+		keyboardNavigation: !1,
+		showButtons: !1,
+		exitOnEsc: !1,
+        exitOnOverlayClick: !1,
+        scrollToElement: !0,
+		tooltipClass: "introjs-tooltip-menu",
+		arrowLayer:"introjs-arrow-menu",
+        steps: [
+          {
+            element: '#step1',
+            intro: "<div><img src='/asset/images/menuHelpTip/menu_help_1.png' /><div class='introjs-step1_btn' onclick='next_step(1);'><img src='/asset/images/menuHelpTip/menu_help_btn1.png' /></div></div>",
+            position: 'right'               
+          },
+          {
+            element: '#step2',
+            intro: "<div><img src='/asset/images/menuHelpTip/menu_help_2.png' style='margin-left:80px;'/><div class='introjs-step2_btn'><img src='/asset/images/menuHelpTip/menu_help_btn2.png' onclick='next_step(2);'/><img src='/asset/images/menuHelpTip/menu_help_btn3.png' onclick='next_step(3);' style='margin-left:10px;'/></div></div>",
+            position: stepPosition
+          }
+        ]
+      });
+      intro.start();
+    //点击任意位置进入下一步
+      jquery(".introjs-overlay").click(function(){
+  			if(now_step==1){
+  				 window.open('#{request.contextPath}/user/ModuleSettings.seam?fromPage=welcome','_self');
+  	  		}else{
+  	  			jquery(".introjs-nextbutton").click();
+  	  			now_step=1;
+  	  		}
+  	  });
+  }
+
+  function next_step(stepNum){
+	  now_step=stepNum;
+	 if(stepNum==1){
+		 jquery(".introjs-nextbutton").click();
+     }else if(stepNum==2){
+		 jquery(".introjs-prevbutton").click();
+     }else if(stepNum==3){
+    	 window.open('#{request.contextPath}/user/ModuleSettings.seam?fromPage=welcome','_self');
+     }	  
+ }
+//切换版本后，重新登录
+  function changeVersionComplete(){
+	  window.location.href="#{request.contextPath}/AutoOut.seam";
+  }
+  
+//]]>
+</script>
+
+</ui:define>
+</ui:composition>

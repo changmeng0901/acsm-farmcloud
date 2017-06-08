@@ -1,0 +1,705 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_analysisnew.xhtml">
+
+<ui:define name="body">
+<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script>
+<style>
+.baseWidth148 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+     width:148px;
+}
+.areaSeltLi01{width:auto;} 
+.ze_table, .ze_table22{margin-top: 0px;}
+.dr-pnl-b{padding:0px;}
+.ze_bg{background:#f0f5fb}
+tr.alt td{background:#f0f5fb}
+.cm_tjfxHd02{min-width:1020px;}
+/* .ze_table22{min-width:100%;}  */
+.rich-panel-body{padding:0px}
+</style>
+	<td valign="top">
+	<!-- #{monitorRecord.queryResultFind()} -->		
+		<div class="right_c" style="min-height:30px;">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">环境监控历史记录</font></div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <ui:fragment rendered="#{s:hasRole('env_historical_record_search')}">
+                <input type="text" id="aaa" value="#{monitorRecord.sbResult}" style="display:none"/>
+                <input type="text" id="bbb" value="#{monitorRecord.yAxisStr}" style="display:none"/>
+				<h:form id="search">
+				<!-- 区域日期种植环境 开始 -->
+				<div class="cm_tjfxHd02 pt20">
+                	<ul class="areaSelt pb15 clear">
+                    	<li class="areaSeltLi01 fl">地块：</li>
+                        <li class="fl">
+							<span class="baseWidth148">
+                                    <h:selectOneMenu styleClass="selectpicker" onchange="baseOrDevice(this.value);" id="deviceOrTunnel">
+                                       <f:selectItem itemLabel="传感器编号" itemValue="1"/>
+                                       <f:selectItem itemLabel="地块" itemValue="2"/>
+                                       <f:selectItem itemLabel="气象站" itemValue="3"/>
+                                    </h:selectOneMenu>
+                             </span>
+                        </li>
+                        <li class="fl">
+                            <input type="hidden" name="searchType" id="searchType" value="#{monitorRecord.searchType}"/>
+                            	<h:panelGroup id="deviceGroup">
+                                   <select name="select_device" id="select_device" data-live-search="true" class="selectpicker" style="display: none;">
+                                       	<a4j:repeat value="#{monitorRecord.deviceList}" var="_item" rowKeyVar="_index">
+                                       		
+                                       		<ui:fragment rendered="#{_item.sn == monitorRecord.deviceSN}">
+                                       			<option value="#{_item.sn}" selected="selected" >#{_item.sn}</option>
+                                       		</ui:fragment>
+                                       		<ui:fragment rendered="#{_item.sn != monitorRecord.deviceSN}">
+                                       			<option value="#{_item.sn}" >#{_item.sn}</option>
+                                       		</ui:fragment>
+                                       	</a4j:repeat>
+                                    </select>
+                                </h:panelGroup>
+                                <h:panelGroup id="tunnelGroup" style="display:none;">
+                       		 		<select name="select_tunnel" id="select_tunnel" data-live-search="true" class="selectpicker" style="display: none;">
+                                   		<a4j:repeat value="#{monitorRecord.tunneList}" var="_item"  rowKeyVar="_index">
+                                       		<ui:fragment rendered="#{_item.tunnelInfoId == monitorRecord.tunnelInfoId}">
+                                       			<option value="#{_item.tunnelInfoId}"  >#{_item.tunnelName}</option>
+                                       		</ui:fragment>
+                                       		<ui:fragment rendered="#{_item.tunnelInfoId != monitorRecord.tunnelInfoId}">
+                                       			<option value="#{_item.tunnelInfoId}"  >#{_item.tunnelName}</option>
+                                       		</ui:fragment>
+                                       	</a4j:repeat>
+                                    </select>
+                                </h:panelGroup>
+                               <h:panelGroup id="weatherStatGroup" style="display:none;">
+                       		 		<select name="select_weatherStation" id="select_weatherStation" data-live-search="true" class="selectpicker" style="display: none;">
+                                   		<a4j:repeat value="#{monitorRecord.weatherStationList}" var="_item"  rowKeyVar="_index">
+                                       		<ui:fragment rendered="#{_item.sn eq monitorRecord.weatherStationSN}">
+                                       			<option value="#{_item.sn}"  >#{_item.sn}</option>
+                                       		</ui:fragment>
+                                       		<ui:fragment rendered="#{_item.sn ne monitorRecord.weatherStationSN}">
+                                       			<option value="#{_item.sn}"  >#{_item.sn}</option>
+                                       		</ui:fragment>
+                                       	</a4j:repeat>
+                                    </select>
+                                </h:panelGroup>
+<!-- 初始化页面 -->
+                        </li>
+                        <li class="dateSeltLi01 fl">日期选择：</li>
+                        <li class="fl">
+                        
+                        <table cellpadding="0" cellspacing="0">
+                        	<tbody>
+                            	<tr>
+                                	<td width="135">
+                                     <div class="input-append date form_datetime" >
+	                                	<input id="startTime" size="26" type="text" value="#{monitorRecord.beginDate}" format="yyyy-MM-dd" onchange="timeChange()" style="width: 130px;" readonly="readonly"/>
+	                                	<span class="add-on"><i class="icon-th"></i></span>
+	                                 </div>
+                                    </td>
+                                    <td width="10" style="text-decoration: none;text-align:center">—&#160; </td>
+                                    <td width="150">
+                                     <div class="input-append date form_datetime" >
+	                                	<input id="endTime" size="26" type="text"  value="#{monitorRecord.endDate}" format="yyyy-MM-dd" onchange="timeChange()" style="width: 130px;" readonly="readonly"/>
+	                                	<span class="add-on"><i class="icon-th"></i></span>
+	                                 </div> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </li>
+                        <li class="fl pl30">
+	                        	<h:inputHidden id="tunnelInfoIdHidden" value="#{monitorRecord.tunnelInfoId}" />
+	                        	<h:inputHidden id="deviceSNHidden" value="#{monitorRecord.deviceSN}" />
+								<h:inputHidden id="beginDateHidden" value="#{monitorRecord.beginDate}" />
+								<h:inputHidden id="endDateHidden" value="#{monitorRecord.endDate}" />
+								<h:inputHidden id="envTypeHidden" value="#{monitorRecord.envStr}" />
+								<h:inputHidden id="weatherSNHidden" value="#{monitorRecord.weatherStationSN}" />
+								<input type="hidden" value="1" id="exportType" name="exportType"/>
+								<input type="hidden" name="param1" id="param1"/>
+								<h:commandButton action="#{monitorRecord.queryResultFind()}" styleClass="btn btn-primary mr5" value="搜索" onclick="jQuery('#exportType').val(1);return gainResult(1);" />
+								<ui:fragment rendered="#{s:hasRole('env_historical_record_exp')}">
+									<h:commandButton id="export" action="#{monitorRecord.queryResultFindExport}" onclick="checkTime()" styleClass="btn btn-default" value="导出">
+									</h:commandButton>
+								</ui:fragment>
+                        </li>
+                    </ul>
+                </div>
+                
+                </h:form>
+				</ui:fragment>
+				<ui:fragment rendered="#{!s:hasRole('env_historical_record_search') and s:hasRole('env_historical_record_exp')}">
+					 <div style="float:right;padding-top: 10px;margin-right:20px; padding-bottom: 10px;">
+	                        <h:form id="excelFrom">
+								<h:commandButton id="export" action="#{monitorRecord.excelExport}" styleClass="btn btn-default" value="导出"></h:commandButton>
+							</h:form>
+                      </div>
+				</ui:fragment>
+				
+<a4j:status id="ajaxStatus" forceId="true" onstart="jquery('#login').show()" onstop="jquery('#login').hide()" />
+     <a4j:form>
+		<a4j:queue requestDelay="100" ignoreDupResponses="true"/>
+		<a4j:jsFunction name="baseOrDeviceMe" action="#{monitorRecord.changeSearchParam}" reRender="refreshPanel" oncomplete="jquery('.selectpicker').selectpicker();" >
+			<a4j:actionparam name="searchType" assignTo="#{monitorRecord.searchType}"/>
+		</a4j:jsFunction>
+	</a4j:form>
+
+<!--  数据表start -->
+<!-- 排名图 详情表 开始 -->
+                <div class="cm_tjfxBd pt20">
+                	<div class="tjfxTabTp">
+                     <ul class="nav nav-tabs" role="tablist" id="myTab">
+                      <li class="active ml30" id="class1" onclick="jquery('.profile').hide();jquery('#home').show();var a = jquery('#container').highcharts();a.setSize(jquery('.cm_pmtZhu').width(),jquery('.cm_pmtZhu').height(),false)"><a href="#home" role="tab" data-toggle="tab">折线图</a></li>
+                      <li class="" id="class2" onclick="jquery('#home').hide();jquery('.profile').show();"><a href="#profile" role="tab" data-toggle="tab">详情表</a></li>
+                    </ul>
+                    </div>
+                    <div class="tjfxTabBt pt40 ml30 mr30">
+                        <div class="tab-content">
+                            <div class="tab-pane active clear" id="home">
+                           			 <select name="select_env" id="select_env" data-live-search="true" class="selectpicker"  multiple="multiple">
+                                       	<option value="1" selected="selected" >空气温度</option>
+                                       	<option value="2" >空气湿度</option>
+                                       	<option value="3" >土壤温度</option>
+                                       	<option value="4" >土壤湿度</option>
+                                       	<option value="5" >二氧化碳</option>
+                                       	<option value="6" >光照</option>
+                                    </select>
+                                <div class="cm_pmtZhu">
+                                	<div id="container" style="min-width:700px;height:400px;"></div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="profile">
+                                <div class="cm_xqbCon" style="height:auto;overflow:auto; width:100%;">
+                                <table class="ze_table22" width="98%" cellpadding="0" cellspacing="0" style="margin-left: 20px; border-collapse: separate;">
+				<tbody>
+					<tr class="alt">
+						<td height="4" width="5"><img src="../asset/images/table_d_40.jpg" height="4" width="5"></img></td>
+						<td colspan="11" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+						<td height="4" width="5"><img src="../asset/images/table_d_43.jpg" height="4" width="5"></img></td>
+					</tr>
+					<tr class="alt">
+						<td class="ze_bg ze_bt_le" height="4" width="5"></td>
+						<td class="ze_bg" width="8%">地块</td>
+						<td class="ze_bg" width="14%">传感器编号</td>
+						<td class="ze_bg" width="8%">空气温度</td>
+						<td class="ze_bg" width="8%">空气湿度</td>
+						<td class="ze_bg" width="8%">土壤温度</td>
+						<td class="ze_bg" width="8%">土壤湿度</td>
+						<td class="ze_bg" width="8%">土壤PH</td>
+						<td class="ze_bg" width="8%">土壤EC值</td>
+						<td class="ze_bg" width="8%">二氧化碳</td>
+						<td class="ze_bg" width="8%">光照</td>
+						<td class="ze_bg" width="14%">监测时间</td>
+						<td class="ze_bg ze_bt_ri" height="4" width="5"></td>
+					</tr>
+				</tbody>
+			</table>
+                    	
+<!--  数据遍历start  -->  
+					<h:form id="monitorRecordFrom">
+						<a4j:commandLink id="refreshShow"  reRender="showPanel"></a4j:commandLink>
+					</h:form>
+					<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+						<table class="ze_table" width="98%" cellpadding="0" cellspacing="0" style="margin-left: 20px; border-collapse: separate;">
+							<tbody>  	
+							<a4j:repeat value="#{monitorRecord.plantDataList}" var="_result" rowKeyVar="_index">
+								<tr class="nottt" >
+									<td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+									<td class="ze_bg2" width="8%">#{monitorRecord.tunnelName}</td>
+									<td class="ze_bg2" width="14%">#{_result.deviceSn}</td>
+									<td class="ze_bg2" width="8%">#{_result.airTempStr}</td>
+									<td class="ze_bg2" width="8%">#{_result.airHumidityStr}</td>
+									<td class="ze_bg2" width="8%">#{_result.soilTempStr}</td>
+									<td class="ze_bg2" width="8%">#{_result.soilHumidityStr}</td>
+									<td class="ze_bg2" width="8%">#{_result.soilPhStr}</td>
+									<td class="ze_bg2" width="8%">#{_result.soilEcStr}</td>
+									<td class="ze_bg2" width="8%">#{_result.co2Str}</td>
+									<td class="ze_bg2" width="8%">#{_result.illuminationStr}</td>
+									<td class="ze_bg2" width="14%">#{_result.genTimeStr}</td>
+									<td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+								</tr>
+							</a4j:repeat>
+							</tbody>
+						</table>
+					<!--翻页开始-->
+					<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty monitorRecord.plantDataList}">
+			                <s:decorate rendered="#{!monitorRecord.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{monitorRecord.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{monitorRecord.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/archive/MonitorRecord.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            	<f:param name="param1" value="1" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/archive/MonitorRecord.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{monitorRecord.previousFirstResult}"/>&lt;
+		                            	<f:param name="param1" value="1" />
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					       <a4j:repeat var="_page" value="#{monitorRecord.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{monitorRecord.previousExists or _index >0 ?'td_t_t':''} #{_page eq monitorRecord.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/archive/MonitorRecord.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+										<f:param name="param1" value="1" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{monitorRecord.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/archive/MonitorRecord.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{monitorRecord.nextFirstResult}" />&gt;
+	                            	<f:param name="param1" value="1" />
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/archive/MonitorRecord.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{monitorRecord.PAGE_COUNT}" />
+								 	<f:param name="param1" value="1" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{monitorRecord.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                            </s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+                   
+                   <!--翻页结束-->
+                   
+
+					</rich:panel>
+                            	</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 排名图 详情表 结束 -->
+                <div style="height:30px; width:100%;"></div>
+                <div class="clear"></div>
+                <!--right_c结束-->
+                <script type="text/javascript"> 
+              //<![CDATA[
+              var name1 = "";//温湿度
+              var name2 = "";//二氧化碳
+              var name3 = "";//光照
+              var param1 = "#{monitorRecord.param1}";
+              if(param1 == "1"){
+					jquery("#class1").removeClass("active");
+					jquery("#class2").addClass("active");
+					jquery("#home").removeClass("active"); 	
+					//jquery("#home").hide();		
+					jquery("#profile").addClass("active");
+					//jquery("#profile").show();
+                 }
+               function baseOrDevice(obj){
+                   jquery("#searchType").val(obj);
+                   if(obj == 1){
+                	    jquery("#search\\:tunnelGroup").hide();
+                	    jquery("#search\\:weatherStatGroup").hide();
+						jquery("#search\\:deviceGroup").show();
+                   }else if(obj == 2){
+                	   jquery("#search\\:deviceGroup").hide();
+                	   jquery("#search\\:weatherStatGroup").hide();
+					   jquery("#search\\:tunnelGroup").show();
+                   }else if(obj == 3){
+                	   jquery("#search\\:deviceGroup").hide();
+                	   jquery("#search\\:tunnelGroup").hide();
+					   jquery("#search\\:weatherStatGroup").show();
+                   }
+               }
+              	//搜索提交方法 
+        		function gainResult(type){
+            		var searchType = jquery("#searchType").val();
+            		if(searchType!="" && searchType=="1"){
+            			if(jquery("#select_device").length>0&&jquery("#select_device").val()==null){
+                  			alert("请选择传感器!");
+                  			return false;
+                  		}
+                	}
+            		if(searchType!="" && searchType=="2"){
+            			if(jquery("#select_tunnel").length>0&&jquery("#select_tunnel").val()==null){
+                  			alert("请选择地块!");
+                  			return false;
+                  		}
+            		}
+            		if(searchType!="" && searchType=="3"){
+            			if(jquery("#select_weatherStation").length>0&&jquery("#select_weatherStation").val()==null){
+                  			alert("请选择气象站!");
+                  			return false;
+                  		}
+            		}
+            		if(searchType == 1){
+            			var deviceSN = jquery("#select_device").val();
+            			var endDate = jquery("#endTime").val();
+            			var beginDate = jquery("#startTime").val();
+            			if (beginDate == null || beginDate == '') {
+    						alert("请选择开始日期...");
+    						return false;
+    					}
+    					var endDate = jquery("#endTime").val();
+    					if (endDate == null || endDate == '') {
+    						alert("请选择结束日期...");
+    						return false;
+    					}
+    					var begin =toDate(beginDate);
+    					var end =toDate(endDate);
+    					if (begin > end) {
+    						alert("开始时间不能大于结束时间...");
+    						return false;
+    					}
+    					if (!getDateDiff(beginDate, endDate)) {
+    						alert("请搜索3个月之间的数据...");
+    						return false;
+    					}
+    					
+    					jquery("#search\\:beginDateHidden").val(beginDate);
+    					jquery("#search\\:endDateHidden").val(endDate);
+    					jquery("#search\\:deviceSNHidden").val(deviceSN);
+    					jquery("#param1").val(0);
+    					var envType = jquery("#select_env").val();
+    					if(envType == null || envType == ""){
+    						jquery("#search\\:envTypeHidden").val("nullResult");
+        				}else{
+        					jquery("#search\\:envTypeHidden").val(envType);
+            			}
+    					
+    					
+                	}else if(searchType == 2){
+                		var tunnelInfoId = jquery("#select_tunnel").val();
+                		var endDate = jquery("#endTime").val();
+            			var beginDate = jquery("#startTime").val();
+            			if (beginDate == null || beginDate == '') {
+    						alert("请选择开始日期...");
+    						return false;
+    					}
+    					var endDate = jquery("#endTime").val();
+    					if (endDate == null || endDate == '') {
+    						alert("请选择结束日期...");
+    						return false;
+    					}
+    					var begin =toDate(beginDate);
+    					var end =toDate(endDate);
+    					if (begin > end) {
+    						alert("开始时间不能大于结束时间...");
+    						return false;
+    					}
+    					if (!getDateDiff(beginDate, endDate)) {
+    						alert("请搜索3个月之间的数据...");
+    						return false;
+    					}
+    					jquery("#search\\:beginDateHidden").val(beginDate);
+    					jquery("#search\\:endDateHidden").val(endDate);
+    					jquery("#search\\:tunnelInfoIdHidden").val(tunnelInfoId);
+    					jquery("#param1").val(0);
+    					var envType = jquery("#select_env").val();
+    					if(envType == null || envType == ""){
+    						jquery("#search\\:envTypeHidden").val("nullResult");
+        				}else{
+        					jquery("#search\\:envTypeHidden").val(envType);
+            			}
+                    }else if(searchType == 3){
+                    	var weatherSN = jquery("#select_weatherStation").val();
+            			var endDate = jquery("#endTime").val();
+            			var beginDate = jquery("#startTime").val();
+            			if (beginDate == null || beginDate == '') {
+    						alert("请选择开始日期...");
+    						return false;
+    					}
+    					var endDate = jquery("#endTime").val();
+    					if (endDate == null || endDate == '') {
+    						alert("请选择结束日期...");
+    						return false;
+    					}
+    					var begin =toDate(beginDate);
+    					var end =toDate(endDate);
+    					if (begin > end) {
+    						alert("开始时间不能大于结束时间...");
+    						return false;
+    					}
+    					if (!getDateDiff(beginDate, endDate)) {
+    						alert("请搜索3个月之间的数据...");
+    						return false;
+    					}
+    					
+    					jquery("#search\\:beginDateHidden").val(beginDate);
+    					jquery("#search\\:endDateHidden").val(endDate);
+    					jquery("#search\\:weatherSNHidden").val(weatherSN);
+    					jquery("#param1").val(0);
+    					var envType = jquery("#select_env").val();
+    					if(envType == null || envType == ""){
+    						jquery("#search\\:envTypeHidden").val("nullResult");
+        				}else{
+        					jquery("#search\\:envTypeHidden").val(envType);
+            			}
+    					
+                    }
+     				return true;
+        		}
+
+        		//刷新
+        		function refreshAction(){
+        			document.getElementById("monitorRecordFrom:refreshShow").onclick();
+        		}
+
+        		function getDateDiff(date1,date2){
+        	        var arr1=date1.split('-');
+        			var arr2=date2.split('-');
+        			var d1=new Date(arr1[0],arr1[1],arr1[2]);
+        			var d2=new Date(arr2[0],arr2[1],arr2[2]);
+        			if ((d2.getTime()-d1.getTime())/(1000*3600*24) > 93) { // 按最大天数
+        				return false;
+        			}else {
+        				return true;
+        			}
+        		}
+
+        		function toDate(str){
+        		    var sd=str.split("-");
+        		    return new Date(sd[0],sd[1],sd[2]);
+        		}
+               
+                jquery(".form_datetime").datetimepicker({
+    				format: "yyyy-mm-dd",
+    			    autoclose: true,
+    				weekStart: 1,
+    				//startDate: "2014-08-14 10:00",
+    				//endDate :"2015-01-15",
+    				language:  'zh-CN',
+    				minView:2,
+    			    pickerPosition: "bottom-left"
+    			});
+					
+					function defaultSelect(){
+						var tunneId = #{monitorRecord.tunnelInfoId};
+						var deviceSN = '#{monitorRecord.deviceSN}';
+						var tunnelName = '#{monitorRecord.tunnelName}';
+						var deviceSelected = '#{monitorRecord.deviceSelected}';
+						
+						if(tunneId != -101 && jquery.trim(tunnelName)!="" && jquery.trim(tunnelName)!="-" ){
+							jquery(jquery(".bootstrap-select .filter-option")[0]).text(tunnelName);
+// 							jquery("#select_tunnel").text(tunneSelected);
+							
+						}
+						if(deviceSN != null && jquery.trim(deviceSN) != "" && jquery.trim(deviceSelected)!="" && jquery.trim(deviceSelected)!="-"){
+							jquery(jquery(".bootstrap-select .filter-option")[1]).text(deviceSelected);
+						}
+					}
+					
+					 jquery(window).resize(function(){
+						 var onLoadWidth = document.body.clientWidth;
+						 jquery(".cm_xqbCon").css("width",(document.body.clientWidth- 362)+"px ");
+						 jquery(".tableXqb").css("width",(document.body.clientWidth- 362)+"px ");
+			
+					})
+					
+					jquery(document).ready(function(){  //这个就是传说的ready
+				          jquery(".ze_table tr,.tr_tab_b tr").mouseover(function(){  
+				                  //如果鼠标移到class为stripe的表格的tr上时，执行函数
+				          jquery(this).addClass("over");})
+				              jquery(".ze_table tr,.tr_tab_b tr").mouseout(function(){                       //给这行添加class值为over，并且当鼠标一出该行时执行函数
+				          jquery(this).removeClass("over");})  //移除该行的class
+				          //jquery(".ze_table tr:even,.tr_tab_b tr:even").not(".nottt").addClass("alt");
+				           //给class为stripe的表格的偶数行添加class值为alt
+
+
+				          var searchType = jquery("#searchType").val();
+		                   if(searchType == 1){
+		                	    jquery("#search\\:tunnelGroup").hide();
+		                	    jquery("#search\\:weatherStatGroup").hide();
+								jquery("#search\\:deviceGroup").show();
+		                   }else if(searchType == 2){
+		                	   var tunneId = "#{monitorRecord.tunnelInfoId}";
+		                	   jquery("#search\\:deviceGroup").hide();
+		                	   jquery("#search\\:weatherStatGroup").hide();
+							   jquery("#search\\:tunnelGroup").show();
+							   jquery("#select_tunnel").selectpicker('val',tunneId);
+		                   }else if(searchType == 3){
+		                	   var weatherSN = "#{monitorRecord.weatherStationSN}";
+		                	   jquery("#search\\:deviceGroup").hide();
+							   jquery("#search\\:tunnelGroup").hide();
+							   jquery("#search\\:weatherStatGroup").show();
+							   jquery("#select_weatherStation").selectpicker('val',weatherSN);
+		                   }
+		                   var envStr = "#{monitorRecord.envStr}";
+		                   if(envStr != ""){
+		               		var checkStr= new Array(); //定义一数组
+		               		checkStr = envStr.split(",");
+		               		jquery("#select_env").selectpicker('val',checkStr);
+			               		//if(jquery("#select_env option").length==checkStr.length){
+			               		//	jquery("#select_env").text('全部');
+			               		//}
+		               		for (var i = 0; i < checkStr.length; i++) {
+								if(checkStr[i] < 5){
+									name1 = "温湿度";
+								}else if(checkStr[i] == 5){
+									name2 = "二氧化碳";
+								}else if(checkStr[i] == 6){
+									name3 = "光照";
+								}
+							}
+		                 	}
+		                   jquery('#select_env').change(function(){
+		                	   jquery("#login").show();
+							   jquery(".mr5").trigger("click");
+		                   }) 
+		                   jquery("#login").hide();
+				  	  });
+
+				  	  
+					 Highcharts.setOptions({ global: { useUTC: false } });
+					//折线图
+					/* var r = jquery("aaa").val();
+					var y = jquery("bbb").val();
+					if(r != "" && r != undefined){
+						 var resultSource = r;
+					}else{
+						 var resultSource = "";
+					}
+					if(y != "" && y != undefined){
+						 var yAxisStr = y;
+					}else{
+						var yAxisStr = "";
+					} */
+					var resultSource =#{monitorRecord.sbResult};
+					var yAxisStr = #{monitorRecord.yAxisStr};
+					 jquery('#container').highcharts('StockChart', {
+					 	navigator: {
+					             xAxis: {
+					 			tickWidth: 0,
+					 			lineWidth: 0,
+					 			gridLineWidth: 1,
+					 			tickPixelInterval: 200,
+					 			labels: {
+					 			    align: 'left',
+					 			    style: {
+					 			        color: '#888'
+					 			    },
+					 	   		    formatter: function() {  
+					 	               return  Highcharts.dateFormat('%Y-%m-%d', this.value);  
+					 	            }
+					 			}
+					 		}
+					     },
+					     rangeSelector : {
+					         selected : 1
+					     },
+					     tooltip:{ 
+					   	  formatter: function () {
+					       var s = '<b>' + Highcharts.dateFormat('%Y-%m-%d  %H:%M', this.x) + '</b>';
+					       jquery.each(this.points, function (i) {
+					    	   var resultParam = resultSource[i].name;
+					    	   var nameParam = resultParam.split("_")[0];
+					    	   var unitParam = resultParam.split("_")[1];
+					    	   var val = 0;
+					    	   if(unitParam == "ppm" || unitParam == "LUX"){
+					    		    val = parseInt(parseFloat(this.y));
+							    }else{
+							    	val = parseFloat(this.y).toFixed(2);
+								}
+					    	   s += '<br/> ';
+						            s += '<span style="color:';
+						            s += this.series.color;
+						            s += '">';
+						            s += nameParam;
+						            s += '</span>: ';
+						            s += val + unitParam;
+					       });
+
+					       return s;
+					   	}
+					   },
+					     xAxis: {  
+					     //  title :{  
+					     //      text:"title"  
+					     //  },  
+					         type: 'datetime', //定义x轴上日期的显示格式  
+					         labels: {  
+					         formatter: function() {  
+					             var vDate=new Date(this.value);  
+					             //alert(this.value);  
+					             return Highcharts.dateFormat('%m-%d %H:%M', this.value);  
+					         },  
+					         rotation: -15,
+					         align: 'center'  
+					     }  
+					     },
+					     credits:{
+								enabled:false
+					        },
+					     lang: {
+					            noData: "暂无数据!"
+					        },noData: {
+					            style: {    
+					                fontWeight: 'bold',     
+					                fontSize: '15px', 
+					                color: '#FFFFFF'        
+					            }
+					        },
+					        legend: {
+					        	enabled: true,
+					            layout: 'horizontal',
+					            align: 'center',
+					            verticalAlign: 'bottom',
+					            backgroundColor: '#ffffff',
+					            borderColor: 'black',
+					            borderWidth: 1,
+					            itemStyle: {
+					                color: "#32c3fd",
+					                fontSize: "12px",
+					                fontWeight: "bold"
+					            }
+					        }, 
+					     yAxis: yAxisStr,
+					      series : resultSource,
+					     exporting: {
+					         enabled: false
+					     },
+					     rangeSelector:{
+					         enabled:false   
+					        }
+					 });
+
+					//导出时间判断
+						function checkTime(){
+							jquery('#exportType').val(2)
+							var start = jquery("#startTime").val();
+							var end = jquery("#endTime").val();
+							var beginDate = new Date(start);
+							var endDate = new Date(end);
+							var year = beginDate.getFullYear();
+							var month = beginDate.getMonth();
+							var oneWeekLaterTime = new Date(beginDate);
+							oneWeekLaterTime.setDate(oneWeekLaterTime.getDate()+7)
+							if(endDate >= oneWeekLaterTime){
+								alert("最多可以导出一周的数据，如想导出更多数据，请分步导出！");
+							}
+							
+						}
+						function timeChange(){
+							var start = jquery("#startTime").val();
+							var end = jquery("#endTime").val();
+							jquery("#search\\:beginDateHidden").val(start);
+							jquery("#search\\:endDateHidden").val(end);
+						}
+					//]]>
+				</script>
+	</td>
+	
+</ui:define>
+</ui:composition>

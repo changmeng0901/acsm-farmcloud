@@ -1,0 +1,96 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+       <td valign="top"  width="100%">
+       <h:form  name="body">
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="工作 ">
+                    </s:link>&#160;&gt;&#160;&#160;<font size="3">运输手工操作</font></div>
+                    </div>
+                    
+                    <div class="z_r_ser" style="*margin-top:30px; *margin-bottom:30px;">
+                    	<table cellpadding="0" cellspacing="0" style=" width:466px; margin:30px auto; *margin:0px auto;">
+                        	<tr>
+                        		<td style="font-size:14px;">查询条件：</td>
+                                <td><input class="z_r_ser_i" type="text" /></td>
+                                <td><a href="#"><img src="#{request.contextPath}/asset/images/fdj_36.jpg" width="40" height="30" /></a></td>
+                           </tr>
+                       </table>               
+                    </div>
+					<table width="100%" class="pr_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<th class="pr_th" width="20%">订单编号</th>
+                    		<th class="pr_th" width="15%">订单类型</th>
+                    		<th class="pr_th" width="15%">配送时间</th>
+                    		<th class="pr_th" width="10%">箱子数量</th>
+                    		<th class="pr_th" width="15%">箱子编码</th>
+                    		<th class="pr_th" width="25%" style="border-right:1px solid #ddd;">操作</th>
+                    	</tr>
+                    	<ui:repeat value="#{transportationManualPageHome.packingInfoList}" var="_oneBox" rendered="#{not empty transportationManualPageHome.packingInfoList}" rowKeyVar="_index">
+                    	<tr>
+                    	<input type="hidden" name="selectIds" value="#{_oneBox.sn}"/>
+                            <td class="pr_td"><h:outputText value="#{_oneBox.orderInfoId.orderCode}" /></td>
+                    		<td class="pr_td"><h:outputText value="#{_oneBox.orderInfoId.orderStatus == 1?'个人':'公司'}" /></td>
+                    		<td class="pr_td"><h:outputText value="#{_oneBox.orderInfoId.deliverTime}"/></td>
+                    		<td class="pr_td"><h:outputText value="1"/></td>
+                    		<td class="pr_td"><h:outputText value="#{_oneBox.sn}"/></td>
+                            <td class="pr_td">
+                                <h:selectOneMenu immediate="true"  style="width:146px;"
+									value="#{transportationManualPageHome.instance.transportInfoId}"  >
+									<s:selectItems  value="#{transportationManualPageHome.getTransportInfoList()}" var="group"  label="#{group.carNumber}">
+									</s:selectItems> 
+									<s:convertEntity />
+								</h:selectOneMenu>
+								
+                            </td>
+                    	</tr>
+                    	</ui:repeat>
+                    	<ui:repeat value="#{transportationManualPageHome.getTransportInfoList()}" var="_oneBox" >
+                    	<input type="hidden" name="transportInfoId"  value="#{_oneBox.transportInfoId}"/>
+                    	</ui:repeat>
+                    </table>
+		            	<img src="#{request.contextPath}/asset/images/tj_52.jpg" style="margin-top: 20px; cursor: pointer;" onclick="selectAll('#{request.contextPath}/record/TransportationOrderInfoList.seam?actionMethod=record%2FTransportationManualPageList.xhtml%3AtransportationManualPageHome.update&amp;selectIds=')" >
+		            	</img>
+		    			&#160;
+		    			<s:link propagation="none"  view="/record/TransportationOrderInfoList.xhtml" action="#{transportationManualPageHome.update}"   id="userViewId">
+								</s:link>&#160;
+		    			<a class="print_a" href="#{request.contextPath}/record/TransportationOrderInfoList.seam">
+                            <img src="#{request.contextPath}/asset/images/re_43.jpg" />
+                        </a>
+            <!--印刷管理下结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                </h:form>
+                
+</td>
+<script>
+function checkAll (name,obj){
+	jquery("input[name='"+name+"']").attr("checked",jquery(obj).attr("checked"));
+}
+function selectAll(url){
+	var str = "";
+	var str2 = "";
+	jquery("input[name='selectIds']").each(function(){
+		str+=jquery(this).val() + ',';	
+				
+	});
+	jquery("input[name='transportInfoId']").each(function(){
+		str2+= +jquery(this).val() + ',';	
+				
+	});
+		window.location.href=url+str+'-'+str2;
+}
+</script>
+	</ui:define>
+
+</ui:composition>

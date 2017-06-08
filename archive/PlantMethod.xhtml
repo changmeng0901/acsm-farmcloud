@@ -1,0 +1,166 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<!-- #{specificationHome.farmingInfoInit()} -->
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge"></meta>
+	<!--[if lt IE 9]>
+      <script src="#{request.contextPath}/asset/js/bootstrap/respond.js"></script>
+    <![endif]-->
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/archive/AddPlantMethod.css" />
+	<td valign="top">
+	<div class="right_c">
+		<!-- 面包屑 -->
+		<div class="r_title mb30">
+			<div class="r_t_l cm_r_t_l"><span>生产管理</span><em>&nbsp;&gt;&nbsp;</em><font	size="3">标准规范</font></div>
+		</div>
+		<!-- 作物基本信息 -->
+		<div class="base-title mb20"><img class="icon20" src="#{request.contextPath}/asset/images/archive/AddPlantMethod_icon_zwxx.png"></img>作物信息</div>
+		<div class="crop-base-info mb22">
+			<div class="clearfix">
+				<div class="info-left">
+					<div class="species-pic">
+						<i class="i-mark"></i>
+						<s:fragment rendered="#{empty specificationHome.plant.plantImgRound}">
+		    				<img class="img" src="#{request.contextPath}/asset/images/record/zstp.png" width="108" height="108" />
+		    			</s:fragment>
+		    			<s:fragment rendered="#{not empty specificationHome.plant.plantImgRound}">
+		    				<img class="img" src="#{specificationHome.plant.plantImgRound}@108_108h_1e_1c.src" width="108" height="108" />
+		    			</s:fragment>
+					</div>
+				</div>
+				<div class="info-right">
+					<p class="crop-name ellipsis" title="#{specificationHome.plant.name}">#{specificationHome.plant.name}</p>
+					<div class="search-wrap crop-search-wrap clearfix">
+					    <dl class="select-item-dl">
+					    	<dt class="select-dt70">种植标准</dt>
+					    	<dd class="select-dd select-w170 mr50" style="margin-top:7px;margin-left:10px;">
+							    #{specificationHome.farmingPushGroup.dataDic.name}
+					    	</dd>
+					    </dl>
+					    <dl class="select-item-dl">
+					    	<dt class="select-dt70">种植环境</dt>
+					    	<dd class="select-dd select-w170" style="margin-top:7px;margin-left:10px;">
+							    #{specificationHome.farmingPushGroup.plantEnvType.name}
+					    	</dd>
+					    </dl>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 农事信息 -->
+		<div class="base-title mb20"><img class="icon20" src="#{request.contextPath}/asset/images/archive/AddPlantMethod_icon_nsxx.png"></img>农事信息</div>
+			<!--周期循环 -->
+			<a:repeat value="#{specificationHome.periodList}" var="_period" rowKeyVar="_index">
+				<div class="period-table-box mb20">
+					<div class="period-title">
+						<p class="fl">#{_period[1]}</p>
+					</div>
+					<table id="fallow-period" class="period-table" width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr class="title-tr">
+							<th width="4%">序号</th>
+							<th width="9%">农事分类</th>
+							<th width="9%">农事操作</th>
+							<th width="11%">农事要求</th>
+							<th width="11%">操作工时（小时/亩）</th>
+							<th width="10%">投入品</th>
+							<th width="10%">参考图片</th>
+							<th width="10%">农机</th>
+							<th width="7%">周期（天）</th>
+							<th width="13%">阶段（第_天 — 第_天）</th>
+						</tr>
+						<a:repeat value="#{specificationHome.farmingPushMap.get(''.concat(_period[0]))}" var="_farming" rowKeyVar="_index">
+							<tr class="item-tr">
+								<td>#{_index+1}</td>
+								<td><p class="txt-name ellipsis" data-toggle="tooltip" data-placement="top" title="#{farmingTypeConstant.getType(_farming.amRfidInfoTypeId.classifyType)}">#{farmingTypeConstant.getType(_farming.amRfidInfoTypeId.classifyType)}</p></td>
+								<td><p class="txt-name ellipsis" data-toggle="tooltip" data-placement="top" title="#{_farming.amRfidInfoTypeId.name}">#{_farming.amRfidInfoTypeId.name}</p></td>
+								<td><p class="txt-name ellipsis"  data-toggle="tooltip" data-placement="top" title="#{_farming.standardOperation}">#{empty _farming.standardOperation?'--':_farming.standardOperation}</p></td>
+								<td>#{_farming.workTime}</td>
+								<td>
+									<s:fragment rendered="#{empty _farming.inputRecordNames}">--</s:fragment>
+									<s:fragment rendered="#{not empty _farming.inputRecordNames}">
+										<div class="product-name-box" data-toggle="tooltip" data-placement="top" title="#{_farming.inputRecordNames}">
+											<p class="inputs_name ellipsis">#{_farming.inputRecordNames}</p>
+											<input class="inputs_info" type="hidden" value="#{_farming.inputRecordInfo}"></input>
+											<div class="view_icon list_view" onclick="showInputsModal(this)"></div>
+										</div>
+									</s:fragment>
+								</td>
+								<td><p class="txt-name ellipsis">
+									<s:fragment rendered="#{not empty _farming.imgUrl}"><img class="farming_img" src="#{_farming.imgUrl}@20h_1e_1c.src"></img></s:fragment>
+									<s:fragment rendered="#{empty _farming.imgUrl}">--</s:fragment>
+								</p></td>
+								<td>
+									<p class="txt-name ellipsis" data-toggle="tooltip" data-placement="top" title="#{empty _farming.instrumentInfo.id ? _farming.instrumentName : _farming.instrumentInfo.name}">	
+									<s:fragment rendered="#{not empty _farming.instrumentInfo.id or not empty _farming.instrumentName}">
+										#{empty _farming.instrumentInfo.id ? _farming.instrumentName : _farming.instrumentInfo.name}
+									</s:fragment>
+									<s:fragment rendered="#{empty _farming.instrumentInfo.id and empty _farming.instrumentName}">
+										--
+									</s:fragment>
+									</p>
+								</td>
+								<td>#{empty _farming.periodDays ? '--':_farming.periodDays}</td>
+								<td><p class="txt-name ellipsis">第#{empty _farming.beginDay ? '--':_farming.beginDay}天—第#{empty _farming.endDay ? '--': _farming.endDay}天</p></td>
+							</tr>
+						</a:repeat>
+					</table>
+				</div>
+			</a:repeat>
+			<!-- 提交、返回 -->
+			<div class="align-center mb20">
+				<s:link view="#{request.contextPath}/archive/SpecificationDetail.seam" styleClass="btn btn-default" value="返回"  style="margin-left:10px" >
+					<f:param name="plantId" value="#{specificationHome.plantId}"/>
+				</s:link>
+			</div>
+			<!-- 显示投入品modal -->
+			<div class="modal fade showinputs-modal" id="showinputsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header clearfix">
+							<i type="button" class="close" data-dismiss="modal"></i>
+						</div>
+						<div class="modal-body">
+							<div class="modal-maincont">
+								<!-- 投入品table -->
+								<div class="inputs-table-block mb20">
+								<table id="showInputsTable" class="inputs-table" width="100%" cellpadding="0" cellspacing="0" border="0">
+									<tr>
+										<th width="20%">序号</th>
+										<th width="20%">投入品名称</th>
+										<th width="20%">规格</th>
+										<th width="20%">使用量</th>
+									</tr>
+								</table>
+								</div>
+								<!-- 投入品table-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 显示投入品modal -->
+			<!-- 图片查看 -->
+			<div class="farmingMage_Magnifier">
+	          	<em class="MagnifierClose" style="z-index: 1"><img src="#{request.contextPath}/asset/images/farmingIco05.png" width="28" height="28" /></em>
+	            <div class="MagnifierBox">
+	            	<img  id="zoomImage" src="" />
+	            </div>
+           </div>
+           <!-- 图片查看 -->
+           <div class="mark_b80"></div>
+	</div>
+	</td>
+	<script src="#{request.contextPath}/asset/js/archive/PlantMethod.js"></script>
+	</ui:define>
+
+</ui:composition>

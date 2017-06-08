@@ -1,0 +1,1274 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+  <ui:define name="foot">
+<!-- 选择基地 开始 -->
+<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+<!-- 选择基地 结束 -->  
+</ui:define>
+<ui:define name="body">
+ <link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+ <link href="#{request.contextPath}/asset/css/realplant/HarvestRecordList.css" rel="stylesheet" />
+ <link href="#{request.contextPath}/asset/css/realplant/caishoujl.css"
+			rel="stylesheet" />
+		<link
+			href="#{request.contextPath}/asset/css/realplant/HarvestRecordList.css"
+			rel="stylesheet" />
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}/asset/css/printPop.css" />
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}/asset/css/datetimepicker.css" />
+<style>
+.pr_th {text-align:center;}
+.baseDate .input-append .add-on, .input-prepend .add-on{ position: inherit;}
+</style>
+		<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+   
+       <td valign="top">
+		<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+		<div class="right_c" style="min-height:500px;">
+		<!-- #{harvestList.baseMethods()} -->
+		<!-- #{productRecordTimesHome.initHigher()} -->
+		<!-- #{harvestRecordsHome.initHigh()} -->
+		
+		 <!-- 查看页面开始 -->
+					<div class="r_title">
+                	<div class="r_t_l cm_r_t_l"><span>加工&#160;&gt;&#160;&#160;采收</span><em>&gt;</em><font size="3">采收记录</font></div>
+                       
+                          <div class="fr" style="margin-bottom:-1px;float:right;">
+                        	<ul class="cm_resumeList clear">
+								 <li>
+                                	<a disabled="true" class="borderBt" style="cursor:default;" href="javascript:void(0)"><img src="../asset/images/caishoujilu01.png"/><span>采收记录</span></a>
+                                </li> 
+								<li>
+                                	<a href="#{request.contextPath}/harvest/PreHarvestListNew.seam"><img src="../asset/images/yucai01.png"/><span>预采管理</span></a>
+                                </li> 
+                                
+                                <li>
+                                	<a href="#{request.contextPath}/harvest/PreSalesList.seam"><img src="../asset/images/yushou01.png"/><span>预售管理</span></a>
+                                </li> 
+                             </ul>   
+                        </div>
+                        
+                    </div>
+                    <br/>
+                    <div class="search-header">
+                     <h:form id="realPlantListSearch">
+                     	<div class="search-header-lt">
+                     		<div class="public-search" style="width: 264px">   
+                    			<span class="octicon-search02"></span>
+                                	<h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="searchParam" styleClass="form-control nw300 srarchfont" value="#{productRecordTimesHome.search}"/>
+                                	<h:inputHidden value="#{productRecordTimesHome.baseId}" id="baseHidden"/>
+                            </div>
+                            <h:commandButton id="search" styleClass="btn btn-primary fl" value="搜索" action="/realplant/RealPlantList.xhtml">                                	
+	                        </h:commandButton>
+	                        <a class="queryClear mt5 fl" href="javascript:clearAll();" style="margin:7px 0 7px 30px;">
+	                        	<span class="clearAll_serDel"><img src="#{request.contextPath}/asset/images/selectMenu-close03.png" /></span>清除所有搜索条件
+	                        </a>
+	                  	</div>
+                       </h:form>
+                    	<div class="search-header-rt">
+	                    	<s:link styleClass="btn btn-success fl mr5" style="display: #{s:hasRole('harvest_add')?'hidden':'none'}" value="添加" view="/realplant/HarvestEdit.xhtml" propagation="none" onclick="return checkBase(this)">
+	                    	<f:param name="userUserId" />
+	                    	<f:param name="baseId" value="#{harvestList.baseId}"/>
+	                    	<f:param name="pageNum" value="#{harvestList.pageNum}"/>
+	                    	</s:link>
+	                    	<s:button id="excelButton1" action="#{productRecordTimesHome.exportExcelHigher()}" onclick="checkExport()" styleClass="btn btn-default fl" value="导出"/>
+                    	</div>         
+                    </div>
+                    		<div class="modal fade" id="myModal1" tabindex="-1" role="dialog"
+							aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal">
+										</button>
+										<h4 class="modal-title font14" id="myModalLabel">采收记录</h4>
+									</div>
+									<div class="modal-body" style="padding-bottom: 0;">
+										<h:panelGroup id="chakan">
+											<table class="farmingMageTab_fjxx">
+												<tr id="easy1">
+													<td width="60" align="right">采收作物:</td>
+													<td width="242" style="padding-left: 15px;">
+													#{harvestRecordsHome.realList.size()}
+														#{harvestRecordsHome.realList[0].tunnelInfoId.tunnelName}#{harvestRecordsHome.realList[0].breedBreedId.plant.name}
+													</td>
+													<s:fragment rendered="#{sessionTake.harvestLevelCheck}">
+														<td width="60" align="right">等级:</td>
+														<td width="193" style="padding-left: 15px;">
+															#{harvestRecordsList.levelName(harvestRecordsHome.product.level)==""
+															? '无等级' :
+															harvestRecordsList.levelName(harvestRecordsHome.product.level)}
+														</td>
+													</s:fragment>
+												</tr>
+												<s:fragment rendered="#{harvestRecordsHome.product.outputCheck ne null and harvestRecordsHome.product.outputCheck}">
+													<tr id="easy2">
+														<td width="60" align="right">产出品:</td>
+														<td width="242" style="padding-left: 15px;">
+															#{harvestRecordsHome.outputName}
+														</td>
+														<td width="60" align="right">产出部位:</td>
+														<td width="193" style="padding-left: 15px;">
+															#{harvestRecordsHome.cropSiteStr1}
+														</td>
+													</tr>
+												</s:fragment>
+												<tr id="diff3" style="display: none">
+													<td width="60" align="right">采收作物:</td>
+													<td width="242" style="padding-left: 15px;">
+														#{harvestRecordsHome.plant.name}</td>
+													<td width="60" align="right">采收区域:</td>
+													<td width="193" style="padding-left: 15px;"><h:outputText
+															rendered="#{harvestRecordsHome.tunnelList[0].tunnelName ne null}"> #{harvestRecordsHome.tunnelList[0].tunnelName}</h:outputText>
+														<h:outputText
+															rendered="#{harvestRecordsHome.tunnelList[0].tunnelName eq null}"> ----</h:outputText>
+													</td>
+												</tr>
+												<s:fragment rendered="#{harvestRecordsHome.product.outputCheck ne null and harvestRecordsHome.product.outputCheck}">
+													<tr id="diff6">
+														<td width="60" align="right">产出品:</td>
+														<td width="242" style="padding-left: 15px;">
+															#{harvestRecordsHome.outputName}
+														</td>
+														<td width="60" align="right">产出部位:</td>
+														<td width="193" style="padding-left: 15px;">
+															#{harvestRecordsHome.cropSiteStr1}
+														</td>
+													</tr>
+												</s:fragment>
+												<tr id="diff4" style="display: none">
+													<td width="60" align="right">定植日期:</td>
+													<td width="242" style="padding-left: 15px;"><h:outputText
+															rendered="#{harvestRecordsHome.realList.size() ne '0'}">
+															<h:outputText
+																value="#{harvestRecordsHome.realList[0].plantBeginTime}">
+																<s:convertDateTime type="both" dateStyle="short"
+																	pattern="yyyy-MM-dd" />
+															</h:outputText>
+														</h:outputText> <h:outputText
+															rendered="#{harvestRecordsHome.realList.size() eq '0'}"> ----</h:outputText>
+
+													</td>
+													<s:fragment rendered="#{sessionTake.harvestLevelCheck}">
+														<td width="60" align="right">等级:</td>
+														<td width="193" style="padding-left: 15px;">
+															#{harvestRecordsList.levelName(harvestRecordsHome.product.level)==""
+															? '无等级' :
+															harvestRecordsList.levelName(harvestRecordsHome.product.level)}
+														</td>
+													</s:fragment>
+												</tr>
+												<tr>
+													<td width="60" align="right">采收量:</td>
+													<td width="242" style="padding-left: 15px;">
+													<h:outputText rendered="#{sessionTake.harvestUnit eq 1}">
+		                                				#{stringUtil.changeFloatMe(harvestRecordsHome.product.weight)}
+		                                			</h:outputText>
+		                                			<h:outputText rendered="#{sessionTake.harvestUnit ne 1}">
+		                                				 #{harvestRecordsHome.product.weight}
+		                               				</h:outputText>
+														&#160;
+													<s:fragment  rendered="#{harvestRecordsHome.product.uintId gt 7 and harvestRecordsHome.product.uintId le 11}"> 
+															#{sessionTake.harvestUnit eq 1?'斤':'公斤（kg）'}
+													</s:fragment>
+													<s:fragment  rendered="#{harvestRecordsHome.product.uintId lt 7 or harvestRecordsHome.product.uintId gt 11}"> 
+														#{goodsInfoConstant.getGoodUnitLabel(harvestRecordsHome.product.uintId)}
+													</s:fragment>
+													</td>
+													<s:fragment rendered="#{sessionTake.harvestPriceCheck}">
+														<td width="60" align="right">单价:</td>
+														<td width="193" style="padding-left: 15px;">
+															#{harvestRecordsHome.product.unitPrice}&#160;元</td>
+													</s:fragment>
+												</tr>
+												<tr>
+												<s:fragment rendered="#{sessionTake.harvestLevelCheck}">
+													<td width="60" align="right">采收人:</td>
+													<td width="242" style="padding-left: 15px;">
+														#{harvestRecordsHome.product.harvestId.farmerId.name}</td>
+												</s:fragment>
+													<td width="60" align="right">采收时间:</td>
+													<td width="193" style="padding-left: 15px;">
+														#{harvestRecordsHome.harvestTime}</td>
+												</tr>
+												<s:fragment rendered="#{sessionTake.harvestEarthCheck or sessionTake.harvesttareCheck}">
+												<tr >
+													<s:fragment rendered="#{sessionTake.harvestEarthCheck}">
+														<td width="60" align="right">扣土重:</td>
+														<td width="242" style="padding-left: 15px;">
+														<h:outputText rendered="#{sessionTake.harvestUnit eq 1}">
+															 <s:fragment rendered="#{harvestRecordsHome.product.harvestEarthWeight eq null}">
+															0.0
+															</s:fragment>
+															<s:fragment rendered="#{harvestRecordsHome.product.harvestEarthWeight ne null}">
+																#{stringUtil.changeFloatMe(harvestRecordsHome.product.harvestEarthWeight)}
+															</s:fragment> 
+		                                				</h:outputText>
+		                                				<h:outputText rendered="#{sessionTake.harvestUnit ne 1}">
+		                                				 	#{harvestRecordsHome.product.harvestEarthWeight}
+		                               					</h:outputText>
+															&#160;
+															<s:fragment  rendered="#{harvestRecordsHome.product.uintId gt 7 and harvestRecordsHome.product.uintId le 11}"> 
+															#{sessionTake.harvestUnit eq 1?'斤':'公斤（kg）'}
+													</s:fragment>
+													<s:fragment  rendered="#{harvestRecordsHome.product.uintId lt 7 or harvestRecordsHome.product.uintId gt 11}"> 
+														#{goodsInfoConstant.getGoodUnitLabel(harvestRecordsHome.product.uintId)}
+													</s:fragment>
+														</td>
+													</s:fragment>
+													<s:fragment rendered="#{sessionTake.harvesttareCheck}">
+														<td width="60" align="right">皮重:</td>
+														<td width="242" style="padding-left: 15px;">
+														<h:outputText rendered="#{sessionTake.harvestUnit eq 1}">
+		                                					 <s:fragment rendered="#{harvestRecordsHome.product.harvestTareWeight eq null}">
+															0.0
+															</s:fragment>
+															<s:fragment rendered="#{harvestRecordsHome.product.harvestTareWeight ne null}">
+																#{stringUtil.changeFloatMe(harvestRecordsHome.product.harvestTareWeight)}
+															</s:fragment>
+		                                				</h:outputText>
+		                                				<h:outputText rendered="#{sessionTake.harvestUnit ne 1}">
+		                                				 	#{harvestRecordsHome.product.harvestTareWeight}
+		                               					</h:outputText>
+															&#160;
+															<s:fragment  rendered="#{harvestRecordsHome.product.uintId gt 7 and harvestRecordsHome.product.uintId le 11}"> 
+															#{sessionTake.harvestUnit eq 1?'斤':'公斤（kg）'}
+													</s:fragment>
+													<s:fragment  rendered="#{harvestRecordsHome.product.uintId lt 7 or harvestRecordsHome.product.uintId gt 11}"> 
+														#{goodsInfoConstant.getGoodUnitLabel(harvestRecordsHome.product.uintId)}
+													</s:fragment>
+														</td>
+													</s:fragment>
+												</tr>
+												</s:fragment>
+												<s:fragment rendered="#{sessionTake.harvestDishCheck or sessionTake.harvestCarsCheck}">
+													<tr >
+														<s:fragment rendered="#{sessionTake.harvestDishCheck}">
+															<td width="60" align="right">净菜重:</td>
+															<td width="242" style="padding-left: 15px;">
+															<h:outputText rendered="#{sessionTake.harvestUnit eq 1}">
+			                                					<s:fragment rendered="#{harvestRecordsHome.product.harvestDishWeight eq null}">
+																0.0
+																</s:fragment>
+																<s:fragment rendered="#{harvestRecordsHome.product.harvestDishWeight ne null}">
+																	#{stringUtil.changeFloatMe(harvestRecordsHome.product.harvestDishWeight)}
+																</s:fragment> 
+			                                				</h:outputText>
+			                                				<h:outputText rendered="#{sessionTake.harvestUnit ne 1}">
+			                                				 	#{harvestRecordsHome.product.harvestDishWeight}
+			                               					</h:outputText>
+																&#160;
+																<s:fragment  rendered="#{harvestRecordsHome.product.uintId gt 7 and harvestRecordsHome.product.uintId le 11}"> 
+															#{sessionTake.harvestUnit eq 1?'斤':'公斤（kg）'}
+													</s:fragment>
+													<s:fragment  rendered="#{harvestRecordsHome.product.uintId lt 7 or harvestRecordsHome.product.uintId gt 11}"> 
+														#{goodsInfoConstant.getGoodUnitLabel(harvestRecordsHome.product.uintId)}
+													</s:fragment>
+															</td>
+														</s:fragment>
+														<s:fragment rendered="#{sessionTake.harvestCarsCheck}">
+															<td width="60" align="right">车辆数:</td>
+															<td width="242" style="padding-left: 15px;">
+															<s:fragment rendered="#{harvestRecordsHome.product.harvestCarsNum eq null}">
+															0.0
+															</s:fragment>
+															<s:fragment rendered="#{harvestRecordsHome.product.harvestCarsNum ne null}">
+			                                					#{harvestRecordsHome.product.harvestCarsNum}
+			                                					</s:fragment>
+																&#160;辆
+															</td>
+														</s:fragment>
+													</tr>
+												</s:fragment>
+												<h:outputText value=""
+													rendered="#{harvestRecordsHome.storageRoomList[0].storageRoomId ne null}">
+													<tr id="storageRoomTr">
+														<td width="60" align="right">采收入库:</td>
+														<td width="242" style="padding-left: 15px;">
+															#{harvestRecordsHome.storageRoomList[0].name}</td>
+														<s:fragment rendered="#{sessionTake.harvestOperatorCheck}">
+															<h:outputText value=""
+																rendered="#{harvestRecordsHome.handleId ne 0}">
+																<td width="60" align="right">经办人:</td>
+																<td width="193" style="padding-left: 15px;">
+																	#{harvestRecordsHome.getFarmerName(harvestRecordsHome.handleId)}
+																</td>
+															</h:outputText>
+															<h:outputText value=""
+																rendered="#{harvestRecordsHome.handleId eq 0}">
+																<td width="60" align="right">经办人:</td>
+																<td width="193" style="padding-left: 15px;">无</td>
+															</h:outputText>
+														</s:fragment>
+													</tr>
+													<s:fragment rendered="#{sessionTake.harvestOutstockCheck}">
+														<tr>
+															<h:outputText value=""
+																rendered="#{harvestRecordsHome.product.outWeight ne null}">
+																<td width="60" align="right">采收出库:</td>
+																<td width="242" colspan="3" style="padding-left: 15px;">
+																	#{unitStranfer.outStranfer(harvestRecordsList.goodsInfo(harvestRecordsHome.product.goodsInfoId),harvestRecordsHome.product.outWeight)}
+																	&#160;#{goodsInfoConstant.getGoodUnitLabel(harvestRecordsList.goodsInfo(harvestRecordsHome.product.goodsInfoId))}
+																</td>
+															</h:outputText>
+														</tr>
+													</s:fragment>
+												</h:outputText>
+												<s:fragment rendered="#{sessionTake.harvestMethodCheck}">
+													<tr>
+														<td width="60" align="right">采收方法:</td>
+														<td width="507" colspan="3" style="padding-left: 15px;">
+															#{harvestRecordsHome.product.harvestMethod}</td>
+													</tr>
+												</s:fragment>
+												<tr>
+													<td width="60" align="right">备注:</td>
+													<td width="507" colspan="3" style="padding-left: 15px;">
+														#{harvestRecordsHome.product.remark}</td>
+												</tr>
+											</table>
+										</h:panelGroup>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						
+						<!-- 编辑采收记录集合模态框 开始 -->
+				<div class="farmmingAdd">
+					<!-- Modal 编辑采收记录弹窗1 开始 -->
+					<a4j:form id="xiu">
+						<div class="modal fade" id="myModal3" tabindex="-1" role="dialog"
+							aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal">
+										</button>
+										<h4 class="modal-title font14" id="myModalLabel">编辑采收记录</h4>
+									</div>
+									<div class="modal-body" style="padding-bottom: 0;">
+										<h:panelGroup id="locallists">
+											<table class="farmingMageTab_fjxx">
+												<tr id="xeasy">
+													<td width="60" align="right">采收作物</td>
+													<td width="242" style="padding-left: 15px;"> 
+													<h:selectOneMenu
+															id="plantIds" styleClass="selectpicker nw200 xb1"
+															value="#{harvestRecordsHome.realPlantId}"
+															onchange="changeZuoWu()">
+															<s:selectItems value="#{harvestRecordsHome.realList}"
+																var="var" label="#{var[2]}#{var[3]}"
+																itemValue="#{var[0]}">
+															</s:selectItems>
+														</h:selectOneMenu> </td>
+														<s:fragment rendered="#{sessionTake.harvestLevelCheck}">
+															<td width="60" align="right">等级</td>
+															<td width="193" style="padding-left: 15px;"><h:panelGroup
+																	id="xidObj" style="float:left;">
+																	<h:selectOneMenu styleClass="selectpicker" id="leveIds"
+																		value="#{harvestRecordsHome.instance.level}"
+																		onchange="xleveprice();">
+																		<s:selectItems value="#{harvestRecordsHome.leveList}"
+																			var="var" label="#{var.name}"
+																			itemValue="#{var.goodsLevelId}" />
+																	</h:selectOneMenu>
+																</h:panelGroup></td>
+														</s:fragment>
+												</tr>
+												<s:fragment rendered="#{harvestRecordsHome.product.outputCheck ne null and harvestRecordsHome.product.outputCheck}">
+													<tr id="easy2">
+														<td width="60" align="right">产出品:</td>
+														<td width="242" style="padding-left: 15px;">
+															#{harvestRecordsHome.outputName}
+														</td>
+														<td width="60" align="right">产出部位:</td>
+														<td width="193" style="padding-left: 15px;">
+															#{harvestRecordsHome.cropSiteStr1}
+														</td>
+													</tr>
+												</s:fragment>
+												<tr id="xdiff1" style="display: none">
+													<td width="60" align="right">采收作物</td>
+													<td width="242" style="padding-left: 15px;"><h:selectOneMenu
+															id="plantListId" styleClass="selectpicker nw200 xc1"
+															value="#{harvestRecordsHome.plantListId}"
+															onchange="xplantlevechange(this.value);">
+															<s:selectItems value="#{harvestRecordsHome.plantList}"
+																var="var" label="#{var[1]}" itemValue="#{var[0]}" />
+														</h:selectOneMenu></td>
+													<td width="60" align="right">采收区域</td>
+													<td width="193" style="padding-left: 15px;"><h:panelGroup
+															id="tunnelInfoId" style="float:left;">
+															<h:selectOneMenu styleClass="selectpicker xc2"
+																id="tunnelId" value="#{harvestRecordsHome.tunnelId}"
+																onchange="xtunnelbian();">
+																<f:selectItem itemLabel="无" itemValue="0"></f:selectItem>
+																<s:selectItems value="#{harvestRecordsHome.tunnelList}"
+																	var="var" label="#{var.tunnelName}"
+																	itemValue="#{var.tunnelInfoId}" />
+															</h:selectOneMenu>
+														</h:panelGroup></td>
+												</tr>
+												<s:fragment rendered="#{harvestRecordsHome.product.outputCheck ne null and harvestRecordsHome.product.outputCheck}">
+													<tr id="diff6">
+														<td width="60" align="right">产出品:</td>
+														<td width="242" style="padding-left: 15px;">
+															#{harvestRecordsHome.outputName}
+														</td>
+														<td width="60" align="right">产出部位:</td>
+														<td width="193" style="padding-left: 15px;">
+															#{harvestRecordsHome.cropSiteStr1}
+														</td>
+													</tr>
+												</s:fragment>
+												<tr id="xdiff2" style="display: none">
+													<td width="60" align="right">定植日期</td>
+													<td width="242" style="padding-left: 15px;"><h:panelGroup
+															id="xtimeId" style="float:left;">
+															<select id="planttimeId" class="selectpicker nw200 xc3"
+																name="planttimeId">
+																<a4j:repeat value="#{harvestRecordsHome.realList}"
+																	var="var">
+																	<option value="#{var[0]}">#{var[1]}#{var[2]}</option>
+																</a4j:repeat>
+																<option value="0">无</option>
+															</select>
+														</h:panelGroup></td>
+												<s:fragment rendered="#{sessionTake.harvestLevelCheck}">
+													<td width="60" align="right">等级</td>
+													<td width="193" style="padding-left: 15px;"><h:panelGroup
+															id="xidObjs" style="float:left;">
+															<h:selectOneMenu styleClass="selectpicker xc4"
+																id="goodsLeve"
+																value="#{harvestRecordsHome.goodsLevelId}"
+																onchange="xgoodleveprice();">
+																<s:selectItems
+																	value="#{harvestRecordsHome.goodLeveList}" var="var"
+																	label="#{var.name}" itemValue="#{var.goodsLevelId}" />
+															</h:selectOneMenu>
+														</h:panelGroup></td>
+												</s:fragment>
+												</tr>
+												<tr>
+													<td width="60" align="right">采收量</td>
+													<td width="242" style="padding-left: 15px;"><h:inputText
+															value="#{harvestRecordsHome.instance.weight}"
+															id="zhongl2" class="form-control fl" type="text"
+															style="width:165px;" /> <h:panelGroup id="xin"
+															style="float:left;">
+															<span class="pl5">#{goodsInfoConstant.getGoodUnitLabel(harvestRecordsHome.info.goodsUnit)}</span>
+														</h:panelGroup></td>
+												<s:fragment rendered="#{sessionTake.harvestPriceCheck}">
+													<td width="60" align="right">单价</td>
+													<td width="193" style="padding-left: 15px;"><h:inputText
+															value="#{harvestRecordsHome.instance.unitPrice}"
+															id="money" class="form-control fl" type="text"
+															style="width:165px;" /> <span class="pl5">元</span></td>
+												</s:fragment>
+												</tr>
+												<tr>
+												<s:fragment rendered="#{sessionTake.harvestHarvesterCheck}">
+													<td width="60" align="right">采收人</td>
+													<td width="242" style="padding-left: 15px;"><h:panelGroup
+															id="farmerIds">
+															<h:selectOneMenu style="display: block;"
+																styleClass="selectpicker nw200 xa3" id="operatorIds"
+																value="#{harvestRecordsHome.product.farmerId}">
+																<s:selectItems value="#{harvestRecordsHome.personLists}"
+																	var="var" label="#{var[1]}" itemValue="#{var[0]}" />
+															</h:selectOneMenu>
+														</h:panelGroup></td>
+												</s:fragment>
+													<td width="60" align="right">采收时间</td>
+													<td width="193" style="padding-left: 15px;">
+														<div class="input-append date form_datetime"
+															style="position: relative; width: 190px;">
+															<h:inputText style="width:190px;" id="xshij"
+																readonly="true"
+																value="#{harvestRecordsHome.product.reciveTime}">
+																<s:convertDateTime type="both" dateStyle="short"
+																	pattern="yyyy-MM-dd HH:mm" />
+															</h:inputText>
+															<span class="add-on"
+																style="position: absolute; right: -4px; top: 9px;"><i
+																class="icon-th"></i></span>
+															<h:inputHidden value="#{harvestRecordsHome.reciveTim}"
+																id="xshij1" />
+														</div>
+													</td>
+												</tr>
+												<tr id="storageRoomTr">
+													<td width="60" align="right">采收入库</td>
+													<td width="242" style="padding-left: 15px;"><h:selectOneMenu
+															styleClass="selectpicker sfrk"
+															value="#{harvestRecordsHome.storageRoomId}"
+															id="storageRoomId" onchange="storageChange(2);">
+															<f:selectItem itemLabel="无" itemValue="0"></f:selectItem>
+															<s:selectItems var="_storage"
+																value="#{harvestRecordsHome.storageRoomList}"
+																label="#{_storage.name}"
+																itemValue="#{_storage.storageRoomId}" />
+														</h:selectOneMenu></td>
+													<s:fragment rendered="#{sessionTake.harvestOperatorCheck}">
+														<td width="60" align="right">经办人</td>
+														<td width="193" style="padding-left: 15px;"><h:selectOneMenu
+																styleClass="selectpicker sfrk xhand1"
+																value="#{harvestRecordsHome.handleId}" id="handleId">
+																<s:selectItems var="var"
+																	value="#{harvestRecordsHome.operatorList}"
+																	label="#{var[1]}" itemValue="#{var[0]}" />
+															</h:selectOneMenu></td>
+													</s:fragment>
+												</tr>
+											<s:fragment rendered="#{sessionTake.harvestLevelCheck}">
+												<tr>
+													<td width="60" align="right">采收出库</td>
+													<td width="242" colspan="3" style="padding-left: 15px;">
+														<h:inputText
+															value="#{harvestRecordsHome.instance.outWeight}"
+															id="output" class="form-control fl" type="text"
+															style="width:165px;" /> <h:panelGroup id="xout"
+															style="float:left;">
+															<span class="pl5">#{goodsInfoConstant.getGoodUnitLabel(harvestRecordsHome.info.goodsUnit)}</span>
+														</h:panelGroup>
+													</td>
+												</tr>
+											</s:fragment>
+												<tr>
+													<td width="60" align="right">备注</td>
+													<td width="507" colspan="3" style="padding-left: 15px;">
+														<h:inputTextarea
+															style="width:483px; resize:none; font-size:12px;"
+															rows="3" class="form-control"
+															value="#{harvestRecordsHome.product.remark}" />
+													</td>
+												</tr>
+											</table>
+										</h:panelGroup>
+									</div>
+									<div class="modal-footer">
+										<a4j:commandButton id="up"
+											styleClass="btn btn-primary bianjibutton"
+											action="#{harvestRecordsHome.highUp}" value="保存"
+											onclick="if(!validationt())return true;jquery('.bianjibutton').prop('disabled','true');"
+											oncomplete="jquery('bianjibutton').removeAttr('disabled');"></a4j:commandButton>
+										<a4j:commandButton id="update"
+											styleClass="btn btn-primary bianjisavebutton"
+											action="#{harvestRecordsHome.update}" value="提交"
+											onclick="if(!validationt())return true;jquery('.bianjisavebutton').prop('disabled','true');"
+											oncomplete="jquery('.bianjisavebutton').removeAttr('disabled');"></a4j:commandButton>
+										<a href="javascript:;" class="btn btn-default" type="button"
+											data-dismiss="modal">返回</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a4j:form>
+					<!-- Modal 编辑采收记录弹窗 结束 -->
+				</div>
+                    <div class="harvest-record-bt mt20" style="border:1px solid #ddd;">
+                     
+                    <div class="harvest-record-more clearfix">
+                        <h2>采收记录列表</h2>
+                        <div class="fr">
+                            <div class="status-default harvest-date-selt fl mr15">
+                            	<button type="button" class="btn date-btn">
+                            		<span class="filter-option pull-left" id="csshijian_">采收时间</span>
+                            		<span class="caret"></span>
+                            	</button>
+                                <div class="farmingInputs_mini" style="top:45px; left:0; z-index:21; width:300px;  font-size:12px;">
+                                    <div class="farmingInputs_miniHd"><h3 style="font-size:12px;">按时间搜索</h3><button></button></div>
+                                    <div class="farmingInputs_miniBd">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td width="55" align="right" valign="middle" style="padding-right:10px;">开始时间</td>
+                                        <td width="200">
+                                             <div class="baseDate">  
+                                                <div class="input-append date form_datetime " style="width:190px;" >
+                                                    <input type="text" readonly="readonly" value="" id="start_" size="26" style="width:150px;" />
+                                                    <span class="add-on"><i class="icon-th"></i></span>
+                                                </div>  
+                                             </div> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="55" align="right" valign="middle" style="padding-right:10px;">结束时间</td>
+                                        <td width="200">
+                                            <div class="baseDate">  
+                                                <div class="input-append date form_datetime " style="width:190px;" >
+                                                    <input type="text" readonly="readonly" value="" id="end_" size="26" style="width:150px;" />
+                                                    <span class="add-on"><i class="icon-th"></i></span>
+                                                </div>  
+                                             </div> 
+                                        </td>
+                                    </tr>
+                                    </table>
+                                    </div>
+                                    <div class="farmingInputs_miniFt">
+                                    	<input style="margin-left: 5px;" class="btn btn-success" onclick="tme();" type="button" value="提交"></input>
+                                        <input class="btn btn-default" onclick="jquery(this).closest('.farmingInputs_mini').hide()" style="margin-left: 5px;" type="button" value="返回">
+                                        </input>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="status-default fl mr15">
+                                <select style="display: none;" class="selectpicker" data-live-search="true" onchange="addArea();" id="quyu_">
+                                    <option value="-1">区域</option>
+                                    <a4j:repeat value="#{productRecordTimesHome.areaList}" var="var1">
+	                                    <option value="#{var1[0]}">#{var1[1]}</option>
+                                    </a4j:repeat>
+                                </select>
+                            </div>
+                            <div class="status-default harvest-crops-selt fl mr15">
+                                <select style="display: none;" class="selectpicker" data-live-search="true" onchange="addCrop();" id="zuowu_">
+                               		<option value="-1">采收作物</option>
+                                    <a4j:repeat value="#{productRecordTimesHome.cropList}" var="var2">
+	                                    <option value="#{var2[0]}">#{var2[1]}</option>
+                                    </a4j:repeat>
+                                </select>
+                            </div>
+                            <div class="status-default fl mr15">
+                                <select style="display: none;" class="selectpicker" onchange="addLevel();" id="dengji_">
+                                	<option value="-1">等级</option>
+                                    <a4j:repeat value="#{productRecordTimesHome.levelList}" var="var3">
+                                    	<option value="#{var3[0]}">#{var3[1]}</option>
+                                    </a4j:repeat>
+                                </select>
+                            </div>
+                            <div class="status-default addPerson_selt fl mr15">
+                                <select style="display: none;" class="selectpicker" data-live-search="true" onchange="addRecovery();" id="caishouren_">
+                                    <option value="-1">采收人</option>
+									<a4j:repeat value="#{productRecordTimesHome.recoveryPeopleList}" var="var4">
+	                                    <option value="#{var4[0]}">#{var4[1]}</option>
+									</a4j:repeat>
+                                </select>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                    <h:outputText rendered="#{productRecordTimesHome.highHarvestList ne null}">
+                    <div>
+					 <table width="100%" class="farmingMageTab" style="clear:both" cellpadding="0" cellspacing="0">
+                    	<a4j:repeat value="#{productRecordTimesHome.highHarvestList}" var="obj"  rowKeyVar="_index">
+                    	<ui:fragment rendered="#{_index==0}">
+                         	<tr>
+		                    	<td colspan="4" class="printDate" style="padding:8px 10px;"><img class="fl mr5" src="#{request.contextPath}/asset/images/cm_lsllIco02.png" style="float:left;" />
+		                    		<h:outputText style="width:190px; padding-left:10px; line-height:17px;"  value="#{obj[9]}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /> 
+									</h:outputText>	
+		                     	</td>
+                 			</tr>
+             			</ui:fragment>           
+                        <ui:fragment rendered="#{_index!=0  &amp;&amp; harvestList.yearmonth(obj[9],productRecordTimesHome.highHarvestList[_index-1][9])}">
+                            <tr>
+		                        <td colspan="4" class="printDate" style="padding:8px 10px;"><img class="fl mr5" src="#{request.contextPath}/asset/images/cm_lsllIco02.png" style="float:left;"  />
+		                             <h:outputText  style="width:190px; padding-left:10px; line-height:17px;"  value="#{obj[9]}">
+		                             	<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+		                             </h:outputText>	
+		                         </td>
+		                         
+                          	</tr>
+	                 	</ui:fragment>
+                    	<tr class="">
+                    		<td width="50%">
+                    			<dl class="baseDl_jl">
+                                    <dt>
+                                        <a target="_blank"><img src="#{request.contextPath}/asset/images/HarvestRecordList_icos1.png" width="14" height="14" />
+                                        	<span>#{obj[10]}</span>
+                                        </a>
+                                    </dt>
+                                    <dd>
+                                        <p class="text fl" style="margin-top:5px; font-size:14px;">采收人
+                                        	<span>#{obj[16]}</span>
+                                        </p>
+                                    </dd>
+                                </dl>
+                    		</td>
+                    		<td width="20%" align="center">筐数量
+                    			<em class="num-txt color-bl">
+                    				<h:outputText value="#{obj[7]==0||obj[7]==null?'1':obj[7]}"/>
+                    			</em>
+                    		</td>
+                    		<td width="20%" align="center">采收总量
+                    			<h:outputText rendered="#{obj[17] ne null}">
+                    				<em class="num-txt color-gr">
+		                                <h:outputText rendered="#{sessionTake.harvestUnit eq 1}">
+		                                	#{stringUtil.changeFloatMe(obj[17])}
+		                                </h:outputText>
+		                                <h:outputText rendered="#{sessionTake.harvestUnit ne 1}">
+		                                	 #{obj[17]}
+		                                </h:outputText>
+		                    		</em>
+		                    		<span class="pl5">
+		                                #{sessionTake.harvestUnit eq 1? '斤':'公斤（kg）'}
+		                            </span>
+			                    </h:outputText>
+			                    <h:outputText rendered="#{obj[17] ne null and obj[18] ne null and obj[18] ne ''}">
+			                    	+
+			                    </h:outputText>
+		                    	<h:outputText rendered="#{obj[18] ne null and obj[18] ne ''}">
+		                            	#{obj[18]}
+		                        </h:outputText>
+		                    </td>
+		                    <td class="ze_bg2">
+		                    	<h:outputText rendered="#{obj[7] eq null or obj[7] eq '0' }" >
+											<a class="list_view"
+												title="查看"
+												style="display: #{s:hasRole('harvest_show')?'hidden':'none'}"
+												onclick="show(#{obj[0]})" /> 
+											<!-- <a
+												class="list_edit" title="编辑"
+												style="display: #{s:hasRole('harvest_edit')?'hidden':'none'}"
+												onclick="isajax(#{obj[0]})"/>  -->
+											<s:link propagation="none" style="display: #{s:hasRole('harvest_edit')?'hidden':'none'}" view="/realplant/LowHarvestToEditOfHigh.xhtml"    styleClass="list_edit"  title="编辑" >
+                                				<f:param name="productRecordTimesId" value="#{obj[0]}" />
+											</s:link>
+								</h:outputText>
+								<h:outputText rendered="#{obj[7] ne null and obj[7] ne '0' }" >
+                            		<s:link propagation="none" style="display: #{s:hasRole('harvest_show')?'hidden':'none'}" view="/realplant/Harvest.xhtml" styleClass="list_view" title="查看"  id="userViewId">
+										<f:param name="productRecordTimesId" value="#{obj[0]}" />
+										<f:param name="baseId" value="#{harvestList.baseId}"/>
+										<f:param name="pageNum" value="#{harvestList.pageNum}"/>
+										</s:link>&#160;
+                                	<s:link propagation="none" style="display: #{s:hasRole('harvest_edit')?'hidden':'none'}" action="#{productRecordTimesHome.updateSearch}"   styleClass="list_edit" id="userEdit" title="编辑" rendered="#{empty from}">
+                               		 	<f:param name="productRecordTimesId" value="#{obj[0]}" />
+                                		<f:param name="baseId" value="#{harvestList.baseId}"/>
+                               		 	<f:param name="pageNum" value="#{harvestList.pageNum}"/>
+									</s:link>&#160;
+								</h:outputText>
+								<s:link propagation="none"  view="/realplant/HarvestPrint.xhtml" styleClass="list_da" title="打印"  id="harvestPrint" target="_blank">
+									<f:param name="productRecordTimesId" value="#{obj[0]}" />
+								</s:link>&#160;
+                                <s:link propagation="none"  view="/realplant/RealPlantList.xhtml" style="display: #{s:hasRole('harvest_del')?'hidden':'none'}" styleClass="list_delete" action="#{productRecordTimesHome.removeTime}" title="删除" onclick="return confirm('确定删除吗？');" id="userDelete" >
+                                <f:param name="productRecordTimesId" value="#{obj[0]}" />
+                                <f:param name="baseId" value="#{harvestList.baseId}"/>
+                                <f:param name="pageNum" value="#{harvestList.pageNum}"/>
+                                </s:link>
+                            </td>
+                    	</tr>
+                    </a4j:repeat>
+                    </table>
+               
+                    </div>
+                    </h:outputText>
+                    <h:outputText rendered="#{productRecordTimesHome.highHarvestList.size() == 0 or productRecordTimesHome.highHarvestList eq null}">
+						<div class="tip-nodata-wap" style="border:0; border-bottom:1px solid #ddd; border-radius:0;">
+                         	<div class="tip-warning-nodata" style="margin-top:-70px;">
+                            	<span class="ico"><img src="#{request.contextPath}/asset/images/farmingIco20.png" width="31" height="31" /></span>
+                            	<em>没有查询到采收记录，请更改搜索条件重新查询！</em>
+                            	<p>没有采收记录，可能是您的搜索条件没有查到结果，请修改搜索条件重新查询；也可能没有添加采收记录，请耐心等待采收记录添加后再查看！</p>
+                         	</div>
+                    	</div>
+                    </h:outputText>
+                    </div>
+                    
+      <!--翻页开始--> <a4j:outputPanel id="refreshPage">
+                        <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<ui:fragment rendered="#{not empty productRecordTimesHome.highHarvestList}">
+			                <ui:fragment rendered="#{!productRecordTimesHome.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </ui:fragment>
+			                 <ui:fragment rendered="#{productRecordTimesHome.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </ui:fragment>
+			                <ui:fragment rendered="#{productRecordTimesHome.previousExists }">
+	                            <td class="td_t_b">
+		                            <a href="#" onclick="jump(0);return false;">首页</a>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <a href="#" onclick="jump(#{productRecordTimesHome.previousFirstResult});return false;" class="no_n">
+		                            	&lt;
+		                            </a>
+	                            </td>
+	                        </ui:fragment>
+					       <a4j:repeat var="_page" value="#{productRecordTimesHome.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{productRecordTimesHome.previousExists or _index >0 ?'td_t_t':''} #{_page eq productRecordTimesHome.pageNum?'onp':''}">
+									<a href="#" onclick="jump(#{_page});return false;">
+										#{_page}
+									</a>
+								</td>
+							</a4j:repeat>
+							<ui:fragment rendered="#{productRecordTimesHome.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <a href="#" class="no_d" onclick="jump(#{productRecordTimesHome.nextFirstResult});return false;">
+	                            &gt;
+	                            </a>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <a href="#" onclick="jump(#{productRecordTimesHome.PAGE_COUNT});return false;">
+								 尾页
+								 </a>
+							</td>
+							</ui:fragment>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{productRecordTimesHome.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                            </ui:fragment>
+                    	</tr>
+                    </table>
+                    </a4j:outputPanel>
+                    <!--翻页结束-->
+            <!--印刷管理下结束-->
+                	<div class="clear"></div>
+                </div><!--right_c结束-->
+                <h:form id="aaa">
+                	<input type="hidden" value="#{productRecordTimesHome.pageNum}" id="pageNum" name="pageNum"/>
+                	<h:inputHidden value="#{productRecordTimesHome.start}" id="start"/>
+					<h:inputHidden value="#{productRecordTimesHome.end}" id="end"/>
+					<h:inputHidden value="#{productRecordTimesHome.area}" id="area"/>
+					<h:inputHidden value="#{productRecordTimesHome.crop}" id="crop"/>
+					<h:inputHidden value="#{productRecordTimesHome.levelid}" id="levelid"/>
+					<h:inputHidden value="#{productRecordTimesHome.levelName}" id="levelName"/>
+					<h:inputHidden value="#{productRecordTimesHome.recovery}" id="recovery"/>
+					<h:inputHidden value="#{productRecordTimesHome.search}" id="searchParam" />
+					<h:commandButton value="" action="/realplant/RealPlantList.xhtml" styleClass="but_" style="display:none">
+					</h:commandButton>
+				</h:form>
+			</rich:panel>
+</td>
+<a4j:form>
+	 <a4j:jsFunction name="HighTheEditor" eventsQueue="mainQueue"
+				action="#{harvestRecordsHome.HighTheEditor}" reRender="locallists"
+				data="#{harvestRecordsHome.definedType}" oncomplete="ti(data)">
+				<a4j:actionparam name="productRecordTimesId1"
+					assignTo="#{harvestRecordsHome.productRecordTimesId}" />
+	</a4j:jsFunction> 
+	<a4j:jsFunction name="proShow" eventsQueue="mainQueue"
+				action="#{harvestRecordsHome.highProFind}" reRender="chakan"
+				data="#{harvestRecordsHome.definedType}" oncomplete="find(data);">
+				<a4j:actionparam name="productRecordTimesId1"
+					assignTo="#{harvestRecordsHome.productRecordTimesId}" />
+	</a4j:jsFunction>
+	<a4j:jsFunction name="queryPlantId" eventsQueue="mainQueue"
+				action="#{harvestRecordsHome.highXlevebian}" reRender="xidObj,money,xin,xout,farmerIds" oncomplete="jquery('.selectpicker').selectpicker();">
+				<a4j:actionparam name="plantListId"
+					assignTo="#{harvestRecordsHome.plantListId}" />
+	</a4j:jsFunction>
+	<a4j:jsFunction name="xunitPirce" eventsQueue="mainQueue"
+				action="#{harvestRecordsHome.price}"
+				data="#{harvestRecordsHome.goodsLevel.unitPrice}"
+				oncomplete="xprice(data);">
+				<a4j:actionparam name="leveId"
+					assignTo="#{harvestRecordsHome.leveId}" />
+	</a4j:jsFunction>
+	<a4j:jsFunction name="xplantlevel" eventsQueue="mainQueue"
+				action="#{harvestRecordsHome.levechange}"
+				reRender="xidObjs,money,xin,xout" oncomplete="xhuidao();">
+				<a4j:actionparam name="plantListId"
+					assignTo="#{harvestRecordsHome.plantListId}" />
+	</a4j:jsFunction>
+	<a4j:jsFunction name="xtunnelchange" eventsQueue="mainQueue"
+				action="#{harvestRecordsHome.xtunnelChange}"
+				reRender="xtimeId,farmerIds" oncomplete="xtunnel();">
+				<a4j:actionparam name="plantListId"
+					assignTo="#{harvestRecordsHome.plantListId}" />
+				<a4j:actionparam name="tunnelId"
+					assignTo="#{harvestRecordsHome.tunnelId}" />
+	</a4j:jsFunction>
+	<a4j:jsFunction name="xgoodPirce" eventsQueue="mainQueue"
+				action="#{harvestRecordsHome.goodprice}"
+				data="#{harvestRecordsHome.goodLeveList[0].unitPrice}"
+				oncomplete="xgoodprice(data);">
+				<a4j:actionparam name="goodsLevelId"
+					assignTo="#{harvestRecordsHome.goodsLevelId}" />
+	</a4j:jsFunction>
+</a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+window.onload = function () {
+    jquery('input[type=text]').not('.input-block-level').focus(function(){  // 文本框获取焦点变化 
+		var txt_value = jquery(this).val();
+		if(txt_value == ''){
+			jquery(this).val('');	
+		}	
+	});
+	jquery('input[type=text]').not('.input-block-level').blur(function(){
+		var txt_value = jquery(this).val();
+		if(txt_value == ''){
+			jquery(this).val('');	
+		}	
+	});
+	
+    jquery(".form_datetime").datetimepicker({  //日历插件
+		format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+		autoclose: true,
+		weekStart: 1,
+		language:  'zh-CN',
+		startView: 3,
+		minView: 2,
+		maxView: 2,		
+		pickerPosition: "bottom-left"
+	});
+	
+    jquery('.harvest-date-selt .date-btn').click(function(){  //点击采收时间按钮事件
+    	jquery('.white-fade-mark').modal('show');
+    	jquery('.harvest-date-selt .farmingInputs_mini').modal('show');
+	});
+    jquery('.white-fade-mark,.farmingInputs_miniHd button,.farmingInputs_miniFt .btn-default').click(function(){//关于采收时间的关闭事件
+    	jquery('.white-fade-mark').modal('hide');
+    	jquery('.harvest-date-selt .farmingInputs_mini').modal('hide');
+	});
+};
+
+  
+function simple(num){
+	if(num==0 || num==null){
+		document.getElementById("productMsg").innerHTML = "请切换到简单界面下进行修改！";
+		jquery("#myModal2").modal('show');
+		return false;
+	}
+	var obj=checkSelectNew();
+	if(obj){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+function showdetail(num){
+	if(num==0 || num==null){
+		document.getElementById("productMsg").innerHTML = "请切换到简单界面下进行修改！";
+		jquery("#myModal2").modal('show');
+		return false;
+	}
+	var obj=checkSelectNew();
+	if(obj){
+			return true;
+	}else{
+			return false;
+	}
+}
+	  
+jquery(document).ready(function(){
+	jquery('.selectpicker').selectpicker();
+	var v = document.getElementById("realPlantListSearch:searchParam").value;
+	if(v == ""){
+		document.getElementById("realPlantListSearch:searchParam").value = "请输入搜索条件";
+	}
+	if(jquery('#aaa\\:start').val() != "" && jquery('#aaa\\:end').val() != ""){
+		jquery('#csshijian_').text(jquery('#aaa\\:start').val() + '-' + jquery('#aaa\\:end').val());
+	}else if(jquery('#aaa\\:start').val() != "" && jquery('#aaa\\:end').val() == ""){
+		jquery('#csshijian_').text(jquery('#aaa\\:start').val() + '-' + '至今');
+	}else{
+		jquery('#csshijian_').text("采收时间");
+	}
+	if(jquery('#aaa\\:area').val() != ""){
+		jquery('#quyu_').val(jquery('#aaa\\:area').val());
+	}else{
+		jquery('#quyu_').val(-1);
+	}
+	if(jquery('#aaa\\:crop').val() != ""){
+		jquery('#zuowu_').val(jquery('#aaa\\:crop').val());
+	}else{
+		jquery('#zuowu_').val(-1);
+	}
+	if(jquery('#aaa\\:levelid').val() != ""){
+		jquery('#dengji_').val(jquery('#aaa\\:levelid').val());
+	}else{
+		jquery('#dengji_').val(-1);
+	}
+	if(jquery('#aaa\\:recovery').val() != ""){
+		jquery('#caishouren_').val(jquery('#aaa\\:recovery').val());
+	}else{
+		jquery('#caishouren_').val(-1);
+	}
+	jquery('.selectpicker').selectpicker();
+});
+
+function tme(){
+	if(jquery("#start_").val() == "" || jquery("#start_").val() == null){
+		alert("必须输入开始时间！");
+		return;
+	}else{
+		jquery("#aaa\\:start").val(jquery("#start_").val());
+		jquery("#aaa\\:end").val(jquery("#end_").val());
+		jquery(".but_").trigger("click");
+	}
+}
+
+function addArea(){
+	jquery('#aaa\\:area').val(jquery('#quyu_').val());
+	jquery(".but_").trigger("click");
+}
+
+function addCrop(){
+	jquery('#aaa\\:crop').val(jquery('#zuowu_').val());
+	jquery(".but_").trigger("click");
+}
+
+function addLevel(){
+	jquery('#aaa\\:levelName').val(jquery('#dengji_ option:selected').text());
+	jquery('#aaa\\:levelid').val(jquery('#dengji_').val());
+	jquery(".but_").trigger("click");
+}
+
+function addRecovery(){
+	jquery('#aaa\\:recovery').val(jquery('#caishouren_').val());
+	jquery(".but_").trigger("click");
+}
+
+function clearAll(){
+	jquery("#aaa\\:start").val("");
+	jquery("#aaa\\:end").val("");
+	jquery('#aaa\\:area').val("");
+	jquery('#aaa\\:crop').val("");
+	jquery('#aaa\\:levelid').val("");
+	jquery('#aaa\\:levelName').val("");
+	jquery('#aaa\\:recovery').val("");
+	jquery('#aaa\\:searchParam').val("请输入搜索条件");
+	jquery(".but_").trigger("click");
+}
+
+function jump(index){
+	jquery("#pageNum").val(index);
+	jquery(".but_").trigger("click");
+}
+
+function show(objId){
+			 proShow(objId);
+
+}
+
+//查看功能回调
+function find(data){
+	//alert("#{harvestRecordsHome.realList.size()}");
+	  jquery('#myModal1').modal('show');
+	  jquery('.selectpicker').selectpicker();
+	if(data==1){
+		jquery("#easy1").hide();
+		jquery("#easy2").hide();
+		jquery("#diff3").show();
+		jquery("#diff4").show();
+		jquery("#diff6").show();
+	}else{
+		jquery("#diff3").hide();
+		jquery("#diff4").hide();
+		jquery("#diff4").hide();
+		jquery("#diff6").hide();
+		jquery("#easy1").show();
+		jquery("#easy2").show();
+	}
+} 
+
+//低级采收编辑按钮
+ function isajax(timeid){
+	 
+	 HighTheEditor(timeid);
+	 jquery('.selectpicker').selectpicker();
+
+ } 
+//低级采收回调方
+ function ti(data){
+	 jquery('.xb1').attr("data-live-search","true");
+	 jquery('.xc1').attr("data-live-search","true");
+	 jquery('.xa3').attr("data-live-search","true");
+	 jquery('.xc2').attr("data-live-search","true");
+	 jquery('#myModal3').modal('show');
+	  jquery('.selectpicker').selectpicker();
+	if(data==1){
+		jquery("#xiu\\:up").css("display","none");
+		jquery("#xiu\\:update").css("display","");
+		jquery("#xeasy").hide();
+		jquery("#xdiff1").show();
+		jquery("#xdiff2").show();
+	}else{
+		jquery("#xiu\\:up").css("display","");
+		jquery("#xiu\\:update").css("display","none");
+		jquery("#xdiff1").hide();
+		jquery("#xdiff2").hide();
+		jquery("#xeasy").show();
+	}
+	var storageRoomId=jquery("#xiu\\:storageRoomId").val();
+	if(storageRoomId==0){
+		jquery("#xiu\\:output").attr("disabled",true);
+		 jquery("#xiu\\:handleId").attr("disabled",true);
+	}
+	jquery(".form_datetime").datetimepicker({
+		format: "yyyy-mm-dd hh:ii",  
+		autoclose: true,
+		weekStart: 1,
+		language:  'zh-CN',		
+		pickerPosition: "bottom-left"
+	    });
+
+} 
+
+//修改验证
+ function validationt(){
+	  
+	  if(document.getElementById("xiu:zhongl2").value == ""){
+	    	alert("采收量不能为空！");
+			return false;
+	    }
+	  if(document.getElementById("xiu:zhongl2").value ==0){
+	    	alert("采收量不能为0！");
+			return false;
+	   }else{
+			var cval=jquery("#xiu\\:output").val();
+			if(eval(cval)<0){
+				alert("出库量不能小于0!");
+				return false;
+			}
+			var zval=document.getElementById("xiu:zhongl2").value;
+			if(eval(zval)<0){
+				alert("采收量不能小于0!");
+				return false;
+			}
+			if(cval!=null && cval !=""){
+				if(eval(cval)>eval(zval)){
+					alert("出库量不能大于采收量！");
+					return false;
+				}
+			}
+	   }
+	 jquery("#xiu\\:xshij1").val(jquery("#xiu\\:xshij").val());
+	 return true;			
+	}
+
+	//采收作物级联更改
+	function changeZuoWu(){
+		var plantId = jquery("#xiu\\:plantIds").val();
+		queryPlantId(plantId);
+	}
+
+	//修改等级价格级联
+	  function xleveprice(){
+		  var leveId=jquery("#xiu\\:leveIds").val();
+			xunitPirce(leveId);
+	   }
+
+	  function xplantlevechange(obj){
+			xplantlevel(obj);
+		  }
+	//修改区域变更
+	  function xtunnelbian(){
+		var plantId=jquery("#xiu\\:plantListId").val();
+		var tunnelId=jquery("#xiu\\:tunnelId").val();
+		xtunnelchange(plantId,tunnelId);
+	  }
+	//修改自定义模式等级价格级联
+	  function xgoodleveprice(){
+		  var leveId=jquery("#xiu\\:goodsLeve").val();
+			xgoodPirce(leveId);
+	  }
+	  //入库改变
+	  function storageChange(obj){
+		 if(obj==1){
+			 var val=jquery("#tian\\:storageRoomId").val();
+			 if(val !=0){
+				 jquery("#tian\\:output").attr("disabled",false);
+				 jquery("#tian\\:handleId").attr("disabled",false);
+				 jquery(".hand1").selectpicker("val",jquery(".hand1").val());
+			 }else{
+				 jquery("#tian\\:output").val("");
+				 jquery(".hand1").selectpicker("val",jquery(".hand1 option:eq(0)").val());
+				 jquery("#tian\\:output").attr("disabled",true);
+				 jquery("#tian\\:handleId").attr("disabled",true);
+			 }
+		 }else{
+			 var val=jquery("#xiu\\:storageRoomId").val();
+			 if(val !=0){
+				 jquery("#xiu\\:output").attr("disabled",false);
+				 jquery("#xiu\\:handleId").attr("disabled",false);
+				 jquery(".xhand1").selectpicker("val",jquery(".xhand1").val());
+			 }else{
+				 jquery("#xiu\\:output").val("");
+				 jquery(".xhand1").selectpicker("val",jquery(".hand1 option:eq(0)").val());
+				 jquery("#xiu\\:output").attr("disabled",true);
+				 jquery("#xiu\\:handleId").attr("disabled",true);
+			 }
+		 }
+		 
+	  }
+
+	  //修改等级价格级联回调
+	  function xprice(data){
+		  if(data==null){
+			  document.getElementById("xiu:money").value="";
+		  }else{
+			  document.getElementById("xiu:money").value=data;
+		  }
+		  
+	  }
+
+	  function xhuidao(){
+		  jquery('.selectpicker').selectpicker();
+	  }
+
+	  //修改区域回调
+	  function xtunnel(){
+		 jquery('.selectpicker').selectpicker();
+		 jquery('.xc3').attr("data-live-search","true");
+	  }
+
+	//修改自定义模式等级价格级联回调
+	  function xgoodprice(data){
+		  if(data==null){
+			  document.getElementById("xiu:money").value="";
+		  }else{
+			  document.getElementById("xiu:money").value=data;
+		  }
+		  
+	  }
+function checkExport(){
+	var start = jquery('#aaa\\:start').val();
+	var end = jquery('#aaa\\:end').val();
+	var beginDate = new Date(start);
+	var endDate = new Date(end);
+	var year = parseInt(start.substring(0,4));
+	var month = start.substring(start.indexOf("-")+1,start.indexOf("-")+3);
+	month = parseInt(month.replace("0",""));
+	var days = Math.floor((endDate.getTime() - beginDate.getTime())/(60*60*24*1000));
+	if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
+		if(days > 31){
+			alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+		}
+	}else if(month == 2){
+		if(year%4 ==0){
+			if(days > 29){
+				alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+			}
+		}else{
+			if(days > 28){
+				alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+			}
+		}
+	}else{
+		if(days > 30){
+			alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+		}
+	}
+}
+	
+	//]]>
+</script>
+	</ui:define>
+
+</ui:composition>

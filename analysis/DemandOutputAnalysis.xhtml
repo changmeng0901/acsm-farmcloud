@@ -1,0 +1,630 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_analysis.xhtml">
+
+<ui:define name="body">
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/tab.js"> </script>
+	#{demandOutPutAnalysis.outPutAnalysisInit()}
+	<script>
+		//<![CDATA[
+		jquery(document).ready(function(){
+		  	var beginDate = '#{demandOutPutAnalysis.beginDate}';
+		  	var endDate = '#{demandOutPutAnalysis.endDate}';
+		  	jquery("#startTime").val(beginDate.substring(0, beginDate.lastIndexOf('-')));
+			jquery("#endTime").val(endDate.substring(0, endDate.lastIndexOf('-')));
+		  	jquery(".form_datetime").datetimepicker({
+		  		format: "yyyy-mm",
+		  		language:  'zh-CN',
+		        weekStart: 1,
+		        todayBtn:  1,
+				autoclose: 1,
+				todayHighlight: 1,
+				startView: 3,
+				minView: 3,
+				forceParse: 0,
+				pickerPosition: "bottom-left"
+			});
+		});
+		//]]>
+	</script>
+	<style>
+		html{ overflow-x: hidden;}
+		.gaojisearch{border:1px solid #cfe3f3; border-top:1px solid #ffffff;  width:90px; text-align:center; margin:0 auto;margin-top:-2px;height:25px; line-height:25px; }
+		.line07{border-top:1px solid #cfe3f3; height:1px;}
+		.line09{padding:0 5px 0 8px;}
+		/*选项卡*/
+		.zwudiv { border-bottom: 1px solid #DBDBDB;height: 36px;padding-left:31px;padding-top:30px;}
+		.zuowuul { float: left; height: 36px;}
+		
+		.zwli.current { background: url("../asset/images/zuowubg.jpg") no-repeat scroll left center rgba(0, 0, 0, 0);display: inline-block;float: left; height: 36px; padding-left: 10px;}
+		.zwli { bottom: -1px; float: left; font-size: 14px;  height: 36px; line-height: 36px; margin-right: 2px; padding: 0 10px; position: relative; }
+		.zwli.current a { background: url("../asset/images/zuowubg.jpg") no-repeat scroll right center rgba(0, 0, 0, 0); float: left; height: 36px; margin-right: -10px; padding-right: 10px;}
+		a {text-decoration: none;}
+		.zhexiantu{ padding-left:15px; padding-right:15px;}
+		.tubiao{ padding-left:15px; padding-right:15px;}
+		/*选项卡结束*/
+		/*表格*/
+		.s_pan{color: #333;}
+		.tpcc_font{ color: #333;}
+		.khtable_001, .khtable_002 { border-collapse: collapse; table-layout: fixed;  }
+
+		.kh_td { border: 1px solid #bbd4e8; height: 39px; text-align: center; vertical-align: middle; }
+		.kh_th_font01 { color: #272727; font-size: 14px; }
+		.kh_th_bg01 { background: none repeat scroll 0 0 #ebf6ff; }
+		.kh_td_font01 { color: #666666; font-family: "宋体";  font-size: 12px; }
+		.kh_leftbg01 { background: none repeat scroll 0 0 #ffffff; }
+		.scroll101 {float: left; overflow-x: auto; }
+		.khtable_002 { background-color: #DDDDDD; margin-left: 0; }
+		.kh_each_thbgy { background: none repeat scroll 0 0 #ebf6ff; min-width: 90px; }
+		.kh_each_tdbgy { background: none repeat scroll 0 0 #ffffff; min-width: 90px; }
+		.all_Arial01 { color: #666666;  font-family: Arial,Helvetica,sans-serif; font-size: 12px; font-weight: bold; line-height: 39px; text-align: center; width: 100%;}
+		.khyy_each_tabg02 { background: none repeat scroll 0 0 #ebf6ff;  max-width: 270px; }
+		.khyy_each_thbg02 { background: none repeat scroll 0 0 #ebf6ff;  min-width: 90px; }
+		.khyy_each_tdbg02 { background: none repeat scroll 0 0 #ffffff; min-width: 90px; }
+		.y_01{background: none repeat scroll 0 0 #f5f5f5;}
+		.y_02{background: none repeat scroll 0 0 #ebf6ff;}
+		#sex_male, #sex_male1, #sex_male2, #sex_male3, #sex_female, #sex_female1, #sex_female2, #sex_female3, #sex_nomale, .sex_nomale, #sex_nomale1, #sex_nomale2, #sex_nomale3 {display: none;}
+		table input[type="checkbox"], table input[type="radio"] { background: none repeat scroll 0 0 rgba(0, 0, 0, 0); padding: 0;}
+		.six3 label {background: url(../asset/images/button_03.png) no-repeat scroll left top rgba(0, 0, 0, 0); cursor: pointer;  display: inline-block;  line-height: 19px; margin: 5px 5px 5px 0;padding-left: 25px;}
+		/*表格结束*/
+		/*折线图*/
+		.need_font{ line-height:50px; text-align: center; font-size:16px; color:#333;}
+		.reili .six3 label { background: url("../asset/images/forms-radio2.gif") no-repeat scroll left top rgba(0, 0, 0, 0); cursor: pointer; display: inline-block;  line-height: 19px; margin: 5px 5px 5px 0; padding-left: 25px; width: auto;}
+		.reili .six3 label.checked { background: url("../asset/images/forms-radio2.gif") no-repeat scroll left bottom rgba(0, 0, 0, 0); width: auto; }
+		.dk_list2 .current a {  color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff; background-color:#ffffff;position:relative; z-index:5;}
+		.dk_list2 .li2.current{ color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff;}
+		.dk_list2 {width:100% ;height:36px;   border-left:1px solid #ddd; }
+		.dk_list2 li {float:left;  border-right:1px solid #ddd; border-top:1px solid #ddd;}
+		.dk_list2 li a {display:block; width:101px; height:36px;  line-height:36px; text-align:center; font-size:14px;	color:#383838;}
+		#gjtop08{ background:url(../asset/images/gjtop.jpg) right no-repeat; color:#4c4c4c; text-decoration:none; padding-right:14px;}
+		#ftitle08{padding:3px 30px; }
+		.la_div02{padding-right:15px; *padding-right:0px; display:inline-block; *display:inherit; float:left;}
+		.la_div02 .s_pan{ float:left; *margin-right:15px; margin-left:5px;font-size:11px; width:100px; width:auto;\9; *width:auto; word-break:normal;}
+		.fxy_title {
+		    border-bottom:none;
+		    padding: 3px 30px;
+		}
+		.khspan007{max-width:100px; overflow:hidden;}
+		.uboxstyle5 DIV.tag_select, .uboxstyle5 DIV.tag_select_open {
+		    width: 179px;
+		}
+		.uboxstyle5 .select_box {
+		    width: 212px;
+		}
+		.uboxstyle5 UL.tag_options {
+		    width: 211px;
+		}
+		.uboxstyle5 UL.tag_options LI {
+		    width: 195px;
+		}
+		.uboxstyle5 .ui-corner-all {
+		    width: 212px;
+		}
+		.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+	    	width: 76px;
+		}
+		.form_datetime input {
+		    border: 1px solid #ccc;
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		}	
+		label {
+		    display: inline-block;
+		    font-weight: 700;
+		    margin-bottom: 5px;
+		    max-width: 100%;
+		    color:#333333;
+		}
+		.input-append{float:left;width:120px;margin-top:3px;}	
+		.fxy_lidate02 {
+		    float: left;
+		    height: 30px;
+		    margin-right: 10px;
+		    min-width: 77px;
+		}
+	
+		.bootstrap-select{ width: 100px;}
+		.zwudiv {
+		    border-bottom: 1px solid #dbdbdb;
+		    height: 36px;
+		    padding-left: 31px;
+		    padding-top: 30px;
+		}	
+		.fxy_title  .fx_tckli {    width: 80px;}
+		 .fx_tckli {
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		    width: 193px;
+		    height:auto;
+		}
+		.fxy_tck .fx_tckli {
+		    float: left;
+		    height: auto;
+		    line-height: 30px;
+		    width: 193px;
+		}
+		.kh_td {
+		    height: 40px;
+		    text-align: center;
+		    vertical-align: middle;
+		}
+		.zwudiv {
+		    border-bottom: 1px solid #dbdbdb;
+		    height: 37px;
+		    padding-left: 31px;
+		    padding-top: 30px;
+		}
+		
+		.div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+width: 200px;
+}
+.fr{float:right;}
+		  .r_ulli1{float:right;}
+	</style>
+	<td valign="top">
+		<div class="right_c" style="min-height:30px;">
+			<div class="r_title">
+				<div class="r_t_l"><font size="3">需求产量查询</font></div>
+			</div>
+			<div class="clear"></div>
+		</div>   
+		<ui:fragment rendered="#{s:hasRole('demand_output_analyse_search')}">
+		
+			<div class="fxy_title">
+				<ul class="fxy_ul six3">
+					<li class="reili" style="padding-left:24px;" >
+						<table cellpadding="0" cellspacing="0" style="float:left;">
+							<tr>
+								<td align="right" >时间：</td>
+								<td align="left" class="tc_strong">
+									<div class="input-append date form_datetime ">
+										<input id="startTime" size="18" type="text" value="" readonly="readonly" onchange="timeChange()"></input>
+										<span class="add-on"><i class="icon-th icon-th2"></i></span>
+									</div>
+								</td>
+								<td class="line09" >——</td>
+								<td align="left" class="tc_strong">
+									<div class="input-append date form_datetime " >
+										<input id="endTime" size="18" type="text" value="" readonly="readonly" onchange="timeChange()"></input>
+										<span class="add-on"><i class="icon-th icon-th2"></i></span>
+									</div>
+								</td>
+							</tr>
+						</table>
+						<table cellpadding="0" cellspacing="0" style="float:left;">
+							<tr>
+								<td width="100" align="right">
+									<a href="javascript:void(0);" onclick="if(!submitResult()){return false;};" style="cursor: hand; cursor: pointer;">
+										<img src="../asset/images/fxb_11.png" width="78" height="32" />
+									</a>
+								</td>
+							</tr>
+						</table>
+						<ui:fragment rendered="#{s:hasRole('demand_output_analyse_exp')}">
+							<div style="float:right; ">
+								<s:link view="/analys/DemandOutputAnalysis.xhtml" action="#{demandOutPutAnalysis.exportExcelMain}" onclick="return checkTime()">
+									<img src="../asset/images/fxdc.jpg" width="82" height="16" /> 
+								</s:link>
+							</div>
+						</ui:fragment>
+					</li>
+				</ul>
+				<div class="fxy_div">
+					<table cellpadding="0" cellspacing="0" style="float:left;">
+							<tr>
+								<td align="right" class="tpcc_font">选择作物：</td>
+								<td align="left" style="padding-left:4px;" id="male" class="six3" >
+									<div class="div200">
+					<select  id="plantCheck" name="plantCheck"  data-live-search="true">
+							<a:repeat value="#{demandOutPutAnalysis.plantList}" var="var">
+							<optgroup label="#{var}">
+								<a:repeat value="#{demandOutPutAnalysis.allPlant[var]}" var="_var">
+									<option value="#{_var.plantId}">#{_var.name}</option>
+								</a:repeat>
+							</optgroup>
+							</a:repeat>
+					</select>
+								</div>
+								</td>
+							</tr>
+						</table>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</ui:fragment>
+		<ui:fragment rendered="#{!s:hasRole('demand_output_analyse_search') and s:hasRole('demand_output_analyse_exp')}">
+					<div style="float:right;padding-top: 10px;margin-right:20px; ">
+					<rich:panel id="time" style="margin:0; border:none; padding: 0;">
+						<s:link view="/analys/DemandOutputAnalysis.xhtml" action="#{demandOutPutAnalysis.exportExcelMain}" >
+							<f:param name="beginDate" value="#{demandOutPutAnalysis.beginDate}"/>
+							<f:param name="endDate" value="#{demandOutPutAnalysis.endDate}"/>
+							<img src="../asset/images/fxdc.jpg" width="82" height="16" /> 
+						</s:link>
+						</rich:panel>
+					</div>
+		
+		</ui:fragment>
+		
+		<div class="clear"></div>
+		<div class="zwudiv" >
+			<ul class="dk_list2">
+				<li class="targe1 current "><a onclick="chos(1)" href="javascript:"><font  color="#333">折线图</font></a></li>
+				<li class="targe2"><a onclick="chos(2)" href="javascript:"><font  color="#333">图表</font></a></li>
+			</ul>
+		</div>
+		<div class="zuowudiv">
+			<div id="tar1" style="display: block;width:100%; margin:0 auto;text-align: center;">
+				<rich:panel id="showPanel" style="width:100%; border: none;">
+					<div class="need_font" >需求品种：<h:outputText id="cropNumber" value="#{demandOutPutAnalysis.cropNumber}" />&#160;&#160;需求产量：<h:outputText id="outPutTotal" value="#{demandOutPutAnalysis.outPutTotal}" ><f:convertNumber pattern="#0.00"/></h:outputText>kg</div>
+				</rich:panel>
+				<div id="container" class="chart22" style="height: 400px;width: 98%;"></div>
+			</div>
+			<div style="display: none;" id="tar2">
+			<div style="margin-top:30px; margin-left:10px;" class="dateAll" id="dateAll0">         
+				<rich:panel id="showTable" style="width:100%; border: none;">
+					<div style="padding-top:10px;min-width:600px; ">                
+						<div style="width:30%; float:left;">
+							<table width="100%" height="80" cellspacing="0" cellpadding="0" style="border-bottom:none;" class="khtable_001">
+								<tr>
+									<td width="15%" style="border-bottom:none;" class="kh_td kh_th_font01 kh_th_bg01" rowspan="2">序号</td>
+									<td width="30%" style="border-bottom:none;" class="kh_td kh_th_font01 kh_th_bg01" rowspan="2">名称</td>
+									<td width="55%" style="border-bottom:none;padding:0px; margin:0px; border:0;border-top:1px solid  #bbd4e8;" class="kh_td kh_th_font01 kh_th_bg01" >
+										<table width="100%" cellspacing="0" cellpadding="0" class="khtable_002">
+											<tr>
+												<td class="kh_td kh_th_font01 khyy_each_tabg02" colspan="2"  style="padding:0px; margin:0px;border:0;border-bottom:1px solid  #bbd4e8;">总计</td>
+											</tr>
+											<tr>
+												<td height="40" class="kh_td kh_th_font01 khyy_each_thbg02 show_td_1" style="padding:0px; margin:0px;border:0;border-right:1px solid  #bbd4e8;border-bottom:1px solid  #bbd4e8;">需求(kg)</td>
+												<td class="kh_td kh_th_font01 khyy_each_thbg02 show_td_3" style="padding:0px; margin:0px;border-bottom：1px;">金额(元)</td>
+											</tr>
+										</table>
+									</td>  
+								</tr>
+							</table>       
+							<h:outputText value="#{demandOutPutAnalysis.resultTotalTableStr}" escape="false"/>
+						</div>
+						<div style="padding-right: 2px; border-right: 0px none; width: 69%;" class="scroll101"> 
+							<h:outputText value="#{demandOutPutAnalysis.resultTableStr}" escape="false"/>
+							</div> 
+							<div class="clear"></div>
+						</div>
+					</rich:panel>                         
+				</div>
+			</div>
+		</div>
+	</td>
+	<h:form id="outputGapFrom">
+		<a:commandLink id="refreshShow"  reRender="showPanel,showTable"></a:commandLink>
+	</h:form>
+	<a:form>
+  		<a:queue requestDelay="50" ignoreDupResponses="true"/>
+		<a:jsFunction name="queryResultFind" action="#{demandOutPutAnalysis.queryResultFind}" data="#{demandOutPutAnalysis.resultSource}" oncomplete="refreshAction(data);" >
+			<a:actionparam name="beginDate" assignTo="#{demandOutPutAnalysis.beginDate}"/>
+			<a:actionparam name="endDate" assignTo="#{demandOutPutAnalysis.endDate}"/>
+			<a:actionparam name="plantIdStr" assignTo="#{demandOutPutAnalysis.plantIdStr}"/>
+		</a:jsFunction>
+		<a:jsFunction name="changeTime" action="#{demandOutPutAnalysis.changeTime}"  reRender="time">
+			<a:actionparam name="beginDate" assignTo="#{demandOutPutAnalysis.beginDate}"/>
+			<a:actionparam name="endDate" assignTo="#{demandOutPutAnalysis.endDate}"/>
+		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript">
+	//<![CDATA[
+		var plantStr = "";
+		var plantSize = '#{demandOutPutAnalysis.plantList.size()}';
+
+		function checkAll_(){
+			var pc = 0 ;
+			jquery("input[name='plantCheck']:checkbox").each(function(){
+	  			if(!jquery(this).is(':checked'))
+	  				pc++;
+			});
+			if(pc==0)
+				jquery("#plantCheckAll").prop("checked",true);
+			else
+				jquery("#plantCheckAll").prop("checked",false);
+		}
+
+		jquery("input[name='plantCheck']:checkbox").click(function(){checkAll_()});
+		
+		//打开关闭作物选择列表
+		function clickPlantDiv(type){
+			if (type == 1) {
+				checkAll_();
+				jquery("#plantShowDiv").show();
+				jquery("#qiyeShowDiv").hide();
+			}else {
+				jquery("#plantShowDiv").hide();
+				var plantIds = plantStr.split(","); 
+		  		var plantCount = 0;
+		  		jquery("input[name='plantCheck']:checkbox").each(function(){
+		  			plantCount ++;
+				});
+		  		jquery("input[name='plantCheck']").removeAttr("checked");
+				for ( var i = 0; i < plantIds.length; i++) {
+					var plantId = "plantItem" + plantIds[i];
+					document.getElementById(plantId).checked = true;
+					plantCount++;
+				}
+				if (plantCount == plantIds.length) {
+					jquery("input[name='plantCheckAll']").attr("checked", true);
+				}else {
+					jquery("input[name='plantCheckAll']").removeAttr("checked");
+				}
+			}
+		}
+
+		jquery(document).ready(function(){
+			//全选作物事件
+			jquery("#plantCheckAll").click(function(){
+		    	jquery("input[name='plantCheck']").prop("checked", this.checked);
+			});
+		});
+
+		//作物选择确定
+	  	function plantTijiao(){
+	  		var checked_num = jquery("input[name='plantCheck']:checkbox:checked").length;
+	  		plantStr = "";
+	  		jquery("#plantUl").empty();
+	  		jquery("#plantUl").append("<li class='fxy_li'>已选作物：</li>");
+	  		if (plantSize == checked_num) {
+	  			jquery("input[name='plantCheck']:checkbox:checked").each(function(){
+		  			plantStr += jquery(this).val() + ",";
+				});
+	  			var addLiMsg = "<li class='fxy_liyx'>全部作物</li>";
+				jquery("#plantUl").append(addLiMsg);
+			} else {
+				jquery("input[name='plantCheck']:checkbox:checked").each(function(){
+		  			plantStr += jquery(this).val() + ",";
+		  			var plantName = jquery("#plantLabel" + jquery(this).val()).html();
+		  			var addLiMsg = "<li class='fxy_liyx'>" + plantName + "</li>";
+					jquery("#plantUl").append(addLiMsg);
+				});
+			}
+	  		jquery("#plantUl").append("<li class='ie7clear'></li>");
+	  		if (plantStr == "") {
+				alert("请至少选择一个作物...");
+				return false;
+			} else {
+				plantStr = plantStr.substr(0,plantStr.length - 1);
+				jquery("#plantShowDiv").hide();
+			}
+	  	}
+	
+		function toDate(str){
+		    var sd=str.split("-");
+		    return new Date(sd[0],sd[1],sd[2]);
+		}
+
+		function getDateDiff(date1,date2){
+	        var arr1=date1.split('-');
+			var arr2=date2.split('-');
+			var d1=new Date(arr1[0],arr1[1],arr1[2]);
+			var d2=new Date(arr2[0],arr2[1],arr2[2]);
+			if ((d2.getTime()-d1.getTime())/(1000*3600*24) > 372) {
+				return false;
+			}else {
+				return true;
+			}
+		}
+	
+		//搜索提交方法 
+		function submitResult(){
+			var startTime = jquery("#startTime").val();
+			if (startTime == null || startTime == '') {
+				alert("请选择开始时间...");
+				return false;
+			}
+			var endTime = jquery("#endTime").val();
+			if (endTime == null || endTime == '') {
+				alert("请选择结束时间...");
+				return false;
+			}
+			var beginDate = startTime + "-01";
+			var endDate = endTime + "-28";
+			var begin =toDate(beginDate);
+			var end =toDate(endDate);
+			if (begin > end) {
+				alert("开始时间不能大于结束时间...");
+				return false;
+			}
+			if (!getDateDiff(beginDate, endDate)) {
+				alert("请搜索一年之间的数据...");
+				return false;
+			}
+			var pids = "";
+			if(jquery("#plantCheck").val()!=null){
+				pids = jquery("#plantCheck").val().toString();
+			}
+			queryResultFind(beginDate, endDate, pids);
+		}
+	
+		jquery(function () {
+			jquery('#plantCheck').attr("multiple","multiple");
+			jquery('select:not(#plantCheck)').selectpicker();
+		    jquery('#plantCheck').selectpicker({noneSelectedText:"全部"});
+			jquery('#plantCheck').selectpicker('deselectAll');
+			plantStr = '#{demandOutPutAnalysis.plantIdStr}';
+			var checkStr = plantStr.split(",");
+			if(jquery("#plantCheck option").length!=checkStr.length)
+				jquery("#plantCheck").selectpicker("val",checkStr);
+			
+			var data = '#{demandOutPutAnalysis.jsonResult}';
+			data = eval("(" + data + ")");
+			jquery('#container').highcharts({
+				chart: {
+		            type: 'spline',
+		            	backgroundColor: {
+		    			linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+		    			stops: [
+		    				[0, 'rgb(255, 255, 255)'],
+		    				[1, 'rgb(255, 255, 255)']
+		    			]
+		    		},
+		    		//borderWidth: 2,
+		    		//plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+		    		plotShadow: true,
+		    		//plotBorderWidth: 1
+		        },
+		        legend: {   
+		        	itemStyle: {
+					font: '9pt Trebuchet MS, Verdana, sans-serif',
+					color: 'black'
+	
+					},
+					itemHoverStyle: {
+						color: '#039'
+					},
+					itemHiddenStyle: {
+						color: 'gray'
+					}
+		        },  
+		        lang: {
+		            noData: "暂无数据!"
+		        },
+		        noData: {
+		            style: {    
+		                fontWeight: 'bold',     
+		                fontSize: '15px',
+		                color: '#303030'        
+		            }
+		        },
+		        title: { text: '' },
+		        subtitle: {text: ''},
+		        credits:{enabled:false},
+		        xAxis: {
+		        	tickInterval:data.tickInterval,
+		        	 categories: data.categories,
+		        	 gridLineWidth: 0, //设置网格宽度为1 
+		        },
+		        yAxis: {
+		        	min: 0, 
+			        title: { text: '需求产量 (kg)' }, 
+			        allowDecimals:false,
+			        max: data.maxYData
+	             },
+		        tooltip: {
+		            formatter: function() {
+		                    return '<b>'+ this.series.name +'</b><br/>'+
+		                    this.x +' '+ this.y + 'kg';
+		            }
+		        },
+		        series: data.resultSource
+		    });
+		});
+
+		//刷新
+		function refreshAction(data){
+			data = eval("(" + data + ")");
+			jquery('#container').highcharts({
+				chart: {
+		            type: 'spline',
+		            	backgroundColor: {
+		    			linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+		    			stops: [
+		    				[0, 'rgb(255, 255, 255)'],
+		    				[1, 'rgb(255, 255, 255)']
+		    			]
+		    		},
+		    		//borderWidth: 2,
+		    		//plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+		    		plotShadow: true,
+		    		//plotBorderWidth: 1
+		        },
+		        lang: {
+		            noData: "暂无数据!"
+		        },
+		        noData: {
+		            style: {    
+		                fontWeight: 'bold',     
+		                fontSize: '15px',
+		                color: '#303030'        
+		            }
+		        },
+		        legend: {   
+		        	itemStyle: {
+					font: '9pt Trebuchet MS, Verdana, sans-serif',
+					color: 'black'
+	
+					},
+					itemHoverStyle: {
+						color: '#039'
+					},
+					itemHiddenStyle: {
+						color: 'gray'
+					}
+		        },  
+		        title: { text: '' },
+		        subtitle: {text: ''},
+		        credits:{enabled:false},
+		        xAxis: {
+		        	tickInterval:data.tickInterval,
+		        	 categories: data.categories,
+		        	 gridLineWidth: 0, //设置网格宽度为1 
+		        },
+		        yAxis: {
+		        	min: 0, 
+			        title: { text: '需求产量 (kg)' }, 
+			        allowDecimals:false,
+			        max: data.maxYData
+	             },
+		        tooltip: {
+		            formatter: function() {
+		                    return '<b>'+ this.series.name +'</b><br/>'+
+		                    this.x +' '+ this.y + 'kg';
+		            }
+		        },
+		        series: data.resultSource
+		    });
+	    	document.getElementById("outputGapFrom:refreshShow").onclick();
+		}
+
+		function chos(t){
+			for(var i=1;i<=4;i++){
+				if(i==t){ 
+					jquery("#tar"+t).css("display", "block");
+					jquery(".targe"+t).addClass("current");
+				}else{
+					jquery("#tar"+i).css("display", "none");
+					jquery(".targe"+i).removeClass("current");
+				}
+			}
+			submitResult();
+		}
+		function timeChange(){
+			var beginTime = jquery("#startTime").val();
+			var endTime = jquery("#endTime").val();
+			changeTime(beginTime,endTime);
+		}
+		//导出时间判断
+		function checkTime(){
+			var start = jquery("#startTime").val();
+			var end = jquery("#endTime").val();
+			var beginDate = new Date(start);
+			var endDate = new Date(end);
+			var year = beginDate.getFullYear();
+			var month = beginDate.getMonth();
+			var oneYearLaterTime = new Date(start);
+			oneYearLaterTime.setFullYear((year+1), month);
+			if(endDate >= oneYearLaterTime){
+				alert("最多可以导出一年的数据，如想导出多年的数据，请分步导出！");
+				return false;
+			}
+		}
+	//]]>
+	</script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts-more.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/themes/highcharts-them.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/modules/no-data-to-display.js"></script>
+</ui:define>
+</ui:composition>

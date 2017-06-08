@@ -1,0 +1,725 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_left.xhtml">
+
+<ui:define name="body">
+	#{inOutAnalysis.InOutInit()}
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/bootcss_checkedRadio.js"></script>
+	<script>
+		//<![CDATA[
+		Date.prototype.format =function(format){
+			var o = {
+					"M+" : this.getMonth()+1, //month
+					"d+" : this.getDate(), //day
+					"h+" : this.getHours(), //hour
+					"m+" : this.getMinutes(), //minute
+					"s+" : this.getSeconds(), //second
+					"q+" : Math.floor((this.getMonth()+3)/3), //quarter
+					"S" : this.getMilliseconds() //millisecond
+			}
+			if(/(y+)/.test(format)) format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4- RegExp.$1.length));
+			for(var k in o)if(new RegExp("("+ k +")").test(format))
+				format = format.replace(RegExp.$1, RegExp.$1.length==1? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+			return format;
+		}
+		
+		window.onload = function () {
+			var startDate = new Date(); 
+			var nowStr =new Date().format('yyyy-MM-dd');
+			startDate.setDate(startDate.getDate()-30)
+			var startTime = startDate.format('yyyy-MM-dd');
+		  	jquery("#startTime").val(startTime);
+			jquery("#endTime").val(nowStr);
+		  	jquery(".form_datetime").datetimepicker({
+		  		format: "yyyy-mm-dd",
+			    autoclose: true,
+				weekStart: 1,
+				language:  'zh-CN',
+				minView:2,
+			    pickerPosition: "bottom-left"
+			});
+		  	var nowStr2 =new Date().format('yyyy-MM');
+		  	jquery("#monthTime").val(nowStr2);
+		  	jquery(".form_datetime2").datetimepicker({
+		  		format: "yyyy-mm",
+		  		language:  'zh-CN',
+		        weekStart: 1,
+		        todayBtn:  1,
+				autoclose: 1,
+				todayHighlight: 1,
+				startView: 3,
+				minView: 3,
+				forceParse: 0,
+				pickerPosition: "bottom-left"
+			});
+		  	var nowStr3 =new Date().format('yyyy');
+		  	jquery("#yearTime").val(nowStr3);
+		  	jquery(".form_datetime3").datetimepicker({
+				format: "yyyy",  //控制显示格式，默认为空，显示小时分钟 
+				autoclose: true,
+				weekStart: 1,
+				language:  'zh-CN',
+				startView: 4,
+				minView: 4,
+				maxView: 4,	
+				pickerPosition: "bottom-left"
+			});
+		};
+		//]]>
+	</script>
+	<style>
+		.fxy_title {
+		    border-bottom: 1px solid #cfe3f3;
+		    padding: 0px 0px;
+		}
+		.form_datetime input, .form_datetime2 input, .form_datetime3 input {
+		    border: 1px solid #ccc;
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		}	
+		.fxy_ul {
+		    margin: 5px 0;
+		    width: 100%;
+		}
+		.fxy_li {
+		    float: left;
+		    height: 26px;
+		    line-height: 26px;
+		    min-width: 75px;
+		}
+		.fxy_lidate {
+		    float: left;
+		    height: 27px;
+		    margin: 0 5px 5px;
+		    min-width: 68px;
+		}
+		.form_datetime input,.form_datetime02 input,.form_datetime03 input {
+		    border: 1px solid #ccc;
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		    margin-top: -3px;
+		}
+		label {
+		    color: #333333;
+		    display: inline-block;
+		    font-weight: 700;
+		    margin-bottom: 5px;
+		    max-width: 100%;
+		}
+		.input-append {
+		    float: left;
+		    margin-top: 3px;
+		    width: 150px;
+		}
+		.fxy_lidate02 {
+		    float: left;
+		    height: 30px;
+		    margin-right: 10px;
+		    margin-top: 4px;
+		    min-width: 77px;
+		}
+		.bootstrap-select {
+		    width: 150px;
+		}
+		.fx_tckli {
+		    float: left;
+		    height: auto;
+		    line-height: 30px;
+		    width: 193px;
+		}
+		.div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+width: 200px;
+}
+a:link, a:visited, a:hover, a:active, a:focus {
+    text-decoration: none;
+}
+	</style>
+	<td valign="top">
+		<div class="right_c" style="min-height:30px;">
+			<div class="r_title">
+				<div class="r_t_l"><font size="3">出入库统计分析</font></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+       <ui:fragment rendered="#{s:hasRole('inout_analyse_search')}">
+		<div class="cm_tjfxHd02 pt20">
+			<ul class="clear">
+				<li class="fl">
+					<ul class="recentTime pb15 clear">
+						<li id="sevenDay" style="cursor:pointer" onclick="switchSearchType(1);" class="curLan1"><a>最近7天</a></li>
+						<li id="thirtyMonth" style="cursor:pointer" onclick="switchSearchType(2)"><a>最近30天</a></li>
+						<li id="sameYear" style="cursor:pointer" onclick="switchSearchType(3);"><a>当年年份</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul id="male" class="fxy_ul dateSelt pb15 clear" style="min-width:720px; margin:0;">
+				<li class="dateSeltLi01 fl">日期选择：</li>
+				<li class="fxy_lidate" id="dateType1" style="margin-top:10px; ">
+					<input value="1" name="dateType" id="dateType1" style="display: none;" type="radio"></input>
+					<label style="margin-left: 5px;" id="dateTypeLabel1">按日</label>
+				</li>
+				<li class="fxy_lidate" id="dateType2" style="margin-top:10px; ">
+ 					<input value="2" name="dateType" id="dateType2" style="display: none;" type="radio"></input>
+					<label style="margin-left: 5px;" id="dateTypeLabel2">按月</label>
+				</li>
+				<li class="fxy_lidate" id="dateType3" style="margin-top:10px; ">
+					<input value="3" name="dateType" id="dateType3" style="display: none;" type="radio"></input>
+					<label style="margin-left: 5px;" id="dateTypeLabel3">按年</label>
+				</li>
+				<li class="fxy_lidate02" id="dayLi" style="display: none;">
+					<font style="*position:relative; *top:-7px;width:40px;float: left; display: block;">时间：</font>
+					<div class="input-append date form_datetime " data-date-format="yyyy-mm-dd" style="width:110px;">
+						<input id="startTime" size="16" readonly="readonly" type="text" onchange="timeChange()"></input>
+						<span class="add-on"><i class="icon-th" style="margin-top:5px;"></i></span>
+					</div>
+					<font style="*position:relative; *top:-7px;width:40px;float: left; display: block; text-align:center; margin-left:-2px;">——</font>
+					<div class="input-append date form_datetime " data-date-format="yyyy-mm-dd" style="width:110px;">
+						<input id="endTime" size="16" readonly="readonly" type="text" onchange="timeChange()"></input>
+						<span class="add-on"><i class="icon-th" style="margin-top:5px;"></i></span>
+					</div>
+				</li>
+				<li class="fxy_lidate02" id="monthLi" style="display: none;">                           
+					<font style="*position:relative; *top:-7px;width:40px;float: left; display: block;">时间：</font>
+					<div class="input-append date form_datetime2 " data-date-format="yyyy-mm" style="width:86px;">
+						<input id="monthTime" size="12" readonly="readonly" type="text"></input>
+						<span class="add-on"><i class="icon-th" style="margin-top:5px;"></i></span>
+					</div>
+				</li>
+				<li class="fxy_lidate02" id="yearLi" style="display:none;">
+					<font style="*position:relative; *top:-7px;width:40px;float: left; display: block;">时间：</font>
+					<div class="input-append date form_datetime3 " data-date-format="yyyy" style="width:76px;">
+						<input id="yearTime" size="10" readonly="readonly" type="text"></input>
+						<span class="add-on"><i class="icon-th" style="margin-top:5px;"></i></span>
+					</div>
+				</li>
+				<li class="fl pl30" style="margin-top: 3px;">
+					<h:form id="excelFrom">
+						<h:inputHidden id="searchTypeHidden" value="#{inOutAnalysis.searchType}" />
+						<h:inputHidden id="dateTypeHidden" value="#{inOutAnalysis.dateType}" />
+						<h:inputHidden id="beginDateHidden" value="#{inOutAnalysis.beginDate}" />
+						<h:inputHidden id="endDateHidden" value="#{inOutAnalysis.endDate}" />
+						<h:inputHidden id="storageRoomIdHidden" value="#{inOutAnalysis.storageRoomId}" />
+						<h:inputHidden id="storageRoomIdStrHidden" value="#{inOutAnalysis.storageRoomIdStr}" />
+						<h:inputHidden id="goodsInfoIdsHidden" value="#{inOutAnalysis.goodsInfoIds}" />
+						<h:inputHidden id="searchYearHidden" value="#{inOutAnalysis.searchYear}" />
+						<h:inputHidden id="searchMonthHidden" value="#{inOutAnalysis.searchMonth}" />
+						<h:inputHidden id="storageTypeStrHidden" value="#{inOutAnalysis.storageTypeStr}" />
+						<h:inputHidden id="operaterHidden" value="#{inOutAnalysis.operater}" />
+						<h:inputHidden id="sarchFlagHidden" value="#{inOutAnalysis.sarchFlag}" />
+						<button class="btn btn-primary mr7" type="button" onclick="gainResult();">搜索</button>
+						<ui:fragment rendered="#{s:hasRole('inout_analyse_exp')}">
+						<button class="btn btn-default" type="button" onclick=" return checkTime()" id="exportButton">导出</button>
+						<h:commandButton id="export" action="#{inOutAnalysis.excelExport()}" styleClass="btn btn-default" value="导出"  style="display:none"></h:commandButton>
+						</ui:fragment>
+					</h:form>
+				</li>
+			</ul>
+			<ul class="blongsSelt pb15 clear" style="min-width:680px;">
+				<li class="storehouseSeltLi01 fl">仓库选择：</li>
+				<li class="fl pr25">
+					<!-- <h:selectOneMenu value="#{inOutAnalysis.storageRoomId1}" id="storageRoomId" styleClass="selectpicker" immediate="true">
+						<f:selectItem itemLabel="全部" itemValue="0"/>
+						<s:selectItems value="#{inOutAnalysis.storageRoomList}" var="_storageRoom" label="#{_storageRoom.name}" itemValue="#{_storageRoom.storageRoomId}" ></s:selectItems>
+					</h:selectOneMenu> -->
+					<select  id="storageRoomId" name="storageRoomId" style="display:none;" data-live-search="true" multiple="multiple" title="全部">
+						<a:repeat value="#{inOutAnalysis.storageRoomList}" var="_storageRoom">
+								<option value="#{_storageRoom.storageRoomId}">#{_storageRoom.name}</option>
+						</a:repeat>
+					</select>
+				</li>
+				<li class="storehouseSeltLi01 fl" style="width:80px;">出入库类型：</li>
+				<li class="fl pr25">
+					<h:selectOneMenu value="#{inOutAnalysis.storageTypeStr1}" id="storageType" styleClass="selectpicker" immediate="true">
+						<f:selectItem itemLabel="全部" itemValue=""/>
+						<s:selectItems value="#{inOutAnalysis.storageTypeList}" var="var" label="#{var.name}" itemValue="#{var.storageTypeId},#{var.storageType}" escape="false"/>									
+					</h:selectOneMenu>
+					<script type="text/javascript">
+						jquery(".selectpicker").selectpicker();
+					</script>
+				</li>
+			</ul>
+			<div class="fxy_title mr30" style="padding-bottom:15px">
+				<div class="fxy_div">
+				<table cellpadding="0" cellspacing="0" style="float:left;">
+					<tr>
+						<td align="right" class="tpcc_font">选择作物：</td>
+						<td align="left" style="" id="male" class="six3" >
+							<select  style="display:none" id="plantCheck" name="plantCheck"  data-live-search="true">
+									<a:repeat value="#{inOutAnalysis.goodsInfoList}" var="_plant">
+											<option value="#{_plant.goodsInfoId}">#{_plant.name}(#{goodsInfoConstant.getGoodTypeLabel(_plant.goodsTypeInfo)})</option>
+									</a:repeat>
+							</select>
+						</td>
+						<td align="right" class="tpcc_font" style="width:105px;">经办人：</td>
+						<td align="left" style="" id="male" class="six3" >
+							<h:selectOneMenu styleClass="selectpicker" id="operater" value="#{inOutAnalysis.operater1}">
+								<f:selectItem itemLabel="全部" itemValue=""/>
+								<s:selectItems var="_attn" value="#{inOutAnalysis.operaterList}" label="#{_attn[1]}" itemValue="#{_attn[0]}" />
+							</h:selectOneMenu>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="clear"></div>
+			</div>
+		</div>
+		
+		</ui:fragment>
+		
+		<ui:fragment rendered="#{!s:hasRole('inout_analyse_search') and s:hasRole('inout_analyse_exp')}">
+			<li class="fl pl30" style="float:right;padding-top: 10px;margin-right:20px; padding-bottom: 10px;">
+					<h:form id="excelFrom1">
+					<h:commandButton id="export" action="#{inOutAnalysis.excelExport}" styleClass="btn btn-default" value="导出"></h:commandButton>
+			</h:form>
+			</li>
+		</ui:fragment>
+		<div class="cm_tjfxBd">
+			<div class="right_c">
+				<div class="fxy_xse">统计表</div>
+				<div class=" pt30">
+					<h:form id="inOutAnalysisFrom">
+						<a:commandLink id="refreshShow"  reRender="showPanel"></a:commandLink>
+					</h:form>
+					<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+						<table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+							<tbody>
+								<tr class="alt">
+									<td height="4" width="5"><img src="../asset/images/table_d_40.jpg" height="4" width="5"></img></td>
+									<td colspan="9" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+									<td height="4" width="5"><img src="../asset/images/table_d_43.jpg" height="4" width="5"></img></td>
+								</tr>
+								<tr class="">
+	                            	<th class="ze_bg ze_bt_le" height="4" width="5"></th>
+	                            	<th colspan="9" class="ze_bg">#{inOutAnalysis.inOutType == 1 ? "入库" : "出库"}操作记录</th>
+	                                <th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+	                            </tr>
+								<tr class="alt">
+									<td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+									<td class="ze_bg2" width="15%">物料名称</td>
+									<td class="ze_bg2" width="15%">物料编号</td>
+									<td class="ze_bg2" width="10%">库房名称</td>
+									<td class="ze_bg2" width="8%">类型</td>
+									<td class="ze_bg2" width="8%">来源</td>
+									<td class="ze_bg2" width="10%">经办人</td>
+									<td class="ze_bg2" width="5%">数量</td>
+									<td class="ze_bg2" width="8%">规格</td>
+									<td class="ze_bg2" width="8%">等级</td>
+									<td class="ze_bg2" >操作日期</td>
+									<td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+								</tr>
+								<a:repeat value="#{inOutAnalysis.resultList}" var="_result" rowKeyVar="_index">
+									<tr class="#{_index % 2 != 0 ? '' : 'alt'}">
+										<td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+										<td class="ze_bg2" width="15%">#{_result[0]}</td>
+										<td class="ze_bg2" width="15%">#{_result[1]}</td>
+										<td class="ze_bg2" width="10%">#{_result[2]}</td>
+										<td class="ze_bg2" width="8%">#{_result[3]}</td>
+										<td class="ze_bg2" width="8%">#{_result[11]}</td>
+										<td class="ze_bg2" width="10%">#{_result[10]}</td>
+										<td class="ze_bg2" width="5%">
+											<s:fragment rendered="#{_result[8] eq 1}">
+												<h:outputText rendered="#{_result[9] ge 7 and _result[9] le 11}" >
+				                                	<h:outputText value="#{stringUtil.changeFloatMe(_result[4],3)}" rendered="#{sessionTake.harvestUnit eq 1}">
+				                                		<f:convertNumber pattern="#####.###"/>
+				                                	</h:outputText>
+				                                	<h:outputText value="#{_result[4]}" rendered="#{sessionTake.harvestUnit ne 1}"><f:convertNumber pattern="#####.###"/></h:outputText>
+						                    	</h:outputText>
+							                    <h:outputText value="#{unitStranfer.outStranfer(_result[9],_result[4])}" rendered="#{_result[9] lt 7 or _result[9] gt 11}" >
+							                    	<f:convertNumber pattern="#####.###"/>
+							                    </h:outputText>
+							                </s:fragment>
+							                <s:fragment rendered="#{_result[8] ne 1}">
+							                	#{_result[4]}
+							                </s:fragment>
+										
+										</td>
+										<td class="ze_bg2" width="8%">
+											<s:fragment rendered="#{_result[8] eq 1}">
+												<s:fragment rendered="#{_result[9] ge 7 and _result[9] le 11}">
+													#{sessionTake.harvestUnit eq 1? '斤':'公斤'}
+												</s:fragment>
+												<s:fragment rendered="#{_result[9] lt 7 or _result[9] gt 11}">
+													#{_result[7]}
+												</s:fragment>
+											</s:fragment>
+											<s:fragment rendered="#{_result[8] ne 1}">
+												#{_result[7]}
+											</s:fragment>										
+										</td>
+										<td class="ze_bg2" width="8%">#{_result[6]}</td>
+										<td class="ze_bg2">#{_result[5]}</td>
+										<td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+									</tr>
+								</a:repeat>
+							</tbody>
+						</table>
+						<h:form id="pageFrom">
+							<div style="width:100%; height: 25; line-height: 25px; margin: 20px 0; font-size: 12px; font-family:'宋体'';" align="right">
+								<a:commandLink style="color:#333333;" id="firstPage" action="#{inOutAnalysis.pageFind(1)}" rendered="#{inOutAnalysis.hasPreviousPage and inOutAnalysis.totalPages > 1}" reRender="showPanel">#{messages.left}#{messages.left} 首页&#160;</a:commandLink>
+								<a:commandLink style="color:#333333;"  id="previousPage" action="#{inOutAnalysis.pageFind(inOutAnalysis.previousPage)}" rendered="#{inOutAnalysis.hasPreviousPage and inOutAnalysis.totalPages > 1}" reRender="showPanel">#{messages.left} 上一页&#160;</a:commandLink>
+								<s:span style="color:#333333;"  id="currentPage" rendered="#{inOutAnalysis.page > 0}" reRender="showPanel">&#160;第#{inOutAnalysis.page}页</s:span>
+								<a:commandLink style="color:#333333;"  id="nextPage" action="#{inOutAnalysis.pageFind(inOutAnalysis.nextPage)}" rendered="#{inOutAnalysis.hasNextPage and inOutAnalysis.totalPages > 1}" reRender="showPanel">&#160;下一页	#{messages.right}</a:commandLink>
+								<a:commandLink style="color:#333333;"  id="lastPage" action="#{inOutAnalysis.pageFind(inOutAnalysis.totalPages)}" rendered="#{inOutAnalysis.hasNextPage and inOutAnalysis.totalPages > 1}" reRender="showPanel">&#160;尾页    #{messages.right}</a:commandLink>
+								<s:span style="color:#333333;"  id="totalPages" rendered="#{inOutAnalysis.totalPages > 0}" reRender="showPanel">&#160;共#{inOutAnalysis.totalPages}页</s:span>
+							</div>
+						</h:form>						
+					</rich:panel>
+				</div>  
+			</div>
+		</div>
+		<div style="height:30px; width:100%;"></div>
+		<div class="clear"></div>
+	</td>
+	<a:form>
+		<a:queue requestDelay="100" ignoreDupResponses="true"/>
+		<a:jsFunction name="queryResultFind" action="#{inOutAnalysis.queryResultFind}" oncomplete="refreshAction();" >
+			<a:actionparam name="searchType" assignTo="#{inOutAnalysis.searchType}"/>
+			<a:actionparam name="dateType" assignTo="#{inOutAnalysis.dateType}"/>
+			<a:actionparam name="beginDate" assignTo="#{inOutAnalysis.beginDate}"/>
+			<a:actionparam name="endDate" assignTo="#{inOutAnalysis.endDate}"/>
+			<a:actionparam name="storageRoomIdStr" assignTo="#{inOutAnalysis.storageRoomIdStr}"/>
+			<a:actionparam name="goodsInfoIds" assignTo="#{inOutAnalysis.goodsInfoIds}"/>
+			<a:actionparam name="searchYear" assignTo="#{inOutAnalysis.searchYear}"/>
+			<a:actionparam name="searchMonth" assignTo="#{inOutAnalysis.searchMonth}"/>
+			<a:actionparam name="storageTypeStr" assignTo="#{inOutAnalysis.storageTypeStr}"/>
+			<a:actionparam name="operater" assignTo="#{inOutAnalysis.operater}"/>
+			<a:actionparam name="sarchFlag" assignTo="#{inOutAnalysis.sarchFlag}"/>
+		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript">
+	//<![CDATA[
+		var plantStr;
+		var plantSize = '#{inOutAnalysis.goodsInfoList.size()}';
+		var searchType = 1;
+		var dateType = 1;
+
+		//刷新
+		function refreshAction(){
+			document.getElementById("inOutAnalysisFrom:refreshShow").onclick();
+		}
+
+		function getDateDiff(date1,date2){
+	        var arr1=date1.split('-');
+			var arr2=date2.split('-');
+			var d1=new Date(arr1[0],arr1[1],arr1[2]);
+			var d2=new Date(arr2[0],arr2[1],arr2[2]);
+			if ((d2.getTime()-d1.getTime())/(1000*3600*24) > 60) {
+				return false;
+			}else {
+				return true;
+			}
+		}
+
+		function toDate(str){
+		    var sd=str.split("-");
+		    return new Date(sd[0],sd[1],sd[2]);
+		}
+		
+		//搜索提交方法 
+		function gainResult(){
+			var pids = "";
+		    if(jquery("#plantCheck").val()!=null){
+		        pids = jquery("#plantCheck").val().toString();
+		    }
+		    var storageType = jquery("#storageType").val();
+			var operater = jquery("#operater").val();
+			var storageRoomId = jquery("#storageRoomId").val();
+			var storageRoomIdStr = "";
+			if(storageRoomId == null){
+				storageRoomId = "";
+			}else{
+				for(var i=0;i<storageRoomId.length;i++){
+					storageRoomIdStr +=storageRoomId[i];
+					if(i<storageRoomId.length-1){
+						storageRoomIdStr +=",";
+					}
+				}
+			}
+			jquery("#excelFrom\\:searchTypeHidden").val(Number(searchType));
+			jquery("#excelFrom\\:dateTypeHidden").val(Number(dateType));
+			jquery("#excelFrom\\:beginDateHidden").val("");
+			jquery("#excelFrom\\:endDateHidden").val("");
+			jquery("#excelFrom\\:storageRoomIdStrHidden").val(storageRoomIdStr);
+			jquery("#excelFrom\\:goodsInfoIdsHidden").val(pids);
+			jquery("#excelFrom\\:searchYearHidden").val("");
+			jquery("#excelFrom\\:searchMonthHidden").val("");
+			jquery("#excelFrom\\:storageTypeStrHidden").val(storageType);
+			jquery("#excelFrom\\:operaterHidden").val(operater);
+			jquery("#excelFrom\\:sarchFlagHidden").val(1);
+			if (searchType == 1 || searchType == 2 || searchType == 3) {
+				queryResultFind(Number(searchType), Number(dateType), "", "", storageRoomIdStr, pids,"", "", storageType, operater, 1);
+				return true;
+			}else {
+				if (dateType == 1) {
+					var beginDate = jquery("#startTime").val();
+					if (beginDate == null || beginDate == '') {
+						alert("请选择开始日期...");
+						return false;
+					}
+					var endDate = jquery("#endTime").val();
+					if (endDate == null || endDate == '') {
+						alert("请选择结束日期...");
+						return false;
+					}
+					var begin =toDate(beginDate);
+					var end =toDate(endDate);
+					if (begin > end) {
+						alert("开始时间不能大于结束时间...");
+						return false;
+					}
+					if (!getDateDiff(beginDate, endDate)) {
+						alert("请搜索2个月之间的数据...");
+						return false;
+					}
+					jquery("#excelFrom\\:beginDateHidden").val(beginDate);
+					jquery("#excelFrom\\:endDateHidden").val(endDate);
+					queryResultFind(Number(searchType), Number(dateType), beginDate, endDate, storageRoomIdStr, pids,"", "",storageType, operater, 1);
+					return true;
+				}else if (dateType == 2) {
+					var monthValue = jquery("#monthTime").val();
+					jquery("#excelFrom\\:searchMonthHidden").val(monthValue);
+					queryResultFind(Number(searchType), Number(dateType), "", "", storageRoomIdStr, pids,"", monthValue, storageType, operater, 1);
+					return true;
+				}else if (dateType == 3) {
+					var yearValue = jquery("#yearTime").val();
+					jquery("#excelFrom\\:searchYearHidden").val(yearValue);
+					queryResultFind(Number(searchType), Number(dateType), "", "", storageRoomIdStr, pids,yearValue, "",storageType, operater, 1);
+					return true;
+				}
+			}
+		}
+
+		//打开关闭作物选择列表
+		function clickPlantDiv(type){
+			if (type == 1) {
+				jquery("#plantShowDiv").show();
+				jquery("#qiyeShowDiv").hide();
+			}else {
+				jquery("#plantShowDiv").hide();
+				var plantIds = plantStr.split(","); 
+		  		var plantCount = 0;
+		  		jquery("input[name='plantCheck']:checkbox").each(function(){
+		  			plantCount ++;
+				});
+		  		jquery("input[name='plantCheck']").removeAttr("checked");
+				for ( var i = 0; i < plantIds.length; i++) {
+					var plantId = "plantItem" + plantIds[i];
+					document.getElementById(plantId).checked = true;
+					plantCount++;
+				}
+				if (plantCount == plantIds.length) {
+					jquery("input[name='plantCheckAll']").attr("checked", true);
+				}else {
+					jquery("input[name='plantCheckAll']").removeAttr("checked");
+				}
+			}
+		}
+
+		jquery(document).ready(function(){
+			//全选作物事件
+			jquery("#plantCheckAll").on("ifClicked", function(event){
+				if (this.checked) {
+					jquery("input[name='plantCheck']").iCheck("uncheck"); 
+				} else {
+					jquery("input[name='plantCheck']").iCheck("check"); 
+				}
+			});
+			jquery("input[name='plantCheck']:checkbox").on("ifChanged", function(event){
+				var temp = "";
+				jquery("input[name='plantCheck']:checkbox:checked").each(function(){
+					temp += jquery(this).val() + ",";
+				});
+				var plantIds = temp.split(","); 
+				if (plantSize == (plantIds.length-1)) {
+					jquery("input[name='plantCheckAll']").iCheck("check"); 
+				}else {
+					jquery("input[name='plantCheckAll']").iCheck("uncheck"); 
+				}
+			});
+			
+			jquery("input[name='dateType']:radio").on("ifChecked", function(event){
+				var type = this.value;
+				showHiddenDiv(4);
+				dateType = type;
+				searchType = 4;
+				jquery("input[name='dateType']").removeAttr("checked");
+				jquery("#dateType" + type).attr("checked", true);
+				if (type == 1) {
+					jquery("#dayLi").show();
+					jquery("#yearLi").hide();
+					jquery("#monthLi").hide();
+					var beginDate = jquery("#startTime").val();
+					var endDate = jquery("#endTime").val();
+					jquery("#excelFrom\\:beginDateHidden").val(beginDate);
+					jquery("#excelFrom\\:endDateHidden").val(endDate);
+				} else if (type == 2) {
+					jquery("#dayLi").hide();
+					jquery("#yearLi").hide();
+					jquery("#monthLi").show();
+					var monthValue = jquery("#monthTime").val();
+					jquery("#excelFrom\\:searchMonthHidden").val(monthValue);
+				} else if (type == 3) {
+					jquery("#dayLi").hide();
+					jquery("#yearLi").show();
+					jquery("#monthLi").hide();
+					var yearValue = jquery("#yearTime").val();
+					jquery("#excelFrom\\:searchYearHidden").val(yearValue);
+				}
+				jquery("#excelFrom\\:dateTypeHidden").val(dateType);
+				jquery("#excelFrom\\:searchTypeHidden").val("4");
+			});
+		});
+
+		//作物选择确定
+	  	function plantTijiao(){
+	  		var checked_num = jquery("input[name='plantCheck']:checkbox:checked").length;
+	  		plantStr = "";
+	  		jquery("#plantUl").empty();
+	  		jquery("#plantUl").append("<li class='fxy_li'>已选作物：</li>");
+	  		if (plantSize == checked_num) {
+	  			jquery("input[name='plantCheck']:checkbox:checked").each(function(){
+		  			plantStr += jquery(this).val() + ",";
+				});
+	  			var addLiMsg = "<li class='fxy_liyx'>全部作物</li>";
+				jquery("#plantUl").append(addLiMsg);
+			} else {
+				jquery("input[name='plantCheck']:checkbox:checked").each(function(){
+		  			plantStr += jquery(this).val() + ",";
+		  			var plantName = jquery("#plantLabel" + jquery(this).val()).html();
+		  			var addLiMsg = "<li class='fxy_liyx'>" + plantName + "</li>";
+					jquery("#plantUl").append(addLiMsg);
+				});
+			}
+	  		jquery("#plantUl").append("<li class='ie7clear'></li>");
+	  		if (plantStr == "") {
+				alert("请至少选择一个作物...");
+				return false;
+			} else {
+				plantStr = plantStr.substr(0,plantStr.length - 1);
+				jquery("#plantShowDiv").hide();
+			}
+	  	}
+
+	  	jquery(function () {
+			plantStr = '#{inOutAnalysis.goodsInfoIds}';
+	  		var plantIds = plantStr.split(","); 
+	  		jquery("#plantUl").empty();
+	  		jquery("#plantUl").append("<li class='fxy_li'>已选作物：</li>");
+	  		if (plantSize == plantIds.length) {
+	  			var addLiMsg = "<li class='fxy_liyx'>全部作物</li>";
+				jquery("#plantUl").append(addLiMsg);
+			}
+	  		jquery("#plantUl").append("<li class='ie7clear'></li>");
+			jquery("#plantShowDiv").hide();
+			var operater = jquery("#operater").val();
+			var storageRoomId =jquery("#storageRoomId").val();
+			var storageType = jquery("#storageType").val();
+			jquery("#excelFrom\\:searchTypeHidden").val(Number(searchType));
+			jquery("#excelFrom\\:dateTypeHidden").val(Number(dateType));
+			jquery("#excelFrom\\:beginDateHidden").val("");
+			jquery("#excelFrom\\:endDateHidden").val("");
+			jquery("#excelFrom\\:storageRoomIdHidden").val(storageRoomId);
+			jquery("#excelFrom\\:goodsInfoIdsHidden").val(plantStr);
+			jquery("#excelFrom\\:searchYearHidden").val("");
+			jquery("#excelFrom\\:searchMonthHidden").val("");
+			jquery("#excelFrom\\:storageTypeStrHidden").val(storageType);
+			jquery("#excelFrom\\:operaterHidden").val(operater);
+			jquery("#excelFrom\\:sarchFlagHidden").val(1);
+
+			jquery('#plantCheck').attr("multiple","multiple");
+			jquery('select:not(#plantCheck)').selectpicker();
+		    jquery('#plantCheck').selectpicker({noneSelectedText:"全部"});
+		    jquery('#plantCheck').selectpicker('deselectAll');
+			var goodsInfoIds = '#{inOutAnalysis.goodsInfoIds}';
+			var checkStr = plantStr.split(",");
+			if(jquery("#plantCheck option").length!=checkStr.length)
+				jquery("#plantCheck").selectpicker("val",checkStr);
+	  	});
+
+		//切换搜索日期类型方法 7天 30天 当年 
+		function switchSearchType(type){
+			searchType = type;
+			showHiddenDiv(searchType);
+			if(type != 4){
+				jquery("input[name='dateType']:radio").attr("checked", false);
+				jquery("input[name='dateType']:radio").iCheck("update");
+			}
+			gainResult();
+		}
+
+		//显示隐藏公共方法 
+		function showHiddenDiv(showType){
+			jquery(".curLan1").removeClass("curLan1");
+			jquery("#dayLi").hide();
+			jquery("#yearLi").hide();
+			jquery("#monthLi").hide();
+			if (showType == 1) {
+				jquery("#sevenDay").addClass("curLan1");
+				dateType = 1;
+			} else if (showType == 2) {
+				jquery("#thirtyMonth").addClass("curLan1");
+				dateType = 1;
+			} else if (showType == 3) {
+				jquery("#sameYear").addClass("curLan1");
+				dateType = 2;
+			}
+		}
+		function timeChange(){
+			var start = jquery("#startTime").val();
+			var endTime = jquery("#endTime").val();
+			jquery("#excelFrom\\:beginDateHidden").val(start);
+			jquery("#excelFrom\\:endDateHidden").val(endTime);
+		}
+		//导出时间判断
+		function checkTime(){
+			var dateType = jquery("#excelFrom\\:dateTypeHidden").val();
+			var searchType = jquery("#excelFrom\\:searchTypeHidden").val();
+			if(searchType=="4" && dateType=="1"){
+				var start = jquery("#excelFrom\\:beginDateHidden").val();
+				var end = jquery("#excelFrom\\:endDateHidden").val();
+				var beginDate = new Date(start);
+				var endDate = new Date(end);
+				var year = parseInt(start.substring(0,4));
+				var month = start.substring(start.indexOf("-")+1,start.indexOf("-")+3);
+				month = parseInt(month.replace("0",""));
+				var days = Math.floor((endDate.getTime() - beginDate.getTime())/(60*60*24*1000));
+				if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
+					if(days > 31){
+						alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+					}
+				}else if(month == 2){
+					if(year%4 ==0){
+						if(days > 29){
+							alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+						}
+					}else{
+						if(days > 28){
+							alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+						}
+					}
+				}else{
+					if(days > 30){
+						alert("最多可以导出一个月的数据，如想导出多个月的数据，请分步导出!");
+					}
+				}
+			}else if((searchType=="4" && dateType=="3") || (searchType=="3")){
+				alert("最多可以导出一个月的数据，如想导出更多数据，请分步导出!");
+				return false;
+			}
+			jquery("#excelFrom\\:export").click();
+		}
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

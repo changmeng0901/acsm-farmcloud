@@ -1,0 +1,310 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template_inventory.xhtml">
+
+	<ui:define name="body">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/stock/InventoryFile.css"/>
+<style >
+.form_datetime_second{ position:relative; width:100%;}
+.form_datetime_second .add-on{	position:absolute;	right:5px;	top:10px;	width:14px;	height:14px;	}
+.form_datetime_second .add-on .icon-th{	display:block;	width:14px;	height:14px;	margin:0;	}
+.form_datetime_second .add-on .icon-th { background-position: -240px 0;	}
+.search_header2 .form_datetime_second input{
+	height:24px;
+	line-height:20px;
+	padding-top:0;
+	padding-bottom:0;
+	border:0;
+	border-top:1px solid #fff;
+	border-bottom:1px solid #ddd;
+	border-radius:0;
+	} 
+
+</style>
+		<td valign="top">
+            <div class="inbentory_file_main">
+            <!-- 出库详细记录右侧 -->
+                <div class="inbentory_content">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt" style="margin-left:20px;"><a href="#">采销存</a><span>&gt;</span><a href="OutStorageDetail.html">出库明细</a><span>&gt;</span><strong>出库明细记录</strong></div>
+                    </div>
+                    <div class="inbentory_search_wap">
+                    <!-- 原料出库 -->
+                    	<div class="material_infor_title clear">
+                        	<strong class="text_title">原料出库</strong>
+                            <i id="ylck_btn" class="ylck_btn"></i>
+                        </div>
+                        <div id="ylck_content" style="overflow:hidden;">
+                        <table class="inventory_modal_table mt20" width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                                <th  width="5%">序号</th>
+								<th  width="2%"></th>
+								<th  width="10%">批次编号</th>
+								<th  width="10%">物料名称</th>
+								<th  width="10%">来源</th>
+								<th  width="8%">等级</th>
+								<th  width="8%">规格</th>
+								<th  width="7%">保质期</th>
+								<th  width="10%">出库数量</th>
+								<th  width="10%">出库总数量（kg）</th>
+								<th  width="10%">单价（元）</th>
+								<th  width="10%">小计（元）</th>
+                            </tr>
+                           <a:repeat value="#{outStorageHome.goodsBatchList}"
+									var="_gpcr" rowKeyVar="_index" id="xx">
+									<tr class="#{_index % 2 == 0 ? 'even' : 'odd'}">
+										<td height="48" width="5%" align="center">#{_gpcr[0]}</td>
+										<td>
+										</td>
+										<td width="10%" align="center">
+											<h:inputHidden id="shangpinid#{_index}" value="#{outStorageHome.getProductInfo(_gpcr[9])}" />
+											#{_gpcr[1]}
+										</td>
+										<td width="10%" align="center" id="wuliaoname#{_index}">#{_gpcr[2]}</td>
+										<td width="10%" align="center"> <h:outputText value="#{ _gpcr[3]}"  /></td>
+										<td width="10%" align="center"><h:outputText value="#{ _gpcr[4]}"/></td>
+										<td width="10%" align="center">#{_gpcr[5]}</td>
+											<td width="10%" align="center">#{_gpcr[7]}天</td>
+										<td width="5%" align="center">
+											<!-- <h:outputText value="#{unitStranfer.inStranfer(_gpcr[10],_gpcr[6])}">
+												<f:convertNumber pattern="#.###" />
+											</h:outputText> -->
+											#{_gpcr[6]}
+										</td>
+										
+										<td><h:outputText value="#{_gpcr[11]}"> <f:convertNumber pattern="#0.00" /></h:outputText></td>
+										<td width="5%" align="center">￥<h:outputText value="#{_gpcr[12]}"> <f:convertNumber pattern="#0.00" /> </h:outputText></td>
+										<td width="10%" align="center">￥ 
+											<h:outputText
+												value="#{_gpcr[8]}">
+												<f:convertNumber pattern="#0.00" />
+											</h:outputText>
+										</td>
+									</tr>
+								</a:repeat>
+                        </table>
+                        </div>
+                    <!-- 原料出库 -->
+                    </div>
+                    <h:form id="saveFrom">
+                    <div class="inbentory_search_wap">
+                    <!-- 商品入库 -->
+                    	<div class="material_infor_title clear">
+                        	<strong class="text_title">商品入库</strong>
+                        </div>
+                        <div class="search_header search_header2 clear">
+                        	<div class="clear">
+                                <div class="search_selected fl">
+                               		<dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">仓库</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <h:selectOneMenu styleClass="selectpicker" value="#{outStorageHome.roomId}"  id="roomId">
+												<s:selectItems var="_storage" value="#{outStorageHome.proRoomList}" label="#{_storage.name}" itemValue="#{_storage.storageRoomId}" />
+											</h:selectOneMenu>
+                                        </dd>
+                                    </dl>
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">入库类型</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <h:selectOneMenu styleClass="selectpicker" id="psTypeId" value="#{outStorageHome.psTypeId}" immediate="true" onchange="showProductList(this.value);">
+												<s:selectItems value="#{outStorageHome.proStorageTypeList}" var="_type" itemValue="#{_type.id}" label="#{_type.name}"/>
+											</h:selectOneMenu>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="search_selected fl">
+                                    
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">经办人</dt>
+                                        <dd class="inline_block bootSelt180">
+                                           <h:selectOneMenu styleClass="selectpicker b1" id="farmInfoId" value="#{outStorageHome.farmInfoId}">
+												<s:selectItems var="_attn" value="#{outStorageHome.proFarmInfoList}" label="#{_attn[1]}" itemValue="#{_attn[0]}" />
+											</h:selectOneMenu>
+                                        </dd>
+                                    </dl>
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">入库时间</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <div class="fl" style="width:180px;">
+                                                <div class="input-append date form_datetime_second" style="position: relative;width:190px;">
+												<input id="inStorageTime" size="22" type="text" value="#{outStorageHome.inStorageTime}" readonly="readonly"></input>
+												 <span class="add-on" style="position:absolute; right:50px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
+											</div>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="clear">
+                                <div class="search_selected fl">
+                                    <textarea class="danju_textarea fl" id="notice">#{outStorageHome.notice}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <h:panelGroup id="harListId">
+                        <table class="inventory_modal_table mt20" id="tbr" width="100%" cellpadding="0" cellspacing="0" style="min-width:1120px-;">
+                        	<tr>
+                                <th class="ze_bg ze_bt_le" height="4" width="5"></th>
+								<th class="ze_bg" width="8%">商品编号</th>
+								<th class="ze_bg" width="10%">商品名称</th>
+								<th class="ze_bg" width="10%">来源</th>
+								<th class="ze_bg" width="10%">单位规格</th>
+								<th class="ze_bg" width="10%">入库量</th>
+								<th class="ze_bg" width="9%">入库总重量</th>
+								<th class="ze_bg" width="9%">保质期(天)</th>
+								<th class="ze_bg" width="9%">商品单价</th>
+								<th class="ze_bg" width="9%">小计</th>
+								<th class="ze_bg" width="12%">操作</th>
+								<th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+                            </tr>
+                            <a:repeat value="#{outStorageHome.storageGoodsInOutList}"
+									var="_sgio" rowKeyVar="_index" id="bb">
+									<tr class="#{_index % 2 == 0 ? 'even' : 'odd'}" id="repeattr#{_index}">
+										<td class="ze_bg ze_bt_le" height="4" width="5"></td>
+										<td height="48" width="8%" align="center">#{_sgio[0]}
+											<h:inputHidden value="#{_sgio[9]}" id="yuanliaoid#{_index}"/>
+											<h:inputHidden value="#{_sgio[14]}" id="goodsbatchid#{_index}"/>
+										</td>
+										<td height="48" width="10%" align="center">
+											<h:selectOneMenu styleClass="selectpicker" value="#{_sgio[5]}"  id="goodsName" onchange="changeGoodsInfo1(#{_index});">
+												<s:selectItems var="_goodsName" value="#{outStorageHome.getGoodsName(_index)}" 
+													label="#{_goodsName[0]}" 
+													itemValue="#{_goodsName[2]}"/>
+											</h:selectOneMenu>	
+											
+										</td>
+										<td height="48" width="10%" align="center">#{_sgio[6]}</td>
+										<td height="48" width="10%" align="center">
+											<h:panelGroup rendered="#{_sgio[4] eq '' or _sgio[4] eq null}">
+											#{_sgio[2]}#{_sgio[3]}
+											</h:panelGroup>
+											<h:panelGroup rendered="#{_sgio[4] ne '' and _sgio[4] ne null}">
+											#{_sgio[2]}#{_sgio[3]}/#{_sgio[4]}
+											</h:panelGroup>
+										</td>
+										<td height="48" width="10%" align="center">
+											<h:inputText class="form-control _number" 
+											onchange="updateMaoNum(this.value,this.id,#{_index});"  onblur = "priceblur(#{_index})"
+											style="width: 50%; text-align: center;display:inline-block;" id="numMaober#{_index}"  
+											type="text" value="#{_sgio[12]}"/>
+										</td>
+										<td height="48" width="9%" align="center">
+											<h:inputText class="form-control _totalWeight" 
+											onchange="updateTotalWeight(this.value,this.id,#{_index});"   
+											style="width: 50%; text-align: center;display:inline-block;" id="totalWeighTd#{_index}" 
+											type="text" value="#{_sgio[15]}"/>
+										</td>
+										<td height="48" width="9%" align="center">
+											<h:inputText class="form-control _expire" 
+												onchange="updateExpirationDate(this.value, this.id,#{_index});" 
+												style="width: 50%; text-align: center;display:inline-block;" id="baozhiqi#{_index}" 
+												type="text" value="#{_sgio[7]}"/>
+										</td>
+										<td height="48" width="9%" align="center">￥
+											<h:inputText styleClass="form-control"
+												onchange="updatePrice(this.value,this.id,#{_index});"  onblur = "priceblur(#{_index})"
+												style="width: 50%; text-align: center;display:inline-block;" id="goodsPrice#{_index}" 
+											 value="#{_sgio[8]}"/>
+										</td>
+										<td height="48" width="9%" align="center" >￥
+												<span id="totalGoodsPrice#{_index}">0.00</span>
+										</td>
+										<td height="48" width="12%" align="center" >
+											<a href="javascript:void(0);" onclick="additional1(#{_index});">添加</a>
+											<a href="javascript:void(0);" onclick="delProduct(#{_index});">删除</a>
+										</td>
+										<td class="ze_bg ze_bt_ri" height="4" width="5"></td>
+									</tr>
+								</a:repeat>
+                        </table>
+                        </h:panelGroup>
+                        <div class="pt10" style="text-align:center;">
+                        <h:inputHidden id="storageDateHidden" value="#{outStorageHome.inStorageTime}"/>
+                        	<a:commandButton id="save" value="提交" styleClass="btn btn-primary" onclick="if(!submitSave())return false;jquery('#saveFrom\\:save').attr('disabled','true');" action="#{outStorageHome.editSaveInOutGoods}"/>
+                          	&#160;
+						 <!-- <s:button view="/stock/OutStorage.seam" value="返回" styleClass="btn btn-default">
+								<f:param name="baseId" value="#{outStorageHome.baseId}"></f:param>
+								<f:param name="storageRoomId" value="#{outStorageHome.storageRoomId}"/>
+								<f:param name="goodsType" value="#{outStorageHome.goodsType}"/>
+								<f:param name="outStorageTime" value="#{outStorageHome.outStorageTime}"/>
+								<f:param name="remark" value="#{outStorageHome.remark}"/>
+								<f:param name="operaterId" value="#{outStorageHome.operaterId}"/>
+								<f:param name="jsonStr" value="#{outStorageHome.jsonStr}"/>
+								<f:param name="storageChangeFormId" value="#{outStorageHome.storageChangeFormId}"/>
+							</s:button> -->
+							<button class="btn btn-default" onclick="history.back(-1)" value="返回">返回</button>
+                        </div>
+                    <!-- 商品入库 -->
+                    </div>
+                  </h:form>
+                  
+                </div>
+            <!-- 入库详细记录右侧 -->
+            </div>  
+            <h:inputHidden value="#{outStorageHome.isUp}" id = "isUpId" /> 
+            </td>    
+<a:form>
+	<a:jsFunction name="additional" reRender="harListId" action="#{outStorageHome.addItional}" data="#{outStorageHome.index}" oncomplete="spHd(data);">
+		 <a:actionparam name="priceArr" assignTo="#{outStorageHome.priceArr}" />
+		 <a:actionparam name="expireArr" assignTo="#{outStorageHome.expireArr}" />
+		 <a:actionparam name="countArr" assignTo="#{outStorageHome.countArr}" />
+		  <a:actionparam name="totalWeightArr"   assignTo="#{outStorageHome.totalWeightArr}"/>  
+		 <a:actionparam name="index"   assignTo="#{outStorageHome.index}"/>    
+		 <a:actionparam name="goodsInfoId" assignTo="#{outStorageHome.newGoodsInfoId}" />      
+		 <a:actionparam name="goodsBatchId" assignTo="#{outStorageHome.goodsBatchId}" />  
+		 <a:actionparam name="isUp" assignTo="#{outStorageHome.isUp}" />               
+	</a:jsFunction>
+	<a:jsFunction name="delOneProduct" reRender="harListId" action="#{outStorageHome.delOneProduct}" data="#{outStorageHome.index}" oncomplete="spHd(data);">
+		 <a:actionparam name="priceArr" assignTo="#{outStorageHome.priceArr}" />
+		 <a:actionparam name="expireArr" assignTo="#{outStorageHome.expireArr}" />
+		 <a:actionparam name="countArr" assignTo="#{outStorageHome.countArr}" />
+		 <a:actionparam name="index"   assignTo="#{outStorageHome.index}"/>                  
+	</a:jsFunction>
+	<a:jsFunction name="changeGoodsInfo" reRender="harListId" action="#{outStorageHome.changeGoodsInfo}" data="#{outStorageHome.index}" oncomplete="spHd(data);">
+		 <a:actionparam name="index"   assignTo="#{outStorageHome.index}"/>
+		 <a:actionparam name="goodsInfoId"   assignTo="#{outStorageHome.newGoodsInfoId}"/>    
+		 <a:actionparam name="goodsBatchId" assignTo="#{outStorageHome.goodsBatchId}" />                        
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryFile.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/OutStorageAudit.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+$(".form_datetime_second").datetimepicker({
+		format: "yyyy-mm-dd hh:ii:ss",  
+		autoclose: true,
+		weekStart: 1,
+		language:  'zh-CN',
+		/*startView: 3,
+		minView: 2,
+		maxView: 2,	*/	
+		pickerPosition: "bottom-left"
+	});
+
+var baseId = "#{outStorageHome.baseId}";
+var storageRoomId = "#{outStorageHome.storageRoomId}";
+var goodsType = "#{outStorageHome.goodsType}";
+var time = "#{outStorageHome.outStorageTime}";
+var remark = "#{outStorageHome.remark}";
+var operator = "#{outStorageHome.operaterId}";
+var json = "#{outStorageHome.jsonStr}";
+var storageChangeFormId = "#{outStorageHome.storageChangeFormId}";
+function backButton(){
+	window.location.href("/stock/OutStorage.xhtml?outStorageTime="+time+"&baseId="+baseId+"&storageRoomId="+storageRoomId+"&goodsType="+goodsType+"&remark="+remark+"&operaterId="+operator+"&jsonStr="+json+"&storageChangeFormId="+storageChangeFormId);
+}
+
+//]]>
+
+
+</script>
+</ui:define>
+</ui:composition>

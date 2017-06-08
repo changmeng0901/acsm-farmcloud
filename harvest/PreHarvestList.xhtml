@@ -1,0 +1,242 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+
+		<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+       <td valign="top">
+		<div class="right_c">
+					<div class="r_title">
+                	<div class="r_t_l cm_r_t_l"><span>采销存&#160;&gt;&#160;&#160;采收</span><em>&gt;</em><font size="3">预采管理</font></div>
+                        <div class="fr" style="margin-bottom:-1px;float:right;">
+                        	<ul class="cm_resumeList clear">
+                                <li>
+                                	<a href="#{request.contextPath}#{sessionTake.harvestParam eq 1?'/realplant/HarvestRecordsList.seam':'/realplant/RealPlantList.seam'}"><img src="../asset/images/caishoujilu01.png"/><span>采收记录</span></a>
+                                </li> 
+								<li>
+                                	<a href="javascript:void(0)" disabled="true" class="borderBt" style="cursor:default;"><img src="../asset/images/yucai01.png"/><span>预采管理</span></a>
+                                </li> 
+                                
+                                <li>
+                                	<a href="#{request.contextPath}/harvest/PreSalesList.seam"><img src="../asset/images/yushou01.png"/><span>预售管理</span></a>
+                                </li>  
+                             </ul>                    
+                        	</div>
+                    </div>
+                    <br/>
+                    <div class="z_r_ser">
+                     <h:form id="realPlantListSearch">
+                    	<table cellpadding="0" cellspacing="0" style=" width:380px;">
+                        	<tr>
+                        	      <td>预采收时间：</td>
+                        		  <td>
+                                         <div class="input-append date form_datetime " style="position: relative;width:220px;height:34px;">
+								    <h:inputText  id="harvestTime" styleClass="new_time" readonly="#{facesContext.renderResponse}" value="#{preHarvestList.dateParam}" style="height:34px;"/>
+								    <span class="add-on"><i class="icon-th" style="margin-top:9px;"></i></span>
+								    </div>
+								    <h:inputHidden value="#{preHarvestList.baseId}" id="baseHidden"/>
+								    
+                                    </td>
+                        		 <td style=" margin-right:5px;">
+                                 <h:commandButton id="search" action="/harvest/PreHarvestList.xhtml" styleClass="btn btn-primary" value="搜索" >
+                                </h:commandButton>
+                                </td>
+                           </tr>
+                       </table>    
+                       </h:form>           
+                    </div>
+                    <div class="tjan_01">
+                    	<s:link styleClass="btn btn-success" style="display: #{s:hasRole('pre_harvest_add')?'hidden':'none'}" value="添加" onclick="return checkSelectNew()" view="/harvest/PreHarvestEdit.xhtml" propagation="none">
+                    	<f:param name="preHarvestId" />
+                    	<f:param name="baseId" value="#{preHarvestList.baseId}"/>
+                    	<f:param name="pageNum" value="#{preHarvestList.pageNum}"/>
+                    	</s:link>
+                    </div>
+                   
+                     <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="8" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                    		<th class="ze_bg" width="14%">预采收日期</th>
+                    		<th class="ze_bg" width="12%">可采收棚数量</th>
+                    		<th class="ze_bg" width="10%">作物种类数量</th>
+                    		<th class="ze_bg" width="12%">未来一天总采收量</th>
+                    		<th class="ze_bg" width="12%">未来一周总采收量</th>
+                    		<th class="ze_bg" width="12%">录入人</th>
+                    		<th class="ze_bg" width="13%">录入时间</th>
+                    		<th class="ze_bg" width="15%">操作</th>
+                            
+                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                    	</tr>
+						<ui:repeat value="#{preHarvestList.PreHarvest()}" var="obj"  rowKeyVar="_index">
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            <td class="ze_bg2">
+                    		<h:outputText value="#{obj.preHarvestTime}">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+						    </h:outputText>
+                    		</td>
+                            <td class="ze_bg2">#{obj.tunnelTotal}</td>
+                    		<td class="ze_bg2">#{obj.plantTotal}</td>
+							<td class="ze_bg2"><h:outputText value="#{obj.unitNum1}"/></td> 
+							<td class="ze_bg2"><h:outputText value="#{obj.unitNum2}"/></td>  
+                    		<td class="ze_bg2">#{obj.insertUser.name}</td> 
+							<td class="ze_bg2">
+							<h:outputText value="#{obj.insertTime}">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+						    </h:outputText>
+							</td>                    
+                    		<td class="ze_bg2">
+                            	<s:link propagation="none" style="display: #{s:hasRole('pre_harvest_show')?'hidden':'none'}" view="/#{empty from ? 'harvest/PreHarvest' : from}.xhtml" styleClass="list_view"  id="plantInfoViewId" title="查看">
+								<f:param name="preHarvestId" value="#{obj.id}" />
+								<f:param name="insertTime" value="#{obj.insertTime}" />
+								<f:param name="baseId" value="#{preHarvestList.baseId}"/>
+								<f:param name="pageNum" value="#{preHarvestList.pageNum}"/>
+								</s:link>&#160;
+								
+								
+	                                <s:link propagation="none" view="/harvest/PreHarvestEdit.xhtml"     styleClass="list_edit" id="plantInfoEdit" rendered="#{empty from}" title="编辑">
+	                                <f:param name="preHarvestId" value="#{obj.id}" />
+	                                <f:param name="baseId" value="#{preHarvestList.baseId}"/>
+	                                <f:param name="pageNum" value="#{preHarvestList.pageNum}"/>
+									</s:link>&#160;
+									<s:link propagation="none" style="display: #{s:hasRole('pre_harvest_del')?'hidden':'none'}"  view="/harvest/PreHarvestList.xhtml"   title="删除"  styleClass="list_delete" action="#{preHarvestHome.remove}" onclick="return confirm('确定删除吗？');" id="plantInfoDelete" rendered="#{empty from}">
+	                                <f:param name="preId" value="#{obj.id}" />
+	                                <f:param name="baseId" value="#{preHarvestList.baseId}"/>
+	                                <f:param name="pageNum" value="#{preHarvestList.pageNum}"/>
+	                                </s:link>
+									<s:link propagation="none"  style="text-decoration: none;" view="/harvest/PreHarvestList.xhtml"  action="#{preHarvestHome.exportExcel}" title="导出" >
+	                                <img style="vertical-align:top;" src="#{request.contextPath}/asset/images/dc_.png" ></img>
+	                                	<f:param name="preId" value="#{obj.id}"/>
+	                                	<f:param name="preHarvestId" value="#{obj.id}" />
+	                                	<f:param name="insertTime" value="#{obj.insertTime}" />
+									</s:link>&#160;
+								<ui:fragment rendered="#{preHarvestList.sameTime(obj.insertTime) and (preHarvestList.preState==1) and ((sessionTake.levelId ==4) or (sessionTake.levelId == 3) or (sessionTake.levelId == 5 and sessionTake.communityId==13) or (sessionTake.levelId == 5 and sessionTake.communityId==17))}">
+								<s:link style="text-decoration: none;" view="/harvest/PreHarvestControl.xhtml"  title="预采库管理">
+                                	<img style="vertical-align: top;margin-top: -3px;" src="../asset/images/harvest/yucai.png" />
+                                	<f:param name="preHarvestId" value="#{obj.id}" />
+								<f:param name="insertTime" value="#{obj.insertTime}" />
+								<f:param name="baseId" value="#{preHarvestList.baseId}"/>
+								<f:param name="pageNum" value="#{preHarvestList.pageNum}"/>
+                                </s:link>
+                                </ui:fragment>
+                            </td>
+                            
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</ui:repeat>
+                    </table>
+                     <s:div styleClass="farming_nodata" rendered="#{empty preHarvestList.resultList}">
+                                    	<div class="warning_noData">
+                                        	<em>很遗憾，没有预采信息</em>
+                                            <p>快来添加吧！</p>
+                                        </div>
+                                    </s:div>
+                    
+ <!--翻页开始-->		<s:decorate rendered="#{not empty preHarvestList.resultList}" >
+	                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+	                    	<tr>
+	                    	<s:div rendered="#{not empty preHarvestList.resultList}">
+				                <s:decorate rendered="#{!preHarvestList.previousExists }">
+				                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+				                </s:decorate>
+				                 <s:decorate rendered="#{preHarvestList.previousExists }">
+				                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+				                </s:decorate>
+				                <s:decorate rendered="#{preHarvestList.previousExists }">
+		                            <td class="td_t_b">
+			                            <s:link propagation="none"  view="/harvest/PreHarvestList.xhtml" >首页
+			                            	<f:param name="pageNum" value="0" />
+			                            </s:link>
+		                            </td>
+		                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+			                            <s:link propagation="none"  view="/harvest/PreHarvestList.xhtml"  styleClass="no_n" >
+			                            	<f:param name="pageNum" value="#{preHarvestList.previousFirstResult}"/>&lt;
+			                            </s:link>
+		                            </td>
+		                        </s:decorate>
+						        <a4j:repeat var="_page" value="#{preHarvestList.pageList}" rowKeyVar="_index">
+									<td class="td_t_b #{preHarvestList.previousExists or _index >0 ?'td_t_t':''} #{_page eq preHarvestList.pageNum?'onp':''}">
+										<s:link propagation="none"  view="/harvest/PreHarvestList.xhtml" value="#{_page}" id="previousPage">
+											<f:param name="pageNum" value="#{_page}" />
+										</s:link>
+									</td>
+								</a4j:repeat>
+								<s:decorate rendered="#{preHarvestList.nextExists}">
+	                            <td class="td_t_b td_t_t">
+		                            <s:link propagation="none"  view="/harvest/PreHarvestList.xhtml"   styleClass="no_d" >
+		                            	<f:param name="pageNum" value="#{preHarvestList.nextFirstResult}" />&gt;
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t">
+									 <s:link propagation="none"  view="/harvest/PreHarvestList.xhtml" >尾页
+									 	<f:param name="pageNum" value="#{preHarvestList.PAGE_COUNT}" />
+									 </s:link>
+								</td>
+								</s:decorate>
+				                <td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{preHarvestList.PAGE_COUNT}页</td>
+	                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+								</s:div>
+	                    	</tr>
+	                    </table>
+	                </s:decorate>
+                    <!--翻页结束-->
+            <!--印刷管理下结束-->
+					
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+</td>
+<a4j:form>
+		<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+         <a4j:jsFunction name="changeBaseMe" action="#{preHarvestList.changeBaseMe}">
+        <a4j:actionparam name="baseId" assignTo="#{preHarvestList.baseId}"/>
+        </a4j:jsFunction>
+        </a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+  window.onload = function () {
+    jquery('.selectpicker').selectpicker();
+  };
+
+  jquery(".form_datetime").datetimepicker({
+	    format: "yyyy-mm-dd",
+	    autoclose: true,
+		 weekStart: 1,
+		  //startDate: "2014-08-14 10:00",
+		 language:  'zh-CN',
+	    minView:2,
+	    pickerPosition: "bottom-left"
+	    });
+//]]>
+</script>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,596 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   xmlns:a4j="http://richfaces.org/a4j" 
+   contentType="text/html">
+   
+<html >
+<head>
+	<!-- #{panoramaViewHome.hotsList()} -->
+ 	<title>#{panoramaViewHome.kg.shareTitle}</title>
+  	<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta http-equiv="x-ua-compatible" content="IE=edge" />
+	<link rel="stylesheet" id="sc" type="text/css" href="#{request.contextPath}/asset/css/panorama/PanoramaZs.css"/>
+	<style>
+		@-ms-viewport { width:device-width; }
+		@media only screen and (min-device-width:800px) { html { overflow:hidden; } }
+		ul, ol, li {
+	    	list-style: none;
+		}	
+		html { height:100%; }
+		body { height:100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#FFFFFF; background-color:#000000; font-family: '微软雅黑';    color: #525252;}
+		a{ color:#AAAAAA; text-decoration:underline; }
+		a:hover{ color:#FFFFFF; text-decoration:underline; }
+		*{margin:0;padding:0;}
+		.black_op50{position:absolute; left:0; top:0; right:0; bottom:0; background-color:#000; opacity:0.5; filter:alpha(opacity=50); }
+		.maturity_block{ position:absolute; left:50%; top:50%; z-index:2; width:300px; padding:20px 10px; border-radius:8px; box-shadow:0 0 15px -2px #564f3d;
+ 			box-sizing:content-box; background-color:#fff; font-size:14px; color:#333; }
+		.close_tipbtn_4{ position:fixed;		right:10px; top:10px; z-index:2; width:41px; height:41px; background:url(#{request.contextPath}/asset/images/map/maturity_ico4.png) no-repeat; cursor:pointer; }
+		.maturity_block .tip_pic{ padding-bottom:10px; text-align:center; }
+		.maturity_block .tip_pic img{ width:36px-; height:36px-; vertical-align:top; }
+		.maturity_block .tip_txt1{ line-height:22px; text-align:center; }
+		.maturity_block .tip_txt1 .colors_b50{ color:#69b631; }
+		.maturity_block .tip_txt1 font{ color:#ff9f13; }
+		.fl{
+			float:left;
+			}
+		.fr{
+			float:right;
+			}
+		.clear{
+			clear:both;
+			}
+		.clear:after{
+			display:block;
+			clear:both;
+			content:"";
+			visibility:hidden;
+			height:0;
+			overflow:hidden;
+			}
+		.opacity_b50{
+			position:absolute;
+			left:0;
+			top:0;
+			z-index:-1;
+			width:100%;
+			height:100%;
+			background-color:#000;
+			opacity:0.5;
+			filter:alpha(opacity=50);
+			}
+		.btn{
+			height:34px;
+			line-height:20px;
+			padding:6px 15px;
+			border:1px solid #fff;
+			box-sizing:border-box;
+			font-size:12px;
+			color:#fff;
+			}
+		.btn_primary{
+			border:1px solid #5aaae8;
+			background-color:#5aaae8;
+			cursor:pointer;
+			}
+		.btn_default{
+			background:none;
+			cursor:pointer;
+			}
+		.streetscape_modal{
+			z-index:100;
+			position:fixed;
+			left:50%;
+			top:65%;
+			width:400px;
+			height:180px;
+			margin:-90px 0 0 -200px;
+			}
+		.modal{
+			background:url(/asset/images/growth/zwleft_04.png) repeat;
+			z-index:5000;
+			position: absolute;
+		}
+		.modal_block{
+		}
+		.modal_header{
+			padding:0 15px;
+			}
+		.modal_header .h_title{
+			height:34px;
+			line-height:34px;
+			font-weight:normal;
+			font-size:12px;
+			color:#fff;
+			}
+		.modal_header .h_title img{
+			margin-right:5px;
+			vertical-align:middle;
+			}
+		.modal_body{
+			padding:0 15px;
+			}
+		.modal_body .textarea{
+			width:100%;
+			height:80px;
+			padding:10px;
+			box-sizing:border-box;
+			resize:none;
+			font-size:12px;
+			color:#b2b2b2;
+			}
+		.modal_footer{
+			padding:15px;
+			}
+		.streetscape_say{
+			z-index:100000;
+			position:fixed;
+			left:0;
+			bottom:0;
+			width:100%;
+			padding:15px 15px 0;
+			background-color:#fff;
+			box-sizing:border-box;
+			}
+		.streetscape_say .input_text{
+			width:100%;
+			border:1px solid #ddd;
+			border-radius:5px;
+			color:#b2b2b2;
+			}
+		.say_footer{
+			padding:15px 0;
+			}
+		.border_red{
+			border-color: #f00;
+		}
+	</style>
+  	</head>
+<body>
+	<em class="close_tipbtn_4" id="close_tipbtn_4" style="display:none" onclick="closeFrame()"></em>
+    <div class="maturity_block" id="maturity_block" style="display:none">
+    	<p class="tip_pic"><img src="#{request.contextPath}/asset/images/map/maturity_ico2.png" /></p>
+        <p class="tip_txt1">抱歉，您的四季田景不存在！</p>
+    </div>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/map/JsMap.js"> </script> 
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.10.2.min.js"></script>	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap.min.js"></script>
+	<script src="#{request.contextPath}/asset/panorama/tour.js"></script>
+<div id="pano" style="width:100%; height:95%;z-index:1">
+	<noscript><table style="width:100%;height:80%;"><tr style="vertical-align:middle;"><td><div style="text-align:center;">ERROR:<br/><br/>Javascript not activated<br/><br/></div></td></tr></table></noscript>
+	<script type="text/javascript">
+	//<![CDATA[
+	var mydomain = "#{dataDicConstant.getDomainNameUrl()}";
+	var domain = "#{dataDicConstant.getWxDomainNameUrl()}";
+	var workpath = "#{request.contextPath}";
+	var url = "#{dataDicConstant.getWxDomainNameUrl()}/weixinservice/farmeasy/adopter?callback=?&method=js_ticket";
+	var myurl = window.location.href.split("#")[0];
+	var mytitle = "#{panoramaViewHome.share_title}";
+	var myname="#{panoramaViewHome.share_des}";
+	var krgid = "#{panoramaViewHome.kg.krpanosGroupId}";
+	var placeShow = "#{panoramaViewHome.kg.placeShow}";
+	var assetShow = "#{panoramaViewHome.kg.assetShow}";
+	var shareImgUrl = "#{panoramaViewHome.kg.shareImgUrl}";
+	myname = myname.replace(/<\/br\>/g,"\n");
+	//没有上传分享图片，则取第一个图
+	var myImg="";
+	if(shareImgUrl==""){
+		myImg="#{panoramaViewHome.firstUrl}";
+		if(myImg!=""){
+			myImg += "/mobile_f.jpg@150h_150w%7C150-1ci.png_1an.src";
+		}
+	}else{
+		myImg=shareImgUrl+"@150h_150w%7C150-1ci.png_1an.src";
+	}	 
+	
+	var appId;
+	jQuery.ajax({
+		url : url,
+		data : {url:myurl},
+		dataType: 'jsonp',  
+		crossDomain: true,  
+		success: function (data) { 
+			var wNoncestr=data.noncestr;
+			var wTimestamp=data.timestamp;
+			var wsignature=data.signature;
+			appId = data.appid;
+					wx.config({      
+						debug:false,
+						appId:appId,
+						timestamp:wTimestamp,
+						nonceStr:wNoncestr,
+						signature:wsignature,
+						jsApiList: ['checkJsApi',
+									'onMenuShareTimeline',
+									'onMenuShareAppMessage',
+						            'onMenuShareQQ',
+						            'onMenuShareWeibo','startRecord'
+									]  });
+
+					 //步骤四：通过ready接口处理成功验证    
+					    wx.ready(function(){  
+					    	wx.checkJsApi({                
+					            jsApiList: ['onMenuShareTimeline']
+					    		});
+					    	wx.onMenuShareTimeline({
+								title: mytitle,
+								desc: myname,
+								link: myurl,
+								imgUrl: myImg,
+								trigger: function(res) {// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+									},
+								success: function(res) {
+									saveForward(krgid,3,#{panoramaViewHome.kg.enterpriseInfoId});
+								},
+								cancel: function(res) {
+								}
+							});
+					    	wx.onMenuShareAppMessage({
+					    		title:  mytitle,
+								desc:  myname,
+								link: myurl,
+								imgUrl: myImg,
+					    	      trigger: function (res) {
+					    	        // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+							    	      },
+					    	      success: function (res) {
+					    	    	  saveForward(krgid,3,#{panoramaViewHome.kg.enterpriseInfoId});
+					    	      },
+					    	      cancel: function (res) {
+					    	      },
+					    	      fail: function (res) {
+					    	      }
+					    	    });
+					    	wx.onMenuShareQQ({
+					    		title:  mytitle,
+								desc:  myname,
+								link: myurl,
+								imgUrl: myImg,
+						          trigger: function (res) {
+						          },
+						          complete: function (res) {
+						          },
+						          success: function (res) {
+						        	  saveForward(krgid,3,#{panoramaViewHome.kg.enterpriseInfoId});
+						          },
+						          cancel: function (res) {
+						          },
+						          fail: function (res) {
+						          }
+						        });
+						});
+						
+    	},
+    	error: function(XMLHttpRequest, textStatus, errorThrown){
+    		alert(errorThrown);
+    	}
+	})
+	//]]>
+	</script>
+	<script>
+	//<![CDATA[
+	    var total = "#{panoramaViewHome.total}";
+	    function selecthtml5usage(){
+			if( navigator.userAgent.indexOf("Android") >= 0 && navigator.userAgent.indexOf("QQ") >= 0 )
+				return "auto+css3d"
+			return (document.domain ? "prefer" : "auto");
+		}
+		function showtip(){
+			var oMaturityW = 320;
+			var oMaturityH = document.getElementById('maturity_block').height;
+			console.log(oMaturityW/2 + "        " + oMaturityH/2);
+			document.getElementById('maturity_block').style.marginLeft = -160+"px";
+			document.getElementById('maturity_block').style.marginTop = -72.5+"px";
+			document.getElementById('maturity_block').style.display = "block";
+			//if(closelog)
+			//	document.getElementById('close_tipbtn_4').style.display = "block";
+		}
+	    var hmap = new JsMap();
+	    var jsa = #{panoramaViewHome.listStr};
+	    var comment = #{panoramaViewHome.commStr};
+		var vars = {};
+		jQuery(function(){
+			//文本框获取焦点和失去焦点状态
+			jQuery("input[type=text],textarea").focus(function(){
+				var txt_val = this.defaultValue;
+				if( jQuery(this).val() == txt_val ){
+					jQuery(this).val("");
+					jQuery(this).css("color","#525252")	
+				}	
+			});	
+			jQuery("input[type=text],textarea").blur(function(){
+				var txt_val = this.defaultValue;
+				if( jQuery(this).val() == "" ){
+					jQuery(this).val( txt_val );	
+					jQuery(this).css("color","#b2b2b2")	
+				}	
+			});	
+			
+		});
+		closeFrame = function (){
+			window.parent.closeKrpanoFrame();
+		}
+		jQuery(".input_text,textarea").on('input',function(e){  
+			var val = jQuery(this).val();
+			   if(val.length>20){
+					val = val.substring(0,20);  
+					jQuery(this).val(val);
+			   }
+			}); 
+		function log4 (err){
+			alert(err);
+			}
+		//]]>
+	</script>
+	<script src="#{request.contextPath}/asset/panorama/skin/edit_util.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	var closelog = "#{request.getParameter('closelogo')}";
+	closelog = closelog==""?true:false;
+	var navigation_url = "http://api.map.baidu.com/marker?location=#latlng#&#38;title=#title#&#38;content=#address#&#38;output=html&#38;src=acsm|acsm";
+	if(total>0)
+		//var s;
+		var ppp = embedpano({swf:"#{request.contextPath}/asset/panorama/tour.swf", xml:"#{request.contextPath}/Panorama.xml?gid=#{panoramaViewHome.gid}&kid=#{panoramaViewHome.v1_krpanos_id}&ccc=#{panoramaViewHome.close}&type=#{panoramaViewHome.type}", target:"pano", html5:"prefer", passQueryParameters:false, vars:vars,wmode:"Opaque", mobilescale:1.0});
+	else
+		setTimeout(function(){showtip();},1);
+	function resize()
+	{
+		var ph = (typeof(window.innerHeight) == 'number') ? window.innerHeight : ((document.documentElement && document.documentElement.clientHeight) ? document.documentElement.clientHeight : ((document.body && document.body.clientHeight) ? document.body.clientHeight : 500));
+		
+		document.getElementById("pano").style.height = ph+"px"
+	}
+	var obj = document.getElementById("krpanoSWFObject");
+	window.onresize = resize;
+	
+	resize();
+	//]]>
+	</script>
+</div>
+<a4j:form id="formid" >
+<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+<a4j:jsFunction name="addView" eventsQueue="mainQueue" action="#{panoramaViewHome.addView}">
+<a4j:actionparam name="param1" assignTo="#{panoramaViewHome.krpano_id}"></a4j:actionparam>
+</a4j:jsFunction>
+<a4j:jsFunction name="addGood" eventsQueue="mainQueue" action="#{panoramaViewHome.addGood}" data="#{panoramaViewHome.re_goods_Str}" oncomplete="addGood_next(data);">
+<a4j:actionparam name="param1" assignTo="#{panoramaViewHome.krpano_id}"></a4j:actionparam>
+<a4j:actionparam name="param2" assignTo="#{panoramaViewHome.openid}" />
+</a4j:jsFunction>
+<a4j:jsFunction name="addComment" eventsQueue="mainQueue" action="#{panoramaViewHome.addComment}" data="#{panoramaViewHome.commStr}" oncomplete="addComment_next(data);">
+<a4j:actionparam name="param1" assignTo="#{panoramaViewHome.krpano_id}"></a4j:actionparam>
+<a4j:actionparam name="param2" assignTo="#{panoramaViewHome.ath}" />
+<a4j:actionparam name="param3" assignTo="#{panoramaViewHome.atv}" />
+<a4j:actionparam name="param4" assignTo="#{panoramaViewHome.comment}" />
+<a4j:actionparam name="param5" assignTo="#{panoramaViewHome.openid}" />
+<a4j:actionparam name="param6" assignTo="#{panoramaViewHome.nickname}" />
+<a4j:actionparam name="param7" assignTo="#{panoramaViewHome.head}" />
+</a4j:jsFunction>
+
+<a4j:jsFunction name="addContact" eventsQueue="mainQueue" action="#{panoramaViewHome.addContact}" oncomplete="addContact_next();">
+<a4j:actionparam name="param1" assignTo="#{panoramaViewHome.k4gid}"></a4j:actionparam>
+<a4j:actionparam name="param2" assignTo="#{panoramaViewHome.tel}"></a4j:actionparam>
+<a4j:actionparam name="param3" assignTo="#{panoramaViewHome.contact_type}"></a4j:actionparam>
+<a4j:actionparam name="param4" assignTo="#{panoramaViewHome.k4id}"></a4j:actionparam>
+</a4j:jsFunction>
+
+<a4j:jsFunction name="addContact2" eventsQueue="mainQueue" action="#{panoramaViewHome.addContact}" oncomplete="addContact_next2();">
+<a4j:actionparam name="param1" assignTo="#{panoramaViewHome.k4gid}"></a4j:actionparam>
+<a4j:actionparam name="param2" assignTo="#{panoramaViewHome.tel}"></a4j:actionparam>
+<a4j:actionparam name="param3" assignTo="#{panoramaViewHome.contact_type}"></a4j:actionparam>
+<a4j:actionparam name="param4" assignTo="#{panoramaViewHome.k4id}"></a4j:actionparam>
+</a4j:jsFunction>
+
+<a4j:jsFunction name="showSceneInfo" eventsQueue="mainQueue" action="#{panoramaViewHome.showSceneInfo}" oncomplete="showSceneInfo_next();" reRender="scene_info">
+<a4j:actionparam name="param1" assignTo="#{panoramaViewHome.k4gid}"></a4j:actionparam>
+</a4j:jsFunction>
+
+<a4j:jsFunction name="customer" action="#{redPacketHome.customer}" data="#{redPacketHome.returnCustomer}" oncomplete="returnPack(data)">
+		<a4j:actionparam name="phone" assignTo="#{redPacketHome.phone}"/>
+		<a4j:actionparam name="couId" assignTo="#{redPacketHome.couId}"/>
+		<a4j:actionparam name="prId" assignTo="#{redPacketHome.prId}"/>
+		<a4j:actionparam name="typeAorP" assignTo="#{redPacketHome.typeAorP}"/>
+	</a4j:jsFunction>
+
+<a4j:jsFunction name="saveForward" action="#{aerviceDataAnalysisHome.saveForward}">
+		<a4j:actionparam name="id" assignTo="#{aerviceDataAnalysisHome.aid}"/>
+		<a4j:actionparam name="type" assignTo="#{aerviceDataAnalysisHome.type}"/>
+		<a4j:actionparam name="enterpriseInfoId" assignTo="#{aerviceDataAnalysisHome.enterpriseInfoId}"/>
+	</a4j:jsFunction>
+</a4j:form>
+<!-- 微信街景说一说 -->
+	<div class="streetscape_say" style="display:none;z-index:5000;">
+        <input class="btn input_text" type="text" value="随便说点儿吧！（最多20个字）" autocomplete="off"/>
+        <div class="say_footer clear">
+        	<div class="fl" onclick="hideComment()" style="color:black;font-size:12px;">隐藏评论</div>
+            <div class="fr"> 
+                <button class="btn btn_primary authorizebutton" onclick="commentOk(1)">发表</button>
+                <button class="btn btn_default" style="border:1px solid #ddd;color:#666;" onclick="cancelComment(1);">取消</button>
+            </div>
+        </div
+    ></div>
+    
+    <!-- pc街景说一说 -->
+	<div class="streetscape_modal" style="display:none;z-index:5000;">
+    	<span class="opacity_b50"></span>
+        <div class="modal_content">
+        	<div class="modal_header">
+            	<h3 class="h_title"><img src="#{request.contextPath}/asset/panorama/skin/Streetscape_icon1.png" />说一说</h3>
+            </div>
+            <div class="modal_body">
+            	<textarea class="textarea" autocomplete="off">随便说点儿吧！（最多20个字）</textarea>
+            </div>
+            <div class="modal_footer clear">
+            	<div class="fl" onclick="hideComment()" style="color:white;font-size:12px;">隐藏评论</div>
+            	<div class="fr">
+                    <button class="btn btn_primary" onclick="commentOk(2);">发表</button>
+                    <button class="btn btn_default" onclick="cancelComment(2);">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	
+	<input type="button" onclick="alert(1);jQuery('.modal_redpacket').show();openJoin();alert(2)" value="测试按钮" style="display:none;font-size:30px;    position: fixed;    top: 100px;"/>
+	<!-- 服务预订 -->
+	<div class="modal fade modal_mark" id="modal_mark" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="font-size:12px;z-index:5000" data-backdrop="static" data-keyboard="false">
+	<div class="modal_block modalMark " style="margin-left: -145px; margin-top: -109px; width: 290px;">
+	<div class="modal_header2">
+		<h3 class="m_title"><img src="#{request.contextPath}/asset/images/panorama/icon_modal_gz.png" />关注农场</h3>
+	    <i class="m_close" onClick="CloseModal('.modal_mark')"></i>
+	</div>
+	<div class="modal_body">
+	    <p class="p_tip" style="#{empty panoramaViewHome.kg.markStr ? '':'display:none'}">
+	    您可在下面留下您的联系方式，<br />
+	    我们的客服会与您联系！
+	    </p>
+	     <p class="p_tip" style="#{empty panoramaViewHome.kg.markStr ? 'display:none':''}">
+	    您可以拨打<span class="color_y">#{panoramaViewHome.kg.markStr}</span>与我们联系，<br />
+	    也可在下面留下您的联系方式，<br />
+	    我们的客服会与您联系！
+	    </p>
+	    <input class="input_txt" type="text" id="mark_phone" name="mark_phone" value="请输入手机号" />
+	    <input type="button" class="input_btn" value="提交" onclick="checkMark()"/>
+	</div>
+	</div>
+	</div>
+	
+	<!-- 会员加入 -->
+	<!-- 更多设置 -->
+	<div class="modal fade" id="MoreSetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="font-size:12px;z-index:5000" data-backdrop="static" data-keyboard="false">
+	<div class="modal_block modal_moreset" >
+	<div class="modal_header2">
+	    <i class="m_close" onclick="closeMoreSet();"></i>
+	</div>
+	<div class="modal_body">
+	    <ol class="moreset_list">
+	    	<li class="clear setRotateShow" style="display:none;">
+	        	<img class="i_icon  " src="#{request.contextPath}/asset/images/panorama/icon_pano_zdxz.png" />自动旋转
+	            <div class="switch_block fr onoff " onclick="setRotateShow_next(this)"><i></i></div>
+	        </li>
+	    	<li class="clear setGyroShow" style="display:none;">
+	        	<img class="i_icon " src="#{request.contextPath}/asset/images/panorama/icon_pano_tly.png" />陀螺仪
+	            <div class="switch_block fr " onclick="setGyroShow_next(this)"><i></i></div>
+	        </li>
+	    	<li class="clear setCardShow" style="cursor: pointer;display:none;" onclick="showCard()">
+	        	<img class="i_icon " src="#{request.contextPath}/asset/images/panorama/icon_pano_qycard.png" />企业名片
+	            <img class="arrow_rt" src="#{request.contextPath}/asset/images/panorama/icon_pano_arrow.png" />
+	        </li>
+	    </ol>
+	</div>
+	</div>
+	</div>
+	<!-- 企业名片 -->
+<div class="modal fade" id="CardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="font-size:12px;" >
+<div class="modal-dialog pano_dialog card_dialog">
+<div class="modal-content">
+	<div class="modal-header clear">
+        <h4 class="modal-title fl" style="font-size:14px;font-family: '宋体';" onclick=""><img src="/asset/images/aerialphoto/icon_qycard.png" />企业名片</h4>
+        <div onclick="closeCardModal();" style="width:22px;height:22px;float:right;"><img src="/asset/panorama/skin/colose_03.png" width="22px" height="22px" style="float:right;  "  onclick="closeCardModal();"/></div>
+    </div>
+    <div class="modal-body modal_body" style="overflow-x:hidden;overflow-y:auto;">
+        <dl class="card_dl">
+        	<dt class="card_dt">
+            	<img id="qycard_logo" src="#{panoramaViewHome.bimg}" />
+            </dt>
+            <dd class="card_dd">
+            	<p class="qycard_name" id="qycard_name" style="#{empty panoramaViewHome.bname ?'display:none':''}">#{panoramaViewHome.bname}</p>
+                <p class="qycard_phone"  style="#{empty panoramaViewHome.bphone ?'display:none':''}"><img src="/asset/images/aerialphoto/icon_phone.png "/><span class="color_y" id="qycard_phone">#{panoramaViewHome.bphone}</span></p>
+                <p class="qycard_mail"  style="#{empty panoramaViewHome.bemail ?'display:none':''}"><img src="/asset/images/aerialphoto/icon_mail.png "/><span id="qycard_mail">#{panoramaViewHome.bemail}</span></p>
+                <p class="qycard_weibo"  style="#{empty panoramaViewHome.bweibo ?'display:none':''}"><img src="/asset/images/aerialphoto/icon_come.png "/><span id="qycard_weibo">#{panoramaViewHome.bweibo}</span></p>
+                <p class="qycard_addr"  style="#{empty panoramaViewHome.baddress ?'display:none':''}"><img src="/asset/images/aerialphoto/icon_addr.png "/><span id="qycard_addr">#{panoramaViewHome.baddress}</span></p>
+            </dd>
+        </dl>
+        <strong class="title_intro">企业介绍</strong>
+        <div class="text_info" id="qycard_intro">
+        	<h:outputText escape="false" value="#{panoramaViewHome.binfo}" />
+        </div>
+    </div>
+</div>
+</div>
+</div>
+	<!--（0-2）场景介绍模态框-->
+<div class="modal fade" id="SceneModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="" >
+<div class="modal-dialog pano_dialog scene_dialog">
+<div class="modal-content">
+	<div class="modal-header clear">
+	<div  style="width:22px;height:22px;float:right;margin-right:15px;" onclick="closeSceneModal();"><img src="/asset/panorama/skin/colose_03.png" width="22px" height="22px" style="float:right; "  onclick="closeSceneModal();"/></div>
+    </div>
+    <div class="modal-body modal_body" style="overflow-x:hidden;overflow-y:auto;margin-top:0px;">
+		<s:div id="scene_info">
+			<h:outputText escape="false" value="#{panoramaViewHome.sceneInfo}" />
+		</s:div>
+    </div>
+</div>
+</div>
+</div>
+<!--（0-3）分享模态框-->
+<div class="modal fade" id="ShareModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="">
+<div class="modal-dialog pano_dialog share_dialog" style="width:500px">
+<div class="modal-content">
+	<img src="/asset/panorama/skin/colose_03.png" width="22px" height="22px" style="float:right;     padding-right: 5px;   padding-top: 5px;"  onclick="jQuery('#ShareModal').hide();"/>
+    <div class="modal-body modal_body">
+    
+       <strong class="text_company">#{panoramaViewHome.share_title}</strong>
+       <p class="text_tip">扫描二维码，将链接分享给好友</p>
+       <img class="code_pic" src="/asset/images/aerialphoto/code_pic1.jpg" />
+       <input class="ipt_link" type="text" value="" style="background-color:#fff;color:#f00;" />
+       <button class="btn_copy" style="color:white;"><img src="/asset/images/aerialphoto/icon_copylink.png" />复制链接</button>
+       
+    </div>
+</div>
+</div>
+</div>
+<!--（0-3）分享模态框-->
+<!-- 地图 开始-->
+<div class="modal fade" id="MapModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:" >
+<div class="modal-dialog pano_dialog share_dialog" >
+<iframe src="" id="mapIframe" frameborder="no" border="0" style="display:none;width:100%;height:100%;"/>
+
+</div>
+</div>
+<!-- 微信提示 -->
+<div class="modal fade" id="WxTipsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="font-size:12px;">
+<div class="modal-dialog pano_dialog share_dialog">
+<div style="float:right;">
+<img src="#{request.contextPath}/asset/images/panorama/wx_tips.png" width="300px"/>
+</div>
+<div style="    float: right;    width: 300px;    text-align: center;    padding-top: 50px;" onclick="jQuery('#WxTipsModal').hide();">
+<img src="#{request.contextPath}/asset/images/panorama/wx_know.png" width="125px" style="margin-left:-40px"/>
+</div>
+</div>
+</div>
+<!--  -->
+<!-- 地图结束 -->
+<script type="text/javascript">
+	//<![CDATA[
+	var url="RedPacket.seam"
+	var hb='#{panoramaViewHome.coupon_id}';
+	var pr=krgid;
+	var typeAorP=3;
+function returnPack(obj){
+	if(obj==2){
+		window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&typeAorP="+typeAorP;
+	}else if(obj==3){
+		window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&typeAorP="+typeAorP;
+	}else if(obj==4){
+		window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&typeAorP="+typeAorP;
+	}else if(obj==5){
+		jQuery('#tck_modal1').hide()
+		jQuery('#tck_modal3').hide()
+	}else{
+		window.location.href=url+"?num="+obj.split('_')[0]+"&phone="+obj.split('_')[1]+"&couId="+hb+"&prId="+pr+"&typeAorP="+typeAorP;
+	}
+}
+//]]>
+</script>
+</body>
+</html>
+</f:view>

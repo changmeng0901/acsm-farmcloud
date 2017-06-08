@@ -1,0 +1,198 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<style>
+	.pr_td span a{text-align:left;}
+	.pr_td span a span{*text-align:left; }
+	.pr_td span a span{ *width:230px;}
+	.pr_th{text-align: center;}
+	
+	
+	</style>
+	<!-- #{printPackagingList.getProductInfo()}-->
+       <td valign="top"  width="100%">
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">
+						<s:link propagation="none"  view="/record/OneBoxOrderInfoList.xhtml" style="text-decoration:none;color:black;" value="包装管理 ">
+                        </s:link>
+						&#160;&gt;&#160;&#160;<font size="3">包装打印</font></div>
+                    </div>
+                    <div class="z_r_ser" style="*margin-top:30px; *margin-bottom:30px;">
+                    </div>
+                   <div class="pr_ad">
+                   
+                        <a class="btn btn-success" href="#" onclick="putppk();"><strong style="cursor: pointer;">批量打印</strong></a>
+						<h:inputHidden id="orderInfoIds" value="#{printPackagingList.orderInfoIds}"/>
+                    </div>
+					<table width="100%" class="pr_table" cellpadding="0" cellspacing="0" id="table">
+                    	<tr>
+                    	 <th class="pr_th" width="2%" style="border-left:1px solid #ddd; padding-left:10px;"><input type="checkbox" id="th" name="th"/></th>
+                    		<th class="pr_th" width="15%">名称</th>
+                    		<th class="pr_th" width="14%">规格</th>
+                    		<th class="pr_th" width="10%">数量</th>
+                    		<th class="pr_th" width="33%">履历</th>
+                    		<th class="pr_th" width="5%">打印数量</th>
+                    		<th class="pr_th" width="21%" style="border-right:1px solid #ddd;">打印</th>
+                    	</tr>
+                    	<a4j:repeat value="#{printPackagingList.goodsInfoList}" var="_gi" rowKeyVar="_index">
+                    	<tr>
+                    		<td class="pr_td" style="padding-left:10px;">
+								<input type="checkbox"  name="td" id="td" value="#{_gi.goodsInfoId}"/>
+                    		</td>
+                            <td class="pr_td"><h:outputText  value="#{_gi.name}" /></td>
+                    		<td class="pr_td"><h:outputText  value="#{_gi.goodsSpec}" /></td>
+                    		<td class="pr_td"><h:outputText  value="#{_gi.productSumTow}"/></td>
+                    		<td class="pr_td" align="center">
+                    			<span id="select#{_gi.goodsInfoId}">
+	                    			<h:selectOneMenu immediate="true" id="productRecordId" styleClass="productRecordId#{_gi.goodsInfoId} selectpicker" style="width:146px; text-align:left;" value="#{_gi.productInfo.productRecordId}" >
+										<s:selectItems value="#{printPackagingList.getRecordList(_gi.goodsInfoId)}" var="rl" label="#{rl.plantName}" itemValue="#{rl.productInfoId}" />
+									</h:selectOneMenu>
+								</span>
+                    		</td>
+                    		<td class="pr_td" align="center">
+                    			<input id="productCount#{_gi.goodsInfoId}" type="text" value="#{_gi.productSumTow}" class="form-control nw805" style="margin-right:auto; margin-left:auto;width:80px; text-align:center;"/>
+							</td>
+							
+                            <td class="pr_td">
+                                <a class="print_fa" href="#" onclick="putppkinfo(#{_gi.goodsInfoId});">打印</a>
+                            </td>
+                    	</tr>
+                    	</a4j:repeat>
+                    </table>
+            <!--印刷管理下结束-->
+         			<a4j:form>
+						<a4j:jsFunction name="changeExpireTimes" action="#{printPackagingList.putJSON}" data="#{printPackagingList.delAddress}" oncomplete="putAddressComplete(data);">
+							<a4j:actionparam name="jsonstr" assignTo="#{printPackagingList.jsonstr}"/>
+							<a4j:actionparam name="orderInfoIds" assignTo="#{printPackagingList.orderInfoIds}"/>
+						</a4j:jsFunction>
+					</a4j:form>
+					<div class="ckd_button" style="margin-top:35px;">
+                    	<a href="#{request.contextPath}/record/OneBoxOrderInfoList.seam" class="btn btn-default">返回</a>
+                    </div>
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+</td>
+   
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/superfish.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/supersubs.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/hoverIntent.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.flot.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui-select.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/customInput.jquery.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.dataTables.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.fancybox-1.3.4.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.filestyle.mini.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.treeview.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.tipsy.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.wysiwyg.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/inline.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/utils.js"></script>
+<script type="text/javascript" src="../asset/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+$J = jQuery.noConflict();
+</script>
+<script>
+function checkAll (name,obj){
+	jquery("input[name='"+name+"']").prop("checked",obj.checked);
+	
+}
+//拼接json
+function putppk(){
+	var flag = false;
+	var pif = "";
+	var jsonstr;
+	var orderInfoIds =  jquery("#orderInfoIds").val();
+	jsonstr="{productInfo:[";
+	jquery("input[name='td']:checked").each(function(){
+		var productId = this.value;
+		var productRecordId = jquery(".productRecordId"+productId).val();
+		var productCount = jquery("#productCount"+productId).val();
+		var reg = /^[1-9]+[0-9]*]*$/; 
+		if (!reg.test(productRecordId)){
+			alert('打印中有未选择履历的商品，请新建履历或者取消选中!');
+			flag = true;
+			return false;
+		}
+		jsonstr += "{\"productId\""+ ":" + "\"" + productId + "\",";
+		jsonstr += "\"productRecordId\""+ ":" + "\"" + productRecordId + "\",";
+		jsonstr += "\"productCount\""+ ":" + "\"" + productCount + "\"},";
+		pif += productId;
+	});
+	if (flag) {
+		return false;
+	}
+	jsonstr = jsonstr.substring(0,jsonstr.lastIndexOf(','));
+	jsonstr += "]}";
+	if(pif==""){
+		alert("请选择需要打印的商品!");
+		return;
+	}
+	if(window.confirm("确认打印订单？")){
+		changeExpireTimes( jsonstr,orderInfoIds);
+	}
+}
+
+//拼接json
+function putppkinfo(obj){
+	var jsonstr;
+	var orderInfoIds =  jquery("#orderInfoIds").val();
+	jsonstr="{productInfo:[";
+	var productRecordId = jquery(".productRecordId"+obj).val();
+	var productCount = jquery("#productCount"+obj).val();
+	checkInt(productRecordId,'请选择履历!');
+	jsonstr += "{\"productId\""+ ":" + "\"" + obj + "\",";
+	jsonstr += "\"productRecordId\""+ ":" + "\"" + productRecordId + "\",";
+	jsonstr += "\"productCount\""+ ":" + "\"" + productCount + "\"},";
+	jsonstr = jsonstr.substring(0,jsonstr.lastIndexOf(','));
+	jsonstr += "]}";
+	if(window.confirm("确认打印订单？")){
+		changeExpireTimes( jsonstr,orderInfoIds);
+	}
+}
+function putAddressComplete(obj){ 
+	$J.getJSON("http://localhost:8086/newesmlpecom/chart/print?callback=?&amp;param="+obj+"&amp;type=1", 
+	   		function (data){
+		    	})
+		    	.done(function() {alert( "打印成功" );  })
+		    	.fail(function(){alert("打印失败");
+	        });
+}
+</script>
+<script type="text/javascript">
+			    jquery('.selectpicker').selectpicker();
+			</script>
+			<script type="text/javascript" src="#{request.contextPath}/asset/new/jquery.js"></script>		
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+			<script type="text/javascript">
+			jq = jQuery.noConflict();
+			jq(document).ready(function(){
+				jq('input').iCheck({
+				    checkboxClass: 'icheckbox_minimal-blue',
+				    radioClass: 'iradio_minimal-blue',
+				    increaseArea: '20%' // optional
+				  });
+				jq('input[name=th]').on("ifClicked", function(event){
+					if (this.checked) {
+						jq("input[name='td']").iCheck("uncheck"); 
+					} else {
+						jq("input[name='td']").iCheck("check"); 
+					}
+				});
+				})
+			</script>
+</ui:define>
+
+</ui:composition>

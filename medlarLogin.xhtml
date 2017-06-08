@@ -1,0 +1,118 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:a="http://richfaces.org/a4j"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   contentType="text/html">
+<html>
+<head>
+	<s:decorate rendered="#{identity.isLoggedIn()}"> 
+		<meta http-equiv="Refresh" content="0; URL=#{request.contextPath}#{sessionTake.getUrlTemp()}" />
+	</s:decorate>
+    <title>枸杞云登录</title>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/login/LoginMedlarCloud.css" />
+
+</head>
+<!-- #{messages.right} -->
+<body>
+<div class="login_body">
+	<div class="login_header_wapper">
+    	<div class="login_header">
+			<img src="#{request.contextPath}/asset/images/login/LoginMedlarCloud_logo.png" />
+        </div>
+	</div>
+	<h:form id="loginForm">
+	<div class="login_main_wapper">
+		<div class="login_main clear">
+			<div class="login_content">
+				<div class="login_head">
+					<h1>登录页</h1>
+					<ul class="login_info">
+		            	<li class="items">
+		                	<i><img src="#{request.contextPath}/asset/images/login/LoginMedlarCloud_ico1.png" /></i>
+		                	<input class="input_text" type="text" id="userName" value="请输入用户名" />
+		                </li>
+		                <li class="items">
+		                	<i><img src="#{request.contextPath}/asset/images/login/LoginMedlarCloud_ico2.png" /></i>
+		                	<input id="input_text1" class="input_text" type="text" value="请输入密码" />
+                            <h:inputSecret id="password1" value="#{credentials.password}" styleClass="input_text" style="display:none;"/>
+		                </li>
+	            	</ul>
+                    <p class="text_tip">                       
+                        	<s:fragment rendered="#{authenticator.messageString eq 1}"><img src="#{request.contextPath}/asset/images/login/LoginMedlarCloud_warn.png" />用户名错误！</s:fragment>
+                        	<s:fragment rendered="#{authenticator.messageString eq 2}"><img src="#{request.contextPath}/asset/images/login/LoginMedlarCloud_warn.png" />密码错误！</s:fragment>
+                        	<s:fragment rendered="#{authenticator.messageString eq 3}"><img src="#{request.contextPath}/asset/images/login/LoginMedlarCloud_warn.png" />未获得相应权限！</s:fragment>
+                        	<s:fragment rendered="#{authenticator.messageString eq 4}"><img src="#{request.contextPath}/asset/images/login/LoginMedlarCloud_warn.png" />该用户已被暂停，请联系客服：400-8199-586</s:fragment>
+                    </p>
+				</div>
+				<h:inputHidden  id="hidUsername" value="#{credentials.username}"/>
+				<h:inputHidden value="#{authenticator.userSources}"  id="userSourcesId"/>
+				<h:commandButton id="submitId" styleClass="submit_btn" onclick="submitLogin();" action="#{authenticator.commonUserLogin()}" value="登录"/>
+                <p class="register_link">
+                	<a href="#{request.contextPath}/registration.seam?source=10">立即注册</a>
+                </p>
+			</div>
+		</div>
+	</div> 
+	</h:form>
+	<div class="login_footer_wapper">
+    	<div class="login_footer">农场帮手服务平台 | ©Copyright 北京奥科美技术服务有限公司</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+jQuery(function(){	
+	jQuery('#loginForm\\:userSourcesId').val(8);
+	 var checkInfo = "#{authenticator.messageString}";  
+     var logName =   "#{authenticator.logNameString}";
+     if(logName != "" && checkInfo=="2"){
+			$("#userName").val(logName);
+     }
+	
+	//(1)文本框获取焦点失去焦点变化
+	jQuery('input[type=text]').focus(function(){  
+        var txtVal = jQuery(this).val();
+        if( txtVal == this.defaultValue ){
+            jQuery(this).val('');   
+        }       
+    });
+    jQuery('input[type=text]').blur(function(){
+        var txtVal = jQuery(this).val();
+        if( txtVal == '' ){
+            jQuery(this).val(this.defaultValue);    
+        }   
+    });
+		
+	//(3)设置密码和确认密码状态
+	getPassword('#input_text1','#loginForm\\:password1');
+	function getPassword(obj,passw){
+		jQuery(obj).focus(function(){
+			jQuery(this).hide();
+			jQuery(passw).show();
+			jQuery(passw).focus();   
+		})
+		jQuery(passw).blur(function(){
+			if( jQuery(passw).val() == '' ){
+				jQuery(obj).show();
+				jQuery(passw).hide();    
+			}   
+		})
+	}	
+});
+function submitLogin(){
+	jQuery("#loginForm\\:hidUsername").val(jQuery("#userName").val());
+	return true;
+}
+//]]>
+</script>
+</body>
+</html>
+</f:view>

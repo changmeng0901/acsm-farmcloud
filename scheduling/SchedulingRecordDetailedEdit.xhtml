@@ -1,0 +1,1268 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+ <style>
+
+.box_back{background:url(../asset/images/bg_png.png) repeat; width:100%; height:100%; position:absolute; z-index:80; display:none;}
+.ie-form-input-background-image-scroll-fix{*display:block !important;}
+	.ts_div2{width:302px; height: 125px; border: 1px solid #81C5E9; margin: 0px auto; padding: 0 15px 15px;  background: url(#{request.contextPath}/asset/images/tck_bg_14.jpg) #ffffff repeat-x scroll center top;}
+	.dr-mpnl-shadow{background:none;}
+	.dr-mpnl-pnl{background:none; border:none;}
+	.dr-mpnl-pnl-b{padding:0;}
+	.dr-mpnl-shadow{top:0; left:0;}
+	.rich-picklist-source-items{margin:0;}
+	.ui-selectmenu.small22{width:86px;}
+	.ui-selectmenu-menusmall{widht:86px;}
+  </style>
+ 
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/tab.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-1.4.2.min.js"> </script> 
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-ui.js"></script>        
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-ui-select.js"> </script> 
+
+<script  type="text/javascript">
+//<![CDATA[
+function BtHide(id){var Div = document.getElementById(id);if(Div){Div.style.display="none"}}
+function BtShow(id){var Div = document.getElementById(id);if(Div){Div.style.display="block"}}
+
+function BtPopload(showId){//蒙版生成div+iframe
+	var h = Math.max(document.documentElement.scrollHeight,document.documentElement.clientHeight) + 'px';
+	var w = document.documentElement.scrollWidth + 'px';
+	var popCss = "background:#000;opacity:0.3;filter:alpha(opacity=30);position:absolute;left:0;top:0;overflow:hidden;"
+	var exsit = document.getElementById("popBox");
+	if (!exsit) {
+		pop_Box = document.createElement("div");pop_Box.id = "popBox";
+		document.getElementsByTagName("body")[0].appendChild(pop_Box);
+		pop_Box.style.cssText = popCss;pop_Box.style.zIndex = "10";
+		pop_Box.style.height = h;pop_Box.style.width = w;
+		
+		pop_Iframe = document.createElement("iframe");pop_Iframe.id = "popIframe";
+		document.getElementsByTagName("body")[0].appendChild(pop_Iframe);	
+		pop_Iframe.style.cssText = popCss;pop_Iframe.style.zIndex = "9";
+		pop_Iframe.style.height = h;pop_Iframe.style.width = (parseInt(w)-5)+"px";
+	}
+	BtShow("popIframe");BtShow("popBox");BtShow(showId);
+	pop_Win = document.getElementById(showId);
+	pop_Win.style.position = "absolute";
+	pop_Win.style.zIndex = "11";
+	pop_Win.style.top = document.documentElement.scrollTop+document.documentElement.clientHeight/2-pop_Win.offsetHeight/2+ 'px';
+	pop_Win.style.left = (document.documentElement.clientWidth/2-pop_Win.offsetWidth/2) + 'px';
+	displayTag();
+}
+function BtPopShow(Bid,Did) { 
+	var UploadBtn = document.getElementById(Bid);
+	if (UploadBtn){UploadBtn.onclick = function() {clearAllTow();BtPopload(Did);return false;}}
+}
+function BtPopShow2(Bid,Did) { 
+	var UploadBtn = document.getElementById(Bid);
+	if (UploadBtn){UploadBtn.onclick = function() {clearAll();BtPopload(Did);insertSmi();return false;}}
+}
+function BtPopHide(Bid,Did) { 
+	var UploadBtn = document.getElementById(Bid);
+	if (UploadBtn){UploadBtn.onclick = function() {BtHide(Did);BtHide("popBox");BtHide("popIframe");return false;}}	
+}
+function BtPopHide2(Bid,Did) { 
+	var UploadBtn = document.getElementById(Bid);
+	if (UploadBtn){UploadBtn.onclick = function() {BtHide(Did);BtHide("popBox");return false;}}	
+}
+function clearAllTow(){
+	_$('#plant\\:breedId')[0].selectedIndex = 0;
+	_$("#plant\\:breedId").selectmenu("destroy").selectmenu({style:'dropdown'});
+	_$('#petId')[0].selectedIndex = 0;
+	_$("#petId").selectmenu("destroy").selectmenu({style:'dropdown'});
+	_$('#smiId')[0].selectedIndex = 0;
+	_$("#smiId").selectmenu("destroy").selectmenu({style:'dropdown'});
+	_$(".rich-calendar-input").addClass("r_c_text_date");
+	_$(".rich-calendar-input").removeClass("rich-calendar-input");
+	_$(".ui-selectmenu-dropdown").addClass("small322");
+	_$(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+	_$(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall");
+	_$(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+}
+function clearAll(){
+	document.getElementById("user:yue1").value = "";
+	document.getElementById("user:yue2").value = "";
+	document.getElementById("user:yue3").value = "";
+	document.getElementById("user:yue4").value = "";
+	document.getElementById("user:yue5").value = "";
+	document.getElementById("user:yue6").value = "";
+	document.getElementById("user:yue7").value = "";
+	document.getElementById("user:yue8").value = "";
+	document.getElementById("user:yue9").value = "";
+	document.getElementById("user:yue10").value = "";
+	document.getElementById("user:yue11").value = "";
+	document.getElementById("user:yue12").value = "";
+}
+var onLoadWidth
+jquery(document).ready(function(){  
+	onLoadWidth = document.body.clientWidth;
+	displayTag();
+	alertInfo();
+	_$("select").selectmenu({style:'dropdown'});
+	_$(".rich-calendar-input").addClass("r_c_text_date");
+    _$(".rich-calendar-input").removeClass("rich-calendar-input");
+    _$(".ui-selectmenu-dropdown").addClass("small322");
+    _$(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+    _$(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall");
+    _$(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+    
+    _$(".timeinfo").selectmenu("destroy").selectmenu({style:'dropdown'});
+	_$(".rich-calendar-input").addClass("r_c_text_date");
+    _$(".rich-calendar-input").removeClass("rich-calendar-input");
+    _$(".ui-selectmenu-dropdown").addClass("small22");
+    _$(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+    _$(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall");
+    _$(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+    
+});
+function alertInfo(){
+	jquery('.pc_name').hover(function(){
+  		jquery(this).find('.pc_p').show();
+ 	},function(){
+  		jquery(this).find('.pc_p').hide();
+ 	});
+}
+function displayTag (){
+	  var apob=onLoadWidth-document.body.clientWidth;
+	  //alert(apob+"----------"+document.body.clientWidth);
+	  var sizesum = #{schedulingRecordDetailedHome.dateTime.size};
+	  var alltd = sizesum * 65;
+	  var divwidth = onLoadWidth-412-apob;
+	  var scr02width = onLoadWidth-370-apob;
+	
+      var divwidth2 = onLoadWidth-577-apob;
+      //alert(divwidth2+"---------------"+(divwidth2/sizesum));
+     // alert(divwidth2+"-------"+(divwidth2/sizesum));
+      if(divwidth2 > alltd){
+			jquery('.zp_bigtd').css("width",(parseInt(divwidth2/sizesum))+ "px");
+			jquery('.zptable').css("width",(parseInt(divwidth2/sizesum))+ "px");
+			
+		}
+
+	  //alert(onLoadWidth+"------"+document.body.clientWidth+"------"+apob+"-----"+(divwidth)+"----"+(onLoadWidth-370-apob)+"----"+(onLoadWidth-195-apob));
+	    jquery('#scroll1').css("width",(onLoadWidth-577-apob)+ "px");
+	    jquery('.scroll1').css("width",divwidth+ "px"); 
+		jquery('.scr02').css("width",scr02width+ "px"); 
+		jquery('._tccen').css("width",(onLoadWidth-195-apob)+ "px"); 
+		//alert("11");
+		if(jquery("#_dgg").is(":hidden")){
+			jquery("#open").hide();
+		}else if(jquery("#_dgg").is(":visible")){
+			jquery("#open").show();
+		}	
+		if(divwidth > alltd){
+			jquery('.pc_borb').css("width",(parseInt(divwidth/sizesum))+ "px");
+		}else{
+			jquery('.pc_borb').css("width","65px");
+			jquery('.pc_bor_t').css("width",alltd+ "px");
+		}
+		if(scr02width > alltd){
+			jquery('.tc_pcccd').css("width",(parseInt(scr02width/sizesum)-1)+ "px");
+			jquery('.tcs').css("width",(parseInt(scr02width/sizesum)-1)+ "px");
+		}
+		
+}
+//添加
+function insertSrd(){
+	var reg = /^[1-9]*[1-9][0-9]*$/; 
+	var breedId = jquery(".breedId").val();
+	var petId = jquery("#petId  option:selected").val(); 
+	var smiId = jquery("#smiId  option:selected").val(); 
+	if(breedId == null){
+		alert("请选择品种");
+		return false;
+	}else{
+		if (!reg.test(breedId)){
+			alert("请选择品种");
+			return false;
+		}
+	}
+	if(petId == null){
+		alert("请选择温室");
+		return false;
+	}else{
+		if (!reg.test(petId)){
+			alert("请选择温室");
+			return false;
+		}
+	}
+	if(smiId == null){
+		alert("请选择模型");
+		return false;
+	}else{
+		if (!reg.test(smiId)){
+			alert("请选择模型");
+			return false;
+		}
+	}
+	jquery("#login").show();
+	insertSrdList(breedId,petId,smiId);
+}
+//修改
+function updatesrd(srdId,area,areaValue){ 
+	if (area.value == '') {
+		area.value = areaValue;
+	}else{
+		jquery("#login").show();
+		updateSrdList(srdId,area.value);
+	}
+}
+function updatetow(){
+	jquery("#login").hide();
+	jquery(".est").jTab({
+		menutag: ".est li",
+		boxtag: ".erbot > ._ss",
+		cur: 0
+	});
+	displayTag();
+	alertInfo();
+}
+//删除
+function deletesrd(index){
+	if (confirm('确定删除吗？')) {
+		jquery("#login").show();
+		deleteSrdList(index);
+	}
+}
+function inserttow(){
+	jquery("#login").hide();
+	jquery("#close").click();
+	displayTag();
+	alertInfo();
+	
+}
+function deletetow(){
+	jquery("#login").hide();
+	document.getElementById("close").click();
+	displayTag();
+	alertInfo();
+}
+//只能输入数字和小数点
+function clearNoNum(obj){   
+	obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+	obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+	obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+	obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+}	
+
+
+function marclick(index){
+  	jquery("#sslistted"+index).toggle();  
+  	var min_17;
+ 	min_17=onLoadWidth-document.body.clientWidth;
+  	jquery('.scroll1').css("width",(onLoadWidth-412-min_17)+ "px"); 
+	jquery('.scr02').css("width",(onLoadWidth-370-min_17)+ "px"); 
+	jquery('._tccen').css("width",(onLoadWidth-195-min_17)+ "px"); 
+}
+
+function linkage (data){
+
+	_$("#smiId").empty().append(data);
+	_$('#smiId')[0].selectedIndex = 0;
+	_$("#smiId").selectmenu("destroy").selectmenu({style:'dropdown'});
+    _$(".rich-calendar-input").addClass("r_c_text_date");
+    _$(".rich-calendar-input").removeClass("rich-calendar-input");
+    _$(".ui-selectmenu-dropdown").addClass("small322");
+    _$(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+    _$(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall");
+    _$(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+}
+function linkageeinfoid(data){
+	if(data == "no"){
+		checkComplete();
+		return false;
+	}
+	var pet =  jquery('#user\\:plantEnvTypeId').val();
+	_$("#petId").empty().append(data);
+	_$('#petId')[0].selectedIndex = 0;
+	if(pet != 0){
+		jquery('#petId').val(pet);
+	}
+	_$("#petId").selectmenu("destroy").selectmenu({style:'dropdown'});
+    _$(".rich-calendar-input").addClass("r_c_text_date");
+    _$(".rich-calendar-input").removeClass("rich-calendar-input");
+    _$(".ui-selectmenu-dropdown").addClass("small322");
+    _$(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+    _$(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall");
+    _$(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+    var div = document.getElementById("pop2");
+    if(div.style.display == "block"){
+    	jquery("#login").hide();
+        div.style.display="none"
+    }
+}
+function linkageeinfoid2(data){
+	_$("#petId").empty().append(data);
+	_$('#petId')[0].selectedIndex = 0;
+	_$("#petId").selectmenu("destroy").selectmenu({style:'dropdown'});
+    _$(".rich-calendar-input").addClass("r_c_text_date");
+    _$(".rich-calendar-input").removeClass("rich-calendar-input");
+    _$(".ui-selectmenu-dropdown").addClass("small322");
+    _$(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+    _$(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall");
+    _$(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+    var div = document.getElementById("pop2");
+    if(div.style.display == "block"){
+    	jquery("#login").hide();
+        div.style.display="none"
+    }
+}
+function clearNoNum(obj){   
+	obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+	obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+	obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+	obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+}
+var yue="";
+//触发事件清空数据
+function clearyue(obj){
+	var booParam = checkInput(obj.name);
+	if(booParam){
+    	//alert(booParam);
+		for(var i=1;12>=i;i++ ){
+			var tempyue="user:yue"+i;
+			if(obj.name==tempyue){
+				if(document.getElementById(tempyue).value!=""){
+					yue=document.getElementById(tempyue).value;
+				}
+				document.getElementById(tempyue).value="";
+			}
+        }
+        return true;
+    }else{
+		//alert(booParam);
+		document.getElementById("spanValue").innerHTML = "该月份不在采收开始和结束时间之内";
+		document.getElementById(obj.name).value = "";
+		#{rich:component('products')}.show();
+		return false;
+    }
+}
+function checkInput(obj){
+    obj = obj + "";
+   	var objNumStr = obj.substring(8);
+	var startStr = document.getElementById("user:plantBeginTime").value;
+   	var endStr = document.getElementById("user:plantEndTime").value;
+   	var objNum = parseInt(objNumStr);
+   	var start = parseInt(startStr);
+   	var end = parseInt(endStr);
+   	//开始时间小于等于结束时间
+   	if(start <= end){
+		if(objNum >= start && objNum <= end){
+			//str = str + ",";
+			return true;
+		}else{
+			return false;
+		}
+   	}else{
+		if(objNum <= end || objNum >= start){
+			//str = str + ",";
+			return true;
+		}else{
+			return false;
+		}
+   	}
+}
+function jisuan(){
+		var a1 = document.getElementById("user:yue1").value;
+		var a2 = document.getElementById("user:yue2").value;
+		var a3 = document.getElementById("user:yue3").value;
+		var a4 = document.getElementById("user:yue4").value;
+		var a5 = document.getElementById("user:yue5").value;
+		var a6 = document.getElementById("user:yue6").value;
+		var a7 = document.getElementById("user:yue7").value;
+		var a8 = document.getElementById("user:yue8").value;
+		var a9 = document.getElementById("user:yue9").value;
+		var a10 = document.getElementById("user:yue10").value;
+		var a11 = document.getElementById("user:yue11").value;
+		var a12 = document.getElementById("user:yue12").value;
+		var total = 0;
+		if(a1 != null && a1 != ""){
+			a1 = parseFloat(a1);
+		}else{
+			a1 = 0;
+		}
+		if(a2 != null && a2 != ""){
+			a2 = parseFloat(a2);
+		}else{
+			a2 = 0;
+		}
+		if(a3 != null && a3 != ""){
+			a3 = parseFloat(a3);
+		}else{
+			a3 = 0;
+		}
+		if(a4 != null && a4 != ""){
+			a4 = parseFloat(a4);
+		}else{
+			a4 = 0;
+		}
+		if(a5 != null && a5 != ""){
+			a5 = parseFloat(a5);
+		}else{
+			a5 = 0;
+		}
+		if(a6 != null && a6 != ""){
+			a6 = parseFloat(a6);
+		}else{
+			a6 = 0;
+		}
+		if(a7 != null && a7 != ""){
+			a7 = parseFloat(a7);
+		}else{
+			a7 = 0;
+		}
+		if(a8 != null && a8 != ""){
+			a8 = parseFloat(a8);
+		}else{
+			a8 = 0;
+		}
+		if(a9 != null && a9 != ""){
+			a9 = parseFloat(a9);
+		}else{
+			a9 = 0;
+		}
+		if(a10 != null && a10 != ""){
+			a10 = parseFloat(a10);
+		}else{
+			a10 = 0;
+		}
+		if(a11 != null && a11 != ""){
+			a11 = parseFloat(a11);
+		}else{
+			a11 = 0;
+		}
+		if(a12 != null && a12 != ""){
+			a12 = parseFloat(a12);
+		}else{
+			a12 = 0;
+		}
+		total = a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10 + a11 + a12;
+		jquery("#total").html(total);
+}
+function checkSubmit(){
+	jquery("#login").show();
+	var a2 =  document.getElementById("user:breedInfoId").value;
+	var yue1 = document.getElementById("user:yue1").value;
+	var startStr = document.getElementById("user:plantBeginTime").value;
+    var endStr = document.getElementById("user:plantEndTime").value;
+	if(a2==""){
+		document.getElementById("spanValue").innerHTML = "种植品种不能为空";
+		#{rich:component('products')}.show();
+		 jquery("#login").hide();
+		return false;
+	}
+	if(startStr=="1" && endStr=="1" && yue1 == ''){
+		document.getElementById("spanValue").innerHTML = "一月份亩商品量不能为空";
+		#{rich:component('products')}.show();
+		 jquery("#login").hide();
+		 return false;
+	}	
+	return true;
+}
+
+//移除调用判断数据是否被更改
+function yichuyue(obj){
+   // alert(yue);
+    for(var i=1;12>=i;i++ ){
+        var tempyue="user:yue"+i;
+        if(obj.name==tempyue){
+      	  if(obj.value == ""){
+      		  document.getElementById(tempyue).value=yue;
+            }
+      	  yue="";
+        }
+    }
+}
+function insertSmi(){
+	var breed =_$('#plant\\:breedId').val();
+	var pet =_$('#petId').val();
+	if (breed < 0) {
+		jquery('#user\\:breedInfoId').val(0);
+	}else{
+		jquery('#user\\:breedInfoId').val(breed);
+	}
+	if(pet < 0){
+		jquery('#user\\:plantEnvTypeId').val(0);
+	}else{
+		jquery('#user\\:plantEnvTypeId').val(pet);
+	}
+	
+	_$("#user\\:breedInfoId").selectmenu("destroy").selectmenu({style:'dropdown'});
+	_$("#user\\:plantEnvTypeId").selectmenu("destroy").selectmenu({style:'dropdown'});
+	_$(".rich-calendar-input").addClass("r_c_text_date");
+	_$(".rich-calendar-input").removeClass("rich-calendar-input");
+	_$(".ui-selectmenu-dropdown").addClass("small322");
+	_$(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+	_$(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall");
+	_$(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+}
+function checkComplete(){
+	   document.getElementById("spanValue").innerHTML = "该品种已添加过此类模型，请重新添加！";
+	   #{rich:component('products')}.show();
+	   jquery("#login").hide();
+}
+//]]>
+</script>
+<!--弹出框结束-->
+
+<style>
+.zp_lsm .even{ background:#fbfcfe;}
+</style>
+ <!--弹出框开始-->
+                      <div class="box_back" id="login">
+                      	 <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" />
+					  	</div>
+					</div>
+					 
+					 
+					  <!--弹出框结束-->     
+<!--右边开始-->
+            <td valign="top" width="100%">
+                <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">预估</font></div>
+                    	<div class="r_t_r">
+                        	<div class="est">
+                             	<ul style="float:right;">
+                                 	<li style=" padding:0 5px; "><a class="zjjh08" href="javascript:void(0);"  ><strong>种植计划</strong></a></li>
+                                  	<li style=" padding:0 5px; background:url(../asset/images/lne_09.jpg) right center no-repeat;"><a class="zjjh08" href="javascript:void(0);" ><strong>排产详情</strong></a></li>
+                             	</ul>
+                         	</div>    	
+                        </div>
+                    	
+                    </div>
+
+                <div style="padding-top:15px; overflow:hidden;">
+                		<!--标题开始-->
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:5px; table-layout:fixed;">
+                                	<tr>
+                                    	<td align="left" width="16" height="30" valign="middle"><img src="../asset/images/dahg_03.jpg" width="16" height="15" /></td>
+                                    	<td align="left" class="zname" height="30">
+                                        	<div class="erbot2">
+											    <div class="kss" id="_dgg">#{schedulingRecordDetailedHome.plantInfo.name}——年份：#{schedulingRecordDetailedHome.yearString}</div>
+                                            	<div class="kss">排产详细</div>
+
+                                            </div>
+                                         </td>
+                                        <td width="52" align="right" height="30"><a href="#" id="open" onclick="displayTag();" ><img src="../asset/images/tj_03.jpg" width="44" height="30" /></a></td>
+                                    </tr>
+                                </table>
+                      <!--标题框结束-->
+                      
+                
+                  <div class="erbot">  
+                    
+                    
+                     <div class="_ss"> 
+                      <!--弹出框开始-->
+						<div>
+						 <h:form id="plant">
+                        	<table class="pop" id="pop" width="368" height="200" cellpadding="0" cellspacing="0">
+                            	<tr>
+                                	<td><img src="../asset/images/left_top.png" width="9" height="8" /></td>
+                                    <td width="100%" height="8" style="background:url(../asset/images/top_cen.png) repeat-x;"></td>
+                                    <td><img src="../asset/images/right_top.png" width="9" height="8" /></td>
+                                </tr>
+                            	<tr>
+                                	<td width="9" height="100%" style="background:url(../asset/images/left_cen.png) repeat-y;"></td>
+                                    <td class="pop_td" valign="top">
+                                    
+                                    	<table width="100%" cellpadding="0" cellspacing="0">
+                                        	<tr>
+                                            	<td align="left" width="19" height="17" class="tcdbor"><img src="../asset/images/tck_12.jpg" width="19" height="17" /></td>
+                                                <td align="left" class="tcdbor tcdtext">添加排产计划</td>
+                                                <td align="right" class="tcdbor"><a href="#" id="close"><img src="../asset/images/close_12.jpg" width="17" height="17" /></a></td>
+                                        	</tr>
+                                          </table>  
+                                          <table cellpadding="0" cellspacing="0" style=" margin:15px auto 0 auto;"> 
+                                            <tr>
+                                                <td class="tck_text">品种：</td>
+                                                <td align="left" class="tckinput" style="width: 190px;"> 
+													<h:selectOneMenu immediate="true" id="breedId" styleClass="breedId small2" value="#{schedulingRecordDetailedHome.breedId}" valueChangeListener="#{schedulingRecordDetailedHome.getPetListByBreedId}">
+														<f:selectItem itemLabel="请选择" itemValue="0" />
+														<s:selectItems value="#{schedulingRecordDetailedHome.breedList}" var="breed" label="#{breed.name}" itemValue="#{breed.breedId}"/>
+														<a:support event="onchange" eventsQueue="default" ajaxSingle="true" bypassUpdates="true" data="#{schedulingRecordDetailedHome.petStr}" oncomplete="linkageeinfoid2(data);getSchedulingModelListInfo(#{schedulingRecordDetailedHome.plantEnvTypeId});"/>
+													</h:selectOneMenu>
+                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tck_text">类型：</td>
+                                                <td align="left" class="tckinput" style="width: 190px;">
+                                                	<select name="petId" id="petId" onchange="getSchedulingModelListInfo(this.value);" >
+                                                		<option value="0" selected="selected">请选择</option>
+														<a:repeat value="#{schedulingRecordDetailedHome.petList}" var="pet">
+															<h:panelGroup rendered="#{schedulingRecordDetailedHome.plantEnvTypeId eq pet.id}">
+																<option value="#{pet.id}" selected="selected">#{pet.name}</option>
+															</h:panelGroup>
+															<h:panelGroup rendered="#{schedulingRecordDetailedHome.plantEnvTypeId ne pet.id}">
+																<option value="#{pet.id}" >#{pet.name}</option>
+															</h:panelGroup>
+	                                                   	</a:repeat>
+													</select>
+                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tck_text">模型：</td>
+                                                <td align="left" class="tckinput" style="width: 190px;">
+												    <select name="smiId" id="smiId" class="smiId small2">
+												    	<option value="0" selected="selected">请选择</option>
+														<a:repeat value="#{schedulingRecordDetailedHome.smiList}" var="smi">
+                                                      		<option value="#{smi.id}">#{smi.name}-#{smi.plantingPattern.name}</option>
+                                                      	</a:repeat>
+													</select>
+                                                 </td>
+                                                  <td class="tck_text">
+                                                 	<a href="#" id="open2" ><img src="../asset/images/six_03.png" /></a>
+                                                 </td>
+                                            </tr>
+                                            <tr>
+                                            	
+                                            	<td colspan="3"  align="center"><a href="javascript:void(0);" id="insert" onclick="insertSrd();"><img src="../asset/images/tckbut_22.jpg" width="60" height="28" /></a>&#160;&#160;<a href="javascript:void(0);" id="closetow"><img src="../asset/images/tckbut_24.jpg" width="60" height="28" /></a></td>
+                                            </tr>
+                                            
+                                            
+                                        </table>
+                                        
+                                    </td>
+                                    <td width="9" height="100%" style="background:url(../asset/images/right_cen.png) repeat-y;"></td>
+                                </tr>
+                            	<tr>
+                                	<td width="9" height="8"><img src="../asset/images/left_bot.png" width="9" height="8" /></td>
+                                    <td width="100%" height="8" style="background:url(../asset/images/bot_cen.png) repeat-x;"></td>
+                                    <td width="9" height="8"><img src="../asset/images/right_bot.png" width="9" height="8" /></td>
+                                </tr>
+                            </table>
+                        </h:form>
+						<script type="text/javascript">
+						BtPopShow("open","pop");
+						BtPopHide("close","pop");
+						BtPopHide("closetow","pop")</script>
+						<h:form id="user">
+							<rich:modalPanel id="products" autosized="true" height="125" width="240" headerClass="modalHeader" >
+					        	<div class="ts_div2" id="div2">
+					        		<div class="tck_ti"><a href="#">
+					        			<h:outputLink value="#"  onclick="#{rich:component('products')}.hide(); return false;">
+					                    <img src="#{request.contextPath}/asset/images/close_17.jpg" width="20" height="20"/>
+					                </h:outputLink>
+					        		</a></div>
+					        	 
+									<table style="width:100%; margin-top:25px; table-layout:fixed; margin-left:15px;">
+					                    <tr>
+					                    	<td width="46" align="left"><img src="#{request.contextPath}/asset/images/tstc.jpg" width="46" height="46" /></td>
+					                        <td align="left" style="font-family:'宋体'; color:#000000; font-size:12px; padding-left:15px;">
+					                        	<span id="spanValue"></span>
+					                        </td>
+					                    </tr>
+					                </table>
+					                </div>
+					        </rich:modalPanel>
+                        	<table class="pop2" id="pop2" width="590"  cellpadding="0" cellspacing="0" >
+                            	<tr>
+                                	<td><img src="../asset/images/left_top.png" width="9" height="8" /></td>
+                                    <td width="100%" height="8" style="background:url(../asset/images/top_cen.png) repeat-x;"></td>
+                                    <td><img src="../asset/images/right_top.png" width="9" height="8" /></td>
+                                </tr>
+                            	<tr>
+                                	<td width="9" height="100%" style="background:url(../asset/images/left_cen.png) repeat-y;"></td>
+                                    <td class="pop_td" valign="top" style="width:auto;">
+                                    	<table width="100%" cellpadding="0" cellspacing="0">
+                                        	<tr>
+                                            	<td align="left" width="19" height="17" class="tcdbor"><img src="../asset/images/tck_12.jpg" width="19" height="17" /></td>
+                                                <td align="left" class="tcdbor tcdtext">模型添加</td>
+                                                <td align="right" class="tcdbor"><a href="#" id="close2"><img src="../asset/images/close_12.jpg" width="17" height="17" /></a></td>
+                                        	</tr>
+                                          </table>  
+                                          <table cellpadding="0" cellspacing="0" style=" margin:15px auto 0 auto;"> 
+                                            <tr>
+                                                <td class="tck_text" width="93" >作物种类：</td>
+                                                <td align="left" class="tckinput" colspan="5"> 
+                                                	#{schedulingRecordDetailedHome.plantInfo.name}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                            	<td class="tck_text" width="93" >种植品种：</td>
+                                                <td align="left" class="tckinput" colspan="2" width="170" > 
+													 <h:selectOneMenu immediate="true" id="breedInfoId" styleClass="breedInfoId small2"  value="#{schedulingRecordDetailedHome.breedInfoId}" >
+														<s:selectItems value="#{schedulingRecordDetailedHome.breedList}" var="var" label="#{var.name}" itemValue="#{var.breedId}"/>
+													</h:selectOneMenu>
+                                                </td>
+                                            	<td class="tck_text" width="93" >种植环境：</td>
+                                                <td align="left" class="tckinput" colspan="2" width="170" > 
+                                                	<h:selectOneMenu immediate="true" id="plantEnvTypeId" styleClass="plantEnvTypeId small2"  value="#{schedulingRecordDetailedHome.plantEnvTypeInfoId}">
+														<s:selectItems value="#{schedulingModelInfoHome.getPlantEnvTypeMethod()}" var="var" label="#{var.name}" itemValue="#{var.id}"/>
+													</h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                            	<td class="tck_text">种植标准：</td>
+                                                <td align="left" class="tckinput" colspan="2">
+                                                	<h:selectOneMenu id="plantingPattern" value="#{schedulingRecordDetailedHome.smiInfo.plantingPattern}">
+														<s:selectItems value="#{schedulingModelInfoHome.getPlMethod()}" var="var" label="#{var.name}"/>
+														<s:convertEntity />
+													</h:selectOneMenu>
+                                                </td>
+                                                <td class="tck_text">定值时间：</td>
+                                                <td align="left" class="tckinput" >
+                                                	<h:selectOneMenu id="valueTime" value="#{schedulingRecordDetailedHome.smiInfo.valueTime}" styleClass="timeinfo">
+														<f:selectItem itemLabel="一月" itemValue="1" />
+												        <f:selectItem itemLabel="二月" itemValue="2" />
+												        <f:selectItem itemLabel="三月" itemValue="3" />
+												        <f:selectItem itemLabel="四月" itemValue="4" />
+												        <f:selectItem itemLabel="五月" itemValue="5" />
+												        <f:selectItem itemLabel="六月" itemValue="6" />
+												        <f:selectItem itemLabel="七月" itemValue="7" />
+												        <f:selectItem itemLabel="八月" itemValue="8" />
+												        <f:selectItem itemLabel="九月" itemValue="9" />
+												        <f:selectItem itemLabel="十月" itemValue="10" />
+												        <f:selectItem itemLabel="十一月" itemValue="11" />
+												        <f:selectItem itemLabel="十二月" itemValue="12" />
+												   </h:selectOneMenu> 
+                                                </td>
+                                                <td align="left" class="tckinput" >
+				                                    <h:selectOneMenu id="valueTenDays" value="#{schedulingRecordDetailedHome.smiInfo.valueTenDays}" styleClass="timeinfo">
+															<f:selectItem itemLabel="上旬" itemValue="1" />
+													        <f:selectItem itemLabel="中旬" itemValue="2" />
+													        <f:selectItem itemLabel="下旬" itemValue="3" />
+												   </h:selectOneMenu> 
+					                            </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tck_text">采收开始：</td>
+                                                <td align="left" class="tckinput" width="86" >
+                                                	<h:selectOneMenu id="plantBeginTime" value="#{schedulingRecordDetailedHome.smiInfo.plantBeginTime}" styleClass="timeinfo">
+															<f:selectItem itemLabel="一月" itemValue="1" />
+													        <f:selectItem itemLabel="二月" itemValue="2" />
+													        <f:selectItem itemLabel="三月" itemValue="3" />
+													        <f:selectItem itemLabel="四月" itemValue="4" />
+													        <f:selectItem itemLabel="五月" itemValue="5" />
+													        <f:selectItem itemLabel="六月" itemValue="6" />
+													        <f:selectItem itemLabel="七月" itemValue="7" />
+													        <f:selectItem itemLabel="八月" itemValue="8" />
+													        <f:selectItem itemLabel="九月" itemValue="9" />
+													        <f:selectItem itemLabel="十月" itemValue="10" />
+													        <f:selectItem itemLabel="十一月" itemValue="11" />
+													        <f:selectItem itemLabel="十二月" itemValue="12" />
+												   </h:selectOneMenu> 
+                                                </td>
+                                                <td align="left" class="tckinput" width="86" >
+				                                    <h:selectOneMenu id="plantBeginTenDays" value="#{schedulingRecordDetailedHome.smiInfo.plantBeginTenDays}" styleClass="timeinfo">
+															<f:selectItem itemLabel="上旬" itemValue="1" />
+													        <f:selectItem itemLabel="中旬" itemValue="2" />
+													        <f:selectItem itemLabel="下旬" itemValue="3" />
+												   </h:selectOneMenu> 
+					                            </td>
+                                                <td class="tck_text">采收结束：</td>
+                                                <td align="left" class="tckinput" >
+                                                	 <h:selectOneMenu id="plantEndTime" value="#{schedulingRecordDetailedHome.smiInfo.plantEndTime}" styleClass="timeinfo">
+															<f:selectItem itemLabel="一月" itemValue="1" />
+													        <f:selectItem itemLabel="二月" itemValue="2" />
+													        <f:selectItem itemLabel="三月" itemValue="3" />
+													        <f:selectItem itemLabel="四月" itemValue="4" />
+													        <f:selectItem itemLabel="五月" itemValue="5" />
+													        <f:selectItem itemLabel="六月" itemValue="6" />
+													        <f:selectItem itemLabel="七月" itemValue="7" />
+													        <f:selectItem itemLabel="八月" itemValue="8" />
+													        <f:selectItem itemLabel="九月" itemValue="9" />
+													        <f:selectItem itemLabel="十月" itemValue="10" />
+													        <f:selectItem itemLabel="十一月" itemValue="11" />
+													        <f:selectItem itemLabel="十二月" itemValue="12" />
+												   </h:selectOneMenu> 
+                                                </td>
+                                                <td align="left" class="tckinput" >
+				                                   <h:selectOneMenu id="plantEndTenDays" value="#{schedulingRecordDetailedHome.smiInfo.plantEndTenDays}" styleClass="timeinfo">
+															<f:selectItem itemLabel="上旬" itemValue="1" />
+													        <f:selectItem itemLabel="中旬" itemValue="2" />
+													        <f:selectItem itemLabel="下旬" itemValue="3" />
+												   </h:selectOneMenu> 
+					                            </td>
+                                            </tr>
+                                            <tr>
+                                            	<td colspan="6" style="padding:10px 0;">
+								                    <table cellpadding="0" cellspacing="0" style="table-layout:fixed; border-collapse:collapse; width:540px;" id="yueTable"> 
+								                    	<tr>
+								                        	<td class="sel_tdline">1月份</td>
+								                            <td class="sel_tdbgc" align="center">
+								                                <h:inputText class="input_oute" id="yue1" value="#{schedulingRecordDetailedHome.smiInfo.januaryMu}" onclick="clearyue(this);" onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)" >
+								                                </h:inputText>
+								                            </td>
+								                        	<td class="sel_tdline">2月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute" id="yue2" value="#{schedulingRecordDetailedHome.smiInfo.februaryMu}" onclick="clearyue(this);" onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)"  >
+								                                </h:inputText>
+								                            </td>
+								                        	<td class="sel_tdline">3月份</td>
+								                            <td class="sel_tdbgc">
+								                           		<h:inputText class="input_oute" id="yue3" value="#{schedulingRecordDetailedHome.smiInfo.marchMu}"   onclick="clearyue(this);" onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)" >
+								                           		
+								                                </h:inputText>
+								                            </td>
+								                    	</tr>
+								                    	<tr>
+								                        	<td class="sel_tdline">4月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute" id="yue4" value="#{schedulingRecordDetailedHome.smiInfo.aprilMu}"  onclick="clearyue(this);"   onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)" >
+								                            	
+								                                </h:inputText>
+								                            </td>
+								                        	<td class="sel_tdline">5月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute" id="yue5" value="#{schedulingRecordDetailedHome.smiInfo.mayMu}" onclick="clearyue(this);"  onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)">
+								                            	
+								                                </h:inputText>
+								                            </td>
+								                        	<td class="sel_tdline">6月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute" id="yue6" value="#{schedulingRecordDetailedHome.smiInfo.juneMu}" onclick="clearyue(this);"  onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)" >
+								                            	
+								                                </h:inputText>
+								                            </td>
+								                    	</tr>
+								                    	<tr>
+								                        	<td class="sel_tdline">7月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute" id="yue7"  value="#{schedulingRecordDetailedHome.smiInfo.julyMu}" onclick="clearyue(this);"  onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)" >
+								                                </h:inputText>
+								                            </td>
+								                        	<td class="sel_tdline">8月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute" id="yue8"  value="#{schedulingRecordDetailedHome.smiInfo.augustMu}" onclick="clearyue(this);"  onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)" >
+								                            	
+								                                </h:inputText>
+								                            </td>
+								                        	<td class="sel_tdline">9月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText  class="input_oute" id="yue9" value="#{schedulingRecordDetailedHome.smiInfo.septemberMu}" onclick="clearyue(this);"  onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)">
+								                            	
+								                                </h:inputText>
+								                            </td>
+								                    	</tr>
+								                    	<tr>
+								                        	<td class="sel_tdline">10月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute" id="yue10"  value="#{schedulingRecordDetailedHome.smiInfo.octoberMu}"  onclick="clearyue(this);"  onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)">
+								                            	
+								                                </h:inputText>
+								                            </td>
+								                        	<td class="sel_tdline">11月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute" id="yue11"  value="#{schedulingRecordDetailedHome.smiInfo.novemberMu}" onclick="clearyue(this);"  onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)">
+								                               		
+								                                </h:inputText>
+								                            </td>
+								                        	<td class="sel_tdline">12月份</td>
+								                            <td class="sel_tdbgc">
+								                            	<h:inputText class="input_oute"  id="yue12" value="#{schedulingRecordDetailedHome.smiInfo.decemberMu}" onclick="clearyue(this);"  onfocus="this.className='input_one';this.onmouseout=''" onblur="this.className='input_offe';this.onmouseout=function(){this.className='input_oute'};yichuyue(this);jisuan();" onmousemove="this.className='input_movee'" onmouseout="this.className='input_oute'"  onkeyup="clearNoNum(this)" >
+								                                </h:inputText>
+								                            </td>
+								                    	</tr>
+								                    </table>
+                                            	</td>
+                                            </tr>
+                                            <tr >
+                                            	<td align="center" colspan="6" >
+                                            		<a:commandButton id="persist" image="../asset/images/tckbut_22.jpg"  style="width:60px; height:28px;" onclick="jisuan();if(!checkSubmit()) return false;" action="#{schedulingRecordDetailedHome.persistSmi}" data="#{schedulingRecordDetailedHome.petStr}" oncomplete="linkageeinfoid(data);getSchedulingModelListInfo(#{schedulingRecordDetailedHome.plantEnvTypeId});" />
+                                            		<a href="javascript:void(0);" id="closetow2"><img src="../asset/images/tckbut_24.jpg" width="60" height="28" /></a>
+                                            	</td>
+                                            </tr>
+                                            
+                                            
+                                        </table>
+                                        
+                                    </td>
+                                    <td width="9" height="100%" style="background:url(../asset/images/right_cen.png) repeat-y;"></td>
+                                </tr>
+                            	<tr>
+                                	<td width="9" height="8"><img src="../asset/images/left_bot.png" width="9" height="8" /></td>
+                                    <td width="100%" height="8" style="background:url(../asset/images/bot_cen.png) repeat-x;"></td>
+                                    <td width="9" height="8"><img src="../asset/images/right_bot.png" width="9" height="8" /></td>
+                                </tr>
+                            </table>
+                        </h:form>
+						<script type="text/javascript">
+						BtPopShow2("open2","pop2");
+						BtPopHide2("close2","pop2");
+						BtPopHide2("closetow2","pop2");
+						</script>
+                        <div style="width:371px; float:left; border-left:1px solid #CADDEC; border-right:1px solid #CADDEC;" id="divleft">
+                        <table cellpadding="0" cellspacing="0" class="zptable_01" width="371">
+                                <tr>
+                                    <td class="zpth_td zplan" width="89">品种</td>
+                                	<td class="zpth_td zplan" width="69">类型</td>
+                                    <td class="zpth_td zplan" width="69">定值日期</td>
+                                    <td class="zpth_td zplan" width="79">总产量</td>
+                                    <td class="zpth_td zplan" width="59">亩数</td>
+                                    
+                                </tr>
+                         </table>
+                          <h:panelGroup id="dataInfoone"> 
+                           <table cellpadding="0" cellspacing="0" class="zptable_01" width="371" columns="0">
+								<a:repeat value="#{schedulingRecordDetailedHome.srdList}" var="_srdInfo" rowKeyVar="_index">
+                                <tr>
+                                    <td class="newstyle3" width="89">
+                                            <div class="pc_name">
+                                                <div class="pc_p">
+                                                   <table width="190" height="140" style=" table-layout:fixed;" cellpadding="0" cellspacing="0">
+                                                   		<tr>
+                                                        	<td width="7" valign="middle"><img src="../asset/images/san.png" width="7" height="13" /></td>
+                                                            <td valign="top" style="background:url(../asset/images/tab_bg.png) repeat;">
+                                                            	<table width="90%" style="margin:10px auto;" cellpadding="0" cellspacing="0">
+                                                            		<tr>
+                                                                    	<td width="50%" class="ap_none">品种</td>
+                                                                        <td width="50%" class="ap_none2">#{_srdInfo.breedId.name}</td>
+                                                                    </tr>
+                                                            		<tr>
+                                                                    	<td width="50%" class="ap_none">类型</td>
+                                                                        <td width="50%" class="ap_none2">#{_srdInfo.plantEnvTypeId.name}</td>
+                                                                    </tr>
+                                                            		<tr>
+                                                                    	<td width="50%" class="ap_none">模型名称</td>
+                                                                        <td width="50%" class="ap_none2">
+                                                                        	#{_srdInfo.schedulingModelInfoId.name}
+                                                                        </td>
+                                                                    </tr>
+                                                            		<tr>
+                                                                    	<td width="50%" class="ap_none">定植日期</td>
+                                                                        <td width="50%" class="ap_none2"> 
+                                                                        	#{_srdInfo.schedulingModelInfoId.valueTime}月份
+											                    			<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.valueTenDays eq 1}" value="上旬"/>
+													       					<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.valueTenDays eq 2}" value="中旬"/>
+													       					<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.valueTenDays eq 3}" value="下旬"/>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                    	<td width="50%" class="ap_none">采收开始</td>
+                                                                        <td width="50%" class="ap_none2"> 
+                                                                        	#{_srdInfo.schedulingModelInfoId.plantBeginTime}月份
+											                    			<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.plantBeginTenDays eq 1}" value="上旬"/>
+													       					<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.plantBeginTenDays eq 2}" value="中旬"/>
+													       					<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.plantBeginTenDays eq 3}" value="下旬"/>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                    	<td width="50%" class="ap_none">采收结束</td>
+                                                                        <td width="50%" class="ap_none2"> 
+                                                                        	#{_srdInfo.schedulingModelInfoId.plantEndTime}月份
+											                    			<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.plantEndTenDays eq 1}" value="上旬"/>
+													       					<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.plantEndTenDays eq 2}" value="中旬"/>
+													       					<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.plantEndTenDays eq 3}" value="下旬"/>
+                                                                        </td>
+                                                                    </tr>
+                                                            	</table>
+                                                            </td>
+                                                        </tr>
+                                                   </table>
+                                                </div>
+												#{_srdInfo.breedId.name}
+                                            </div>
+											
+                                    </td>
+                                    <td class="newstyle3" width="69">#{_srdInfo.plantEnvTypeId.name}</td>
+                                    <td class="newstyle3" width="69"> 
+                                    	#{_srdInfo.schedulingModelInfoId.valueTime}月份
+		                    			<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.valueTenDays eq 1}" value="上旬"/>
+				       					<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.valueTenDays eq 2}" value="中旬"/>
+				       					<h:outputText  rendered="#{_srdInfo.schedulingModelInfoId.valueTenDays eq 3}" value="下旬"/>
+                                    </td>
+                                    <td class="newstyle3" width="79" >#{_srdInfo.allYield}</td>
+                                    <td class="newstyle3" width="59"><input class="#{_index eq 0 ?'input_on':'zp_input_out'}" name="areasum" type="text" value="#{_srdInfo.area}" onfocus="this.className='input_on';this.onmouseout='';this.value='';" onblur="this.className='zp_input_off';this.onmouseout=function(){this.className='zp_input_out'};updatesrd(#{_srdInfo.id},this,#{_srdInfo.area eq null?1:_srdInfo.area});" onmousemove="this.className='input_move'" onmouseout="this.className='zp_input_out'" onkeyup="clearNoNum(this)"/>
+                                    </td>
+                                </tr>
+								</a:repeat> 
+                               
+                                <tr>   
+                                    <td class="xjft ap_font ap_bg">小计</td>
+                                    <td class=" ap_font2 ap_bg"></td>
+                                    <td class=" ap_font2 ap_bg"></td>
+                                    <td class=" ap_font2 ap_bg ">#{processOrdersHome.getFloatbyTow(schedulingRecordDetailedHome.allYieldSum)}</td>
+                                    <td class=" ap_font2 ap_bg ">#{processOrdersHome.getFloatbyTow(schedulingRecordDetailedHome.allAreaSum)}</td>
+                                </tr>  
+                                <tr>   
+                                    <td class="xjft ap_font ap_bg1">订单</td>
+                                    <td class=" ap_font2 ap_bg1"></td>
+                                    <td class=" ap_font2 ap_bg1"></td>
+                                    <td class=" ap_font2 ap_bg1"></td>
+                                    <td class=" ap_font2 ap_bg1"></td>
+                                </tr>  
+                                <tr>   
+                                    <td class="xjft ap_font ap_bg2">差异</td>
+                                    <td class=" ap_font2 ap_bg2"></td>
+                                    <td class=" ap_font2 ap_bg2"></td>
+                                    <td class=" ap_font2 ap_bg2"></td>
+                                    <td class=" ap_font2 ap_bg2"></td>
+                                </tr>  
+                             </table>
+                             </h:panelGroup>
+							</div>
+                       <!----><div id="scroll1" style="border-bottom:0;">  
+                       		 <h:panelGroup id="dataInfotow">
+                             <table  cellpadding="0" cellspacing="0" class="zp_lsm"  >
+                                  <tr>
+                                     <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+										<td class="zp_bigtd">
+                                          <table cellpadding="0" cellspacing="0" class="zptable" width="100%">
+                                              <tr>
+                                                  <td class="newstyle" height="40"> 
+                                                  	<h:outputText value="#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo)}"></h:outputText>月
+                                                  </td>
+                                              </tr>
+											  <a:repeat value="#{schedulingRecordDetailedHome.srdList}" var="_srdInfo" rowKeyVar="_srdindex">
+		                                      		<tr class="#{_srdindex %2 ==0?'even':''}">
+	                                                  <td class="newstyle2">
+	                                                  	<h:panelGroup rendered="#{_srdInfo.schedulingModelInfoId.plantEndTime gt _srdInfo.schedulingModelInfoId.valueTime}">
+                                                        	#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) ge _srdInfo.schedulingModelInfoId.valueTime and schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) le _srdInfo.schedulingModelInfoId.plantEndTime ? processOrdersHome.getFloatbyTow(schedulingRecordDetailedHome.getMonthSum(_srdInfo.schedulingModelInfoId,schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo)) * _srdInfo.area) : 0.0}
+                                                        </h:panelGroup>
+                                                        <h:panelGroup rendered="#{_srdInfo.schedulingModelInfoId.plantEndTime lt _srdInfo.schedulingModelInfoId.valueTime}">
+                                                       		#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) ge _srdInfo.schedulingModelInfoId.valueTime  ? processOrdersHome.getFloatbyTow(schedulingRecordDetailedHome.getMonthSum(_srdInfo.schedulingModelInfoId,schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo)) * _srdInfo.area) : 0.0}
+                                                      	</h:panelGroup>
+	                                                  </td>
+													</tr>
+											  </a:repeat>
+                                              <tr>
+                                                  <td class="ap_font2 ap_bg ">#{processOrdersHome.getFloatbyTow(schedulingRecordDetailedHome.dateMap.get(schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo)))}</td>
+                                              </tr> 
+                                              <tr>   
+                                                  <td class="ap_font2 ap_bg1 ">#{processOrdersHome.getFloatbyTow(schedulingRecordDetailedHome.srMap.get(_dateInfo))}</td>
+                                              </tr>
+                                              <tr>   
+                                                  <td class="ap_font2 ap_bg2 ">#{processOrdersHome.getFloatbyTow(schedulingRecordDetailedHome.dateMap.get(schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo)) - schedulingRecordDetailedHome.srMap.get(_dateInfo))}</td>
+                                              </tr>  
+                                          </table>
+                                        </td>
+								  </a:repeat>
+                                  </tr>
+                               </table>
+                              </h:panelGroup>
+						</div> 
+                        
+                        <div style="width:60px; float:left;border-right:1px solid #CADDEC;border-left:1px solid #CADDEC; [;width:48px;]">
+                        	 <h:panelGroup id="dataInfothree">
+                        	 <table width="100%" cellpadding="0" cellspacing="0" class="zpta3" columns="0">
+                            	<tr>
+                            		<td class="newstyle">操作</td>
+                            	</tr>
+                            	<a:repeat value="#{schedulingRecordDetailedHome.srdList}" var="_srdInfo" >
+                            	<tr>
+                            		<td class="newstyle2"><a href="#" onclick="deletesrd(#{_srdInfo.id})"><img src="../asset/images/02_62.png" width="16" height="15" /></a></td>
+                            	</tr>
+                            	</a:repeat>
+                            	<tr>
+                            		<td class="ap_font2 ap_bg">&#160;</td>
+                            	</tr>
+                                
+                            	<tr>
+                            		<td class="ap_font2 ap_bg1">&#160;</td>
+                            	</tr>
+                                
+                            	<tr>
+                            		<td class="ap_font2 ap_bg2">&#160;</td>
+                            	</tr>
+                                
+                                
+                            </table>
+                            </h:panelGroup>
+                        
+                        	<div class="clear"></div>
+                        </div>
+                        <div class="clear"></div>
+                        </div>
+					<div style=" height:33px; text-align:right; margin:15px 5px;"> 
+						
+				    	<h:form >
+					    	<h:commandButton id="cancel" style="width:128px; height:37px;" action="#{schedulingRecordDetailedHome.saveSr}" image="../asset/images/order/save.jpg" propagation="end" />
+				    		&#160;&#160;
+				    		<s:button id="button" style="width:128px; height:37px;" image="../asset/images/order/retu_11.jpg" propagation="end" view="/scheduling/SchedulingRecordEdit.xhtml">
+				    			<f:param name="spId" value="#{schedulingRecordDetailedHome.yearString}" />
+				    		</s:button>
+				    	</h:form>
+					</div>
+                	<div class="clear"></div>
+                </div> <!--_ss-->    
+				 <s:div id="srdTowId" styleClass="_ss" style="display:none">
+                	<div >
+                        <!--下拉table开始-->
+                         <a:repeat value="#{schedulingRecordDetailedHome.petBySrdList}" var="_petInfo" rowKeyVar="_petindex">
+                              <div class="pc__1">
+                                <div style="width:100%;">
+                                    <div class="hjtj">
+                                        <table cellpadding="0" cellspacing="0" class="paic_table">
+                                            <tr style="display:#{_petindex eq 0 ?'':'none'}">
+                                                <td class="paicth1 paic_border" height="79" width="100" >环境条件</td>
+                                                <td class="paicth1 paic_border" height="79" width="73">比对项</td>
+                                            </tr>
+                                            <tr>
+                                                <td rowspan="3" class="paic_th paic_border" height="79" width="100">#{_petInfo.name}</td>
+                                                <td class="paic_td paic_border" height="79" width="73">预估面积</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="paic_td paic_border">可用面积</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="paic_td paic_border">剩余面积</td>
+                                            </tr>
+                                            
+                                        </table>
+                                    </div>
+                                    <div class="scroll1" >  
+                                            <table cellpadding="0" cellspacing="0" id="kuan#{_petindex}" class="paic_cen pc_bor_t ">
+                                            
+                                                <tr style="display:#{_petindex eq 0 ?'':'none'}">
+                                                    <td class="paicmoon pc_bor_b" colspan="#{schedulingRecordDetailedHome.dateTime.size}">月份及面积（亩）</td>
+                                                </tr>
+                                                <tr style="display:#{_petindex eq 0 ?'':'none'}">
+                                                <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index" >
+                                                    <td class="paicth2 pc_bor_b pc_borb" ><h:outputText value="#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo)}"></h:outputText>月</td>
+                                                </a:repeat>
+                                                </tr>
+                                                <tr>
+                                                <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+                                                    <td class="paic_03 pc_bor_b pc_borb" >#{schedulingRecordDetailedHome.petArea.get(_petInfo.id).get(_dateInfo)}</td>
+                                                </a:repeat>
+                                                </tr>
+                                                <tr>
+                                                 <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+                                                    <td class="paic_03 pc_bor_b pc_borb" >#{stringUtil.floatFormat2(_petInfo.tunnelArea)}</td>
+                                                 </a:repeat>
+                                                </tr>
+                                                <tr>
+                                                <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+                                                    <td class="paic_03 pc_bor_b pc_borb" >#{stringUtil.floatFormat2(_petInfo.tunnelArea - schedulingRecordDetailedHome.petArea.get(_petInfo.id).get(_dateInfo))}</td>
+                                                </a:repeat>
+                                                </tr>
+                                            </table>
+                                   </div> 
+                                   
+                                    <div class="paic_cz">
+                                        <table cellpadding="0" cellspacing="0" class="paic_table">
+                                            <tr style="display:#{_petindex eq 0 ?'':'none'}">
+                                                <td class="paicth1 paic_border" height="79" width="100" >操作</td>
+                                               
+                                            </tr>
+                                            <tr>
+                                                <td class="paic_th paic_border" height="119" width="100"><span class="mar" onclick="marclick(#{_petindex});displayTag();">详情<br /><img style="margin-top:5px;" src="../asset/images/pcxq_03.jpg" width="9" height="5" /></span></td>
+                                               
+                                            </tr>
+                                           
+                                        </table>
+                                    </div>
+                                <div class="clear"></div>   
+                            </div>	
+                          <div class="sslistted" id="sslistted#{_petindex}">
+                              <div class="_tccen">      
+                                    <div style="width:173px; float:left; border-bottom:1px solid #ddd; border-right:1px solid #ddd;">
+                                        <table cellpadding="0" cellspacing="0" class="khtable_01" width="173" height="80" >
+                                                <tr>
+                                                    <td rowspan="2" class="tc_pc00" width="70" style="border-bottom:none;">序号</td>
+                                                    <td rowspan="2" class="tc_pc00" width="100" style="border-bottom:none;border-right: 1px solid #DDDDDD;">名称</td>
+                                                </tr>
+                                         </table>       
+                                            <table cellpadding="0" cellspacing="0" class="khtable_01" width="173" style="border-top:1px solid #ddd;">
+                                            	<a:repeat value="#{schedulingRecordDetailedHome.srdListByPet.get(_petInfo.id)}" var="_srdbInfo" rowKeyVar="_srdbindex">
+	                                                <tr>
+	                                                    <td class="tc_pc03" width="70">#{_srdbindex+1}</td>
+	                                                    <td class="tc_pc03" width="100" style="border-right: 1px solid #DDDDDD;">
+	                                                    <h:outputText value="#{_srdbInfo.breedId.name}..." title="#{_srdbInfo.breedId.name}——#{_srdbInfo.schedulingModelInfoId.name}"/></td>
+	                                                </tr>
+                                                </a:repeat>
+                                             </table>
+                                        </div>
+                                        <div class="scr02"> 
+                                              <table cellpadding="0" cellspacing="0" class="tc_pctable">
+                                                    <tr>
+                                                       <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+                                                        <td class="tc_pcccd">
+                                                            <table cellpadding="0" cellspacing="0" class="tcpctable">
+                                                                <tr>
+                                                                    <td class="tc_pc07 tcs" height="40"><h:outputText value="#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo)}"></h:outputText>月</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="tc_pc07 tcs">亩数</td>
+                                                                </tr>
+																<a:repeat value="#{schedulingRecordDetailedHome.srdListByPet.get(_petInfo.id)}" var="_srdbInfo" rowKeyVar="_srdbindex">
+                                                                <tr>
+                                                                    <td class="tc_pc04 tcs">
+                                                                    	<h:panelGroup rendered="#{_srdbInfo.schedulingModelInfoId.plantEndTime gt _srdbInfo.schedulingModelInfoId.valueTime}">
+                                                                    		#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) ge _srdbInfo.schedulingModelInfoId.valueTime and schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) le _srdbInfo.schedulingModelInfoId.plantEndTime ? _srdbInfo.area : 0.0}
+                                                                    	</h:panelGroup>
+                                                                    	<h:panelGroup rendered="#{_srdbInfo.schedulingModelInfoId.plantEndTime lt _srdbInfo.schedulingModelInfoId.valueTime}">
+                                                                    		#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) ge _srdbInfo.schedulingModelInfoId.valueTime  ? _srdbInfo.area : 0.0}
+                                                                    	</h:panelGroup>
+                                                                    </td>
+                                                                </tr>
+                                                                </a:repeat>
+                                                            </table>
+                                                      </td>
+                                                     </a:repeat>
+                                                    </tr>
+                                                 </table>   
+                    
+                                        </div>
+                                     <div class="clear"></div>                       
+                                </div><!--_tccen结束-->
+                               <div class="clear"></div>    
+                           </div>        
+                                   
+                       <div class="clear"></div>   
+                  </div>
+                 </a:repeat>	             
+               <div class="clear"></div>
+           </div> 
+           
+          </s:div><!--_ss-->   
+          </div><!--erbot-->
+
+        </div><!--padding-->      
+              
+              
+              
+              
+              
+            <div class="clear"></div>
+          </div><!--right_c结束-->
+      </td>    
+    <!--右边结束-->
+   <a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+  		<a:jsFunction name="insertSrdList" action="#{schedulingRecordDetailedHome.insertSrdList}" reRender="dataInfoone,dataInfotow,dataInfothree,srdTowId" data="#{schedulingRecordDetailedHome.petStr}" oncomplete="linkageeinfoid(data);getSchedulingModelListInfo(#{schedulingRecordDetailedHome.plantEnvTypeId});inserttow();">
+  			<a:actionparam name="breedId" assignTo="#{schedulingRecordDetailedHome.breedId}"/>
+			<a:actionparam name="petId" assignTo="#{schedulingRecordDetailedHome.plantEnvTypeId}"/>
+			<a:actionparam name="smiId" assignTo="#{schedulingRecordDetailedHome.schedulingModelInfoId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="updateSrdList" action="#{schedulingRecordDetailedHome.updateSrdList}" reRender="dataInfoone,dataInfotow,dataInfothree,srdTowId" oncomplete="updatetow();">
+  			<a:actionparam name="srdId" assignTo="#{schedulingRecordDetailedHome.srdId}"/>
+			<a:actionparam name="areaSum" assignTo="#{schedulingRecordDetailedHome.areaSum}"/>
+		</a:jsFunction>
+		<a:jsFunction name="deleteSrdList" action="#{schedulingRecordDetailedHome.deleteSrdList}" reRender="dataInfoone,dataInfotow,dataInfothree,srdTowId" data="#{schedulingRecordDetailedHome.petStr}" oncomplete="linkageeinfoid(data);getSchedulingModelListInfo(#{schedulingRecordDetailedHome.plantEnvTypeId});deletetow();">
+  			<a:actionparam name="srdId" assignTo="#{schedulingRecordDetailedHome.srdId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="getSchedulingModelListInfo" action="#{schedulingRecordDetailedHome.getSchedulingModelListInfo}"  data="#{schedulingRecordDetailedHome.smiStr}" oncomplete="linkage(data);">
+  			<a:actionparam name="plantEnvTypeId" assignTo="#{schedulingRecordDetailedHome.plantEnvTypeId}"/>
+		</a:jsFunction>
+	</a:form>
+<!--选择表格js开始-->
+<script  type="text/javascript">
+//<![CDATA[
+jquery(".est").jTab({
+	menutag: ".est li",
+	boxtag: ".erbot > ._ss",
+	cur: 0
+});
+jquery(".est").jTab({
+	menutag: ".est li",
+	boxtag: ".erbot2 > .kss",
+	cur: 0,
+	callback:"displayTag()"
+});
+//]]>
+</script>
+ </ui:define>
+</ui:composition>

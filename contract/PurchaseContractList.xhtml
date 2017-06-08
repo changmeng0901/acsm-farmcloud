@@ -1,0 +1,393 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+	<ui:define name="foot">
+	<!-- 选择基地 开始 -->
+	<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+	<!-- 选择基地 结束 -->  
+	</ui:define>
+	<ui:define name="body">
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/tubiaoFx.css" />
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/contractMenu.css" />
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/contract/contractLeftMenu.js"></script>   
+	
+	<style>
+	 .bootstrap-select{ width:140px;}
+	 .selectpickerList .selectpickerLi .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {width:140px;}
+	 .nw100{ width:140px;}
+	  .btn-success{width:40px}
+	</style>
+       <td valign="top" >
+       <!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>            
+				<div class="right_c"> 	
+				
+                	<div class="r_title clear">
+                	<!-- 公用头部 start-->
+                    	<div class="r_t_l fl">采销存&#160;&gt;&#160;&#160;<font size="3">外采管理</font></div>
+                    	<ul class="cm_resumeList fr" style="margin-bottom:0;">
+                    		<li>
+	                        	<a href="#{request.contextPath}/contract/PurchaseContractSum.seam"><span>外采汇总</span></a>
+	                        </li>
+	            			<li>
+	                        	<a href="#{request.contextPath}/contract/PurchaseContractList.seam" disabled="true" class="borderBt" style="cursor:default;"><span>外采管理</span></a>
+	                        </li>
+	                    	<li>
+	                        	<a href="#{request.contextPath}/contract/PurchaseMemberInfoListOne.seam"><span>供应商管理</span></a>
+	                        </li>
+	                    </ul>
+                   <!-- 公用头部 end -->
+                    </div>
+                    <br />
+                    
+                     <div class="z_r_ser" style="margin-left:16px;">
+                    <h:form id="storageTypeSearch">
+                    	<table cellpadding="0" cellspacing="0">
+                           <tr>
+                                <td>
+                                <div class="public-search">   
+                                	<span class="octicon-search02"></span>
+                                	<h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="contractCode" styleClass="form-control nw300 srarchfont" value="#{purchaseContractList.contractCode}"/>
+                                	<h:inputHidden value="#{plantInfoList.baseId}" id="baseHidden"/>
+                                </div>
+                                	<h:commandButton id="search" styleClass="btn btn-primary" value="搜索" action="/contract/PurchaseContractList.xhtml">                                	
+	                                </h:commandButton>
+                                </td>
+                           </tr>
+                       </table> 
+                    </h:form>                         
+                    </div>
+                     <!--添加按钮开始-->
+                    <div class="tjan_01">
+                     	<div class="btn-group">
+							<s:link rendered="#{s:hasRole('purchase_add')}" id="obj2" onclick="changeVal(id);return checkBase(this);"  styleClass="btn btn-success mr5 fr" view="/contract/PurchaseMemberInfoList.xhtml">
+			                    	<f:param name="workParam" value="1"/>
+			                    	<f:param name="memberInfoType" value="2"/>
+			                    	<f:param name="pageNumh" value="#{purchaseContractList.pageNum}" />
+			                    	<f:param name="baseId" value="#{purchaseContractList.baseId}"/>添加</s:link>
+						</div><!-- /btn-group -->
+
+                    </div>
+                    
+                    
+                    <!--添加按钮结束-->
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-left:16px;">
+                    	<tr>
+                    		<td width="5" height="4" ><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="7" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4" ></th>
+                    		<th class="ze_bg" width="15%">外采编号</th>
+                    		<th class="ze_bg" width="10%">供应企业</th>
+                    		<th class="ze_bg" width="15%">外采签订时间</th>
+                    		<th class="ze_bg" width="20%">外采订购时间范围</th>
+                    		<th class="ze_bg" width="15%">总金额(元)</th>
+                    		<th class="ze_bg" width="10%">外采状态</th>
+                    		<th class="ze_bg" width="15%">操作</th>
+                            <th class="ze_bg ze_bt_ri" width="5" height="4" ></th>
+                    	</tr>
+                    	<s:decorate rendered="#{empty purchaseContractList.resultList}">
+	                    	<tr>
+	                    		<td class="ze_bg2" colspan="8"><h:outputText value="没有找到符合条件的记录" /></td>
+	                    	</tr>
+						</s:decorate>
+						<a4j:repeat value="#{purchaseContractList.todayList}" var="_contract" rendered="#{not empty purchaseContractList.todayList}" rowKeyVar="_index">
+						<s:decorate rendered="#{_index == 0}">
+							<tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td colspan="7" align="left" class="ze_bg3"><b>今天</b><font color="#62ace9">（#{purchaseContractList.todaycount}单）</font></td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                    	</tr>
+	                    </s:decorate>
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.contractCode}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.memberInfoId.realname}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.signingTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.beginTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM" /></h:outputText>至<h:outputText value="#{_contract.endTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{purchaseContractHome.getFloatbyTow(_contract.contractMoney)}" /></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText value="失效" rendered="#{_contract.activeState eq 0}"/>
+                    			<h:outputText value="有效" rendered="#{_contract.activeState eq 1}"/>
+                    		</td>
+                    		<td class="ze_bg2" align="center">
+                            	<s:link rendered="#{s:hasRole('purchase_show')}" propagation="none"  view="/contract/PurchaseContract.xhtml" styleClass="list_view"  id="View" title="查看">
+									<f:param name="baseId" value="#{purchaseContractList.baseId}"/>
+									<f:param name="contractId" value="#{_contract.id}" />
+									<f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+								</s:link>&#160;
+		                    	<s:link rendered="#{s:hasRole('purchase_edit')}" propagation="none"  view="/contract/PurchaseContractUpdate.xhtml" styleClass="list_edit" action="#{purchaseContractHome.login4}" id="Edit" title="编辑" >
+	                                <f:param name="baseId" value="#{purchaseContractList.baseId}"/>
+	                                <f:param name="contractId" value="#{_contract.id}" />
+	                                <f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+								</s:link>&#160;
+		                    	<s:link rendered="#{s:hasRole('purchase_del')}" propagation="none"  view="/contract/PurchaseContractEdit.xhtml" styleClass="list_delete" action="#{purchaseContractHome.remove}" onclick="return confirm('确定删除吗？');" id="Delete" immediate="true" title="删除" >
+									<f:param name="contractId" value="#{_contract.id}" />
+									<f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+                                </s:link>&#160;
+                               <a href="javascript:;"  class="#{_contract.activeState eq 0 ?'list_het':'list_67e'}" title="修改外采状态" onclick="checkSubmit(#{_contract.id},#{_contract.activeState});" />&#160;
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</a4j:repeat>
+						<a4j:repeat value="#{purchaseContractList.yesterdayList}" var="_contract" rendered="#{not empty purchaseContractList.yesterdayList}" rowKeyVar="_index">
+						<s:decorate rendered="#{_index == 0}">
+							<tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td colspan="7" align="left" class="ze_bg3"><b>昨天</b><font color="#62ace9">（#{purchaseContractList.yesterdaycount}单）</font></td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                    	</tr>
+	                    </s:decorate>
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.contractCode}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.memberInfoId.realname}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.signingTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.beginTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM" /></h:outputText>至<h:outputText value="#{_contract.endTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{purchaseContractHome.getFloatbyTow(_contract.contractMoney)}" /></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText value="失效" rendered="#{_contract.activeState eq 0}"/>
+                    			<h:outputText value="有效" rendered="#{_contract.activeState eq 1}"/>
+                    		</td>
+                    		<td class="ze_bg2" align="center">
+                            	<s:link propagation="none"  view="/contract/PurchaseContract.xhtml" styleClass="list_view"  id="View" title="查看">
+									<f:param name="baseId" value="#{purchaseContractList.baseId}"/>
+									<f:param name="contractId" value="#{_contract.id}" />
+									<f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+								</s:link>&#160;
+		                    	<s:link propagation="none"  view="/contract/PurchaseContractUpdate.xhtml" styleClass="list_edit" action="#{purchaseContractHome.login4}" id="Edit" title="编辑" >
+	                                <f:param name="baseId" value="#{purchaseContractList.baseId}"/>
+	                                <f:param name="contractId" value="#{_contract.id}" />
+	                                <f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+								</s:link>&#160;
+		                    	<s:link propagation="none"  view="/contract/PurchaseContractEdit.xhtml" styleClass="list_delete" action="#{purchaseContractHome.remove}" onclick="return confirm('确定删除吗？');" id="Delete" immediate="true" title="删除" >
+									<f:param name="contractId" value="#{_contract.id}" />
+									<f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+                                </s:link>&#160;
+                             	<a href="javascript:;" class="#{_contract.activeState eq 0 ?'list_het':'list_67e'}" title="修改外采状态" onclick="checkSubmit(#{_contract.id},#{_contract.activeState});" />&#160;
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</a4j:repeat>
+						<a4j:repeat value="#{purchaseContractList.weekList}" var="_contract" rendered="#{not empty purchaseContractList.weekList}" rowKeyVar="_index">
+						<s:decorate rendered="#{_index == 0}">
+							<tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td colspan="7" align="left" class="ze_bg3"><b>#{purchaseContractList.week}</b><font color="#62ace9">（#{purchaseContractList.weekcount}单）</font></td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                    	</tr>
+                    	</s:decorate>
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            <td class="ze_bg2"><h:outputText value="#{_contract.contractCode}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.memberInfoId.realname}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.signingTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.beginTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM" /></h:outputText>至<h:outputText value="#{_contract.endTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{purchaseContractHome.getFloatbyTow(_contract.contractMoney)}" /></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText value="失效" rendered="#{_contract.activeState eq 0}"/>
+                    			<h:outputText value="有效" rendered="#{_contract.activeState eq 1}"/>
+                    		</td>
+                    		<td class="ze_bg2" align="center">
+                            	<s:link rendered="#{s:hasRole('purchase_show')}" propagation="none"  view="/contract/PurchaseContract.xhtml" styleClass="list_view"  id="View" title="查看">
+									<f:param name="baseId" value="#{purchaseContractList.baseId}"/>
+									<f:param name="contractId" value="#{_contract.id}" />
+									<f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+								</s:link>&#160;
+		                    	<s:link rendered="#{s:hasRole('purchase_edit')}" propagation="none"  view="/contract/PurchaseContractUpdate.xhtml" styleClass="list_edit" action="#{purchaseContractHome.login4}" id="Edit" title="编辑" >
+	                                <f:param name="baseId" value="#{purchaseContractList.baseId}"/>
+	                                <f:param name="contractId" value="#{_contract.id}" />
+	                                <f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+								</s:link>&#160;
+		                    	<s:link rendered="#{s:hasRole('purchase_del')}" propagation="none"  view="/contract/PurchaseContractEdit.xhtml" styleClass="list_delete" action="#{purchaseContractHome.remove}" onclick="return confirm('确定删除吗？');" id="Delete" immediate="true" title="删除" >
+									<f:param name="contractId" value="#{_contract.id}" />
+									<f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+                                </s:link>&#160;
+                              <a href="javascript:;" class="#{_contract.activeState eq 0 ?'list_het':'list_67e'}" title="修改外采状态" onclick="checkSubmit(#{_contract.id},#{_contract.activeState});" />&#160;
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</a4j:repeat>
+						<a4j:repeat value="#{purchaseContractList.earlierList}" var="_contract" rendered="#{not empty purchaseContractList.earlierList}" rowKeyVar="_index">
+						<s:decorate rendered="#{_index == 0}">
+							<tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td colspan="7" align="left" class="ze_bg3"><b>更早</b><font color="#62ace9"></font></td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                    	</tr>
+	                    </s:decorate>
+                    	<tr> 
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            <td class="ze_bg2"><h:outputText value="#{_contract.contractCode}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.memberInfoId.realname}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.signingTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_contract.beginTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM" /></h:outputText>至<h:outputText value="#{_contract.endTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{purchaseContractHome.getFloatbyTow(_contract.contractMoney)}" /></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText value="失效" rendered="#{_contract.activeState eq 0}"/>
+                    			<h:outputText value="有效" rendered="#{_contract.activeState eq 1}"/>
+                    		</td>
+                    		<td class="ze_bg2" align="center">
+                            	<s:link rendered="#{s:hasRole('purchase_show')}" propagation="none"  view="/contract/PurchaseContract.xhtml" styleClass="list_view"  id="View" title="查看">
+									<f:param name="baseId" value="#{purchaseContractList.baseId}"/>
+									<f:param name="contractId" value="#{_contract.id}" />
+									<f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+								</s:link>&#160;
+		                    	<s:link rendered="#{s:hasRole('purchase_edit')}" propagation="none"  view="/contract/PurchaseContractUpdate.xhtml" styleClass="list_edit" action="#{purchaseContractHome.login4}" id="Edit" title="编辑" >
+	                                <f:param name="baseId" value="#{purchaseContractList.baseId}"/>
+	                                <f:param name="contractId" value="#{_contract.id}" />
+	                                <f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+								</s:link>&#160;
+		                    	<s:link rendered="#{s:hasRole('purchase_del')}" propagation="none"  view="/contract/PurchaseContractEdit.xhtml" styleClass="list_delete" action="#{purchaseContractHome.remove}" onclick="return confirm('确定删除吗？');" id="Delete" immediate="true" title="删除" >
+									<f:param name="contractId" value="#{_contract.id}" />
+									<f:param name="pageNum" value="#{purchaseContractList.pageNum}" />
+                                </s:link>&#160;
+                                <a href="javascript:;"  class="#{_contract.activeState eq 0 ?'list_het':'list_67e'}" title="修改外采状态" onclick="checkSubmit(#{_contract.id},#{_contract.activeState});" />&#160;
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</a4j:repeat>
+                    </table>
+                    <!--翻页开始-->
+                    <s:decorate rendered="#{not empty purchaseContractList.resultList}">
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+			                <s:decorate rendered="#{!purchaseContractList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{purchaseContractList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{purchaseContractList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/contract/PurchaseContractList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/contract/PurchaseContractList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{purchaseContractList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{purchaseContractList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{purchaseContractList.previousExists or _index >0 ?'td_t_t':''} #{_page eq purchaseContractList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/contract/PurchaseContractList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{purchaseContractList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/contract/PurchaseContractList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{purchaseContractList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/contract/PurchaseContractList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{purchaseContractList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{purchaseContractList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</tr>
+                    </table>
+					</s:decorate>
+                    <!--翻页结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+        
+<a4j:form>
+	 <a4j:queue requestDelay="10" ignoreDupResponses="true" />
+     <a4j:jsFunction name="updateActiveState" action="#{purchaseContractList.updateActiveState}" >
+      <a4j:actionparam name="contractId" assignTo="#{purchaseContractList.contractId}"/>
+      <a4j:actionparam name="activeState" assignTo="#{purchaseContractList.activeState}"/>
+     </a4j:jsFunction>
+</a4j:form>          
+<script src="#{request.contextPath}/asset/js/utils.js" type="text/javascript"></script> 
+<script>
+//<![CDATA[
+jquery(document).ready(function(){
+	jquery('.selectpicker').selectpicker();
+	var searchText = jQuery("#storageTypeSearch\\:contractCode").val();
+	if(searchText == null || searchText == ""){
+		jQuery("#storageTypeSearch\\:contractCode").val("请输入搜索条件");
+		jQuery("#storageTypeSearch\\:contractCode").css("color","#a8a8a8");
+	}else if(searchText == "请输入搜索条件"){
+		jQuery("#storageTypeSearch\\:contractCode").css("color","#a8a8a8");
+	}else{
+		jQuery("#storageTypeSearch\\:contractCode").css("color","#000");
+	}
+});
+function checkAll (name,obj){
+	jquery("input[name='"+name+"']").attr("checked",jquery(obj).attr("checked"));
+}
+
+function checkSubmit(contractId,activeState){
+	if(activeState == 0){
+		if(confirm('确定改为有效外采么？')){
+			updateActiveState(contractId,1);
+		}
+	}else{
+		if(confirm('确定改为失效外采么？')){
+			updateActiveState(contractId,0)
+		}
+	}
+}
+	function  objFocus(obj){
+		if(obj.value=="请输入搜索条件"){
+			obj.value="";
+			jQuery("#storageTypeSearch\\:contractCode").css("color","#000");
+		}
+		
+	} 
+	function objBlur(obj){
+	   if(obj.value==""){
+			obj.value="请输入搜索条件";
+			jQuery("#storageTypeSearch\\:contractCode").css("color","#a8a8a8");
+		}
+	}
+
+//刷新
+function refreshCartAction(){
+	document.getElementById("refreshCartFrom:refreshCart").click();
+}
+
+function changeVal(obj){
+	var objVal = jquery("#"+obj).text();;
+	jquery("#Primary").text(objVal);
+}
+
+//]]>
+</script>
+		</td>
+		
+	</ui:define>
+
+</ui:composition>

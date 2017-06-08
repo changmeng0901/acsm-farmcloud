@@ -1,0 +1,295 @@
+﻿<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/stock/InventoryFile.css"/>
+#{outStorageHome.detailInit()} 
+             <td valign="top">
+            <div class="inbentory_file_main">
+                <!-- 出库详细记录右侧 -->
+                <div class="inbentory_content">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt" style="margin-left:20px;"><a href="#">采销存</a><span>&gt;</span><a href="#{request.contextPath}/stock/OutStorageList.seam">出库明细</a><span>&gt;</span><strong>出库明细记录</strong></div>
+                    </div>
+                    <div class="inbentory_search_wap">
+                    <!-- 物料信息 -->
+                    	<div class="material_infor_title clear">
+                        	<strong class="text_title">出库信息</strong>
+                            <s:link propagation="end"  view="/stock/OutStorageList.xhtml" styleClass="btn btn-default fr"  id="detailId" value="返回">
+										<f:param name="storageRoomId" value="#{outStorageList.storageRoomId}" />
+										<f:param name="goodsType" value="#{outStorageList.goodsType}" />
+										<f:param name="beginTime" value="#{outStorageList.beginTime}" />
+										<f:param name="endTime" value="#{outStorageList.endTime}" />
+										<f:param name="operaterId" value="#{outStorageList.operaterId}" />
+										<f:param name="storageType" value="#{outStorageList.storageType}" />
+										<f:param name="searchStr" value="#{outStorageList.searchStr}" />
+										<f:param name="thisPage" value="#{outStorageList.thisPage}" />
+									</s:link>
+                        </div>
+                        <div class="material_table clear">
+                        	<dl class="li_item col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            	<dt class="dl_dt">
+                                	<img src="#{request.contextPath}/asset/images/stock/inventory/StorageDetailRecords_icon1.png" />出库编号
+                                </dt>
+                                <dd class="dl_dd">
+                                	<p class="text_num">#{outStorageHome.storageChangeForm.name}</p>
+                                </dd>
+                            </dl>
+                        	<dl class="li_item col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            	<dt class="dl_dt">
+                                	<img src="#{request.contextPath}/asset/images/stock/inventory/StorageDetailRecords_icon2.png" />出库类型
+                                </dt>
+                                <dd class="dl_dd">
+                                	<p class="text_num">#{outStorageHome.storageChangeForm.storageChangeTypeId.name}</p>
+                                </dd>
+                            </dl>
+                            <dl class="li_item col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            	<dt class="dl_dt">
+                                	<img src="#{request.contextPath}/asset/images/stock/inventory/StorageDetailRecords_icon3.png" />仓<span class="space_two12"></span>库
+                                </dt>
+                                <dd class="dl_dd">
+                                	<p class="text_num">#{outStorageHome.storageChangeForm.storageRoom.name}</p>
+                                </dd>
+                            </dl>
+                            <dl class="li_item col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            	<dt class="dl_dt">
+                                	<img src="#{request.contextPath}/asset/images/stock/inventory/StorageDetailRecords_icon4.png" />经<span class="space_harf12"></span>办<span class="space_harf12"></span>人
+                                </dt>
+                                <dd class="dl_dd">
+<!-- bug位置开始 -->
+                                	<p class="text_num">
+                                		<s:fragment rendered="#{outStorageHome.storageChangeForm.operater.name eq null }">系统自动操作</s:fragment>
+                                		<s:fragment rendered="#{outStorageHome.storageChangeForm.operater.name ne null }">#{outStorageHome.storageChangeForm.operater.name}</s:fragment>
+                                	</p>
+<!-- bug位置结束 -->
+                                </dd>
+                            </dl>
+                            <dl class="li_item col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            	<dt class="dl_dt">
+                                	<img src="#{request.contextPath}/asset/images/stock/inventory/StorageDetailRecords_icon5.png" />出库时间
+                                </dt>
+                                <dd class="dl_dd">
+                                	<p class="text_num"><h:outputText
+											value="#{outStorageHome.storageChangeForm.insertTime}">
+											<s:convertDateTime type="both" dateStyle="short"
+												pattern="yyyy-MM-dd HH:mm" />
+										</h:outputText></p>
+                                </dd>
+                            </dl>
+                            <dl class="li_item col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            	<dt class="dl_dt">
+                                	<img src="#{request.contextPath}/asset/images/stock/inventory/StorageDetailRecords_icon6.png" />备<span class="space_two12"></span>注
+                                </dt>
+                                <dd class="dl_dd">
+                                	<p class="text_num">#{outStorageHome.storageChangeForm.comment}</p>
+                                </dd>
+                            </dl>
+                        </div>
+                    <!-- 物料信息 -->
+                    </div>
+                    <rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+                    <div class="inbentory_search_wap">
+                    <!-- 该物料在库存中的全部流水记录列表 -->
+                        <table class="inventory_modal_table mt20" width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<th>序号</th>
+                                <th>批次编号</th>
+                                <th>物料名称</th>
+                                <th>来源</th>
+                                <th>等级</th>
+                                <th>规格</th>
+                                <th>保质期</th>
+                                <th>出库数量</th>
+                                <th>出库总重量（kg）</th>
+                                <th>单价（元）</th>
+                                <th>小计（元）</th>
+                            </tr>
+                             <a:repeat value="#{outStorageHome.resultList}" var="_gpcr" rowKeyVar="_index">
+                            <tr class="cm_nottt #{_index % 2 == 0 ? 'alt' : ''}">
+												<td height="48" width="5%" align="center">#{_index+1}</td>
+												<td width="10%" align="center">#{_gpcr[1]}</td>											
+												<td width="10%" align="center">#{_gpcr[2]}</td>
+												<td width="10%" align="center">
+													<h:outputText rendered="#{_gpcr[14] != 11}">
+														<h:outputText value="--" rendered="#{null eq _gpcr[13]}"/>
+														<h:outputText value="#{ _gpcr[13]}" rendered="#{null ne  _gpcr[13]}"/> 
+													</h:outputText>
+													<h:outputText rendered="#{_gpcr[14] == 11}">
+														<h:outputText value="--" rendered="#{null eq _gpcr[15]}"/>
+														<h:outputText value="#{ _gpcr[15]}" rendered="#{null ne  _gpcr[15]}"/> 
+													</h:outputText>
+												</td>											
+												<td width="10%" align="center">
+													<h:outputText value="--" rendered="#{null eq  _gpcr[12]}"/>
+													<h:outputText value="#{ _gpcr[12]}" rendered="#{null ne  _gpcr[12]}"/> 
+												</td>
+												<td width="10%" align="center">		
+													<!-- <s:fragment rendered="#{_gpcr[8] eq 1}">
+														#{_gpcr[6]}
+													</s:fragment>
+													<s:fragment rendered="#{_gpcr[8] ne 1}">
+														#{_gpcr[10]}#{_gpcr[6]}
+														<s:fragment rendered="#{_gpcr[11] ne null and _gpcr[11] ne ''}">
+															/#{_gpcr[11]}
+														</s:fragment>
+													</s:fragment> -->
+													<s:fragment rendered="#{_gpcr[8] eq 1}">
+														<s:fragment rendered="#{_gpcr[7] ge 7 and _gpcr[7] le 11}">
+															#{sessionTake.harvestUnit eq 1? '斤':'公斤（kg）'}
+														</s:fragment>
+														<s:fragment rendered="#{_gpcr[7] lt 7 or _gpcr[7] gt 11}">
+															#{_gpcr[6]}
+														</s:fragment>
+													</s:fragment>
+													<s:fragment rendered="#{_gpcr[8] ne 1}">
+															#{_gpcr[10]}#{_gpcr[6]}
+														<s:fragment rendered="#{_gpcr[11] ne null and _gpcr[11] ne ''}">
+															/#{_gpcr[11]}
+														</s:fragment>
+													</s:fragment>
+												</td>
+												
+												<td width="5%" align="center">#{_gpcr[3]}天</td>
+												<td width="5%" align="center">
+													<!-- <s:fragment rendered="#{_gpcr[8] eq 1}">
+														<h:outputText value="#{unitStranfer.outStranfer(_gpcr[7],_gpcr[5])}"><f:convertNumber pattern="#.###"/></h:outputText>
+													</s:fragment>
+													<s:fragment rendered="#{_gpcr[8] ne 1}">
+														<h:outputText value="#{_gpcr[5]}"><f:convertNumber pattern="#.###"/></h:outputText>
+													</s:fragment> -->
+													<s:fragment rendered="#{_gpcr[8] eq 1}">
+														<h:outputText rendered="#{_gpcr[7] ge 7 and _gpcr[7] le 11}" >
+								                        	<h:outputText value="#{stringUtil.changeFloatMe(_gpcr[5],3)}" rendered="#{sessionTake.harvestUnit eq 1}">
+								                            	<f:convertNumber pattern="#####.###"/>
+								                            </h:outputText>
+								                            <h:outputText value="#{_gpcr[5]}" rendered="#{sessionTake.harvestUnit ne 1}">
+								                            	<f:convertNumber pattern="#####.###"/>
+								                            </h:outputText>
+										                </h:outputText>
+											            <h:outputText value="#{unitStranfer.outStranfer(_gpcr[7],_gpcr[5])}" rendered="#{_gpcr[7] lt 7 or _gpcr[7] gt 11}" >
+											                   	<f:convertNumber pattern="#####.###"/>
+											            </h:outputText>
+											        </s:fragment>
+											        <s:fragment rendered="#{_gpcr[8] ne 1}">
+											        	<h:outputText value="#{_gpcr[5]}">
+											        			<f:convertNumber pattern="#####.###"/>
+											        	</h:outputText>
+											        </s:fragment>	
+												</td>
+												<td width="10%" align="center">
+													<h:outputText value="#{_gpcr[16]}">
+											        			<f:convertNumber pattern="#####.###"/>
+											        </h:outputText>
+													kg
+												</td>
+												<td width="10%" align="center">￥
+													<!-- <h:outputText value="#{_gpcr[9]}"><f:convertNumber pattern="#0.00"/></h:outputText> -->
+													<s:fragment rendered="#{_gpcr[8] eq 1}">
+														<h:outputText rendered="#{_gpcr[7] ge 7 and _gpcr[7] le 11}" >
+								                        	<h:outputText value="#{unitStranfer.outStranferPrice(9,_gpcr[9])}" rendered="#{sessionTake.harvestUnit eq 1}">
+								                            	<f:convertNumber pattern="#####.##"/>
+								                            </h:outputText>
+								                            <h:outputText value="#{_gpcr[9]}" rendered="#{sessionTake.harvestUnit ne 1}">
+								                            	<f:convertNumber pattern="#####.##"/>
+								                            </h:outputText>
+										                </h:outputText>
+											            <h:outputText value="#{_gpcr[9]}" rendered="#{_gpcr[7] lt 7 or _gpcr[7] gt 11}" >
+											                   	<f:convertNumber pattern="#####.###"/>
+											            </h:outputText>
+											        </s:fragment>
+											        <s:fragment rendered="#{_gpcr[8] ne 1}">
+											               #{_gpcr[9]}
+											        </s:fragment>	
+												</td>
+												<td width="10%" align="center">￥											
+											        <!-- <h:outputText value="#{unitStranfer.outStranfer(10,_gpcr[9]) *  unitStranfer.outStranfer(10,_gpcr[5])}">
+											        	<f:convertNumber pattern="#####.###"/>
+											        </h:outputText> -->
+											       <!--  <s:fragment rendered="#{_gpcr[8] eq 1}">
+														<h:outputText rendered="#{_gpcr[7] ge 7 and _gpcr[7] le 11}" >
+								                        	<h:outputText value="#{unitStranfer.outStranferPrice(9,_gpcr[17])}" rendered="#{sessionTake.harvestUnit eq 1}">
+								                            	<f:convertNumber pattern="#####.##"/>
+								                            </h:outputText>
+								                            <h:outputText value="#{_gpcr[17]}" rendered="#{sessionTake.harvestUnit ne 1}">
+								                            	<f:convertNumber pattern="#####.##"/>
+								                            </h:outputText>
+										                </h:outputText>
+											            <h:outputText value="#{_gpcr[17]}" rendered="#{_gpcr[7] lt 7 or _gpcr[7] gt 11}" >
+											                   	<f:convertNumber pattern="#####.###"/>
+											            </h:outputText>
+											        </s:fragment>
+											        <s:fragment rendered="#{_gpcr[8] ne 1}">
+											         	<h:outputText value="#{_gpcr[17]}">
+											                   	<f:convertNumber pattern="#####.###"/>
+											            </h:outputText>
+											        </s:fragment>	 -->
+											        <h:outputText value="#{_gpcr[17]}">
+											                   	<f:convertNumber pattern="#####.##"/>
+											        </h:outputText>
+												</td>
+											</tr>
+                            </a:repeat>
+                        </table>
+                         <div class="pageModel_wap" style="padding:50px 0 30px;">
+                           <h:form id="pageFrom" rendered="#{null ne outStorageHome.resultList and outStorageHome.resultList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!outStorageHome.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{outStorageHome.hasPreviousPage and outStorageHome.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{outStorageHome.hasPreviousPage and outStorageHome.totalPages > 1}" >首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{outStorageHome.previousPage})"  >&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{outStorageHome.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le outStorageHome.totalPages}">
+											<td class="td_t_b #{outStorageHome.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq outStorageHome.thisPage ? 'onp' : ''}" >
+												<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{outStorageHome.hasNextPageFlag}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{outStorageHome.nextPage})" rendered="#{outStorageHome.hasNextPage and outStorageHome.totalPages > 1}" >&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{outStorageHome.totalPages})" rendered="#{outStorageHome.hasNextPage and outStorageHome.totalPages > 1}" >尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{outStorageHome.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+						</table>
+						</h:form>
+                    <!-- 该物料在库存中的全部流水记录列表 -->
+                    </div>
+                </div>
+                </rich:panel>
+                <!-- 入库详细记录右侧 -->
+            </div>   
+            </div>
+            </td>    
+        <a:form>
+			<a:jsFunction name="detailInit" action="#{outStorageHome.detailInit()}"  reRender="showPanel"  oncomplete="windowHeight()">
+				<a:actionparam name="thisPage" assignTo="#{outStorageHome.thisPage}"/>
+			</a:jsFunction>
+		</a:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryFile.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/OutStorageDetail.js"></script>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,350 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	#{specificationHome.initShowList()}
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge"></meta>
+	<!--[if lt IE 9]>
+      <script src="#{request.contextPath}/asset/js/bootstrap/respond.js"></script>
+    <![endif]-->
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/archive/SpecificationDetail.css" />
+	<td valign="top">
+	<div class="right_c">
+		<!-- 面包屑 -->
+		<div class="r_title mb30">
+			<div class="r_t_l cm_r_t_l"><span>生产管理</span><em>&nbsp;&gt;&nbsp;</em><font	size="3">标准规范</font></div>
+		</div>
+		<!-- 作物基本信息 -->
+		<div class="crop-base-info mb22">
+			<div class="clear overflowH">
+				<div class="info-left">
+					<s:fragment rendered="#{not empty specificationHome.plant.plantImgRound}"><img class="species-pic" src="#{specificationHome.plant.plantImgRound}@120_120h_1e_1c.src" /></s:fragment>
+					<s:fragment rendered="#{empty specificationHome.plant.plantImgRound}"><img class="species-pic" style="width:120px;" src="#{request.contextPath}/asset/images/record/zstp.png"/></s:fragment>
+					
+				</div>
+				<p class="crop-name ellipsis" title="#{specificationHome.plant.name}">#{specificationHome.plant.name}</p>
+				<div class="info-right">
+					<div class="info-con1 fl">
+						<div class="blongs-name mb10">
+							<span>中文学名</span>
+							<p class="ellipsis" title="#{specificationHome.plant.scientificName}">#{specificationHome.plant.scientificName}</p>
+						</div>
+						<div class="blongs-name">
+							<span>英文名</span>
+							<p class="ellipsis" title="#{specificationHome.plant.englishName}">#{specificationHome.plant.englishName}</p>
+						</div>
+					</div>
+					<div class="info-con2 fl">
+						<div class="blongs-name mb10">
+							<span>拉丁学名</span>
+							<p class="ellipsis" title="#{specificationHome.plant.formalName}">#{specificationHome.plant.formalName}</p>
+						</div>
+						<div class="blongs-name">
+							<span>科</span>
+							<p class="ellipsis" title="#{specificationHome.plant.faculty}">#{specificationHome.plant.faculty}</p>
+						</div>
+					</div>
+					<div class="info-con3 fr">
+						<div class="blongs-name blongs-name2 mb10">
+							<span>别称</span>
+							<p class="ellipsis" title="#{specificationHome.plant.byname}">#{specificationHome.plant.byname}</p>
+						</div>
+						<div class="blongs-name blongs-name2">
+							<span>属</span>
+							<p class="ellipsis" title="#{specificationHome.plant.genus}">#{specificationHome.plant.genus}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 搜索 -->
+		<div class="search-wrap mb14 clearfix">
+			<div class="fl">
+				<div class="public-search mr20 fl">
+					<span class="octicon-search02"></span>
+			    	<input type="text" id="searchContent" class="form-control srarchfont" value="输入种植方法名称搜索"></input>
+			    </div>
+			    <dl class="select-item-dl">
+			    	<dt class="select-dt70">种植标准</dt>
+			    	<dd class="select-dd select-w124">
+					    <select class="selectpicker"  id="planStandard"  multiple="multiple">
+						    <a:repeat value="#{specificationHome.planStandardList}" var="_stand">
+					    	 	<option value="#{_stand.dataDicId}">#{_stand.name}</option>
+					    	</a:repeat>
+						</select>
+			    	</dd>
+			    </dl>
+			    <dl class="select-item-dl">
+			    	<dt class="select-dt70">种植环境</dt>
+			    	<dd class="select-dd select-w124">
+					    <select class="selectpicker" id="plantEnv" multiple="multiple">
+						    <a:repeat value="#{specificationHome.plantEnvList}" var="_env">
+					    	 	<option value="#{_env.id}">#{_env.name}</option>
+					    	</a:repeat>
+						</select>
+			    	</dd>
+			    </dl>
+			    <dl class="select-item-dl">
+			    	<dt class="select-dt70">推送来源</dt>
+			    	<dd class="select-dd select-w124">
+					    <select class="selectpicker" id="pushSource" multiple="multiple">
+						    <option value="1">专家推送</option>
+						    <option value="3">系统推送</option>
+						    <option value="2">企业推送</option>
+						</select>
+			    	</dd>
+			    </dl>
+			    <dl class="select-item-dl">
+			    <a href="javascript:void(0);" onclick="queryPage(1);" class="btn btn-primary">搜索</a>
+			    </dl>
+		    </div>
+		    <div class="fixed-btn fr">
+		    	
+		    	<button type="button" class="btn btn-default mr5 fl" style="display:none;">导入</button>
+		    	<a href="#{request.contextPath}/archive/AddPlantMethod.seam?plantId=#{specificationHome.plantId}&amp;addOrUpdate=1" class="btn btn-primary fl">添加种植方法</a>
+		    </div>
+		</div>
+		<!-- 种植方法列表 -->
+		<s:div id="plantMethodList">
+			<table class="tableModel mb20" width="100%" cellpadding="0" cellspacing="0">
+		    	<thead>
+			        <tr>
+			            <th width="6%">序号</th>
+			            <th width="18%">种植方法</th>
+			            <th width="16%">种植标准</th>
+			            <th width="16%">种植环境</th>
+			            <th width="18%">使用种植</th>
+			            <th width="16%">推送来源</th>
+			            <th width="10%">操作</th>
+			        </tr>
+		        </thead>
+		    	<tbody>
+		    		<a:repeat value="#{specificationHome.farmingPushList}" var="_pushList" rowKeyVar="_pushIndex">
+		    			<tr class="plantff-tr odd">
+				            <td>#{_pushIndex+1}</td>
+				            <td><p class="ellipsis">#{_pushList[10]}</p></td>
+				            <td><p class="ellipsis">#{_pushList[6]}</p></td>
+				            <td><p class="ellipsis">#{_pushList[7]}</p></td>
+				            <td><p class="ellipsis" data-toggle="tooltip" data-placement="top" title="#{_pushList[9]}">#{_pushList[9]}</p></td>
+				            <td><p class="ellipsis">#{_pushList[8]}</p></td>
+				            <td>
+				                <s:link propagation="none"  view="#{request.contextPath}/archive/PlantMethod.xhtml" styleClass="list_view"  title="查看">
+									<f:param name="plantId" value="#{specificationHome.plantId}" />
+									<f:param name="pushGroupId" value="#{_pushList[0]}" />
+								</s:link>
+				                <s:link propagation="none"  view="#{request.contextPath}/archive/AddPlantMethod.xhtml" styleClass="list_edit" style="margin-left:3px;"  title="编辑">
+									<f:param name="plantId" value="#{specificationHome.plantId}" />
+									<f:param name="addOrUpdate" value="2" />
+									<f:param name="planStandardId" value="#{_pushList[3]}" />
+									<f:param name="plantEnvId" value="#{_pushList[4]}" />	
+									<f:param name="pushGroupId" value="#{_pushList[0]}" />
+									<f:param name="pushSource" value="#{_pushList[5]}" />
+								</s:link>
+				                <s:fragment rendered="#{_pushList[5] ne 1 and _pushList[5] ne 3}">
+				                	<a href="javascript:;" title="删除" class="list_delete" onclick="if(confirm('确认删除吗？')){deleteMethod('#{_pushList[0]}')}"></a>
+				                </s:fragment>
+				            </td>
+				        </tr>
+		    		</a:repeat>
+		        </tbody>
+		    </table>
+		    <!-- 分页 开始 -->
+		    <div class="pageModel_wap fr">
+	             <h:form id="pageFrom" rendered="#{null ne specificationHome.farmingPushList and specificationHome.farmingPushList.size() gt 0}">
+					<table style="height:30px;" cellpadding="0" cellspacing="0">
+						<tr>
+							<s:fragment rendered="#{!specificationHome.hasPreviousPage }">
+								<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+							</s:fragment>
+							<s:fragment rendered="#{specificationHome.hasPreviousPage and specificationHome.totalPages > 1}">
+								<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+								<td class="td_t_b">
+									<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{specificationHome.hasPreviousPage and specificationHome.totalPages > 1}" >首页</a:commandLink>
+								</td>
+								<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+									<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{specificationHome.previousPage})"  >&lt;</a:commandLink>
+								</td>
+							</s:fragment>
+							<a:repeat var="_page" value="#{specificationHome.showPageList}" rowKeyVar="_index">
+								<s:fragment rendered="#{_page gt 0 and _page le specificationHome.totalPages}">
+									<td class="td_t_b #{specificationHome.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq specificationHome.thisPage ? 'onp' : ''}" >
+										<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+									</td>
+								</s:fragment>
+							</a:repeat>
+							<s:fragment rendered="#{specificationHome.hasNextPageFlag}">
+								<td class="td_t_b td_t_t">
+									<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{specificationHome.nextPage})" rendered="#{specificationHome.hasNextPage and specificationHome.totalPages > 1}" >&gt;</a:commandLink>
+								</td>
+								<td class="td_t_b td_t_t">
+									<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{specificationHome.totalPages})" rendered="#{specificationHome.hasNextPage and specificationHome.totalPages > 1}" >尾页</a:commandLink>
+								</td>
+							</s:fragment>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{specificationHome.totalPages}页</td>
+							<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+						</tr>
+					</table>
+				</h:form>
+	          </div> 
+	       </s:div>
+	    <!-- 当前种植信息 -->
+	    <div style="clear:both;">
+	    <s:div id="realPlantList" >
+	    	<s:fragment rendered="#{not empty specificationHome.realPlantList}">
+		    <div class="plant-title-block mb20">当前种植</div>
+		    <div class="plant-list row ">
+		    	<a:repeat value="#{specificationHome.realPlantList}" var="_real">
+			    	<div class="col-crop2">
+			    		<dl class="crop-con">
+							<dd class="crop-left clear">
+								<div class="crop-pic">
+									<span class="shade"></span>
+									<s:fragment rendered="#{_real[4] != '' and _real[4]!=null}"><img src="#{_real[4]}@62_62h_1e_1c.src" /></s:fragment>
+									<s:fragment rendered="#{_real[4] == '' or _real[4]==null}"><img src="#{request.contextPath}/asset/images/wt.png" style="width:62px;"/></s:fragment>
+								</div>
+								<div class="crop-area ellipsis" title="#{_real[5]}亩">#{_real[5]}亩</div>
+							</dd>
+							<dd class="crop-right">
+								<a class="info-set" href="javascript:;"  onclick="showRealPlantMethod('#{_real[0]}','#{_real[10]}','#{_real[13]}','#{_real[14]}')"></a>
+								<div class="clearfix">
+									<p class="txt-quyu ellipsis" title="#{_real[3]}">#{_real[3]}</p>
+									<p class="txt-fangfa ellipsis">#{_real[11]}
+										<s:fragment rendered="#{_real[12] eq 1}">专家推送</s:fragment>
+										<s:fragment rendered="#{_real[12] eq 2}">企业推送</s:fragment>
+										<s:fragment rendered="#{_real[12] eq 3}">系统推送</s:fragment>
+									</p>
+								</div>
+								<p class="crop-name ellipsis" title="#{_real[1]}-#{_real[2]}">#{_real[1]}-#{_real[2]}</p>
+								<div class="plant-progress">
+									<p class="plant-days" date-days="21" style="left: #{_real[9]/_real[8]*100}%;">#{_real[9]}天</p>
+									<div class="progress">
+									    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="#{_real[9]/_real[8]*100}" aria-valuemin="0" aria-valuemax="100" style="width: #{_real[9]/_real[8]*100}%"></div>
+									</div>
+									<p class="start-time">#{_real[6]}</p>
+									<p class="end-time">#{_real[7]}</p>
+								</div>
+							</dd>
+						</dl>
+			    	</div>
+			    </a:repeat>
+		    </div>
+		    </s:fragment>
+		    <!-- 计划种植信息 -->
+		    <s:fragment rendered="#{not empty specificationHome.planPlantList}">
+		    <div class="plant-title-block mb20">计划种植</div>
+		    <div class="plant-list row ">
+		    	<a:repeat value="#{specificationHome.planPlantList}" var="_plan">
+			    	<div class="col-crop2">
+			    		<dl class="crop-con">
+							<dd class="crop-left clear">
+								<div class="crop-pic">
+									<span class="shade"></span>
+									<s:fragment rendered="#{not empty _plan[4]}"><img src="#{_plan[4]}@62_62h_1e_1c.src" /></s:fragment>
+									<s:fragment rendered="#{empty _plan[4]}}"><img src="#{request.contextPath}/asset/images/wt.png"/></s:fragment>
+								</div>
+								<div class="crop-area ellipsis" title="#{_plan[5]}亩">#{_plan[5]}亩</div>
+							</dd>
+							<dd class="crop-right">
+								<a class="info-set" href="javascript:;" onclick="showRealPlantMethod('#{_plan[0]}','#{_plan[10]}','#{_plan[13]}','#{_plan[14]}')"></a>
+								<div class="clearfix">
+									<p class="txt-quyu ellipsis" title="#{_plan[3]}">#{_plan[3]}</p>
+									<p class="txt-fangfa ellipsis">#{_plan[11]}
+										<s:fragment rendered="#{_plan[12] eq 1}">专家推送</s:fragment>
+										<s:fragment rendered="#{_plan[12] eq 2}">企业推送</s:fragment>
+										<s:fragment rendered="#{_plan[12] eq 3}">系统推送</s:fragment>
+									</p>
+								</div>
+								<p class="crop-name ellipsis" title="#{_plan[1]}-#{_plan[2]}">#{_plan[1]}-#{_plan[2]}</p>
+								<div class="plant-progress">
+									<p class="plant-days" date-days="21" style="left: 0%;">#{_plan[9]}天</p>
+									<div class="progress">
+									    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+									</div>
+									<p class="start-time">#{_plan[6]}</p>
+									<p class="end-time">#{_plan[7]}</p>
+								</div>
+							</dd>
+						</dl>
+			    	</div>
+			    </a:repeat>
+		    </div>
+		    </s:fragment>
+	    <!-- 计划种植信息 -->
+	    </s:div>
+	    </div>
+	    <div class="align-center pt40 pb40">
+	    	<a class="btn btn-default" href="#{request.contextPath}/archive/Specification.seam?thisPage=#{specificationHome.listPage}">返回</a>
+	    </div>
+	    <!-- 返回 -->
+		<!-- 修改种植方法modal -->
+		<div class="modal fade amendPlant-modal" id="amendPlantModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header clearfix">
+				<h4 class="modal-title" id="myModalLabel">选择种植方法</h4>
+				<i type="button" class="close" data-dismiss="modal"></i>
+			</div>
+			<div class="modal-body">
+				<table class="modal-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="td-lt">种植方法</td>
+						<td class="td-rt">
+							<input type="hidden" id="realPlantId"/>
+							<div class="select-dd select-w186">
+							<s:div id="realplantMethodList">
+							    <select class="selectpicker" id="methodSelectpicker">
+							    	<option value="0">请选择</option>
+							    	<a:repeat value="#{specificationHome.farmingMethodList}" var="_method">
+							    	 	<option value="#{_method[0]}">#{_method[4]}</option>
+							    	</a:repeat>
+								</select>
+								</s:div>
+					    	</div>
+						</td>
+					</tr>
+				</table>	    
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="submitMethod();">确定</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+		</div>
+		</div>
+		<a:form id="formid" >
+			<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+			<a:jsFunction eventsQueue="mainQueue" name="searchPlantFarmingPushList" action="#{specificationHome.getPlantFarmingPushList()}" reRender="plantMethodList">
+				<a:actionparam name="searchContent" assignTo="#{specificationHome.searchContent}" />
+				<a:actionparam name="planStandardIds" assignTo="#{specificationHome.planStandardIds}" />
+				<a:actionparam name="plantEnvIds" assignTo="#{specificationHome.plantEnvIds}" />
+				<a:actionparam name="expertMarks" assignTo="#{specificationHome.expertMarks}" />
+				<a:actionparam name="thisPage" assignTo="#{specificationHome.thisPage}" />
+			</a:jsFunction>
+			<a:jsFunction eventsQueue="mainQueue" name="setRealPlantMethod" action="#{specificationHome.setRealPlantMethod()}" reRender="realPlantList,plantMethodList">
+				<a:actionparam name="realPlantId" assignTo="#{specificationHome.realPlantId}" />
+				<a:actionparam name="pushGroupId" assignTo="#{specificationHome.pushGroupId}" />
+			</a:jsFunction>
+			<a:jsFunction eventsQueue="mainQueue" name="deleteMethod" action="#{specificationHome.delFarming()}" data="#{specificationHome.messageInfo}" reRender="plantMethodList" oncomplete="deleteMethodNext(data)">
+				<a:actionparam name="pushGroupId" assignTo="#{specificationHome.pushGroupId}" />
+			</a:jsFunction>
+			<a:jsFunction eventsQueue="mainQueue" name="getPlantFarmingMethodList" action="#{specificationHome.getPlantFarmingMethodList()}" reRender="realplantMethodList"  oncomplete="getRealplantMethodListNext()">
+				<a:actionparam name="planStandardId" assignTo="#{specificationHome.planStandardId}" />
+				<a:actionparam name="plantEnvId" assignTo="#{specificationHome.plantEnvId}" />
+			</a:jsFunction>
+		</a:form>
+		<!-- 修改种植方法modal -->
+	<script src="#{request.contextPath}/asset/js/archive/SpecificationDetail.js"></script>
+	</div>
+	</td>
+	</ui:define>
+
+</ui:composition>

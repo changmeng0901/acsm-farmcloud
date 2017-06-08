@@ -1,0 +1,510 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_map.xhtml">
+
+<ui:define name="body">
+   
+<td valign="top" >
+<div style="z-index: 0; position: absolute;*left:60px" id="map-canvas"></div>
+<style>  
+     html, body, #map-canvas {  
+       height: 100%;  
+       margin: 0px;  
+       padding: 0px  
+     }  
+     .nothing{
+     position: absolute;
+     }
+     .rich-color-picker-icon{ right:-25px; top:6px; }
+    .rich-color-picker-span img{float:right;}
+ .fr{float:right;}
+		  .r_ulli1{float:right;}
+		  
+   </style>  
+   
+ <!-- #{mapHome.groupWork()} -->
+  
+<div id="detail" class="nothing" style="display:none">
+名称:
+			<input type="text" id="type"/>
+			面积:
+			<input type="text" id="area"/>
+			<input type="button" id="button" onclick="ok()" value="ok"/>
+			<input type="button" id="button" onclick="no()" value="cannal"/>
+			<input type="button" id="button" onclick="deleted()" value="delete"/>
+	
+	</div>
+<div id="mark_info_div"  class="nothing" style="display:none">
+<a4j:form >
+<a4j:jsFunction name="delete_mark_info"  action="#{mapHome.delete_mark_info}" >
+   <a4j:actionparam name="baseId" assignTo="#{mapHome.mark_info_id}"/>
+</a4j:jsFunction>
+</a4j:form>
+</div>
+	
+<div id="mark_div"  class="nothing" style="display:none">
+<a4j:form >
+<a4j:jsFunction name="mark_delete"  action="#{mapHome.deleteFirstPolygon}">
+   <a4j:actionparam name="baseId" assignTo="#{mapHome.mark_info_id}"/>
+</a4j:jsFunction>
+</a4j:form>
+</div>
+                    	<ul class="map_search">
+                                    <li>
+  <table id="floatTools" class="float0831" cellpadding="0" cellspacing="0">
+                           <tr> 
+                            <td valign="middle" align="right" class="floatL" style="display:none;">
+                            	<a  id="aFloatTools_Show" class="btnOpen"  style="cursor:pointer">
+                    			展开
+                                </a>
+                    			
+                    	   </td>
+                    
+                          <td valign="middle" id="divFloatToolsView_" width="1" class="floatR">
+                           		<div class="tc_top_03"><div style="width:130px;" id="divtittle">编辑大棚</div></div> 
+                                <div class="tc_cont">
+                                    <a4j:form ajaxSubmit="true" id="groupForm">
+                                <div class="rightNo rightNo5">
+                                <div class="tc_rw_rw2" z-height="146">
+                                 
+	                                <ul class="tc_ul">
+	                                	<li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">区域名称</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  		<input type="hidden" value="" id="group_id" name="group_id" />
+															<input type="hidden" value="" id="group_index" name="group_index"/>
+															<input type="hidden" value="2" id="maptype" name="maptype"></input>
+	                                                      	<input type="text" class="form-control nw221" style="width:170px;" id="group_name" name="group_name" />
+	                                                      	<input type="hidden" id="group_envList" name="group_envList" />
+	                                                      	<input type="hidden" id="group_group" name="group_group"></input>
+	                                                      	<input type="hidden" id="group_x" name="group_x" />
+	                                                      	<input type="hidden" id="group_y" name="group_y" />
+	                                                      	<input type="hidden" value="" id="group_base_id" name="group_base_id"/>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">种植环境</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                  <select name="group_type" id="group_type" class="small2" style="display:none">
+	                                                      	<a4j:repeat value="#{mapHome.envList}" var="f" >
+	                                                      	<option value="#{f.id}">#{f.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  <input type="hidden" id="group_type_default" ></input>
+	                                                    	 <font style="font-size:14px" id="group_type_hidden"></font>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">分区</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                  <select name="group_parent_id" id="group_parent_id" class="small2">
+	                                                  </select>
+	                                                  <input type="hidden" id="group_parent_id_default" ></input>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li plant_hide">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">农户</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                  		<select name="group_farmer" id="group_farmer">
+	                                                      	<a4j:repeat value="#{mapHome.keeperList}" var="f" >
+	                                                      	<option value="#{f[0]}">#{f[1]}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                                  <td style="padding-left:8px; width:31px; *width:auto; "><a href="#" onclick="addFarmer(1)"><img src="#{request.contextPath}/asset/images/six_03.png"  width="31" height="31" /></a></td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li plant_hide">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">生产负责人</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                      	<select name="group_farmer1" id="group_farmer1">
+	                                                      	<a4j:repeat value="#{mapHome.masterList}" var="f" >
+	                                                      	<option value="#{f[0]}">#{f[1]}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                                  <td style="padding-left:8px; width:31px; *width:auto; "><a href="#" onclick="addFarmer(2)"><img src="#{request.contextPath}/asset/images/six_03.png"  width="31" height="31" /></a></td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li animal_hide">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">饲养员</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                  		<select name="group_farmer2" id="group_farmer2">
+	                                                      	<a4j:repeat value="#{mapHome.syyList}" var="f" >
+	                                                      	<option value="#{f[0]}">#{f[1]}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                                  <td style="padding-left:8px; width:31px; *width:auto; "><a href="#" onclick="addFarmer(3)"><img src="#{request.contextPath}/asset/images/six_03.png"  width="31" height="31" /></a></td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li animal_hide">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">养殖负责人</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                      	<select name="group_farmer3" id="group_farmer3">
+	                                                      	<a4j:repeat value="#{mapHome.yzfList}" var="f" >
+	                                                      	<option value="#{f[0]}">#{f[1]}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                                  <td style="padding-left:8px; width:31px; *width:auto; "><a href="#" onclick="addFarmer(4)"><img src="#{request.contextPath}/asset/images/six_03.png"  width="31" height="31" /></a></td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li ">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">分组</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="sw170">
+	                                                      	<select name="group_groupId" id="group_groupId">
+	                                                      	<a4j:repeat value="#{mapHome.tunnelGroupList}" var="f" >
+	                                                      	<option value="#{f[0]}">#{f[1]}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                                  <td style="padding-left:8px; width:31px; *width:auto; "></td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">实际面积</td>
+	                                                  <td align="left" class="tc_strong150">
+	                                                      	<input type="hidden" id="group_area" name="group_area"  />
+	                                                    	 <font style="font-size:14px" id="group_area_hidden">亩</font>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">可用面积</td>
+	                                                  <td align="left" class="tc_strong150">
+	                                                      	<input type="text" class="form-control nw221" style="width:170px;float:left" id="muarea" name="muarea"/>
+	                                                    	 <font style="position:relative; top:5px; font-size:14px">亩</font>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">颜色</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                      	<rich:colorPicker colorMode="hex" id="color"></rich:colorPicker>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                </ul>
+	                                <ul>
+                                               </ul>
+	                              <div class="clear"></div>
+                                </div>
+                               
+                                <div class="tc_bottom" >
+                                <table style="margin:auto;">
+                                <tr><td style="padding-right:2px">
+                                        <a4j:commandButton   eventsQueue="default"  styleClass="btn btn-primary" value="保存" style="cursor: pointer;" onclick="if(!che()) return false;" action="#{mapHome.updateTunnelGroup}" data="#{mapHome.re_group_id}" oncomplete="if(data==0){alert('区域名称重复!');return false;}_Q('#group_id').val(data);group_ok('#{request.contextPath}/map/PartitionInfo.seam')"/>
+								</td><td>	<input type="button" class="btn btn-default" value="取消" style=" cursor:pointer"  onclick="group_no('#{request.getParameter('typ')}','#{request.contextPath}/map/PartitionInfo.seam','#{request.contextPath}/map/PartitionList.seam')"/>
+                                       <input type="button" value="delete" onclick="group_delete()" style="display:none;"/>
+                                 </td></tr>	 </table>
+                                        </div>
+                                        <div class="clear"></div>
+                                 </div>
+                                </a4j:form>
+                                
+                                <a4j:form ajaxSubmit="true" id="farmer">
+                                <div class="rightNo rightNo7" style="display:none">
+                                <div class="tc_rw_rw2" z-height="146">
+                                 <div class="jScrollbar_mask">
+	                                <ul class="tc_ul">
+	                                  	<li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">姓名</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" value="" class="form-control nw221" style="width:170px;" id="farmer_name" name="farmer_name"></input>
+	                                                    <input type="hidden" value="" id="farmer_type" name="farmer_type"></input>
+	                                                     <input type="hidden" value="" id="farmer_base_id" name="farmer_base_id"/>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">年龄</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" class="form-control nw221" style="width:170px;" value="" id="farmer_age" name="farmer_age"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">从业年限</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" class="form-control nw221" style="width:170px;" value="" id="farmer_age2" name="farmer_age2"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">电话</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" class="form-control nw221" style="width:170px;" value="" id="farmer_phone" name="farmer_phone"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">荣誉</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                    <input type="text" class="form-control nw221" style="width:170px;" value="" id="farmer_honor" name="farmer_honor"></input>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                    </ul>
+	                                </div>
+								</div>
+                                <div class="clear"></div>
+                                <div class="tc_bottom" >
+                                <table style="margin:auto;">
+                                <tr><td style="padding-right:2px">
+                                        <a4j:commandButton styleClass="btn btn-primary" value="保存"  eventsQueue="mainQueue" style="cursor: pointer;" action="#{mapHome.updateFarmer}"  data="#{mapHome.re_farmer_str}"  oncomplete="farmer_ok(data,event)" onclick="if(!checkFarmer()) return false;"/>
+								</td><td>	<input type="button" class="btn btn-default" value="取消" style="  cursor:pointer"  onclick="farmer_no(event)"/>
+                                       <input type="button"  onclick="mark_info_delete()" style="display:none;"/>
+                                 </td></tr>	 </table>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+                                    </div>
+                          </td>
+                      </tr>
+                    </table>
+  </li>
+                                </ul>
+                    <!--右侧弹出框结束-->
+                
+                <script type="text/javascript">
+                var markstr = #{mapHome.baseString};
+                var secondstr = #{mapHome.partitionString};
+                var thirdstr = #{mapHome.groupString};
+                var colors = #{mapHome.dicColor};
+				var envTypeList = #{mapHome.entTypeString};
+				var animalStr = #{mapHome.animalStr};
+				var _center = "#{mapHome.center}";
+                </script>
+                <script src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script>  
+     <script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-1.4.2.min.js"> </script>    
+   <script type="text/javascript" src="#{request.contextPath}/asset/js/map/map_group.js"> </script> 
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-ui.js"></script>        
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-ui-select.js"> </script> 
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-mousewheel.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jScrollbar.jquery.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+           var baseId = "#{mapHome.edit_base_id}";
+           var noneOption = "<option value='0'>暂无数据</option>";
+           function insertPartition(){
+       		if(secondstr.length==0){
+       			_Q("#group_parent_id").append(noneOption);
+       		}else {
+           		
+       			_Q("#group_parent_id").append(noneOption); 
+       			for(var i = 0;i<secondstr.length;i++){
+       				var os = secondstr[i];
+       				_Q("#group_parent_id").append("<option value='"+os.id+"'>"+os.name+"</option>");
+       			}
+       		}
+       	}
+              	
+_Q(document).ready(function(){
+	initialize();
+	_Q(".tc_rw_rw2").not(".yanshi").each(function(index){
+		var _height = document.body.clientHeight- 161;
+		_Q(this).css("height",_height +"px ");
+		//if(_height<_Q(this).attr("z-height"))
+		//	_Q(this).jScrollbar();
+		//else
+		//	_Q(this).find(".jScrollbar_draggable").hide();
+	});
+	_Q(".rightNo").hide();
+	_Q("#map-canvas").css("height", document.body.clientHeight- 60 +"px ");
+	_Q("#map-canvas").css("width", document.body.clientWidth- 80 +"px ");
+	_Q(".floatL").css("height", 368 +"px ");
+	_Q("#floatTools").css("height",document.body.clientHeight- 60 +"px ");
+	_Q("#groupForm\\:color").attr("class","formcolor");
+	_Q("input[name='groupForm:color']").attr("name","groupFormColor").attr("id","groupFormColor").hide();
+	_Q("#groupFormColor").parent().find(".rich-color-picker-icon").bind("click",function(){
+		setTimeout('colorPic3(_Q("#groupFormColor"))',10);
+		});
+	_Q("#divFloatToolsView_").css("height",document.body.clientHeight- 60+"px ");
+	_Q("#divFloatToolsView_").css("width",368+"px");
+});  
+
+_Q(document).ready(function(){
+	   insertPartition();
+		 _Q('select').not("#group_type").selectpicker();
+});  
+var ie7 = navigator.userAgent.split(";")[1].toLowerCase().indexOf("msie 7.0")=="-1"?false:true;
+
+function colorPic3(obj){
+	_Q(obj).parent().parent().find(".rich-color-picker-wrapper").css({"top":"315px","left":"70px","position":"absolute"}).show();
+	if(ie7)
+		_Q(obj).parent().parent().find(".rich-color-picker-wrapper").css({"top":"365px","left":"70px","position":"absolute"}).show();
+	}
+		_Q(window).resize(function(){
+			_Q("#map-canvas").css("height", document.body.clientHeight- 60 +"px ");
+			_Q("#map-canvas").css("width", document.body.clientWidth- 80 +"px ");
+			_Q(".floatL").css("height", 368 +"px ");
+			_Q("#floatTools").css("height",document.body.clientHeight- 60 +"px ");
+			_Q("#divFloatToolsView_").css("height",document.body.clientHeight- 60+"px ");
+			_Q("#divFloatToolsView_").css("width",368+"px");
+			});
+		_Q(document).ready(function()
+				{
+			_Q(".rich-color-picker-new-color").remove();
+			_Q(".rich-color-picker-new-color").remove();
+			_Q(".rich-color-picker-current-color").remove();
+			_Q(".rich-color-picker-rgb-r").remove();
+			_Q(".rich-color-picker-rgb-g").remove();
+			_Q(".rich-color-picker-rgb-b").remove();
+			_Q(".rich-color-picker-hsb-h").remove();
+			_Q(".rich-color-picker-hsb-s").remove();
+			_Q(".rich-color-picker-hsb-b").remove();
+			_Q(".rich-color-picker-colors-input").remove();
+			_Q(".rich-color-picker-hex-wrapper").remove();
+			_Q(".rich-color-picker-ext").css("height","195px");
+			_Q(".rich-color-picker-wrapper").css("left","10px");
+			_Q(".rich-color-picker-wrapper").css("width","200px");
+			_Q(".rich-color-picker-submit").css({"top":"170px","left":"30px","width": "50px", "height": "20px"}).html("确定");
+			_Q(".rich-color-picker-cancel").css({"top":"170px","left":"120px","width": "50px", "height": "20px"}).html("取消");
+				});
+					//]]>
+</script>
+<style>
+.datetimepicker-dropdown-bottom-left:before {
+    border-bottom: 7px solid rgba(0, 0, 0, 0.2);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 6px;
+    top: -7px;
+}
+.datetimepicker-dropdown-bottom-left:after {
+    border-bottom: 6px solid #ffffff;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 7px;
+    top: -6px;
+}
+.sw170{width:170px;}
+.sw170 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+    width: 170px;
+}
+
+
+.icon-th {
+    background-position: -240px 0;
+}
+.form_datetime input{border:1px solid #CCC; height:30px; line-height:30px;width:170px}
+.icon-arrow-left { background-position: -240px -96px; } .icon-arrow-right { background-position: -264px -96px; } .dropdown-menu { position: absolute; top: 100%; left: 0; z-index: 1000; display: none; float: left; min-width: 160px; padding: 5px 0; margin: 2px 0 0; font-size: 14px; text-align: left; list-style: none; background-color: #fff; -webkit-background-clip: padding-box; background-clip: padding-box; border: 1px solid #ccc; border: 1px solid rgba(0, 0, 0, .15); border-radius: 4px; -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175); box-shadow: 0 6px 12px rgba(0, 0, 0, .175); } .form_datetime input { border: 1px solid #ccc; height: 30px; line-height: 30px; }
+.input-append.date .add-on i, .input-prepend.date .add-on i {
+  cursor: pointer;
+    height: 14px;
+    margin-left: -41px;
+    margin-top:9px; /* IE8支持 */ 
+    width: 14px;
+}
+@media all and (-webkit-min-device-pixel-ratio:0){
+.add-on {height:14px;
+position: relative;
+z-index:10;
+
+display: block;
+
+}
+ .input-append.date .add-on i, .input-prepend.date .add-on i {
+  cursor: pointer;
+    height: 14px;
+    /*margin-left: -49px;*/  
+    width: 14px;
+ 
+ }
+}
+
+.map_sele4 li{ float: none;
+    height: 26px;
+    margin-right: 0px;
+    width:auto;
+   }
+.add-on{height: 14px; float: left; position: relative; z-index: 10; left: 194px;
+
+}
+.tc_cont{
+padding-left:10px;
+}
+</style>
+            </td> 
+</ui:define>
+</ui:composition>

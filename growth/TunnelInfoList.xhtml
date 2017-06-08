@@ -1,0 +1,655 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template_new.xhtml">
+
+<ui:define name="body">
+<link href="#{request.contextPath}/asset/css/commons/commons.css" rel="stylesheet" type="text/css"></link>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/growth/echarts-all.js"></script>
+<style>
+.monitor{width: 100%; height: auto; box-sizing:border-box; padding: 0 20px;}
+.public-search{position: relative; width: 300px; float: left;}
+.rightBtn{width: 121px; height: 34px; border-radius: 4px; overflow: hidden; float: right; border: 1px solid #ccc; margin-top: 5px;}
+.rightBtn .list{width: 64px; height: 34px; cursor: pointer; line-height: 34px; background: #428bca; font-size: 12px; color: #fff; text-align: center; border: 1px solid #357ebd; box-sizing:border-box; border-radius: 0 4px 6px 0;}
+.rightBtn .detail{width: 55px; height: 34px; cursor: pointer; line-height: 34px; color: #8f8f8f; text-align: center; box-sizing:border-box; border-left: 0;}
+.card_l{float: left;}
+.card_r{float: right;}
+.card_l,.card_r{width: 49%; height: 108px; margin-bottom:15px; min-width: 434px; border: 1px solid #e6e6e6; border-radius: 5px;/*  overflow: hidden; */ position: relative;}
+.arrow_left{width: 0; height: 0; border-top: 0 solid transparent; border-bottom: 40px solid transparent;  border-left: 40px solid #ff5f5f; font-size: 0px; line-height: 0px; position: absolute; top: 0; left: 0;}
+.arrow_left .square1{width: 3px; height: 9px; background: #fff; position: absolute; left: -30px; top:7px; z-index: 5;}
+.arrow_left .square2{width: 3px; height: 3px; background: #fff; position: absolute; left: -30px; top:18px; z-index: 5;}
+.infoBox td{text-align: center; vertical-align: middle; height: 104px;}
+.infoBox td .pic{width: 54px; height: 54px; overflow: hidden; position: relative; left: 50%; margin-left: -27px; cursor: pointer;}
+.infoBox td .pic img{position: absolute; left: 0; top: 0; width: 54px; height: 54px;}
+.infoBox td .pic img.mask_bg{z-index: 5;}
+.line1,.line2,.line3,.line4,.line5,.line6,.line7{padding-left: 25px; height: 20px; padding-top: 1px;}
+.line1{background: url(#{request.contextPath}/asset/images/growth/icon.png) 0 0 no-repeat; }
+.line2{background: url(#{request.contextPath}/asset/images/growth/icon.png) 0 -28px no-repeat;}
+.line3{background: url(#{request.contextPath}/asset/images/growth/icon.png) 0 -53px no-repeat;}
+.line4{background: url(#{request.contextPath}/asset/images/growth/icon.png) 0 -80px no-repeat;}
+.line5{background: url(#{request.contextPath}/asset/images/growth/icon.png) 0 -170px no-repeat;}
+.line6{background: url(#{request.contextPath}/asset/images/growth/icon.png) 0 -140px no-repeat;}
+.line7{background: url(#{request.contextPath}/asset/images/growth/icon.png) 0 -110px no-repeat;}
+.line{width: 90%; background: #e7e7e7; height: 7px; border-radius: 10px; overflow: hidden; margin-top: 4px;}
+.line1 .inner{height: 7px; width: 50%; background: #f1d46e; border-radius: 0 10px 10px 0;}
+.line1 .inner.red{width: 100%; background: #ff5f5f;}
+.line2 .inner{height: 7px; width: 20%; background: #9ad8ff; border-radius: 0 10px 10px 0;}
+.line2 .inner.red{width: 100%; background: #ff5f5f;}
+.line3 .inner{height: 7px; width: 40%; background: #ebaf97; border-radius: 0 10px 10px 0;}
+.line3 .inner.red{width: 100%; background: #ff5f5f;}
+.line4 .inner{height: 7px; width: 65%; background: #b3d77e; border-radius: 0 10px 10px 0;}
+.line4 .inner.red{width: 100%; background: #ff5f5f;}
+.line5 .inner{height: 7px; width: 65%; background: #99e9ce; border-radius: 0 10px 10px 0;}
+.line5 .inner.red{width: 100%; background: #ff5f5f;}
+.line6 .inner{height: 7px; width: 65%; background: #a8b2e7; border-radius: 0 10px 10px 0;}
+.line6 .inner.red{width: 100%; background: #ff5f5f;}
+.line7 .inner{height: 7px; width: 65%; background: #e9abce; border-radius: 0 10px 10px 0;}
+.line7 .inner.red{width: 100%; background: #ff5f5f;}
+.data_radar{width:220px; height: 104px;}
+/*弹窗*/
+.popBox{display:none; width: 780px; height: 410px; position: fixed; top:50%; margin-top: -205px; left: 50%; margin-left: -390px; border-radius: 5px; background: url(#{request.contextPath}/asset/images/growth/pop_bg.png) repeat; z-index: 29;}
+.popBox .left,.popBox .right{width: 390px; height: 410px; float: left;}
+.popBox .left{padding-left: 30px; padding-top: 20px; box-sizing:border-box;}
+.popBox .left .pic{width: 100px; height: 100px; border:1px solid #69a06e; border-radius: 50%; padding: 3px; float: left;}
+.popBox .left .pic img{width: 100%; height: 100%; border-radius: 50%;}
+.popBox .left .txt{float: left; width: 250px; padding-left: 20px; color: #fff;}
+.popBox .left .txt .plant{font-size: 20px; height: 50px; line-height: 50px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;}
+.popBox .left .txt .growth{font-size: 12px;}
+.popBox .left .txt .growth img{vertical-align: -3px;}
+.popBox .left .p_bar{width: 350px; height: auto; position: relative;}
+.popBox .left .growth-cycle{width: 350px; height: 10px; border-radius: 4px; overflow: hidden; margin-top: 25px;}
+.growth-state {height: 10px; zoom: 1;}
+.growth-state .bgColor1{ background:#adec67;}
+.growth-state .bgColor2{ background:#7dcf23;}
+.growth-state .bgColor3{ background:#67ed02;}
+.growth-state .bgColor4{ background:#2dd402;}
+.growth-state .bgColor5{ background:#039621;}
+.growth-state .bgColor6{ background:#f3ff37;}
+.growth-state .bgColor7{ background:#d6e031;}
+.growth-state .bgColor8{ background:#d8d00d;}
+.growth-state .bgColor9{ background:#ffe401;}
+.growth-state .bgColor10{ background:#d9c200;}
+.growth-state .bgColor11{ background:#ff9934;}
+.growth-state .bgColor12{ background:#ff7f00;}
+.growth-state .bgColor13{ background:#ff6600;}
+.growth-state .bgColor14{ background:#ff5001;}
+.growth-state .bgColor15{ background:#d34200;}
+.growth-state .bgColor16{ background:#fe0000;}
+.growth-state .bgColor17{ background:#e20001;}
+.growth-state .bgColor18{ background:#ce0000;}
+.growth-state .bgColor19{ background:#ac0000;}
+.growth-state .bgColor20{ background:#910000;}
+.popBox .left .p_bar .days{color: #fff; margin-top: 5px;}
+.popBox .left .p_bar .growth-value{position: absolute; width: 8px; height: 15px; background: #fff; top: -2px;}
+.popBox .left .p_bar .growth-value .tip{width: 60px; height: auto; color: #fff; text-align: center; margin-top: -32px; margin-left: -27px;}
+.popBox .left .p_bar .growth-value .tip .cycles{width: 60px; height: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.popBox .left .p_bar .growth-value .tip .tipDays{line-height: 12px;}
+.radar{width: 350px; height: 186px;}
+.popBox .right ul{padding-top: 35px; padding-left: 20px;}
+.popBox .right li{float: left; width: 104px; height: 56px; background: url(#{request.contextPath}/asset/images/growth/li_bg.png) 0 -70px; margin-right: 8px; margin-bottom: 12px; cursor: pointer;}
+.popBox .right li.cur{background: url(#{request.contextPath}/asset/images/growth/li_bg.png) 0 0;}
+.popBox .right li i{float: left; width: 38px; height: 50px;}
+.popBox .right li .data{float: left; width: 66px; height: 56px; color: #fff; padding-top: 8px;}
+.popBox .right li .data .num{font-size: 18px; height: 20px;width: 62px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;}
+.popBox .right li .data .num.red{color: #ff5f5f;}
+.popBox .right li i.icon1{background: url(#{request.contextPath}/asset/images/growth/sprits.png) 5px 16px no-repeat; }
+.popBox .right li i.icon2{background: url(#{request.contextPath}/asset/images/growth/sprits.png) 2px -36px no-repeat;}
+.popBox .right li i.icon3{background: url(#{request.contextPath}/asset/images/growth/sprits.png) 2px -98px no-repeat;}
+.popBox .right li i.icon4{background: url(#{request.contextPath}/asset/images/growth/sprits.png) 2px -144px no-repeat;}
+.popBox .right li i.icon5{background: url(#{request.contextPath}/asset/images/growth/sprits.png) 2px -206px no-repeat;}
+.popBox .right li i.icon6{background: url(#{request.contextPath}/asset/images/growth/sprits.png) 2px -266px no-repeat;}
+.popBox .right .line_chart{width: 480px; height: 200px; display: none; margin-left: -45px;}
+.popBox .right .line_chart.cur{display: block;}
+.popBox .closeBtn{width: 14px; height: 14px; position: absolute; background: url(#{request.contextPath}/asset/images/growth/close.png) no-repeat; top: 10px; right: 15px;}
+.no_chart{width: 330px; height: 200px; border: 1px dashed #9f9f9f; border-radius: 5px; margin-left: 20px; text-align: center; padding:30px 20px 0;}
+.no_chart p{text-align: left; color: #9f9f9f; font-size: 14px; margin-top: 20px;}
+.leftBox{height: 80px; overflow: hidden;}
+
+/*20161201新增内容*/
+.newMask{position: absolute; width: 142px; height: 134px; z-index:10; background: url(#{request.contextPath}/asset/images/growth/newMask.png) no-repeat; padding: 30px 5px 0; text-align: left; display: none;}
+.newMask p{font-size: 12px; color: #f7f7f7; line-height: 22px;}
+
+</style>
+#{monitoringListHome.findSensorList()}
+<td valign="top" style="min-width:926px;">
+<!-- 监控右侧 -->
+<div class="monitor clear">
+	<div class="breadNav_wap clear">
+		<div class="breadNav_lt">
+			<a href="#">生产管理</a><span>&gt;</span><strong>远程监控</strong>
+		</div>
+		<div class="rightBtn">
+			<span class="list fl"><a href="/growth/TunnelInfoList.seam" style="color: #fff;"><img src="#{request.contextPath}/asset/images/growth/icon_list.png" style="margin-right: 5px;"/>列表</a></span> 
+			<span class="detail fl"><a href="/growth/TunnelInfoView.seam"><img src="#{request.contextPath}/asset/images/growth/icon_detail.png" style="margin-right: 5px;"/>详情</a></span>
+		</div>
+	</div>
+	<div class="clear first_line" style="padding: 20px 0;">
+		<form class="public-search mr5" >
+			<span class="octicon-search02"></span>
+			<h:inputText id="serachParam" style="color:#000" styleClass="form-control nw300 srarchfont" value="#{monitoringListHome.serachParam}"/>
+			<h:commandButton id="search" styleClass="btn btn-primary" style="display:none;" value="搜索" action="/growth/TunnelInfoList.xhtml"></h:commandButton>
+		</form>
+		<button type="button" class="btn btn-primary fl" onclick="findMess();">搜索</button>
+		
+	</div>
+	<!-- 内容开始 -->
+	<s:div id="sensorListMess">
+	<a:repeat value="#{monitoringListHome.sensorList}" var="_sen" rowKeyVar="_index">
+		<div class="#{_index%2==0?'card_l':'card_r'}">
+			<h:outputText value="" rendered="#{_sen[13] ne 0}">
+			<div class="arrow_left">
+				<span class="square1"></span> <span class="square2"></span>
+			</div>
+			</h:outputText>
+			<table width="100%" cellpadding="0" cellspacing="0" class="infoBox">
+				<tr>
+					<td width="33%" style="min-width: 110px;">
+						<table width="100%">
+							<tr>
+								<td width="50%">
+									<div class="pic">
+										<h:outputText value="" rendered="#{_sen[13] ne 0}">
+											<img src="#{request.contextPath}/asset/images/growth/solid.png" class="mask_bg" /> 
+										</h:outputText>
+										<h:outputText value="" rendered="#{_sen[13] eq 0}">
+										<img src="#{request.contextPath}/asset/images/growth/circle.png" class="mask_bg" /> 
+										</h:outputText>
+										<input type="hidden" id="tunner_#{_index}" value="#{_sen[10]}"/>
+										<input type="hidden" id="plant_#{_index}" value="#{_sen[11]}"/>
+										<img src="#{_sen[0] eq '' or _sen[0] eq null ? '/asset/images/growth/plant_img.png' : _sen[0] }" />
+									</div>
+								</td>
+								<td width="50%" style="text-align: left;">#{_sen[1]}<br />#{_sen[2]}</td>
+							</tr>
+						</table>
+					</td>
+					<td width="33%">
+					<div class="data_radar" id="plantRadar_#{_index}"></div>
+					<script type="text/javascript"> 
+					//<![CDATA[
+						// 雷达图
+						var myChart = echarts.init(document.getElementById('plantRadar_#{_index}')); 
+						var json= eval('( #{_sen[3]} )');   
+						option = {
+						    title : {
+						        show: false
+						    },
+						    tooltip : {
+						    	 trigger: 'axis',
+						    	 textStyle:{fontSize:10}
+						    },
+						    legend: {
+						        orient : 'vertical',
+						        x : 'right',
+						        y : 'bottom',
+						        data:['#{_sen[2]}'],
+						        show: false
+						    },
+						    toolbox: {
+						        show : false,
+						        feature : {
+						            mark : {show: true},
+						            dataView : {show: true, readOnly: false},
+						            restore : {show: true},
+						            saveAsImage : {show: true}
+						        }
+						    },
+						    calculable : true,
+						    polar : [{
+						           indicator : [
+						               	{text : '积温', max  : json.maxjw},
+						                {text : '降雨量', max  : 2000},
+						                {text : '日照时长', max  : 24},
+						                {text : '日夜温差', max  : 35},
+						                {text : '病害发病率', max  : 100},
+						            ]
+						    }],
+						    series : [{
+						            name: '',
+						            type: 'radar',
+						            itemStyle: {
+						                normal: {
+						                    areaStyle: {
+						                        type: 'default'
+						                    }
+						                }
+						            },
+						            data : [
+						                {
+						                    value : [json.jw, json.jyl, json.rzsc, json.rywc, json.bhfbl,],
+						                    name : '#{_sen[2]}'
+						                },
+						            ]
+						   }]
+						};
+					    myChart.setOption(option);                
+					//]]>
+					</script>
+					</td>
+					<td width="34%" style="text-align: left; min-width: 125px;">
+						<div class="leftBox">
+						
+						<a:repeat value="#{_sen[14]}" var="_var" rowKeyVar="_i">
+						<div class="#{_var[2]}">
+							<div class="line">
+								<div class="inner #{_var[0] ne 0 ?'red':''}" style="width:#{_var[1]}%"></div>
+							</div>
+						</div>
+						</a:repeat> 
+						
+						</div>
+						<!-- 20161201新增 -->
+	                   <div id="newMask_#{_index}" class="newMask">
+	                      <!-- <p>空气温度：26℃</p>
+	                      <p>空气湿度：28%</p>
+	                      <p>土壤温度：20℃</p>
+	                      <p>光照：1000LUX</p> -->
+	                   </div>
+	                   <script type="text/javascript"> 
+						//<![CDATA[
+							// 雷达图
+							var str = '#{_sen[15]}'; 
+							jQuery('#newMask_#{_index}').append(str);       
+						//]]>
+						</script>
+	                   
+					</td>
+				</tr>
+			</table>
+		</div>
+	</a:repeat>
+	</s:div>
+	<s:div id="detailsMess">
+				<div class="popBox">
+				<input type="hidden" id="deviceSn" value="#{monitoringListHome.deviceSn}"/>
+                  <span class="closeBtn"></span>
+                  <div class="left">
+                    <div class="clear">
+                      <div class="pic" style="right: 0px; left: 0px; margin-left: -20px;">
+                        <img src="#{monitoringListHome.plantMess[0] eq '' or monitoringListHome.plantMess[0] eq null ? '/asset/images/growth/plant_img.png' : monitoringListHome.plantMess[0] }" />
+                      </div>
+                      <div class="txt">
+                        <p class="plant">#{monitoringListHome.plantMess[1]} #{monitoringListHome.plantMess[2]}</p>
+                        <p class="growth"><img src="#{request.contextPath}/asset/images/growth/growth.png" />生长期：总共#{monitoringListHome.plantMess[3][0]}天，剩余#{monitoringListHome.plantMess[3][1]}天</p>
+                      </div>
+                    </div>
+                    <div class="p_bar">
+                      <div style="left:#{monitoringListHome.plantMess[3][3]}%" class="growth-value">
+                      	<h:outputText rendered="#{monitoringListHome.plantMess[3][2] ne 0}">
+                        <div class="tip">
+                        	<p class="cycles">#{monitoringListHome.plantMess[13]}</p>
+                          	<p class="tipDays">#{monitoringListHome.plantMess[3][2]}天</p>
+                        </div>
+                        </h:outputText>
+                      </div>
+                      <div class="growth-cycle">
+                          <table width="100%" cellspacing="0" cellpadding="0" class="growth-state">
+                            <tr>
+                            	<a:repeat value="#{monitoringListHome.plantMess[12]}" var="_mess" rowKeyVar="_index">
+                              		<td width="#{_mess[0]}%" class="bgColor#{_index+1}"> </td>
+                              	</a:repeat>
+                              <!-- <td width="20%" class="bgColor2"></td>
+                              <td width="10%" class="bgColor3"></td>
+                              <td width="20%" class="bgColor4"></td>
+                              <td width="15%" class="bgColor5"></td> -->
+                            </tr>
+                          </table>
+                      </div>
+                      <h:outputText rendered="#{monitoringListHome.plantMess[3][0] ne 0}">
+                      <div class="days clear">
+                        <span class="fl">0天</span>
+                        <span class="fr">#{monitoringListHome.plantMess[3][0]}天</span>
+                      </div>
+                      </h:outputText>
+                    </div>
+                    <h:outputText rendered="#{monitoringListHome.plantMess[4].containsKey('jw')}">
+                    	<div class="radar" id="plantMessage" ></div>
+                    	<script>
+                    	//<![CDATA[
+                    		var json2 = eval('( #{monitoringListHome.plantMess[4]} )'); 
+	                    	var myChart3 = echarts.init(document.getElementById('plantMessage')); 
+	                    	option = {
+	                    		 	color:['#9c7db9'],
+	                    		 	textStyle : {
+	                    				color : '#fff'
+	                    			},
+	                    		    title : {
+	                    		    	show : false,
+	                    		        text: '#{monitoringListHome.plantMess[2]}',
+	                    		        subtext: '成长数据'
+	                    		    },
+	                    		    tooltip : {
+	                    		        trigger: 'axis',
+		                    		    show:false
+	                    		    },
+	                    		    legend: {
+	                    		    	show : false,
+	                    		        x : 'center',
+	                    		        data:['#{monitoringListHome.plantMess[2]}']
+	                    		    },
+	                    		    toolbox: {
+	                    		        show : false,
+	                    		        feature : {
+	                    		            mark : {show: true},
+	                    		            dataView : {show: true, readOnly: false},
+	                    		            restore : {show: true},
+	                    		            saveAsImage : {show: true}
+	                    		        }
+	                    		    },
+	                    		    calculable : true,
+	                    		    polar : [{
+	                    		            name: {
+	                    					    show: true,
+	                    					    textStyle:{
+	                    					        color:"#fff"
+	                    					    }
+	                    					},
+	                    		            indicator : [
+												{text : (json2.jw==0?'--':json2.jw) +' 积温', max  : json2.maxjw},
+												{text : (json2.jyl==0?'--':json2.jyl)+'mm\n降雨量', max  : 2000},
+												{text : (json2.rzsc==0?'--':json2.rzsc)+'h\n日照时长', max  : 24},
+												{text : (json2.rywc==0?'--':json2.rywc)+'℃\n日夜温差', max  : 35},
+												{text : (json2.bhfbl==0?'--':json2.bhfbl)+'%\n病害发病率', max  : 100},
+	                    		            ],
+	                    		        },
+	                    		    ],
+	                    		    series : [{
+                    		            name: '#{monitoringListHome.plantMess[2]}',
+                    		            type: 'radar',
+                    		            itemStyle: {
+                    		                normal: {
+                    		                    areaStyle: {
+                    		                        type: 'default'
+                    		                    }
+                    		                }
+                    		            },
+                    		            data : [{
+                   		                    value : [json2.jw, json2.jyl, json2.rzsc, json2.rywc, json2.bhfbl,],
+                   		                    name : '',
+                   		                 	hoverable:false, 
+                   		                 	clickable:false,
+                    		            }]
+	                    		      }]
+	                    		};
+	                        myChart3.setOption(option);  
+                     	//]]>
+                    	</script>
+                    </h:outputText>
+                    <!-- 没有数据 -->
+                    <h:outputText value="" rendered="#{!monitoringListHome.plantMess[4].containsKey('jw')}">
+                    <div class="no_radar" style="text-align:center; margin-top:15px;">
+                      <img src="#{request.contextPath}/asset/images/growth/no-data.png" />
+                    </div>
+                    </h:outputText>
+                  </div>
+                  <div class="right">
+                    <ul class="clearfix">
+                      <li class="cur">
+                        <i class="icon1"></i>
+                        <div class="data">
+                          <input type="hidden" value="1"/>
+                          <p class="num #{monitoringListHome.plantMess[5][0] ne 0 ?'red':''}" title="#{monitoringListHome.plantMess[5][1]}℃">#{monitoringListHome.plantMess[5][1]}℃</p>
+                          <p class="name">空气温度</p>
+                        </div>
+                      </li>
+                      <li>
+                        <i class="icon2"></i>
+                        <div class="data">
+                        <input type="hidden" value="2"/>
+                          <p class="num #{monitoringListHome.plantMess[6][0] ne 0 ?'red':''}" title="#{monitoringListHome.plantMess[6][1]}%">#{monitoringListHome.plantMess[6][1]}%</p>
+                          <p class="name">空气湿度</p>
+                        </div>
+                      </li>
+                      <li>
+                        <i class="icon3"></i>
+                        <div class="data">
+                        <input type="hidden" value="3"/>
+                          <p class="num #{monitoringListHome.plantMess[7][0] ne 0 ?'red':''}" title="#{monitoringListHome.plantMess[7][1]}℃">#{monitoringListHome.plantMess[7][1]}℃</p>
+                          <p class="name">空气露点</p>
+                        </div>
+                      </li>
+                      <li>
+                        <i class="icon4"></i>
+                        <div class="data">
+                        <input type="hidden" value="4"/>
+                          <p class="num #{monitoringListHome.plantMess[8][0] ne 0 ?'red':''}" title="#{monitoringListHome.plantMess[8][1]}℃">#{monitoringListHome.plantMess[8][1]}℃</p>
+                          <p class="name">土壤温度</p>
+                        </div>
+                      </li>
+                      <li>
+                        <i class="icon5"></i>
+                        <div class="data">
+                        <input type="hidden" value="5"/>
+                          <p class="num #{monitoringListHome.plantMess[9][0] ne 0 ?'red':''}" title="#{monitoringListHome.plantMess[9][1]}%">#{monitoringListHome.plantMess[9][1]}%</p>
+                          <p class="name">土壤水分</p>
+                        </div>
+                      </li>
+                      <li>
+                        <i class="icon6"></i>
+                        <div class="data">
+                        <input type="hidden" value="6"/>
+                          <p class="num #{monitoringListHome.plantMess[11][0] ne 0 ?'red':''}" title="#{monitoringListHome.plantMess[11][1]}LUX">#{monitoringListHome.plantMess[11][1]}LUX</p>
+                          <p class="name">光照</p>
+                        </div>
+                      </li>
+                    </ul>
+                    <s:div id="oneDayDateDiv">
+                    <div class="line_chart cur" id="oneDayDate">
+                    	<!-- 没数据 -->
+                        <div class="no_chart" style="width: 285px; height: 188px; margin-left: 69px;">
+	                        <img src="#{request.contextPath}/asset/images/growth/cloud.png" />
+	                        <p>暂未获得环境监控数据！请检查设备是否正常运转，或者联系我们！</p>
+                        </div>
+                    </div>
+                    </s:div>
+                  </div>
+                </div>
+				</s:div>
+</div> <!-- 监控右侧 --> 
+<s:div id="pageDiv">
+<div class="pageModel_wap" style="padding:50px 0 30px;">
+                        <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty monitoringListHome.sensorList}"> 
+			                <s:decorate rendered="#{!monitoringListHome.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{monitoringListHome.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{monitoringListHome.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/growth/TunnelInfoList.xhtml" >首页
+		                            	<f:param name="pageNum" value="1" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/growth/TunnelInfoList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{monitoringListHome.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a:repeat var="_page" value="#{monitoringListHome.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{monitoringListHome.previousExists or _index >0 ?'td_t_t':''} #{_page eq monitoringListHome.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/growth/TunnelInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a:repeat>
+							<s:decorate rendered="#{monitoringListHome.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/growth/TunnelInfoList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{monitoringListHome.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/growth/TunnelInfoList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{monitoringListHome.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{monitoringListHome.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</s:div>
+                    	</tr>
+                    </table>
+   			</div>
+   </s:div>
+<a:form>
+	<a:queue requestDelay="10" ignoreDupResponses="true" />
+	<a:jsFunction name="fundDevice" action="#{monitoringListHome.findDevice()}" reRender="detailsMess" data="#{monitoringListHome.plantMess}" oncomplete="huidiao(data);">
+		<a:actionparam name="tunnerId" assignTo="#{monitoringListHome.tunnerId}"/>
+		<a:actionparam name="plantId" assignTo="#{monitoringListHome.plantId}"/>
+	</a:jsFunction>
+	<a:jsFunction name="fundDayDate" action="#{monitoringListHome.findSurround()}" reRender="oneDayDateDiv" data="#{monitoringListHome.dayDate}" oncomplete="abc(data);">
+		<a:actionparam name="type" assignTo="#{monitoringListHome.type}"/>
+		<a:actionparam name="deviceSn" assignTo="#{monitoringListHome.deviceSn}"/>
+	</a:jsFunction>
+</a:form> 
+<script type="text/javascript"> 
+//<![CDATA[
+    var mess=new Array();
+    var type=1;
+	jQuery(document).ready(function() {
+	/* jQuery('input[type=text]').focus(function(){
+		var txt_value = jQuery(this).val();
+		if(txt_value==this.defaultValue){
+			jQuery(this).val("");
+		};	
+	});
+	jQuery('input[type=text]').blur(function(){
+		var txt_value = jQuery(this).val();
+		if(txt_value==""){
+			jQuery(this).val(this.defaultValue);
+		};	
+	}); */	
+
+	jQuery('.leftBox').mouseenter(function() {
+		jQuery(this).siblings('.newMask').show();
+	});
+	jQuery('.leftBox').mouseleave(function() {
+		jQuery(this).siblings('.newMask').hide();
+    });
+	
+	jQuery('.popBox .right li').click(function() {
+		var index = jQuery(this).index();
+		jQuery(this).addClass('cur').siblings().removeClass('cur');
+		jQuery('.line_chart').eq(index).addClass('cur').siblings().removeClass('cur');
+	});
+	jQuery('.card_l .pic,.card_r .pic').click(function() {
+		var i=0;
+		jQuery(this).children("input").each(function(){
+			mess[i]=jQuery(this).val();
+			i++;
+		});
+		fundDevice(mess[0],mess[1]);
+	});
+	jQuery('.closeBtn').click(function() {
+		jQuery(this).parent('.popBox').hide();
+	});
+	});
+	var message;
+	function abc(date){
+		jQuery('#oneDayDate').empty();
+		var json2 = eval('(date)');
+		var date_x=json2.x;
+		var date_y=json2.y;
+		var mess="空气温度";
+		var aaa="";
+		if(type==1){
+			mess="空气温度";
+			aaa='°C';
+		}else if(type==2){
+			mess="空气湿度";
+			aaa='%';
+		}else if(type==3){
+			mess="空气露点";
+			aaa='°C';
+		}else if(type==4){
+			mess="土壤温度";
+			aaa='°C';
+		}else if(type==5){
+			mess="土壤水分";
+			aaa='%';
+		}else if(type==6){
+			mess="光照强度";
+			aaa='LUX';
+		}
+		message = eval('(json2.lable)');
+		if(jQuery.isEmptyObject(json2) || date_y[0]==-100||date_x==''||date_y==''){
+			jQuery('#oneDayDate').append('<div class="no_chart" style="width: 285px; height: 188px; margin-left: 69px;"><img src="#{request.contextPath}/asset/images/growth/cloud.png" /><p>暂未获得环境监控数据！请检查设备是否正常运转，或者联系我们！</p></div>');
+		}else{
+		    var myChart4 = echarts.init(document.getElementById('oneDayDate'));
+		    option = {
+		    	color:['#28bbe6'],
+		    	calculable : true,
+		    	 grid: {borderWidth:0, //去掉边框
+			   	},
+			     tooltip : {
+			    	trigger: 'item',
+					formatter:function(params){
+				    console.log(params[1]);
+			        var relVal = "";
+			        relVal = message[params[1].replace("时","")]+"<br/>";
+			        relVal += params[0]+":"+params[2]+aaa;
+			        return relVal; 
+			        }
+			    }, 
+		    	xAxis : [{
+    	            type : 'category',
+    	            axisLabel :{textStyle:{color:'#fff'}},
+    	            axisLine:{lineStyle:{color:'#FFFFFF',}},
+    	            boundaryGap : false,
+    	            splitLine: {show: false,},
+    	            data : date_x
+    	        }],
+		    	yAxis : [{
+			    	type : 'value',
+			    	axisLabel :{textStyle:{color:'#fff'}},
+			    	axisLine:{lineStyle:{color:'#FFFFFF',}}
+		    	}],
+		    	series : [{
+		    	            name: mess ,
+		    	            type:'line',
+		    	            stack: '总量',
+		    	            data:date_y
+		    	        }]
+		    };
+			myChart4.setOption(option); 
+		}
+		
+	}
+	function huidiao(data){
+		fundDayDate(1,jQuery("#deviceSn").val());
+		jQuery('.popBox').show();
+		jQuery('.popBox .right li').click(function() {
+			var index = jQuery(this).index();
+			jQuery(this).addClass('cur').siblings().removeClass('cur');
+			jQuery('.line_chart').addClass('cur');
+			type = jQuery(this).find('input[type=hidden]').val();
+			fundDayDate(jQuery(this).find('input[type=hidden]').val(),jQuery("#deviceSn").val());
+		});
+		jQuery('.closeBtn').click(function() {
+			jQuery(this).parent('.popBox').hide();
+		});
+	}
+
+	function findMess(){
+		/* var serachParam = jQuery('#serachParam').val();
+		if(serachParam != '' && serachParam!=null){ */
+			jQuery('#search').click();
+		//}
+	}
+	
+//]]>
+</script>
+
+</td>
+</ui:define>
+</ui:composition>

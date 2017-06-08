@@ -1,0 +1,427 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<style>
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:220px;}
+#excelId_body{padding:0;}
+#excelId_body .btn{padding:6px 19px}
+</style>
+#{inOutStorageRecordList.InOutStorageRecordListInit()}
+<td valign="top" width="100%">
+	<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<div class="right_c">
+		<!-- 公用头部 开始 -->
+                	<div class="r_title clear" style="margin-bottom: 30px;">
+                    	<div class="r_t_l fl">生产管理&#160;&gt;&#160;&#160;农资管理&#160;&gt;&#160;&#160;<font size="3">流水记录</font></div>
+                        <div class="fr" style="margin-bottom:-1px;float:right;">
+                        	<ul class="cm_resumeList clear">
+                            	<li>
+                                	<a href="#{request.contextPath}/inputs/StockRecord.seam"><img src="../asset/images/tjsbg_01.jpg"/><span>库存</span></a>
+                                </li>
+                            	<li>
+                                	<a href="#{request.contextPath}/inputs/ExpireGoodsInfo.seam?dataType=0"><img src="../asset/images/tjsbg_02.jpg" /><span>过期</span></a>
+                                </li>
+                                	<li>
+                                	<a href="javascript:void(0)" disabled="true" class="borderBt" style="cursor:default;"><img src="../asset/images/tjsbg_03.jpg" /><span>流水</span></a>
+                                </li>
+                            	<li>
+                                	<a href="#{request.contextPath}/inputs/InventoryRecordControl.seam?dataType=0"><img src="../asset/images/tjsbg_04.jpg" /><span>盘点</span></a>
+                                </li>
+                                <li>
+                                	<a href="#{request.contextPath}/inputs/InputStock.seam?dataType=0"><img src="../asset/images/tjsbg_05.png" /><span>农资库</span></a>
+                                </li>
+                        	</ul>
+                        </div>
+                    </div>
+		<!-- 公用头部 结束 -->
+		<s:div styleClass="z_r_ser" id="refreshLink">
+			<table cellpadding="0" cellspacing="0" class="cxtja">
+				<tr>
+					<td style=" float:left;" width="300">
+						<div class="public-search">   
+                        	<span class="octicon-search02"></span>
+                        	<input type="text" id="storageChangeFormCode" class="form-control nw300 srarchfont" ></input>
+                        </div>
+					</td>
+					<td width="80" align="center" style="float:left;">
+						<button type="button" onclick="return submitResult();" class="btn btn-primary" style="padding:6px 18px;">搜索</button>
+					</td>
+					<td align="right" style="float:left;" width="80" valign="bottom" height="30">
+						<a onclick="switchShowSearch();" href="javascript:void(0);" class="gjss_a gjtop">高级搜索</a>
+					</td>
+					<td width="80" align="right" style="float:right;">
+						<button type="button" onclick="batchPrint();" class="btn btn-success" style="padding:6px 18px;">批量打印</button>
+					</td>
+					<td width="80" align="right" style="float:right;margin-right:10px" >
+							<rich:panel id="excelId" style="margin:0; border:none; padding: 0;">
+						  	<s:link view="/inputs/InOutRecord.xhtml" styleclass="list_view" action="#{inOutStorageRecordList.queryResultFindExcel()}" >
+								<f:param name="storageRoomId" value = "#{inOutStorageRecordList.storageRoomId}" />
+								<f:param name="operater" value = "#{inOutStorageRecordList.operater}" />
+								<f:param name="storageChangeFormCode" value = "#{inOutStorageRecordList.storageChangeFormCode}" />
+								<f:param name="beginDate" value = "#{inOutStorageRecordList.beginDate}" />
+								<f:param name="endDate" value = "#{inOutStorageRecordList.endDate}" />
+								<f:param name="dataType" value = "#{inOutStorageRecordList.dataType}" />
+								<f:param name="baseId" value = "#{inOutStorageRecordList.baseId}" />
+								<f:param name="showSearchFlag" value = "#{inOutStorageRecordList.showSearchFlag}" />
+							    <!-- <button type="button" class="btn btn-success" >导出</button> -->
+							</s:link> 
+							</rich:panel>
+					</td>
+				</tr>
+			</table>                          
+		</s:div>
+		<div class="gjs" id="ftitle"  style="display:none; padding-top:0;padding-bottom:10px;">
+			<div class="gjss_con clear" style="display:block;">
+				<div class="gjss_w gjss_w1" style="width:auto;">
+					<table>
+						<tr>
+							<td class="all_te">经办人：</td>
+							<td width="120">
+								<select class="selectpicker" data-live-search="true" style="display: none;" id="operater">	
+                                	<option selected="selected" value="-1">全部</option>
+                                	<a:repeat value="#{stockControl.getOperatorListInPuts()}" var="_operater">
+                                		<option value="#{_operater[0]}">#{_operater[1]}</option>
+                                	</a:repeat>
+                                </select>
+							</td>
+  						</tr>
+					</table>
+				</div> 
+				<div class="gjss_w gjss_w1" >
+					<table>
+						<tr>
+							<td class="all_te">库房：</td>
+							<td width="120">
+								<h:selectOneMenu value="#{inOutStorageRecordList.storageRoomId}" id="storageRoomId" style="width:120px;" styleClass="selectpicker" immediate="true">
+									<f:selectItem itemLabel="全部" itemValue="0"/>
+									<s:selectItems value="#{inOutStorageRecordList.inOutRecordInit()}" var="_storageRoom" label="#{_storageRoom.name}" itemValue="#{_storageRoom.storageRoomId}" ></s:selectItems>
+								</h:selectOneMenu>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="gjss_w gjss_w1" style="width:auto;">
+					<table>
+						<tr>
+							<td class="all_te">开始时间：</td>
+							<td width="166">
+								<div class="input-append date form_datetime clear" style="float:left;">
+									<input id="beginDate" type="text" readonly="readonly" value="" size="26" style="color:#333; padding-left:3px; float:left;"></input>
+									<span class="add-on"><i class="icon-th" style="margin-top:8px;"></i></span>
+								</div>
+							</td>
+							<td style="padding-left:3px; padding-right:3px; color:#4c4c4c;">—</td>
+							<td>
+								<div class="input-append date form_datetime " style="float:left;">
+									<input id="endDate" type="text" readonly="readonly" value="" size="26" style="color:#333; padding-left:3px; float:left;"></input>
+									<span class="add-on"><i class="icon-th" style="margin-top:8px;"></i></span>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div> 
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="tree_dis">
+			<h:form id="inOutRecordFrom">
+				<a:commandLink id="refreshShow"  reRender="showPanel"></a:commandLink>
+			</h:form>
+			<rich:panel id="showPanel" style="margin:0; border:none; padding: 0;">
+				<div class="box2">
+					<div>
+						<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b2" style="border-top:1px solid #ddd;">
+							<tr>
+								<td class="tree_th" width="5%">
+									<input id="inOutAll" class="iCheck" type="checkbox"  name="inOutAll" onclick="checkAllChange(this)"/>
+								</td>
+								<td class="tree_th" width="5%">ID</td>
+								<td class="tree_th" width="20%">出入库编号</td>
+								<td class="tree_th" width="15%">出入库类型</td>
+								<td class="tree_th" width="15%">存储库房</td>
+								<td class="tree_th" width="15%">经办人</td>
+								<td class="tree_th" width="15%">出入库日期</td>
+								<td class="tree_th" width="10%">操作</td>
+							</tr>
+						</table>
+						<table width="100%" cellpadding="0" cellspacing="0" class="tr_tab_b">
+							<a:repeat value="#{inOutStorageRecordList.resultList}" var="_scf" rowKeyVar="_index">
+								<tr class="cm_nottt #{_index % 2 != 0 ? 'alt' : ''}">
+									<td height="48" width="5%">
+										<input class="iCheck" value="#{_scf[0]}" name="inOut" type="checkbox" onclick="checkBoxChange(this)" />
+									</td>
+									<td width="20%">#{_scf[0]}</td>
+									<h:panelGroup rendered="#{_scf[11] eq '1'}">
+									<td height="48" width="5%">
+										<p>#{_scf[1]}<img src="#{request.contextPath}/asset/images/order_ico101.png" title="该条记录需审核" /></p>
+									</td>
+									</h:panelGroup>
+									<h:panelGroup rendered="#{_scf[11] ne '1'}">
+										<td height="48" width="5%">#{_scf[1]}</td>
+									</h:panelGroup>
+									<td width="15%">#{_scf[2]}</td>
+									<td width="15%">#{_scf[3]}</td>
+									<td width="15%">#{_scf[4]}</td>
+									<td width="15%">#{_scf[5]}</td>
+									<td width="10%">
+										<s:link propagation="none" style="display: #{s:hasRole('inputs_show')?'hidden':'none'}" view="/inputs/InOutRecordDetail.xhtml" styleClass="list_view"  id="detailId" title="查看">
+											<f:param name="storageChangeFormId" value="#{_scf[0]}" />
+											<f:param name="pageNum" value="#{inOutStorageRecordList.page}" />
+										</s:link>&#160;
+										<s:link propagation="none"  view="/inputs/UpdateInputsStorage.xhtml"    styleClass="list_edit" id="editStorage" title="编辑" rendered="#{empty from and _scf[7] eq 1}">
+			                                <f:param name="storageChangeFormId" value="#{_scf[0]}" />
+			                                <f:param name="baseId" value="#{inOutStorageRecordList.baseId}" />
+			                                <f:param name="goodsType" value="#{_scf[6]}" />
+			                                <f:param name="dataType" value="#{_scf[7]}" />
+			                                <f:param name="page" value="#{inOutStorageRecordList.page}" />
+										</s:link>
+										<s:link propagation="none"  view="/inputs/UpdateOutStorage.xhtml"    styleClass="list_edit" id="editOutStorage" title="编辑" rendered="#{empty from and _scf[7] eq 2}">
+			                                <f:param name="storageChangeFormId" value="#{_scf[0]}" />
+			                                <f:param name="baseId" value="#{inOutStorageRecordList.baseId}" />
+			                                <f:param name="goodsType" value="#{_scf[6]}" />
+			                                <f:param name="dataType" value="#{_scf[7]}" />
+			                                <f:param name="page" value="#{inOutStorageRecordList.page}" />
+										</s:link>&#160;
+										<s:link propagation="none"  view="/inputs/UpdateInputsStorage.xhtml"    styleClass="list_delete" action="#{updateStorageHome.delStorageInfo}" title="删除" onclick="return confirm('确定删除吗？');" id="delStorage">
+			                               <f:param name="storageChangeFormId" value="#{_scf[0]}" />
+			                               <f:param name="goodsType" value="#{_scf[6]}" />
+			                               <f:param name="page" value="#{inOutStorageRecordList.page}" />
+		                                </s:link>
+		                                <a title="打印" href="#" onclick="onePrint(#{_scf[0]});"><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_print2.png" /></a>
+									</td>
+								</tr>
+							</a:repeat>
+						</table>
+						<h:form id="pageFrom" >
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!inOutStorageRecordList.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{inOutStorageRecordList.hasPreviousPage and inOutStorageRecordList.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" action="#{inOutStorageRecordList.pageFind(1)}" rendered="#{inOutStorageRecordList.hasPreviousPage and inOutStorageRecordList.totalPages > 1}" reRender="showPanel">首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" action="#{inOutStorageRecordList.pageFind(inOutStorageRecordList.previousPage)}" rendered="#{inOutStorageRecordList.hasPreviousPage and inOutStorageRecordList.totalPages > 1}" reRender="showPanel">&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{inOutStorageRecordList.showPageList}" rowKeyVar="_index">
+										<td class="td_t_b #{inOutStorageRecordList.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq inOutStorageRecordList.page ? 'onp' : ''}">
+											<a:commandLink id="thisPage" action="#{inOutStorageRecordList.pageFind(_page)}" reRender="showPanel">#{_page}</a:commandLink>
+										</td>
+									</a:repeat>
+									<s:fragment rendered="#{inOutStorageRecordList.hasNextPage}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" action="#{inOutStorageRecordList.pageFind(inOutStorageRecordList.nextPage)}" rendered="#{inOutStorageRecordList.hasNextPage and inOutStorageRecordList.totalPages > 1}" reRender="showPanel">&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" action="#{inOutStorageRecordList.pageFind(inOutStorageRecordList.totalPages)}" rendered="#{inOutStorageRecordList.hasNextPage and inOutStorageRecordList.totalPages > 1}" reRender="showPanel">尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{inOutStorageRecordList.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+			</rich:panel>
+		</div>
+		<div class="clear"></div>
+	</div>
+</td>
+<a:form>
+	<a:queue requestDelay="100" ignoreDupResponses="true"/>
+	<a:jsFunction name="queryResultFind" action="#{inOutStorageRecordList.queryResultFind}" reRender="showPanel,excelId" oncomplete="refreshAction();" >
+		<a:actionparam name="showSearchFlag" assignTo="#{inOutStorageRecordList.showSearchFlag}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{inOutStorageRecordList.storageRoomId}"/>
+		<a:actionparam name="operater" assignTo="#{inOutStorageRecordList.operater}"/>
+		<a:actionparam name="storageChangeFormCode" assignTo="#{inOutStorageRecordList.storageChangeFormCode}"/>
+		<a:actionparam name="beginDate" assignTo="#{inOutStorageRecordList.beginDate}"/>
+		<a:actionparam name="endDate" assignTo="#{inOutStorageRecordList.endDate}"/>
+		<a:actionparam name="dataType" assignTo="#{inOutStorageRecordList.dataType}"/>
+		<a:actionparam name="baseId" assignTo="#{inOutStorageRecordList.baseId}"/>
+	</a:jsFunction>
+	<a:jsFunction name="refreshTab" action="#{inOutStorageRecordList.refreshTab}" data="#{inOutStorageRecordList.storageRoomSelectItem}" oncomplete="onRefreshTab(data);" >
+		<a:actionparam name="dataType" assignTo="#{inOutStorageRecordList.dataType}"/>
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+var baseObj = "#{sessionTake.baseModel.baseId}";
+if(baseObj == ""){
+	baseObj = 0;
+}
+	var showSearch = false;//高级搜索状态 false收起 true展开       
+	var goodsType = 0;//物料类型 1原料 2成品 3辅料 5投入品
+
+	jquery(function(){
+		jquery(".selectpicker").selectpicker();
+	  	jquery(".form_datetime").datetimepicker({
+	  		format: "yyyy-mm-dd",
+		    autoclose: true,
+			weekStart: 1,
+			language:  'zh-CN',
+			minView:2,
+		    pickerPosition: "bottom-left"
+		});
+	  	document.getElementById("inOutRecordFrom:refreshShow").onclick();
+	});
+	
+	//高级搜索展示切换
+	function switchShowSearch(){
+		if (showSearch == true) {//展示时点击收起
+			jquery(".gjs").slideUp(800);
+			jquery(".gjss_a").removeClass("gjbottom").addClass("gjtop");
+			jquery("#operater").val("");
+			jquery("#beginDate").val("");
+			jquery("#endDate").val("");
+			jquery("#storageRoomId")[0].selectedIndex =0;
+			showSearch = false;
+		} else {//收起时点击展开
+			jquery(".gjs").slideDown(800);
+			jquery(".gjss_a").removeClass("gjtop").addClass("gjbottom");
+			showSearch = true;
+		}
+	}
+
+	//提交搜索数据信息
+	function submitResult(){
+		var storageChangeFormCode = jquery("#storageChangeFormCode").val();
+		var operater = jquery("#operater").val();
+		var beginDate = jquery("#beginDate").val();
+		var endDate = jquery("#endDate").val();
+		var storageRoomId = jquery("#storageRoomId").val();
+		if(beginDate!=""&&endDate!=""){
+			if(beginDate>endDate){
+				alert("结束时间不能小于开始时间");
+				return false;
+			}
+		}
+		queryResultFind(showSearch, Number(storageRoomId), operater, storageChangeFormCode, beginDate, endDate, Number(goodsType),baseObj);
+	}
+/* 	function excelResult(){
+		var storageChangeFormCode = jquery("#storageChangeFormCode").val();
+		var operater = jquery("#operater").val();
+		var beginDate = jquery("#beginDate").val();
+		var endDate = jquery("#endDate").val();
+		var storageRoomId = jquery("#storageRoomId").val();
+		if(beginDate!=""&&endDate!=""){
+			if(beginDate>endDate){
+				alert("结束时间不能小于开始时间");
+				return false;
+			}
+		}
+		jquery("#operaterID").val(operater);
+		alert(jquery("#operaterID").val());
+		jquery("#storageRoomIdID").val(Number(storageRoomId));
+		jquery("#storageChangeFormCodeID").val(storageChangeFormCode);
+		jquery("#beginDateID").val(beginDate);
+		jquery("#endDateID").val(endDate);
+		jquery("#dataTypeID").val(Number(goodsType));
+		jquery("#baseIdID").val(baseObj);
+	} */
+	//刷新
+	function refreshAction(data){
+		//jquery(".selectpicker").selectpicker();
+		//document.getElementById("inOutRecordFrom:refreshShow").onclick();
+	}
+
+	//刷新标签切换库房
+	function onRefreshTab(item){
+		if (item != null && item != '') {
+			//jquery(".bootstrap-select").empty();
+			jquery("#storageRoomId").empty();
+			jquery(item).appendTo("#storageRoomId")//添加下拉框的option 
+			jquery("#storageRoomId")[0].selectedIndex =0;
+			jquery(".selectpicker").selectpicker();
+			jquery("#storageRoomId").selectpicker("refresh");
+		}
+	}
+	//切换类型标签 
+	function switchTypeLi(type){
+		goodsType = type;
+		refreshTab(Number(goodsType));
+		submitResult();
+	}
+	/* 复选框全选 */
+	function checkAllChange(obj){
+		if (obj.checked) {
+			jquery("input[name='inOut']").iCheck("check"); 
+		} else {
+			jquery("input[name='inOut']").iCheck("uncheck"); 
+		}
+	}
+	/* 复选框单选 */
+	function checkBoxChange(obj){
+		var temp = "";
+		jquery("input[name='inOut']:checkbox:checked").each(function(){
+			temp += jquery(this).val() + ",";
+		});
+		var orderCheckNum = temp.split(",");
+		var orderNum = jquery("input[name='inOut']").length;
+		if (orderNum == orderCheckNum.length - 1) {
+			jquery("input[name='inOutAll']").iCheck("check"); 
+		}else {
+			jquery("input[name='inOutAll']").iCheck("uncheck"); 
+		}
+	}
+	/* 批量打印 */
+	function batchPrint(){
+		//复选框选中的数据
+		var inOutIds = ""
+		jquery("input[name='inOut']:checkbox:checked").each(function(){
+			inOutIds += (this.value + ",");
+		});
+		if(inOutIds!=""){
+			inOutIds = inOutIds.substring(0, inOutIds.length - 1);
+			if (confirm("确定打印流水记录明细单？")){
+				window.open('/inputs/PrintInOutRecord.seam?inOutIds='+inOutIds,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=1000,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			} else {
+				return false;
+			}
+		}
+		else{
+			alert("请您勾选要打印的流水记录！");
+		}
+	}
+	function onePrint(id){
+		window.open('/inputs/PrintInOutRecord.seam?inOutIds='+id,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=1000,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+	}
+//]]>
+</script>
+</ui:define>
+</ui:composition>

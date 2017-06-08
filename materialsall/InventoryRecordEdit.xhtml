@@ -1,0 +1,240 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="inventoryRecord" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{inventoryRecordHome.managed ? 'Edit' : 'Add'} Inventory record</f:facet>
+
+
+
+
+            <s:decorate id="goodsBatchIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Goods batch id</ui:define>
+                <h:inputText id="goodsBatchId"
+                       required="true"
+                          value="#{inventoryRecordHome.instance.goodsBatchId}">
+                    <a:support event="onblur" reRender="goodsBatchIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="goodsBatchStockField" template="layout/edit.xhtml">
+                <ui:define name="label">Goods batch stock</ui:define>
+                <h:inputText id="goodsBatchStock"
+                       required="true"
+                          value="#{inventoryRecordHome.instance.goodsBatchStock}">
+                    <a:support event="onblur" reRender="goodsBatchStockField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="actualStockField" template="layout/edit.xhtml">
+                <ui:define name="label">Actual stock</ui:define>
+                <h:inputText id="actualStock"
+                       required="true"
+                          value="#{inventoryRecordHome.instance.actualStock}">
+                    <a:support event="onblur" reRender="actualStockField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="differenceValueField" template="layout/edit.xhtml">
+                <ui:define name="label">Difference value</ui:define>
+                <h:inputText id="differenceValue"
+                       required="true"
+                          value="#{inventoryRecordHome.instance.differenceValue}">
+                    <a:support event="onblur" reRender="differenceValueField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="remarkField" template="layout/edit.xhtml">
+                <ui:define name="label">Remark</ui:define>
+                <h:inputTextarea id="remark"
+                               cols="80"
+                               rows="2"
+                              value="#{inventoryRecordHome.instance.remark}"/>
+            </s:decorate>
+
+
+            <s:decorate id="insertTimeField" template="layout/edit.xhtml">
+                <ui:define name="label">Insert time</ui:define>
+                <rich:calendar id="insertTime"
+                          value="#{inventoryRecordHome.instance.insertTime}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="insertUserField" template="layout/edit.xhtml">
+                <ui:define name="label">Insert user</ui:define>
+                <h:inputText id="insertUser"
+                          value="#{inventoryRecordHome.instance.insertUser}">
+                    <a:support event="onblur" reRender="insertUserField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="updateTimeField" template="layout/edit.xhtml">
+                <ui:define name="label">Update time</ui:define>
+                <rich:calendar id="updateTime"
+                          value="#{inventoryRecordHome.instance.updateTime}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="updateUserField" template="layout/edit.xhtml">
+                <ui:define name="label">Update user</ui:define>
+                <h:inputText id="updateUser"
+                          value="#{inventoryRecordHome.instance.updateUser}">
+                    <a:support event="onblur" reRender="updateUserField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="deletedField" template="layout/edit.xhtml">
+                <ui:define name="label">Deleted</ui:define>
+                <h:inputText id="deleted"
+                       required="true"
+                          value="#{inventoryRecordHome.instance.deleted}">
+                    <a:support event="onblur" reRender="deletedField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{inventoryRecordHome.persist}"
+                       disabled="#{!inventoryRecordHome.wired}"
+                       rendered="#{!inventoryRecordHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{inventoryRecordHome.update}"
+                       rendered="#{inventoryRecordHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{inventoryRecordHome.remove}"
+                      immediate="true"
+                       rendered="#{inventoryRecordHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/InventoryRecord.xhtml"
+                rendered="#{inventoryRecordHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty inventoryRecordFrom ? 'InventoryRecordList' : inventoryRecordFrom}.xhtml"
+                rendered="#{!inventoryRecordHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Inventory *" labelClass="required">
+    <div class="association" id="inventoryParent">
+
+        <h:outputText value="There is no inventory associated with this inventoryRecord."
+                   rendered="#{inventoryRecordHome.instance.inventory == null}"/>
+
+        <rich:dataTable var="_inventory"
+                   value="#{inventoryRecordHome.instance.inventory}"
+                rendered="#{inventoryRecordHome.instance.inventory != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="inventoryTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_inventory.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Storage room id</f:facet>
+                <h:outputText value="#{_inventory.storageRoomId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Inventory batch</f:facet>
+                <h:outputText value="#{_inventory.inventoryBatch}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Inventory time</f:facet>
+                <h:outputText value="#{_inventory.inventoryTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Inventory people</f:facet>
+                <h:outputText value="#{_inventory.inventoryPeople}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Inventory status</f:facet>
+                <h:outputText value="#{_inventory.inventoryStatus}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Entry time</f:facet>
+                <h:outputText value="#{_inventory.entryTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Entry user</f:facet>
+                <h:outputText value="#{_inventory.entryUser}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Insert time</f:facet>
+                <h:outputText value="#{_inventory.insertTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Insert user</f:facet>
+                <h:outputText value="#{_inventory.insertUser}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Update time</f:facet>
+                <h:outputText value="#{_inventory.updateTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Update user</f:facet>
+                <h:outputText value="#{_inventory.updateUser}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Deleted</f:facet>
+                <h:outputText value="#{_inventory.deleted}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{inventoryRecordHome.instance.inventory != null ? 'changeParent' : 'selectParent'}" value="#{inventoryRecordHome.instance.inventory != null ? 'Change' : 'Select'} inventory"
+                       view="/InventoryList.xhtml">
+                <f:param name="from" value="InventoryRecordEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

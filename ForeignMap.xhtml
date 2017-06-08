@@ -1,0 +1,1260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:a4j="http://richfaces.org/a4j"
+   xmlns:rich="http://richfaces.org/rich"
+   contentType="text/html">
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <meta http-equiv="pragma" content="no-cache"/>
+      <title>义田帮手简单实用的农场管理工具</title>
+      <link rel="shortcut icon" href="#{request.contextPath}/favicon.ico"/>
+      <ui:insert name="head"/>
+      <!--鼠标移上去换色js开始-->
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/new_clone/bootstrap-select.js"></script>
+	  <style>
+	  body{
+	  	overflow:hidden;
+	  }
+	   html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        font-size:12px;
+        font-family:"微软雅黑"
+      }
+.maptck{ border-collapse:collapse; position:absolute; z-index:10000; left:150px; top:150px;}
+.titlefont{ font-size:16px; color:#e8e8e8; font-weight:bold;}
+.numfont{ font-size:12px; color:#dadada; font-weight:normal; padding-left:20px;}
+.closed{ margin-right:10px;}
+.ludian{ height:19px; line-height:19px; padding-left:10px; background:url(#{request.contextPath}/asset/images/tckbg.png) left center no-repeat; display:inline-block; float:left;}
+.ludian span{ min-width:30px; height:19px; line-height:19px; margin-right:-10px; padding-right:10px; color:#fff; background:url(#{request.contextPath}/asset/images/tckbg.png) right center no-repeat; display:inline-block; float:left; font-size:12px;}
+.shidu{ height:19px; line-height:19px; padding-left:10px; float:left; color:#fff;}
+.shuju{ width:100%; table-layout:fixed; margin-top:10px;padding-left:30px}
+.shujutd{ color:#fff; background:url(#{request.contextPath}/asset/images/shuline.png) right repeat-y;}
+.fottable{ height:22px; line-height:22px; background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat;}
+.ckxx{ color:#0878bf; font-size:14px; text-decoration:underline; padding-left:25px; text-align:left; font-weight:bold;}
+.qckxx2{ color:#0878bf; font-size:14px; text-decoration:underline; margin:0 auto; font-weight:bold; padding-top:5px; display:block;}
+.cjtime{ text-align:right; color:#dddddd; padding-right:15px;}
+.tdimg{padding-top:10px; padding-bottom:10px;}
+
+.qixz{ border-collapse:collapse; position:absolute; z-index:10000; left:650px; top:150px;}
+.qingt{ color:#fff; font-size:14px;}
+.box_back{background:url(asset/images/bg_png3.png) repeat; width:100%; height:100%; position:fixed; z-index:8888; display:none;}
+
+.gm-style-iw{ position:relative; z-index:100;margin-left:10px; }
+.div_012{width:220px;}
+
+.zw_bgt2{ width:88px;   position: absolute; z-index:3;}
+.zw_libg_img2{ width:88px;  z-index:2; position:absolute;  margin-left:auto; margin-right:auto;display:block; cursor:pointer; }
+.ret_pic2{width:92px; height:52px; float:left; position:relative; top:-33px; top:-23px\9;}
+.div_width{ width:225px; padding:0px; background:#efefef; margin:0px auto;}
+.div_dl2{position:relative; width:140px; *width:130px;  top:-8px; top:-6px\9; [;top:0px;]; margin-left:8px;}
+.div_dt2{ font-size:16px; color:#171717; line-height:16px; font-family:"微软雅黑"; font-weight: normal;}
+.div_dt3{   display: inline; font-size:13px; color:#e75467; line-height:20px;   background-color: #9bc66d;border-radius: 4px; color: #ffffff; padding: 3px;}
+.div_dt4{ width:91px; *width:130px; height:20px; overflow:hidden; font-family:"黑体"; font-size:14px; color:#666666; line-height:22px;}
+
+ @media screen and (-webkit-min-device-pixel-ratio:0) {
+ .div_dl2 {
+position: relative;
+width: 140px;
+margin-left: 8px;
+}
+} 
+
+h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form, img, p, input {
+    border: medium none;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.fl{ float:left;}
+.fr{ float:right;}
+.clear{ clear:both;}
+.clear:after{ clear:both; content:""; display:block; visibility:hidden; height:0;}
+
+     .videobut{ width:321px; height:77px; margin:0px auto 0 auto; background:url(asset/images/growth/videobuts_.png) no-repeat;}
+     .videobut_{ width:321px; height:77px; margin:0px auto 0 auto; background:url(asset/images/growth/videobutk_.png) no-repeat;}
+.box_back{background:url(asset/images/bg_png3.png) repeat; width:100%; height:100%; position:fixed; z-index:98; display:none;}
+#login3{background:url(asset/images/growth/zwleft_04.png) repeat; width:100%; height:100%; position:fixed; z-index:8888; display:none;}{background:url(../asset/images/bg_png3.png) repeat; width:100%; height:100%; position:fixed; z-index:8888; display:none;}
+.close-btn{ width:11px; height:11px; border:none; overflow:hidden; zoom:1; background:url(#{request.contextPath}/asset/images/ico_close100.png) no-repeat;}
+.close-btn:hover, .close-btn:focus{ background:url(#{request.contextPath}/asset/images/ico_close101.png) no-repeat;}
+.map-IntroPop{ width:396px; min-height:50px; background:#fff; border-radius:5px;}
+.map-introPop-pot{ position:relative;}
+.map-introPop-pot .close-btn{ position:absolute; right:10px; top:10px;cursor: pointer;}
+.map-introPop-pot .supIco{ position:absolute; left:50%; margin-left:-9px; top:100%; width:18px; height:18px; }
+
+.map-introPop-header{ padding:15px 20px; border-bottom:1px dashed #e6e6e6;}
+.map-introPop-body{ min-height:15px;}
+.introPop-header-lt{ position:relative; z-index:200; float:left; margin:-45px 15px 0 0;}
+.introPop-header-lt img{ width:98px; height:98px; margin:1px;}
+.introPop-header-shade{ position:absolute; width:100px; height:100px; background:url(#{request.contextPath}/asset/images/map_zhezhao2.png) no-repeat;}
+.introPop-header-rt{ float:left;}
+.introPop-header-rt h3{ float:left; margin:0 10px 0 0; line-height:32px; font-family:'宋体'; font-size:18px; font-weight:bold; color:#303030;}
+.introPop-header-rt strong{ float:left; margin:0 10px 0 0; line-height:32px; font-family:'宋体'; font-size:16px; font-weight:bold; color:#303030;}
+.introPop-header-rt em{ float:left; margin:0 10px 0 0; line-height:32px; font-style:normal; font-family:'宋体'; font-size:12px; color:#b0b0b0;}
+.bootSelt130{ display:inline-block; }
+.bootSelt130 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){ width:130px;}
+.bootSelt130 .bootstrap-select{ width:130px;}
+.bootSelt130 .btn-group .btn{ padding:6px 25px 6px 12px; font-size:12px;}
+.bootstrap-select.btn-group .dropdown-menu{ max-width:170px; overflow:auto;}
+.farmer_mess{ clear:both; overflow:hidden; height:16px; line-height:16px; margin-top:10px; padding-left:20px; background:url(#{request.contextPath}/asset/images/map_ico100.png) no-repeat left center; color:#9d9d9d;}
+.farmer_mess .farmer{ padding-left:5px;}
+.farmer_mess .farmland{ padding-left:15px; font-family:'Arial'; color:#b0b0b0;}
+.introPop-introTime{ padding:5px 0; border-bottom:1px dashed #e6e6e6; background:#fafafa;}
+.introPop-introTime li{ float:left; margin:10px 0; line-height:16px; font-size:12px; font-family:'宋体'; color:#535353;}
+.introPop-introTime li img{ float:left; margin:0 8px 0 25px;}
+.introPop-introTime li p{ float:left; width:60px;}
+.intro-chart-trend{ padding:10px;}
+
+/* 土地检测记录  */
+.baseMap_ttl{ width:120px; height:42px; line-height:42px; margin-top:0; margin-bottom:0; background:url(#{request.contextPath}/asset/images/IcoBottom.png) no-repeat 10px center; font-size:12px; font-weight:bold; text-indent:28px; cursor:pointer; }
+.tudi-jcjl{margin-left:25px;}
+.detailedInfo{ position:absolute; right:0; top:-37px; height:20px; line-height:20px; padding:0 19px; border:1px solid #ddd; border-radius:4px; color:#323232; font-size:11px; }
+.detailedInfo:hover{ background:#e6e6e6; border-color:#adadad; text-decoration:none; color:#323232;}
+.jiance_mechanism, .jiance_date{ height:16px; line-height:16px; background:url(#{request.contextPath}/asset/images/bg_jiance.png) no-repeat; font-family:'微软雅黑'; text-indent:25px; margin-bottom:10px;}
+.jiance_mechanism{ height:auto; max-height:32px; overflow:hidden; padding-left:25px; background:url(#{request.contextPath}/asset/images/bg_jiance2.png) no-repeat; text-indent:0;}
+.jiance_date{ background-position: 0 -25px;}
+.landRecord_wp{ width:210px; margin:0 auto 15px 32px; padding:5px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;}
+.landRecord_wp table th{ text-align:center; font-size:16px; color:#428bca; font-family:'Arial';}
+.landRecord_wp table td{ text-align:center; vertical-align:middle; padding-bottom:0; font-size:11px; font-family:'Arial';}
+
+/* 土地历史记录 */
+.colorGrn02{ color:#428bca;}
+.landHistory_jl{ position:relative; width:268px; margin:5px auto 0;}
+.landHistory_list{overflow:hidden; margin-bottom:0;}
+.landHistory_list{ background:url(#{request.contextPath}/asset/images/bg_landhistory02.png) repeat-y 5px 0;}
+.block_landhis-pos9{ position:absolute; left:0; top:0; width:7px; height:9px; background:#fff;}
+.block_landhis-pos22{ position:absolute; left:0; bottom:0; width:7px; height:22px; background:#fff;}
+.landHistory_list li{ padding-left:20px; height:28px; line-height:28px; padding-bottom:15px; background:url(#{request.contextPath}/asset/images/bg_landhistory.png) no-repeat 0 9px;}
+.landHistory_list li.histroyJl_date02{ background-position:0 -36px;}
+.landHistory_list li.histroyJl_date03{ background-position:1px -83px;}
+.landHistory_list span{ float:left; width:70px; font-family:'Arial';}
+.landHistory_list div{ float:left; padding-left:14px; width:115px; background:url(#{request.contextPath}/asset/images/bg_landhistory04.png) no-repeat;}
+.landHistory_list div em{ font-style:normal; font-family:'微软雅黑'; float:left; padding-right:7px;}
+	  .noPlant .introPop-header-title h3{background:#FFFFFF}
+	  
+.introPop-header-rt{ float:none; padding-left:115px;}
+.farmer_mess{ clear:none;}
+.introPop-header-rt h3{ float:none; display:inline-block;}
+.introPop-header-rt em{ float:none;}
+	  
+	  </style>
+   </head>
+   <body >
+   <div class="box_back" id="login" style="display:none">
+    <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="#{request.contextPath}/asset/images/loginda.gif" />
+  	</div>
+</div>
+<div class="box_back" id="login3" style="display:none;*position:*absolute;*top:64px;*left:77px;">
+  	</div>
+<div class="box_back" id="login4" style="display:none">
+</div>
+<table width="95%" align="center" cellpadding="0" cellspacing="0" style="z-index: 99999;position:relative;">
+<tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" id="video_iframe" style="display:none;position: absolute; ">
+	      	<tr>
+	      		<td valign="top" class="videobox" style="width:auto; z-index:9999; position:relative; height: 472px;">
+	      		
+	              	<div class="videobg" style="background:none; z-index:9999; position:relative; height: 370px; background-image: none; background-attachment: scroll; background-repeat: repeat; background-position-x: 0%; background-position-y: 0%; background-color: transparent;">
+	                    <div id="outDiv" class="videoimg" style=" height: 370px; right: 0px; margin-top: 0px; margin-right: auto; margin-bottom: 0px; margin-left: auto;">
+	                		<object classid="clsid:EE4EA829-B8DA-4229-AC72-585AF45AD778" style="z-index:9999; position:relative;" standby="Waiting..." id="ppvs" width="100%" height="100%" name="ocx1" title="&#35270;&#39057;" >
+							      <param value="transparent" name="wmode"/>
+							        <param value="_Version" name="65536"/>
+							        <param value="_ExtentX" name="9155"/>
+							        <param value="_ExtrntY" name="6800"/>
+							        <param value="_StockProps" name="0"/>
+							        <param value="#ffffff" name="bgcolor"/>
+	                		</object>
+	                	</div>
+	                  </div>
+	                  <div class="videopanel" style="background:url(#{request.contextPath}/asset/images/bg_png003.png) repeat; width:100%;padding-top:5px;padding-bottom:10px;z-index: 99999">
+	                  <div class="videobut_ vb" >
+	                     <table width="107" height="77" cellpadding="0" cellspacing="0" style="float:left;z-index: 99999"> 
+	                     		<tr>
+	                          	<td width="41" valign="middle" align="right" id="vbtn">
+	                              	<a id="v1" href="Javascript: void(0)" onmousedown="PTZControlOn(12)" onmouseup="PTZControlOff(12)" onmouseout="PTZControlOff(12)"><img src="#{request.contextPath}/asset/images/growth/but_jian.png" width="14" height="14" /></a>
+	                              	<a style="display:none" id="v2" href="Javascript: void(0)" onmousedown="PTZControlOn(12)" onmouseup="PTZControlOff(12)" onmouseout="PTZControlOff(12)"><img src="#{request.contextPath}/asset/images/growth/onbut_jian.png" width="14" height="14" /></a>
+	                              </td>
+	                          	<td width="16"></td>
+	                              <td width="50" valign="middle" align="right" id="vbut2">
+	                              	<a id="v3" href="Javascript: void(0)" onmousedown="PTZControlOn(11)" onmouseup="PTZControlOff(11)" onmouseout="PTZControlOff(11)"><img src="#{request.contextPath}/asset/images/growth/but_jia.png" width="14" height="14" /></a>
+	                              	<a style="display:none" id="v4" href="Javascript: void(0)" onmousedown="PTZControlOn(11)" onmouseup="PTZControlOff(11)" onmouseout="PTZControlOff(11)"><img src="#{request.contextPath}/asset/images/growth/onbut_jia.png" width="14" height="14" /></a>
+	                              </td>
+	                          </tr>
+	                     </table>  
+	                     <table width="66" height="77" cellpadding="0" cellspacing="0" style="float:left; margin-left:28px;z-index: 99999"> 
+	                     		<tr>
+	                          	<td width="22"></td>
+	                          	<td width="23" valign="bottom"  id="vbut3">
+	                              	<a id="v5" href="Javascript: void(0)" onmousedown="PTZControlOn(21)" onmouseup="PTZControlOff(21)" onmouseout="PTZControlOff(21)"><img src="#{request.contextPath}/asset/images/growth/but_up.png" width="12" height="9" /></a>
+	                              	<a style="display:none" id="v6" href="Javascript: void(0)" onmousedown="PTZControlOn(21)" onmouseup="PTZControlOff(21)" onmouseout="PTZControlOff(21)"><img src="#{request.contextPath}/asset/images/growth/onbut_up.png" width="12" height="9" /></a>
+	                              </td>
+	                              <td width="21"></td>
+	                          </tr>
+	                     		<tr>
+	                          	<td valign="middle" id="vbut4">
+	                              	<a id="v7" href="Javascript: void(0)" onmousedown="PTZControlOn(23)" onmouseup="PTZControlOff(23)" onmouseout="PTZControlOff(23)"><img src="#{request.contextPath}/asset/images/growth/but_left.png" width="9" height="13" /></a>
+	                              	<a style="display:none" id="v8" href="Javascript: void(0)" onmousedown="PTZControlOn(23)" onmouseup="PTZControlOff(23)" onmouseout="PTZControlOff(23)"><img src="#{request.contextPath}/asset/images/growth/onbut_left.png" width="9" height="13" /></a>
+	                              </td>
+	                              <td >
+	                              <div style="width: 14px; height: 14px; cursor: pointer;" id="switch1"></div>
+	                              </td>
+	                              <td valign="middle" id="vbut5" >
+	                              	<a id="v9" href="Javascript: void(0)" onmousedown="PTZControlOn(24)" onmouseup="PTZControlOff(24)" onmouseout="PTZControlOff(24)"><img src="#{request.contextPath}/asset/images/growth/but_right.png" width="9" height="13" /></a>
+	                              	<a style="display:none" id="v10" href="Javascript: void(0)" onmousedown="PTZControlOn(24)" onmouseup="PTZControlOff(24)" onmouseout="PTZControlOff(24)"><img src="#{request.contextPath}/asset/images/growth/onbut_right.png" width="9" height="13" /></a>
+	                              </td>
+	                          </tr>
+	                     		<tr>
+	                          	<td></td>
+	                          	<td valign="top" id="vbut6" >
+	                              	<a id="v11" href="Javascript: void(0)" onmousedown="PTZControlOn(22)" onmouseup="PTZControlOff(22)" onmouseout="PTZControlOff(22)"><img src="#{request.contextPath}/asset/images/growth/but_down.png" width="12" height="9" /></a>
+	                              	<a style="display:none" id="v12" href="Javascript: void(0)" onmousedown="PTZControlOn(22)" onmouseup="PTZControlOff(22)" onmouseout="PTZControlOff(22)"><img src="#{request.contextPath}/asset/images/growth/onbut_down.png" width="12" height="9" /></a>
+	                              </td>
+	                              <td ></td>
+	                          </tr>
+	                     </table>                                           
+	                     <table width="105" height="77" cellpadding="0" cellspacing="0" style="float:right;z-index: 99999"> 
+	                     		<tr>
+	                          	<td width="41" valign="middle" align="left" id="vbut7">
+	                              	<a id="v13" href="Javascript: void(0)" onmousedown="PTZControlOn(14)" onmouseup="PTZControlOff(14)" onmouseout="PTZControlOff(14)"><img src="#{request.contextPath}/asset/images/growth/but_jian.png" width="14" height="14" /></a>
+	                              	<a style="display:none" id="v14" href="Javascript: void(0)" onmousedown="PTZControlOn(14)" onmouseup="PTZControlOff(14)" onmouseout="PTZControlOff(14)"><img src="#{request.contextPath}/asset/images/growth/onbut_jian.png" width="14" height="14" /></a>
+	                              </td>
+	                          	<td width="24"></td>
+	                              <td width="40" valign="middle" align="left" id="vbut8">
+	                              	<a id="v15" href="Javascript: void(0)" onmousedown="PTZControlOn(15)" onmouseup="PTZControlOff(15)" onmouseout="PTZControlOff(15)"><img src="#{request.contextPath}/asset/images/growth/but_jia.png" width="14" height="14" /></a>
+	                              	<a style="display:none" id="v16" href="Javascript: void(0)" onmousedown="PTZControlOn(15)" onmouseup="PTZControlOff(15)" onmouseout="PTZControlOff(15)"><img src="#{request.contextPath}/asset/images/growth/onbut_jia.png" width="14" height="14" /></a>
+	                              	  
+	                              </td>
+	                          </tr>
+	                     </table>  
+	                                                            
+	                  </div>
+	                 <div class="videocj" style="float:right; margin-right:20px;margin-top:-55px; z-index: 99999"><a style="color: #ff0000;font-size:14px;text-decoration:underline;" href="http://img1.farmeasy.cn/plugin/EHomeActiveX.exe">
+	          						<!-- <img src="#{request.contextPath}/asset/images/xiazai.png" /> -->                 
+	                           </a></div>   
+	               </div>
+	              </td>
+	              <td valign="top" width="31">      <div style="z-index: 99999; position: relative;"><a style="color:#3badfd; text-decoration:underline;" href="#" onclick="closeVideo()"><img src="#{request.contextPath}/asset/images/cose.png"></img></a></div></td>
+	      	</tr>
+	      </table>
+	      <table width="100%" cellpadding="0" cellspacing="0" id="video_iframe2" style="display:none;position: absolute; ">
+	      	<tr>
+	      		<td valign="top" class="videobox" style="width:auto; z-index:9999; position:relative; height: 472px;">
+	      		
+	              	<div class="videobg" style="overflow:hidden;background:none; z-index:99999; position:relative; height: 370px; background-image: none; background-attachment: scroll; background-repeat: repeat; background-position-x: 0%; background-position-y: 0%; background-color: transparent;">
+	                    <div id="outDiv" class="videoimg" style="overflow:hidden; height: 370px; right: 0px; margin-top: -25px; margin-right: auto; margin-bottom: 0px; margin-left: auto;">
+	                		 <object classid="clsid:D5E14042-7BF6-4E24-8B01-2F453E8154D7" id="PlayViewOCX"  width="100%" height="532" name="ocx" >
+            				</object>
+            				
+	                	</div>
+	                  </div>
+	                  <div class="videopanel" style="background:url(#{request.contextPath}/asset/images/bg_png003.png) repeat; width:100%;margin-top:-20px;padding-bottom:10px;">
+	                  <div class="videobut vb" >
+	                     <table width="107" height="77" cellpadding="0" cellspacing="0" style="float:left;"> 
+	                     		<tr>
+	                          	<td width="41" valign="middle" align="right" id="vbtn">
+	                              	<a id="v1" href="Javascript: void(0)" onmousedown="PTZMinusTimes()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/but_jian.png" width="14" height="14" /></a>
+	                              	<a style="display:none" id="v2" href="Javascript: void(0)" onmousedown="PTZMinusTimes()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/onbut_jian.png" width="14" height="14" /></a>
+	                              </td>
+	                          	<td width="16"></td>
+	                              <td width="50" valign="middle" align="right" id="vbut2">
+	                              	<a id="v3" href="Javascript: void(0)" onmousedown="PTZAddTimes()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/but_jia.png" width="14" height="14" /></a>
+	                              	<a style="display:none" id="v4" href="Javascript: void(0)" onmousedown="PTZAddTimes()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/onbut_jia.png" width="14" height="14" /></a>
+	                              </td>
+	                          </tr>
+	                     </table>  
+	                     <table width="66" height="77" cellpadding="0" cellspacing="0" style="float:left; margin-left:28px;"> 
+	                     		<tr>
+	                          	<td width="22"></td>
+	                          	<td width="23" valign="bottom"  id="vbut3">
+	                              	<a id="v5" href="Javascript: void(0)" onmousedown="PTZUp()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/but_up.png" width="12" height="9" /></a>
+	                              	<a style="display:none" id="v6" href="Javascript: void(0)" onmousedown="PTZUp()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/onbut_up.png" width="12" height="9" /></a>
+	                              </td>
+	                              <td width="21"></td>
+	                          </tr>
+	                     		<tr>
+	                          	<td valign="middle" id="vbut4">
+	                              	<a id="v7" href="Javascript: void(0)" onmousedown="PTZLeft()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/but_left.png" width="9" height="13" /></a>
+	                              	<a style="display:none" id="v8" href="Javascript: void(0)" onmousedown="PTZLeft()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/onbut_left.png" width="9" height="13" /></a>
+	                              </td>
+	                              <td >
+	                              <div style="width: 14px; height: 14px; cursor: pointer;" id="switch2"></div>
+	                              </td>
+	                              <td valign="middle" id="vbut5" >
+	                              	<a id="v9" href="Javascript: void(0)" onmousedown="PTZRight()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/but_right.png" width="9" height="13" /></a>
+	                              	<a style="display:none" id="v10" href="Javascript: void(0)" onmousedown="PTZRight()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/onbut_right.png" width="9" height="13" /></a>
+	                              </td>
+	                          </tr>
+	                     		<tr>
+	                          	<td></td>
+	                          	<td valign="top" id="vbut6" >
+	                              	<a id="v11" href="Javascript: void(0)" onmousedown="PTZDown()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/but_down.png" width="12" height="9" /></a>
+	                              	<a style="display:none" id="v12" href="Javascript: void(0)" onmousedown="PTZDown()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/onbut_down.png" width="12" height="9" /></a>
+	                              </td>
+	                              <td ></td>
+	                          </tr>
+	                     </table>                                           
+	                     <table width="105" height="77" cellpadding="0" cellspacing="0" style="float:right;"> 
+	                     		<tr>
+	                          	<td width="41" valign="middle" align="left" id="vbut7">
+	                              	<a id="v13" href="Javascript: void(0)" onmousedown="PTZFarFocus()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/but_jian.png" width="14" height="14" /></a>
+	                              	<a style="display:none" id="v14" href="Javascript: void(0)" onmousedown="PTZFarFocus()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/onbut_jian.png" width="14" height="14" /></a>
+	                              </td>
+	                          	<td width="24"></td>
+	                              <td width="40" valign="middle" align="left" id="vbut8">
+	                              	<a id="v15" href="Javascript: void(0)" onmousedown="PTZNearFocus()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/but_jia.png" width="14" height="14" /></a>
+	                              	<a style="display:none" id="v16" href="Javascript: void(0)" onmousedown="PTZNearFocus()" onmouseup="PTZStop()" onmouseout="PTZStop()"><img src="#{request.contextPath}/asset/images/growth/onbut_jia.png" width="14" height="14" /></a>
+	                              	  
+	                              </td>
+	                          </tr>
+	                     </table>  
+	                                                            
+	                  </div>
+	                 <div class="videocj" style="float:right; margin-right:20px;margin-top:-55px; "><a style="color: #ff0000;font-size:14px;text-decoration:underline;" href="http://img1.farmeasy.cn/plugin/cmsocx.exe">
+	          						<!-- <img src="#{request.contextPath}/asset/images/xiazai.png" /> -->                 
+	                           </a></div>   
+	               </div>
+	              </td>
+	              <td valign="top" width="31">      <div style="z-index: 9999; position: relative;"><a style="color:#3badfd; text-decoration:underline;" href="#" onclick="closeVideo2()"><img src="#{request.contextPath}/asset/images/cose.png"></img></a></div></td>
+	      	</tr>
+	      </table>
+	      <table width="100%" cellpadding="0" cellspacing="0" id="video_iframe3" style="display:none;position: absolute; ">
+	      	<tr>
+	      		<td valign="top" class="videobox" style="width:auto; z-index:9999; position:relative; height: 472px;width:95%">
+	      							<div id="hlsdiv">
+		                                </div>
+	      							<div id="player">                           
+		                                <div class="video" id="HLSPlayer">
+		                                <script type="text/javascript">
+		                                var vID        = "hlsdiv"; 
+		                                var vWidth     = "100%";                //播放器宽度设置
+		                                var vHeight    = 572;                   //播放器宽度设置
+		                                var vPlayer    = "#{request.contextPath}/document/player.swf"; //播放器文件
+		                                var vHLSset    = "#{request.contextPath}/document/HLS.swf";             //HLS配置
+		                                var vPic       = "#{request.contextPath}/asset/images/iphone/videosImg.jpg";    //视频缩略图
+		                                var vCssurl    = "#{request.contextPath}/asset/css/mini.css";     //移动端CSS应用文件
+		                                var  vHLSurl    = "";
+		                                //-->
+		                                </script> 
+		                                <script type="text/javascript" src="#{request.contextPath}/asset/js/hls.min.js"></script>
+		                                </div>
+		                            </div>
+	              </td>
+	              <td valign="top">      <div style="z-index: 9999; position: relative;"><a style="color:#3badfd; text-decoration:underline;" href="#" onclick="closeVideo3()"><img src="#{request.contextPath}/asset/images/cose.png"></img></a></div></td>
+	      	</tr>
+	      </table>
+	      <table width="100%" cellpadding="0" cellspacing="0" id="video_iframe4" style="display:none;position: absolute; ">
+	      	<tr>
+	      		<td valign="top" class="videobox" style="width:auto; z-index:9999; position:relative; height: 472px;width:100%">
+	              	<div class="videobg" style="background:none; z-index:9999; position:relative; height: 370px; background-image: none; background-attachment: scroll; background-repeat: repeat; background-position-x: 0%; background-position-y: 0%; background-color: transparent;">
+	                    <div id="outDiv" class="videoimg videoimg__" style=" height: 370px; right: 0px; margin-top: 0px; margin-right: auto; margin-bottom: 0px; margin-left: auto;">
+	                	</div>
+	                  </div>
+	                  <div style="background:url(../asset/images/bg_png003.png) repeat; padding-top:5px;padding-bottom:10px;z-index: 99999">
+	                   <div class="videobut_ vb" >
+	                     <table width="107" height="77" cellpadding="0" cellspacing="0" style="float:left;z-index: 99999"> 
+	                     		<tr>
+	                          	<td width="41" valign="middle" align="right" id="vbtn">
+	                              	<a id="v1" href="Javascript: void(0)" onmouseup="PTZZoomStop()" onmousedown="PTZZoomout()"><img src="#{request.contextPath}/asset/images/growth/but_jian.png" width="14" height="14" /></a>
+	                              </td>
+	                          	<td width="16"></td>
+	                              <td width="50" valign="middle" align="right" id="vbut2">
+	                              	<a id="v3" href="Javascript: void(0)"  onmouseup="PTZZoomStop()" onmousedown="PTZZoomIn()"><img src="#{request.contextPath}/asset/images/growth/but_jia.png" width="14" height="14" /></a>
+	                              </td>
+	                          </tr>
+	                     </table>  
+	                     <table width="66" height="77" cellpadding="0" cellspacing="0" style="float:left; margin-left:28px;z-index: 99999"> 
+	                     		<tr>
+	                          	<td width="22"></td>
+	                          	<td width="23" valign="bottom"  id="vbut3">
+	                              	<a id="v5" href="Javascript: void(0)"  onmouseup="mouseUpPTZControl();" onmousedown="mouseDownPTZControl(1);" ><img src="#{request.contextPath}/asset/images/growth/but_up.png" width="12" height="9" /></a>
+	                              </td>
+	                              <td width="21"></td>
+	                          </tr>
+	                     		<tr>
+	                          	<td valign="middle" id="vbut4">
+	                              	<a id="v7" href="Javascript: void(0)"  onmouseup="mouseUpPTZControl();" onmousedown="mouseDownPTZControl(3);"><img src="#{request.contextPath}/asset/images/growth/but_left.png" width="9" height="13" /></a>
+	                              </td>
+	                             <td >
+                                  <div style="width: 14px; height: 14px; cursor: pointer;" id="switch3"></div>
+                                  </td>
+	                              <td valign="middle" id="vbut5" >
+	                              	<a id="v9" href="Javascript: void(0)" onmouseup="mouseUpPTZControl();" onmousedown="mouseDownPTZControl(4);"><img src="#{request.contextPath}/asset/images/growth/but_right.png" width="9" height="13" /></a>
+	                              </td>
+	                          </tr>
+	                     		<tr>
+	                          	<td></td>
+	                          	<td valign="top" id="vbut6" >
+	                              	<a id="v11" href="Javascript: void(0)"  onmouseup="mouseUpPTZControl();" onmousedown="mouseDownPTZControl(2);"><img src="#{request.contextPath}/asset/images/growth/but_down.png" width="12" height="9" /></a>
+	                              </td>
+	                              <td ></td>
+	                          </tr>
+	                     </table>                                           
+	                     <table width="105" height="77" cellpadding="0" cellspacing="0" style="float:right;z-index: 99999"> 
+	                     		<tr>
+	                          	<td width="41" valign="middle" align="left" id="vbut7">
+	                              	<a id="v13" href="Javascript: void(0)"  onmouseup="PTZFoucusStop()" onmousedown="PTZFoucusOut()"><img src="#{request.contextPath}/asset/images/growth/but_jian.png" width="14" height="14" /></a>
+	                              </td>
+	                          	<td width="24"></td>
+	                              <td width="40" valign="middle" align="left" id="vbut8">
+	                              	<a id="v15" href="Javascript: void(0)" onmouseup="PTZFoucusStop()" onmousedown="PTZFocusIn()"><img src="#{request.contextPath}/asset/images/growth/but_jia.png" width="14" height="14" /></a>
+	                              	  
+	                              </td>
+	                          </tr>
+	                     </table>  
+	                                                            
+	                  </div>
+	                 <div class="videocj" style="float:right; margin-right:20px;margin-top:-55px; z-index: 99999"><a style="color: #ff0000;font-size:14px;text-decoration:underline;" href="http://img1.farmeasy.cn/plugin/WebComponents.exe">
+	          						<!-- <img src="#{request.contextPath}/asset/images/xiazai.png" />  -->                
+	                           </a></div>   
+	               </div>
+	              </td>
+	              <td valign="top">      <div style="z-index: 99999; position: relative;"><a style="color:#3badfd; text-decoration:underline;" href="#" onclick="closeVideo5()"><img src="#{request.contextPath}/asset/images/cose.png"></img></a></div></td>
+	      	</tr>
+	      </table>
+	      </td></tr></table>
+	      <!--中间头部开始-->
+	      <div id="novideo" style="display:none; margin-left: auto; margin-right: auto; position: relative;width: 710px;z-index: 9999;">
+	      <table  style="position: absolute;z-index:100">
+	      <tr><td>
+	      <img src="#{request.contextPath}/asset/images/zwsp.png" width="680" height="458" />
+	      </td>
+	      <td valign="top" width="31">      <div style="z-index: 9999; position: relative;"><a style="color:#3badfd; text-decoration:underline;" href="#" onclick="closeVideo4()"><img src="#{request.contextPath}/asset/images/cose.png"></img></a></div></td>
+	      </tr>
+	      </table>
+	      </div>
+	      <script >
+	    //<![CDATA[
+	        var strIP = "61.51.81.46";
+	        var strPort = "8003";
+	       var  strName1 = "admin";
+	        var strPwd1 = "12345";
+	        var ChanNum1 = "2";
+		var cameraID1 = "";
+		 
+	function StartPlayView()
+	    {
+		try{
+			_Q('#login3').show();
+        	_Q("#video_iframe2").show();
+			var OCXobj = document.getElementById("PlayViewOCX");
+			OCXobj.SetOcxMode(0);
+			OCXobj.SetWndNum(1);
+			strXML = "<?xml version='1.0'?><Parament><CameraID>" + cameraID1 + "</CameraID><DeviceIP>" + strIP + "</DeviceIP><DevicePort>" + strPort + "</DevicePort><User>"+ strName1 +"</User><Password>" + strPwd1 + "</Password><ChannelNum>"+ ChanNum1 +"</ChannelNum><ProtocolType>0</ProtocolType><StreamType>0</StreamType><Transmits></Transmits></Parament>";
+		        OCXobj.StartTask_Preview_InWnd(strXML,0);
+		        _Q("#switch2").unbind("click");
+				_Q("#switch2").bind("click",function(){
+					StopPlayView();
+					_Q(this).closest(".vb").attr("class","videobut_ vb");
+					
+				});
+		}catch(e){
+			_Q('#login3').show();
+        	_Q("#novideo").show();
+        	_Q("#video_iframe2").hide();
+		}
+		
+	    }
+	function StopPlayView()
+    {
+		try{
+			 var OCXobj = document.getElementById("PlayViewOCX");
+		        OCXobj.StopAllPreview();
+		}catch(e){
+		}
+        _Q("#switch2").unbind("click");
+		_Q("#switch2").bind("click",function(){
+			StartPlayView()
+			_Q(this).closest(".vb").attr("class","videobut vb");
+			
+		});
+    }
+    /*****设置抓图格式为JPG******/
+    function CatchPicJPG()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.SetCapturParam("C:\\pic",0);
+    }
+    /*****设置抓图格式为BMP******/
+    function CatchPicBMP()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.SetCapturParam("C:\\pic",1);
+    }
+    /*****云台：左上******/
+    function PTZLeftUp()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(25,3);
+    }
+    /*****云台：上******/
+    function PTZUp()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(21,3);
+    }
+    /*****云台：右上******/
+    function PTZRightUp()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(26,3);
+    }
+    /*****云台：左******/
+    function PTZLeft()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(23,3);
+    }
+    /*****云台：自转******/
+    function PTZAuto()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(29,3);
+    }
+    /*****云台：右******/
+    function PTZRight()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(24,3);
+    }
+    /*****云台：左下******/
+    function PTZLeftDown()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(27,3);
+    }
+    /*****云台：下******/
+    function PTZDown()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(22,3);
+    }
+    /*****云台：右下******/
+    function PTZRightDown()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(28,3);
+    }
+    /*****云台：停止******/
+    function PTZStop()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(-21,3);
+    }
+    /*****云台：焦距+******/
+    function PTZAddTimes()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(11,3);
+    }
+    /*****云台：焦距-******/
+    function PTZMinusTimes()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(12,3);
+    }
+    /*****云台：焦点+******/
+    function PTZFarFocus()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(13,3);
+    }
+    /*****云台：焦点-******/
+    function PTZNearFocus()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(14,3);
+    }
+    /*****云台：光圈+******/
+    function PTZLargeAperture()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(15,3);
+    }
+    /*****云台：光圈-******/
+    function PTZSmallAperture()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        OCXobj.StartTask_PTZ(16,3);
+    }
+    /*****云台：调用预置点******/
+    function GetPt()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        ptNum = document.getElementById("SelectGetpt").value;
+        var ret = OCXobj.PTZCtrlGotoPreset(ptNum); 
+             
+    }
+    /*****云台：设置预置点******/
+    function SetPt()
+    {
+        var OCXobj = document.getElementById("PlayViewOCX");
+        ptNum = document.getElementById("SelectSetpt").value;
+        var ret = OCXobj.PTZCtrlSetPreset(parseInt(ptNum));
+    }
+	//]]>
+	      </script>
+	      <script language="javascript" for="PlayViewOCX" event="FireWindowsNumber(iSel)">   
+	szMsg = "窗口分割消息,窗口数" + iSel;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireSelectWindow(iSel)"> 
+	szMsg = "窗口选择消息,窗口" + iSel;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireStartRealPlay(iSel)">
+	szMsg = "开始预览消息" + iSel;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireStopRealPlay(iSel)">   
+	szMsg = "停止预览消息" + iSel ;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireStopPreviewAll()">   
+	szMsg = "停止所有预览消息" ;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireOpenSound(iSel)">   
+	szMsg = "打开声音消息" ;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireCloseSound(iSel)">   
+	szMsg = "关闭声音消息" ;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireChangeWindow(iFrom,iTo)">   
+	szMsg = "互换窗口消息"+ "从" +iFrom+"到"+iTo;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FirePTZCtrl(iWindowID,iCtrlID,iSpeed)">   
+	szMsg = "云台控制消息:"+ "窗口:" +iWindowID+"控制:"+iCtrlID+"速度:"+ iSpeed;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireStartRecord(iWindowID)">   
+	szMsg = "开始录像"+ iWindowID;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireStopRecord(iWindowID)">   
+	szMsg = "停止录像"+ iWindowID;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireCatchPic(szPath,iWindowID)">   
+	szMsg = "抓图"+ "路径" +szPath+"窗口"+iWindowID;  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireStartPlayBack(lWindowID)">  
+</script>
+<script language="javascript" for="PlayViewOCX" event="FireStopPlayBack(lWindowID)">  
+</script>
+	      <script type="text/javascript" language="JavaScript">	
+		     
+			//连接设备
+				//alert(noTemp);alert(passWord);alert(userName);alert(ip);
+				var iConnHandle = -1;		//连接设备返回句柄
+				var iPlayHandle = -1;		//播放视频返回句柄
+				//var iChannel = 1;			//设备视频通道
+				var iStreamType = 1;		//取设备流类型	0：主码流	1：子码流
+				var szAccount= "";
+				var szRegIP = "";
+				var iRegPort = 7660;
+				var password = "";
+				var username = "";
+				var channelNo = "";
+				//7660
+				//流媒体服务IP、端口
+				var iStreamServerPort = 7554;//7554
+				var iPlayConnMode = 0;		//取流方式	0：与设备直连取流	1：通过流媒体转发取流
+				
+				function openVideo(){
+					try{
+					var PlayOCX = document.getElementById("ppvs");
+					iConnHandle = PlayOCX.ConnectDeviceByACS(szAccount, szRegIP, iRegPort,username, password);
+					if (  0 > iConnHandle)
+					{
+						alert("连接设备失败！");
+					}else{
+						if ( 0 > iConnHandle)	{
+							alert("请先连接设备，并确保连接成功！");
+							return;
+						}
+						var PlayOCX = document.getElementById("ppvs");
+						setTimeout(function(){iPlayHandle = PlayOCX.StreamPlayStartByTCP(szRegIP, iStreamServerPort, szAccount, "1", iStreamType, 1);},500);
+						
+					}
+					_Q("#switch1").unbind("click");
+					_Q("#switch1").bind("click",function(){
+						_Q(this).closest(".vb").attr("class","videobut_ vb");
+						StopPlay()
+					});
+					_Q('#login3').show();
+	        		_Q("#video_iframe").show();
+					}catch(e){
+						_Q('#login3').show();
+						_Q("#novideo").show();
+						_Q("#video_iframe").show();
+					}
+				}
+				function videoReady(){
+					try{
+						_Q('#login3').show();
+		        		_Q("#video_iframe").show();
+						var PlayOCX = document.getElementById("ppvs");
+						iConnHandle = PlayOCX.ConnectDeviceByACS(szAccount, szRegIP, iRegPort,username, password);
+						PlayOCX.StreamPlayStop();
+						PlayOCX.RealPlayStop();
+					}catch(e){
+						
+					}
+					
+				}
+				function StopPlay(){	
+					var PlayOCX = document.getElementById("ppvs");
+					try{
+						PlayOCX.StreamPlayStop();
+						PlayOCX.RealPlayStop();
+						iPlayHandle = -1;
+						_Q("#switch1").unbind("click");
+						_Q("#switch1").bind("click",function(){
+							_Q(this).closest(".vb").attr("class","videobut vb");
+							openVideo()
+						});
+						}catch(e){
+							}
+					if( iPlayHandle>=0 ){
+						if (parseInt(iPlayConnMode) == 0){
+							if(PlayOCX.RealPlayStop()){      
+								iPlayHandle = -1;}
+						}
+						else{
+							if(PlayOCX.StreamPlayStop()){
+								iPlayHandle = -1;
+							}
+						}
+					}
+				}
+			function PTZControlOn(temp)
+			{
+				if(temp == 12){
+					   _Q("#v1").attr("src",workpath +"/asset/images/growth/onbut_jian.png");
+					}
+					if(temp == 11){
+					   _Q("#v2").attr("src",workpath +"/asset/images/growth/onbut_jia.png");
+					}
+					if(temp == 21){
+					   _Q("#v3").attr("src",workpath +"/asset/images/growth/onbut_up.png");
+					}
+					if(temp == 23){
+					   _Q("#v4").attr("src",workpath +"/asset/images/growth/onbut_left.png");
+					}
+					if(temp == 24){
+					   _Q("#v5").attr("src",workpath +"/asset/images/growth/onbut_right.png");
+					}
+					if(temp == 22){
+					   _Q("#v6").attr("src",workpath +"/asset/images/growth/onbut_down.png");
+					}
+					if(temp == 14){
+					   _Q("#v7").attr("src",workpath +"/asset/images/growth/onbut_jian.png");
+					}
+					if(temp == 13){
+					   _Q("#v8").attr("src",workpath +"/asset/images/growth/onbut_jia.png");
+					}
+				//channelNo:函数设备通道号
+				//temp：命令控制号（11 - 焦距变大，12 - 焦距变小 ，13 - 焦点变大  ，14 - 焦点变小 ， 15 - 光圈变大，16 - 光圈变小 ，21 - 云台向上， 22 - 云台向下， 23 - 云台左转， 24 - 云台右转）
+				//alert(channelNo+'  '+temp);	
+				var PlayOCX = document.getElementById("ppvs");
+				PlayOCX.PTZControl(channelNo,temp,0,1);
+			}
+
+			function PTZControlOff(temp)
+			{
+				if(temp == 12){
+					   _Q("#v1").attr("src",workpath +"/asset/images/growth/but_jian.png");
+					}
+					if(temp == 11){
+					   _Q("#v2").attr("src",workpath +"/asset/images/growth/but_jia.png");
+					}
+					if(temp == 21){
+					   _Q("#v3").attr("src",workpath +"/asset/images/growth/but_up.png");
+					}
+					if(temp == 23){
+					   _Q("#v4").attr("src",workpath +"/asset/images/growth/but_left.png");
+					}
+					if(temp == 24){
+					   _Q("#v5").attr("src",workpath +"/asset/images/growth/but_right.png");
+					}
+					if(temp == 22){
+					   _Q("#v6").attr("src",workpath +"/asset/images/growth/but_down.png");
+					}
+					if(temp == 14){
+					   _Q("#v7").attr("src",workpath +"/asset/images/growth/but_jian.png");
+					}
+					if(temp == 13){
+					   _Q("#v8").attr("src",workpath +"/asset/images/growth/but_jia.png");
+					}
+				
+				//channelNo:函数设备通道号
+				//temp：命令控制号（11 - 焦距变大，12 - 焦距变小 ，13 - 焦点变大  ，14 - 焦点变小 ， 15 - 光圈变大，16 - 光圈变小 ，21 - 云台向上， 22 - 云台向下， 23 - 云台左转， 24 - 云台右转）
+				//alert('    ');
+				var PlayOCX = document.getElementById("ppvs");
+				PlayOCX.PTZControl(channelNo,temp,1,1);
+			}
+		</script>
+ <!-- #{foreignMapHome.work()} -->
+  <!-- #{foreignMapHome.work3()} -->
+  <!-- #{foreignMapHome.work5()} #{foreignMapHome.initLand()} #{foreignMapHome.loadAnimalList()}-->
+<div class="box_back" id="login4" style="display:none">
+</div>
+                      <div style=" color: #ffffff; position: absolute;  left: 95px; top: 16px;z-index: 1000;">
+<!-- 
+	  <h:selectOneMenu id="base_Id" value="#{foreignMapHome.base_Id}"  autocomplate="off" onchange="window.location.href=workpath+'/MobileMap.seam?enterprise_Id=#{foreignMapHome.enterprise_Id}&amp;base_Id='+this.value;">
+                <s:selectItems value="#{foreignMapHome.blist}" var="var" label="#{var.name}" itemValue="#{var.id}" noSelectionLabel="全部"/>
+            </h:selectOneMenu> -->
+	</div>
+ 		<div id="map-canvas"  class="gm-style"></div>
+<script type="text/javascript"> 
+//<![CDATA[
+           #{foreignMapHome.base_Id == -1?"alert('无效地址!')":""}
+           var Sys = {};    
+var ua = navigator.userAgent.toLowerCase();   
+var bb = true; 
+var s;    
+(s = ua.match(/msie ([\d.]+)/))? Sys.ie = s[1]:  
+   bb = false;
+if(Sys.ie==6){
+	DD_belatedPNG.fix('.left_culi a img');
+}
+	var ie7 = Sys.ie==7;
+
+	var head = document.getElementsByTagName('head')[0];
+	var insertBefore = head.insertBefore;
+	head.insertBefore = function (newElement, referenceElement) {
+	    if (newElement.href && (newElement.href.indexOf('https://fonts.googleapis.com/css?family=') === 0 || newElement.href.indexOf('http://fonts.googleapis.com/css?family=') === 0)) {
+	        //console.info('Prevented Roboto from loading!');
+	        return;
+	    }
+	    insertBefore.call(head, newElement, referenceElement);
+	};
+	//]]>
+</script>
+   
+<script type="text/javascript">
+                var markstr = #{foreignMapHome.baseString};
+                var secondstr = #{foreignMapHome.partitionString};
+                var thirdstr = #{foreignMapHome.groupString};
+				var allList = #{foreignMapHome.allList};
+				var workpath = "#{request.contextPath}";
+				var _center = "#{foreignMapHome.center}";
+				var realPlantJson = #{foreignMapHome.realPlantJson};
+				var deviceStr = #{foreignMapHome.deviceStr};
+				var videoStr = #{foreignMapHome.videoStr};
+				var useStr = #{foreignMapHome.useStr};
+				var tesStr = #{foreignMapHome.tesStr};
+				var animalStr = #{foreignMapHome.animalStr};
+				var domain = "#{foreignMapHome.domain}";
+                </script>
+                <s:div rendered="#{foreignMapHome.base_Id != -1}">
+                <script type="text/javascript" src="#{request.contextPath}/asset/js/map/JsMap.js"> </script> 
+<script src="http://ditu.google.cn/maps/api/js?v=3.25&amp;key=AIzaSyB2mG9FLX3dYDFycXGkmidn-OZU-FL1rLM&amp;sensor=false&amp;libraries=drawing"></script> 
+<script src="#{request.contextPath}/asset/js/map/foreign_map.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="#{request.contextPath}/asset/css/bootstrap-select.min.css"/>
+      <link href="#{request.contextPath}/asset/css/bootstrap3.min.css" rel="stylesheet"/>
+      	<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/bootstrap.min.js"></script>
+<script src="#{request.contextPath}/asset/js/map/highcharts.js" type="text/javascript"></script>
+</s:div>
+<script type="text/javascript"> 
+//<![CDATA[
+           
+var noneOption = "<option value='0'>暂无数据</option>";
+function insertPartition(){
+	if(secondstr.length==0){
+		_Q("#group_parent_id").append(noneOption);
+	}else {
+		_Q("#group_parent_id").append(noneOption);
+		for(var i = 0;i<secondstr.length;i++){
+			var os = secondstr[i];
+			_Q("#group_parent_id").append("<option value='"+os.id+"'>"+os.name+"</option>");
+		}
+	}
+}
+
+_Q(document).ready(function(){
+	_Q("#map-canvas").css("width",_Q("#mPane").width());
+	_Q("#map-canvas").css("height",_Q("#mPane").height());
+	insertPartition();
+	_Q("select").each(function(){
+		if(_Q(this).find("option").length==0){
+			_Q(this).append(noneOption);
+		}
+	});
+	_Q(".selectpicker").selectpicker();
+	initList();
+	_Q("#login4,#login3").bind("click",function(){
+		closeNotPlant();
+		closeOnePlant();
+		closeCgq();
+		closeQxz();
+		closeVideo();
+		closeVideo2();
+		closeVideo3();
+		closeVideo4();
+		closeVideo5();
+	})
+}); 
+
+//]]>
+</script>     
+<a4j:form style="display:none">
+ 		<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+		<a4j:jsFunction name="findWeatherData" eventsQueue="mainQueue" action="#{foreignMapHome.findWeatherData}" data="#{foreignMapHome.weatherData}" oncomplete="findWeatherData_next(data)">
+				<a4j:actionparam name="param1" assignTo="#{foreignMapHome.device_sn}"></a4j:actionparam>
+		</a4j:jsFunction>
+</a4j:form>
+
+<!--搜索开始-->
+
+<!--下拉table结束-->
+
+<div class="div_width" style="display:none;">
+                <div class="div_012"  >
+                	<div style="width:100%;">
+                           <div class="ret_pic2">
+                               <img class="zw_bgt2" onclick="addPlant()" src="#{request.contextPath}/asset/images/png-png.png" width="88" height="88"  />
+                               <img class="zw_libg_img2" src="#{request.contextPath}/asset/images/yuan.png" width="88" height="88" />
+                            </div>
+                            <div style="float:left; width:95px; *width:130px; ">
+                            	<dl class="div_dl2">
+                                	<dt class="div_dt2"><font style="font-family:Arial, Helvetica, sans-serif">A</font>区-06温室温室</dt>
+                                    <dd class="div_dt4"></dd>
+                                    <dd><div class="div_dt3"></div></dd>
+
+                                </dl>
+                            </div>
+                            <div class="clear"></div>
+                    </div> 
+                    <table width="100%" height="28" cellpadding="0" cellspacing="0"  style="float:left;margin:10px auto 0 auto;background:url(#{request.contextPath}/asset/images/line_03.jpg) top repeat-x; padding-bottom:5px;">
+                    	<tr>
+                        	<td width="19" height="28" valign="top" style="padding-right:5px; padding-top:5px;"><img src="#{request.contextPath}/asset/images/fzr.png" width="14" height="14" /></td>
+                            <td valign="top" style="font-size:12px; color:#989898; padding-top:5px;" class="div_dt55 win_masterId"></td>
+                            <td width="19" height="28" valign="top" style="padding-right:5px; padding-top:5px;" class="win_date_1"><img src="#{request.contextPath}/asset/images/fzs.png" width="14" height="14" /></td>
+                            <td valign="top" style="font-size:12px; color:#989898; padding-top:5px;" class="div_dt55 win_date_2"></td>
+
+                        </tr>
+                    </table>  
+                </div>    
+ </div>
+ 
+
+      <div style="display:none" id="firstHtml">
+      <div style="width:100%; display:block; margin-bottom:10px;" class="plantList_"   sid="">
+                                                <div class="pcaqu2">
+                                                    <table width="100%" cellspacing="0" cellpadding="0">
+                                                        <tbody><tr>
+                                                            <td width="20" align="left">
+                                                            	<img width="20" height="23" src="#{request.contextPath}/asset/images/xhs01_03.jpg"/>                                                            </td>
+                                                            <td align="left" class="pca_hg">    
+                                                            esr.plantId.name
+                                                            </td></tr></tbody></table>            
+                                                </div>
+                                                <ul style="min-width:320px;" class="aqu_ul">
+                                                    <li class="pca_li" sid="">
+                                                    <table width="100%" cellspacing="0" cellpadding="0"><tbody><tr>
+                                                                <td width="100" height="60" rowspan="3">
+																<img width="100" height="60" pic="pic" src="#{request.contextPath}/asset/images/tjqy_03.jpg" /> </td>
+                                                                <td valign="middle" align="left" class="pca_font" aa="x" onclick="gotoMap(this.getAttribute('aa'))" style="cursor:pointer">#{_esr.tunnelInfoId.tunnelName}</td></tr>
+                                                            <tr><td valign="middle" align="left" class="pca_font1 font1_">面积：</td></tr>
+                                                            <tr><td valign="middle" align="left" class="pca_font1 font2_">种植日期：</td></tr>
+                                                     </tbody></table>       	
+                                                    </li> </ul> <div class="clear"></div>
+                                            </div></div>
+      <div class="tec_c2 thirdHtml" style="display:none">
+                                            <div class="pcic" sid="">
+                                                <a onclick="pc_img2(this)" class="thirdHtmlClass" aa="" lj="lj" href="#"><img width="99" height="102" src="#{request.contextPath}/asset/images/pcdi_03.png" class="pcpic"/></a>
+                                                   <div class="pcimg">
+                                                   <div><img id="thirdimg" src="/asset/images/wt.png" width="70" height="70"/></div>
+	                                		   			</div>
+                                                   <div class="pctext">#{obj1.plantId.name}</div>
+                                                   <div class="pc_bgdiv" style="display:none">
+                                                   <div class="pc_bgno"><strong>1.2</strong></div>
+                                                   </div> 
+                                            </div>
+                                        </div> 
+<!--传感器开始-->   
+<table class="maptck" width="400" height="100" cellpadding="0" cellspacing="0" style="display:none;" >
+    <tr>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg2.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg3.png) repeat-x;"></td>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg4.png" width="7" height="5" /></td>
+    </tr>
+    <tr>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat-y;"></td>
+        <td valign="top" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat; font-size:12px; font-family:'微软雅黑';">
+            <table width="100%" height="38" cellpadding="0" cellspacing="0" style="background:url(#{request.contextPath}/asset/images/linerepe.png) bottom repeat-x; border-collapse:collapse;">
+                <tr>
+                    <td align="left"><font class="titlefont">四合一传感器</font><font class="numfont t1_sn">编号：A057406005060062001</font></td>
+                    <td align="right"><a class="closed" href="#" onclick="closeCgq()"><img src="#{request.contextPath}/asset/images/closed.png" width="12" height="13" /></a></td>
+                </tr>
+              </table>  
+              <table width="100%" cellpadding="0" cellspacing="0">
+              	<tr>
+                	<td width="113" height="113" class="tdimg"><img src="#{request.contextPath}/asset/images/tckimg.png" width="113" height="113" /></td>
+                    <td style="padding-left:15px; padding-top:10px; padding-bottom:10px;" valign="top">
+                    	<table width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td rowspan="2"><img src="#{request.contextPath}/asset/images/cloud.png" width="43" height="29" style="vertical-align:top;" /><font class="t1_airTemp" style="font-size:28px; font-family:'Arial'; line-height:30px; color:#fff;">28.4℃</font></td>
+                                <td>
+                                	<div class="ludian">
+                                    	<span class="t1_ludian" style="font-family:'Arial';">露点：22.5%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        	<tr>
+                            	<td class="shidu t1_airHumidity" style="font-family:'Arial';">湿度：50%</td>
+                            </tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju" style="padding-left:0px">
+                        	<tr>
+                            	<td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon1.png" width="58" height="20" /></td>
+                            	<td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon2.png" width="59" height="24" /></td>
+                                <td class="shujutd" style="background:none;"><img src="#{request.contextPath}/asset/images/tckicon3_.png" width="76" height="24" /></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd t1_soilTemp">温度&nbsp;70.5%</td>
+                            	<td class="shujutd t1_illumination" style="font-family:'Arial';">6015.6LUX </td>
+                                <td class="shujutd t1_co2" style="background:none;">6015.6LUX </td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd t1_soilHumidity">湿度&nbsp;70.5%</td>
+                            	<td class="shujutd"></td>
+                                <td class="shujutd" style="background:none;"></td>
+                            </tr>
+                        </table>
+                    
+                    </td>
+                </tr>
+              </table>
+              <table width="100%" cellpadding="0" cellspacing="0" class="fottable">
+              	<tr>
+                	<td><a class="ckxx" href="#" >查看详细</a></td>
+                    <td class="cjtime t1_gentime">采集时间：06月19日16时24分</td>
+                </tr>
+              </table>
+        </td>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg6.png) repeat-y;"></td>
+    </tr>
+    <tr>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg7.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg8.png) repeat-x;"></td>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg9.png" width="7" height="5" /></td>
+    </tr>
+    <tr style="">
+    	<td colspan="3" align="center" valign="top"><img src="#{request.contextPath}/asset/images/tckkbg1.png" width="21" height="23" /></td>
+    </tr>
+</table>
+<!--传感器结束-->    
+<!--气象站开始-->   
+<table class="qixz" width="555" height="100" cellpadding="0" cellspacing="0" style="display:none;">
+    <tr>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg2.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg3.png) repeat-x;"></td>
+        <td><img src="#{request.contextPath}/asset/images/tckkbg4.png" width="7" height="5" /></td>
+    </tr>
+    <tr>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat-y;"></td>
+        <td valign="top" style="background:url(#{request.contextPath}/asset/images/tckkbg5.png) repeat;">
+            <table width="100%" height="38" cellpadding="0" cellspacing="0" style="background:url(#{request.contextPath}/asset/images/linerepe.png) bottom repeat-x; border-collapse:collapse;">
+                <tr>
+                    <td align="left" style="padding-left:10px"><font class="titlefont">气象站</font><font class="numfont t2_sn">编号：A057406005060062001</font></td>
+                    <td align="right"><a class="closed" href="#" onclick="closeQxz()"><img src="#{request.contextPath}/asset/images/closed.png" width="12" height="13" /></a></td>
+                </tr>
+              </table>  
+              <table width="100%" cellpadding="0" cellspacing="0">
+              	<tr>
+                	
+                    <td style="padding-top:10px; padding-bottom:10px;" valign="top">
+                    	<table width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td height="60" width="" style="font-size:54px; color:#fff;padding-left:30px" class="" valign=""><span class="t2_air_temp">28.43°</span>
+                            	<img src="#{request.contextPath}/asset/images/cloud.png" width="43" height="29" style="position: absolute;margin-left: 15px;"/>
+                            	</td>
+                                <td valign="top" width=""></td>
+                                <td valign="top" class="qingt" width="100px"></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shidu t2_gen_time" style="padding-left:30px" colspan="3">采集时间：06月19日16时24分</td>
+                            </tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju">
+                        	<tr>
+                            	<td width="32" height="32" valign="middle" align="left"><img src="#{request.contextPath}/asset/images/icon5.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_rainfallS">降水量&nbsp;5%</td>
+                                <td width="32" height="32" valign="middle" align="left"><img src="#{request.contextPath}/asset/images/icon6.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_air_humidity">湿度&nbsp;38%</td>
+                                <td width="32" height="32" valign="middle" align="left"><img src="#{request.contextPath}/asset/images/icon7.png" width="27" height="32" /></td>
+                                <td valign="middle" class="qingt t2_wind_velocity">东南风2级</td>
+                        	</tr>
+                        </table>
+                        <table width="100%" cellpadding="0" cellspacing="0" class="shuju">
+                        	<tr>
+                            	<td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon1.png" width="58" height="20" /></td>
+                            	<td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon2.png" width="59" height="24" /></td>
+                                <td class="shujutd"><img src="#{request.contextPath}/asset/images/tckicon4.png" width="59" height="26" /></td>
+                                <td class="shujutd" style="background:none;"><img src="#{request.contextPath}/asset/images/tckicon3.png" width="76" height="24" /></td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd t2_soil_temp">温度&nbsp;70.5%</td>
+                            	<td class="shujutd t2_illumination">6015.6LUX</td>
+                                <td class="shujutd t2_atmospheric_pressure">22.03Pa </td>
+                                <td class="shujutd t2_solar_radiation" style="background:none;">6015.6LUX</td>
+                            </tr>
+                        	<tr>
+                            	<td class="shujutd t2_soil_humidity">湿度&nbsp;70.5%</td>
+                            	<td class="shujutd"></td>
+                                <td class="shujutd"></td>
+                                <td class="shujutd" style="background:none;"></td>
+                            </tr>
+                        </table>
+                    
+                    </td>
+                    <td width="160" height="113" valign="top" class="tdimg" align="center"><img src="#{request.contextPath}/asset/images/qxaimg.png" width="113" height="113" /><br/><a class="qckxx2" href="#"></a></td>
+                </tr>
+              </table>
+        </td>
+        <td width="7" height="100%" style="background:url(#{request.contextPath}/asset/images/tckkbg6.png) repeat-y;"></td>
+    </tr>
+    <tr>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg7.png" width="7" height="5" /></td>
+        <td width="100%" height="5" style="background:url(#{request.contextPath}/asset/images/tckkbg8.png) repeat-x;"></td>
+        <td width="7" height="5"><img src="#{request.contextPath}/asset/images/tckkbg9.png" width="7" height="5" /></td>
+    </tr>
+    <tr style="">
+    	<td colspan="3" align="center" valign="top"><img src="#{request.contextPath}/asset/images/tckkbg1.png" width="21" height="23" /></td>
+    </tr>
+</table>     
+<div style="display:none">
+农户
+<select  id="group_farmer_"  class="notselect"><a4j:repeat value="#{foreignMapHome.keeperList}" var="f" ><option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option></a4j:repeat></select>
+生产负责人
+<select  id="group_farmer1_"  class="notselect"><a4j:repeat value="#{foreignMapHome.masterList}" var="f" ><option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option></a4j:repeat></select>
+养殖负责人
+<select  id="group_farmer3_" class="notselect"><a4j:repeat value="#{foreignMapHome.yzfList}" var="f" ><option value="#{f[0]}" base_id='#{f[2]}'>#{f[1]}</option></a4j:repeat></select>
+</div>  
+<div style="display:none" id="type20"><a4j:repeat value="#{foreignMapHome.type20}" var="var"><li aa="#{var[0]}" bb="#{var[1]}"/></a4j:repeat> </div>    
+<div style="display:none" id="type21"><a4j:repeat value="#{foreignMapHome.type21}" var="var"><li aa="#{var[0]}" bb="#{var[1]}"/></a4j:repeat></div>    
+<!-- 无作物 开始 -->
+<div class="map-IntroPop notPlant" style="width:448px;position: absolute;top:400px;left:400px;z-index:100;display:none">
+	<div class="map-introPop-pot">
+    	<button class="close-btn" onclick="closeNotPlant()"></button>
+        <span class="supIco">
+        <img src="#{request.contextPath}/asset/images/map_ico101.png"/>
+        </span>
+        <div class="map-introPop-header clear">
+        	<div class="introPop-header-lt">
+            	<span class="introPop-header-shade"></span>
+            	<img src="#{request.contextPath}/asset/images/map_zhezhao3.png" />
+            </div>
+            <div class="introPop-header-rt">
+            	<div class="introPop-header-title">
+                    <h3>20号棚</h3>
+                    <em>生产负责人 王军</em>
+                </div>
+                <p class="farmer_mess">农户<span class="farmer">小张</span><span class="farmland">0.88亩/2.56亩</span></p>
+            </div>
+        </div>
+        <div class="map-introPop-body clear">
+        	<div class="tudi-jcjl fl">
+                <h2 class="baseMap_ttl" style="background:none; text-indent:0;">土地检测记录</h2>  
+                <div class="baseMap_con">
+                    <div style="width:154px; margin:0 auto;">
+                        <p class="jiance_mechanism">检测机构：北京农学院</p>
+                        <p class="jiance_date">检测日期：2014.06.25</p>
+                    </div>
+                    <div class="landRecord_wp" style="width:150px; margin-left:0;">
+                    <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                        <tr>
+                            <th width="48" class="ph ph1" height="28" align="center">5.0</th>
+                            <th width="48" class="ec ec1" align="center">--</th>
+                            <th width="48" class="pb pb1" align="center">1.8</th>
+                        </tr>
+                        <tr>
+                            <td  height="22">PH</td>
+                            <td >EC</td>
+                            <td >PB</td>
+                        </tr>
+                    </table>
+                    </div>
+                </div>  
+            </div>
+            <div class="tudi-jcjl fl" style="width:220px">
+                <h2 class="baseMap_ttl" style="background:none; text-indent:0;">土地历史记录</h2>  
+                <div class="baseMap_con">
+                    <div class="landHistory_jl" style=" margin-top:0;">
+                    	<span class="block_landhis-pos9"></span>
+                        <span class="block_landhis-pos22"></span>
+                        <ul class="landHistory_list">
+                            <li>
+                                <span>2010-2014</span>
+                                <div>
+                                    <em>松沙土</em><em class="colorGrn02">红壤土</em>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
+<div class="map-IntroPop onePlant" style="display:none;position: absolute;top:200px;left:400px;z-index:100;">
+	<div class="map-introPop-pot">
+    	<button class="close-btn" onclick="closeOnePlant();"></button>
+        <span class="supIco">
+        <img src="#{request.contextPath}/asset/images/map_ico101.png"/>
+        </span>
+        <div class="map-introPop-header clear">
+        	<div class="introPop-header-lt">
+            	<span class="introPop-header-shade"></span>
+            	<img src="#{request.contextPath}/asset/images/map_zz_pic1.png" />
+            </div>
+            <div class="introPop-header-rt">
+            	<div class="introPop-header-title">
+                    <h3>20号棚</h3>
+                    <strong>芹菜</strong>
+                    <span class="bootSelt130">
+                    <select class="selectpicker" onchange="resetDate(this)">
+                    </select>
+                    </span>
+                </div>
+                <p class="farmer_mess">农户<span class="farmer">小张</span><span class="farmland">0.88亩/2.56亩</span></p>
+            </div>
+        </div>
+        <div class="map-introPop-body clear">
+        	<ul class="introPop-introTime time1 clear">
+            	<li>
+                	<img src="#{request.contextPath}/asset/images/map_pic100.png" />
+                    <p>定植时间<br/>6月21日</p>
+                </li>
+                <li>
+                	<img src="#{request.contextPath}/asset/images/map_pic101.png" />
+                    <p>采收开始<br/>6月21日</p>
+                </li>
+                <li>
+                	<img src="#{request.contextPath}/asset/images/map_pic102.png" />
+                    <p>种植结束<br/>6月21日</p>
+                </li>
+            </ul>
+            <ul class="introPop-introTime time2 clear">
+            	<li style="width:50%;padding-left:20px">
+                	<img src="#{request.contextPath}/asset/images/map_pic103.png" />
+                    <p>休耕开始<br/>6月21日</p>
+                </li>
+                <li style="">
+                	<img src="#{request.contextPath}/asset/images/map_pic103.png" />
+                    <p>休耕结束<br/>6月21日</p>
+                </li>
+            </ul>
+            <div class="intro-chart-trend">
+            	<div id="container-oneChart" style="min-width:360px;height:100px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="#{request.contextPath}/asset/monitoring/js/webVideoCtrl.js"/>
+<!-- 无作物 结束 -->                                
+   </body>
+</html>
+</f:view>

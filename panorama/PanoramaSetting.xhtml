@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   xmlns:a4j="http://richfaces.org/a4j" 
+   contentType="text/html">
+   
+<html >
+<head>
+	<!-- #{panoramaHome.initAsset()} -->
+ 	<title>四季田景热点设置</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta http-equiv="x-ua-compatible" content="IE=edge" />
+	<style>
+		@-ms-viewport { width:device-width; }
+		@media only screen and (min-device-width:800px) { html { overflow:hidden; } }
+		html { height:100%; }
+		body { height:100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#FFFFFF; background-color:#000000; }
+		.close_tipbtn_4{ position:fixed;		right:10px; top:10px; z-index:2; width:41px; height:41px; background:url(#{request.contextPath}/asset/images/map/maturity_ico4.png) no-repeat; cursor:pointer; }
+	</style>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/bootstrap3.min.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/panorama/PanoramaSetting.css" />
+  	</head>
+<body>
+<div style="background:#000000;">
+	    <div class="pano_edit_wrap"></div>
+    <div class="fixed_btns_wrap" style="z-index:7000;">
+        <div class="fr clear" style="width:164px;">
+            <input type="button" class="btn btn_success fl mr20" onclick="saveAll()" value="保存"/>
+            <input type="button" class="btn btn_default" onclick="parent.closeIframe();" value="关闭"/>
+        </div>
+        <div class="fr clear" style="margin-top:20px;">
+            <input type="button" class="btn btn_default " id="chooseT1" onclick="chooseT(1)" value="视角"/><br />
+            <input type="button" class="btn btn_success mt20 " id="chooseT2" onclick="chooseT(2)" value="热点"/>
+        </div>
+    </div>
+
+
+    <!-- 悬浮热点 -->
+    <div class="hotspot_wrap" style="top:160px;margin-top:auto;">
+        <div class="hotspot_header">热点</div>
+        <div class="hotspot_body">
+            <div class="hotspot_cont">
+            	<div id="switch" style="display:none;">
+                <h4 class="hot_title">全景切换（<span id="switch_total" class="count_total">0</span>）</h4>
+                <ul class="hot_list">
+                </ul>
+                </div>
+                <div id="hyperlinks" style="display:none;">
+                <h4 class="hot_title">超链接（<span id="hyperlinks_total" class="count_total">0</span>）</h4>
+                <ul class="hot_list">
+                </ul>
+               	</div>
+               	<div id="picture" style="display:none;">
+                <h4 class="hot_title">图片展示（<span id="picture_total" class="count_total">0</span>）</h4>
+                <ul class="hot_list">
+                </ul>
+                </div>
+                <div id="textinstor" style="display:none;">
+                <h4 class="hot_title">文字介绍（<span id="textinstor_total" class="count_total">0</span>）</h4>
+                <ul class="hot_list">
+                </ul>
+                </div>
+            </div>
+        </div>
+        <a href="javascript:;" class="addhotspot_btn" onclick="openSelectModel()">添加热点</a>
+    </div>
+   
+    <div id="repeat" class="hide">
+    			<div id="switch_">
+                <h4 class="hot_title">全景切换（<span id="switch_total">3</span>）</h4>
+                <ul class="hot_list_">
+                    <li class="item " onclick="openTip(this,#type#,#index_#)" id="#li#">
+                        <div class="item_con">
+                            <img class="pano_pic" src="#scene_img_src#" />
+                            <p class="text_in">#scene_name#</p>
+                            <div class="icon_hot"><i></i><img src="#hotspot_style#" /></div>
+                        </div>
+                    </li>
+                </ul>
+                </div>
+                <li id="popDiv" style="display:none;">
+                <div class="position_block ">
+                    <a href="javascript:;" onclick="seek()">定位</a>
+                    <a href="javascript:;" onclick="edit()">编辑</a>
+                    <a href="javascript:;"  onclick="delete_()" class="noline">删除</a>
+                </div>
+                </li>
+                <div id="hyperlinks_">
+                <h4 class="hot_title">超链接（<span id="hyperlinks_total">3</span>）</h4>
+                <ul class="hot_list">
+                    <li class="item "  onclick="openTip(this,#type#,#index_#)" id="#li#">
+                        <div class="item_con">
+                            <p class="text_in2">#name#</p>
+                            <div class="icon_hot"><i></i><img src="#hotspot_style#" /></div>
+                        </div>
+                    </li>
+                </ul>
+               	</div>
+               	<div id="picture_">
+                <h4 class="hot_title">图片展示（<span id="picture_total">3</span>）</h4>
+                <ul class="hot_list">
+                    <li class="item "  onclick="openTip(this,#type#,#index_#)" id="#li#">
+                        <div class="item_con">
+                            <img class="pano_pic" src="#pic_url#" />
+                            <p class="text_in">#name#</p>
+                            <div class="icon_hot"><i></i><img src="#hotspot_style#" /></div>
+                        </div>
+                    </li>
+                </ul>
+                </div>
+                <div id="textinstor_">
+                <h4 class="hot_title">文字介绍（<span id="textinstor_total">3</span>）</h4>
+                <ul class="hot_list">
+                    <li class="item "   onclick="openTip(this,#type#,#index_#)" id="#li#">
+                        <div class="item_con">
+                            <p class="text_in2">#name#</p>
+                            <div class="icon_hot"><i></i><img src="#hotspot_style#" /></div>
+                        </div>
+                    </li>
+                </ul>
+                </div>
+    </div>
+  
+    <!-- 悬浮热点 -->
+
+
+<!-- (1-1)添加热点弹出 -->
+<div class="hotspot_mark"></div>
+<div class="hotspot_modal hottype_modal" id="hottype_modal" style="display:none;">
+    <div class="modal_header">
+        <h2>添加热点</h2>
+        <i class="mclose" onclick="HideModal('#hottype_modal')"><img src="#{request.contextPath}/asset/images/panorama/modal_close.jpg" /></i>
+    </div>
+    <div class="modal_body">
+        <div class="modal_content">
+            <p class="text_type">请选择您要添加的类型</p>
+            <ul class="hottype_list">
+                <li onoff="true" tomodal="ShowModal('#switch_modal','')">
+                    <a href="javascript:;" class="type_link aCur" data-toggle="tooltip" data-placement="top" title="增加全景切换热点，支持全景间跳转"><i class="icon0"></i>全景切换</a>
+                </li>
+                <li onoff="true" tomodal="ShowModal('#hyperlink_modal','')">
+                    <a href="javascript:;" class="type_link" data-toggle="tooltip" data-placement="top" title="支持点击跳转的链接"><i class="icon1"></i>超链接</a>
+                </li>
+                <li onoff="true" tomodal="ShowModal('#pictureshow_modal','')">
+                    <a href="javascript:;" class="type_link" data-toggle="tooltip" data-placement="top" title="支持点击后显示图片"><i class="icon2"></i>图片展示</a>
+                </li>
+                <li onoff="true" tomodal="ShowModal('#textinstro_modal','')">
+                    <a href="javascript:;" class="type_link" data-toggle="tooltip" data-placement="top" title="支持点击后显示文字介绍"><i class="icon3"></i>文字介绍</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="modal_footer">
+        <input type="button" class="btn btn_success" id="SelectType" value="下一步"/>
+    </div>
+</div>
+<!-- (2-1)全景切换 热点图标弹出 -->
+<div class="hotspot_modal switch_modal" id="switch_modal" style="display:none;">
+    <div class="modal_header">
+        <h2>添加热点</h2>
+        <i class="mclose" onclick="HideModal('#switch_modal')"><img src="#{request.contextPath}/asset/images/panorama/modal_close.jpg" /></i>
+    </div>
+    <div class="modal_body">
+        <div class="modal_content">
+            <img src="#{request.contextPath}/asset/images/panorama/hotspot_bg1.jpg"  style="display:none;"/>
+            <div class="hoticon_list">
+                <span class="spIcur" data-id="1"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/1.png" /></span>
+                <span class="spIcur" data-id="2"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/2.png" /></span>
+                <span class="spIcur" data-id="3"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/3.png" /></span>
+                <span class="spIcur" data-id="4"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/4.png" /></span>
+                <span class="spIcur" data-id="5"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/5.png" /></span>
+                <span class="spIcur" data-id="6"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/6.png" /></span>
+                <span class="spIcur" data-id="7"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/7.png" /></span>
+                <span class="spIcur" data-id="8"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/8.png" /></span>
+                <span class="spIcur" data-id="9"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/9.png" /></span>
+                <span class="spIcur" data-id="10"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/10.png" /></span>
+                <span class="spIcur" data-id="11"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/11.png" /></span>
+                <span class="spIcur" data-id="12"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/12.png" /></span>
+                <span class="spIcur" data-id="13"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/13.png" /></span>
+                <br />               
+                <span class="spIcur" data-id="51"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/1-1.png" /></span>
+                <span class="spIcur" data-id="52"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/2-2.png" /></span>
+                <span class="spIcur" data-id="53"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/3-3.png" /></span>
+                <span class="spIcur" data-id="54"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/4-4.png" /></span>
+                <span class="spIcur" data-id="55"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/5-5.png" /></span>
+                <span class="spIcur" data-id="56"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/6-6.png" /></span>
+                <span class="spIcur" data-id="57"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/7-7.png" /></span>
+                <span class="spIcur" data-id="58"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/8-8.png" /></span>
+                <span class="spIcur" data-id="59"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/9-9.png" /></span>
+                <span class="spIcur" data-id="60"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/10-10.png" /></span>
+                <span class="spIcur" data-id="61"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/11-11.png" /></span>
+                <span class="spIcur" data-id="62"><img class="micon" src="#{request.contextPath}/asset/panorama/skin/12-12.png" /></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal_footer">
+        <input type="button" class="btn btn_default mr5 needhide" onclick="ShowModal('#hottype_modal','#switch_modal')" value="上一步"/>
+        <input type="button" class="btn btn_success" onclick=""  value="下一步"/>
+    </div>
+</div>
+<!-- (2-2)全景切换 场景图片弹出 -->
+<div class="hotspot_modal scene_modal" id="scene_modal" style="display:none;">
+    <div class="modal_header">
+        <h2>添加热点</h2>
+        <i class="mclose" onclick="HideModal('#scene_modal')"><img src="#{request.contextPath}/asset/images/panorama/modal_close.jpg" /></i>
+    </div>
+    <div class="modal_body">
+        <div class="modal_content">
+            <img src="#{request.contextPath}/asset/images/panorama/hotspot_bg2.jpg"  style="display:none;"/>
+            <ul class="scenepic_list">
+                
+            </ul>
+        </div>
+    </div>
+    <div class="modal_footer">
+        <input type="button" class="btn btn_default mr5" onclick="ShowModal('#switch_modal','#scene_modal')" value="上一步"/>
+        <input type="button" class="btn btn_success changetxt" onclick="addType1()" value="下一步"/>
+    </div>
+</div>
+<!-- (3-1)超链接弹出 -->
+<div class="hotspot_modal hyperlink_modal" id="hyperlink_modal" style="display:none;">
+    <div class="modal_header">
+        <h2>添加热点</h2>
+        <i class="mclose" onclick="HideModal('#hyperlink_modal')"><img src="#{request.contextPath}/asset/images/panorama/modal_close.jpg" /></i>
+    </div>
+    <div class="modal_body">
+        <div class="modal_content">
+            <img src="#{request.contextPath}/asset/images/panorama/hotspot_bg3.jpg"  style="display:none;"/>
+            <table class="modale_table table_hyperlink">
+                <tr>
+                    <td class="tdlt">请输入热点名称</td>
+                    <td class="tdrt">
+                        <input type="text" class="form-control" id="url_name"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdlt">请输入链接地址</td>
+                    <td class="tdrt">
+                        <input type="text" class="form-control" id="url_url"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="modal_footer">
+        <input type="button" class="btn btn_default mr5" onclick="ShowModal('#switch_modal','#hyperlink_modal')" value="上一步"/>
+        <input type="button" class="btn btn_success changetxt" onclick="addType2()" value="下一步"/>
+    </div>
+</div>
+<!-- (4-1)图片展示弹出 -->
+<div class="hotspot_modal pictureshow_modal" id="pictureshow_modal" style="display:none;">
+    <div class="modal_header">
+        <h2>添加热点</h2>
+        <i class="mclose" onclick="HideModal('#pictureshow_modal')"><img src="#{request.contextPath}/asset/images/panorama/modal_close.jpg" /></i>
+    </div>
+    <div class="modal_body">
+        <div class="modal_content">
+            <img src="#{request.contextPath}/asset/images/panorama/hotspot_bg4.jpg"  style="display:none;"/>
+            <table class="modale_table table_pictureshow">
+                <tr>
+                    <td class="tdlt">请输入热点名称</td>
+                    <td class="tdrt">
+                        <input type="text" class="form-control" id="img_name"/>
+                    </td>
+                </tr>
+            </table>
+            <!-- 图片展示区块 -->
+            <div class="random_slider_wrap" id="random_slider_wrap">
+            <s:div id="asset_list" styleClass="random_slider">
+            	<a4j:repeat value="#{panoramaHome.assetList}" var="var">
+                <div class="sitem " onoff="false" onclick="ActiveCur(this,'sCur',#{var.id})" objid="#{var.id}">
+                    <div class="pic_con">
+                        <img src="#{var.imgUrl}@100w_100h_1e_1c.src"/>
+                        <p class="text_delete" onclick="DeleteItem(event,this,'.sitem',#{var.id})">删除</p>
+                    </div>
+                    <p class="text_url" title="#{var.name}">#{var.name}</p>
+                </div>
+                </a4j:repeat>
+            </s:div>
+            </div>
+            <!-- 图片展示区块 -->
+            <div id="container">
+            <div class="filepic_btn" id="selectfiles">上传图片
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal_footer">
+        <input type="button" class="btn btn_default mr5" value="上一步"  onclick="ShowModal('#switch_modal','#pictureshow_modal')"/>
+        <input type="button" class="btn btn_success changetxt" value="下一步"  onclick="addType3()"/>
+    </div>
+</div>
+<!-- (5-1)文字介绍弹出 -->
+<div class="hotspot_modal textinstro_modal" id="textinstro_modal" style="display:none;">
+    <div class="modal_header">
+        <h2>添加热点</h2>
+        <i class="mclose" onclick="HideModal('#textinstro_modal')"><img src="#{request.contextPath}/asset/images/panorama/modal_close.jpg" /></i>
+    </div>
+    <div class="modal_body">
+        <div class="modal_content">
+            <img src="#{request.contextPath}/asset/images/panorama/hotspot_bg3.jpg" style="display:none;"/>
+            <table class="modale_table table_textinstro">
+                <tr>
+                    <td class="tdlt">请输入标题</td>
+                    <td class="tdrt">
+                        <input type="text" class="form-control" id="txt_title"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdlt">请输入内容</td>
+                    <td class="tdrt">
+                        <textarea class="form-control form_textarea" id="txt_content"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="modal_footer">
+        <input type="button" class="btn btn_default mr5" value="上一步"  onclick="ShowModal('#switch_modal','#textinstro_modal')"/>
+        <input type="button" class="btn btn_success changetxt" value="下一步"  onclick="addType4()"/>
+    </div>
+</div>
+</div>
+<div style="display:none" id="upload_progress">
+		<input type="hidden" value="" id="krpanoFileUrl" />
+		<div id="ossfile1"></div>
+		<a style="display: none" id="postfiles1" href="javascript:void(0);" class='btn' onclick="apply(6);"></a>
+		<a style="display: none" id="callback" href="javascript:void(0);" class='btn' onclick="callback();"></a>
+</div>		
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/map/JsMap.js"> </script> 
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.10.2.min.js"></script>	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/new/bootstrap-popver.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/jquery.nicescroll.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/PanoramaSetting.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/panorama/jquery-bigSlider.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+	<script src="#{request.contextPath}/asset/panorama/tour.js"></script>
+	<div id="pano" style="width:100%; height:95%;z-index:1">
+	<noscript><table style="width:100%;height:80%;"><tr style="vertical-align:middle;"><td><div style="text-align:center;">ERROR:<br/><br/>Javascript not activated<br/><br/></div></td></tr></table></noscript>
+	<script type="text/javascript">
+	//<![CDATA[
+	var mydomain = "#{dataDicConstant.getDomainNameUrl()}";
+	var wxdomain = "#{dataDicConstant.getWxDomainNameUrl()}";
+	var workpath = "#{request.contextPath}";
+	var kid = "#{param.kid}";
+	var k4id = "#{param.k4id}";
+	var gid = "#{param.gid}";
+	//]]>
+	</script>
+	<script type="text/javascript">
+	//<![CDATA[
+	var closelog = "#{request.getParameter('closelogo')}";
+	closelog = closelog==""?true:false;
+	var ppp = embedpano({swf:"#{request.contextPath}/asset/panorama/tour.swf", xml:"#{request.contextPath}/Panorama.xml?kid="+kid+"&type=12&gid="+gid, target:"pano", html5:"prefer", passQueryParameters:false ,wmode:"Opaque", mobilescale:1.0});
+	function resize()
+	{
+		var ph = (typeof(window.innerHeight) == 'number') ? window.innerHeight : ((document.documentElement && document.documentElement.clientHeight) ? document.documentElement.clientHeight : ((document.body && document.body.clientHeight) ? document.body.clientHeight : 500));
+		
+		document.getElementById("pano").style.height = ph+"px"
+	}
+	var obj = document.getElementById("krpanoSWFObject");
+	window.onresize = resize;
+	
+	resize();
+	//]]>
+	</script>
+	<script type="text/javascript">
+//<![CDATA[
+           var oss_url = "#{dataDicConstant.getOssUrl()}";
+           var bucket_type ="#{dataDicConstant.getBucketType()}";
+           var domain_url = "#{dataDicConstant.getDomainNameUrl()}";
+           //全景
+           var filters1 = {
+                   mime_types : [ //允许上传图片和zip,rar文件以及视频文件
+                                  { title : "Image files", extensions : "jpg,jpeg,gif,png,bmp" }, 
+                                  ],
+                                  max_file_size : "1mb", //最大只能上传2mb的文件
+                                  prevent_duplicates : false //不允许选取重复文件
+                              };
+        function apply(obj){
+       		var entId='#{sessionTake.getEnterpriseInfoId()}';
+       		window.parent.document.getElementById('ajaxStatus.start').onstart();
+       		window.parent.document.getElementById('fileTips').style.display='block';
+       		set_upload_param(uploader1, '', false,obj,entId);
+       	};
+
+       	var uploaded_file_url = "";
+       	var file_name = "";
+       	function callback() {
+       		if(uploaded_file_url!=""){
+       			addAsset(uploaded_file_url,file_name);
+       		}
+       	};
+//]]>
+       </script>
+       	<script type="text/javascript" src="#{request.contextPath}/asset/js/map/krpanoPicUpload.js"></script>
+</div>
+<a4j:form id="formid" >
+<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+<a4j:jsFunction name="addAsset" eventsQueue="mainQueue" action="#{panoramaHome.addAsset}" oncomplete="addAsset_next();" reRender="asset_list">
+<a4j:actionparam name="param1" assignTo="#{panoramaHome.asset_img}"></a4j:actionparam>
+<a4j:actionparam name="param2" assignTo="#{panoramaHome.asset_name}"></a4j:actionparam>
+</a4j:jsFunction>
+<a4j:jsFunction name="deletedAsset" eventsQueue="mainQueue" action="#{panoramaHome.deletedAsset}" oncomplete="addAsset_next();" reRender="asset_list">
+<a4j:actionparam name="param1" assignTo="#{panoramaHome.asset_id}"></a4j:actionparam>
+</a4j:jsFunction>
+<a4j:jsFunction name="saveSetting" eventsQueue="mainQueue" action="#{panoramaHome.saveSetting}" data="#{panoramaHome.re_setting_str}" oncomplete="saveAll_next(data);">
+<a4j:actionparam name="param1" assignTo="#{panoramaHome.settingData}"></a4j:actionparam>
+</a4j:jsFunction>
+<a4j:jsFunction name="updateView"  eventsQueue="mainQueue" action="#{panoramaHome.updateView}" oncomplete="alert('保存成功！')">
+<a4j:actionparam name="param1" assignTo="#{panoramaHome.k4id}"></a4j:actionparam>
+<a4j:actionparam name="param2" assignTo="#{panoramaHome.vlookat}"></a4j:actionparam>
+<a4j:actionparam name="param3" assignTo="#{panoramaHome.hlookat}"></a4j:actionparam>
+</a4j:jsFunction>
+</a4j:form>
+
+</body>
+</html>
+</f:view>

@@ -1,0 +1,215 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+				<link href="#{request.contextPath}/asset/css/message/Inbox.css" rel="stylesheet" />
+	 <td valign="top">
+            <!-- right_c 开始 -->
+            <div class="right_c" style="min-height:30px;">
+                <div class="r_title clear" style="margin-top:0; padding-top:20px;">
+                    <div class="r_t_l fl"><a href="#{request.contextPath}#{sessionTake.urlTemp}">个人主页</a>&#160;&gt;&#160;&#160;<font size="3">收件箱</font></div>
+                    <div class="fr" style="margin-bottom:-1px;">
+                        <ul class="cm_resumeList clear">
+                            <li>
+                            	<s:link view="/message/ReceiptList.xhtml"  styleClass="borderBt"><img src="#{request.contextPath}/asset/images/message/sjx_ico01.png" style="margin-top:12px;" /><span>收件箱</span></s:link>
+                            </li>
+                            <li>
+                                <s:link view="/message/SiteNewsList.xhtml"><img src="#{request.contextPath}/asset/images/message/sjx_ico02.png" /><span>发件箱</span></s:link>
+                                
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 收件箱搜索 开始 -->
+                <div class="mt20 mb20 clear">
+                    <span class="fl" style="width:350px;">
+                        <h:form class="public-search" id="search">
+                        <span class="octicon-search02" style="top:11px;"></span>
+                        <h:inputText styleClass="form-control nw300 srarchfont" style="text-indent:0px;width:350px;"  value="请输入查询内容" onchange="mySearch()"/>
+                        <h:inputHidden value="#{receiptList.searchParam}" id="para" />
+                        </h:form>
+                    </span>
+                    <a4j:form styleClass="fr">
+	                	<h:commandButton id="manyexport" styleClass="btn btn-default" action="#{receiptHome.manyExportExcel()}" value="导出服务预订"  style="float: right;height:34px;">   
+			        	</h:commandButton>
+			        </a4j:form>
+                </div>
+                 
+                <!-- 收件箱搜索 结束 -->
+                <!-- 收件箱内容 开始 -->
+                <div class="InboxCon">
+                	<ul class="InboxList">
+                	<ui:repeat value="#{receiptList.resultList}" var="_receipt" rendered="#{not empty receiptList.resultList}" rowKeyVar="_index">
+                    	<li class="InboxLi">
+                        	<table width="100%" cellpadding="0" cellspacing="0">
+                            	<tr>
+                                	<td width="80%" height="40" class="Inbox_messTtl">
+                                	<h:panelGroup rendered="#{_receipt.readsState eq 1 }" >
+	                                        <span class="unusualIco"></span>
+	                                        <span class="unusualPho">
+		                                        <img class="zhezhao" src="#{request.contextPath}/asset/images/message/sjx_ico05.png" />
+	                                            <h:panelGroup rendered="#{_receipt.userId.imageUrl ne '' and _receipt.userId.imageUrl ne null}" >
+	                                                 <img class="picture" src="#{_receipt.userId.imageUrl}" />
+	                                            </h:panelGroup>
+	                                            <h:panelGroup rendered="#{_receipt.userId.imageUrl eq '' or _receipt.userId.imageUrl eq null}" >
+	                                            	<img class="picture" src="#{request.contextPath}/asset/images/message/sjx_test01.jpg" />
+	                                            </h:panelGroup>
+                                      		</span>
+                                        </h:panelGroup>
+                                        <h:panelGroup rendered="#{_receipt.readsState eq 2 }" >
+	                                        <span class="usualIco"></span>
+	                                        <span class="usualPho">
+		                                        <img class="zhezhao" src="#{request.contextPath}/asset/images/message/sjx_ico04.png" />
+	                                            <h:panelGroup rendered="#{_receipt.userId.imageUrl ne '' and _receipt.userId.imageUrl ne null}" >
+	                                                 <img class="picture" src="#{_receipt.userId.imageUrl}" />
+	                                            </h:panelGroup>
+	                                            <h:panelGroup rendered="#{_receipt.userId.imageUrl eq '' or _receipt.userId.imageUrl eq null}" >
+	                                            	<img class="picture" src="#{request.contextPath}/asset/images/message/sjx_test01.jpg" />
+	                                            </h:panelGroup>
+                                      	    </span>
+                                        </h:panelGroup>
+                                	
+                                		<s:link propagation="none" includePageParams="none" view="/#{empty from ? 'message/Receipt' : from}.xhtml" styleClass="messTxt"  id="receiptViewId" >
+                                		<h:panelGroup rendered="#{_receipt.siteNewsId.dataDicId==0}">
+                                		【服务预订】#{_receipt.siteNewsId.title}
+                                		</h:panelGroup>
+                                		<h:panelGroup rendered="#{_receipt.siteNewsId.dataDicId!=0}">
+                                			【#{goodsInfoConstant.getMessageTypelabel(_receipt.siteNewsId.dataDicId)}】#{_receipt.siteNewsId.title}
+                                		
+                                		</h:panelGroup>
+										<f:param name="receiptId" value="#{_receipt.siteNewsId.id}" />
+										<f:param name="myId" value="#{_receipt.id}" />
+										</s:link>
+                                    </td>
+                                    <td width="20%" align="right" valign="top" class="Inbox_messTime">
+                                    	<ui:fragment rendered="#{_receipt.siteNewsId.enterpriseInfoId!=1}">
+                                   		<s:link styleClass="delete" propagation="none"  view="/message/Receipt.xhtml"   title="删除"   action="#{receiptHome.remove}" onclick="return confirm('确定删除吗？');" id="breedDelete" rendered="#{empty from}">
+		                             	<img src="#{request.contextPath}/asset/images/message/delpng.png" />
+		                                <f:param name="receiptId" value="#{_receipt.siteNewsId.id}" />
+		                                <f:param name="myId" value="#{_receipt.id}" />
+		                                </s:link>
+		                                </ui:fragment>
+                                    	<span class="timeDate">
+											<h:outputText value="#{_receipt.siteNewsId.insertTime}">
+												<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+										    </h:outputText>
+										</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </li>
+                        </ui:repeat>
+                    </ul>
+                </div>
+                
+                <!-- 收件箱内容 结束 -->
+            </div>
+            <!-- right_c 结束 -->
+			<!--翻页开始-->
+            <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+              	<tr>
+              		<s:div rendered="#{not empty receiptList.resultList}"> 
+	           			<s:decorate rendered="#{!receiptList.previousExists }">
+	            			<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+	            		</s:decorate>
+	             		<s:decorate rendered="#{receiptList.previousExists }">
+	             			<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+	             		</s:decorate>
+	             		<s:decorate rendered="#{receiptList.previousExists }">
+	                    	<td class="td_t_b">
+	                    		<s:link propagation="none"  view="/message/ReceiptList.xhtml" >首页
+	                        		<f:param name="pageNum" value="0" />
+	                        	</s:link>
+	                    	</td>
+	                     	<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+	                       		<s:link propagation="none"  view="/message/ReceiptList.xhtml"  styleClass="no_n" >
+	                        		<f:param name="pageNum" value="#{receiptList.previousFirstResult}"/>&lt;
+	                     		</s:link>
+	                       </td>
+	                 	</s:decorate>
+						<a4j:repeat var="_page" value="#{receiptList.pageList}" rowKeyVar="_index">
+							<td class="td_t_b #{receiptList.previousExists or _index >0 ?'td_t_t':''} #{_page eq receiptList.pageNum?'onp':''}">
+								<s:link propagation="none"  view="/message/ReceiptList.xhtml" value="#{_page}" id="previousPage">
+									<f:param name="pageNum" value="#{_page}" />
+								</s:link>
+							</td>
+						</a4j:repeat>
+						<s:decorate rendered="#{receiptList.nextExists}">
+							<td class="td_t_b td_t_t">
+	                    		<s:link propagation="none"  view="/message/ReceiptList.xhtml"   styleClass="no_d" >
+	                    			<f:param name="pageNum" value="#{receiptList.nextFirstResult}" />&gt;
+	                    		</s:link>
+	                     	</td>
+	                     	<td class="td_t_b td_t_t">
+			 					<s:link propagation="none"  view="/message/ReceiptList.xhtml" >尾页
+			 						<f:param name="pageNum" value="#{receiptList.PAGE_COUNT}" />
+			 					</s:link>
+							</td>
+						</s:decorate>
+					<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{receiptList.PAGE_COUNT}页</td>
+	                <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+	                 <td><s:link view="#{sessionTake.urlTemp}" styleClass="btn btn-default" value="返回" >
+		    					</s:link></td>
+				</s:div>
+				<s:div rendered="#{empty receiptList.resultList}"> 
+				<td><s:link view="#{sessionTake.urlTemp}" styleClass="btn btn-default" value="返回" >
+		    					</s:link></td>
+				</s:div>
+				</tr>
+			</table>
+        	<!--翻页结束-->
+            </td>  
+
+<a4j:form>
+    <a4j:jsFunction name="searchme" action="#{receiptList.searchMe}">
+   <a4j:actionparam name="searchParam" assignTo="#{receiptList.searchParam}"/>
+   </a4j:jsFunction>
+</a4j:form>			
+<script type="text/javascript">
+jQuery = jQuery.noConflict();
+jQuery(function(){	
+	if(jquery('#search\\:para').val() !=""){
+		jquery('.srarchfont').val(jquery('#search\\:para').val());
+	}
+	
+	//文本控制
+	jQuery(function(){
+		jQuery('.srarchfont').focus(function(){
+			var txt_value = jQuery(this).val();
+			if(txt_value==this.defaultValue){
+				jQuery(this).val("");	
+			};	
+		});
+		jQuery('.srarchfont').blur(function(){
+			var txt_value = jQuery(this).val();
+			if(txt_value==""){
+				jQuery(this).val(this.defaultValue);	
+			};	
+		});	
+	})
+	
+	//收件箱列表消息点击删除
+	jQuery('.Inbox_messTime .delete').click(function(){
+		jQuery(this).parents('.InboxLi').remove();	
+	});
+
+});
+</script>
+<script type="text/javascript">
+function mySearch(){
+	if(jquery('.srarchfont').val() !="请输入查询内容"){
+		searchme(jquery('.srarchfont').val());
+	}
+}
+</script>
+	</ui:define>
+
+</ui:composition>

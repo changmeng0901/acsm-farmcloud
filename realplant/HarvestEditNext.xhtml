@@ -1,0 +1,524 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+<ui:define name="body">
+<script type="text/javascript">
+  window.onload = function () {
+    jquery('.selectpicker').selectpicker();
+  };
+</script>
+
+<script type="text/javascript">
+document.getElementById("selectBaseDiv").style.display="none";
+</script>
+<style>
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width: 100px;}
+</style>
+<td valign="top" width="100%">
+                <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">
+						<s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="加工 ">
+                        </s:link>
+						&#160;&gt;&#160;&#160;<font size="3">采收记录</font></div>
+                    </div>
+                  <!--入库订单列表开始-->
+                   <div class="sp_d_iv">
+                   <span class="enterpriseSet" style="display:none">#{sessionTake.harvestUnit}</span>
+                  <span class="spn_01" style="margin-right: 5px;"> 采收单号：<span class="sh_02">
+                  <h:outputText value="#{productRecordTimesHome.number(1)}"></h:outputText></span> </span>
+                  <span class="spn_01"> 基地名称：<span class="sh_02">
+                  <h:outputText value="#{productRecordTimesHome.baseName}" ></h:outputText> </span></span>
+				  <div class="clear"></div>
+				  </div>
+				  <div class="sp_d_iv">
+                  <span class="spn_01"> 采收人：<span class="sh_02">
+                  <h:outputText value="#{productRecordTimesHome.getOperatorName(productRecordTimesHome.operatorId)}"></h:outputText></span> </span>
+                  <span class="spn_01"> 采收时间：<span class="sh_02">
+                  <h:outputText value="#{productRecordTimesHome.harvestTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></span> </span>
+                  <h:outputText rendered="#{productRecordTimesHome.storageRoomId ne 0}" >
+                  <span class="spn_01"> 采收入库：<span class="sh_02">
+                  <h:outputText  value="#{productRecordTimesHome.getRoomName(productRecordTimesHome.storageRoomId)}" ></h:outputText></span> </span>
+                  </h:outputText>
+				  <div class="clear"></div>
+				  </div>
+				  <br></br>
+				<!--入库订单列表结束-->
+				<h:form id="goodsInfo">
+				                  <!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="spanValue">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+				<a:repeat value="#{productRecordTimesHome.finalList}" var="obj" rowKeyVar="index" id="lists">
+				<div style="#{index==0?'':'margin-top:35px;'}">
+				
+				<div class="sp_d_iv" >
+									<h:outputText rendered="#{obj.realPlantId ne null}" >
+									<span class="spn_01">作物：#{obj.breedBreedId.plant.name}</span>
+								    <span class="spn_01">品种：#{obj.breedBreedId.name}</span>
+								     <span class="spn_01" style="#{sessionTake.harvestSiteCheck ? '':'display:none'}">产出品：#{obj.outputsName}</span>
+								    <span class="spn_01">区域：#{obj.tunnelInfoId.tunnelName}</span>
+								  </h:outputText>
+								  <h:outputText rendered="#{obj.realPlantId eq null}" >
+									<span class="spn_01">作物：#{obj.goodsInfoId.plant.name}</span>
+									 <span class="spn_01" style="#{sessionTake.harvestSiteCheck ? '':'display:none'}">产出品：#{obj.outputsName}</span>
+								    <h:outputText  rendered="#{obj.tunnelInfoId ne null}">
+								    <span class="spn_01">区域：#{obj.tunnelInfoId.tunnelName}</span>
+								    </h:outputText>
+								  </h:outputText>
+								  <s:fragment rendered="#{sessionTake.harvestLevelCheck}">
+								    <span class="spn_01">等级：#{harvestRecordsList.levelName(obj.levelId)}</span>
+								  </s:fragment>
+								  <s:fragment rendered="#{sessionTake.harvestPriceCheck}">
+								    <span class="spn_01">单价：#{obj.unitPrice}</span>
+								  </s:fragment>
+								    <span class="spn_02">
+								    	<a  href="#"  onclick="addOneFrame(#{index});return false;" class="btn btn-success one" style="font-weight;bold;"> <strong style="cursor: pointer; color:white;font-weight:bold;font-size:12px">&#160;增加筐&#160;</strong></a>
+								    	<span style="display:none" class="goodsUnit#{index}">#{obj.goodsInfoId.goodsUnit}</span>
+								    </span>
+								</div>
+                    <table class="newble12" cellpadding="0" cellspacing="1" >
+                        <tr>
+                            <th class="new_thc8" >ID</th>
+                            <th class="new_thc8">采收重量</th>
+                            <s:fragment rendered="#{sessionTake.harvestEarthCheck}">
+                            	<th class="new_thc8">扣土量</th>
+                            </s:fragment>
+                            <s:fragment rendered="#{sessionTake.harvesttareCheck}">
+                            	<th class="new_thc8">皮重</th>
+                            </s:fragment>
+                            <s:fragment rendered="#{sessionTake.harvestDishCheck}">
+                            	<th class="new_thc8">净菜重</th>
+                            </s:fragment>
+                            <th class="new_thc8">单位</th>
+                            <th class="new_thc8">操作</th>
+                        </tr>
+                        <a:repeat value="#{obj.harvestDetails}" var="_obj" rowKeyVar="_index">
+                        <tr class="detailtr">
+                           <td class="new_td8">#{_index+1}</td>
+                            <td class="new_td8 two#{index}" >
+                            <h:inputText value="#{_obj.weight}" styleClass="input_02bg weight#{index}" >
+                            	<a:support event="onblur" oncomplete="jisuan(#{index})"></a:support>
+                            </h:inputText>
+                            </td>
+                             <s:fragment rendered="#{sessionTake.harvestEarthCheck}">
+	                            <td class="new_td8 five#{index}" >
+	                            	<h:inputText value="#{_obj.earthWeigth}" styleClass="input_03bg earthWeight#{_index}" />
+	                            	<a:support event="onblur" oncomplete="jisuan(#{index})"></a:support>
+	                            </td>
+                            </s:fragment>
+                            <s:fragment rendered="#{sessionTake.harvesttareCheck}">
+	                            <td class="new_td8 six#{index}" >
+	                            	<h:inputText value="#{_obj.tareWeight}" styleClass="input_03bg tareWeight#{_index}" />
+	                            </td>
+                            </s:fragment>
+                            <s:fragment rendered="#{sessionTake.harvestDishCheck}">
+	                            <td class="new_td8 seven#{index}" >
+	                            	<h:inputText value="#{_obj.dishWeight}" styleClass="input_03bg dishWeight#{_index}" />
+	                            </td>
+                            </s:fragment>
+                            <td class="new_td8"> #{goodsInfoConstant.getGoodUnitLabel(obj.goodsInfoId.goodsUnit)}</td>
+                            <td class="new_td8">
+                            	<a href="#" onclick="del(#{index},#{_obj.tempId});return false;" class="list_delete" style="color:black;"></a>
+                           	</td>  
+                        </tr>
+                        </a:repeat>
+                    </table>
+                    <div style="overflow:hidden;">
+	                    <div style="float:left;">
+	                    	<div style="overflow:hidden;margin:15px 0;">
+	                    	<s:fragment rendered="#{sessionTake.harvestOutstockCheck}">
+			                    <div style="float:left;margin-right:60px;">
+				                    <div style="float:left; font-size:14px;width:60px;margin: 10px 5px 5px 0;height:30px;line-height:30px;">采收出库</div>
+				                    <h:inputText value=""  class="form-control outWeight"  style="width:220px; margin-top:10px;display: inline-block;"/> 
+				                    <span style="margin-left:5px;margin-top:10px; font-size:14px;height:30px;line-height:30px;display: inline-block;" >
+				                  	  #{goodsInfoConstant.getGoodUnitLabel(obj.goodsInfoId.goodsUnit)}
+				                    </span>
+				                </div>
+				             </s:fragment>
+				                <s:fragment rendered="#{sessionTake.harvestCarsCheck}">
+					                <div style="float:left;">
+					                	<div style="float:left; font-size:14px;width:60px;margin: 10px 5px 5px 0;height:30px;line-height:30px;">车辆数量</div>
+				                    	<h:inputText value="#{obj.carsNum}"  class="form-control carsNum"   style="width:220px; margin-top:10px;display: inline-block;"/> 
+					                    <span style="margin-left:5px;margin-top:10px; font-size:14px;height:30px;line-height:30px;display: inline-block;" >
+					                  	  辆
+					                    </span>
+					                </div>
+				                </s:fragment>
+			                </div>
+			                <s:fragment rendered="#{sessionTake.harvestMethodCheck}">
+				                <div style="overflow:hidden;margin:15px 0;">
+				                    <div style="float: left;margin-right:5px;width:60px;text-align:right;font-size:14px;">采收方法</div>
+				                   	<h:inputTextarea value="#{obj.harvestMethod}" class="form-control nw300 method" rows="3" id="method"/>
+			                   	</div>
+			                </s:fragment>
+	                    </div>
+	                    <div style="float:right;">
+	                    	<div style="text-align:rigth; padding-right:30px; height:30px; line-height:30px;overflow:hidden;">
+		                    	<span style="margin-right: 8px; margin-left: 30px; float: right;">采收量：&#160;<font color="#ff0000" size="+1" style="font-family: Arial, Helvetica, sans-serif;" id="_count#{index}">0</font>&#160;#{goodsInfoConstant.getGoodUnitLabel(obj.goodsInfoId.goodsUnit)}</span>
+								<span style="float: right;">采收筐数量：&#160;<font color="#d87500" size="+1" style="font-family: Arial, Helvetica, sans-serif;">#{obj.harvestDetails.size}</font>&#160;筐</span>
+		                    </div>
+		                 </div>
+		                    
+                    </div>
+                    </div>
+                    </a:repeat>
+                    
+                    
+                   <div style="float:right;">
+		                   	<div style="margin-top:5px; font-size:14px; height:40px; line-height:40px;overflow:hidden;">
+								<span style="margin-right: 8px; margin-left: 30px; float: right;">采收总量：&#160;<font color="#ff0000" size="+1" style="font-family: Arial, Helvetica, sans-serif;" id="total2">0</font>&#160;<font id="unit2"></font><font id="add2"></font><font color="#ff0000" size="+1" style="font-family: Arial, Helvetica, sans-serif;" id="num3"></font></span>
+								<span style="float: right;">总采收筐数量：&#160;<font color="#d87500" size="+1" id="total1" style="font-family: Arial, Helvetica, sans-serif;">#{productRecordTimesHome.totalSize}</font>&#160;筐</span>
+		                   </div>
+	                    </div>
+                   <div style="float: left;margin-right:5px;width:60px;text-align:right;font-size:14px;">备注</div>
+			                   <h:inputTextarea value="#{productRecordTimesHome.instance.remark}" class="form-control nw300 comment" rows="3" />
+                   <div class="clear"></div>
+                   <div style="height:25px;"></div>
+                    <table width="135" style="margin:35px auto 0 auto;">
+						<h:inputHidden id="allWeight" value="#{productRecordTimesHome.allWeight}" />     
+						<h:inputHidden id="handleId" value="#{productRecordTimesHome.handleId}" />                    
+						<tr>
+							<td>
+							<s:button id="next"  view="/realplant/HarvestEdit.xhtml"  style="margin-right:15px;" styleClass="btn btn-default" value="返回">
+							<f:param name="baseId" value="#{productRecordTimesHome.baseId}"/>
+							</s:button>
+							</td>
+							<td>
+			            	 <a:commandButton id="persist" action="#{productRecordTimesHome.saveTime}"  onclick="if(!checkSub())return true;jquery('.savebutton').prop('disabled','true');" oncomplete="jquery('.savebutton').removeAttr('disabled');"  styleClass="btn btn-primary savebutton" value="提交" />
+                            </td>
+						</tr>
+                   </table> 
+                   <div style="height:20px; width:100%;"></div>
+                 <div class="clear"></div>
+                 </h:form>
+                </div><!--right_c结束-->
+            </td>  
+            <a:form>
+		        <a:jsFunction name="addOne" reRender="goodsInfo" action="#{productRecordTimesHome.addOne}"  eventsQueue="default" oncomplete="jisuan(0);www()">
+		            <a:actionparam name="param1"   assignTo="#{productRecordTimesHome.ind}"/> 
+		            <a:actionparam name="numjson"   assignTo="#{productRecordTimesHome.numjson}"/>                   
+		        </a:jsFunction>
+            </a:form>
+            <a:form>
+		        <a:jsFunction name="deleted" reRender="goodsInfo" action="#{productRecordTimesHome.delete}"  eventsQueue="default" oncomplete="jisuan(0);www()">
+		        	<a:actionparam name="param1"   assignTo="#{productRecordTimesHome.ind}"/>     
+		            <a:actionparam name="param2"   assignTo="#{productRecordTimesHome.deleteId}"/>                  
+		        </a:jsFunction>
+            </a:form>
+<script type="text/javascript">
+//<![CDATA[
+    var harvestOutStock = #{sessionTake.harvestOutstockCheck};
+    function del(a,b){
+			var flag=window.confirm("确定删除吗？");
+			if(flag){
+				deleted(a,b);
+			}
+     }
+	www = function(){
+		jquery('.selectpicker').selectpicker();
+		}
+	jquery(".rich-calendar-input").addClass("r_c_text180").addClass("intime");
+	jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+	document.onkeydown=function(event){ 
+		e = event ? event :(window.event ? window.event : null); 
+		if(e.keyCode==13){ 
+		if(document.activeElement.id=="goodsInfoSearch:search"){
+			jquery(".searchClass").trigger("onclick");
+		}
+		e.keyCode=0;
+		 if (window.navigator.userAgent.indexOf("MSIE")==-1)
+		    {
+			 e.preventDefault();
+			 return false;
+		    }
+		e.returnValue=false;				
+		} 
+	}
+
+	jisuan = function(index){
+		var sessionUnit = Number(jquery(".enterpriseSet").html());
+		var unitName = "公斤";
+		var total1 = 0;
+		var number = 0;
+		var totalweight1 = 0;//重量单位的重量
+		var totalweight2 = 0;//非重量单位的重量
+		for(var i = 0;i<jquery(".one").length;i++){
+			var total2 = 0;
+			var weight1 = 0;//重量单位的重量
+			var weight2 = 0;//非重量单位的重量
+			var temp = 0;
+			var unit = Number(jquery(".goodsUnit" + i).html());
+			jquery(".weight"+i).each(
+			function(){
+				var a = jquery(this).val();
+				var a1 = parseFloat(a);
+				if(isNaN(a1)){
+					temp+=1;
+					return true;
+				}
+				if( unit >= 7 && unit <= 11){
+					if(sessionUnit == 2){
+						weight1 += transferNumOfKg(unit,a1);
+					}else{
+						weight1 += transferNumOfjin(unit,a1);
+					}
+					temp+=1;
+					total2+=a1;
+				}else{
+					weight2 += a1;
+					temp+=1;
+					total2+=a1;
+				}
+			}
+			);
+			number +=temp;
+			total1+=total2;
+			totalweight1 += weight1;
+			totalweight2 += weight2;
+			document.getElementById("_count"+i).innerHTML = total2;
+			
+		}
+		if(sessionUnit == 1){
+			unitName = "斤";
+		}
+		jquery("#total1").html(number);
+		//jquery("#total2").html(total1.toFixed(2));
+		if(totalweight1 != 0 && totalweight2 != 0){
+			jquery("#total2").html(totalweight1);
+			jquery("#unit2").html(unitName);
+			//jquery("#add2").html("+");
+			jquery("#num3").html("+" + totalweight2);
+		}else if(totalweight1 == 0 && totalweight2 != 0){
+			jquery("#total2").html("");
+			jquery("#num3").html(totalweight2);
+		}else if(totalweight1 != 0 && totalweight2 == 0){
+			jquery("#total2").html(totalweight1);
+			jquery("#num3").html("");
+			jquery("#unit2").html(unitName);
+		}
+	}
+
+	deleteOne = function(e,f){
+		var a = jquery("#total1").html();
+		jquery("#total1").html(parseInt(a)-1);
+		deleted(e,f);
+	}
+
+	function checkSub(){
+		var b=true;
+		jquery(".input_02bg").each(function(){
+			if(jquery(this).val()==""){
+				document.getElementById("spanValue").innerHTML = "重量不能为空";
+		 		jquery("#myModal").modal('show');
+		 		b=false;
+				return false;
+			}
+			var b1 = parseFloat(jquery(this).val());
+			if(isNaN(b1)||b1<=0.0){
+				document.getElementById("spanValue").innerHTML = "请填写正确的重量格式";
+		 		jquery("#myModal").modal('show');
+		 		b=false;
+				return false;
+			}
+		});
+		
+		jquery(".input_03bg").each(function(){
+			var b1 = jquery(this).val().trim();
+			if(isNaN(b1)||parseFloat(b1)<0.0){
+				document.getElementById("spanValue").innerHTML = "请填写正确的重量格式";
+		 		jquery("#myModal").modal('show');
+		 		b=false;
+				return false;
+			}
+		});
+		var allValue="";
+		var val='#{productRecordTimesHome.storageRoomId}';
+		
+		if(val!=0){
+			if(harvestOutStock){
+				jquery(".outWeight").each(function (index,domEle){
+					var n=jquery(this).val();
+					var m=jquery("#_count"+index).text();
+					if(eval(n)>eval(m)){
+						document.getElementById("spanValue").innerHTML = "出库量不能大于采收量!";
+				 		jquery("#myModal").modal('show');
+				 		b=false;
+						return false;
+					}
+					if(n==""){
+						allValue +=0+"@";
+					}else{
+						allValue +=n+"@";
+					}
+					
+				});
+			}
+		}
+		var r = /^\+?[1-9][0-9]*$/;　　//正整数
+		jquery("#goodsInfo\\:allWeight").val(allValue);
+		jquery(".carsNum").each(function(){
+			var b1 = jquery(this).val().trim();
+			if(b1 != ""){
+				if(isNaN(b1)|| !r.test(b1)){
+					document.getElementById("spanValue").innerHTML = "请填写正确的车辆数";
+			 		jquery("#myModal").modal('show');
+			 		b=false;
+					return false;
+				}
+			}
+			
+		});
+		jquery(".method").each(function(){
+			var b1 = jquery(this).val();
+			if(b1.length > 200){
+				document.getElementById("spanValue").innerHTML = "采收方法不能大于200字";
+		 		jquery("#myModal").modal('show');
+		 		b=false;
+				return false;
+			}
+		});
+		jquery(".comment").each(function(){
+			var b1 = jquery(this).val();
+			if(b1.length > 200){
+				document.getElementById("spanValue").innerHTML = "备注不能大于200字";
+		 		jquery("#myModal").modal('show');
+		 		b=false;
+				return false;
+			}
+		});
+		return b;
+	}
+
+
+	function closeMethod(){
+		var b = true;
+		jquery(".input_03bg").each(function(){
+			if(jquery(this).val()==""){
+				jquery(this).focus();
+				b = false;
+				return false;
+			}
+		});
+		if(b){
+			jquery(".input_02bg").each(function(){
+				if(jquery(this).val()==""){
+					jquery(this).focus();
+					b = false;
+					return false;
+				}
+				var b1 = parseFloat(jquery(this).val());
+				if(isNaN(b1)||b1<=0.0){
+					jquery(this).focus();
+					b = false;
+					return false;
+				}
+			});
+		}
+		return b;
+	}
+
+	jquery(document).ready(function(){
+		if(harvestOutStock){
+			var val='#{productRecordTimesHome.storageRoomId}';
+			if(val==0){
+				jquery(".outWeight").each(function(){
+					jquery(this).attr("disabled",true);
+				});
+			}else{
+				jquery(".outWeight").each(function(){
+					jquery(this).attr("disabled",false);
+				});
+			}
+			jisuan();
+		}
+		
+		
+	});
+
+	//增加框
+	function addOneFrame(index){
+		var numjson = '[';
+		jquery(".newble12").each(function(i){
+			numjson += '{"index":"' + i + '",';
+			numjson += '"num":[';
+			jquery(this).find(".detailtr").each(function(j){
+				var earthWeight = jquery(this).find(".earthWeight" + j).val();
+				var tareWeight = jquery(this).find(".tareWeight" + j).val();
+				var dishWeight = jquery(this).find(".dishWeight" + j).val();
+				/* if(earthWeight == ""){
+					earthWeight = "0";
+				} 
+				if(tareWeight == ""){
+					tareWeight = "0";
+				} 
+				if(dishWeight == ""){
+					dishWeight = "0";
+				}  */
+				numjson += '{"earthWeight":"' +  earthWeight + '","tareWeight":"' + tareWeight + '","dishWeight":"' + dishWeight + '"},';
+			});
+			numjson = numjson.substring(0,numjson.length-1);
+			numjson += ']},'
+		});
+		numjson = numjson.substring(0,numjson.length-1);
+		numjson += ']';
+		addOne(index,numjson);
+	}
+	//单位转换公斤
+	function transferNumOfKg(unit,num){
+		var result = num;
+		if(unit == 7){
+			result = num/1000;
+		}else if(unit == 8){
+			result = num/20;
+		}else if(unit == 9){
+			result = num/2;
+		}else if(unit == 10){
+			result = num;
+		}else if(unit == 11){
+			result = num*1000;
+		}
+		return result;
+	}
+	//单位转换斤
+	function transferNumOfjin(unit,num){
+		var result = num;
+		if(unit == 7){
+			result = num/500;
+		}else if(unit == 8){
+			result = num/10;
+		}else if(unit == 9){
+			result = num;
+		}else if(unit == 10){
+			result = num*2;
+		}else if(unit == 11){
+			result = num*500;
+		}
+		return result;
+	}
+    //]]>
+</script>
+</ui:define>
+</ui:composition>

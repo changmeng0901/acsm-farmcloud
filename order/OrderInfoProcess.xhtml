@@ -1,0 +1,74 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+	<ui:define name="body">
+	<style>
+		.pr_th{text-align: center;}
+	</style>
+	<!-- #{orderInfoProcessList.getOrderInfo()}-->
+	 <h:form id="orderInfoProcess">
+       <td valign="top"  width="100%">
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">
+						<s:link propagation="none"  view="/order/OrderInfoList.xhtml" style="text-decoration:none;color:black;" value="订单管理 ">
+                        </s:link>
+						&#160;&gt;&#160;&#160;<font size="3">订单处理</font></div>
+                    </div>
+                    <div class="z_r_ser" style="*margin-top:30px; *margin-bottom:30px;">
+                    </div>
+					<table width="100%" class="pr_table" cellpadding="0" cellspacing="0" id="table" style="table-layout:fixed;">
+                    	<tr>
+                    		<th class="pr_th" width="20%">任务</th>
+                    		<th class="pr_th" width="13%">订单人</th>
+                    		<th class="pr_th" width="15%">联系电话</th>
+                    		<th class="pr_th" width="15%">配送时间</th>
+                    		<th class="pr_th" width="20%">地址</th>
+                    		<th class="pr_th" width="243" style="border-right:1px solid #ddd;*width:243px">操作</th>
+                    	</tr>
+                    	<a4j:repeat value="#{orderInfoProcessList.orderInfoList}" var="_oi" rowKeyVar="_index">
+                    	<tr>
+                            <td class="pr_td"><h:outputText  value="订单#{_oi.orderCode}" /></td>
+                    		<td class="pr_td"><h:outputText  value="#{_oi.receiveName}" /></td>
+                    		<td class="pr_td"><h:outputText  value="#{_oi.receivePhone}"/></td>
+                    		<td class="pr_td"><h:outputText value="#{_oi.deliverTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText> 
+                    			<h:outputText value="全天" rendered="#{_oi.timeSlot eq 0}"/>
+                    			<h:outputText value="上午" rendered="#{_oi.timeSlot eq 1}"/>
+                    			<h:outputText value="下午" rendered="#{_oi.timeSlot eq 2}"/>
+                    		</td>
+                            <td class="pr_td"><h:outputText  value="#{_oi.receiveAddress}"/></td>
+                            <td class="pr_td" style="text-align:left;">
+                            	<span id="select">
+									<h:selectOneMenu immediate="true" id="routeInfoId" styleClass="routeInfoId#{_oi.routeInfo.id} selectpicker" style="width:146px;" value="#{_oi.routeInfo}">
+										<s:selectItems value="#{orderInfoProcessList.routeInfoList}" var="var" label="#{var.name}" />
+										<s:convertEntity />
+									</h:selectOneMenu>
+								</span>
+                            </td>
+                    	</tr>
+                    	</a4j:repeat>
+                    </table>
+            <!--印刷管理下结束-->
+					<div class="ckd_button" style="margin-top:35px;">
+                    	<a href="#{request.contextPath}/order/OrderInfoList.seam" class="btn btn-default">返回</a>
+                    	<a4j:commandButton id="persist" value="下一步" styleClass="btn btn-primary" style="margin-right:10px;margin-left:10px;" action="#{orderInfoProcessList.persistList}">
+                    		<f:param name="orderInfoIds" value="#{printPackagingList.orderInfoIds}" />
+                    	</a4j:commandButton>
+                    </div>
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+</td>
+</h:form>
+<script type="text/javascript">
+			    jquery('.selectpicker').selectpicker();
+			</script>
+</ui:define>
+
+</ui:composition>

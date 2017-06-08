@@ -1,0 +1,454 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_inventory.xhtml">
+
+<ui:define name="body">
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/bootstrap/skinBlue.css" />
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/stock/InventoryFile.css"/>
+
+<style >
+.search_header2 .form_datetime_second input{
+	height:24px;
+	line-height:20px;
+	padding-top:0;
+	padding-bottom:0;
+	border:0;
+	border-top:1px solid #fff;
+	border-bottom:1px solid #ddd;
+	border-radius:0;
+	} 
+.form_datetime_second{ position:relative; width:100%;}
+.form_datetime_second .add-on{	position:absolute;	right:5px;	top:10px;	width:14px;	height:14px;	}
+.form_datetime_second .add-on .icon-th{	display:block;	width:14px;	height:14px;	margin:0;	}
+.form_datetime_second .add-on .icon-th { background-position: -240px 0;	}
+.baseFile_onload{ display:block; float:left; width:130px; height:130px; margin:25px 50px 25px 0;border:none;background: url("/asset/images/farmingIco15.jpg") no-repeat scroll 0 0; cursor:pointer;}
+.addbg{
+        background:#87A900;
+    }	
+</style>
+#{inventoryBillAllHome.pageInit()}
+            <td valign="top">
+            <div class="inbentory_file_main">
+            <div class="maskbox" style="width:100%;display:none; z-index:1000; position: fixed; top:0; left:0; background:#000; opacity:0; filter:alpha(opacity:0);" id="mydialog"></div>
+            	<!-- 库存左侧二级导航 -->
+                <div class="inbentory_level_wap">
+                    <div class="inbentory_level">
+                        <strong class="inben_first inben_first1 ">
+                            <a href="javascript:;" onclick="window.open('#{request.contextPath}/stock/InventoryFile.seam','_self')" ><i class="icon_L icon_kcda"></i>库存档案</a>
+                        </strong>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_rkgl"></i>入库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item sed_item" onclick="window.open('#{request.contextPath}/stock/InStorageList.seam','_self')" ><i class="icon_sed"></i>入库明细</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/InStockAdd.seam','_self')"><i class="icon_sed"></i>入库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_ckgl"></i>出库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/OutStorageList.seam','_self')"><i class="icon_sed"></i>出库明细</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/OutStorage.seam','_self')"><i class="icon_sed"></i>出库单</li>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_zkgl"></i>在库管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/ExpireWarning.seam','_self')"><i class="icon_sed"></i>过期预警</li>
+                           <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/AllocationRecord.seam','_self')"><i class="icon_sed"></i>调拨记录</li>
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/AllocationBill.seam','_self')"><i class="icon_sed"></i>调拨单</li>
+                        	<h:panelGroup rendered="#{sessionTake.tempType eq 9}">
+							<li class="sed_item sed_cur" onclick="window.open('#{request.contextPath}/stock/StorageRecord.seam','_self')"><i class="icon_sed"></i>贮藏记录</li>
+							</h:panelGroup>
+                        </ol>
+                        <strong class="inben_first inben_first2">
+                            <a href="javascript:;"><i class="icon_L icon_pdgl"></i>盘点管理</a><b class="b_arrow"></b>
+                        </strong>
+                        <ol class="inben_second">
+                            <li class="sed_item" onclick="window.open('#{request.contextPath}/stock/InventoryRecord.seam','_self')"><i class="icon_sed"></i>盘点记录</li>
+                            <li class="sed_item sed_cur" onclick="window.open('#{stockUtil.getInventoryNoBatch(sessionTake.enterpriseInfoId) ? '/stock/InventoryBillAll.seam' : '/stock/InventoryBill.seam'}','_self')"><i class="icon_sed"></i>盘点单</li>
+                        </ol>
+                    </div>
+                    <i class="collapse_btn"></i>
+                </div>
+                <!-- 库存左侧二级导航 -->
+                <!-- 库存档案右侧 -->
+                <div class="inbentory_content">
+                    <div class="breadNav_wap clear">
+                        <div class="breadNav_lt" style="margin-left:20px;"><a href="#">采销存</a><span>&gt;</span><a href="#">库存</a><span>&gt;</span><strong>盘点单</strong></div>
+                    </div>
+                    <div class="inbentory_search_wap">
+                    <!-- 商品入库 -->
+                        <div class="search_header search_header2 clear">
+                        	
+                        	<div class="clear">
+                        	<rich:panel id="condition" style="margin:0; border:none; padding: 0;">
+                                <div class="search_selected fl">
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">物料类型</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <select class="selectpicker" style="display: none;"  id="goodsType" onchange="initStorage()">
+                                                <option  value="-1">请选择</option>
+                                                 <a:repeat value="#{inventoryBillAllHome.initGoodsType()}" var="_sc" rowKeyVar="_index">
+                                                	<s:fragment rendered="#{inventoryBillAllHome.goodsType ne null and inventoryBillAllHome.goodsType eq _sc.id}">
+                                                		<option value="#{_sc.id}" selected="selected">
+								   							<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+															<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>									   
+								  					 	</option>
+                                                	</s:fragment>
+                                                	<s:fragment rendered="#{inventoryBillAllHome.goodsType eq null or inventoryBillAllHome.goodsType ne _sc.id}">
+	                                                	<option value="#{_sc.id}">
+									   						<s:fragment rendered="#{_sc.id eq 3}">商品</s:fragment>
+															<s:fragment rendered="#{_sc.id ne 3}">#{_sc.name}</s:fragment>									   
+									  					 </option>
+								  					 </s:fragment>
+							 					 </a:repeat>
+                                            </select>
+                                        </dd>
+                                    </dl>
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">仓库</dt>
+                                        <dd class="inline_block bootSelt180">
+                                         <rich:panel id="storageRoomPanel" style="margin:0; border:none; padding: 0;">
+                                            <select class="selectpicker" style="display: none;" id="storageRoom" onchange="goodsInit()">
+                                                <option value="-1">请选择</option>
+                                                   <a:repeat value="#{inventoryBillAllHome.storageRoomList}" var="storage">
+                                                   		<s:fragment rendered="#{inventoryBillAllHome.storageRoomId ne null and inventoryBillAllHome.storageRoomId eq storage[0]}">
+															<option value="#{storage[0]}" selected="selected">#{storage[1]}</option>
+														</s:fragment>
+														<s:fragment rendered="#{inventoryBillAllHome.storageRoomId eq null or inventoryBillAllHome.storageRoomId ne storage[0]}">
+															<option value="#{storage[0]}" >#{storage[1]}</option>
+														</s:fragment>
+												    </a:repeat>
+                                            </select>
+                                            </rich:panel>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                 </rich:panel>
+                                <div class="search_selected fl">
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                        <dt style="width:80px;">盘点日期</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <div class="fl" style="width:180px;">
+                                                <div class="input-append date form_datetime_second " style="position:relative;" >
+                                                <input size="26" type="text" value="" readonly="readonly" style="border-radius:4px;"  id="inventoryDate" onchange="dateChange()"/> 
+                                                <span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
+                                                </div>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                    
+                                    <dl style="width:265px;" class="se_selt180 fl">
+                                    <rich:panel id="conditionOperator" style="margin:0; border:none; padding: 0;">
+                                        <dt style="width:80px;">经办人</dt>
+                                        <dd class="inline_block bootSelt180">
+                                            <select class="selectpicker" style="display: none;" id="operatorId" onchange="operatorIdChange()">
+                                                <option selected="selected" value="-1">请选择</option>
+                                                <a:repeat value="#{inventoryBillAllHome.initOperatorListInOut()}" var="operator">
+                                                	<s:fragment rendered="#{inventoryBillAllHome.operatorId ne null and inventoryBillAllHome.operatorId eq operator[0]}">
+														<option value="#{operator[0]}"  selected="selected">#{operator[1]}</option>
+													</s:fragment>
+													<s:fragment rendered="#{inventoryBillAllHome.operatorId eq null or inventoryBillAllHome.operatorId ne operator[0]}">
+														<option value="#{operator[0]}" >#{operator[1]}</option>
+													</s:fragment>
+												</a:repeat>
+                                            </select>
+                                        </dd>
+                                         </rich:panel>
+                                    </dl>
+                                   
+                                </div>
+                            </div>
+                            <div class="clear">
+                            <rich:panel id="conditionComment" style="margin:0; border:none; padding: 0;">
+                                <div class="search_selected fl">
+                                    <textarea class="danju_textarea fl" id="comment" onchange="commentChange()">#{inventoryBillAllHome.comments eq null ? '暂无备注信息' : inventoryBillAllHome.comments}</textarea>
+                                </div>
+                                </rich:panel>
+                                <div class="search_selected fl" style="margin-left:28px;">
+                                    <button class="btn btn-success"   disabled="disabled" id="addButton" onclick="showAddModel()">添加物料</button>
+                                </div>
+                                 <div class="search_selected fl" style="margin-left:10px;">
+                                    <button class="btn btn-success"  disabled="disabled" id="addAllButton" onclick="addAllGoods()">添加全部物料</button>
+                                </div>
+                                <div class="search_selected fl" style="margin-left:10px;">
+                                    <button class="btn btn-success"  disabled="disabled" id="printButton" onclick="prit()">打印</button>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <rich:panel id="goodsListPanel" style="margin:0; border:none; padding: 0;">
+                        <table id="goodsTable" class="inventory_modal_table mt20" width="100%" cellpadding="0" cellspacing="0" style="min-width:1120px-;">
+                        	<tr >
+                            	<th width="5%">序号</th>
+                                <th width="14%">物料编号</th>
+                                <th width="14%" id="replaceClick"> 物料名称 <a class="scancode_btn scan_no" onclick="scancode(this,'scan_no')" href="javascript:;" >扫描条码</a></th>
+                                <th width="10%">等级</th>
+                                <th width="12%">单位规格</th>
+                                <th width="9%">库存数量</th>
+                                <th width="9%">实盘数量</th>
+                                <th width="9%">损益数量</th>
+                                <th width="9%" style="display:none">物料Id</th>
+                                <th width="5%">操作</th>
+                            </tr>
+                            <a:repeat value="#{inventoryBillAllHome.batchBillList}" var="_bill" rowKeyVar="_index">
+			                     <tr class="#{(_index + 1)%2 eq 0 ? 'even' : 'odd' } billTr" id="goodsTr_#{_index}">
+			                     	<td class="td_line" id="numtd_#{_index}">#{_index + 1}</td>
+			                        <td class="td_line" id="goods_codetd_#{_index}" name="goods_codetd">#{_bill[2]}</td>
+			                        <td class="td_line td_mater" id="goods_nametd_#{_index}" >
+			                        	<div class="mater_name_block" id="mater_name_block_#{_index}" style="#{_bill[0] eq null ? 'display:none' : ''};">
+			                            	<div class="mater_name_hd" id="mater_name_hd_#{_index}">
+			                                	<input type="text" id="goods_name_#{_index}" name='searchAndSao' onkeyup='searchLi(this,event,1)' style="text-align:center;" value="#{_bill[3]}"/>
+			                                 	<i class='add_mater'  onclick="showAddModel()"></i>
+			                                 </div>
+			                             	<div class="mater_name_bd" id="mater_name_bd_#{_index}" style='min-width: 10%;z-index:9999'>
+			                                 	<ul class="mater_name_list" name="goodsNameUl" id="goodsNameUl_#{_index}">
+				                                 	<a:repeat value="#{inventoryBillAllHome.goodsNameList}" var="_goods">
+				                                 		<li name='goodsNameLi' myAttr='#{_goods[0]}' onclick='clickGoods(this)'>#{_goods[2]}</li>
+				                                 	</a:repeat>
+			                                    </ul>
+			                                    <ul class='mater_name_list3'  id="goodsNameUl2_#{_index}" style='display:none'>
+			                                    	<a:repeat value="#{inventoryBillAllHome.goodsNameList}" var="_g">
+				                                 		<li name='goodsNameLi' myAttr='#{_g[0]}' onclick='clickGoods(this)'>#{_g[2]}</li>
+				                                 	</a:repeat>
+			                                    </ul>
+			                                 </div>
+			                             </div>
+			                         </td>
+			                         <td class="td_line" id="leveltd_#{_index}"> </td>
+			                         <td class="td_line" id="goods_spectd_#{_index}"></td>
+			                         <td class="td_line goodsNum" id="batch_numtd_#{_index}"></td>
+			                         <td class="td_line" id="bill_numtd_#{_index}"><input type="text" class="form-control" value='0.0' style="text-align:center;#{_bill[0] eq null ? 'display:none' : ''}" onblur="cacluProfitLoss(this)"/></td>
+			                         <td class="td_line" id="profitLoss_numtd_#{_index}"></td>
+			                         <td class="td_line" id="goods_idtd_#{_index}" style='display:none'></td>
+			                         <td class="td_line" >
+			                         	<a class="icon_link" href="javascript:;" id="copya_#{_index}" onclick="copyGoods(#{_index})" style="#{_bill[0] eq null ? 'display:none' : ''}"><img src="/images/crop_tableadd.jpg" /></a>
+			                         	<a class="icon_link" href="javascript:;" id="dela_#{_index}" onclick="delGoods(#{_index})" style="#{_bill[0] eq null ? 'display:none' : ''}"><img src="#{request.contextPath}/asset/images/stock/commons/tableIco_delect2.png" /></a>
+			                         </td>
+			                     </tr>
+			                     </a:repeat>
+                       		</table>
+                       		</rich:panel>
+                        <div class="total_price mt10">
+                        	合计<p class="text_name">库存数量：<em id="stockNum">0</em></p>
+                        	<p class="text_name">实盘数量：<em id="inventoryNum">0</em></p>
+                        </div>
+                        <div class="pt10" style="text-align:right;">
+                        	<h:form id="add">
+        					<h:inputHidden value="#{inventoryBillAllHome.goodsType}" id="goodsType"/>
+        					<h:inputHidden value="#{inventoryBillAllHome.storageRoomId}" id="storageRoomId"/>
+        					<h:inputHidden value="#{inventoryBillAllHome.inventoryDate}" id="inventoryDate"/>
+        					<h:inputHidden value="#{inventoryBillAllHome.operatorId}" id="operatorId"/>
+        					<h:inputHidden value="#{inventoryBillAllHome.comments}" id="comments"/>
+        					<h:inputHidden value="#{inventoryBillAllHome.jsonListOld}" id="jsonListOld"/>
+        					<h:commandButton id="commit" styleClass="btn btn-primary fl"  style="display:none"  value="编辑提交"  action="#{inventoryBillAllHome.addsave()}">
+        					</h:commandButton> 
+        				</h:form>
+        					<input type="button"  class="btn btn-primary"  onclick="saveCheck()" value="提交" id="submitButton"/>
+                            <a class="btn btn-default" href="#" onclick="clearPage()">取消</a>
+                        </div>
+                    <!-- 商品入库 -->
+                    </div>
+                </div>
+                <!-- 库存档案右侧 -->
+            </div>  
+            
+            
+            <!-- 添加物料模态框 -->
+<div class="modal fade" id="AddMaterial" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<div class="modal-dialog material_dialog">
+    <!--(1)添加物料内容-->
+    <div class="modal-content" id="addGoods">
+        <div class="modal-header clear">
+            <h4 class="modal-title fl">选择物料</h4>
+            <i class="i_close" data-dismiss="modal"></i>
+        </div>
+        
+        <div class="modal-body modal_body" >
+            <!--搜索-->
+            <div class="search_header mb15 clear">
+                <div class="search_selected clear">
+                    <div class="public-search fl">
+                        <span class="octicon-search02"></span>
+                        <input class="form-control nw300 srarchfont" type="text" value="请输入查询内容" id="searchStr" onfocus="checkValue(this)"/>
+                    </div>
+                    <button class="btn btn-primary fl ml5" type="button" onclick="search()" id="searchButton">搜索</button>
+                    <div class="fl ml10 mt10">
+                    	<p class="checkradio1"><input class="iCheck" type="checkbox" id="zeroGoods" /><label>显示零库存物料</label></p>
+                	</div>
+                </div>
+                
+            </div>
+            <!--物料列表-->
+            <rich:panel id="goodsModel" style="margin:0; border:none; padding: 0;">
+            <table class="material_list" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <th width="20px"><input class="iCheck" type="checkbox" aa="unchecked" onclick="checkAllChange(this)"/></th>
+                    <th style="display:none">物料ID</th>
+                    <th width="190px">物料编号</th>
+                    <th width="160px">物料名称</th>
+                    <th width="160px">单位规格</th>
+                    <th width="160px">库存数量</th>
+                    <th style="display:none">实盘数量</th>
+                    <th style="display:none">损益数量</th>
+                    <th style="display:none">等级</th>
+                    <th style="display:none">等级集合</th>
+                </tr>
+                <a:repeat value="#{inventoryBillAllHome.goodsList}" var="goods" rowKeyVar="_index">
+                <tr class="model_tr">
+                    <td class="bg1"><input class="iCheck" type="checkbox" bb="unchecked" name="selectGoods" id="selectGoods_#{_index}"/></td>
+                    <td style="display:none" id="model_goods_id_#{_index}">#{goods[0]}</td>
+                    <td id="model_goods_code_#{_index}">#{goods[1]}</td>
+                    <td id="model_goods_name_#{_index}">#{goods[2]}</td>
+                    <td id="model_goods_spec_#{_index}">#{goods[3]}</td>
+                    <td id="model_goods_num_#{_index}">#{goods[4]}</td>
+                    <td id="model_real_num_#{_index}" style="display:none">#{goods[5]}</td>
+                    <td id="model_profit_loss_#{_index}" style="display:none">#{goods[6]}</td>
+                    <td id="model_level_id_#{_index}" style="display:none">#{goods[7]}</td>
+                    <td id="model_level_list_#{_index}" style="display:none">
+                   	 	<s:fragment rendered="#{goods[7] ne null and goods[8] ne null}">
+                   	 		<ul>
+                       			<a:repeat value="#{goods[8]}" var="_level" rowKeyVar="_row">
+                       				<li class="levelli" levelid="#{_level[0]}" levelnum="#{_level[2]}">#{_level[1]}</li>
+                       			</a:repeat>
+                       		</ul>
+                   	 	</s:fragment>
+                   	 	<s:fragment rendered="#{goods[7] ne null and goods[8] ne null}">
+                   	 	
+                   	 	</s:fragment>
+                    </td>
+                </tr>
+                </a:repeat>
+            </table>
+            <!--分页-->
+            <div class="pageModel_wap" style="padding:50px 0 30px;">
+                        <h:form id="pageFrom" rendered="#{null ne inventoryBillAllHome.goodsList and inventoryBillAllHome.goodsList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!inventoryBillAllHome.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{inventoryBillAllHome.hasPreviousPage and inventoryBillAllHome.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a:commandLink style="color:#333333;" id="firstPage" onclick="queryPage(1)" rendered="#{inventoryBillAllHome.hasPreviousPage and inventoryBillAllHome.totalPages > 1}" >首页</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a:commandLink styleClass="no_n" id="previousPage" onclick="queryPage(#{inventoryBillAllHome.previousPage})"  >&lt;</a:commandLink>
+										</td>
+									</s:fragment>
+									<a:repeat var="_page" value="#{inventoryBillAllHome.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_page gt 0 and _page le inventoryBillAllHome.totalPages}">
+											<td class="td_t_b #{inventoryBillAllHome.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq inventoryBillAllHome.pageNum ? 'onp' : ''}" >
+												<a:commandLink id="thisPage"  onclick="queryPage(#{_page})"  >#{_page}</a:commandLink>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{inventoryBillAllHome.hasNextPageflag}">
+										<td class="td_t_b td_t_t">
+											<a:commandLink styleClass="no_d"  id="nextPage" onclick="queryPage(#{inventoryBillAllHome.nextPage})"  >&gt;</a:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a:commandLink style="color:#333333;"  id="lastPage" onclick="queryPage(#{inventoryBillAllHome.totalPages})" >尾页</a:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{inventoryBillAllHome.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+						</div>
+						  </rich:panel>
+            <!--分页-->
+        </div>
+      
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-dismiss="modal" onclick="selectToAddGoods()">添加物料</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="clearSearch()">返回</button>
+        </div>
+    </div>
+</div>
+</div>
+
+ <div class="box_back" id="login" style="display: none; z-index: 1000;position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0,0,0,0.5);">
+		<div id="login2" style="width: 128px;height: 168px;margin: -84px auto 0 -64px;position: absolute;left: 50%;top: 50%;">
+			<img src="../asset/images/loginda.gif" />
+		</div>
+	</div>    
+</td>    
+
+<a:form>
+	<a:jsFunction name="initGoodsNameList" action="#{inventoryBillAllHome.initGoodsNameList()}" reRender="goodsListPanel" oncomplete="expList()" >
+		<a:actionparam name="goodsType" assignTo="#{inventoryBillAllHome.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{inventoryBillAllHome.storageRoomId}"/>
+		<a:actionparam name="queryType" assignTo="#{inventoryBillAllHome.queryType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="selectAllGoods" action="#{inventoryBillAllHome.selectAllGoods()}" data="#{inventoryBillAllHome.goodsJson}"  oncomplete="addAllComplete(data)" >
+		<a:actionparam name="goodsType" assignTo="#{inventoryBillAllHome.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{inventoryBillAllHome.storageRoomId}"/>
+		<a:actionparam name="queryType" assignTo="#{inventoryBillAllHome.queryType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="selectGoods" action="#{inventoryBillAllHome.selectGoods()}"  data="#{inventoryBillAllHome.goodsJson}"  oncomplete="initGoodsBatch(data)" >
+		<a:actionparam name="goodsType" assignTo="#{inventoryBillAllHome.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{inventoryBillAllHome.storageRoomId}"/>
+		<a:actionparam name="goodsInfoId" assignTo="#{inventoryBillAllHome.goodsInfoId}"/>
+		<a:actionparam name="tableNo" assignTo="#{inventoryBillAllHome.tableNo}"/>
+	</a:jsFunction>
+	<a:jsFunction name="initGoodsList" action="#{inventoryBillAllHome.initGoodsList()}"  reRender="goodsModel" oncomplete="showModelComplete()">
+		<a:actionparam name="goodsType" assignTo="#{inventoryBillAllHome.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{inventoryBillAllHome.storageRoomId}"/>
+		<a:actionparam name="searchStr" assignTo="#{inventoryBillAllHome.searchStr}"/>
+		<a:actionparam name="pageNum" assignTo="#{inventoryBillAllHome.pageNum}"/>
+		<a:actionparam name="queryType" assignTo="#{inventoryBillAllHome.queryType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="saoToTable" action="#{inventoryBillAllHome.saoToTable()}"   data="#{inventoryBillAllHome.goodsJson}"  oncomplete="initGoodsBatch(data)" >
+		<a:actionparam name="goodsType" assignTo="#{inventoryBillAllHome.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{inventoryBillAllHome.storageRoomId}"/>
+		<a:actionparam name="tableNo" assignTo="#{inventoryBillAllHome.tableNo}"/>
+		<a:actionparam name="goodsInfoCode" assignTo="#{inventoryBillAllHome.goodsInfoCode}"/>
+	</a:jsFunction>
+	<a:jsFunction name="pageFind" action="#{inventoryBillAllHome.initGoodsList()}"  reRender="goodsModel" >
+		<a:actionparam name="goodsType" assignTo="#{inventoryBillAllHome.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{inventoryBillAllHome.storageRoomId}"/>
+		<a:actionparam name="searchStr" assignTo="#{inventoryBillAllHome.searchStr}"/>
+		<a:actionparam name="pageNum" assignTo="#{inventoryBillAllHome.pageNum}"/>
+		<a:actionparam name="queryType" assignTo="#{inventoryBillAllHome.queryType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="initStorageRoom" action="#{inventoryBillAllHome.initStorageRoom()}"   oncomplete="goodsInit()" reRender="storageRoomPanel">
+		<a:actionparam name="goodsType" assignTo="#{inventoryBillAllHome.goodsType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="pageEcho" action="#{inventoryBillAllHome.pageEcho()}"  data="#{inventoryBillAllHome.innerGoodsTable}"  oncomplete="initGoodsBatch(data)"  reRender="condition,conditionOperator,conditionComment">
+		<a:actionparam name="goodsType" assignTo="#{inventoryBillAllHome.goodsType}"/>
+		<a:actionparam name="storageRoomId" assignTo="#{inventoryBillAllHome.storageRoomId}"/>
+		<a:actionparam name="inventoryDate" assignTo="#{inventoryBillAllHome.inventoryDate}"/>
+		<a:actionparam name="operatorId" assignTo="#{inventoryBillAllHome.operatorId}"/>
+		<a:actionparam name="comments" assignTo="#{inventoryBillAllHome.comments}"/>
+		<a:actionparam name="jsonListOld" assignTo="#{inventoryBillAllHome.jsonListOld}"/>
+		<a:actionparam name="trHeadHtml" assignTo="#{inventoryBillAllHome.trHeadHtml}"/>
+	</a:jsFunction>
+	<a:jsFunction name="inventoryMemory" action="#{inventoryBillAllHome.inventoryMemory()}" data="#{inventoryBillAllHome.memoryInventory}" reRender="condition,conditionOperator,conditionComment" oncomplete="stockEchoComplete(data)">
+	</a:jsFunction>
+	<a:jsFunction name="initBillList" action="#{inventoryBillAllHome.initBillList()}"  reRender="goodsListPanel,condition"  oncomplete="clearComplete()">
+	</a:jsFunction>
+</a:form>
+
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryFile.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/stock/InventoryBillAll.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+<script type="text/javascript">
+	var stockEchoFlag = "#{sessionTake.stockEcho}";
+</script>
+</ui:define>
+</ui:composition>
+

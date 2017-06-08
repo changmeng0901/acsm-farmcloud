@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   contentType="text/html">
+   
+<html  xmlns="http://www.w3.org/1999/xhtml" lang="en" ng-app="app">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <meta http-equiv="pragma" content="no-cache"/>
+      <style>
+      body{
+      font-family:'微软雅黑';
+      font-size:12px;
+      }
+      	.showspan{
+      		display:block;
+      	}
+      	.hidespan{
+      		display:hide;
+      	}
+      	/* 编辑全景样式 */
+p{ margin:0; padding:0;}
+.borderBt04{ height:5px; overflow:hidden; border-bottom:1px solid #d4d2d3;}
+.fileBtn{ position:relative; width:68px; height:22px; text-align:center; line-height:20px; border:1px solid #418bca; box-sizing:border-box; font-size:11px; color:#418bca; cursor:pointer; overflow:hidden;}
+.fileBtn input{ position:absolute; right:0; top:0; z-index:1; width:132px; height:20px; font-size:12px; opacity:0; filter:alpha(opacity=0);}
+.fileBtn:hover,.fileBtn input:hover{ cursor:pointer;}
+.fileTip{ float:left; line-height:22px; overflow:hidden; font-size:11px; color:#bbb;}
+.fileTip.hasUrl{ color:#3e3e3e;}
+.baseWidth100 {
+    display: block;
+    width: 85px;
+    padding-right: 14px;
+    text-align: right;
+    line-height: 22px;
+    font-size: 11px;
+}
+.mr10 {
+    margin-right: 10px;
+}
+.btn-primary {
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd;
+}
+.btn {
+    display: inline-block;
+    padding: 6px 19px;
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+#redtext{
+	color:red;
+}
+      </style>
+   	</head>
+	<body>
+	<!--  #{mapFileUploadHome.load()} -->
+	<h:form id="submitFile" enctype="multipart/form-data">
+	<table width="100%" cellpadding="0" cellspacing="0" class="mt5">
+	<tr>
+                                    <td width="99" height="30"><span class="baseWidth100">图片类型</span></td>
+                                    <td width="" colspan="3">
+                                    	<input type="radio" name="fileType" id="krpanoType1" onclick="setFileType(1)" value="1"/><label for="krpanoType1">四季田景</label>
+                                    	<input type="radio" name="fileType" id="krpanoType2" onclick="setFileType(2)" value="2"/><label for="krpanoType2">普通图片</label>
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td width="" height="30"><span class="baseWidth100">上传图片</span></td>
+                                    <td colspan="" width="95">
+                                    	<div class="fileBtn" style="width:85px">选择文件<s:fileUpload id="krpano" size="40" accept="image/png,image/jpeg,image/gif" contentType="image/png,image/jpeg,image/gif" fileName="#{mapFileUploadHome.krpanoName}"
+										 data="#{mapFileUploadHome.krpanoBytes}" onchange="filechange(this)">
+			 </s:fileUpload></div>
+                                    </td>
+                                    <td width="13" colspan="">
+                                    <input type="hidden" value="#{sessionScope['krpanos'].filefold}" id="krpanoFileUrl"/>
+                                    	<p class="fileTip" id="submitFile:krpanoP"><s:span  rendered="#{sessionScope['krpanos'].filefold ne null}" styleClass="showspan"><img title="预览" src="#{request.contextPath}/asset/images/selected.png" style="width:13px;"/></s:span></p>
+                                    </td>
+                                    <td>
+                                    <h:commandButton id="submitFile" style="margin-left:8px;margin-top:1px;padding: 2px 12px;" onclick="if(!checksubmit())return false;window.parent.document.getElementById('ajaxStatus.start').onstart();window.parent.document.getElementById('fileTips').style.display='block';" value="上传" action="#{mapFileUploadHome.addKrpanoFile}" class="btn btn-primary mr10"/>
+                                    </td>
+                                </tr>
+                               <tr>
+                                    <td height="30" colspan="4"><span id="redtext">
+                                    </span></td>
+                                </tr>
+                            </table>
+	
+					</h:form>		
+<script type="text/javascript">
+//<![CDATA[
+function filechange(obj){
+	if(obj.value==""){
+		
+	}else{
+		document.getElementById(obj.id+"P").innerHTML = "<img src='#{request.contextPath}/asset/images/isok.png' style='width:13px;height:13px' title='已选择文件'/>";
+	}
+}
+
+
+function suffix(file_name){
+    var result =/\.[^\.]+/.exec(file_name);
+    return result;
+}
+
+function checksubmit(){
+	var obj = document.getElementById("submitFile:krpanoP");
+	if(obj.innerHTML == ""){
+		alert("请选择图片!");
+		return false;
+	}
+	
+	var file = document.getElementById("submitFile:krpano");
+	if(file.value==""){
+		alert("请选择图片!");
+		return false;
+	}
+	if(document.getElementById("krpanoType1").checked){
+		window.parent.document.getElementById("fileTips").innerHTML = "正在转换四季田景，请耐心等待！";
+		if(!file.value.match( /.jpg/i ) ){ 
+			alert("图片格式错误!");
+			return false;
+		}
+	}else if(document.getElementById("krpanoType2").checked){
+		window.parent.document.getElementById("fileTips").innerHTML = "图片正在上传，请耐心等待！";
+		if(!file.value.match( /.jpg|.jpeg|.gif|.png|.bmp/i ) ){ 
+			alert("图片格式错误!");
+			return false;
+		}
+	}else{
+		alert("请选择图片类型!");
+		return false;
+	}
+	
+	return true;
+}
+
+var krpanoStr = "#{mapFileUploadHome.krpanoStr}";
+
+if(krpanoStr != ""){
+	window.parent.alert(krpanoStr);
+}
+
+var fileId = "#{sessionScope['krpanos'].id}";
+var fileName = "#{sessionScope['krpanos'].fileName}";
+var fileWidth = "#{sessionScope['krpanos'].fileWidth}";
+var fileHeight = "#{sessionScope['krpanos'].fileHeight}";
+var fileSize = "#{sessionScope['krpanos'].fileSizeStr}";
+var fileSuffix = "#{sessionScope['krpanos'].fileSuffix}";
+var fileTime = "#{sessionScope['krpanos'].fileTime != null ? stringUtil.showTime2(sessionScope['krpanos'].fileTime) :''}";
+var fileType = "#{sessionScope['krpanos'].fileType}";
+var fileX = "#{sessionScope['krpanos'].coordinateX}";
+var fileY = "#{sessionScope['krpanos'].coordinateY}";
+
+
+window.parent.document.getElementById("krpano_file_name").value = fileName;
+window.parent.document.getElementById("krpano_file_name").setAttribute("title", fileName);
+window.parent.document.getElementById("krpano_file_suffix").value = fileSuffix;
+window.parent.document.getElementById("krpano_file_size").value = fileSize;
+if(fileWidth!="" && fileHeight!="")
+	window.parent.document.getElementById("krpano_file_width_height").value = fileWidth+"x"+fileHeight + " 像素";
+else
+	window.parent.document.getElementById("krpano_file_width_height").value = "";
+	
+if(fileId == "" || fileId != window.parent.document.getElementById("krpano_id").value){
+	if(fileX != ""){
+		window.parent.document.getElementById("krpano_coordinateX").value = fileX;
+		fileX = parseFloat(fileX).toFixed(2);
+		//°54'
+		var fileXs = fileX.split(".");
+		fileX = fileXs[0] + "°" + fileXs[1] + "'";
+		window.parent.document.getElementById("krpano_coordinateX_name").value = fileX;
+	}else{
+		window.parent.document.getElementById("krpano_coordinateX").value = "";
+		window.parent.document.getElementById("krpano_coordinateX_name").value = "";
+	}
+
+	if(fileY != ""){
+		window.parent.document.getElementById("krpano_coordinateY").value = fileY;
+		fileY = parseFloat(fileY).toFixed(2);
+		//°54'
+		var fileYs = fileY.split(".");
+		fileY = fileYs[0] + "°" + fileYs[1] + "'";
+		window.parent.document.getElementById("krpano_coordinateY_name").value = fileY;
+	}else{
+		window.parent.document.getElementById("krpano_coordinateY").value = "";
+		window.parent.document.getElementById("krpano_coordinateY_name").value = fileY;
+	}
+	//if(fileX != "" && fileY != ""){
+	if(fileName != ""){
+		window.parent.krpano_second();
+	}
+}
+
+
+window.parent.document.getElementById("krpano_file_type").value = fileType;
+window.parent.document.getElementById("krpano_file_time").value = fileTime;
+
+function setFileType (type){
+	if(type == 1){
+		document.getElementById("krpanoType1").checked = true;
+		document.getElementById("redtext").innerHTML = "*图像大小：宽必须为高的二倍，例如：360X180px<br/>*支持格式：jpg<br/>*图片大小：限定小于10M";
+	}else if(type == 2){
+		document.getElementById("krpanoType2").checked = true;
+		document.getElementById("redtext").innerHTML = "*支持格式：.jpg .jpeg .gif .png .bmp<br/>*图片大小：限定小于2M";
+	}
+}
+
+if(fileType == "" || fileType == "1"){
+	setFileType(1);
+}else if(fileType == 2){
+	setFileType(2);
+}
+
+setTimeout(function(){
+	window.parent.document.getElementById('ajaxStatus.stop').onstop();
+	window.parent.document.getElementById('fileTips').style.display='none';
+},100);
+
+//]]>
+</script>
+	</body>
+</html>
+</f:view>

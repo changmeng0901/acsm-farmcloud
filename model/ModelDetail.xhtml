@@ -1,0 +1,885 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_ui_new.xhtml">
+	<ui:define name="body">
+	<link href="#{request.contextPath}/asset/css/bootstrap-select.min.css" rel="stylesheet" />
+	<link href="#{request.contextPath}/asset/css/model/ModelDetail.css" rel="stylesheet" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/bootstrap/bootstrap-select.min.css" />
+	<style>
+	.fieldPlant_wap{display:none;}
+	.fieldPlant_wap.active{display:block;}
+	.fieldPlant_after{ margin:0;padding-bottom:30px;}
+	.fieldPlant_before{ margin:0;}
+	
+	.farming_nodate{ position: relative; min-height:294px; margin-bottom: 20px;}
+	.warning_noData{ position:absolute; left:50%; top:50%; width:350px; min-height:82px; margin-left:-175px; margin-top:-41px; text-align:center;}
+	.warning_noData .ico{ display:block; margin-bottom:20px; text-align:center;}
+	.warning_noData em { display:block; color:#333; font-family:"微软雅黑"; font-weight:bold; font-size:18px; font-style:normal;}
+	.warning_noData p { color:#5c5c5c; font-family:"微软雅黑"; font-size:14px; line-height:26px; margin-top:24px;}
+	body{height:auto;}
+	
+	.Plant_classone{height:50px;padding: 10px 30px; background:url(#{request.contextPath}/asset/images/farming/farmingPushBg02.jpg) no-repeat 10px -2px; font-size:20px; color:#72c958;}
+	.Plant_classone p{line-height:32px; margin-top:-16px;font-weight:bold;}	
+	.Plant_classtwo{ height:33px; line-height:32px; padding:0 30px 36px; background:url(../images/farmingPushBg03.jpg) 8px 0 no-repeat; font-size:16px;font-weight:bold; color:#abc6f5;}
+    .Plant_classtwo img{ margin-top:10px; vertical-align:top;}
+   .closed22{width: 29px; height: 29px; position: absolute; z-index: 5; right: 0; top: 0; background: url(#{request.contextPath}/asset/images/purchase/close.png); display: none;}
+    /* 背景小图标 */
+    .r_t_l  .nav3 {
+	    background: url("/asset/images/model/xiaotubiao.png") 0 4px no-repeat;
+	    font-size: 16px;
+		color: #666666;
+		height: 34px;
+		padding-left: 30px;
+		margin-bottom: 8px;
+	}
+	/* 背景小图标 */
+	.right_c   .icon{
+	    display: inline-block;
+	    float: left;
+	    width: 54px;
+	    height: 18px;
+	    line-height: 18px;
+	    margin: 8px 10px 0 0;
+	    padding-left: 22px;
+	    background: url("/asset/images/model/icos_102.png") no-repeat 0 -2px;
+	    font-size: 12px;
+	    color: #5cb85c;}
+	    
+	.production_list li{position:relative;}
+	.production_list .p_btns{position:absolute;right:0;top:0;visibility: hidden;border: 1px solid #206fbc;
+	background: #4096ee; padding: 4px 8px;}
+	.production_list .btn_edit{float:left; background:url("/asset/images/bj_12.jpg") no-repeat center center;
+	width:16px;height:16px;}
+	.production_list .btn_delete{float:left; background:url("/asset/images/dele_15.jpg") no-repeat center center;
+	width:16px;height:16px;}
+	.production_list .b_line{float:left;border-left:1px solid #6daff3;width:2px;height:16px;margin:0 6px 0 8px;overflow:hidden;}
+	.production_list li:hover .p_btns{visibility: visible;}
+	.production_list .btn_edit:hover,
+	.production_list .btn_delete:hover{cursor: pointer;}
+	.rich-panel-body{padding:0;}
+	.modelTable td{padding-bottom: 15px;}
+	#namemesg{padding-left:10px;line-height:34px;color:#f00;}
+	</style>
+		             <!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="mesgModel" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="ModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="modelMesg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<!-- #{modelInfoTwoHome.childBreed()} -->
+ <td valign="top">
+            <div class="right_c" style="min-height:30px; padding-bottom:20px;">
+            	<!-- 面包屑导航 开始 -->
+                <div class="r_title clear" style="margin-top:0; padding-top:20px;">
+                    <div class="r_t_l fl"><a href="#{request.contextPath}/model/ModelInfoOne.seam" >模型库</a><span style="padding:0 5px;">&gt;</span><font size="3">#{modelInfoTwoHome.instance.name}</font></div>
+                </div>
+                <!-- 面包屑导航 结束 -->
+                <!-- 模型库详情内容 开始 -->
+                <div class="modelDetail-wap clear">
+                	<div class="modelDetail-lt">
+                    	<div class="pic">
+                    		<s:fragment rendered="#{not empty modelInfoTwoHome.instance.plantImgSquare}"><img class="img" src="#{modelInfoTwoHome.instance.plantImgSquare}" /></s:fragment>
+                        	<s:fragment rendered="#{empty modelInfoTwoHome.instance.plantImgSquare}"><img class="img" src="#{requestContext}/asset/images/851.jpg" /></s:fragment>
+                        </div>
+                        <div class="side-catalog" style="display:none;">
+                        	<div class="catalog-scroller">
+                            	<i class="up-cirle"></i>
+                                <i class="down-cirle"></i>
+                                <dl class="catalog-list">
+                                	<dt class="catalog-ttl"><a class="txt jibenff" href="#jibenff"><em class="point cur"></em>基本信息</a></dt>
+                                	<dt class="catalog-ttl"><a class="txt shengyq" href="#shengyq"><em class="point"></em>生育期</a></dt>
+                                    <dt class="catalog-ttl"><a class="txt huanjxq" href="#huanjxq"><em class="point"></em>环境需求</a></dt>
+                                    <dt class="catalog-ttl"><a class="txt bingchhxx" href="#bingchhxx"><em class="point"></em>病虫害信息</a></dt>
+                                    <dt class="catalog-ttl"><a class="txt chanchup" href="#chanchup"><em class="point"></em>产出品</a></dt>
+                                    <dt class="catalog-ttl"><a class="txt zuowupz" href="#zuowupz"><em class="point"></em>作物品种</a></dt>
+                                </dl>
+                            </div>
+                            <div class="bottom-wrap">
+                            	<a class="toggle-btn" href="javascript:void(0);"></a>
+                                <a class="gotop-btn" href="javascript:void(0);"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modelDetail-rt">
+                    	<!-- 右侧内容 开始 --> 
+                        <s:link propagation="none" view="/model/MenuInfoEdit.xhtml" id="obj6" styleClass="edit-menu">
+                       					<f:param name="typeAorP" value="1"/>
+            		                    <f:param name="plantPlantId" value="#{modelInfoTwoHome.instance.plantId}"/>编辑菜谱
+			                       </s:link>
+                        <h2 class="cropName"><span>#{modelInfoTwoHome.instance.name}</span>
+	                        <i>
+	                        	<h:panelGroup rendered="#{modelInfoTwoHome.instance.englishName !=''}">
+	                        		【#{modelInfoTwoHome.instance.englishName}】
+	                        	</h:panelGroup>
+	                        </i>
+                        </h2>
+                        
+                        <!-- 基本信息 -->
+                        <div class="titleH3">
+                        	<h3 class="jibenff" id="jibenff">基本信息</h3>
+                            <div class="fr">
+                            <ui:fragment rendered="#{modelInfoTwoHome.instance.enterpriseId !=null and modelInfoTwoHome.instance.enterpriseId.id !=1}">
+                            	<s:link propagation="none" view="/model/ModelDetailEdit.xhtml" styleClass="edit-btn" style="margin-right:0;" >
+			                	         编辑
+			                       </s:link>
+			                       </ui:fragment>
+                            </div>
+                        </div>
+                        <table class="jbxx-table" width="100%" cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td width="80" height="39">学名</td>
+                                <td width="40%">#{modelInfoTwoHome.instance.scientificName}</td>
+                                <td width="100">别名</td>
+                                <td>#{modelInfoTwoHome.instance.byname}</td>
+                            </tr>
+                            <tr>
+                            	<td height="39">拉丁文名</td>
+                                <td>#{modelInfoTwoHome.instance.formalName}</td>
+                                <td>英文名</td>
+                                <td>#{modelInfoTwoHome.instance.englishName}</td>
+                            </tr>
+                            <tr>
+                            	<td height="39">科</td>
+                                <td>#{modelInfoTwoHome.instance.faculty}</td>
+                                <td>属</td>
+                                <td>#{modelInfoTwoHome.instance.genus}</td>
+                            </tr>
+                        </table>
+                        
+                        <!-- 生育期 -->
+                        <s:fragment rendered="#{not empty modelInfoTwoHome.plantPeriodList}">
+                        <div class="titleH3 clear">
+                        	<h3 class="shengyq" id="shengyq">生育期</h3>
+                        </div>
+                        <div class="growthPeriod-wap">
+                        	<div class="period-progress-block">
+                        		<ul class="period-progress-bar clear">
+                        			<a4j:repeat value="#{modelInfoTwoHome.plantPeriodList}" var="_ppi" rowKeyVar="_index">
+	                        			<li class="pitem bg_#{_index mod 10} #{(_index mod 2) eq 0 ?'':'fdown'}" style="width:#{_ppi.days/modelInfoTwoHome.totalDays*100}%">
+	                        				<div class="period-cont">
+	                        					<s:fragment rendered="#{empty _ppi.imgUrl}">
+	                        						<img class="pimg" src="#{request.contextPath}/asset/images/model/grow_default.png"></img>
+	                        					</s:fragment>	
+	                        					<s:fragment rendered="#{not empty _ppi.imgUrl}">
+	                        						<img class="pimg" src="#{_ppi.imgUrl}"></img>
+	                        					</s:fragment>	
+	                        					<p class="txt-cycle ellipsis">#{_ppi.name}</p>
+	                        					<p class="txt-date ellipsis">#{_ppi.days}天</p>
+	                        					<p class="txt-temperature" style="display:#{empty _ppi.accumulateTemp ?'none':''}">积温：<span title="#{_ppi.accumulateTemp}°C">#{_ppi.accumulateTemp}°C</span></p>
+	                        				</div>
+	                        			</li>
+                        			</a4j:repeat>
+                        		</ul>
+                        	</div>
+                        </div>
+                        </s:fragment>
+                        <!-- 环境需求 -->
+                        <div class="titleH3 clear">
+                        	<h3 class="huanjxq" id="huanjxq">环境需求</h3>
+                        </div>
+                        <div class="growthEnvir-wap">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="tdEqual">
+                                     <s:link propagation="none" view="/model/GrowModelEdit.xhtml" styleClass="envir-wap">
+							      		<f:param name="plantIdHidden" value="#{modelInfoTwoHome.instance.plantId}"/>
+							      		<f:param name="floristicIdHidden" value="#{modelInfoTwoHome.instance.floristicsId.floristicsId}"/>
+							      		<f:param name="breedIdHidden" value=""/>
+							      		<f:param name="reflag" value="0"/>
+                                    	<i class="editBtn"></i>
+                                        <span class="envirPic"><img src="#{request.contextPath}/asset/images/model/ico_airw.png" /></span>
+                                        <span class="envirDepre">空气温度</span>
+                                        <span class="envirValue">
+                                        	<b>#{modelInfoTwoHome.geList[8].suitLower}<i>#{modelInfoTwoHome.geList[8].suitLower==null ?'':'℃'}#{modelInfoTwoHome.geList[8].suitUpper==null &amp;&amp; modelInfoTwoHome.geList[8].suitLower ==null?'--':'~'}</i></b><b>#{modelInfoTwoHome.geList[8].suitUpper}<i>#{modelInfoTwoHome.geList[8].suitUpper==null ?'':'℃'}</i></b>
+                                        </span>
+                                    </s:link>
+                                    </td>
+                                    <td class="tdEqual">
+                                     <s:link propagation="none" view="/model/GrowModelEdit.xhtml" styleClass="envir-wap">
+							      		<f:param name="plantIdHidden" value="#{modelInfoTwoHome.instance.plantId}"/>
+							      		<f:param name="floristicIdHidden" value="#{modelInfoTwoHome.instance.floristicsId.floristicsId}"/>
+							      		<f:param name="breedIdHidden" value=""/>
+							      		<f:param name="reflag" value="0"/>
+							      		
+				                	    <i class="editBtn"></i>
+                                        <span class="envirPic"><img src="#{request.contextPath}/asset/images/model/ico_airs.png" /></span>
+                                        <span class="envirDepre">空气湿度</span>
+                                        <span class="envirValue">
+                                        	<b>#{modelInfoTwoHome.geList[7].suitLower}<i>#{modelInfoTwoHome.geList[7].suitLower==null ?'':'%'}#{modelInfoTwoHome.geList[7].suitUpper==null &amp;&amp; modelInfoTwoHome.geList[7].suitLower ==null?'--':'~'}</i></b><b>#{modelInfoTwoHome.geList[7].suitUpper}<i>#{modelInfoTwoHome.geList[7].suitUpper==null ?'':'%'}</i></b>
+                                        </span>
+				                      </s:link>
+                                    </td>
+                                    <td class="tdEqual">
+                                     <s:link propagation="none" view="/model/GrowModelEdit.xhtml" styleClass="envir-wap">
+							      		<f:param name="plantIdHidden" value="#{modelInfoTwoHome.instance.plantId}"/>
+							      		<f:param name="floristicIdHidden" value="#{modelInfoTwoHome.instance.floristicsId.floristicsId}"/>
+							      		<f:param name="breedIdHidden" value=""/>
+							      		<f:param name="reflag" value="0"/>
+                                    	<i class="editBtn"></i>
+                                        <span class="envirPic"><img src="#{request.contextPath}/asset/images/model/ico_soilw.png" /></span>
+                                        <span class="envirDepre">土壤温度</span>
+                                        <span class="envirValue">
+                                        	<b>#{modelInfoTwoHome.geList[6].suitLower}<i>#{modelInfoTwoHome.geList[6].suitLower==null ?'':'℃'}#{modelInfoTwoHome.geList[6].suitUpper==null &amp;&amp; modelInfoTwoHome.geList[6].suitLower ==null?'--':'~'}</i></b><b>#{modelInfoTwoHome.geList[6].suitUpper}<i>#{modelInfoTwoHome.geList[6].suitUpper==null ?'':'℃'}</i></b>
+                                        </span>
+                                    </s:link>
+                                    </td>
+                                    <td class="tdEqual">
+                                     <s:link propagation="none" view="/model/GrowModelEdit.xhtml" styleClass="envir-wap">
+							      		<f:param name="plantIdHidden" value="#{modelInfoTwoHome.instance.plantId}"/>
+							      		<f:param name="floristicIdHidden" value="#{modelInfoTwoHome.instance.floristicsId.floristicsId}"/>
+							      		<f:param name="breedIdHidden" value=""/>
+							      		<f:param name="reflag" value="0"/>
+                                    	<i class="editBtn"></i>
+                                        <span class="envirPic"><img src="#{request.contextPath}/asset/images/model/ico_soils.png" /></span>
+                                        <span class="envirDepre">土壤湿度</span>
+                                        <span class="envirValue">
+                                        	<b>#{modelInfoTwoHome.geList[5].suitLower}<i>#{modelInfoTwoHome.geList[5].suitLower==null ?'':'%'}#{modelInfoTwoHome.geList[5].suitUpper==null &amp;&amp; modelInfoTwoHome.geList[5].suitLower ==null?'--':'~'}</i></b><b>#{modelInfoTwoHome.geList[5].suitUpper}<i>#{modelInfoTwoHome.geList[5].suitUpper==null ?'':'%'}</i></b>
+                                        </span>
+                                    </s:link>
+                                    </td>
+                                    <td class="tdEqual">
+                                      <s:link propagation="none" view="/model/GrowModelEdit.xhtml" styleClass="envir-wap">
+							      		<f:param name="plantIdHidden" value="#{modelInfoTwoHome.instance.plantId}"/>
+							      		<f:param name="floristicIdHidden" value="#{modelInfoTwoHome.instance.floristicsId.floristicsId}"/>
+							      		<f:param name="breedIdHidden" value=""/>
+							      		<f:param name="reflag" value="0"/>
+                                    	<i class="editBtn"></i>
+                                        <span class="envirPic"><img src="#{request.contextPath}/asset/images/model/ico_sun1.png" /></span>
+                                        <span class="envirDepre">光照</span>
+                                        <span class="envirValue">
+                                            <b>#{modelInfoTwoHome.geList[3].suitLower}<i>#{modelInfoTwoHome.geList[3].suitLower==null ?'':'LUX'}#{modelInfoTwoHome.geList[3].suitUpper==null &amp;&amp; modelInfoTwoHome.geList[3].suitLower ==null?'--':'~'}</i></b><b>#{modelInfoTwoHome.geList[3].suitUpper}<i>#{modelInfoTwoHome.geList[3].suitUpper==null ?'':'LUX'}</i></b>
+                                        </span>
+                                    </s:link>
+                                    </td>
+                                    <td class="tdEqual" style="background:none;">
+                                    <s:link propagation="none" view="/model/MatureEdit.xhtml" styleClass="envir-wap">
+							      		<f:param name="plantPlantId" value="#{modelInfoTwoHome.instance.plantId}"/>
+				                	    <i class="editBtn"></i>
+                                        <span class="envirPic"><img src="#{request.contextPath}/asset/images/model/ico_ripe.png" /></span>
+                                        <span class="envirDepre">成熟度</span>
+                                        <span class="envirValue">#{modelInfoTwoHome.maturityInfo.mature==null?'--':modelInfoTwoHome.maturityInfo.mature}</span>
+			                        </s:link>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- 病虫害信息 -->
+                        <div class="titleH3 clear">
+                        	<h3 class="bingchhxx" id="bingchhxx">病虫害信息</h3>
+                            <div class="fr">
+                            	<s:link propagation="none" view="/model/HarmfulModelEdit.xhtml" styleClass="add-btn">
+                            	<f:param name="plantPlantId" value="#{modelInfoTwoHome.instance.plantId}"/>
+                            	<f:param name="myId"/>
+			                	    添加
+			                       </s:link>
+                            	<s:link propagation="none" view="/model/ModelDetailMore.xhtml" styleClass="more">
+                                   	<f:param name="plantId" value="#{modelInfoTwoHome.instance.plantId}"/>
+                                   	<f:param name="plantPlantId" value="#{modelInfoTwoHome.instance.plantId}"/>
+                          			<f:param name="floristicsId" value="#{modelInfoTwoHome.instance.floristicsId.floristicsId}"/>
+                          			<f:param name="plantName" value="#{modelInfoTwoHome.instance.name}"/>
+                          			更多
+			                    </s:link>
+                            </div>
+                        </div>
+                        <div class="diseaseXx-con" style="padding-left:30px;">
+                        <h:panelGroup id="hurId">
+                        	<table width="100%" cellpadding="0" cellspacing="0">
+                            	<tr>
+                                	<th width="15%" height="58" style="text-align:left;">病虫害名称</th>
+                                    <th width="14%">病虫害类型</th>
+                                    <th width="14%">最高温度</th>
+                                    <th width="14%">最低温度</th>
+                                    <th width="14%">最高湿度</th>
+                                    <th width="14%">最低湿度</th>
+                                    <th width="15%">操作</th>
+                                </tr>
+                                <a4j:repeat value="#{modelInfoTwoHome.harList}" var="_sc" rowKeyVar="_index">
+	                                 <tr>
+	                                	<td class="lineBg" height="68">
+	                                    	<span class="txtCor1 fl pr30">#{_sc.modelName}</span>
+	                                    </td>
+	                                      <td class="lineBg">
+	                                    	<p class="diseaseTxt2">
+	                                    		<s:fragment rendered="#{_sc.type==1}">病害</s:fragment>
+	                                    		<s:fragment rendered="#{_sc.type==2}">虫害</s:fragment>
+	                                    		<s:fragment rendered="#{_sc.type==3}">草害</s:fragment>	                                    	
+	                                    	</p>
+	                                    </td>
+	                                    <td class="lineBg">
+	                                        <span class="diseaseTxt2 txtCor2">#{_sc.tempUpper==null?'-':_sc.tempUpper}</span>
+	                                    </td>
+	                                    <td class="lineBg">
+	                                    	<span class="diseaseTxt2 txtCor3">#{_sc.tempLower==null?'-':_sc.tempLower}</span>
+	                                    </td>
+	                                     <td class="lineBg">
+	                                        <span class="diseaseTxt2 txtCor4">#{_sc.humiUpper==null?'-':_sc.humiUpper}</span>
+	                                    </td>
+	                                    <td class="lineBg">
+	                                    	<span class="diseaseTxt2 txtCor5">#{_sc.humiLower==null?'-':_sc.humiLower}</span>
+	                                    </td>
+	                                    
+	                                    <td>
+	                                    	<ui:fragment rendered="#{_sc.enterpriseInfoId !=1}">
+		                                    	<s:link propagation="none" view="/model/HarmfulModelEdit.xhtml" styleClass="edit-btn">
+			                                    	<f:param name="plantPlantId" value="#{modelInfoTwoHome.instance.plantId}"/>
+		                            				<f:param name="myId" value="#{_sc.harmfulModelId}"/>
+							                    </s:link>
+							                </ui:fragment>
+	                                    	<!-- <a class="view-btn" href="#"></a> -->
+	                                    	<s:link propagation="none" view="/model/HarmfulModel.xhtml" styleClass="view-btn">
+			                                   <f:param name="plantPlantId" value="#{modelInfoTwoHome.instance.plantId}"/>
+		                            			<f:param name="myId" value="#{_sc.harmfulModelId}"/>
+		                            			<f:param name="typ" value="1"/>
+						                    </s:link>
+	                                    	<ui:fragment rendered="#{_sc.enterpriseInfoId !=1}">
+	                                    		<a class="dele-btn" href="javascript:void(0);" onclick="delHarmfulModel('#{_sc.harmfulModelId}');"></a>
+	                                    	</ui:fragment>
+	                                    </td>
+	                                </tr>
+                                </a4j:repeat>
+                            </table>
+                            </h:panelGroup>
+                        </div>                       
+                        <!-- 产出品 -->
+				        <div class="titleH3">
+                        	<h3 class="chanchup" id="chanchup">产出品</h3>
+                            <div class="fr">
+                            	<a class="add-btn" onclick="showModel()" href="javascript:;">添加</a>
+                            </div>
+                        </div>
+                        <rich:panel id="outputsPanel" style="margin:0; border:none; padding: 0;">
+				         <div class="cropType-con clear">
+				         	<ul class="production_list">
+				         	 <a4j:repeat value="#{modelInfoTwoHome.outputsList}" var="_output" rowKeyVar="_index">
+				         		 <li class="fl" style="margin-left:10px;">
+				         		 <s:fragment rendered="#{_output[3] ne 1}">
+				         		 	<div class="p_btns">
+				         		 		<span class="btn_edit" onclick="editCrop(this)" cropid="#{_output[2]}"></span>
+				         		 		<span class="b_line"></span>
+				         		 		<span class="btn_delete" cropid="#{_output[2]}" onclick="delCheck(this)"></span>
+				         		 	</div>
+				         		 </s:fragment>
+				         			<span class="ico-standard" style="width:124px; height:138px;">
+				         				<img src="#{_output[1]}" style="width:124px; height:138px;" />
+				         				<span class="closed22" onclick="delProductImg(#{_index})"></span>
+				         			</span>
+				         		 	<p style="text-align:center;width: 120px;" >#{_output[0]}</p>
+				         		 </li>
+				         	</a4j:repeat>
+				         	</ul>
+				         </div>
+				         </rich:panel>
+                        <!-- 右侧内容 结束 -->  
+                        <!-- 作物品种 -->
+                        <div class="titleH3">
+                        	<h3 class="zuowupz" id="zuowupz">作物品种</h3>
+                            <div class="fr">
+                            	<a class="add-btn" href="#{request.contextPath}/storage/BreedTowEdit.seam?plantPlantId=#{modelInfoTwoHome.plantPlantId}">添加</a>
+                            </div>
+                        </div>
+                        <div class="cropType-con clear">
+                        	<ul>
+                                <a4j:repeat value="#{modelInfoTwoHome.cbList}" rendered="#{not empty modelInfoTwoHome.cbList}" var="_modelInfo" rowKeyVar="_index">
+                                
+                                <li class="items" id="deleted#{_modelInfo.breedId}">
+                                	<ui:fragment rendered="#{_modelInfo.enterpriseInfo.id==1 || _modelInfo.enterpriseInfo==null}">
+                                			<span class="ico-standard"><img src="#{request.contextPath}/asset/images/model/icos_public.png" /></span>
+                                			<div class="pos-ab-icos">
+	                                    	<a class="edit-bn"  onclick="editntroduce('#{_modelInfo.breedId}')" style="cursor : pointer;"></a>
+	                                    </div>
+                                	</ui:fragment>
+                                	<ui:fragment rendered="#{_modelInfo.enterpriseInfo.id !=1 &amp;&amp; _modelInfo.enterpriseInfo!=null}">
+	                                	<span class="ico-standard"><img src="#{request.contextPath}/asset/images/model/icos_ownership.png" /></span>
+	                                    <div class="pos-ab-icos">
+	                                    	<a class="edit-bn" href="#{request.contextPath}/storage/BreedTowEdit.seam?plantPlantId=#{modelInfoTwoHome.plantPlantId}&amp;breedBreedId=#{_modelInfo.breedId}"></a>
+	                                        <span class="line-bn"></span>
+	                                        <a class="delete-bn" style="cursor: pointer" onclick="del(#{_modelInfo.breedId})"></a>
+	                                    </div>
+                                    </ui:fragment>
+                                	<table width="100%" height="100%" cellpadding="0" cellspacing="0">
+                                    	<tr>
+                                        	<tr>
+                                            	<td>
+                                    <a href="#{request.contextPath}/model/ModelInfoTwo.seam?plantPlantId=#{modelInfoTwoHome.plantPlantId}&amp;breedId=#{_modelInfo.breedId}" style="cursor: pointer; ">
+                                                	<p>#{_modelInfo.name}</p>
+                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tr>
+                                    </table>
+                                </li>
+                                </a4j:repeat>
+                            </ul>
+                        </div>
+                        
+                        <!-- 右侧内容 结束 -->  
+                    </div>
+                </div>
+                <!-- 模型库详情内容 结束 -->
+                <div class="mes_mailBtn" style="margin:50px 0 100px;">
+                    <a class="btn btn-default" href="ModelInfoOne.seam">返回</a>
+                </div>
+            </div>
+            
+            
+            <h:panelGroup id="introduceId">
+            <div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" data-toggle="modal" id="edit_introduce" class="modal fade in">
+                <div style="position:fixed;left:50%; top:50%; margin-left:-200px;margin-top:-100px;" class="modal-dialog">
+                <a4j:form id="edit">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <button data-dismiss="modal" class="close" type="button" onclick="jquery('#edit_introduce').modal('hide');"> </button>
+                        <h4 id="myModalLabel" class="modal-title font14">编辑产品介绍</h4>
+                        </div>
+                        <div class="modal-body">
+                        	<table class="farmingMageTab_jl" width="100%" cellpadding="0" cellspacing="0">
+                        		<tr>
+                        			<td><h:inputTextarea class="form-control" id="introduce" style="width:280px; resize:none;" rows="3" value="#{modelInfoTwoHome.introduce}"></h:inputTextarea>
+			                        </td>
+			                        <h:inputHidden value="#{modelInfoTwoHome.breedbreedId}" id="breedbreedId"/>
+                        		</tr>
+                        	</table>
+                        </div>
+                        <div class="modal-footer">
+                        <a4j:commandButton value="提交" onclick="if(!saveIntroduce())return false" action="#{modelInfoTwoHome.editBreedIntroduce()}" oncomplete="jquery('#edit_introduce').modal('hide')" styleClass="btn btn-success"/>
+                        <input class="btn btn-default" type="button"  onclick="jquery('#edit_introduce').modal('hide')" value="返回"/>
+                        </div>
+                    </div>
+                </a4j:form>
+                </div>
+            </div>
+               
+             </h:panelGroup>
+             
+            
+             <!-- Modal产出品添加 -->
+            <div class="modal fade" id="addcrop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="width:644px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"> </button>
+                        <h4 class="modal-title font14" id="myModalLabel">添加产出品</h4>
+                        </div>
+                         <h:form id="cropForm"  enctype="multipart/form-data">
+                        <div class="modal-body" style="padding-bottom:20px; padding-left:154px;">
+                            <table class="modelTable">
+                                <tr>
+                                    <td width="80" align="right" style="padding-right:15px;">部位</td>
+                                    <td style="padding-bottom:15px;">
+                                        <select class="selectpicker"  multiple="multiple" title="请选择" id="cropSite" >
+	   										<a4j:repeat value="#{modelInfoTwoHome.getCropSiteList()}" var="_crop"  >
+	   											<option value="#{_crop[0]}">#{_crop[1]}</option>
+	   										</a4j:repeat>
+			   							</select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="80" align="right" style="padding-right:15px;">产出品名称 </td>
+                                    <td style="padding-bottom:15px;">
+                                    	 <rich:panel id="editCropPanel" style="float:left;margin:0;padding:0; border:none; padding: 0;">
+                                        	<h:inputText value="#{modelInfoTwoHome.cropName}" styleClass="form-control fl" style="width:220px;" id="cropName" maxlength="20" onblur="checkName()"/>
+                                        </rich:panel>
+                                        <span id="namemesg"></span>
+                                        <rich:panel id="editCropOtherPanel" style="margin:0; border:none; padding: 0;">
+	                                     	<h:inputHidden value="#{modelInfoTwoHome.cropImgName}" id="imgName"/>
+	                        				<h:inputHidden value="#{modelInfoTwoHome.imgurl}" id="imgurl"/>
+	                        				<h:inputHidden value="#{modelInfoTwoHome.cropId}" id="cropId"/>
+	                        				<h:inputHidden value="#{modelInfoTwoHome.cropSite}" id="cropSite"/>
+	                        			</rich:panel>
+                                    </td>
+                                </tr>
+	                            <tr class="setContent">
+		                            <td width="80" align="right" style="padding-right:15px;">图片</td>
+		                            <td>
+		                                <div class="filing">
+		                                    <iframe id="cropimgIframe" name="cropimgIframe" src="#{request.contextPath}/model/CropEditImage.seam" style ="height:128px; width:128px;border:0;overflow:hidden;">
+					                		</iframe>
+		                                </div>
+		                               <p id="imgmesg"></p>
+		                            </td>
+	                        	</tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer" style="text-align: center;">
+                        	<a class="btn btn-primary" onclick="saveBefore()" href="javascript:;">保存</a>
+                        	<button class="btn btn-default" type="button" data-dismiss="modal">返回</button>
+                        </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        <!-- 添加模态框 结束 -->
+        
+           </td>    
+	<a4j:form>
+		<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+		<a4j:jsFunction name="delHarmful" eventsQueue="mainQueue" action="#{modelInfoTwoHome.hurDel()}" reRender="hurId">
+			<a4j:actionparam name="myId" assignTo="#{modelInfoTwoHome.myId}"/>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="delfarming" action="#{modelInfoTwoHome.delFarming}" reRender="farId" oncomplete="huidiao()">
+			<a4j:actionparam name="ddAndEnv" assignTo="#{modelInfoTwoHome.ddAndEnv}"/>
+		</a4j:jsFunction>
+	</a4j:form>	
+	<a4j:form>
+        <a4j:jsFunction name="deleteObj" action="#{modelInfoTwoHome.delete()}" data="#{modelInfoTwoHome.deid}" oncomplete="remo(data)">
+        <a4j:actionparam name="deid" assignTo="#{modelInfoTwoHome.deid}"/>
+        </a4j:jsFunction>
+    </a4j:form>
+    <a4j:form>
+        <a4j:jsFunction name="showbreedintroduce" action="#{modelInfoTwoHome.showBreedIntroduce()}" oncomplete="huiIntroduce()" reRender="introduceId">
+        <a4j:actionparam name="id" assignTo="#{modelInfoTwoHome.breedbreedId}"/>
+        </a4j:jsFunction>
+    </a4j:form>
+    <a4j:form>
+        <a4j:jsFunction name="checkCropName" action="#{modelInfoTwoHome.checkCropName()}" data="#{modelInfoTwoHome.promptMessage}" oncomplete="checkNameComplete(data)" >
+       	 	<a4j:actionparam name="cropName" assignTo="#{modelInfoTwoHome.cropName}"/>
+       	 	<a4j:actionparam name="id" assignTo="#{modelInfoTwoHome.cropId}"/>
+        </a4j:jsFunction>
+         <a4j:jsFunction name="saveBeforeCheck" action="#{modelInfoTwoHome.checkCropName()}" data="#{modelInfoTwoHome.promptMessage}" oncomplete="beforeSaveCheckComplete(data)" >
+       	 	<a4j:actionparam name="cropName" assignTo="#{modelInfoTwoHome.cropName}"/>
+       	 	<a4j:actionparam name="id" assignTo="#{modelInfoTwoHome.cropId}"/>
+        </a4j:jsFunction>
+        <a4j:jsFunction name="queryCrop" action="#{modelInfoTwoHome.queryCrop()}" reRender="editCropPanel,editCropOtherPanel"   oncomplete="editCropComplete()" >
+        	<a4j:actionparam name="cropId" assignTo="#{modelInfoTwoHome.cropId}"/>
+        </a4j:jsFunction>
+        <a4j:jsFunction name="toShowModal" action="#{modelInfoTwoHome.toShowModal()}" reRender="editCropPanel,editCropOtherPanel"   oncomplete="showModelComplete()" >
+        </a4j:jsFunction>
+        <a4j:jsFunction name="checkCropMaterial" action="#{modelInfoTwoHome.checkCropMaterial()}"  data="#{modelInfoTwoHome.jsonMesg}" oncomplete="toDelCrop(data)" >
+        	<a4j:actionparam name="cropId" assignTo="#{modelInfoTwoHome.cropId}"/>
+        </a4j:jsFunction>
+        <a4j:jsFunction name="delCrop" action="#{modelInfoTwoHome.delCrop()}" >
+        	<a4j:actionparam name="cropId" assignTo="#{modelInfoTwoHome.cropId}"/>
+        </a4j:jsFunction>
+        <a4j:jsFunction name="addCrop" action="#{modelInfoTwoHome.addCrop()}" >
+        	<a4j:actionparam name="cropId" assignTo="#{modelInfoTwoHome.cropId}"/>
+        	<a4j:actionparam name="imgurl" assignTo="#{modelInfoTwoHome.imgurl}"/>
+        	<a4j:actionparam name="cropSite" assignTo="#{modelInfoTwoHome.cropSite}"/>
+        	<a4j:actionparam name="imgName" assignTo="#{modelInfoTwoHome.cropImgName}"/>
+        	<a4j:actionparam name="cropName" assignTo="#{modelInfoTwoHome.cropName}"/>
+        </a4j:jsFunction>
+    </a4j:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/new/bootstrap-select.min.js"></script> 
+	
+
+<script type="text/javascript">
+  //<![CDATA[
+jQuery =jQuery.noConflict();
+jQuery(function(){
+	jquery('#myTab li:first').attr('class','active');
+	//jquery('#myTab li:first').find('#im').attr('style','margin-left:5px;')
+
+	jquery('#myTab li:first a').attr('href');
+	jquery(jquery('#myTab li:first a').attr('href')).attr('class','tab-pane active');
+	fnGrowth();  //环境需求计算
+	
+	jQuery('.catalog-ttl').each(function(index, elem) {  //固定侧栏目录，每一项点击事件
+        jQuery(elem).click(function(){
+			jQuery(elem).find('.point').addClass('cur');
+			jQuery(elem).siblings().find('.point').removeClass('cur');	
+		});
+    });
+	jQuery(window).scroll(function(){  //滚动条滚动事件
+		var aTtlH3 = jQuery('.titleH3');
+		var scrollT = jQuery(window).scrollTop();
+		var aItem = jQuery('.catalog-ttl');
+		var oSideWap =jQuery('.side-catalog');
+		jQuery('.titleH3').each(function(index, elem) {
+           if(aTtlH3.eq(index).offset().top<scrollT+100 && aTtlH3.eq(index+1).offset().top>scrollT+100){			
+				aItem.eq(index).find('.point').addClass('cur');
+			}else{
+				aItem.eq(index).find('.point').removeClass('cur');
+			}
+           if(scrollT>300){
+				oSideWap.show();
+			}else{
+				oSideWap.hide();
+			} 
+			if(scrollT<300){
+				aItem.eq(0).find('.point').addClass('cur');
+			} 
+		});
+	});
+	jQuery('.gotop-btn').on('click',function(){  //返回顶部
+		jQuery(window).scrollTop(0)	;
+	});
+	
+	jQuery('.toggle-btn').on('click',function(){  //切换侧栏目录状态
+		if( jQuery('.catalog-scroller').css('display') == 'none'){
+			jQuery('.catalog-scroller').css('display','block');
+		}else{
+			jQuery('.catalog-scroller').css('display','none');
+		}
+	});
+	
+	jQuery('.selectpicker').selectpicker();	   //下拉菜单控件
+});
+
+function fnGrowth(){  //环境需求计算
+	var oBodyWid = jQuery(window).width();
+	var oGrowthWid = jQuery('.growthEnvir-wap').outerWidth();  
+	var oEqualLen = jQuery('.growthEnvir-wap .tdEqual').length;
+	var oEqualWid = parseInt(oGrowthWid / oEqualLen);
+	jQuery('.growthEnvir-wap .tdEqual').css({width : oEqualWid});	
+	if( oBodyWid <1280 ){
+		jQuery('.envir-wap .envirValue').css('font-size','14px');
+		jQuery('.modelDetail-lt .pic').css({width:'180px',height:'180px'});
+		jQuery('.modelDetail-rt').css('margin-left','200px');
+	}else{
+		jQuery('.envir-wap .envirValue').css('font-size','22px');	
+		jQuery('.modelDetail-lt .pic').css({width:'196px',height:'196px'});
+		jQuery('.modelDetail-rt').css('margin-left','240px');
+	}
+};
+
+jQuery(window).resize(function(){
+	fnGrowth();	 //窗口缩放时的环境需求计算
+});
+
+function delHarmfulModel(id){
+	if(confirm('确定删除?')){
+		delHarmful(id);
+ 	}
+}
+
+function farChange(id){
+	//jquery('.tab-content .active').attr('class','fieldPlant_wap ml20 mb30');
+	jquery('#'+id).attr('class','fieldPlant_wap ml20 mb30 active');
+	jquery('#'+id).parent().find('.fieldPlant_wap').each(function(){
+		if(jquery(this).attr('id')!=id){
+			jquery(this).attr('class','fieldPlant_wap ml20 mb30');
+		}
+	})
+	jquery('#myTab li a').each(function(){
+		//jquery('#'+id).parent().attr('class','tab-pane');
+		if(jquery(this).attr('href')=="#"+jquery('#'+id).parent().attr('id')){
+			jquery(this).parent().attr('class','active');
+		}
+	})
+}
+function thisEdit(cl){
+	window.location.href=jquery('#'+cl+' .active').find('.onEdit').attr('href');
+}
+
+function thisDele(){
+	if(confirm('确定删除?')){
+		if(jquery('#farId .tab-content').find('.active .active').attr('id')==null){
+			alert("无可删除项")
+		}else{
+			delfarming(jquery('#farId .tab-content').find('.active .active').attr('id'));
+		}
+ 		return true;
+ 	}
+}
+
+function huidiao(){
+	jQuery('.selectpicker').selectpicker();	
+	jquery('#myTab li:first').attr('class','active');
+	//jquery('#myTab li:first').find('#im').attr('style','margin-left:5px;')
+
+	jquery('#myTab li:first a').attr('href');
+	jquery(jquery('#myTab li:first a').attr('href')).attr('class','tab-pane active');
+}
+
+del = function(xx){
+	if(confirm('确定删除?')){
+		deleteObj(xx);
+	}
+}
+
+function remo(id){
+	jquery("#deleted"+id).hide(1000);
+}
+
+function editntroduce(id){
+	showbreedintroduce(id);
+}
+
+function huiIntroduce(){
+	jquery("#edit_introduce").modal("show");
+}
+
+function saveIntroduce(){
+   	if(jquery('#edit\\:introduce').val().length>300){
+         	alert("产品介绍字数需小于300字！");
+		return false;
+    }
+	return true;
+}
+
+function reTab(va){
+	jquery('#myTab li').each(function(){
+		jquery(this).find('#im').attr('style','margin-left:5px;display:none;');
+	})
+	jquery(va).find('#im').attr('style','margin-left:5px;');
+}
+
+//弹出添加产出品
+function showModel(){
+	toShowModal();
+}
+//弹出添加产出品回调
+function showModelComplete(){
+	var sites = jQuery("#cropForm\\:cropSite").val();
+	var imgurl = jQuery("#cropForm\\:imgurl").val();
+	if(null != imgurl && imgurl != ""){
+		jquery("#cropimgIframe").contents().find("#cropImg").attr("src",imgurl);
+		jquery("#cropimgIframe").contents().find("#imgshow").show();
+		jquery("#cropimgIframe").contents().find("#imghide").hide();  
+	}else{
+		jquery("#cropimgIframe").contents().find("#cropImg").attr("src",imgurl);
+		jquery("#cropimgIframe").contents().find("#imgshow").hide();
+		jquery("#cropimgIframe").contents().find("#imghide").show();  
+	}
+	jQuery("#cropSite").selectpicker("val","");
+	jQuery('#cropSite').selectpicker();
+	jQuery('.selectpicker').selectpicker();
+	jquery("#addcrop").modal('show');
+}
+//弹出提示信息
+function showMesg(mesg){
+	jquery("#imgmesg").html(mesg);
+}
+
+function checkCrop(){
+	var cropName = jquery("#cropForm\\:cropName").val().trim();
+	var cropSite = jquery("#cropSite").val();
+	var cropImgurl = jquery("#cropForm\\:imgurl").val();
+	var imgName = jquery("#cropForm\\:imgName").val();
+	if(cropName == ""){
+		alert("请输入产出品名称");
+		return false;
+	}else{
+		if(cropName.length > 20){
+			alert("产出品名称不能大于20字");
+			return false;
+		}
+	}
+	var siteStr = "";
+	if(cropSite == null || cropSite.length ==0){
+		alert("请选择产出品部位");
+		return false;
+	}else{
+		for(var i=0;i<cropSite.length;i++){
+			siteStr += cropSite[i] + ",";
+		}
+		siteStr = siteStr.substring(0,siteStr.length-1) ;
+	}
+	jquery("#cropForm\\:cropSite").val(siteStr);
+	var cropId = jquery("#cropForm\\:cropId").val();
+	var mesg = jquery("#namemesg").html();
+	if(mesg == ""){
+		addCrop(cropId,cropImgurl,siteStr,imgName,cropName);
+	}else{
+		return false;
+	}
+	
+	
+}
+//校验名字是否存在
+function checkName(){
+	var name = jquery("#cropForm\\:cropName").val().trim();
+	var id = jquery("#cropForm\\:cropId").val();
+	if(id == ""){
+		id = 0;
+	}
+	if(name.trim() != ""){
+		checkCropName(name,id);
+	}
+}
+
+function saveBefore(){
+	var name = jquery("#cropForm\\:cropName").val().trim();
+	var id = jquery("#cropForm\\:cropId").val();
+	if(id == ""){
+		id = 0;
+	}
+	if(name.trim() != ""){
+		saveBeforeCheck(name,id);
+	}
+}
+function checkNameComplete(data){
+	jquery("#namemesg").html(data);
+	var imgName = jquery("#cropForm\\:imgName").val("");
+}
+
+function beforeSaveCheckComplete(data){
+	jquery("#namemesg").html(data);
+	var imgName = jquery("#cropForm\\:imgName").val("");
+	if(data == ""){
+		checkCrop();
+	}
+}
+function editCrop(obj){
+	var cropId = jquery(obj).attr("cropid");
+	queryCrop(cropId);
+}
+function editCropComplete(){
+		var sites = jQuery("#cropForm\\:cropSite").val();
+		var siteArr = sites.split(",");
+		var imgurl = jQuery("#cropForm\\:imgurl").val();
+		if(null != imgurl && imgurl != ""){
+			jquery("#cropimgIframe").contents().find("#cropImg").attr("src",imgurl);
+			jquery("#cropimgIframe").contents().find("#imgshow").show();
+			jquery("#cropimgIframe").contents().find("#imghide").hide();  
+		}else{
+		 	jquery("#cropimgIframe").contents().find("#cropImg").attr("src",imgurl);
+			jquery("#cropimgIframe").contents().find("#imgshow").hide();
+			jquery("#cropimgIframe").contents().find("#imghide").show();  
+		}
+		jquery("#namemesg").html("");
+		jquery("#addcrop").modal('show');
+		jQuery("#cropSite").selectpicker("val",siteArr);
+		jQuery('#cropSite').selectpicker();
+		jQuery('.selectpicker').selectpicker();
+		
+}
+
+//产出产出品时进行校验，如果原料存在则给提示，如果原料被删除则可以被删除
+function delCheck(obj){
+	var cropId = jquery(obj).attr("cropid");
+	checkCropMaterial(cropId);
+}
+//删除产出品
+function toDelCrop(data){
+	var obj = eval(data);
+	var cropId = obj.id;
+	var mesg = obj.mesg;
+	if(mesg == ""){
+		delCrop(cropId);
+	}else{
+		jquery("#modelMesg").html(mesg);
+		jquery("#mesgModel").modal("show");
+	}
+	
+}
+
+//关闭弹出框
+function hideModal(){
+	jquery("#addcrop").modal('hide');
+}
+//]]>
+</script>
+	</ui:define>
+
+</ui:composition>

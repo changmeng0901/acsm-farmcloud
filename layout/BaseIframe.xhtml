@@ -1,0 +1,177 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	>
+	<style>
+		.choosebase_dialog{
+			position: fixed;
+			left: 50%;
+			top: 16%;
+			margin-left: -300px;
+			width: 600px;
+		}
+		.choosebase_dialog .modal-title{
+			font-size: 14px;
+		}
+		.choosebase_dialog .modal-footer{
+			text-align: center;
+		}
+		.choosebase_dialog .modal-body{
+			min-height: 105px;
+			max-height: 200px;
+			padding: 25px 0 30px 0;
+			box-sizing: border-box;
+			overflow-y: auto;
+		}
+		.choose_list{
+			width: 500px;
+			margin: auto;
+		}
+		.choose_list li{
+			position: relative;
+			float: left;
+			width: 166px;
+			height: 40px;
+			line-height: 38px;
+			margin: 5px 29px 5px;
+			border: 1px solid #e5e5e5;
+			border-radius: 5px;
+			box-sizing: border-box;
+			text-align: center;
+			font-size: 14px;
+			color: #9b9b9b;
+			cursor: pointer;
+			list-style:none;
+		}
+		.choose_list li:hover{
+			box-shadow: 0 0 10px 2px #c8ebfe;
+		}
+		.choose_list li:after{
+			position: absolute;
+			right: -1px;
+			bottom: -1px;
+			z-index: 1;
+			width: 22px;
+			height: 21px;
+			border-radius: 0 0 5px 0;
+			content: '';
+		}
+		.choose_list li.lCur{
+			color: #4c96d5;
+			border-color: #4c96d5;
+		}
+		.choose_list li.lCur:after{
+			background: url(#{request.contextPath}/asset/images/icon_duihao.png);
+		}
+		.basename{display:inline-block;max-width:120px;height:20px; line-height:20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+	</style>
+	<div class="modal" id="choosebaseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog choosebase_dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only"></span></button>
+                <h4 class="modal-title" id="myModalLabel">选择基地</h4>
+            </div>
+            <div class="modal-body">
+				<ul class="choose_list">
+					<a:repeat value="#{sessionTake.baseModel.baseList}" var="_var" rowKeyVar="_index">
+						<li onclick="Transfer(#{_var.id})">
+						<a class="basename"  href="javascript:void(0)" title="#{_var.name}">#{_var.name}
+					    </a>
+					    </li>
+					</a:repeat>
+					<h:inputHidden value="0" name="hide" id="hideId"/>
+					<h:inputHidden value="" id="toNextPageIdHide" name="toNextPageIdHide"/>
+                </ul>
+            </div>
+            <div class="modal-footer">
+            	<button class="btn btn-primary" onclick=" return selectOk();">确认</button>
+            	<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+        </div>
+    </div>
+     <a:form>
+		<a:queue requestDelay="10" ignoreDupResponses="true" />
+		<a:jsFunction name="chooseBaseAndRedirect" action="#{baseChooseHome.chooseBaseAndRedirect()}" data="#{baseChooseHome.toNextPageId}" oncomplete="redirect(data)">
+			<a:actionparam name="baseId" assignTo="#{baseChooseHome.baseId}" />
+			<a:actionparam name="toNextPageId" assignTo="#{baseChooseHome.toNextPageId}" />
+		</a:jsFunction>
+	</a:form>
+	<script>
+	//<![CDATA[
+	
+	//校验基地
+	var level = #{sessionTake.levelId};
+	var baseListLen = #{sessionTake.baseModel.baseNum};
+	var flag=false;//标识是否跳链接
+	function checkBase(obj){
+		flag=false;
+		var selectVal = jquery('.siteSeleHd').text();
+		if(baseListLen == 0){
+			document.getElementById("topSpanValue").innerHTML = "请先添加基地！";
+			jquery("#topModel").modal('show');
+			return false;
+		}else if(level < 4 && selectVal == "全部" && baseListLen != 1){
+			showModal(obj);
+			return false;
+		}
+		return true;
+	}
+		//var jquery = jQuery.noConflict();
+		//基地选择模态框中，选择基地
+		jquery(function(){
+			jquery('.choose_list li').click(function(){
+				jquery(this).addClass('lCur').siblings().removeClass('lCur');
+			});
+		});
+		
+		function Transfer(id){
+			jquery("#hideId").val(id);
+		}
+		function showModal(obj){
+			jquery("#toNextPageIdHide").val(jquery(obj).attr("id"));
+			jquery("#choosebaseModal").modal("show");
+		}
+
+		function selectOk(){
+			var baseId = jquery("#hideId").val();
+			if(baseId == "0"){
+				alert("请选择基地");
+				return false;
+			}
+			if(flag){
+				jquery("#choosebaseModal").modal("hide");
+				callBack(baseId);
+				return true;
+			}else{
+				var id = jquery("#toNextPageIdHide").val();		
+				chooseBaseAndRedirect(baseId,id);		
+			}
+			
+		}
+		function redirect(data){
+			if(data != ""){
+				window.location.href = jquery("#" + data).attr("href");
+			}
+		}
+		//不跳页面，弹框的调用此方法
+		function checkBaseModule(typeFlag){
+			flag=typeFlag;
+			var selectVal = jquery('.siteSeleHd').text();
+			if(baseListLen == 0){
+				document.getElementById("topSpanValue").innerHTML = "请先添加基地！";
+				jquery("#topModel").modal('show');
+				return false;
+			}else if(level < 4 && selectVal == "全部" && baseListLen != 1){
+				jquery("#choosebaseModal").modal("show");
+				return false;
+			}
+			return true;
+		}
+	//]]>
+	</script>
+</ui:composition>

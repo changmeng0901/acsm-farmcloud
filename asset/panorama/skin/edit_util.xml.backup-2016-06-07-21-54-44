@@ -1,0 +1,1019 @@
+<krpano>
+	<events name="util_events" keep="true"
+	        onxmlcomplete="set(events[util_events].onxmlcomplete,null); util_startup();"
+	        />
+	<layer name="scene_list" visible="false" type="container" keep="true" align="left" x="100" y="0" width="200" height="400" bgcapture="true" boder="true" bgborder="3 0x3C3C3C" bgcolor="0x272727" bgalpha="0.4" maskchildren="true" ondown="draglayer();">
+		<layer name="top_title" url="%SWFPATH%/plugins/textfield.swf" html="选择一个目标场景" align="top" edge="top" width="140" y="5" backgroundalpha="0"
+		height="50" autoheight="true"  zorder="4" enabled="false" css="text-align:left; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:16px;" textshadow="1"/>
+		<layer name="scene_list_info" type="container" bgcolor="0x000000" bgalpha="0.5" align="lefttop" width="100%" height="300" x="0" y="50" maskchildren="true">
+			<layer name="scene_list_container" url="%SWFPATH%/plugins/scrollarea.swf" alturl="%SWFPATH%/plugins/scrollarea.js" mwheel="true" 
+			direction="v" x="-5" align="top" width="50%" height="100%" zorder="1" onloaded="skin_updatescroll();" 
+			onscroll="if(hoverflow GT 0, div(yp,toverflow,hoverflow);Math.min(yp,1);Math.max(yp,0); copy(th,layer[scrollbar].pixelheight);sub(th,layer[scrollup].pixelheight);sub(th,layer[scrolldown].pixelheight);sub(th,layer[scrollslider].pixelheight); mul(yp,th);add(yp,layer[scrollup].pixelheight); copy(layer[scrollslider].y,yp); );" >
+			</layer>
+			<layer name="scrollbar" type="container" bgcolor="0x000000" bgalpha="0.25" align="righttop" x="5" y="5" width="19" height="-10">
+				<layer name="scrollup"     url="dirbutton.png"    align="righttop"    x="19" rotate="-90" crop="0|0|19|19" onovercrop="0|19|19|19" ondowncrop="0|38|19|19" ondown="asyncloop(pressed, layer[scene_list_container].scrollby(0,+1));" />
+				<layer name="scrolldown"   url="dirbutton.png"    align="rightbottom" x="19" rotate="+90" crop="0|0|19|19" onovercrop="0|19|19|19" ondowncrop="0|38|19|19" ondown="asyncloop(pressed, layer[scene_list_container].scrollby(0,-1));" />
+				<layer name="scrollslider" url="sliderbutton.png" align="righttop"    x="0"  y="19"       crop="0|0|19|19" onovercrop="0|19|19|19" ondowncrop="0|38|19|19" ondown="if(layer[scene_list_container].hoverflow GT 0, copy(cy,y);copy(sy,mouse.stagey);dragging(); );" dragging="if(pressed, sub(dy,mouse.stagey,sy);add(ny,cy,dy);Math.max(ny,layer[scrollup].pixelheight); copy(th,layer[scrollbar].pixelheight);sub(th,layer[scrolldown].pixelheight);sub(th,layer[scrollslider].pixelheight);Math.min(ny,th); copy(y,ny); sub(ny,layer[scrollup].pixelheight);sub(th,layer[scrollslider].pixelheight);div(ny,th); copy(fh,layer[scene_list_container].hoverflow); mul(fh,-1); mul(ny,fh); layer[scene_list_container].stopscrolling(); copy(layer[scene_list_container].y,ny); delayedcall(0,dragging()); );" />
+			</layer>
+		</layer>
+		<layer name="bottom_button" type="container"  align="top" edge="top" width="100%" height="50" y="350" zorder="4"  >
+			<layer name="button_ok" url="%SWFPATH%/plugins/textfield.swf" html="确定" align="lefttop" width="40" zorder="5" backgroundcolor="0x333FFF" backgroundalpha="0.1"
+					 autoheight="true" x="20" y="12" css="text-align:left; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:16px;" 
+					 onclick="savepots()"/>
+			<layer name="button_no" url="%SWFPATH%/plugins/textfield.swf" html="取消" align="righttop" width="40" zorder="5" backgroundcolor="0x333FFF" backgroundalpha="0.1"
+					 autoheight="true" x="20" y="12" css="text-align:left; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:16px;" 
+					 onclick="checkTarget()"/>
+		</layer>
+	</layer>
+	<layer name="tipslogo" devices="mobile"  keep="true" url="%SWFPATH%/skin/vtourskin_dragico.png" visible="false" height="150" width="150" align="center"  onclick="set(layer[tipslogo].visible,false)"/>
+	<style name="hotspot_ani_white"
+	       url="../black_64x64x20.png"
+	       crop="0|0|64|64"
+	       framewidth="64" frameheight="64" frame="0" lastframe="19"
+	       onloaded="hotspot_animate();"
+	       />
+
+	<action name="littlep">
+		copy(lp_scene, xml.scene);
+		copy(lp_hlookat, view.hlookat);
+		copy(lp_vlookat, view.vlookat);
+		copy(lp_fov, view.fov);
+		copy(lp_fovmax, view.fovmax);
+		copy(lp_limitview, view.limitview);
+		set(view.fovmax, 170);
+		set(view.limitview, lookto);
+		set(view.hlookat,0);
+		set(view.vlookat,180);
+		set(view.fov,170);
+		set(view.stereographic,"on");
+		set(view.fisheye,1);
+		//delayedcall(1.5, normalview());
+		
+	</action>
+
+	<action name="normalview">
+	if(view.fisheye == 1,
+		openthumbs();
+		tween(view.hlookat, 0, 3.5, easeInOutQuad);
+		tween(view.vlookat, 0, 3.5, easeInOutQuad);
+		tween(view.fov,     get(lp_fov), 3.5, easeInOutQuad);
+		set(view.limitview,  get(lp_limitview));
+		tween(view.fisheye, 0.0, 3.5, easeInOutQuad);
+		wait(3.7);
+		set(view.fovmax,  get(lp_fovmax));
+		set(display.flash10, on);
+		set(layer[tipslogo].visible,true);
+		delayedcall(3, set(layer[tipslogo].visible,false));
+	)
+	</action>
+
+	<action name="hotspot_animate">
+	if(isgif,
+		inc(frame,1,get(lastframe),0);
+		mul(ypos,frame,frameheight);
+		txtadd(crop,'0|',get(ypos),'|',get(framewidth),'|',get(frameheight));
+		delayedcall(0.03, if(loaded, hotspot_animate() ) );
+		,
+		set(crop,'');
+		set(scale,0.8);
+		);
+	</action>
+
+	<!-- the 'tooltip' style - show tooltip textfield and update positions as long as hovering -->
+	<style name="tooltip"
+	       onover="copy(layer[tooltip].html, tooltip);
+	               set(layer[tooltip].visible, true);
+	               tween(layer[tooltip].alpha, 1.0, 0.5);
+	               asyncloop(hovering, copy(layer[tooltip].x,mouse.stagex); copy(layer[tooltip].y,mouse.stagey); );"
+	       onout="tween(layer[tooltip].alpha, 0.0, 0.25, default, set(layer[tooltip].visible,false), copy(layer[tooltip].x,mouse.stagex); copy(layer[tooltip].y,mouse.stagey); );"
+	       />
+
+
+	<!-- the 'tooltip' textfield -->
+	<layer name="tooltip" keep="true"
+	       url="%SWFPATH%/plugins/textfield.swf"
+	       parent="STAGE"
+	       visible="false" alpha="0"
+	       enabled="false"
+	       align="lefttop"
+	       edge="bottom"
+	       oy="-2"
+	       autowidth="true"
+	       autoheight="true"
+	       background="false" backgroundcolor="0xFFFFFF" backgroundalpha="1.0"
+	       border="false" bordercolor="0x000000" borderalpha="1.0"
+	       borderwidth="1.0" roundedge="0"
+	       shadow="0.0" shadowrange="4.0" shadowangle="45" shadowcolor="0x000000" shadowalpha="1.0"
+	       textshadow="1" textshadowrange="6.0" textshadowangle="90" textshadowcolor="0x000000" textshadowalpha="1.0"
+	       css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:14px;"
+	       html=""
+	       />
+
+	<action name="util_startup">
+			set(targetlink,'_');
+			set(targetlinkid,'_');
+			set(thumbwidth2, 120);
+			set(thumbheight2, 80);
+			set(thumbpadding2, 10);
+			set(thumbcrop2, "0|40|240|160");
+	
+			add(thumbxoffset2, thumbheight2, thumbpadding2);
+			mul(thumbxcenter2, thumbxoffset2, 0.5);
+			add(thumbbarwidth2, thumbwidth2, thumbpadding2);
+			mul(thumbbarheight2, thumbxoffset2, scene.count);
+			add(thumbbarheight2, thumbpadding2);
+	
+			copy(layer[scene_list_container].height, thumbbarheight2);
+			copy(layer[scene_list_container].width, thumbbarwidth2);
+	
+
+			mul(halfheight2, thumbbarheight2, 0.5);
+			copy(layer[skin_thumbs_scrollleft].y, halfheight2);
+			copy(layer[skin_thumbs_scrollright].y, halfheight2);
+	
+			for(set(i,0), i LT scene.count, inc(i),
+				txtadd(thumbname2,'util_thumb_',get(scene[get(i)].name));
+				addlayer(get(thumbname2));
+				copy(layer[get(thumbname2)].url, scene[get(i)].thumburl);
+				set(layer[get(thumbname2)].keep, true);
+				set(layer[get(thumbname2)]._index, get(i));
+				set(layer[get(thumbname2)].parent, 'scene_list_container');
+				set(layer[get(thumbname2)].align, lefttop);
+				copy(layer[get(thumbname2)].width, thumbwidth2);
+				copy(layer[get(thumbname2)].height, thumbheight2);
+				set(layer[get(thumbname2)].scene_id, get(scene[get(i)].scene_id));
+				mul(thumbx2, i, thumbxoffset2);
+				add(thumbx2, thumbpadding2);
+				copy(layer[get(thumbname2)].x, thumbpadding2);
+				copy(layer[get(thumbname2)].y, thumbx2);
+				add(scene[get(i)].thumby2, thumbx2, thumbxcenter2);
+				copy(scene[get(i)].thumbx2, thumbpadding2);
+				set(layer[get(thumbname2)].linkedscene, get(scene[get(i)].name) );
+				set(layer[get(thumbname2)].onclick, 
+					copy(layer[skin_thumbborder2].parent, name); 
+					set(layer[skin_thumbborder2].visible, true);
+					set(targetlink,get(linkedscene));
+					set(targetlinkid,get(scene_id));
+					
+				);
+				if(true,
+					txtadd(thumbtext2, scene.name, get(i));
+					addlayer(get(thumbtext2));
+					layer[get(thumbtext2)].loadstyle(skin_thumbtext_style);
+					set(layer[get(thumbtext2)].keep, true);
+					set(layer[get(thumbtext2)].parent, get(thumbname2));
+					set(layer[get(thumbtext2)].html, get(scene[get(i)].title));
+				  );
+			   );
+
+	</action>
+
+	<action name="draglayer">
+		if(%1 != dragging,
+			copy(drag_currentx, x);
+			copy(drag_currenty, y);
+			copy(drag_stagex, mouse.stagex);
+			copy(drag_stagey, mouse.stagey);
+			set(drag_sx, +1);
+			set(drag_sy, +1);
+			if(align == righttop,    set(drag_sx,-1); );
+			if(align == right,       set(drag_sx,-1); );
+			if(align == rightbottom, set(drag_sx,-1); set(drag_sy,-1); );
+			if(align == bottom,      set(drag_sy,-1); );
+			if(align == leftbottom,  set(drag_sy,-1); );
+			draglayer(dragging);
+		  ,
+			if(pressed,
+				sub(dx, mouse.stagex, drag_stagex);
+				sub(dy, mouse.stagey, drag_stagey);
+				mul(dx, drag_sx);
+				mul(dy, drag_sy);
+				add(x, drag_currentx, dx);
+				add(y, drag_currenty, dy);
+				delayedcall(0, draglayer(dragging) );
+			  );
+		  );
+	</action>
+
+	<action name="draghotspot">
+	<![CDATA[
+		if(%1 != dragging,
+			spheretoscreen(ath, atv, hotspotcenterx, hotspotcentery);
+			sub(drag_adjustx, mouse.stagex, hotspotcenterx); 
+			sub(drag_adjusty, mouse.stagey, hotspotcentery); 
+			draghotspot(dragging);
+		  ,
+			if(pressed,
+				sub(dx, mouse.stagex, drag_adjustx);
+				sub(dy, mouse.stagey, drag_adjusty);
+				screentosphere(dx, dy, ath, atv);
+				copy(print_ath, ath);
+				copy(print_atv, atv);
+				roundval(print_ath, 3);
+				roundval(print_atv, 3);
+				delayedcall(0, draghotspot(dragging) );
+			  );
+		  );
+	]]>
+	</action>
+
+	<!-- 按钮添加热点 -->
+	<action name="addpots">
+		set(newspot,"temphotspots");
+		addhotspot(get(newspot));
+		set(hotspot[get(newspot)].style,"hotspot_ani_white");
+		set(hotspot[get(newspot)].ath,get(view.hlookat));
+		set(hotspot[get(newspot)].atv,get(view.vlookat));
+		set(hotspot[get(newspot)].scale,0.5);
+		set(hotspot[get(newspot)].zoom,true);
+		set(hotspot[get(newspot)].ondown,"draghotspot()");
+		hotspot[get(newspot)].loadstyle();
+		set(layer[skin_thumbborder2].visible, false);
+		set(layer[scene_list_container].y,0);
+		set(layer[scrollslider].y,19);
+		set(layer[scene_list].visible,true);
+	</action>
+	
+	<action name="resethotspot">
+		if(hots_id != null ,
+			txtadd(thumbname3,'util_thumb_',get(linked_name));
+			set(layer[skin_thumbborder2].parent, get(thumbname3));
+			set(layer[skin_thumbborder2].visible, true);
+			mul(yyy,-3,get(layer[get(thumbname3)]._index));
+			set(layer[scene_list].visible,true);
+			set(layer[scene_list_container].y,0);
+			set(layer[scrollslider].y,19);
+			layer[scene_list_container].scrollby(0,get(yyy));
+		)
+	</action>
+	
+	<!-- 场景加载是添加所有的热点 -->
+	<action name="addpots2">
+		txtadd(jsnewspot,get(xml.scene),"_h_",%1);
+		addhotspot(get(jsnewspot));
+		set(hotspot[get(jsnewspot)].style,"hotspot_ani_white|tooltip");
+		set(hotspot[get(jsnewspot)].tooltip,%6);
+		set(hotspot[get(jsnewspot)].ath,%2);
+		set(hotspot[get(jsnewspot)].atv,%3);
+		set(hotspot[get(jsnewspot)].scale,0.5);
+		set(hotspot[get(jsnewspot)].zoom,true);
+		set(hotspot[get(jsnewspot)].hots_id,%5);
+		set(hotspot[get(jsnewspot)].linked_name,%4);
+		set(hotspot[get(jsnewspot)].ondown,"");
+		set(hotspot[get(jsnewspot)].onclick,if(isdelete,js(deleteHotspots(%5)) ,skin_buttonglow(null);set(layer[tooltip].visible,false); tween(scale,0.25,0.5); tween(oy,-20,0.5); tween(alpha,0,0.5); looktohotspot();loadscene(%4,null,get(skin_settings.loadscene_flags),get(skin_settings.loadscene_blend)); ););
+		hotspot[get(jsnewspot)].loadstyle();
+	</action>
+
+	<action name="checkTarget">
+			if(layer[scene_list].visible==true,
+				set(layer[scene_list].visible,false);
+				removehotspot("temphotspots");
+				set(targetlink,'_');
+				set(targetlinkid,'_');
+				set(isdelete,false);
+				skin_buttonglow(null);
+				set(layer[tooltip].visible,false);
+			)
+	</action>
+
+	<action name="savepots">
+		if(layer[skin_thumbborder2].visible == false,
+			js(alert("请先选择目标场景!"));,
+			js(savepots(get(hotspot["temphotspots"].ath),get(hotspot["temphotspots"].atv),get(targetlink),get(targetlinkid),get(xml.scene),get(scene[get(xml.scene)].scene_id),get(scene[get(targetlink)].title)))
+			)
+
+	</action>
+	
+		
+	<action name="deletepots">
+		if(isdelete,set(isdelete,false);skin_buttonglow(null);if(skin_lockglow === name, ifnot(pressed, skin_buttonglow(null);delete(skin_lockglow); ));,
+		set(isdelete,true);copy(skin_lockglow,name); skin_buttonglow(get(name)); if(ondown2, ondown2() ););
+		
+	</action>
+	
+	
+	<layer name="mysay" visible="false"  ondown="dragpinglun()" y="-60" x="-25" keep="true" width="200" height="10" align="left" type="container"   maskchildren="false"  >
+		<layer name="mysay_background" visible="true" keep="true" height="50" width="200" align="center" type="container" bgcolor="0xBE6B23" bgalpha="0.4"  bgroundedge="10 10 10 10"  bgcapture="true"  maskchildren="false" >
+			<layer name="mysay_head" ondown="dragpinglun()" align="leftcenter" x="10" zorder="1" width="40" url="%SWFPATH%/skin/g.jpg"  height="40" bgcapture="true" />
+			<layer name="mysay_text" ondown="dragpinglun()" url="%SWFPATH%/plugins/textfield.swf" align="leftcenter"  x="60" width="120"  background="false" border="false"   html="拖动头像到想要评论的位置" css="color:#FFFFFF; font-family:Arial; font-size:14px;line-height:180%;"/>
+		</layer>
+		<layer name="mysay_bottom" ondown="dragpinglun()" align="leftcenter" x="25" y="40" scale="0.5" zorder="1" width="24" url="%SWFPATH%/skin/vtourskin_newbase4.png"  height="60" bgcapture="true" />
+	</layer>
+	<action name="initComment">
+		txtadd(newlayername,"aa",%8,"_",%9,"_",%1);
+		txtadd(newhotspotname,get(newlayername),"ht");
+		addhotspot(get(newhotspotname));
+		set(hotspot[get(newhotspotname)].visible,get(custom_set.commentShow));
+		set(hotspot[get(newhotspotname)].ispl,true);
+		set(hotspot[get(newhotspotname)].krpano_id,%8);
+		set(hotspot[get(newhotspotname)].ath,%2);
+		set(hotspot[get(newhotspotname)].atv,%3);
+		set(hotspot[get(newhotspotname)].url,"%SWFPATH%/skin/vtourskin_newbase4.png");
+		set(hotspot[get(newhotspotname)].zorder,1);
+		set(hotspot[get(newhotspotname)].scale,0.3);
+		set(hotspot[get(newhotspotname)].crop,"1|1|1|1");
+		//hotspot[get(newhotspotname)].loadstyle();
+		txtadd(parentname,'hotspot[',get(newhotspotname),']');
+		txtadd(pinglunondown,"dragpinglun(",get(parentname),")");
+		
+		
+		addlayer(get(newlayername));
+		set(layer[get(newlayername)].visible,get(custom_set.commentShow));
+		set(layer[get(newlayername)].ispl,true);
+		set(layer[get(newlayername)].krpano_id,%8);
+		set(layer[get(newlayername)].ondown,"dragpinglun()");
+		set(layer[get(newlayername)].keep,true);
+		set(layer[get(newlayername)].width,200);
+		set(layer[get(newlayername)].height,10);
+		set(layer[get(newlayername)].y,-28);
+		set(layer[get(newlayername)].x,-6);
+		set(layer[get(newlayername)].align,"left");
+		set(layer[get(newlayername)].type,"container");
+		set(layer[get(newlayername)].maskchildren,false);
+		set(layer[get(newlayername)].parent,get(parentname));
+		
+		txtadd(newlayerhead,get(newlayername),"_head");
+		addlayer(get(newlayerhead));
+		set(layer[get(newlayerhead)].visible,get(custom_set.commentShow));
+		set(layer[get(newlayerhead)].ispl,true);
+		set(layer[get(newlayerhead)].krpano_id,%8);
+		set(layer[get(newlayerhead)].ondown,"dragpinglun()");
+		set(layer[get(newlayerhead)].align,"leftcenter");
+		set(layer[get(newlayerhead)].zorder,1);
+		set(layer[get(newlayerhead)].height,22);
+		set(layer[get(newlayerhead)].width,22);
+		if(%7 == nohead,
+		set(layer[get(newlayerhead)].url,"%SWFPATH%/skin/g.jpg");
+		,
+		set(layer[get(newlayerhead)].url,%7);
+		);
+		set(layer[get(newlayerhead)].roundedge,"4 4 4 4");
+		set(layer[get(newlayerhead)].bgcapture,true);
+		set(layer[get(newlayerhead)].parent,get(newlayername));
+		
+
+		txtadd(newlayertext,get(newlayername),"_text");
+		addlayer(get(newlayertext));
+		set(layer[get(newlayertext)].visible,get(custom_set.commentShow));
+		set(layer[get(newlayertext)].ispl,true);
+		set(layer[get(newlayertext)].krpano_id,%8);
+		set(layer[get(newlayertext)].ondown,"dragpinglun()");
+		set(layer[get(newlayertext)].align,"leftcenter");
+		set(layer[get(newlayertext)].url,"%SWFPATH%/plugins/textfield.swf");
+		set(layer[get(newlayertext)].autowidth,"true");
+		set(layer[get(newlayertext)].backgroundalpha,0.4);
+		set(layer[get(newlayertext)].vcenter,true);
+		set(layer[get(newlayertext)].x,22);
+		set(layer[get(newlayertext)].height,22);
+		set(layer[get(newlayertext)].background,true);
+		set(layer[get(newlayertext)].backgroundcolor,"0x000000");
+		set(layer[get(newlayertext)].border,false);
+		set(layer[get(newlayertext)].html,%4);
+		set(layer[get(newlayertext)].roundedge,"4 4 4 0");
+		set(layer[get(newlayertext)].css,"color:#FFFFFF; font-family:Arial; font-size:14px;line-height:100%;");
+		set(layer[get(newlayertext)].parent,get(newlayername));
+
+		txtadd(newlayerbottom,get(newlayername),"_bottom");
+		addlayer(get(newlayerbottom));
+		set(layer[get(newlayerbottom)].visible,get(custom_set.commentShow));
+		set(layer[get(newlayerbottom)].ispl,true);
+		set(layer[get(newlayerbottom)].krpano_id,%8);
+		set(layer[get(newlayerbottom)].ondown,"dragpinglun()");
+		set(layer[get(newlayerbottom)].align,"leftcenter");
+		set(layer[get(newlayerbottom)].url,"%SWFPATH%/skin/vtourskin_newbase4.png");
+		set(layer[get(newlayerbottom)].x,9);
+		set(layer[get(newlayerbottom)].y,18);
+		set(layer[get(newlayerbottom)].scale,0.5);
+		set(layer[get(newlayerbottom)].zorder,1);
+		set(layer[get(newlayerbottom)].width,12);
+		set(layer[get(newlayerbottom)].height,30);
+		set(layer[get(newlayerbottom)].bgcapture,true);
+		set(layer[get(newlayerbottom)].parent,get(newlayername));
+	</action>
+	
+	<action name="removeAll">
+	for(set(i,0), i LT hotspot.count, inc(i),
+			if(hotspot[get(i)].ispl AND hotspot[get(i)].krpano_id != get(scene[get(xml.scene)].scene_id),
+				set(hotspot[get(i)].visible,false);
+			  );
+		  );
+		for(set(i,0), i LT layer.count, inc(i),
+			if(layer[get(i)].ispl AND get(layer[get(i)].krpano_id) != get(scene[get(xml.scene)].scene_id),
+				set(layer[get(i)].visible,false);
+			  );
+		  );
+	</action>
+	
+	<action name="displayAll">
+	if(%1,
+		for(set(i,0), i LT hotspot.count, inc(i),
+			set(displayAllkrpano_id,get(hotspot[get(i)].krpano_id));
+			set(displayAllkrpano_id2,get(scene[get(xml.scene)].scene_id));
+			if(hotspot[get(i)].ispl AND displayAllkrpano_id === displayAllkrpano_id2,
+				set(hotspot[get(i)].visible,true);
+			  );
+		  );
+		for(set(i,0), i LT layer.count, inc(i),
+			set(displayAllkrpano_id,get(layer[get(i)].krpano_id));
+			set(displayAllkrpano_id2,get(scene[get(xml.scene)].scene_id));
+			if(layer[get(i)].ispl AND displayAllkrpano_id === displayAllkrpano_id2,
+				set(layer[get(i)].visible,true);
+			  );
+		  );
+		,
+		for(set(i,0), i LT hotspot.count, inc(i),
+			if(hotspot[get(i)].ispl,
+				set(hotspot[get(i)].visible,false);
+			  );
+		  );
+		for(set(i,0), i LT layer.count, inc(i),
+			if(layer[get(i)].ispl,
+				set(layer[get(i)].visible,false);
+			  );
+		  );
+	);
+	</action>
+	
+	<action name="resetDisplayHtml">
+			set(layer[skin_btn_yc_img].onclick,'displayAll(false)');
+			set(layer[skin_btn_yc_text].onclick,'displayAll(false)');
+			set(layer[skin_btn_yc_text].html,"隐藏");
+	</action>
+
+	<action name="dragpinglun">
+	
+		if(%1 != dragging,
+			spheretoscreen(hotspot[spot1].ath, hotspot[spot1].atv, hotspotcenterx_, hotspotcentery_);
+			sub(drag_adjustx, mouse.stagex, hotspotcenterx_); 
+			sub(drag_adjusty, mouse.stagey, hotspotcentery_); 
+			dragpinglun(dragging);
+		  ,
+			if(pressed,
+				sub(dx, mouse.stagex, drag_adjustx);
+				sub(dy, mouse.stagey, drag_adjusty);
+				screentosphere(dx, dy, hotspot[spot1].ath, hotspot[spot1].atv);
+				copy(print_ath, hotspot[spot1].ath);
+				copy(print_atv, hotspot[spot1].atv);
+				roundval(print_ath, 3);
+				roundval(print_atv, 3);
+				delayedcall(0, dragpinglun(dragging) );
+			  );
+		  );
+	</action>
+	
+	<action name="openthumbs">
+		if(skin_settings.thumbs_isopened,
+		  if(scene.count GT 1,skin_showthumbs(),set(layer[skin_btn_gyro].x,0));
+		  set(skin_settings.thumbs_isopened,false);
+		);
+	</action>
+	
+	<action name="showView" >
+		txtadd(viewCount,'人气数:',get(scene[get(xml.scene)].view_count));
+		set(layer[viewcounttext].html,get(viewCount));
+	</action>
+	
+	<action name="krpanoInit">
+		removeAll();
+		js(loadhotspots(get(xml.scene)));
+		js(addView_before(%1));
+		showView();
+		showGood();
+		js(initComment(get(scene[get(xml.scene)].scene_id)));
+	</action>
+	
+	<action name="showGood">
+		set(goodCount,get(scene[get(xml.scene)].good_count));
+		js(showGood_before(get(goodCount),get(scene[get(xml.scene)].scene_id)));
+	</action>
+	
+	<action name="showGood_next">
+		set(layer[skin_btn_hp_text].html,%1);	
+	</action>
+	<action name="showGood_next__">
+		set(layer[skin_btn_hp_text].html,%1);
+		if(device.flash,
+			if(%1 GT 99999,
+				set(layer[skin_btn_hp_text_flash].width,105);,
+				if(%1 GT 9999,
+					set(layer[skin_btn_hp_text_flash].width,75);,
+					if(%1 GT 999,
+						set(layer[skin_btn_hp_text_flash].width,65);,
+						if(%1 GT 99,
+							set(layer[skin_btn_hp_text_flash].width,55);,
+							if(%1 GT 99,
+							set(layer[skin_btn_hp_text_flash].width,45);,
+							set(layer[skin_btn_hp_text_flash].width,45););
+						);
+					);
+				);
+			);
+		);
+	</action>
+	<action name="showGood_next_next">
+		set(goodwidth,get(layer[skin_btn_hp_text].width));
+		add(newgoodwidth,goodwidth,40);
+		set(layer[skin_btn_hp_text].autowidth,false);
+		set(layer[skin_btn_hp_text].width,get(newgoodwidth));
+	</action>
+	
+	<action name="showComment">
+		set(hotspot[spot1].ath,get(view.hlookat));
+		set(hotspot[spot1].atv,get(view.vlookat));
+		set(layer[mysay].visible,true);
+		set(layer[mysay].parent,hotspot[spot1]);
+		js(showComment());
+		skin_showthumbs(false);
+	</action>
+	<action name="cancelComment">
+		set(layer[mysay].visible,false);
+	</action>
+	<action name="commentOk">
+		js(commentOk_before(%1,get(hotspot[spot1].ath),get(hotspot[spot1].atv),get(scene[get(xml.scene)].scene_id)));
+	</action>
+	<action name="setTempUrl">
+		set(layer[mysay_head].url,%1);
+	</action>
+	
+	<action name="add_all_the_time_tooltip">
+	if(showtitle ,
+		txtadd(tooltipname, 'tooltip_', get(name));
+		addplugin(get(tooltipname));
+		txtadd(plugin[get(tooltipname)].parent, 'hotspot[', get(name), ']');
+		set(plugin[get(tooltipname)].url,'%SWFPATH%/plugins/textfield.swf');
+		set(plugin[get(tooltipname)].align,top);
+		set(plugin[get(tooltipname)].edge,bottom);
+		set(plugin[get(tooltipname)].x,0);
+		set(plugin[get(tooltipname)].y,10);
+		set(plugin[get(tooltipname)].autowidth,true);
+		set(plugin[get(tooltipname)].autoheight,true);
+		set(plugin[get(tooltipname)].background,true);
+		set(plugin[get(tooltipname)].backgroundcolor,0x000000);
+		set(plugin[get(tooltipname)].roundedge,5);
+		set(plugin[get(tooltipname)].backgroundalpha,0.5);
+		set(plugin[get(tooltipname)].border,true);
+		set(plugin[get(tooltipname)].glow,4);
+		set(plugin[get(tooltipname)].glowcolor,0xFFFFFF);
+		set(plugin[get(tooltipname)].css,'text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:16px;');
+		set(plugin[get(tooltipname)].textshadow,1);
+		set(plugin[get(tooltipname)].textshadowrange,6.0);
+		set(plugin[get(tooltipname)].textshadowangle,90);
+		set(plugin[get(tooltipname)].html,get(title));
+		set(plugin[get(tooltipname)].enabled,false);	
+	)
+	</action>
+	<style name="new_skin_hotspotstyle" scale="0.5" edge="top" oy="0" distorted="false"
+	       onclick="hotspot_click();"
+	       onloaded="add_all_the_time_tooltip();hotspot_animate();"
+	       />
+	<style name="hotspot_type_scene"  crop="0|0|128|128" 
+	       framewidth="128" frameheight="128" frame="0" lastframe="25" />
+	<action name="hotspot_click">
+	//looktohotspot();
+	if(	pot_type == 1 ,
+		if(linkedscene, skin_hidetooltips(); tween(scale,0.25,0.5); tween(oy,-20,0.5); tween(alpha,0,0.5); looktohotspot(); loadscene(get(linkedscene),null,get(skin_settings.loadscene_flags),get(skin_settings.loadscene_blend)); skin_updatescroll(); );
+	);
+	if(pot_type == 2 ,
+		openurl(get(target_url),_blank);
+	);
+	if(pot_type == 3 ,
+		showimagesContent(get(name));
+	);
+	if(pot_type == 4 ,
+		showtextcontent(get(title),get(data-html));
+	);
+		
+	</action>
+	
+	<action name="showimagescontent">
+	 set(imagesIndex,0);
+     if(layer[imagesPaneContainer],
+      set(layer[imagesPaneContent].visible,false);
+      set(layer[imagesPaneLeft].visible,false);
+      set(layer[imagesPaneRight].visible,false);
+      ,
+      addlayer(imagesPaneContainer);
+      set(layer[imagesPaneContainer].type,container);
+      set(layer[imagesPaneContainer].align,center);
+      set(layer[imagesPaneContainer].x,0);
+      set(layer[imagesPaneContainer].y,0);
+      set(layer[imagesPaneContainer].width,100%);
+      set(layer[imagesPaneContainer].height,100%);
+      set(layer[imagesPaneContainer].bgcolor,0x000000);
+      set(layer[imagesPaneContainer].bgalpha,0.8);
+      set(layer[imagesPaneContainer].bgcapture,true);
+      set(layer[imagesPaneContainer].zorder,3700);
+      set(layer[imagesPaneContainer].onclick,hideimagesContent(%1););
+
+      addlayer(imagesPaneContentContainer);
+      set(layer[imagesPaneContentContainer].type,container);
+      set(layer[imagesPaneContentContainer].align,center);
+      set(layer[imagesPaneContentContainer].x,0);
+      set(layer[imagesPaneContentContainer].y,-50);
+      set(layer[imagesPaneContentContainer].width,80%);
+      set(layer[imagesPaneContentContainer].height,get(stageheight));
+      mul(layer[imagesPaneContentContainer].height,0.8);
+      sub(layer[imagesPaneContentContainer].height,100);
+      set(layer[imagesPaneContentContainer].parent,layer[imagesPaneContainer]);
+
+      addlayer(imagesPaneContent);
+      set(layer[imagesPaneContent].url,"");
+      set(layer[imagesPaneContent].align,center);
+      set(layer[imagesPaneContent].x,0);
+      set(layer[imagesPaneContent].y,0);
+      set(layer[imagesPaneContent].keep,true);
+      set(layer[imagesPaneContent].onloaded,layoutimages(););
+      set(layer[imagesPaneContent].autowidth,true);
+      set(layer[imagesPaneContent].autoheight,true);
+      set(layer[get(imagesPaneContent)].bgcolor,0xffffff);
+      set(layer[get(imagesPaneContent)].bgalpha,0);
+      set(layer[imagesPaneContent].zorder,3100);
+      set(layer[imagesPaneContent].border,false);
+      set(layer[imagesPaneContainer].imgCount,get(hotspot[%1].image.count));
+
+      set(layer[imagesPaneContent].onautosized,layoutimages(););
+      set(layer[imagesPaneContent].parent,layer[imagesPaneContentContainer]);
+
+
+
+      addlayer(imagesPaneLeft);
+      set(layer[imagesPaneLeft].url,%SWFPATH%/skin/to_left.png);
+      set(layer[imagesPaneLeft].align,leftcenter);
+      set(layer[imagesPaneLeft].x,-50);
+      set(layer[imagesPaneLeft].y,0);
+      set(layer[imagesPaneLeft].scale,0.5);
+      set(layer[imagesPaneLeft].autowidth,true);
+      set(layer[imagesPaneLeft].autoheight,true);
+      set(layer[imagesPaneLeft].background,false);
+      set(layer[imagesPaneLeft].zorder,3100);
+      set(layer[imagesPaneLeft].sceneIndex,%1);
+      set(layer[imagesPaneLeft].hotspotName,%1);
+      set(layer[imagesPaneLeft].border,false);
+      set(layer[imagesPaneLeft].onclick,turnimages(0));
+      set(layer[imagesPaneLeft].parent,layer[imagesPaneContentContainer]);
+
+
+
+      addlayer(imagesPaneRight);
+      set(layer[imagesPaneRight].url,%SWFPATH%/skin/to_right.png);
+      set(layer[imagesPaneRight].align,rightcenter);
+      set(layer[imagesPaneRight].x,-50);
+      set(layer[imagesPaneRight].y,0);
+      set(layer[imagesPaneRight].scale,0.5);
+      set(layer[imagesPaneRight].autowidth,true);
+      set(layer[imagesPaneRight].autoheight,true);
+      set(layer[imagesPaneRight].background,false);
+      set(layer[imagesPaneRight].zorder,3100);
+      set(layer[imagesPaneRight].border,false);
+      set(layer[imagesPaneRight].sceneIndex,%1);
+      set(layer[imagesPaneRight].hotspotName,%1);
+      set(layer[imagesPaneRight].onclick,turnimages(1));
+      set(layer[imagesPaneRight].parent,layer[imagesPaneContentContainer]);
+
+      addlayer(imagesPaneClose);
+      set(layer[imagesPaneClose].url,%SWFPATH%/skin/closeImg.png);
+      set(layer[imagesPaneClose].align,topright);
+      set(layer[imagesPaneClose].x,0);
+      set(layer[imagesPaneClose].y,0);
+      set(layer[imagesPaneClose].scale,0.2);
+      set(layer[imagesPaneClose].autowidth,true);
+      set(layer[imagesPaneClose].autoheight,true);
+      set(layer[imagesPaneClose].background,false);
+      set(layer[imagesPaneClose].zorder,3101);
+      set(layer[imagesPaneClose].border,false);
+      set(layer[imagesPaneClose].onclick,hideimagesContent(%1););
+      set(layer[imagesPaneClose].parent,layer[imagesPaneContainer]);
+
+
+      addlayer(imagesPaneLoadingContent);
+      layer[imagesPaneLoadingContent].loadstyle(skin_style);
+      set(layer[imagesPaneLoadingContent].crop,500|160|130|70);
+      set(layer[imagesPaneLoadingContent].align,center);
+      set(layer[imagesPaneLoadingContent].x,0);
+      set(layer[imagesPaneLoadingContent].y,0);
+      set(layer[imagesPaneLoadingContent].autowidth,true);
+      set(layer[imagesPaneLoadingContent].autoheight,true);
+      set(layer[imagesPaneLoadingContent].background,false);
+      set(layer[imagesPaneLoadingContent].border,false);
+      set(layer[imagesPaneLoadingContent].visible,false);
+      set(layer[imagesPaneLoadingContent].parent,layer[imagesPaneContentContainer]);
+
+    );
+
+    set(layer[imagesPaneContainer].onclick,hideimagesContent(%1););
+    set(layer[imagesPaneContent].onover,
+      set(iszoom, true);
+      set(startzoom, true);
+      copy(copy_mousefovchange, control.mousefovchange);
+      copy(copy_touchzoom, control.touchzoom);
+      set(control.mousefovchange, 0);
+      set(control.touchzoom, false););
+    set(layer[imagesPaneContent].onout,
+      set(iszoom, false);
+      copy(control.mousefovchange, copy_mousefovchange);
+      copy(control.touchzoom, copy_touchzoom););
+
+    set(layer[imagesPaneContent].ondown,dragimages();onover(););
+    set(layer[imagesPaneContent].onup,set(iszoom, true););
+    set(layer[imagesPaneRight].sceneIndex,%1);
+    set(layer[imagesPaneLeft].sceneIndex,%1);
+
+
+
+
+    set(layer[imagesPaneRight].visible,true);
+    set(layer[imagesPaneLeft].visible,true);
+    if(hotspot[%1].image.count LT 2,
+      set(layer[imagesPaneRight].visible,false);
+      set(layer[imagesPaneLeft].visible,false);
+    );
+    
+    
+    tween(layer[imagesPaneContainer].alpha,1.0, 0.30);
+    loadimagesContent(get(hotspot[%1].image[0].title),get(hotspot[%1].image[0].url));
+    stopRatote();
+
+
+	</action>
+	<action name="turnimages">
+	 if(%1==0,
+      sub(imagesIndex,1);
+      if(imagesIndex==-1,
+        set(imagesIndex,get(hotspot[get(sceneIndex)].image.count));
+        sub(imagesIndex,1);
+      );
+      ,
+      add(imagesIndex,1);
+      if(imagesIndex==hotspot[get(sceneIndex)].image.count OR imagesIndex GT hotspot[get(sceneIndex)].image.count,
+        set(imagesIndex,0);
+      );
+    );
+
+    loadimagesContent(get(hotspot[get(sceneIndex)].image[get(imagesIndex)].title),get(hotspot[get(sceneIndex)].image[get(imagesIndex)].url));
+	
+	</action>
+	<action name="showfirstimagesthumbboard">
+	for(set(i5,0),i5 LT hotspot[%1].image.count,inc(i5),
+
+      txtadd(imagesThumbName,'categoryThumbContainer','_',get(i5));
+      if(i5 == 0,
+        set(layer[get(imagesThumbName)].bgborder,1 0xff7f00 1);
+      ,
+        set(layer[get(imagesThumbName)].bgborder,0 0xff7f00 1);
+      )
+    );
+		
+	</action>
+<action name="loadimagescontent">
+    set(layer[imagesPaneContent].visible,false);
+    set(layer[imagesPaneTitle].html,%1);
+    set(layer[imagesPaneContent].url,%SWFPATH%/skin/loading.png);
+    set(layer[imagesPaneContent].width,null);
+    set(layer[imagesPaneContent].height,null);
+    set(layer[imagesPaneContent].autowidth,true);
+    set(layer[imagesPaneContent].autoheight,true);
+    set(imagesPaneContentURL,%2);
+                                                
+    set(layer[imagesPaneContent].url,get(imagesPaneContentURL));
+    set(layer[imagesPaneContent].crop,);
+    set(layer[imagesPaneLoadingContent].visible,true);
+    set(layer[imagesPaneContainer].visible,true);
+
+    set(layer[imagesPaneContent].scale,1);
+    set(layer[imagesPaneContent].x,0);
+    set(layer[imagesPaneContent].y,0);
+
+    if(imageIndex!==null,
+      set(imagesIndex,get(imageIndex));
+    );
+</action>
+  <action name="hideimagescontent">
+    tween(layer[imagesPaneContainer].alpha,0.0, 0.30, default,
+      set(layer[imagesPaneContainer].visible,false);
+      set(layer[imagesPaneContent].visible,false);
+      if(custom_set.autoShow == true AND auto_status == '1' AND autorotate.enabled == false,startAutoRotate());
+    );
+
+    for(set(i5,0),i5 LT hotspot[%1].image.count,inc(i5),
+      txtadd(imagesThumbName,'categoryThumbContainer','_',get(i5));
+      txtadd(imagesThumbContainerName,'categoryThumbContainerBoard','_',get(i5));
+      set(layer[get(imagesThumbName)].onclick,null);
+      removelayer(get(imagesThumbName));
+      removelayer(get(imagesThumbContainerName));
+    );
+
+
+    set(layer[imagesPaneContent].onover,);
+    set(layer[imagesPaneContent].onout,);
+    set(layer[imagesPaneContent].ondown,);
+    set(layer[imagesPaneContent].onup,);
+
+
+
+    set(iszoom, false);
+    </action>
+  <action name="layoutimages">
+    set(imagesBoardWidth,get(stagewidth));
+    mul(imagesBoardWidth,0.8);
+    set(imagesBoardHeight,get(stageheight));
+    mul(imagesBoardHeight,0.8);
+    sub(imagesBoardHeight,100);
+    set(imageRate,get(width));
+    div(imageRate,get(height));
+    set(imagesBoardRate,get(imagesBoardWidth));
+    div(imagesBoardRate,get(imagesBoardHeight));
+
+    if(width GT imagesBoardWidth OR height GT imagesBoardHeight,
+      if(imageRate GT imagesBoardRate,
+        mul(height,imagesBoardWidth);
+        div(height,width);
+        set(width,get(imagesBoardWidth));
+        ,
+        mul(height,imagesBoardWidth);
+        div(height,width);
+        set(width,get(imagesBoardWidth));
+
+        set(layer[imagesPaneContent].y,get(height));
+        sub(layer[imagesPaneContent].y,imagesBoardHeight);
+        div(layer[imagesPaneContent].y,2);
+
+      );
+    );
+    set(layer[imagesPaneLoadingContent].visible,false);
+    set(visible,true);
+    set(alpha,0);
+    tween(alpha, 1.0 , 0.5);
+</action>
+  <action name="images_onmousewheel">
+    if(iszoom,
+      if(wheeldelta_touchscale GT 0,
+        if(startzoom,
+          set(startzoom,false);
+          copy(start_wheeldelta_touchscale, wheeldelta_touchscale);
+          copy(start_imagescale, layer[imagesPaneContent].scale);
+          );
+
+        div(tmp, wheeldelta_touchscale, start_wheeldelta_touchscale);
+        mul(layer[imagesPaneContent].scale, start_imagescale, tmp);
+
+                                                                                                                                                                                               
+        ,
+        mul(sit,get(wheeldelta),0.05);
+        mul(sit,layer[imagesPaneContent].scale);
+        add(layer[imagesPaneContent].scale,sit);
+                                                                                                                                                                                               
+        );
+    );
+    </action>
+    <action name="dragimages">
+      if(%1 != dragging,
+        copy(drag_currentx, x);
+        copy(drag_currenty, y);
+        copy(drag_stagex, mouse.stagex);
+        copy(drag_stagey, mouse.stagey);
+        set(drag_sx, +1);
+        set(drag_sy, +1);
+        if(align == righttop,    set(drag_sx,-1); );
+        if(align == right,       set(drag_sx,-1); );
+        if(align == rightbottom, set(drag_sx,-1); set(drag_sy,-1); );
+        if(align == bottom,      set(drag_sy,-1); );
+        if(align == leftbottom,  set(drag_sy,-1); );
+        dragimages(dragging);
+        ,
+        if(pressed,
+          sub(dx, mouse.stagex, drag_stagex);
+          sub(dy, mouse.stagey, drag_stagey);
+          mul(dx, drag_sx);
+          mul(dy, drag_sy);
+          add(x, drag_currentx, dx);
+          add(y, drag_currenty, dy);
+          delayedcall(0, dragimages(dragging) );
+          );
+        );
+             
+    </action>
+    <action name="showtextcontent">
+    if(layer[textPaneContainer],
+
+      ,
+      set(textPaneTitleW,get(stagewidth));
+      mul(textPaneTitleW,0.8);
+      if(textPaneTitleW GT 900,
+        set(textPaneTitleW,900);
+      );
+
+      addlayer(textPaneContainer);
+      set(layer[textPaneContainer].type,container);
+      set(layer[textPaneContainer].align,center);
+      set(layer[textPaneContainer].alpha,0);
+      set(layer[textPaneContainer].visible,false);
+      set(layer[textPaneContainer].x,0);
+      set(layer[textPaneContainer].y,0);
+      set(layer[textPaneContainer].width,100%);
+      set(layer[textPaneContainer].height,100%);
+      set(layer[textPaneContainer].bgcolor,0x000000);
+      set(layer[textPaneContainer].bgalpha,0.8);
+      set(layer[textPaneContainer].bgcapture,true);
+      set(layer[textPaneContainer].zorder,3700);
+      set(layer[textPaneContainer].onclick,hidetextContent(););
+
+      addlayer(textPaneTitleContainer);
+      set(layer[textPaneTitleContainer].type,container);
+      set(layer[textPaneTitleContainer].align,center);
+      set(layer[textPaneTitleContainer].x,0);
+      set(layer[textPaneTitleContainer].y,0);
+      set(layer[textPaneTitleContainer].width,get(textPaneTitleW));
+      set(layer[textPaneTitleContainer].height,70%);
+      set(layer[textPaneTitleContainer].parent,textPaneContainer);
+
+      addlayer(textPaneTitle);
+      set(layer[textPaneTitle].url,%SWFPATH%/plugins/textfield.swf);
+      set(layer[textPaneTitle].align,topcenter);
+      set(layer[textPaneTitle].x,0);
+      set(layer[textPaneTitle].y,-50);
+      set(layer[textPaneTitle].autowidth,true);
+      set(layer[textPaneTitle].autoheight,true);
+      set(layer[textPaneTitle].background,false);
+      set(layer[textPaneTitle].border,false);
+      set(layer[textPaneTitle].onautosized,copy(layer[textPaneContentScroller].height, height););
+      set(layer[textPaneTitle].padding,'10 15');
+      set(layer[textPaneTitle].html,'title');
+      set(layer[textPaneTitle].css,'color:#ffffff; font-family:黑体; font-size:18px');
+      set(layer[textPaneTitle].parent,textPaneTitleContainer);
+
+      addlayer(textPaneContentContainer);
+      set(layer[textPaneContentContainer].type,container);
+      set(layer[textPaneContentContainer].align,center);
+      set(layer[textPaneContentContainer].x,0);
+      set(layer[textPaneContentContainer].y,0);
+      set(layer[textPaneContentContainer].width,get(textPaneTitleW));
+      set(layer[textPaneContentContainer].height,65%);
+      set(layer[textPaneContentContainer].parent,textPaneContainer);
+
+      addlayer(textPaneContentMask);
+      set(layer[textPaneContentMask].type,container);
+      set(layer[textPaneContentMask].align,lefttop);
+      set(layer[textPaneContentMask].x,5);
+      set(layer[textPaneContentMask].y,5);
+      set(layer[textPaneContentMask].width,-1);
+      set(layer[textPaneContentMask].height,-10);
+      set(layer[textPaneContentMask].maskchildren,true);
+      set(layer[textPaneContentMask].parent,textPaneContentContainer);
+
+      addlayer(textPaneContentScroller);
+      set(layer[textPaneContentScroller].url,%SWFPATH%/plugins/scrollarea.swf);
+      set(layer[textPaneContentScroller].alturl,%SWFPATH%/plugins/scrollarea.js);
+      set(layer[textPaneContentScroller].mwheel,true);
+      set(layer[textPaneContentScroller].direction,v);
+      set(layer[textPaneContentScroller].overscroll,0);
+      set(layer[textPaneContentScroller].align,lefttop);
+      set(layer[textPaneContentScroller].width,100%);
+      set(layer[textPaneContentScroller].height,100%);
+      set(layer[textPaneContentScroller].parent,textPaneContentMask);
+
+      addlayer(textPaneContent);
+      set(layer[textPaneContent].url,%SWFPATH%/plugins/textfield.swf);
+      set(layer[textPaneContent].align,lefttop);
+      set(layer[textPaneContent].x,0);
+      set(layer[textPaneContent].y,0);
+      set(layer[textPaneContent].width,100%);
+      set(layer[textPaneContent].autoheight,true);
+      set(layer[textPaneContent].background,false);
+      set(layer[textPaneContent].border,false);
+      set(layer[textPaneContent].onautosized,copy(layer[textPaneContentScroller].height, height););
+      set(layer[textPaneContent].padding,'10 15');
+      set(layer[textPaneContent].html,data:testtext);
+      set(layer[textPaneContent].parent,textPaneContentScroller);
+      set(layer[textPaneContent].css,color:#ffffff; font-family:黑体; font-size:14px;line-height:30px;);
+
+      addlayer(textPaneClose);
+      set(layer[textPaneClose].url,%SWFPATH%/skin/closeImg.png);
+      set(layer[textPaneClose].align,topright);
+      set(layer[textPaneClose].x,0);
+      set(layer[textPaneClose].y,0);
+      set(layer[textPaneClose].scale,0.2);
+      set(layer[textPaneClose].autowidth,true);
+      set(layer[textPaneClose].autoheight,true);
+      set(layer[textPaneClose].background,false);
+      set(layer[textPaneClose].zorder,3101);
+      set(layer[textPaneClose].border,false);
+      set(layer[textPaneClose].onclick,hidetextContent(););
+      set(layer[textPaneClose].parent,textPaneContainer);
+
+    );
+    set(layer[textPaneTitle].html,%1);
+    set(layer[textPaneContent].html,%2);
+    set(layer[textPaneContainer].visible,true);
+    set(layer[textPaneContainer].alpha,0);
+    tween(layer[textPaneContainer].alpha, 1.0 , 0.3);
+    stopRatote();
+</action>
+  <action name="hidetextcontent">
+    tween(layer[textPaneContainer].alpha,0.0, 0.30, default,
+      set(layer[textPaneContainer].visible,false);
+      );
+
+    if(custom_set.autoShow == true AND auto_status == '1' AND autorotate.enabled == false,startAutoRatote());
+
+    </action>
+</krpano>

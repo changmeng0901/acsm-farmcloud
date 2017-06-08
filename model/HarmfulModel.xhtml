@@ -1,0 +1,159 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/model/DiseaseInfo.css" />
+#{harmfulModelHome.wire()}
+   <td valign="top">
+            <div class="right_c" style="min-height:30px; padding-bottom:20px; padding-top:20px;">
+                <!-- 病害信息内容 开始 -->
+                <div class="titleH2">
+                	<h2 class="ttl-lt">病害信息</h2>
+                </div>
+                <div class="mt30">
+                	<table class="disease-table" width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-txt1" width="12%" height="36">名称</td>
+                            <td class="td-txt2" width="30%">#{harmfulModelHome.instance.modelName}</td>
+                            <td class="td-txt1" width="12%">作物类型</td>
+                            <td class="td-txt2 bor-rt" width="30%">#{harmfulModelHome.instance.floristicsId.name}</td>
+                            <td class="" rowspan="4" width="320">
+                            	<div class="crop-exhibit">
+                                	<strong class="crop-hd">图片</strong>
+                                    <div class="crop-bd">
+                                    	<ui:fragment rendered="#{harmfulModelHome.instance.imageUrl eq ''}">
+                                    		<img src="#{request.contextPath}/asset/images/model/disease01.jpg" />
+                                    	</ui:fragment>
+                                    	<ui:fragment rendered="#{harmfulModelHome.instance.imageUrl ne ''}">
+		                                    <img src="#{harmfulModelHome.instance.imageUrl}" />
+                                    	</ui:fragment>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                        	<td class="td-txt1" height="36">病原</td>
+                            <td class="td-txt2">#{harmfulModelHome.instance.cause}</td>
+                            <td class="td-txt1">症状</td>
+                            <td class="td-txt2 bor-rt">#{harmfulModelHome.instance.symptom}</td>
+                        </tr>
+                        <tr>
+                        	<td class="td-txt1" height="36">发病条件</td>
+                            <td class="td-txt2">#{harmfulModelHome.instance.attackCriteria}</td>
+                            <td class="td-txt1">农业防治</td>
+                            <td class="td-txt2 bor-rt">#{harmfulModelHome.instance.agricultureControl}</td>
+                        </tr>
+                        <tr>
+                        	<td class="td-txt1">物理防治</td>
+                            <td class="td-txt2">#{harmfulModelHome.instance.physicsControl}</td>
+                            <td class="td-txt1">生物防治</td>
+                            <td class="td-txt2 bor-rt">#{harmfulModelHome.instance.biologyControl}</td>
+                        </tr>
+                        <ui:fragment rendered="#{harmfulModelHome.instance.plantId == null}">
+	                        <tr>
+	                        	<td class="td-txt1" >化学防治</td>
+	                            <td class="td-txt2" >#{harmfulModelHome.instance.chemistryControl}</td>
+	                            <td class="td-txt1">病虫害类型</td>
+	                            <td class="td-txt2" colspan="2">
+	                            	<s:fragment rendered="#{harmfulModelHome.instance.type==1}">病害</s:fragment>
+	                             	<s:fragment rendered="#{harmfulModelHome.instance.type==2}">虫害</s:fragment>
+	                             	<s:fragment rendered="#{harmfulModelHome.instance.type==3}">草害</s:fragment>	   
+	                            </td>
+	                        </tr>
+                        </ui:fragment>
+                       	<ui:fragment rendered="#{harmfulModelHome.instance.plantId != null}">
+	                       	<tr>
+	                        	<td class="td-txt1" rowspan="2">化学防治</td>
+	                            <td class="td-txt2" rowspan="2">#{harmfulModelHome.instance.chemistryControl}</td>
+	                            <td class="td-txt1">病虫害类型</td>
+	                            <td class="td-txt2" colspan="2">
+	                            	<s:fragment rendered="#{harmfulModelHome.instance.type==1}">病害</s:fragment>
+	                             	<s:fragment rendered="#{harmfulModelHome.instance.type==2}">虫害</s:fragment>
+	                             	<s:fragment rendered="#{harmfulModelHome.instance.type==3}">草害</s:fragment>	   
+	                            </td>
+	                        </tr>
+	                       	<tr>
+		                            <td class="td-txt1">作物类别</td>
+		                            <td class="td-txt2" colspan="2">#{harmfulModelHome.instance.plantId.name}</td>
+	                        </tr>
+                        </ui:fragment>
+                        <tr>
+                        	<td class="td-txt1" height="36">病虫害损失率</td>
+                            <td class="td-txt2">#{harmfulModelHome.instance.lossRatio}%</td>
+                            <td class="td-txt1"></td>
+                            <td class="td-txt2" colspan="2"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="titleH2 mt30">
+                	<h2 class="ttl-lt">发育阶段易患病害管理</h2>
+                </div>
+                <div class="mt30">
+                	<table class="disease-table" width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-txt1" width="11.5%">发育阶段易患病害信息</td>
+                            <td class="td-txt2">
+                            	<a:repeat value="#{harmfulModelHome.plantPeriodSourceResult}" var="_sc" rowKeyVar="_index">
+                            		#{harmfulModelHome.attackName(_sc)}
+                            		<ui:fragment rendered="#{harmfulModelHome.plantPeriodSourceResult.size()-1!=_index}">
+                            		、
+                            		</ui:fragment>
+                            	</a:repeat>
+                            </td>
+                        </tr> 
+                    </table>
+                </div>
+                <div class="titleH2 mt30">
+                	<h2 class="ttl-lt">病害生长环境信息</h2>
+                </div>
+                <div class="mt30">
+                	<table class="disease-table" width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td class="td-txt1" width="11.8%">最低温度</td>
+                            <td class="td-txt2" width="29%">#{harmfulModelHome.instance.tempLower}℃</td>
+                            <td class="td-txt1" width="12%">最高温度</td>
+                            <td class="td-txt2">#{harmfulModelHome.instance.tempUpper}℃</td>
+                        </tr> 
+                        <tr>
+                        	<td class="td-txt1">最低湿度</td>
+                            <td class="td-txt2">#{harmfulModelHome.instance.humiLower}%</td>
+                            <td class="td-txt1">最高湿度</td>
+                            <td class="td-txt2" >#{harmfulModelHome.instance.humiUpper}%</td>
+                        </tr> 
+                        <tr>
+                        	<td class="td-txt1">爆发时间</td>
+                            <td class="td-txt2">#{harmfulModelHome.instance.eruptTime}</td>
+                            <td class="td-txt1"></td>
+                            <td class="td-txt2"></td>
+                        </tr> 
+                    </table>
+                </div>
+                <!-- 病害信息内容 结束 -->
+                <div class="mes_mailBtn" style="margin:50px 0 100px;">
+                	<ui:fragment rendered="#{harmfulModelHome.typ eq 1}">
+	                    <s:button styleClass="btn btn-default" value="返回" propagation="end" view="/model/ModelDetail.xhtml">
+	                		<f:param name="plantPlantId" value="#{harmfulModelHome.plantId}" />
+	                	</s:button>
+                	</ui:fragment>
+                	<ui:fragment rendered="#{harmfulModelHome.typ eq 2}">
+	                	<s:link propagation="none" view="/model/ModelDetailMore.xhtml" styleClass="btn btn-default">
+                                   	<f:param name="plantId" value="#{harmfulModelHome.plantId}"/>
+                                   	<f:param name="floristicsId" value="#{harmfulModelHome.floristicId}"/>
+                          			返回
+			                    </s:link>
+                	</ui:fragment>
+                </div>
+            </div>
+            </td>  
+
+</ui:define>
+
+</ui:composition>

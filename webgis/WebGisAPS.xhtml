@@ -1,0 +1,54 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    template="/layout/template_webgis.xhtml">
+    <ui:define name="head">
+    </ui:define>
+    <ui:define name="head_next">
+    </ui:define>
+    <ui:define name="body">
+<td valign="top" >
+	<iframe src="#{request.contextPath}/webgis/WebGisAPS.html?base_id=#{webGisHome.base_Id}&amp;latlng=#{webGisHome.latLngs}&amp;enter_id=#{sessionTake.enterpriseInfoId}&amp;baseFontSize=#{webGisHome.baseFontSize}&amp;partitionFontSize=#{webGisHome.partitionFontSize}&amp;tunnelInfoFontSize=#{webGisHome.tunnelInfoFontSize}&amp;baseFontColor=#{webGisHome.baseFontColor}&amp;partitionFontColor=#{webGisHome.partitionFontColor}&amp;tunnelInfoFontColor=#{webGisHome.tunnelInfoFontColor}&amp;oss_url=#{dataDicConstant.getOssUrl()}&amp;viewAdmin=#{sessionTake.viewAdmin}&amp;viewFarmer=#{sessionTake.viewFarmer}" 
+		id="map_iframe" scrolling="no" frameborder="no" border="0" style="width:100%;height:100%;">
+        
+    </iframe>
+    <div id="aerialVideoDiv" style="position:fixed; z-index:10000; left:0; top:0;width:100%; height:100%;display:none;">
+ 		<iframe id="aerialIframe" scrolling="yes" frameborder="no" src="" width="100%" height="100%" ></iframe>	
+	</div>
+    <script type="text/javascript">
+  //<![CDATA[
+    	function setIframeHeight(){
+    		var height = document.body.clientHeight;
+        	document.getElementById("map_iframe").style.height = (height-60)+"px";
+    	}
+    	setIframeHeight();
+    	jQuery(window).resize(function(){
+    		setTimeout(function(){
+    			resizeIframe()
+    		}, 10);
+		});
+    	
+    	function resizeIframe(){
+    		var width = jQuery(window).width()-77;
+    		var height = jQuery(window).height()-60;
+    		var isOpened = jQuery("#map_iframe")[0].contentWindow.isOpened;
+    		var iframeObj = jQuery("#map_iframe").contents();
+    		iframeObj.find(".box_back").not("#copy_tips").css({"height":height+"px","width":width+"px","top":0});
+    		iframeObj.find("#box").css({width:width,height:height});
+    		iframeObj.find(".jScrollbar_mask").css("height",height- 101 +"px ");
+    		if(isOpened){
+    			jQuery("#map_iframe")[0].contentWindow.openDoor();
+    		}else{
+    			jQuery("#map_iframe")[0].contentWindow.closeDoor();
+    		}
+    		setIframeHeight();
+    	}
+    	
+    	var zoom_group = "#{webGisHome.coordinateGroup}";
+    	 
+    	//]]>
+    </script>
+</td>
+</ui:define>
+</ui:composition>

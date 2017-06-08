@@ -1,0 +1,398 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_left.xhtml">
+
+<ui:define name="body">
+<style>
+.borderBt1{ min-width:630px; margin:13px 0; zoom:1; border-bottom:1px solid #dbdbdb; height:2px; overflow:hidden;}
+
+.farmingMage_Magnifier{ display:none; position:fixed; left:0px; top:0px;  z-index:20; height:360px;}
+.MagnifierClose{ position:absolute; right:-15px; top:0; width:28px; height:28px; cursor:pointer;}
+
+.farming_nodata{ overflow:hidden; border-bottom:1px solid #ddd; background:#fcfcfc;}
+.warning_noData{ width:508px; padding-top:60px; margin:125px auto 220px; text-align:center; background:url(../asset/images/farmingIco20.png) no-repeat center top;}
+.warning_noData em{ font-style:normal; font-family:'微软雅黑'; font-size:18px; color:#333;}
+.warning_noData p{ line-height:26px; margin-top:24px; font-size:14px; font-family:'黑体'; color:#5c5c5c;}
+</style>
+<div class="box_back" id="login" style="display:none;z-index:1000">
+    <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" />
+  	</div>
+</div>
+	<td valign="top">
+	<!-- #{autoShack.allBegin()} -->
+		<div class="right_c" style="min-height:30px;">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">自动查棚</font></div>
+                    </div>
+                    <div class="clear"></div>
+                    <br/>
+                    
+                    <div class="z_r_ser" style="min-width:1020px">
+                    <h:form id="autoSearch">
+									<span>选择分区 </span>
+									<span>
+										<h:selectOneMenu  styleClass="selectpicker" id="pListId"   value="#{autoShack.pListId}" onchange="tunnel(this.value)">
+											<s:selectItems value="#{autoShack.pList}" var="var" label="#{var[1]}" itemValue="#{var[0]}"/>
+										</h:selectOneMenu>
+									</span>
+									<h:panelGroup id="retunId">
+									<span>选择区域  </span>
+									<span>
+					                    <select  id="tunnelCheck" name="tunnelCheck" class="selectpicker"  data-live-search="true" style="display: none;" multiple="multiple" onchange="plant()">
+												<a4j:repeat value="#{autoShack.tiList}" var="var">
+													<option>#{var}</option>
+												</a4j:repeat>
+										</select>
+									</span>
+									<h:panelGroup id="rePlantId">
+									<span >选择作物  </span>
+									<span>
+										<select  id="plantCheck" name="plantCheck" class="selectpicker"  data-live-search="true" style="display: none;" multiple="multiple">
+												<a4j:repeat value="#{autoShack.plantList}" var="var">
+													<option>#{var}</option>
+												</a4j:repeat>
+										</select>
+									</span>
+									</h:panelGroup>
+									</h:panelGroup>
+									<h:inputHidden value="#{autoShack.plantNames}" id="plantNames"/>
+									 <a4j:commandButton id="search" styleClass="btn btn-primary" status="ajaxStatus" value="查棚" action="#{autoShack.searchAll()}" onclick="if(!allcomit())return false;" reRender="allId,refreshPage" oncomplete="huidiao3()">                                	
+	                                </a4j:commandButton>
+	                                 <h:commandButton id="manyexport" styleClass="btn btn-primary" value="导出" action="#{autoShack.manyExportExcel()}" style="margin-left:10px;" onclick="if(!allExport())return false">                                	
+	                                </h:commandButton>
+                    </h:form>
+                    <div class="borderBt1"></div>                     
+                    </div>
+                    <h:panelGroup id="allId">
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="#{autoShack.sensorOrStations==1?'10':'13'}" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                    		<th class="ze_bg" >区域</th>
+                    		<th class="ze_bg" >种植作物</th>
+                    		<th class="ze_bg" >空气温度</th>
+                    		<th class="ze_bg" >空气湿度</th>
+                    		<th class="ze_bg" >土壤温度</th>
+                    		<th class="ze_bg" >土壤湿度</th>
+                    		<th class="ze_bg" >二氧化碳</th>
+                    		<th class="ze_bg" >光照</th>
+                    		<ui:fragment rendered="#{autoShack.sensorOrStations==2}">
+	                    		<th class="ze_bg" >风力风向</th>
+	                    		<th class="ze_bg" >降水量</th>
+	                    		<th class="ze_bg" >大气压</th>
+                    		</ui:fragment>
+                    		<th class="ze_bg" >作物生长状况</th>
+                    		<th class="ze_bg" >环境评价</th>
+                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                    	</tr>
+                    	 <a4j:repeat var="var" value="#{autoShack.allList}" rowKeyVar="_row">
+	                    	 <tr>
+	                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                            <td class="ze_bg2 tsize" style="color: #{var[2]?'#F00':''}">
+	                            <ui:fragment rendered="#{var[2]}">
+	                    			<img src="#{request.contextPath}/asset/images/analysis/th.png" style="padding-right: 5px;padding-bottom: 2px;"/>
+	                    		</ui:fragment>
+	                            #{var[0]}</td>
+	                            <td class="ze_bg2">#{var[1]}</td>
+	                    		<td class="ze_bg2" style="color: #{var[4]!=0?'#F00':''}">
+	                    		<ui:fragment rendered="#{var[4]!=0}">
+	                    			<img src="#{request.contextPath}/asset/images/analysis/th.png" style="padding-right: 5px;padding-bottom: 2px;"/>
+	                    		</ui:fragment>
+	                    		#{var[3]=='' || var[3]=='-100.0'?'-':var[3]}#{var[3]==''|| var[3]=='-100.0'?'':'℃'}</td>
+	                    		<td class="ze_bg2" style="color: #{var[6]!=0?'#F00':''}">
+	                    		<ui:fragment rendered="#{var[6]!=0}">
+	                    			<img src="#{request.contextPath}/asset/images/analysis/th.png" style="padding-right: 5px;padding-bottom: 2px;"/>
+	                    		</ui:fragment>
+	                    		#{var[5]=='' || var[5]=='-100.0' ?'-':var[5]}#{var[5]=='' || var[5]=='-100.0' ?'':'%'}</td>
+	                    		<td class="ze_bg2" style="color: #{var[8]!=0?'#F00':''}">
+	                    		<ui:fragment rendered="#{var[8]!=0}">
+	                    			<img src="#{request.contextPath}/asset/images/analysis/th.png" style="padding-right: 5px;padding-bottom: 2px;"/>
+	                    		</ui:fragment>
+	                    		#{var[7]=='' || var[7]=='-100.0' ?'-':var[7]}#{var[7]=='' || var[7]=='-100.0'?'':'℃'}</td>
+	                    		<td class="ze_bg2" style="color: #{var[10]!=0?'#F00':''}">
+	                    		<ui:fragment rendered="#{var[10]!=0}">
+	                    			<img src="#{request.contextPath}/asset/images/analysis/th.png" style="padding-right: 5px;padding-bottom: 2px;"/>
+	                    		</ui:fragment>
+	                    		#{var[9]=='' || var[9]=='-100.0'?'-':var[9]}#{var[9]=='' || var[9]=='-100.0'?'':'%'}</td>
+	                    		<td class="ze_bg2" style="color: #{var[12]!=0?'#F00':''}">
+	                    		<ui:fragment rendered="#{var[12]!=0}">
+	                    			<img src="#{request.contextPath}/asset/images/analysis/th.png" style="padding-right: 5px;padding-bottom: 2px;"/>
+	                    		</ui:fragment>
+	                    		#{var[11]=='' || var[11]=='-100.0'?'-':var[11]}#{var[11]=='' || var[11]=='-100.0'?'':'ppm'}</td>
+	                    		<td class="ze_bg2" style="color: #{var[14]!=0?'#F00':''}">
+	                    		<ui:fragment rendered="#{var[14]!=0}">
+	                    			<img src="#{request.contextPath}/asset/images/analysis/th.png" style="padding-right: 5px;padding-bottom: 2px;"/>
+	                    		</ui:fragment>
+	                    		#{var[13]=='' || var[13]=='-100.0'?'-':var[13]}#{var[13]=='' || var[13]=='-100.0'?'':'lux'}</td>
+	                    		<ui:fragment rendered="#{autoShack.sensorOrStations==2}">
+	                    			
+	                    			<td class="ze_bg2">#{var[15]}</td>
+		                    		<td class="ze_bg2">#{var[17]=='' || var[17] =='-100.0'?'-':var[17]}#{var[17]=='' || var[17] =='-100.0'?'':'mm'}</td>
+		                    		<td class="ze_bg2">#{var[18]=='' || var[18] =='-100.0'?'-':var[18]}#{var[18]=='' || var[18] =='-100.0'?'':'hPa'}</td>
+	                    		</ui:fragment>
+							    <td class="ze_bg2">
+							   		<ui:fragment rendered="#{var[19]!='-'}">
+							   			<ul class="farmingMage_pics" style="width:auto">
+                                             <li>
+                                                 <a href="javascript:;"><img src="#{var[19]}" style="width: 80px; height: 33px;" title="#{var[22].substring(0,4)}-#{var[22].substring(5,6)}-#{var[22].substring(7,8)}"/></a>
+                                                 <div class="farmingMage_Magnifier" style="z-index:1000">
+                                                 	<em class="MagnifierClose"><img src="#{request.contextPath}/asset/images/farmingIco05.png" width="28" height="28" /></em>
+                                                     <div class="MagnifierBox"><img src="#{var[19]}" id="zoomId"/></div>
+                                                 </div>
+                                             </li>
+                                         </ul>
+							   			
+							   		</ui:fragment>
+							   		<ui:fragment rendered="#{var[19]=='-'}">
+							   			<img src="#{request.contextPath}/asset/images/analysis/mrt.png" style="width: 80px; height: 60px;"/>
+							   		</ui:fragment>
+							    </td>
+	                    		<td class="ze_bg2">
+	                    		<ui:fragment rendered="#{var[20]!='-' &amp;&amp; var[20] &gt;= 80 &amp;&amp; var[20] &lt;=100}">
+		                    		#{var[20]}
+		                    		<img src="#{request.contextPath}/asset/images/analysis/you.png" />
+	                    		</ui:fragment>
+	                    		<ui:fragment rendered="#{var[20]!='-' &amp;&amp; var[20] &gt;=70 &amp;&amp; var[20] &lt;80}">
+		                    		#{var[20]}
+		                    		<img src="#{request.contextPath}/asset/images/analysis/liang.png" />
+	                    		</ui:fragment>
+	                    		<ui:fragment rendered="#{var[20]!='-' &amp;&amp; var[20] &gt;=60 &amp;&amp; var[20] &lt; 70}">
+		                    		#{var[20]}
+		                    		<img src="#{request.contextPath}/asset/images/analysis/zhong.png" />
+	                    		</ui:fragment>
+	                    		<ui:fragment rendered="#{var[20]!='-' &amp;&amp; var[20] &gt;=0 &amp;&amp; var[20] &lt;60}">
+		                    		#{var[20]}
+		                    		<img src="#{request.contextPath}/asset/images/analysis/cha.png" />
+	                    		</ui:fragment>
+	                    		<ui:fragment rendered="#{var[20]=='-'}">
+		                    		#{var[20]}
+	                    		</ui:fragment>
+	                    		</td>
+	                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"> </td>
+	                    	</tr>
+                    	 </a4j:repeat>
+                    </table>
+                    
+						<s:div styleClass="farming_nodata" rendered="#{empty autoShack.allList}">
+                                    	<div class="warning_noData">
+                                        	<em>很遗憾，没有相关数据</em>
+                                        	<p>您可以通过选择分区，区域或作物来及时查看区域的生产现状，快去跟进吧！</p>
+                                        </div>
+                                    </s:div>
+                    </h:panelGroup>
+                    	 <!-- 分页 开始 -->
+                                <a4j:outputPanel id="refreshPage">
+                                <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+			                <ui:fragment rendered="#{!autoShack.previousExists}">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </ui:fragment>
+			                 <ui:fragment rendered="#{autoShack.previousExists}">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </ui:fragment>
+			                <ui:fragment rendered="#{autoShack.previousExists}">
+	                            <td class="td_t_b">
+		                            <a href="#" onclick="jump(0);return false;">首页</a>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <a href="#" onclick="jump(#{autoShack.previousFirstResult});return false;" class="no_n">
+		                            	&lt;
+		                            </a>
+	                            </td>
+	                        </ui:fragment>
+					       <a4j:repeat var="_page" value="#{autoShack.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{autoShack.previousExists or _index >0 ?'td_t_t':''} #{_page eq autoShack.pageNum?'onp':''}">
+									<a href="#" onclick="jump(#{_page});return false;">
+										#{_page}
+									</a>
+								</td>
+							</a4j:repeat>
+							<ui:fragment rendered="#{autoShack.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <a href="#" class="no_d" onclick="jump(#{autoShack.nextFirstResult});return false;">
+	                            &gt;
+	                            </a>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <a href="#" onclick="jump(#{autoShack.PAGE_COUNT});return false;">
+								 尾页
+								 </a>
+							</td>
+							</ui:fragment>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{autoShack.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</tr>
+                    </table>
+                    </a4j:outputPanel>
+                                <!-- 分页 结束 -->
+                   
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                 <h:form>
+		            <input type="hidden" value="#{autoShack.pageNum}" id="pageNum" name="pageNum"/>
+		            <a4j:commandButton value="" action="#{autoShack.searchAll()}" styleClass="but_" style="display:none"  reRender="allId,refreshPage" oncomplete="huidiao3()"/>
+		            </h:form>
+                <div style="height:30px; width:100%;"></div>
+                <div class="clear"></div>
+                <!--right_c结束-->
+			<a4j:status id="ajaxStatus" forceId="true" onstart="jquery('#login').show()" onstop="jquery('#login').hide()" />	
+	</td>
+	<a4j:form>
+		<a4j:jsFunction eventsQueue="mainQueue" name="changeTunnel" action="#{autoShack.changeTiList()}" reRender="retunId" oncomplete="huidiao()">
+			<a4j:actionparam name="pListId" assignTo="#{autoShack.pListId}" />
+		</a4j:jsFunction>
+	</a4j:form>
+	<a4j:form>
+		<a4j:jsFunction eventsQueue="mainQueue" name="changePlant" action="#{autoShack.changePList()}"  reRender="rePlantId" oncomplete="huidiao2()">
+			<a4j:actionparam name="tiNames" assignTo="#{autoShack.tiNames}" />
+		</a4j:jsFunction>
+	</a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+	window.onload = function () {
+	  jquery('.selectpicker').selectpicker();
+	  jquery('#autoSearch\\:search').click();
+	};
+	jquery(function(){
+		jquery('#tunnelCheck').selectpicker({noneSelectedText:"全部"});
+	    jquery('#tunnelCheck').selectpicker('deselectAll');
+	    jquery('#plantCheck').selectpicker({noneSelectedText:"全部"});
+	    jquery('#plantCheck').selectpicker('deselectAll');
+		})
+		
+	function tunnel(val){
+		changeTunnel(val);
+	}
+	
+	function plant(){
+		if(jquery("#tunnelCheck").val()==null){
+			changePlant(0);
+		}else{
+			changePlant(jquery("#tunnelCheck").val().toString());
+		}
+	}
+
+	function huidiao(){
+		jquery('.selectpicker').selectpicker();
+		jquery('#tunnelCheck').selectpicker({noneSelectedText:"全部"});
+	    jquery('#tunnelCheck').selectpicker('deselectAll');
+	    jquery('#plantCheck').selectpicker({noneSelectedText:"全部"});
+	    jquery('#plantCheck').selectpicker('deselectAll');
+	}
+	function huidiao2(){
+		jquery('.selectpicker').selectpicker();
+	    jquery('#plantCheck').selectpicker({noneSelectedText:"全部"});
+	    jquery('#plantCheck').selectpicker('deselectAll');
+	}
+	function allcomit(){
+		if(jquery("#plantCheck").val()==null){
+			jquery("#autoSearch\\:plantNames").val("0");
+		}else{
+			jquery("#autoSearch\\:plantNames").val(jquery("#plantCheck").val().toString());
+		}
+		if(jquery('#autoSearch\\:pListId').val()==null){
+			alert("无可查询分区");
+			return false;
+		}
+		return true;
+	}
+	function jump(index){
+		jquery("#pageNum").val(index);
+		jquery(".but_").trigger("click");
+	}
+
+	/*  放大镜js */
+	function jsZoom(){
+		jquery('.farmingMage_pics li a').click(function(){
+			var img = jquery(this).find("img");
+			var _th = jquery(this);
+			var realWidth;//真实的宽度
+			var realHeight;//真实的高度
+			jquery("<img/>").attr("src", jquery(img).attr("src")+"?" + new Date().getTime()).load(function() {
+			realWidth = this.width;
+			realHeight = this.height;
+			var width = document.body.clientWidth-30;
+			var height = document.body.clientHeight-40;
+			var a1 = realWidth/width;
+			var a2 = realHeight/height;
+			//console.log(a1+"+++"+a2);
+			if(a1>a2){
+				_th.next().css("max-width",width+"px");
+				_th.next().find(".MagnifierBox").css("max-width",width+"px");
+				_th.next().find("#zoomId").css("max-width",width+"px");
+				if(realWidth>width){
+					_th.next().css("left","15px");
+					var x = width/realWidth*realHeight;
+					_th.next().css("top",(height-x)/2+"px");
+				}else{
+					_th.next().css("top",(height-realHeight)/2+"px");
+					_th.next().css("left",(width-realWidth)/2+"px");
+				}
+			}else{
+				_th.next().css("max-height",height+"px");
+				_th.next().find(".MagnifierBox").css("max-height",height+"px");
+				_th.next().find("#zoomId").css("max-height",height+"px");
+				if(realHeight>height){
+					_th.next().css("top","15px");
+					var x = height/realHeight*realWidth;
+					_th.next().css("left",(width-x)/2+"px");
+				}else{
+					_th.next().css("top",(height-realHeight)/2+"px");
+					_th.next().css("left",(width-realWidth)/2+"px");
+				}
+			}
+			_th.next().css('display','block')
+			.parent().siblings().children('a').next().hide();
+			jquery('.MagnifierClose').click(function(){
+				jquery(this).parent().hide();	
+			});
+			});
+		});
+		jquery('.farmingMage_pics li a').blur(function(){
+			jquery(this).next('.farmingMage_Magnifier').fadeOut();	
+		});
+	}
+	function huidiao3(){
+		jsZoom();
+		}
+
+	function allExport(){
+		if(jquery(".tsize").length==0){
+			alert("对不起,没有可导出棚");
+			return false;
+		}
+		jquery("#login").show();
+		jquery.extend({              
+			   referesh1: function () {              
+					 jquery.ajax({
+							type :'get',
+							url :'#{request.contextPath}/AutoShackServlet.do',
+							success : function(msg){
+								if(msg==1){
+									jquery("#login").hide();
+									 window.clearInterval(timerID);
+								}
+							}
+						});
+			        }       
+			 
+			      });
+			 
+		 timerID = setInterval("jquery.referesh1()", 1000 * 2);
+		return true;
+	}
+	//]]>
+</script> 
+</ui:define>
+</ui:composition>

@@ -1,0 +1,2575 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_gantt.xhtml">
+    <ui:define name="body">
+<td valign="top" >
+<div class="box_back" id="login" style="display:none">
+    <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" />
+  	</div>
+</div>
+ <!-- #{mapHome.work()} -->
+  <!-- #{mapHome.work3()} -->
+<style>
+.box_back{background:url(../asset/images/bg_png.png) repeat; width:100%; height:100%; position:fixed; z-index:8888; display:none;}
+.width73{width:73px}
+.rich-color-picker-wrapper{z-index:4}
+.mu_mianji{float:left; height:30px; line-height:30px;}
+.rich-calendar-date-layout span{background :none;float: none;};
+
+#MySplitter {
+	min-width:  600px;
+	min-height: 300px;
+}
+#bPane{			/* Top nested in right pane */
+	height: 0px;		/* Initial height */
+	overflow-y: scroll;
+}
+#rightPane{
+	width: 0px;
+	max-width: 450px;
+	overflow-x:hidden;
+	overflow-y:hidden;
+	
+}
+#rbPane{
+	height: 0px;
+	background-color:#FFFFFF;
+	overflow:auto;
+}
+.SplitterPane {
+	overflow: auto;
+}
+.vsplitbar {
+	width: 6px;
+	background:url(#{request.contextPath}/asset/images/panev2.png) 0% 50%;
+}
+
+.vsplitbar.active, .vsplitbar:hover {
+	background:url(#{request.contextPath}/asset/images/panev2.png) 0% 50%;
+	width: 6px;
+	opacity: 0.5;
+	filter: alpha(opacity=50); /* IE */
+}
+
+.hsplitbar {
+	height: 6px;
+	background:#cbe1fb url(#{request.contextPath}/asset/images/paneh3.gif) 50% 0%;
+}
+
+.hsplitbar.active, .hsplitbar:hover {
+	opacity: 0.7;
+	background:url(#{request.contextPath}/asset/images/paneh3.gif) repeat scroll 50% 0;
+	filter: alpha(opacity=70); /* IE */
+}
+.splitbarV {
+float:left;width:6px;height:100%;
+line-height:0px;font-size:0px;
+border-left:solid 1px #9cbdff;border-right:solid 1px #9cbdff;
+background:#cbe1fb url(#{request.contextPath}/asset/js/gantt/img/panev2.png) 0% 50%;
+}
+.splitbarH {
+height:6px;text-align:left;line-height:0px;font-size:0px;
+border-top:solid 1px #9cbdff;border-bottom:solid 1px #9cbdff;
+background:#cbe1fb url(#{request.contextPath}/asset/js/gantt/img/paneh2.gif) 50% 0%;
+}
+
+.splitbuttonV{
+margin-top:-41px;margin-left:-12px;top:50%;position:relative;
+height:108px;width:17px;
+background:transparent url(#{request.contextPath}/asset/js/gantt/img/panevc2.gif) 17px 50%;
+}
+.splitbuttonV.invert{
+margin-left:5px;background:transparent url(#{request.contextPath}/asset/js/gantt/img/panevc2.gif) 0px 50%;
+}
+
+.splitbuttonH{margin-left:-41px;left:50%;position:relative;height:17px !important;width:91px;background:transparent url(#{request.contextPath}/asset/js/gantt/img/panehc2.png) 50% 0px; margin-top:5px;}
+.splitbuttonH.invert{margin-top:-11px; background:transparent url(#{request.contextPath}/asset/js/gantt/img/panehc2.png)0 -16px;}
+
+   #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      #panel {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: -180px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+      }
+.jScrollbar_mask .tc_ul .tc_li table{*width:97%;}
+.tc_strong .uboxstyle3 font{font-size:14px;}
+.rich-calendar-popup{width:208px;}
+</style>
+<div id="MySplitter">
+  <div id="CenterAndRight">
+  <div id="mbPane" class="SplitterPane" style="overflow-x:hidden；overflow-y:hidden;overflow:hidden;">
+		<div class="right_c">
+                        <div class="r_title" style="border-bottom:none;">
+                            <div class="r_t_l">工作&#160;&#160;&gt;&#160;&#160;<font size="3">甘特图</font></div>
+                                       <div style="   position: absolute; right: 159px; top: 36px; z-index: 1000;">
+
+	 <h:selectOneMenu id="base_Id" value="#{mapHome.base_Id}"  autocomplate="off" onchange="window.location.href=workpath+'/map/Gantt.seam?base_Id='+this.value;" >
+                <s:selectItems value="#{mapHome.blist}" var="var" label="#{var.name}" itemValue="#{var.id}" noSelectionLabel="全部"/>
+            </h:selectOneMenu>
+	</div>
+                            	<ul class="yeardiv">
+                                	<li class="yearli"><a href="#"  onclick="reset_gantt(1)"><img id="img1" src="#{request.contextPath}/asset/images/yearl.jpg" width="30" height="30" /></a></li>
+                                    <li class="yearlic" id="yearlic"></li> 
+                                    <li class="yearli"><a href="#"  onclick="reset_gantt(2)"><img id="img2" src="#{request.contextPath}/asset/images/yearr.jpg" width="30" height="30" /></a></li>
+                                </ul>
+                                <script type="text/javascript">
+                                	document.getElementById("yearlic").innerHTML=new Date().getFullYear();
+                                </script>
+                         </div>
+                         <div class="gantt"></div> 
+                        <div class="clear"></div>
+                   </div>
+   </div>
+   <div id="rightPane"  class="SplitterPane">
+		<div id="rmPane">
+                          	  <div class="tc_top_05 list1">
+                                    <div class="erlist4">
+                                          <ul>
+                                            <li class="current" style="width:50%"><a title="" href="javascript:">排产</a></li>
+                                            <li class="" style="width:50%"><a title="" href="javascript:">区域</a></li>
+                                          </ul>
+                                    </div>
+                               </div> 
+                        <div class="erbox3 list1">
+                         <!--排产开始-->
+                        	<div class="erb" style="">
+                        	<table cellpadding="0" cellspacing="0" class="tc_top_04" style="border-collapse:collapse; table-layout:fixed;">	
+                          		<tr>
+                                	<td style="width:34px; padding-left:40px;"><a href="#"  onclick="searchApsBy()"><img width="34" height="32" src="#{request.contextPath}/asset/images/sous_04.jpg"/></a></td>
+                                    <td style="padding-right:45px;"><input type="text" id="tc_top_input" value="" class="tc_top_in2"  /></td>
+                                    <td style="display:none">
+                                    <ul class="erlist3_min">
+                                            <li class="rightli01 current"><a title="" href="javascript:"><img width="30" title="当前作物" height="29" src="#{request.contextPath}/asset/images/pcs.png"/></a></li>
+                                        </ul> 
+                                    </td>
+                                </tr>
+                           </table>
+                            <div  class="tc_rw_rw2">
+                                 <div class="jScrollbar_mask">
+                                     <div class="erbox3min">
+                                   <div class="erb2" style="">
+                                   		<!--排产第三页开始-->
+                                        <div style="display:block; margin-bottom:10px;">
+                                   		<div class="pcaqu2">
+                                            <table width="100%" cellspacing="0" cellpadding="0" style="background:url(#{request.contextPath}/asset/images/gtd_03.jpg) left bottom no-repeat;">
+                                                <tbody><tr>
+                                                  <td width="20" height="15" align="left">    
+                                                       <img width="17" height="15" src="#{request.contextPath}/asset/images/gtda_07.jpg" style="cursor:pointer;" class="gtbut2"/>                                                    </td>
+                                                    <td align="left">
+                                                        <div class="pca_hg">当前作物</div>                                                    </td>
+                                                </tr>
+                                            </tbody></table>            
+                                   		</div>
+                                        <div class="tec_c2 nowPlant">
+                                        <a4j:repeat value="#{mapHome.floriList}" var="obj" >
+                                         <a4j:repeat value="#{mapHome.getPlantMethod(obj.floristicsId)}"  var="obj1" >
+                                            <div class="pcic" sid="#{obj1.plantId}">
+                                                <a onclick="pc_img2(this)" class="thirdHtmlClass" lj="lj" aa="#{obj1.plantId}" bb="#{obj1.name}" href="#"><img width="99" height="102" src="#{request.contextPath}/asset/images/pcdi_03.png" class="pcpic"/></a>
+                                                   <div class="pcimg">
+                                                   		<s:decorate rendered="#{obj1.plantImgRound ne null &amp;&amp; obj1.plantImgRound ne ''}">
+                                							<img src="#{obj1.plantImgRound}" width="70" height="70"/>
+	                                		   			</s:decorate> 
+											    		<s:decorate rendered="#{obj1.plantImgRound eq null || obj1.plantImgRound eq ''}">
+                                							<img src="../asset/images/wt.png" width="70" height="70"/>
+	                                		   			</s:decorate>         
+	                                		   			</div>
+                                                   <div class="pctext">#{obj1.name}</div>
+                                                   <div class="pc_bgdiv" style="display:none">
+                                                   <div class="pc_bgno"><strong>1.2</strong></div>
+                                                   </div> 
+                                            </div>
+                                            </a4j:repeat>
+                                            </a4j:repeat>
+                                        </div> 
+                                        <div class="clear"></div>   
+                                   </div>
+                                   <!--排产第三页结束--> 
+                                   </div><!--erb2结束-->
+                           </div>  <!--erbox3min结束-->              
+                                    <div class="clear"></div>
+                               </div>
+                                    <!--<div class="jScrollbar_draggable">
+                                        <a href="#" class="draggable"/></a>
+                                    </div>-->
+                              </div><!--rw_rw2结束-->          
+                                	<div class="clear"></div>
+                          </div><!--erb结束-->
+                               <!--排产结束-->       
+                         <!--区域开始-->
+                        	<div class="erb" style="display: none;">
+                               <table cellpadding="0" cellspacing="0" class="tc_top_04" style="border-collapse:collapse; table-layout:fixed;">	
+                          		<tr>
+                                	<td style="width:34px; padding-left:5px;"><a href="#" onclick="searchs()"><img width="34" height="32" src="#{request.contextPath}/asset/images/sous_04.jpg"/></a></td>
+                                    <td style="padding-right:15px;"><input type="text" id="second_word" class="tc_top_in2" /></td>
+                                            
+                                	<td width="134">
+                                        <ul class="erlist_min">
+                                    	<li class="leftli01 current"><a title="" href="javascript:"><img width="30" height="29" src="#{request.contextPath}/asset/images/lei_03.png" title="区域类型"/></a></li>
+                                        <li class="leftli02"><a title="" href="javascript:"><img width="30" height="29" src="#{request.contextPath}/asset/images/lei_05.png" title="品种类型"/></a></li>
+                                        <li class="leftli02"><a title="" href="javascript:"><img width="30" height="29" src="#{request.contextPath}/asset/images/lei_06.png" title="区域"/></a></li>
+                                        <li class="rightli01"><a title="" href="javascript:"><img width="30" height="29" src="#{request.contextPath}/asset/images/lei_08.png" title="状态"/></a></li>
+                                    </ul> 
+                                   </td>
+                                </tr>
+                           </table>
+                              <div  class="tc_rw_rw2">
+                                     <div class="jScrollbar_mask" style="top: 0px; padding-left:0;">
+                                         <div class="erbox4min">
+                                          <div id="erb2" style="display: block;">
+	                            <div class="tc_rw_rw2 _scroll" >
+	                            <div class="jScrollbar_mask _area0" style="top: 0px; padding-left:0;">
+	                            </div></div>
+	                            <div class="clear"></div>
+                                </div>  
+                                
+                                <div id="erb2" style="display: none;">
+  								<div class="tc_rw_rw2 _scroll" >
+	                            <div class="jScrollbar_mask _area1" style="top: 0px; padding-left:0;">
+	                            </div></div>
+	                            <div class="clear"></div>
+	                            </div>  
+	                            
+                                <div id="erb2" style="display: none;">
+                                <div class="tc_rw_rw2 _scroll" >
+                                <div class="jScrollbar_mask _area2" style="top: 0px; padding-left:0;">
+                                </div></div>          
+                                <div class="clear"></div>
+                                </div>
+	                             
+                                <div id="erb2" style="display: none;">
+								<div class="tc_rw_rw2 _scroll" >
+	                            <div class="jScrollbar_mask _area3" style="top: 0px; padding-left:0;">
+	                            </div></div>
+	                            <div class="clear"></div>
+								</div>  
+								
+                                <div class="clear" style="display: none;"></div>  
+                                        </div><!--erbox3min结束-->              
+                                        <div class="clear"></div>
+                                     </div><!--jScrollbar_mask结束-->
+    
+                                     <!--<div class="jScrollbar_draggable">
+                                        <a href="#" class="draggable"/></a>
+                                     </div>-->
+                                </div><!--rw_rw2结束-->          
+                                <div class="clear"></div>
+                            </div><!--erb结束-->
+                       <!--区域结束-->       
+                          <div class="clear" style="display: none;"></div>
+                           </div> <!--erbox3结束-->                        
+		 <div id="tunnelInfo" class="list1" style="display:none">
+		 <div class="tc_top_03"><div style="width:130px;" id="divtittle ">编辑区域</div></div> 
+		 	<a4j:form ajaxSubmit="true" id="groupForm">
+                                <div class="rightNo rightNo5">
+                                <div class="tc_rw_rw2" z-height="146">
+                                 <div class="jScrollbar_mask">
+	                                <ul class="tc_ul">
+	                                	<li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">区域名称</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  	<strong>
+	                                                  		<input type="hidden" value="" id="group_id" name="group_id" />
+															<input type="hidden" value="" id="group_index" name="group_index"/>
+															<input type="hidden" value="1" id="maptype" name="maptype"></input>
+															<input type="hidden" value="" id="group_base_id" name="group_base_id"/>
+	                                                      	<input type="text" id="group_name" name="group_name" />
+	                                                      	<input type="hidden" id="group_envList" name="group_envList" />
+	                                                      	<input type="hidden" id="group_group" name="group_group"></input>
+	                                                      </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">种植环境</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="uboxstyle3">
+	                                                  <select name="group_type" id="group_type" class="small2">
+	                                                      	<a4j:repeat value="#{mapHome.envList}" var="f" >
+	                                                      	<option value="#{f.id}">#{f.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  <input type="hidden" id="group_type_default" ></input>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                  	<li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">分区</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="uboxstyle3">
+	                                                  <select name="group_parent_id" id="group_parent_id" class="small2">
+	                                                  </select>
+	                                                  <input type="hidden" id="group_parent_id_default" ></input>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">农户</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="uboxstyle3">
+	                                                      	<select name="group_farmer" id="group_farmer" class="small2">
+	                                                      	<a4j:repeat value="#{mapHome.keeperList}" var="f" >
+	                                                      	<option value="#{f.farmerInfoId}">#{f.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                                  <td style="padding-left:8px; width:31px; *width:71px; "><a href="#" onclick="addFarmer(1)"><img src="#{request.contextPath}/asset/images/six_03.png"  width="31" height="31" /></a></td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">生产负责人</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="uboxstyle3">
+	                                                      	<select name="group_farmer1" id="group_farmer1" class="small2">
+	                                                      	<a4j:repeat value="#{mapHome.masterList}" var="f" >
+	                                                      	<option value="#{f.farmerInfoId}">#{f.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                                  <td style="padding-left:8px; width:31px; *width:71px; "><a href="#" onclick="addFarmer(2)"><img src="#{request.contextPath}/asset/images/six_03.png"  width="31" height="31" /></a></td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">实际面积</td>
+	                                                  <td align="left" class="tc_strong150">
+	                                                      	<input type="hidden" id="group_area" name="group_area"  />
+	                                                    	 <font style="font-size:14px" id="group_area_hidden">亩</font>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                          	
+	                                              	<td align="right" class="tc_font">种植面积</td>
+	                                                  <td align="left" class="tc_strong150">
+	                                                  	<strong>
+	                                                      	<input type="text" id="muarea" name="muarea"/>
+	                                                      </strong>
+	                                                    	 <font style="position:relative; top:5px; font-size:14px">亩</font>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">颜色</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                      	<rich:colorPicker colorMode="hex" id="color"></rich:colorPicker>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                                                              <li class="tc_li" style="height: 100%;padding:0px">
+                                              <table cellpadding="0" cellspacing="0">
+                                                  <tr>
+                                                      <td align="right" class="tc_font" style="vertical-align:top;padding-top:23px" >当前种植</td>
+                                                      <td align="left" style="line-height:normal;" class="tc_str_check">
+                                                                    <div class="tec_c realplantlist">
+                                                                  </div>
+                                                         </td>
+                                                  </tr>
+                                              </table>
+                                         </li>
+                                         <li class="tc_li" style="height: 100%;padding:0px">
+                                              <table cellpadding="0" cellspacing="0">
+                                                  <tr>
+                                                      <td align="right" class="tc_font" style="vertical-align:top;padding-top:23px" >计划种植</td>
+                                                      <td align="left" style="line-height:normal;" class="tc_str_check">
+                                                                    <div class="tec_c apslist">
+                                                                  </div>
+                                                         </td>
+                                                  </tr>
+                                              </table>
+                                         </li>
+                                         <li class="tc_li" style="height: 100%;padding:0px">
+                                              <table cellpadding="0" cellspacing="0">
+                                                  <tr>
+                                                      <td align="right" class="tc_font" style="vertical-align:top;padding-top:23px">历史种植</td>
+                                                      <td align="left" style="line-height:normal;" class="tc_str_check">
+                                                                    <div class="tec_c hislist">
+                                                                  </div>
+                                                         </td>
+                                                  </tr>
+                                              </table>
+                                         </li>
+	                                     <li class="tc_li firstblock" style="display:none">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">长</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                      	<input type="text" id="group_long" name="group_long"/>
+	                                                      	</strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li firstblock" style="display:none">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">宽</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                      	<input type="text" id="group_width" name="group_width"/>
+	                                                      	</strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li firstblock" style="display:none">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">高</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                      	<input type="text" id="group_height" name="group_height"/>
+	                                                      	</strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                </ul>
+	                               					<ul>
+                                                	<li class="tc_li01" style="display: none">
+                                                    	<table width="100%" cellspacing="0" cellpadding="0">
+                                                        	<tbody><tr>
+                                                            	<td align="right" class="tc_font">设备</td>
+                                                                <td align="left" class="tc_str_hjtj">
+                                                                  	 环境调节设备
+                                                                </td>
+                                                            </tr>
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font"></td>
+                                                                <td align="left" class="tc_str_check tc_str_check1">
+                                                                            <div class="la_div">
+                                                                                    <a href="#" class="new_checkbox1" onclick="checkbox1(this)"></a><font class="s_pan">灌溉设备</font>
+                                                                            </div>
+                                                                           <div class="la_div">
+                                                                                    <a href="#" class="new_checkbox1"  onclick="checkbox1(this)"></a><font class="s_pan">灌溉设备</font>
+                                                                            </div>
+                                                                            <div class="la_div">
+                                                                                    <a href="#" class="new_checkbox1"  onclick="checkbox1(this)"></a><font class="s_pan">灌溉设备</font>
+                                                                            </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody></table>
+                                                    </li>
+                                                	<li class="tc_li01" style="display: none">
+                                                    	<table width="100%" cellspacing="0" cellpadding="0">
+                                                        	<tbody><tr>
+                                                            	<td align="right" class="tc_font"></td>
+                                                                <td align="left" class="tc_str_hjtj">
+                                                                   信息采集设备
+                                                                </td>
+                                                            </tr>
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font"></td>
+                                                                <td align="left" class="tc_str_check tc_str_check2">
+                                                                </td>
+                                                           </tr>
+                                                        </tbody></table>        
+                                                    </li>
+                                               </ul>
+	                                </div>
+                                </div>
+                                <div class="clear"></div>
+                                <div class="tc_bottom" >
+                                <table style="width:50%; margin:0 auto;">
+                                <tr><td align="left">
+                                        <a4j:commandButton status="ajaxStatus"  eventsQueue="mainQueue" style="background-image:url('#{request.contextPath}/asset/images/button_43_1.jpg');width:67px;height:32px;cursor: pointer;" onclick="if(!che())return false;" action="#{mapHome.updateTunnelGroup}" data="#{mapHome.re_group_id}" reRender="esrId" oncomplete="if(data==0){alert('区域名称重复!');return false;}_Q('#group_id').val(data);group_ok()"/>
+								</td><td align="left">		
+								<input type="button" id="groupbutton1" style=" background:url('#{request.contextPath}/asset/images/button_45_1.jpg') no-repeat;width:67px;height:32px; cursor:pointer"  onclick="group_no()"/>
+									<input type="button" id="groupbutton2" style="display:none; background:url('#{request.contextPath}/asset/images/return_46_1.jpg') no-repeat;width:67px;height:32px; cursor:pointer"  onclick="group_back()"/>
+	                                  <input type="button" value="delete" onclick="group_delete()" style="display:none;"/>
+                                  </td>
+                                  <td align="left" style="padding-right:17px;">    
+                                  <input type="button" id="groupbutton3" style="background:url('#{request.contextPath}/asset/images/dele.jpg') bottom no-repeat; width:67px;height:32px; cursor:pointer"  onclick="delete_tunnel(_Q('#group_id').val())"/>
+                                 </td></tr>	 </table>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+                                
+		 </div>
+		 
+		 <div id="add_farmer" class="list1" style="display:none;margin:0 auto;">
+		 <div class="tc_top_03"><div style="width:130px;" id="divtittle " class="divtittle_4">添加农户</div></div> 
+		 		<a4j:form ajaxSubmit="true" id="farmer">
+                                <div class="rightNo rightNo7">
+                                <div class="tc_rw_rw2" z-height="146">
+                                 <div class="jScrollbar_mask">
+	                                <ul class="tc_ul">
+	                                  	<li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">姓名</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                    <input type="text" value="" id="farmer_name" name="farmer_name"></input>
+	                                                    <input type="hidden" value="" id="farmer_type" name="farmer_type"></input>
+	                                                    <input type="hidden" value="" id="farmer_base_id" name="farmer_base_id"/>
+	                                                  </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">年龄</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  	<strong>
+	                                                    <input type="text" value="" id="farmer_age" name="farmer_age"></input>
+	                                                  </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">从业年限</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                    <input type="text" value="" id="farmer_age2" name="farmer_age2"></input>
+	                                                  </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">电话</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                    <input type="text" value="" id="farmer_phone" name="farmer_phone"></input>
+	                                                  </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">荣誉</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                    <input type="text" value="" id="farmer_honor" name="farmer_honor"></input>
+	                                                  </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                    </ul>
+	                                </div>
+								</div>
+                                <div class="clear"></div>
+                                <div class="tc_bottom" >
+                                <table style="margin:auto;">
+                                <tr><td>
+                                        <a4j:commandButton status="ajaxStatus" eventsQueue="mainQueue" style="background-image:url('#{request.contextPath}/asset/images/button_43_1.jpg');width:67px;height:32px;cursor: pointer;" action="#{mapHome.updateFarmer}"  data="#{mapHome.re_farmer_str}"  oncomplete="farmer_ok(data,event)" onclick="if(!checkFarmer()) return false;"/>
+								</td><td>	<input type="button" style=" background-image:url('#{request.contextPath}/asset/images/return_46_1.jpg');width:67px;height:32px; cursor:pointer"  onclick="farmer_no(event)"/>
+                                       <input type="button" value="delete" onclick="mark_info_delete()" style="display:none;"/>
+                                 </td></tr>	 </table>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+		 </div>
+		 <div id="add_breed" class="list1" style="display:none;margin:0 auto;">
+		 <div class="tc_top_03"><div style="width:130px;" id="divtittle " class="divtittle_4">添加品种</div></div> 
+		 		<a4j:form ajaxSubmit="true" id="breed">
+                                <div class="rightNo rightNo8">
+                                <div class="tc_rw_rw2" z-height="146">
+                                 <div class="jScrollbar_mask">
+	                                <ul class="tc_ul">
+	                                	<li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">作物</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  	<div class="uboxstyle3">
+	                                                  	<select id="breed_plant" name="breed_plant" class="small2" style="display:none">
+														<a4j:repeat value="#{mapHome.plantList}" var="var" >
+	                                                      	<option value="#{var.plantId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+														</select>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                  	<li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">商品名</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                    <input type="text" value="" id="breed_name" name="breed_name"></input>
+	                                                    <input type="hidden" value="" id="breed_type" name="breed_type"/>
+	                                                  </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">适合茬口</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                    <input type="text" value="" id="suitableCrops" name="suitableCrops"></input>
+	                                                  </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">适合区域</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <strong>
+	                                                    <input type="text" value="" id="suitableArea" name="suitableArea"></input>
+	                                                  </strong>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                    </ul>
+	                                </div>
+								</div>
+                                <div class="clear"></div>
+                                <div class="tc_bottom" >
+                                <table style="margin:auto;">
+                                <tr><td>
+                                        <a4j:commandButton status="ajaxStatus" eventsQueue="mainQueue" style="background-image:url('#{request.contextPath}/asset/images/button_43_1.jpg');width:67px;height:32px;cursor: pointer;" action="#{mapHome.updateBreed}" data="#{mapHome.re_breed_str}"  oncomplete="breed_ok(data,event)" onclick="if(!checkBreed()) return false;"/>
+								</td><td>	<input type="button" style=" background-image:url('#{request.contextPath}/asset/images/return_46_1.jpg');width:67px;height:32px; cursor:pointer"  onclick="breed_no(event)"/>
+                                       <input type="button" value="delete" onclick="mark_info_delete()" style="display:none;"/>
+                                 </td></tr>	 </table>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+		 </div>
+		 <div id="realplant" class="list1" style="display:none;margin:0 auto;">
+		 <div class="tc_top_03"><div style="width:130px;" id="divtittle " class="divtittle_2">添加作物</div></div> 
+		 		<a4j:form ajaxSubmit="true" id="plant">
+                                <div class="rightNo rightNo6">
+                                <div class="tc_rw_rw2" z-height="146">
+                                 <div class="jScrollbar_mask">
+	                                <ul class="tc_ul">
+	                                  	<li class="tc_li" id="tunnel_none1">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">区域</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  	<div class="uboxstyle3">
+	                                                  	<input type="hidden" value="" id="plant_tunnel_id" name="plant_tunnel_id"></input>
+	                                                  	<input type="hidden" value="" id="plant_real_id" name="plant_real_id"></input>
+	                                                  	<input type="hidden" value="" id="edittype" name="edittype"></input>
+	                                                  	<input type="hidden" value="" id="scheduleId" name="scheduleId"></input>
+	                                                  	<input type="hidden" value="" id="env_type" name="env_type"></input>
+	                                                    <font id="plant_parent_name"></font>
+	                                                    <input type="hidden" value="" id="map_p"></input>
+	                                                    <input type="hidden" value="" id="map_b"></input>
+	                                                    <input type="hidden" value="" id="map_m"></input>
+	                                                    <input type="hidden" value="" id="tunnel_area" name="tunnel_area"></input>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" id="tunnel_none2">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">区域</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  	<div class="uboxstyle3">
+	                                                      	<select name="allTunnel" id="allTunnel" onchange="selectTunnel(this)">
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" style="height:22px">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">种植类型</td>
+	                                                  <td align="left" class="tc_strong aps_typs_name" style="font-size:14px">
+	                                                  
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li" id="typeHide">
+	                                      	<table cellpadding="0" cellspacing="0" >
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">类别</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  	<div class="uboxstyle3" style="min-width:160px; margin-right:0px;">
+	                                                  	<select id="aps_type" name="aps_type" onchange="radio1(this)">
+	                                                  	<option value="0">历史种植</option>
+	                                                  	<option value="1">实际种植</option>
+	                                                  	<option value="2">计划种植</option>
+	                                                  	</select>
+	                                                  	</div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li typ1">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">作物</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div style="width:173px;">
+														<select id="plant_plantId" name="plant:plantId" class="small2" style="display:none" onchange="getBreedByPlantId(this.value)">
+														<a4j:repeat value="#{mapHome.plantList}" var="var" >
+	                                                      	<option value="#{var.plantId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+														</select>
+								</div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li typ1" >
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">品种</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="uboxstyle3">
+								<select name="breedBreedId" id="breedBreedId" class="small2" style="display:none" onchange="getModelByTime(this.value,_Q('#plant_tunnel_id').val(),_Q('#plant\\:plant_beginInputDate').val(),_Q('#plant_standard').val(),_Q('#plant\\:plant_endInputDate').val(),_Q('#plant_real_id').val())">
+								<a4j:repeat value="#{mapHome.breedList}" var="var" >
+	                                                      	<option value="#{var.breedId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+								</select>
+								</div>
+	                                                  </td>
+	                                                  <td style="padding-left:8px; width:31px; *width:auto; "><a href="#" onclick="addBreed(1)"><img src="#{request.contextPath}/asset/images/six_03.png"  width="31" height="31" /></a></td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li typ1">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">种植标准</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  	<div class="uboxstyle3">
+	                                                      	<select name="plant_standard" id="plant_standard" onchange="getModelByTime(_Q('#breedBreedId').val(),_Q('#plant_tunnel_id').val(),_Q('#plant\\:plant_beginInputDate').val(),_Q('#plant_standard').val(),_Q('#plant\\:plant_endInputDate').val(),_Q('#plant_real_id').val())">
+	                                                      	<a4j:repeat value="#{mapHome.dataDicList}" var="var" >
+	                                                      	<option value="#{var.dataDicId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+	                                                      	</select>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li typ1">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">定植时间</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="tc_strong155">
+	                                                  <rich:calendar styleClass="" onchanged="getModelByTime(_Q('#breedBreedId').val(),_Q('#plant_tunnel_id').val(),_Q('#plant\\:plant_beginInputDate').val(),_Q('#plant_standard').val(),_Q('#plant\\:plant_endInputDate').val(),_Q('#plant_real_id').val())" id="plant_begin" datePattern="yyyy-MM-dd" />
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li typ1">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">结束时间</td>
+	                                                  <td align="left" class="tc_strong">
+	                                                  <div class="tc_strong155">
+	                                                  <rich:calendar id="plant_end" datePattern="yyyy-MM-dd"  onchanged="getModelByTime(_Q('#breedBreedId').val(),_Q('#plant_tunnel_id').val(),_Q('#plant\\:plant_beginInputDate').val(),_Q('#plant_standard').val(),_Q('#plant\\:plant_endInputDate').val(),_Q('#plant_real_id').val())"/>
+	                                                  </div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li typ1">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">履历名称</td>
+	                                                  <td align="left" class="tc_strong">
+		                                                     <div class="tc_strong155">
+							                <span>
+							               <input type="text" id="real_plant_name" name="real_plant_name"  class=""/></span></div>
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li typ1">
+	                                      	<table cellpadding="0" cellspacing="0">
+	                                          	<tr>
+	                                              	<td align="right" class="tc_font">种植面积</td>
+	                                                  <td align="left" class="tc_strong">
+		                                                     <strong>
+		                                                      	<input type="text" style="width:80px;" id="plant_area" name="plant_area" onkeyup="clearNoNum(this)"/>
+		                                                      </strong>
+                                                      		<span class="mu_mianji">&#160;亩/</span>
+                                                           <span class="mu_mianji"  id="plantarea" name="plantarea" ></span>
+                                                     	  	<span class="mu_mianji" >亩可用</span>
+                                                     	  	<input type="hidden" id="myarea"/>
+                                                     	  	<input type="hidden" id="old_start"/>
+                                                     	  	<input type="hidden" id="old_end" />
+	                                                  </td>
+	                                              </tr>
+	                                          </table>
+	                                     </li>
+	                                     <li class="tc_li typ1" >
+                                         	<table cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+                                             	<tr>
+                                             	<td width="60" align="right" >亩商品量</td>
+                                                     <td style="padding-left:8px; width:80px; *width:auto; ">
+                                                    <input type="hidden" name="modelId" id="modelId"/>
+                                                     <a href="#" onclick="addModel()" id="mu_table">
+                                                     (添加)</a></td>
+                                                 </tr>
+                                             </table>
+                                        </li>
+                                         <li class="tc_li typ1" style="padding:0; height:0;"><div id="prompt" style="height:20px; color: red; text-align:left;  line-height:20px; position:relative; top:-20px;"></div></li>
+	                                     <li class="tc_li typ1" style="height:auto; padding:0;">
+	                                     	<table cellspacing="0" cellpadding="0" class="spctab_le table_0 typ1" style="display:none; width:95%; float:left;"> 
+                                              </table>
+                                          </li>    
+                                                	<li class="tc_li typ2" style="display:none">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font">作物</td>
+                                                                <td align="left" class="tc_strong">
+                                                                	<div style="width:173px;">
+                                                                            <select id="splant" name="splant" onchange="getBreedModelByPlant(this.value)">
+                                                                           <a4j:repeat value="#{mapHome.plantList}" var="var" >
+	                                                      	<option value="#{var.plantId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+                                                                            </select>
+                                                                            <input type="hidden" value="" id="xplant"></input>
+                                                                     </div>
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li typ2" style="display:none">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font">品种</td>
+                                                                <td align="left" class="tc_strong">
+                                                                	<div class="uboxstyle4">
+                                                                            <select id="sbreed" name="sbreed" onchange="getSchedulingPlant(_Q('#sbreed').val(),_Q('#planttime').val(),_Q('#plantten').val(),_Q('#plant_tunnel_id').val(),_Q('#sstandard').val(),_Q('#yearTime').val(),_Q('#scheduleId').val())">
+                                                                                <a4j:repeat value="#{mapHome.breedList}" var="var" >
+	                                                      	<option value="#{var.breedId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+                                                                            </select>
+                                                                            <input type="hidden" value="" id="xbreed"></input>
+                                                                     </div>
+                                                                </td>
+                                                              <td style="padding-left:8px; width:31px; *width:auto; "><a href="#" onclick="addBreed(2)"><img src="#{request.contextPath}/asset/images/six_03.png"  width="31" height="31" /></a></td>
+	                                              		</tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li typ2" style="display:none">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font">种植标准</td>
+                                                                <td align="left" class="tc_strong">
+                                                                	<div class="uboxstyle5">
+                                                                            <select name="sstandard" id="sstandard" onchange="getSchedulingPlant(_Q('#sbreed').val(),_Q('#planttime').val(),_Q('#plantten').val(),_Q('#plant_tunnel_id').val(),_Q('#sstandard').val(),_Q('#yearTime').val(),_Q('#scheduleId').val())">
+                                                            <a4j:repeat value="#{mapHome.dataDicList}" var="var" >
+	                                                      	<option value="#{var.dataDicId}">#{var.name}</option>
+	                                                      	</a4j:repeat>
+                                                                            </select>
+                                                                            <input type="hidden" value="" id="xstandard"></input>
+                                                                     </div>
+                                                                </td>
+                                                               
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li typ2" style="display:none">
+                                                    	<table width="97%" cellpadding="0" cellspacing="0" style="table-layout:fixed;" >
+                                                    	
+                                                        	<tr>
+                                                                <td width="60" align="right" class="tc_font">定植时间</td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1 smallselect" style="margin-right:0;" >
+                                                                            <select name="yearTime" id="yearTime" onchange="getSchedulingPlant(_Q('#sbreed').val(),_Q('#planttime').val(),_Q('#plantten').val(),_Q('#plant_tunnel_id').val(),_Q('#sstandard').val(),_Q('#yearTime').val(),_Q('#scheduleId').val())">
+                                                                                <option value="2014">2014年</option>
+                                                                                <option value="2015">2015年</option>
+                                                                                <option value="2016">2016年</option>
+                                                                                <option value="2017">2017年</option>
+                                                                                <option value="2018">2018年</option>
+                                                                                <option value="2019">2019年</option>
+                                                                                <option value="2020">2020年</option>
+                                                                            </select>
+                                                                            <input type="hidden" value="" id="xyear"></input>
+                                                                     </div>
+                                                                </td>
+                                                                <td  align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1 smallselect" style="margin-right:0;">
+                                                                            <select name="valuetime" id="planttime" onchange="getSchedulingPlant(_Q('#sbreed').val(),_Q('#planttime').val(),_Q('#plantten').val(),_Q('#plant_tunnel_id').val(),_Q('#sstandard').val(),_Q('#yearTime').val(),_Q('#scheduleId').val())">
+                                                                                <c:forEach begin="1" end="12" var="var">
+                                                                                <option value="#{var}">#{var}月</option>
+                                                                                </c:forEach>
+                                                                            </select>
+                                                                            <input type="hidden" value="" id="xmonth"></input>
+                                                                     </div>
+                                                                </td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1 smallselect" style="margin-right:0;">
+                                                                            <select  name="valueten" id="plantten" onchange="getSchedulingPlant(_Q('#sbreed').val(),_Q('#planttime').val(),_Q('#plantten').val(),_Q('#plant_tunnel_id').val(),_Q('#sstandard').val(),_Q('#yearTime').val(),_Q('#scheduleId').val())">
+                                                                                <option value="1" selected="selected">上旬</option>
+                                                                                <option value="2">中旬</option>
+                                                                               	<option value="3">下旬</option>
+                                                                            </select>
+                                                                            <input type="hidden" value="" id="xdays"></input>
+                                                                     </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li typ2" style="display:none">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font">种植面积</td>
+                                                                <td align="left" class="tc_strong74">
+		                                                     <strong>
+                                                                    	<input type="text" id="sarea" name="sarea"  onkeyup="clearNoNum2(this)"/>
+                                                                    </strong>
+                                                      		<span class="smu_mianji mu_mianji">&#160;亩/</span>
+                                                           <span class="smu_mianji mu_mianji"  id="splantarea" name="splantarea" ></span>
+                                                     	  	<span class="smu_mianji mu_mianji" >亩可用</span>
+                                                     	  	<input type="hidden" id="myarea_aps"/>
+	                                                  </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                           			 <li class="tc_li typ2" style="display:none">
+                                                    	<table cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+                                                        	<tr>
+                                                        	<td align="right" class="tc_font">亩商品量</td>
+                                                                <td style="padding-left:8px; width:80px; *width:auto; ">
+                                                                <input type="hidden" name="smodel" id="smodel"></input>
+                                                                <a href="#" onclick="addModel()" id="mu_table2">
+                                                                (添加)</a></td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                   <li class="tc_li typ2" style="padding:0; height:0;"><div id="prompt2" style="height:20px; color: red; text-align:left;  line-height:20px; position:relative; top:-20px;"></div></li>
+                                            	 
+	                                            	<table cellspacing="0" cellpadding="0" class="spctab_le table_1 typ2" style="display:none; width:95%; float:left;"> 
+	                                              </table>
+	                                              
+                                            
+	                                </ul>
+	                                </div>
+                                </div>
+                                <div class="clear"></div>
+				<div style="display:none" id="plant_model">
+                             <input type="hidden" name="model_name" id="model_name_1" />
+                             <input type="hidden" name="model_id" id="model_id_1" />
+						     <input type="hidden" name="model_type" id="model_type_1" />
+						     <input type="hidden" name="model_plant" id="model_plant_1" />
+						     <input type="hidden" name="model_breed" id="model_breed_1" />
+						     <input type="hidden" name="model_standard" id="model_standard_1"/>
+						     <input type="hidden" name="model_valuetime" id="model_valuetime_1" />
+						     <input type="hidden" name="model_valueten" id="model_valueten_1" />
+						     <input type="hidden" name="model_begintime" id="model_begintime_1" />
+						     <input type="hidden" name="model_beginten" id="model_beginten_1" />
+						     <input type="hidden" name="model_endtime" id="model_endtime_1" />
+						     <input type="hidden" name="model_endten" id="model_endten_1" />
+						     <input type="hidden" name="month1" id="month1_1"/>
+						     <input type="hidden" name="month2" id="month2_1"/>
+						     <input type="hidden" name="month3" id="month3_1"/>
+						     <input type="hidden" name="month4" id="month4_1"/>
+						     <input type="hidden" name="month5" id="month5_1"/>
+						     <input type="hidden" name="month6" id="month6_1"/>
+						     <input type="hidden" name="month7" id="month7_1"/>
+						     <input type="hidden" name="month8" id="month8_1"/>
+						     <input type="hidden" name="month9" id="month9_1"/>
+						     <input type="hidden" name="month10" id="month10_1"/>
+						     <input type="hidden" name="month11" id="month11_1"/>
+						     <input type="hidden" name="month12" id="month12_1"/>
+                                </div>
+                                <div class="tc_bottom" style="background:none;" >
+                                <table style="width:50%; margin:0 auto;">
+                                <tr><td align="left">
+                                      <a4j:commandButton status="ajaxStatus" onclick="if(!checkSubmit()) return false; " eventsQueue="mainQueue" style="background-image:url('#{request.contextPath}/asset/images/button_43_1.jpg');width:67px;height:32px;cursor: pointer;" action="#{mapHome.updateRealPlant}" data="#{mapHome.re_plant_str}" oncomplete="plant_ok(data,event)" />
+								</td><td align="left">		
+								<input type="button" style=" background-image:url('#{request.contextPath}/asset/images/return_46_1.jpg');width:67px;height:32px; cursor:pointer"  onclick="plant_no(event)"/>
+                                  </td>
+                                  <td align="left" style="padding-right:17px;">    
+                                  <input type="button" style="background:url('#{request.contextPath}/asset/images/dele.jpg') bottom no-repeat; width:67px;height:32px; cursor:pointer"  onclick="delete_plant_or()"/>
+                                 </td></tr>	 </table>
+                                        </div>
+                                 </div>
+                                </a4j:form>
+		 </div>
+		 
+		 <div id="modelInfo" class="list1" style="display:none">
+		 <div class="tc_top_03"><div class="tie_00">添加模型</div></div> 
+		 <a4j:form id="model">
+                                <div class="tc_cont">
+                                        <div class="tc_rw_rw2" style="overflow:auto;">
+                                           <div class="jScrollbar_mask" style="width:97%;">
+                                            	<ul class="tc_ul">
+                                                	<li class="tc_li" style="display:none">
+                                                    	<table cellpadding="0" cellspacing="0" style="display:none;">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font width73">种植模型：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                	<strong>
+                                                                    	<input type="hidden" id="model_name" name="model_name"/>
+                                                                    	<input type="hidden" id="model_id" name="model_id"/>
+                                                                    </strong>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                    <li class="tc_li">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font width73">种植环境：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                     <div class="uboxstyle3">
+					                                                      	<font id="m_type"></font>
+					                                                  </div>
+                                                                     <input type="hidden" name="model_type" id="model_type"/>
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font">作物：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                     <div class="uboxstyle3">
+					                                                      	<font id="m_plant"></font>
+					                                                  </div>
+                                                                     <input type="hidden" name="model_plant" id="model_plant"/>
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font width73">品种：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                     <div class="uboxstyle3">
+					                                                      	<font id="m_breed"></font>
+					                                                  </div>
+                                                                     <input type="hidden" name="model_breed" id="model_breed"/>
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                            	<td align="right" class="tc_font width73">种植标准：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                	<div class="uboxstyle3">
+					                                                      	<font id="m_standard"></font>
+					                                                  </div>
+                                                                     <input type="hidden" name="model_standard" id="model_standard"/>
+                                                                </td>
+                                                               
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                                <td align="right" class="tc_font width73">定植时间：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1">
+                                                                            <select name="model_valuetime" id="model_valuetime">
+                                                                            <option value="-2">请选择</option>
+                                                                                <c:forEach begin="1" end="12" var="var">
+                                                                                <option value="#{var}">#{var}月</option>
+                                                                                </c:forEach>
+                                                                            </select>
+                                                                     </div>
+                                                                </td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1">
+                                                                            <select name="model_valueten" id="model_valueten">
+                                                                                <option selected="selected" value="1">上旬</option>
+                                                                                <option value="2">中旬</option>
+                                                                                <option value="3">下旬</option>
+                                                                            </select>
+                                                                     </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li" style="display:none">
+                                                    	<table cellpadding="0" cellspacing="0" style="display:none">
+                                                        	<tr>
+                                                                <td align="right" class="tc_font width73">育种开始：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1">
+                                                                            <select name="model_nurserytime" id="model_nurserytime">
+                                                                            <option value="-2">请选择</option>
+                                                                                <c:forEach begin="1" end="12" var="var">
+                                                                                <option value="#{var}">#{var}月</option>
+                                                                                </c:forEach>
+                                                                            </select>
+                                                                     </div>
+                                                                </td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1">
+                                                                            <select name="model_nurseryten" id="model_nurseryten">
+                                                                               <option selected="selected" value="1">上旬</option>
+                                                                                <option value="2">中旬</option>
+                                                                                <option value="3">下旬</option>
+                                                                            </select>
+                                                                     </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                                <td align="right" class="tc_font width73">采收开始：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1">
+                                                                            <select name="model_begintime" id="model_begintime" onchange="begin_end()">
+                                                                            <option value="-2">请选择</option>
+                                                                                <c:forEach begin="1" end="12" var="var">
+                                                                                <option value="#{var}">#{var}月</option>
+                                                                                </c:forEach>
+                                                                            </select>
+                                                                     </div>
+                                                                </td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1">
+                                                                            <select name="model_beginten" id="model_beginten"  onchange="begin_end()">
+                                                                               <option selected="selected" value="1">上旬</option>
+                                                                                <option value="2">中旬</option>
+                                                                                <option value="3">下旬</option>
+                                                                            </select>
+                                                                     </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                	<li class="tc_li">
+                                                    	<table cellpadding="0" cellspacing="0">
+                                                        	<tr>
+                                                                <td align="right" class="tc_font width73">采收结束：</td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1">
+                                                                            <select name="model_endtime" id="model_endtime">
+                                                                            <option value="-2">请选择</option>
+                                                                                <c:forEach begin="1" end="12" var="var">
+                                                                                <option value="#{var}">#{var}月</option>
+                                                                                </c:forEach>
+                                                                            </select>
+                                                                     </div>
+                                                                </td>
+                                                                <td align="left" class="tc_strong">
+                                                                    <div class="uboxstyle1">
+                                                                            <select name="model_endten" id="model_endten">
+                                                                                <option selected="selected" value="1">上旬</option>
+                                                                                <option value="2">中旬</option>
+                                                                                <option value="3">下旬</option>
+                                                                            </select>
+                                                                     </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                </ul>
+                                                <table cellspacing="0" cellpadding="0" class="spctab_le table_2" style="width:95%; float:left;"> 
+                                                    <tr>
+                                                		<td colspan="6" height="50">
+                                                			<b>月份-亩商品量</b>
+                                                		</td>
+                                                	</tr>
+                                                    <tr>
+                                                        <td class="semxline">1月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month1"  name="month1" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                        <td class="semxline">2月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month2" name="month2" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                        <td class="semxline">3月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month3" name="month3" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="semxline">4月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month4" name="month4" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                        <td class="semxline">5月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month5" name="month5" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                        <td class="semxline">6月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month6" name="month6" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="semxline">7月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month7" name="month7" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                        <td class="semxline">8月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month8" name="month8" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                        <td class="semxline">9月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month9" name="month9" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="semxline">10月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month10" name="month10" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                        <td class="semxline">11月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month11" name="month11" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                        <td class="semxline">12月份</td>
+                                                        <td class="semxnene">
+                                                            <input class="input_out3" id="month12" name="month12" type="text" onfocus="this.className='input_on3';this.onmouseout=''" onblur="this.className='input_off3';this.onmouseout=function(){this.className='input_out3'};" onmousemove="this.className='input_move3'" onmouseout="this.className='input_out3'" />
+                                                        </td>
+                                                    </tr>
+                                                </table>                                          
+                     
+                                        	</div>
+                                        	
+                                        </div><!--rw_rw2结束-->
+                                	<div class="clear"></div>
+                                </div>
+                                
+                                	<div class="tc_bottom">
+                                    	<table style="margin:auto;">
+                                <tr><td>
+                                        <input type="button" class="nomore" style="display:none; background-image:url('#{request.contextPath}/asset/images/button_43_1.jpg');width:67px;height:32px; cursor:pointer"  onclick="notaddmodel()"/>
+                                        <a4j:commandButton styleClass="nomore" onclick="_Q('#model_name').val(_Q('#m_type').html()+'-'+_Q('#m_standard').html()+'-'+_Q('#model_valuetime').val()+'-'+_Q('#model_valueten').val());if(!chemodel())return false;" status="ajaxStatus" eventsQueue="mainQueue" style="background-image:url('#{request.contextPath}/asset/images/button_43_1.jpg');width:67px;height:32px;cursor: pointer;" action="#{mapHome.addModel}" data="#{mapHome.re_model_str}" oncomplete="model_ok(data,event)"/>
+								</td><td>	<input type="button" style=" background-image:url('#{request.contextPath}/asset/images/return_46_1.jpg');width:67px;height:32px; cursor:pointer"  onclick="model_no(event)"/>
+                                       <input type="button" value="delete" onclick="mark_info_delete()" style="display:none;"/>
+                                 </td></tr>	 </table>
+                                    </div>
+                                    </a4j:form>
+		 </div>
+		 
+		 </div>
+		<div id="rbPane">
+		    <div class="section">
+                                        	<table width="100%" cellspacing="0" cellpadding="0" class="divLq">
+                                            	<tbody>
+                                                <tr>
+                                                  <td valign="top" class="floatRq" id="divFloatToolsViewq" colspan="3" >
+                                                     
+                                                       <!--弹出div开始-->
+                                                       <div class="zitc_03">
+                                                            <span class="zitc_span">
+                                                                <strong class="zitc_strong">
+                                                                    <ul>
+                                                                        <li class="zitc_stli current"><a href="#">排产</a></li>
+                                                                        <li class="zitc_stli"><a href="#">预估</a></li>
+                                                                        <li class="zitc_stli"><a href="#">合同</a></li>
+                                                                    </ul>
+                                                                </strong>
+                                                           </span>
+                                                       </div>
+                                                       <span style="display:none">
+                                                       <s:link propagation="none"  includePageParams="false" view="/contract/ContractList.xhtml" id="hetong" action="#{sessionTake.setWorkParam(9)}">添加</s:link>
+                                                       </span>
+                                                       <div class="zit_table">
+                                                       <!--排产开始-->
+                                                       <div>
+                                                           <table cellspacing="0" cellpadding="0" class="zi_tb" width="100%" >
+                                                                <tbody><tr class="even">
+                                                                    <th class="zi_tdth">区域</th>
+                                                                    <th class="zi_tdth">定植日期</th>
+                                                                    <th class="zi_tdth">亩数</th>
+                                                                </tr>
+                                                           </tbody></table>
+                                                       </div>
+                                                       <!--排产结束-->
+                                                       
+                                                       <!--预估开始-->
+                                                       <div style="display: none;">
+                                                           <table cellspacing="0" cellpadding="0" class="zi_tb1" width="100%"  >
+                                                                <tbody><tr class="even">
+                                                                    <th class="zi_tdth1">品种</th>
+                                                                    <th class="zi_tdth1">类型</th>
+                                                                    <th class="zi_tdth1">定植日期</th>
+                                                                    <th class="zi_tdth1">亩数</th>
+                                                                </tr>
+                                                           </tbody></table>
+                                                       </div>
+                                                       <!--预估结束-->
+                                                       <!--订单开始-->
+                                                       <div style="display: none;">
+                                                           <table cellspacing="0" cellpadding="0" class="zi_tb2" width="100%">
+                                                                <tbody><tr class="even">
+                                                                    <th class="zi_tdth2">月份</th>
+                                                                    <th class="zi_tdth2">采购量</th>
+                                                                    <th class="zi_tdth2">金额</th>
+                                                                </tr>
+                                                           </tbody></table>
+                                                       </div>  
+                                                       <!--订单结束-->
+                                                       </div> <!--zit_table结束-->                                                  </td>
+                                                </tr>
+                                            </tbody></table>
+                                                        
+                                                      
+                                                       <!--弹出div结束-->
+                                       </div>
+                                           
+		
+		
+		</div>
+   </div>
+	
+  </div> <!-- #CenterAndRight -->
+  
+<!-- #MySplitter -->
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery13.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/splitter15.js"></script>
+<script type="text/javascript"> 
+//<![CDATA[
+           var nowpage = 0;
+           var Sys = {};    
+var ua = navigator.userAgent.toLowerCase();   
+var bb = true; 
+var s;    
+(s = ua.match(/msie ([\d.]+)/))? Sys.ie = s[1]:  
+   bb = false;
+if(Sys.ie==6){
+	DD_belatedPNG.fix('.left_culi a img');
+}
+	var ie7 = Sys.ie==7;
+
+var jQuery13 = jQQ.noConflict(true);
+jQuery13().ready(function() {
+	//jQuery13("#CenterAndRight").css("height", document.body.clientHeight- 60 +"px ");
+	//jQuery13("#CenterAndRight").css("width", document.body.clientWidth- 77 +"px ");
+	//jQuery13("#map-canvas").css("height", document.body.clientHeight- 40 +"px ");
+	//jQuery13("#map-canvas").css("width", document.body.clientWidth- 60 +"px ");
+	// Main vertical splitter, anchored to the browser window
+
+	// Second vertical splitter, nested in the right pane of the main one.
+	
+		historyList();
+	jQuery13("#CenterAndRight").splitter({
+        sizeRight: true,//初始化最小
+		splitVertical: true,
+		outline: true,
+        resizeToWidth: true,
+        anchorToWindow: true 
+	});
+
+     jQuery13("#rightPane").splitter({
+		splitHorizontal: true,
+		type: "h", 
+		outline: true,
+        sizeBottom: true
+	});
+	
+	var splitbuttonH = "<div style='cursor: pointer; display: block;' class='splitbuttonH invert' unselectable='on' onclick='changeBPane(this)'></div>"; 
+	var splitbuttonV ="<div style='cursor: pointer;' class='splitbuttonV' unselectable='on' onclick='changeRPane(this)'></div>";
+	jQuery13(".hsplitbar").append(splitbuttonH); 
+	jQuery13(".vsplitbar").append(splitbuttonV); 	
+
+	//竖轴点击
+	jQuery13('.splitbuttonV').attr('onclick', '').click(function (){
+		if(jQuery13("#rightPane").width()){
+			jQuery13(this).removeClass().addClass("splitbuttonV");
+
+				var wait=setInterval(function(){
+				     if(jQuery13('#rightPane').width()-50<=0){
+				         jQuery13('#rightPane').css('width',0);
+					 clearInterval(wait);
+				     }else{
+				         jQuery13('#rightPane').css('width',jQuery13('#rightPane').width()-50);
+				     }
+				     jQuery13('#CenterAndRight').trigger('resize');
+				}, 10);
+
+		}else{
+			jQuery13(this).removeClass().addClass("splitbuttonV invert");
+
+				var wait=setInterval(function(){
+				     if(jQuery13('#rightPane').width()+50>=368){
+				         jQuery13('#rightPane').css('width',368);
+					 clearInterval(wait);
+				     }else{
+				         jQuery13('#rightPane').css('width',jQuery13('#rightPane').width()+50);
+				     }
+				     jQuery13('#CenterAndRight').trigger('resize');
+				}, 10);
+		}
+		jQuery13(".list1").hide();
+		jQuery13(".tc_top_05").show();
+		jQuery13(".erbox3").show();
+		var year = document.getElementById("yearlic").innerHTML;
+		var str = "";
+		if(checkGanttStr()==3){
+			str = _Q("#second_word").val();
+		}else if(checkGanttStr()==2){
+			str = _Q(".nowPlant a[lj=bj]").attr("bb");
+		}
+		if(str == undefined)
+			str = "";
+		innitGantt(str);
+		mygantt2();
+	});
+});
+
+function changeBPane(obj){
+	if(jQuery13(obj).parent().next().attr("id")=="bPane"){
+	
+		if(jQuery13("#bPane").height()){
+		    jQuery13(obj).removeClass().addClass("splitbuttonH invert");
+			jQuery13('#bPane').css("height","0px");
+			jQuery13('#CenterAndRight').trigger('resize');
+		}else{
+		    jQuery13(obj).removeClass().addClass("splitbuttonH");
+			jQuery13('#bPane').css("height","400px");
+			jQuery13('#CenterAndRight').trigger('resize');
+		}
+	}else if(jQuery13(obj).parent().next().attr("id")=="rbPane"){
+		if(jQuery13("#rbPane").height()){
+		    jQuery13(obj).removeClass().addClass("splitbuttonH invert");
+			jQuery13('#rbPane').css("height","0px");
+			jQuery13('#rightPane').trigger('resize');
+			_Q(".nowPlant a[lj='bj']").trigger("click");
+		}else{
+		    jQuery13(obj).removeClass().addClass("splitbuttonH");
+			jQuery13('#rbPane').css("height","300px");
+			jQuery13('#rightPane').trigger('resize');
+		}
+	}
+	
+}
+
+function changeRPane(obj){
+	if(jQuery13("#rightPane").width()){
+	    jQuery13(obj).removeClass().addClass("splitbuttonV");
+		jQuery13('#rightPane').css("width","0px");
+		jQuery13('#CenterAndRight').trigger('resize');
+	}else{
+	    jQuery13(obj).removeClass().addClass("splitbuttonV invert");
+		jQuery13('#rightPane').css("width","350px");
+		jQuery13('#CenterAndRight').trigger('resize');
+	}
+}
+
+</script>
+<script type="text/javascript">
+                var markstr = #{mapHome.baseString};
+                var secondstr = #{mapHome.partitionString};
+                var thirdstr = #{mapHome.groupString};
+                var colors = #{mapHome.dicColor};
+				var collects = #{mapHome.collect};
+				var regulate = #{mapHome.regulate};
+				var _center = "#{mapHome.center}";
+				var allList = #{mapHome.allList};
+				var workpath = "#{request.contextPath}";
+				var envTypeList = #{mapHome.entTypeString};
+				var ret = 1;
+				var apsJson = #{mapHome.apsJson};
+				var apsStr = #{mapHome.apsStr};
+				var plantAps = #{mapHome.plantAps};
+				var plantContract = #{mapHome.plantContract};
+				var realPlantJson = #{mapHome.realPlantJson};
+				var lastStr;
+                </script>
+                <script type="text/javascript" src="#{request.contextPath}/asset/js/map/JsMap.js"> </script> 
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery.fn.gantt2.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/prettify.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-ui.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-ui2.js"></script>          
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-ui-select.js"> </script> 
+<script src="#{request.contextPath}/asset/js/map/map_gantt.js" type="text/javascript"></script>
+<script type="text/javascript"> 
+var noneOption = "<option value='0'>暂无数据</option>";
+function insertPartition(){
+	if(secondstr.length==0){
+		_Q("#group_parent_id").append(noneOption);
+	}else {
+		_Q("#group_parent_id").append(noneOption);
+		for(var i = 0;i<secondstr.length;i++){
+			var os = secondstr[i];
+			_Q("#group_parent_id").append("<option value='"+os.id+"'>"+os.name+"</option>");
+		}
+	}
+}
+var typs = _Q("#aps_type").html();
+var typs2 = _Q("#aps_type").html().replace("<option value=\"2\">计划种植</option>","");
+_Q(document).ready(function(){
+	insertPartition();
+	_Q("select").each(function(){
+		if(_Q(this).find("option").length==0){
+			_Q(this).append(noneOption);
+		}
+	});
+    document.body.style.overflow = "hidden";
+		_Q(".dataPanel").animate({width: window.screen.width-302},800,function(){});
+		
+		//_Q(".dataPanel").css("width",100000+"px");
+		//_Q("#rightPane").animate({width: window.screen.width*0.75-77},800,function(){});
+		//_Q(".gantt").animate({width: window.screen.width-100},800,function(){});
+	    _Q("#divFloatToolsViewq").animate({width: window.screen.width/4-30},800,function(){});
+		//_Q(".zi_tb").animate({width: window.screen.width/4-30},800,function(){});
+		//_Q(".zi_tb1").animate({width: window.screen.width/4-30},800,function(){});
+		//_Q(".zi_tb2").animate({width: window.screen.width/4-30},800,function(){});
+		_Q(".content").css("height",document.body.clientHeight- 60 +"px ");
+		_Q(".animate1").css("width",document.body.clientWidth- 77 +"px ");
+		_Q(".gttxs").css("width",document.body.clientWidth- 77 +"px ");
+		_Q("#divFloatToolsView").css("height",document.body.clientHeight- 60 +"px ");
+		_Q(".gtdtss").animate({width: window.screen.width/4-140},800,function(){});
+		//_Q(".tc_top_04").animate({width: window.screen.width/4},800,function(){});
+		//_Q(".tc_top_in2").animate({width: window.screen.width/4-138-50},800,function(){});
+		//_Q(".spctab_le").animate({width: window.screen.width/4-37},800,function(){});
+		_Q(".floatL").css("height", document.body.clientHeight - 60 +"px ");
+		//_Q('.tc_rw_rw2').jScrollbar();<!--鼠标让滚动条滚动作用-->
+		_Q('.tc_rw_rw2').css("height",document.body.clientHeight - 160)
+		_Q(".floatL").css("text-align","center");
+		_Q(".floatL").css("vertical-align","middle");
+		_Q(".floatL").css("valign","middle");
+		initList();
+		_Q("#plant\\:plantId").attr("id","plant_plantId");
+		//_Q("#plant\\:plant_begin").attr("id","plant_plant_begin");
+		//_Q("#plant\\:plant_end").attr("id","plant_plant_end");
+		_Q("select").not("#plant_plantId,#splant").hide().selectmenu({style:'dropdown'});
+		_Q(".rich-calendar-input").addClass("r_c_text_date");
+	    _Q(".rich-calendar-input").removeClass("rich-calendar-input");
+	    _Q(".ui-selectmenu-dropdown").not("#yearTime-button,#planttime-button,#plantten-button").addClass("small322");
+		_Q(".ui-selectmenu-dropdown").not("#yearTime-button,#planttime-button,#plantten-button").removeClass("ui-selectmenu-dropdown");
+		_Q(".ui-selectmenu-menu").not("#yearTime-menu,#planttime-menu,#plantten-menu").addClass("ui-selectmenu-menusmall");
+		_Q(".ui-selectmenu-menu").not("#yearTime-menu,#planttime-menu,#plantten-menu").removeClass("ui-selectmenu-menu");
+	    
+	    _Q(".smallselect .ui-selectmenu-dropdown").addClass("small22");
+	    _Q(".smallselect .ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+	    _Q(".smallselect .ui-selectmenu-menu").addClass("ui-selectmenu-menusmall22");
+	    _Q(".smallselect .ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+		_Q(".rich-color-picker-new-color").remove();
+		_Q(".rich-color-picker-new-color").remove();
+		_Q(".rich-color-picker-current-color").remove();
+		_Q(".rich-color-picker-rgb-r").remove();
+		_Q(".rich-color-picker-rgb-g").remove();
+		_Q(".rich-color-picker-rgb-b").remove();
+		_Q(".rich-color-picker-hsb-h").remove();
+		_Q(".rich-color-picker-hsb-s").remove();
+		_Q(".rich-color-picker-hsb-b").remove();
+		_Q(".rich-color-picker-colors-input").remove();
+		_Q(".rich-color-picker-hex-wrapper").remove();
+		_Q(".rich-color-picker-ext").css("height","195px");
+		_Q(".rich-color-picker-wrapper").css("left","10px");
+		_Q(".rich-color-picker-wrapper").css("z-index","4");
+		_Q(".rich-color-picker-wrapper").css("width","200px");
+		_Q(".rich-color-picker-submit").css({"top":"170px","left":"30px","width": "50px", "height": "20px"}).html("确定");
+		_Q(".rich-color-picker-cancel").css({"top":"170px","left":"120px","width": "50px", "height": "20px"}).html("取消");
+		_Q("#groupForm\\:color").attr("class","formcolor");
+		_Q("input[name='groupForm:color']").attr("name","groupFormColor").attr("id","groupFormColor").hide();
+		_Q("#groupFormColor").parent().find(".rich-color-picker-icon").bind("click",function(){
+			setTimeout('colorPic3(_Q("#groupFormColor"))',10);
+			});
+		_Q("#plant\\:plant_beginInputDate,#plant\\:plant_beginPopupButton").bind('click',function(){
+			setTimeout(function(){resetCurrentTable(_Q("#plant\\:plant_begin"))},20);
+		});
+		_Q("#plant\\:plant_endInputDate,#plant\\:plant_endPopupButton").bind('click',function(){
+			setTimeout(function(){resetCurrentTable(_Q("#plant\\:plant_end"))},20);
+		});
+}); 
+function resetCurrentTable(obj){
+	obj.css("top","240px");
+}
+function colorPic3(obj){
+	_Q(obj).parent().parent().find(".rich-color-picker-wrapper").css({"top":"315px","left":"70px","position":"absolute","z-index":"4"}).show();
+	if(ie7)
+		_Q(obj).parent().parent().find(".rich-color-picker-wrapper").css({"top":"365px","left":"70px","position":"absolute","z-index":"4"}).show();
+	}
+
+_Q(window).resize(function(){
+	 var onLoadWidth = document.body.clientWidth;
+	_Q(".dataPanel").animate({width: window.screen.width-302},800,function(){});
+  // _Q("#rightPane").animate({width: window.screen.width*0.75-77},800,function(){});
+
+	//   _Q(".dataPanel").css("width",100000+"px");
+	 //_Q(".gantt").animate({width: window.screen.width-100},800,function(){});
+	 _Q("#divFloatToolsViewq").animate({width: window.screen.width/4-30},800,function(){});
+	//_Q(".zi_tb").animate({width: window.screen.width/4-30},800,function(){});
+	//_Q(".zi_tb1").animate({width: window.screen.width/4-30},800,function(){});
+	 //_Q(".zi_tb2").animate({width: window.screen.width/4-30},800,function(){});
+	 _Q(".animate1").css("width",document.body.clientWidth- 77 +"px ");
+	 _Q(".gttxs").css("width",document.body.clientWidth- 77 +"px ");
+	 //_Q(".tc_top_04").animate({width: window.screen.width/4},800,function(){});
+	 //_Q(".tc_top_in2").animate({width: window.screen.width/4-138-50},800,function(){});
+	 //_Q(".spctab_le").animate({width: window.screen.width/4-37},800,function(){});
+	 mygantt2();
+
+})
+</script>     
+
+<script>
+_Q(function() {
+	"use strict";
+	innitGantt("");
+	mygantt();
+
+	prettyPrint();
+});
+function mygantt(){
+	var pageSize = (document.body.clientHeight-237)/24;
+	pageSize = (pageSize+"").split(".")[0];
+	pageSize = parseInt(pageSize, 10);
+	_Q(".gantt").gantt({
+		source: scource,
+		 scale: "weeks",
+		 minScale: "weeks",
+	         maxScale: "weeks",
+		itemsPerPage: pageSize,
+		//itemsPerPage:10000,
+		onItemClick: function(data) {
+			//alert("Item clicked - show some details");
+			editGantt(data);
+		},
+		onAddClick: function(dt, rowId) {
+			//alert( "Empty space clicked - add an item!" + dt + "\n rowId: " + rowId);
+			addGantt();
+			
+			//alert("Empty space clicked - add an item!");
+		},
+		onRender: function() {
+			//_Q(".dataPanel").css("width",window.screen.width-302);
+			//if (window.console && typeof console.log === "function") {
+				//console.log("chart rendered");
+			//}
+		}
+	});
+	
+}
+
+function mygantt2(){
+	var pageSize = (document.body.clientHeight-237)/24;
+	pageSize = (pageSize+"").split(".")[0];
+	pageSize = parseInt(pageSize, 10);
+	_Q(".gantt").gantt({
+		source: scource,
+		 scale: "weeks",
+		 minScale: "weeks",
+	         maxScale: "weeks",
+		itemsPerPage: pageSize,
+		pageNum : nowpage,
+		//itemsPerPage:10000,
+		onItemClick: function(data) {
+			//alert("Item clicked - show some details");
+			editGantt(data);
+		},
+		onAddClick: function(dt, rowId) {
+			//alert( "Empty space clicked - add an item!" + dt + "\n rowId: " + rowId);
+			addGantt();
+			
+			//alert("Empty space clicked - add an item!");
+		},
+		onRender: function() {
+			//_Q(".dataPanel").css("width",window.screen.width-302);
+			//if (window.console && typeof console.log === "function") {
+				//console.log("chart rendered");
+			//}
+		}
+	});
+	
+}
+</script>
+
+
+<script type="text/javascript">
+_Q(document).ready(function()
+{
+var openbox=true;
+_Q("#divFloatToolsView").css("width","1px");
+_Q(".btnOpen").click(function(){
+	if(openbox){
+		_Q("#divFloatToolsView").animate({width: window.screen.width/4},800,function(){
+		});
+		openbox=false;
+	}else{
+		_Q("#divFloatToolsView").animate({width:1},800,function(){
+		});
+		openbox=true;
+	}
+});
+});
+//
+_Q(document).ready(function()
+{
+var openbox=true;
+_Q(".btnOpenq").click(function(){
+	if(openbox){
+		_Q("#divFloatToolsViewq").animate({height: window.screen.height/4-30},800,function(){
+		});
+		openbox=false;
+	}else{
+		_Q("#divFloatToolsViewq").animate({height:0},800,function(){
+		});
+		openbox=true;
+	}
+});
+
+
+});
+
+
+</script>
+
+
+<!--搜索开始-->
+<script type="text/javascript">
+_Q(document).ready(function(){
+var openbox=true;
+_Q("#ser_input").css("width","1px");
+_Q(".search02").click(function(){
+	if(openbox){
+		_Q("#ser_input").animate({width:"130"+"px "},800,function(){_Q("#ser_input").show()});
+		openbox=false;
+	}else{
+		_Q("#ser_input").animate({width:"1px"},800,function(){_Q("#ser_input").hide()});
+		openbox=true;
+	}
+});
+});
+<!--搜索结束-->
+<!--模版列表鼠标移上去js-->
+_Q(function(){
+ _Q('.map_li').hover(function(){
+  _Q(this).find('.hover_map').show();
+ },function(){
+  _Q(this).find('.hover_map').hide();
+ })
+})
+<!--模版列表鼠标移上去js结束-->
+<!--下拉table开始-->
+_Q(document).ready(function(){
+  _Q(".sjj_09").click(function(){
+  _Q(".aqu_ul2").toggle();
+  });
+  _Q(".gtbut").click(function(){
+	 	var obj = _Q(this).closest(".pcaqu2").next();
+	 	if(obj.is(":visible")){
+			obj.hide();
+			_Q(this).attr("src",workpath+"/asset/images/gtda_08.jpg");
+	 	}else{
+			obj.show();
+			_Q(this).attr("src",workpath+"/asset/images/gtda_07.jpg");
+	 	}
+  });
+  _Q(".gtbut2").click(function(){
+	 	var obj = _Q(this).closest(".pcaqu2").next();
+	 	if(obj.is(":visible")){
+			obj.hide();
+			_Q(this).attr("src",workpath+"/asset/images/gtda_08.jpg");
+	 	}else{
+			obj.show();
+			_Q(this).attr("src",workpath+"/asset/images/gtda_07.jpg");
+	 	}
+});
+
+  _Q(".semxnene input").focus(function(){
+		var a = _Q("#model_begintime").val();
+		var b = _Q("#model_endtime").val();
+		a = parseInt(a,10);
+		b = parseInt(b,10);
+		var arr = [];
+		if(b>=a){
+			for(var i = a ;i<=b;i++){
+				arr.push(i);
+			}
+		}else if(b<a){
+			for(var i = a ;i<=12;i++){
+				arr.push(i);
+			}
+			for(var i = 1 ;i<=b;i++){
+				arr.push(i);
+			}
+		}
+		for(var i = 0;i<arr.length;i++){
+			if(arr[i]==_Q(this).attr("name").replace("month","")){
+				break;
+			}else if(i==arr.length-1){
+				alert("该月份不在采收开始和结束时间之内");
+				_Q(this).blur();
+			}
+		}
+  })
+
+  _Q('.hislist,.realplantlist,.apslist').delegate('.rteic','mouseenter mouseleave',function ( event ) {
+		    if (event.type == 'mouseenter') {
+		    	 _Q(this).find('.rtehov').show();
+		    } else {
+		    	 _Q(this).find('.rtehov').hide();
+		    }
+	  });
+
+  _Q("#img1").hover(function() {
+			_Q(this).attr("src",workpath+"/asset/images/yearlon.jpg");
+		}, function() {
+			_Q(this).attr("src",workpath+"/asset/images/yearl.jpg");
+		});
+_Q("#img2").hover(function() {
+	// $("#orderedlist li:last").hover(function() {
+		_Q(this).attr("src",workpath+"/asset/images/yearron.jpg");
+	}, function() {
+		_Q(this).attr("src",workpath+"/asset/images/yearr.jpg");
+	});
+});
+</script>
+<!--下拉table结束-->
+<!--点击一张图换另一张图开始-->
+<script type="text/javascript">
+function pc_img (obj){
+	var par = _Q(obj).closest(".secondHtml");
+	var val = _Q(obj).attr("aa");
+	if(_Q(obj).attr("lj")=="lj"){
+		par.find("a").attr("lj","lj");
+		par.find("a img").attr("src","#{request.contextPath}/asset/images/pcdi_03.png");
+		_Q(obj).find("img").attr("src","#{request.contextPath}/asset/images/pc01_03.png");
+		_Q(obj).attr("lj","bj");
+		var html1 = '<tbody><tr class="even"><th class="zi_tdth">区域</th><th class="zi_tdth">定植日期</th><th class="zi_tdth">亩数</th></tr>';
+		for(var i = 0;i<apsStr.length;i++){
+			var obj = apsStr[i];
+			if(obj.plant_id==val&&obj.id>0){
+				html1+='<tr><td class="zi_tdtd">'+obj.tunnel_name+'</td><td class="zi_tdtd">'+obj.value_time+''+days3[obj.value_ten_days-1]+'</td><td class="zi_tdtd">'+obj.crop_area+'/'+obj.mu_number+'亩</td></tr></tbody>';
+			}
+		}
+		_Q(".zi_tb").empty().append(html1);
+		var html2 = '<tr class="even"><th class="zi_tdth1">品种</th><th class="zi_tdth1">类型</th><th class="zi_tdth1">定植日期</th><th class="zi_tdth1">亩数</th></tr>';
+		for(var i = 0;i<plantAps.length;i++){
+			var obj = plantAps[i];
+			if(obj.plantid==val){
+				html2+='<tr><td class="zi_tdtd1">'+obj.bname+'</td><td class="zi_tdtd1">'+obj.pname+'</td><td class="zi_tdtd1">'+obj.vt+'月'+obj.vtday+'号</td><td class="zi_tdtd1">'+obj.area+'</td></tr>';
+			}
+		}
+		_Q(".zi_tb1").empty().append(html2);
+		var html3 = '<tr class="even"><th class="zi_tdth2">月份</th><th class="zi_tdth2">采购量</th><th class="zi_tdth2">金额</th></tr>';
+        for(var i = 0;i<plantContract.length;i++){
+			var obj = plantContract[i];
+			if(obj.plantid==val){
+				html3+='<tr><td class="zi_tdtd2">'+obj.data+'</td><td class="zi_tdtd2">'+obj.purchases+'kg</td><td class="zi_tdtd2">'+obj.subtotal+'元</td></tr>';
+			}
+        }
+        _Q(".zi_tb2").empty().append(html3);
+        _Q("#rightPane .hsplitbar").show();
+		_Q("#rbPane").show();
+		jQuery13('#rbPane').css("height","300px");
+		jQuery13('#rightPane').trigger('resize');
+	}else {
+		par.find("a").attr("lj","lj");
+		par.find("a img").attr("src","#{request.contextPath}/asset/images/pcdi_03.png");
+		_Q(obj).find("img").attr("src","#{request.contextPath}/asset/images/pcdi_03.png");
+		_Q(obj).attr("lj","lj");
+		jQuery13('#rbPane').css("height","0px");
+		jQuery13('#rightPane').trigger('resize');
+	}
+}
+function pc_img2 (obj){
+	var par = _Q(obj).closest(".tec_c2");
+	var val = _Q(obj).attr("aa");
+	if(_Q(obj).attr("lj")=="lj"){
+		par.find("a").attr("lj","lj");
+		par.find("a img").attr("src","#{request.contextPath}/asset/images/pcdi_03.png");
+		_Q(obj).find("img").attr("src","#{request.contextPath}/asset/images/pc01_03.png");
+		_Q(obj).attr("lj","bj");
+		var html1 = '<tbody><tr class="even"><th class="zi_tdth">区域</th><th class="zi_tdth">定植日期</th><th class="zi_tdth">亩数</th></tr>';
+		for(var i = 0;i<apsStr.length;i++){
+			var obj = apsStr[i];
+			if(obj.plant_id==val&&obj.id>0){
+				html1+='<tr><td class="zi_tdtd">'+obj.tunnel_name+'</td><td class="zi_tdtd">'+obj.value_time+''+days3[obj.value_ten_days-1]+'</td><td class="zi_tdtd">'+(obj.crop_area==undefined?0.0:obj.crop_area)+'/'+obj.mu_number+'亩</td></tr></tbody>';
+			}
+		}
+		_Q(".zi_tb").empty().append(html1);
+		var html2 = '';
+		for(var i = 0;i<plantAps.length;i++){
+			var obj = plantAps[i];
+			if(obj.plantid==val){
+				html2+='<tr><td class="zi_tdtd1">'+obj.bname+'</td><td class="zi_tdtd1">'+obj.pname+'</td><td class="zi_tdtd1">'+obj.vt+'月'+obj.vtday+'号</td><td class="zi_tdtd1">'+obj.area+'</td></tr>';
+			}
+		}
+		if(html2!=""){
+			html2 = '<tr class="even"><th class="zi_tdth1">品种</th><th class="zi_tdth1">类型</th><th class="zi_tdth1">定植日期</th><th class="zi_tdth1">亩数</th></tr>'+html2;
+		}else{
+			html2 = '<tr><td align="center">'+_Q("#hetong")[0].outerHTML+'</td></tr>';
+		}
+		_Q(".zi_tb1").empty().append(html2);
+		var html3 = '';
+        for(var i = 0;i<plantContract.length;i++){
+			var obj = plantContract[i];
+			if(obj.plantid==val){
+				html3+='<tr><td class="zi_tdtd2">'+obj.data+'</td><td class="zi_tdtd2">'+obj.purchases+'kg</td><td class="zi_tdtd2">'+obj.subtotal+'元</td></tr>';
+			}
+        }
+        if(html3!=""){
+			html3 = '<tr class="even"><th class="zi_tdth2">月份</th><th class="zi_tdth2">采购量</th><th class="zi_tdth2">金额</th></tr>'+html3;
+		}else{
+			html3 = '<tr><td align="center">'+_Q("#hetong")[0].outerHTML+'</td></tr>';
+		}
+        _Q(".zi_tb2").empty().append(html3);
+        _Q("#rightPane .hsplitbar").show();
+		_Q("#rbPane").show();
+		jQuery13('#rbPane').css("height","300px");
+		jQuery13('#rightPane').trigger('resize');
+		innitGantt(_Q(".nowPlant a[lj=bj]").attr("bb"));
+		mygantt();
+	}else {
+		par.find("a").attr("lj","lj");
+		par.find("a img").attr("src","#{request.contextPath}/asset/images/pcdi_03.png");
+		_Q(obj).find("img").attr("src","#{request.contextPath}/asset/images/pcdi_03.png");
+		_Q(obj).attr("lj","lj");
+		jQuery13('#rbPane').css("height","0px");
+		jQuery13('#rightPane').trigger('resize');
+		innitGantt("");
+		mygantt();
+	}
+}
+</script>
+<!--点击一张图换另一张图结束-->
+
+<script>
+_Q(document).ready(function(){
+_Q('.zi_tb tr.zi_tdtd').addClass('odd');
+_Q('.zi_tb tr:even').addClass('even'); //奇偶变色，添加样式
+_Q('.zi_tb1 tr.zi_tdtd1').addClass('odd');
+_Q('.zi_tb1 tr:even').addClass('even'); //奇偶变色，添加样式
+_Q('.zi_tb2 tr.zi_tdtd2').addClass('odd');
+_Q('.zi_tb2 tr:even').addClass('even'); //奇偶变色，添加样式
+});
+</script> 
+
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/tab.js"></script>
+
+<script type="text/javascript">
+_Q(function(){
+    _Q(".erlist4").jTab({
+        menutag: ".erlist4 li",
+        boxtag: ".erbox3 > .erb",
+        cur: 0,
+		callback:"checkLiTag(index)"
+    });
+	
+    _Q(".erlist3_min").jTab({
+        menutag: ".erlist3_min li",
+        boxtag: ".erbox3min > .erb2",
+        cur: 0,
+        callback:"hideTag(index)"
+		
+    });
+    
+    _Q(".erlist_min").jTab({
+        menutag: ".erlist_min li",
+        boxtag: ".erbox4min > #erb2",
+        cur: 0,
+		callback:"searchTunnel(index)"
+    });
+
+   _Q(".zitc_strong").jTab({
+        menutag: ".zitc_strong li",
+       boxtag: ".zit_table > div",
+        cur: 0
+		
+    });
+   _Q(".tc_top_input").val("");
+   _Q(".leftli01:eq(0)").trigger("click");
+
+});
+
+function checkLiTag(index){
+	if(index==0){
+		var ind = _Q(".erlist3_min .current").index();
+		if(ind!=0){
+			_Q("#rightPane .hsplitbar").hide();
+			_Q("#rbPane").hide();
+		}else {
+			searchAps(ind);
+		}
+	}else if(index==1){
+		_Q("#rightPane .hsplitbar").hide();
+		_Q("#rbPane").hide();
+	}
+
+}
+function hideTag(index){
+	if(index<1&&false){
+		_Q("#rightPane .hsplitbar").hide();
+		_Q("#rbPane").hide();
+	}else{
+		_Q("#rightPane .hsplitbar").show();
+		_Q("#rbPane").show();
+	}
+	searchAps(index);
+}
+
+function isIE7(){
+return Sys.ie==7;
+}
+ if(isIE7()){
+	_Q(function(){
+		_Q(".erlist4").jTab({
+			menutag: ".erlist4 li",
+			boxtag: ".erbox3 > div",
+			cur: 0
+		});
+	});
+}
+ jQuery(document).ready(function(){
+ 	jQuery(".r_ulli2").hover(
+				function(){
+					jQuery("#lll").show();
+				},function(){
+					jQuery("#lll").hide();
+				}
+         	);
+ 	jQuery(".r_ulli1").hover(
+				function(){
+					jQuery("#ll").show();
+				},function(){
+					jQuery("#ll").hide();
+				}
+         	);
+		jQuery(".tab_t2 ul").hover(
+				function(){
+					jQuery(this).find("div").show();
+				},
+				function(){
+					jQuery(this).find("div").hide();
+				});
+});
+//验证开始
+function checkSubmit(){
+	var asp_type = _Q('#aps_type').val();
+	var nowD = new Date();
+	var nowD_ = new Date(nowD.getFullYear(),nowD.getMonth()+1,nowD.getDate());
+	if(asp_type <2 ){
+		var beginTime = document.getElementById("plant:plant_beginInputDate").value;
+	    var endTime = document.getElementById("plant:plant_endInputDate").value;
+	    var plantarea = document.getElementById("plant_area").value;
+	    var edittype = _Q("#edittype").val();
+	    var breedId = _Q("#breedBreedId").val();
+	    var arr = beginTime.split("-");
+	    var starttime = new Date(arr[0], arr[1], arr[2]);
+	    var starttimes = starttime.getTime();
+	    var arrs = endTime.split("-");
+	    var lktime = new Date(arrs[0], arrs[1], arrs[2]);
+	    var lktimes = lktime.getTime();
+	    var flag = true;
+	    var allarea =  parseFloat(_Q("#plantarea").text());
+	    if (starttimes >= lktimes) {
+	    	_Q("#prompt").text("定植时间不能大于结束时间！");
+			return false;
+	    }
+	    if(beginTime == ""){
+	    	_Q("#prompt").text("定植时间不能为空！");
+			return false;
+	    }
+	    if(endTime == ""){
+        	_Q("#prompt").text("结束时间不能为空！");
+			return false;
+        }
+	   	var nowT = nowD_.getTime();
+	    if(asp_type == 1 ){
+		    if(starttimes>nowT){
+	        	_Q("#prompt").text("实际种植开始日期不能大于今天！");
+	        	return false;
+	        }
+		    var fb = lktimes<nowT;
+		    if(fb){
+	        	_Q("#prompt").text("实际种植结束日期不能小于今天！");
+	        	return false;
+		    }
+		    
+        }else{
+        	if(lktimes>nowT){
+            	_Q("#prompt").text("历史种植结束日期不能大于今天！");
+            	return false;
+            }
+        }
+	    if(plantarea == 0){
+        	_Q("#prompt").text("种植面积不能为0！");
+			return false;
+        }
+	    if(plantarea == ""){
+	    	_Q("#prompt").text("种植面积不能为空！");
+			return false;
+	    }
+	    //if(parseFloat(plantarea) > parseFloat(_Q("#tunnel_area").val())){
+	    //	_Q("#prompt").text("种植面积不能大于区域面积！");
+		//	return false;
+	    //}
+	    
+	    if(edittype == 1){
+	    	if(parseFloat(plantarea) > allarea){
+	            _Q("#prompt").text("种植面积不能大于剩余种植面积！");
+				return false;
+	        }
+	    }else{
+	    	if(parseFloat(plantarea) > allarea){
+	            _Q("#prompt").text("种植面积不能大于剩余种植面积！");
+				return false;
+	        }
+	    }
+	    if(_Q("#modelId").val()==""||_Q("#modelId").val()==0){
+	    	_Q("#prompt").text("请先预估每月产量！");
+			return false;
+	    }
+	    var year = parseInt(_Q("#checkStart").val(),10)<parseInt(_Q("#checkMonth").val())?arr[0]:parseInt(arr[0],10)+1;
+		var date1 = new Date(arrs[0],parseInt(arrs[1],10)-1,arrs[2]);
+		var date2 ;
+		if(_Q("#checkDays").val()==3){
+			date2 = new Date(year,_Q("#checkMonth").val(),0);
+		}else {
+			date2 = new Date(year,(_Q("#checkMonth").val()-1),_Q("#checkDays").val()*10);
+		}
+		var month1 = parseInt(arr[0]) * 12 + parseInt(arr[1]);
+		var month2 = parseInt(arrs[0]) * 12 + parseInt(arrs[1]);
+		var cha = Math.abs(month2 - month1);
+		if(cha<12){
+		    if(date1>date2){
+		    	_Q("#prompt").text("结束时间未在模型区间内！");
+		    	return false;
+		    }
+		}
+	   return true;
+	}else if(asp_type == 2){
+		var modelId = _Q("#smodel").val();
+		if(modelId == 0){
+			_Q("#prompt2").text("请先预估每月产量！");
+			return false;
+		}
+		if(_Q("#splantarea").html()==0){
+			_Q("#prompt2").text("已无可用面积!");
+			return false;
+		}
+		if(parseFloat(_Q("#sarea").val())>parseFloat(_Q("#splantarea").html())){
+			_Q("#prompt2").text("排产面积大于可用面积！");
+			return false;
+		}
+		return true;
+	}
+  return true;
+}
+function chemodel (){
+	if(_Q("#model_valuetime").val()==-2){
+		alert("请选择定植时间!");
+		return false;
+	}
+	//if(_Q("#model_nurserytime").val()==-2){
+		//alert("请选择育种开始!");
+		//return false;
+	//}
+	if(_Q("#model_begintime").val()==-2){
+		alert("请选择采收开始!");
+		return false;
+	}
+	if(_Q("#model_endtime").val()==-2){
+		alert("请选择采收结束!");
+		return false;
+	}
+	return true;
+}
+function clearNoNum(obj){
+	obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+	obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+	obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+	obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+	if(obj.value=="")
+		return ;
+	_Q(".table_0 .mul").each(function(){
+		var mu = parseFloat(_Q(this).attr("mul"));
+		var total = mu*parseFloat(obj.value);
+		_Q(this).html(total.toFixed(2)+"kg");
+	});
+}
+
+function clearNoNum2(obj){
+	obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+	obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+	obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+	obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+	if(obj.value=="")
+		return ;
+	_Q(".table_1 .mul").each(function(){
+		var mu = parseFloat(_Q(this).attr("mul"));
+		var total = mu*parseFloat(obj.value);
+		_Q(this).html(total.toFixed(2)+"kg");
+	});
+}	
+//验证结束
+
+//右侧弹框滚动条滚动时，下拉框隐藏
+ _Q(".tc_rw_rw2").scroll(function(){
+	 _Q(".ui-selectmenu-open").removeClass("ui-selectmenu-open");
+   });
+</script>
+<style>
+html {
+    height: 99%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.custom-combobox {
+  position: relative;
+  display: inline-block;
+}
+.custom-combobox-toggle {
+  position: absolute;
+  top: -2px;
+  bottom: 0;
+  margin-left: -1px;
+  padding: 0;
+  height: 32px;
+  /* support: IE7 */
+  *top:1px;
+}
+.custom-combobox-input {
+  margin: 0;
+  padding:2px 5px; width:130px;height: 28px;
+}
+#ui-id-1{height:150px; overflow-x:hidden; overflow-y:scroll; *width:143px;}
+.uboxstyle1 .ui-state-default,.uboxstyle1 .ui-widget-content,.uboxstyle1 .ui-state-default,.uboxstyle1 .ui-widget-header,.uboxstyle1 .ui-state-default,
+.uboxstyle2 .ui-state-default,.uboxstyle2 .ui-widget-content,.uboxstyle2 .ui-state-default,.uboxstyle2 .ui-widget-header,.uboxstyle2 .ui-state-default,
+.uboxstyle3 .ui-state-default,.uboxstyle3 .ui-widget-content,.uboxstyle3 .ui-state-default,.uboxstyle3 .ui-widget-header,.uboxstyle3 .ui-state-default,
+.uboxstyle4 .ui-state-default,.uboxstyle4 .ui-widget-content,.uboxstyle4 .ui-state-default,.uboxstyle4 .ui-widget-header,.uboxstyle4 .ui-state-default,
+.uboxstyle5 .ui-state-default,.uboxstyle5 .ui-widget-content,.uboxstyle5 .ui-state-default,.uboxstyle5 .ui-widget-header,.uboxstyle5 .ui-state-default{border:0;}
+  .plant_imgbd{ position:absolute; top:0; left:0;}
+  .rteic{height:auto};
+
+.aps_typs_name{font-size:14px}
+</style>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/gantt/jquery-1.10.2_clone.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-ui3.js"></script>    
+	<link rel="stylesheet" href="#{request.contextPath}/asset/css/jquery-ui_css.css"/>
+<script type="text/javascript" >
+(function( _T ) {
+	  _T.widget( "custom.combobox", {
+	    _create: function() {
+	      this.wrapper = _T( "<span>" )
+	        .addClass( "custom-combobox" )
+	        .insertAfter( this.element );
+	      this.element.hide();
+	      this._createAutocomplete();
+	      this._createShowAllButton();
+	    },
+	    _createAutocomplete: function() {
+	      var selected = this.element.children( ":selected" ),
+	        value = selected.val() ? selected.text() : "";
+	      this.input = _T( "<input>" )
+	        .appendTo( this.wrapper )
+	        .val( value )
+	        .attr( "title", "" )
+	        .addClass( "custom-combobox-input ui-widget ui-widget-content1 ui-state-default1 input_bg" )
+	        .autocomplete({
+	          delay: 0,
+	          minLength: 0,
+	          source: _T.proxy( this, "_source" )
+	        })
+	        .tooltip({
+	          tooltipClass: "ui-state-highlight"
+	        });
+	      this._on( this.input, {
+	        autocompleteselect: function( event, ui ) {
+	          ui.item.option.selected = true;
+	          this._trigger( "select", event, {
+	            item: ui.item.option
+	          });
+	          this.element.trigger("onchange");
+	        },
+	        autocompletechange: "_removeIfInvalid"
+	      });
+	    },
+	    _createShowAllButton: function() {
+	      var input = this.input,
+	        wasOpen = false;
+	      _T( "<a>" )
+	        .attr( "tabIndex", -1 )
+	        .attr( "title", "显示全部品种" )
+	        .tooltip()
+	        .appendTo( this.wrapper )
+	        .button({
+	          icons: {
+	            primary: "ui-icon-triangle-1-s"
+	          },
+	          text: false
+	        })
+	        .removeClass( "ui-corner-all" )
+	        .addClass( "custom-combobox-toggle ui-corner-right" )
+	        .mousedown(function() {
+	          wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+	        })
+	        .click(function() {
+	          input.focus();
+	          if ( wasOpen ) {
+	            return;
+	          }
+	          input.autocomplete( "search", "" );
+	        });
+	    },
+	    _source: function( request, response ) {
+	      var matcher = new RegExp( _T.ui.autocomplete.escapeRegex(request.term), "i" );
+	      response( this.element.children( "option" ).map(function() {
+	        var text = _T( this ).text();
+	        if ( this.value && ( !request.term || matcher.test(text) ) )
+	          return {
+	            label: text,
+	            value: text,
+	            option: this
+	          };
+	      }) );
+	    },
+	    _removeIfInvalid: function( event, ui ) {
+	      if ( ui.item ) {
+	        return;
+	      }
+	      var value = this.input.val(),
+	        valueLowerCase = value.toLowerCase(),
+	        valid = false;
+	      this.element.children( "option" ).each(function() {
+	        if ( _T( this ).text().toLowerCase() === valueLowerCase ) {
+	          this.selected = valid = true;
+	          return false;
+	        }
+	      });
+	      if ( valid ) {
+	        return;
+	      }
+	      this.input
+	        .val( "" )
+	        .attr( "title", value + " 没有符合条件的项目" )
+	        .tooltip( "open" );
+	      this.element.val( "" );
+	      this._delay(function() {
+	        this.input.tooltip( "close" ).attr( "title", "" );
+	      }, 2500 );
+	      this.input.data( "ui-autocomplete" ).term = "";
+	    },
+	    _destroy: function() {
+	      this.wrapper.remove();
+	      this.element.show();
+	    }
+	  });
+	})( _T );
+	_T(function() {
+	  _T( "#plant_plantId" ).combobox();
+	  _T( "#splant" ).combobox();
+	});
+//]]>
+</script>
+
+</div>
+<div class="div_width" style="display:none;">
+                <div class="div_012"  >
+                	<div style="width:100%;">
+                           <div class="ret_pic2">
+                               <img class="zw_bgt2" onclick="addPlant()" src="#{request.contextPath}/asset/images/png-png.png" width="88" height="88"  />
+                               <img class="zw_libg_img2" src="#{request.contextPath}/asset/images/yuan.png" width="88" height="88" />
+                            </div>
+                            <div style="float:left; width:95px; *width:130px; ">
+                            	<dl class="div_dl2">
+                                	<dt class="div_dt2"><font style="font-family:Arial, Helvetica, sans-serif">A</font>区-06温室温室</dt>
+                                    <dd class="div_dt4">西红柿西红柿</dd>
+									<dd class="div_dt3">2.4亩</dd>
+                                </dl>
+                            </div>
+                            <div class="clear"></div>
+                    </div> 
+                    <table width="100%" height="28" cellpadding="0" cellspacing="0"  style="margin:10px auto 0 auto;background:url(#{request.contextPath}/asset/images/line_03.jpg) top repeat-x; padding-bottom:5px;">
+                    	<tr>
+                        	<td width="19" height="28" valign="top" style="padding-right:5px; padding-top:5px;"><img src="#{request.contextPath}/asset/images/time_07.jpg" width="19" height="19" /></td>
+                            <td valign="top" style="font-size:12px; color:#989898; padding-top:5px;" class="div_dt55">种植日期：三月上旬——七月下旬</td>
+                        </tr>
+                    </table>  
+                </div>    
+ </div>
+ <a4j:form style="display:none">
+ 		<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+        <a4j:jsFunction name="changeBreedValue" eventsQueue="mainQueue"  action="#{mapHome.getModelByBreedId()}" data="#{mapHome.modelStr}" oncomplete="linkage2(data)" >
+        <a4j:actionparam name="param1"   assignTo="#{mapHome.changeV}"/>
+        <a4j:actionparam name="param2" value="#{mapHome.plant_tunnel_id}"></a4j:actionparam>
+        </a4j:jsFunction>
+        <a4j:jsFunction name="getBreedModelByPlant"  eventsQueue="mainQueue"  action="#{mapHome.getBreedModelByPlant()}" data="#{mapHome.sbreedStr}" oncomplete="linkage3(data)">
+        <a4j:actionparam name="param1"   assignTo="#{mapHome.splantId}"/>    
+        </a4j:jsFunction>
+        <a4j:jsFunction name="getSchedulingPlant"  eventsQueue="mainQueue"  action="#{mapHome.getSchedulingPlant()}" data="#{mapHome.smodelStr}" oncomplete="linkage4(data)">
+		<a4j:actionparam name="param1"   assignTo="#{mapHome.sbreedId}"/>  
+		<a4j:actionparam name="param2"   assignTo="#{mapHome.smonth}"/>  
+		<a4j:actionparam name="param3"   assignTo="#{mapHome.sday}"/>  
+		<a4j:actionparam name="param4"   assignTo="#{mapHome.tunnelId}"/> 
+		<a4j:actionparam name="param5"   assignTo="#{mapHome.param4}"/> 
+		<a4j:actionparam name="param6"   assignTo="#{mapHome.year}"/> 
+		<a4j:actionparam name="param7"   assignTo="#{mapHome.param7}"/> 
+		</a4j:jsFunction>
+		<a4j:jsFunction name="getInfoTable"  eventsQueue="mainQueue"  action="#{mapHome.getInfoTable()}" data="#{mapHome.tableStr}" oncomplete="linkage5(data)">
+		<a4j:actionparam name="param1"   assignTo="#{mapHome.smodelId}"/>  
+		</a4j:jsFunction>
+		<a4j:jsFunction name="getBreedByPlant"  eventsQueue="mainQueue"  action="#{mapHome.getBreedByPlant()}" data="#{mapHome.mbreedStr}" oncomplete="linkage6(data)">
+        <a4j:actionparam name="param1"   assignTo="#{mapHome.mplantId}"/>    
+        </a4j:jsFunction>
+        <a4j:jsFunction name="deleteTunnel"  eventsQueue="mainQueue"  action="#{mapHome.deleteTunnelInfo()}" data="#{mapHome.deleteStr}" oncomplete="delete_tunnel_next(data)" >
+        <a4j:actionparam name="param3" assignTo="#{mapHome.delete_group_id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="deletePlant"  eventsQueue="mainQueue"  action="#{mapHome.deletePlant()}">
+        <a4j:actionparam name="param3" assignTo="#{mapHome.del_plant_id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="deleteHisPlant"  eventsQueue="mainQueue"  action="#{mapHome.deleteHisPlant()}" data="#{mapHome.del_his_str}" oncomplete="deleteHisPlant_next(data)">
+        <a4j:actionparam name="param3" assignTo="#{mapHome.del_plant_id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="deleteAps"  eventsQueue="mainQueue"  action="#{mapHome.deleteAps()}" data="#{mapHome.del_aps_str}" oncomplete="deleteAps_next(data)" >
+        <a4j:actionparam name="param3" assignTo="#{mapHome.del_aps_id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="getModelInfoJson"  eventsQueue="mainQueue"  action="#{mapHome.getModelInfoJson()}" data="#{mapHome.oneModelJson}" oncomplete="getModelInfoJson_next(data)" >
+        <a4j:actionparam name="param3" assignTo="#{mapHome.oneModelId}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="getModelByTime_"  eventsQueue="mainQueue"  action="#{mapHome.getModelByTime()}" data="#{mapHome.return1}" oncomplete="getModelByTime_next(data)">
+        <a4j:actionparam name="param1" assignTo="#{mapHome.param1}"></a4j:actionparam>
+        <a4j:actionparam name="param2" assignTo="#{mapHome.param2}"></a4j:actionparam>
+        <a4j:actionparam name="param3" assignTo="#{mapHome.param3}"></a4j:actionparam>
+        <a4j:actionparam name="param4" assignTo="#{mapHome.param4}"></a4j:actionparam>
+        <a4j:actionparam name="param5" assignTo="#{mapHome.param5}"></a4j:actionparam>
+        <a4j:actionparam name="param6" assignTo="#{mapHome.param6}"></a4j:actionparam>
+		</a4j:jsFunction>
+		<a4j:jsFunction name="getBreedByPlantId" eventsQueue="mainQueue" action="#{mapHome.getBreedByPlantId}" data="#{mapHome.breedStr}" oncomplete="linkage(data)">
+				<a4j:actionparam name="param1" assignTo="#{mapHome.breed_Id}"></a4j:actionparam>
+		</a4j:jsFunction>
+		
+		<a4j:jsFunction name="historyList" eventsQueue="mainQueue" action="#{mapHome.work6}" data="#{mapHome.re_last_Str}" oncomplete="eval('lastStr='+data)">
+		</a4j:jsFunction>
+      	</a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+function getModelByTime (v1,v2,v3,v4,v5,v6){
+	if(v5=="")
+		return;
+	else{
+		if(_Q("#plant_real_id").val()==""){
+			if(_Q("#model_type_1").val()!=""){
+				var arr = v3.split("-");
+			    var starttime = new Date(arr[0], arr[1], arr[2]);
+			    if(parseInt(arr[1],10)==parseInt(_Q("#model_valuetime_1").val(), 10)){
+			    	var a = 1;
+			    	var ti = parseInt(arr[2],10);
+			    	if(ti>10&&ti<21){
+			    		a = 2;
+			    	}else if(ti>=21){
+			    		a = 3;
+			    	}
+			    	if(a != parseInt(_Q("#model_valueten_1").val)){
+			    		_Q("#plant_model input").val("");
+			    	}else{
+			    		return ;
+			    	}
+			    }else{
+			    	_Q("#plant_model input").val("");
+			    }
+			}
+		}
+		getModelByTime_ (v1,v2,v3,v4,v5,v6);
+	}
+}
+//]]>
+</script>
+      <div style="display:none" id="firstHtml">
+      <div style="width:100%; display:block; margin-bottom:10px;" class="plantList_"   sid="">
+                                                <div class="pcaqu2">
+                                                    <table width="100%" cellspacing="0" cellpadding="0">
+                                                        <tbody><tr>
+                                                            <td width="20" align="left">
+                                                            	<img width="20" height="23" src="#{request.contextPath}/asset/images/xhs01_03.jpg"/>                                                            </td>
+                                                            <td align="left" class="pca_hg">    
+                                                            esr.plantId.name
+                                                            </td></tr></tbody></table>            
+                                                </div>
+                                                <ul style="min-width:320px;" class="aqu_ul">
+                                                    <li class="pca_li" sid="">
+                                                    <table width="100%" cellspacing="0" cellpadding="0"><tbody><tr>
+                                                                <td width="100" height="60" rowspan="3">
+																<img width="100" height="60" pic="pic" src="#{request.contextPath}/asset/images/tjqy_03.jpg" /> </td>
+                                                                <td valign="middle" align="left" class="pca_font" aa="x" onclick="gotoMap(this.getAttribute('aa'))" style="cursor:pointer">#{_esr.tunnelInfoId.tunnelName}</td></tr>
+                                                            <tr><td valign="middle" align="left" class="pca_font1 font1_">面积：</td></tr>
+                                                            <tr><td valign="middle" align="left" class="pca_font1 font2_">种植日期：</td></tr>
+                                                     </tbody></table>       	
+                                                    </li> </ul> <div class="clear"></div>
+                                            </div></div>
+      <div class="tec_c2 thirdHtml" style="display:none">
+                                            <div class="pcic" sid="">
+                                                <a onclick="pc_img2(this)" class="thirdHtmlClass" aa="" lj="lj" href="#"><img width="99" height="102" src="#{request.contextPath}/asset/images/pcdi_03.png" class="pcpic"/></a>
+                                                   <div class="pcimg">
+                                                   <div><img id="thirdimg" src="../asset/images/wt.png" width="70" height="70"/></div>
+	                                		   			</div>
+                                                   <div class="pctext">#{obj1.plantId.name}</div>
+                                                   <div class="pc_bgdiv" style="display:none">
+                                                   <div class="pc_bgno"><strong>1.2</strong></div>
+                                                   </div> 
+                                            </div>
+                                        </div> 
+       <a4j:status id="ajaxStatus" forceId="true" onstart="_Q('#login').show()" onstop="_Q('#login').hide()" />
+</td>
+</ui:define>
+</ui:composition>

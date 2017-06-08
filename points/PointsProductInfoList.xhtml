@@ -1,0 +1,216 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/points/mall.css" type="text/css" />
+<script src="#{request.contextPath}/asset/js/jquery.lazyloadxt.js"></script>
+<style>
+	.mallBox p{margin:0;}
+</style>
+
+<td valign="top">
+<!-- #{pointsProductInfoHome.begins()} -->
+    <!--右边开始-->
+    <div class="right_c clear">
+        <!-- 面包屑导航 开始 -->
+        <div class="r_title clear">
+            <div class="r_t_l fl"><a href="#{request.contextPath}#{sessionTake.urlTemp}">个人主页</a><span style="padding:0 5px;">&gt;</span><font size="3">积分商城</font></div>
+            <div class="fr"><img src="#{request.contextPath}/asset/images/points/no6.png" style="padding-right:10px; padding-bottom:3px;"/>可用积分<span style="color:#ff5000; padding-left:10px;" class="kyjf">#{pointsProductInfoHome.allPoints}</span></div>
+        </div>
+        <!-- 面包屑导航 结束 -->
+        <!-- 积分商城内容 开始 -->
+        <div class="clear" style="padding:15px 0">
+            <span class="octicon-search02"></span>
+            <input type="text" class="form-control srarchfont" value="搜索你想兑换的商品" style="width:265px;"/>
+            
+        </div>
+        <div class="mall clear">
+        	<a4j:repeat value="#{pointsProductInfoHome.ppiList}" var="ppi" rowKeyVar="_index">
+	        	<div class="mallBox">
+	                <div class="pic">
+	                    <table width="100%">
+	                        <tr>
+	                            <td>
+	                            
+	                             <s:link  view="/points/PointsProductInfo.xhtml"  id="pointsProductInfoPointsProductInfoId" >
+										<f:param name="pointsProductInfoPointsProductInfoId" value="#{ppi.pointsProductInfoId}" />
+										<f:param name="allPoints" value="#{pointsProductInfoHome.allPoints}" />
+										<h:panelGroup rendered="#{ppi.productImages !=null &amp;&amp; ppi.productImages !=''}">
+	                            			<img class="fruitName lazyloadimg" width="220px" height="210px" data-src="#{ppi.productImages.split(',')[0]}"/>
+	                            		</h:panelGroup>
+	                            		<h:panelGroup rendered="#{ppi.productImages ==null || ppi.productImages ==''}">
+	                            			<img class="fruitName lazyloadimg" width="220px" height="210px" data-src=""/>
+	                            		</h:panelGroup>
+								</s:link>
+	                            </td>
+	                        </tr>
+	                    </table>
+	                </div> 
+	                
+	                <p class="fruit"><a target="view_window">#{ppi.name}<span>#{ppi.productParams}</span></a></p>
+	                <p class="clear pb10"><span class="fl pr5 coin">#{ppi.productPoints}</span> <span class="fl">积分</span><span class="fr c64" style="display:none;"><i class="pr5">市场价</i><i>￥#{ppi.marketPrice}</i></span></p>
+	                <div class="c64 clear">
+	                    <div class="fl pr5 count">数量</div>
+	                    <div class="fl number">
+	                        <input class="fl numberIn" value="1"/>
+	                        <div class="fl pl5 btnN">
+	                            <img src="#{request.contextPath}/asset/images/points/plus.png" alt="" class="pt5 plus"/>
+	                            <img src="#{request.contextPath}/asset/images/points/minus.png" alt="" class="pt5 minus"/>
+	                        </div>
+	                    </div>
+	                    <div class="fr convert" style="cursor:pointer;" onclick="exchange('#{ppi.pointsProductInfoId}',this)"><a >立即兑换</a><h:inputHidden value="#{ppi.surplusNum}" id="kc"/></div>
+	                </div>
+	            </div>
+        	</a4j:repeat>
+        </div>
+        <!-- 积分商城 结束 -->
+       
+        <div class="mallFoot">
+            <table width="100%">
+                <tr>
+                    <td class="boederR firstTd">
+                        <a href="#{request.contextPath}/user/PointsTaskList.seam">
+                        <img src="#{request.contextPath}/asset/images/points/step1.png" />
+                        </a>
+                        <!-- <p>新手上路</p>
+                        <p>如何获得积分</p -->
+                    </td>
+                    <td width="184" class="boederR center">
+                        <a href="#{request.contextPath}#{sessionTake.urlTemp}"><img src="#{request.contextPath}/asset/images/points/step2.png" /></a>
+                    </td>
+                    <td width="184" class="boederR center">
+                        <a href="#{request.contextPath}/points/ConvertPointsRecordList.seam"><img src="#{request.contextPath}/asset/images/points/step3.png" /></a>
+                    </td>
+                    <td class="lastTd">
+                        <a href=""><img src="#{request.contextPath}/asset/images/points/step4.png" /></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <!--右侧结束-->
+    <h:form>
+    	<input type="hidden" value="#{pointsProductInfoHome.search}" id="search" name="search"/>
+   	 	<h:commandButton value="" action="/points/PointsProductInfoList.xhtml" styleClass="but2_" style="display:none"/>
+    </h:form>
+    
+    
+    
+    
+    
+<div class="modal fade" id="prompt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:560px; position:absolute; left:50%; margin-left:-280px; top:50%; margin-top:-197px; margin-bottom:0;">
+<div class="modal-content" style="height:185px;">
+<div class="modal-header" style="border-bottom:0; text-align:right;">
+   <span style="cursor : pointer;"><img src="#{request.contextPath}/asset/images/farmingIco16.jpg" onclick="jquery('#prompt').modal('hide');"></img></span>      
+</div>
+<p style=" text-align:center; margin-top:10px;">您当前拥有<span style="color: #ff5000; ">积分不足</span>以兑换该商品，</p>
+<p style=" text-align:center;">坚持完成<span style="color: #ff5000; ">每日任务</span>，早日兑换心仪商品哦！</p>
+    <div class="modal-footer" style="text-align:center; border-top:0;">
+ 		<a class="btn btn-primary"  href="#{request.contextPath}#{sessionTake.urlTemp}" style="color:#fff;">去做任务</a>
+        <a class="btn btn-default" data-dismiss="modal" href="#">我知道了</a>
+    </div>
+</div>
+</div>
+</div>
+    
+    
+    
+    
+</td> 
+
+<script type="text/javascript">
+//<![CDATA[
+jquery(function(){
+	jquery(".lazyloadimg").lazyLoadXT();
+	if(jquery('#search').val() !=""){
+		jquery('.srarchfont').val(jquery("#search").val());
+	}
+
+	jquery('input[type=text]').focus(function(){  //文本框获取焦点失去焦点变化
+		var txt_value = jquery(this).val();
+		if( txt_value == this.defaultValue ){
+			jquery(this).val("");	
+		}	
+	});	
+	jquery('input[type=text]').blur(function(){
+		var txt_value = jquery(this).val();
+		if( txt_value == "" ){
+			jquery(this).val(this.defaultValue);	
+		}	
+	});
+	
+    jquery(".plus").click(function() {
+       var i = jquery(this).parent().siblings('.numberIn').val();
+       i++;
+       if(i>99){
+    	   jquery(this).parent().siblings('.numberIn').val(99);
+       }else{
+	       jquery(this).parent().siblings('.numberIn').val(i);
+       }
+
+    });
+    jquery(".minus").click(function() {
+       var i = jquery(this).parent().siblings('.numberIn').val();
+       i--;
+       if(i<1){
+         jquery(this).parent().siblings('.numberIn').val(1);
+       }else{
+	       jquery(this).parent().siblings('.numberIn').val(i);
+       }
+    });
+
+    jquery('.numberIn').blur(function(){ 
+    	var v = jquery(this).val().replace(/[^0-9]/g,""); 
+    	jquery(this).val(v);
+		if(v>99){
+			jquery(this).val(99);
+		}
+		if(v<1){
+			jquery(this).val(1);
+		}
+    });
+	
+    document.onkeydown = function(e){
+	    var ev = document.all ? window.event : e;
+	    if(ev.keyCode==13) {
+	    	searchName();//点击回车时,走搜索方法
+	    	return false;
+	     }
+	}
+	
+});
+function searchName(){
+	if(jquery('.srarchfont').val()!='搜索你想兑换的商品'){
+		jquery("#search").val(jquery('.srarchfont').val());
+		jquery(".but2_").trigger("click");
+	}
+}
+
+function exchange(id,obj){
+	if(jquery('.kyjf').text()>=(jquery(obj).parents('.mallBox').find('.coin').text()*jquery(obj).parents('.mallBox').find('.numberIn').val())){
+		if(parseInt(jquery(obj).parents('.mallBox').find('.numberIn').val())>parseInt(jquery(obj).find('input').val())){
+			alert('库存不足，请输入小于等于'+jquery(obj).find('input').val()+'的数量重新兑换！');
+		}else{
+			window.location.href = "#{request.contextPath}/points/PointsProductInfoEdit.seam?pointsProductInfoPointsProductInfoId="+id+"&allPoints="+#{pointsProductInfoHome.allPoints}+"&num="+jquery(obj).parents('.mallBox').find('.numberIn').val()+"&dhjf="+(jquery(obj).parents('.mallBox').find('.coin').text()*jquery(obj).parents('.mallBox').find('.numberIn').val())+"&pag=1";
+		}
+	}else{
+		jquery('#prompt').modal('show');
+		//alert('可用积分不够兑换当前商品，请从新选择！');
+	}
+}
+//]]>
+</script>
+</ui:define>
+
+</ui:composition>

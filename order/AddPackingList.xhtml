@@ -1,0 +1,189 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+	<style>
+	.dr-mpnl-pnl-b{padding:0;}
+	.dr-mpnl-pnl{border:none;padding:0;}
+	</style>
+       <td valign="top"  width="100%">
+      <!-- #{orderInfoHome.one()} -->
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="工作 ">
+                    </s:link>&#160;&gt;&#160;&#160;<font size="3">装箱管理</font></div>
+                    </div>
+                    <br/>
+                    <h:panelGroup id="list">
+                    <a4j:repeat value="#{orderInfoHome.packingList}" var="obj" rendered="#{not empty orderInfoHome.packingList}" rowKeyVar="index">
+                    <div class="pr_ad" style="padding-top:20px;">
+                        	<div class="sp_d_iv">
+									<span class="spn_01">订单：#{orderInfoHome.instance.orderCode}</span>
+								    <span class="spn_01">箱编码：#{obj.sn}</span>
+								    <span class="spn_01">创建时间：<h:outputText value="#{obj.packingTime}">
+																<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+														    </h:outputText></span>
+									<span class="spn_01">操作人：#{orderInfoHome.getUser(obj.insertUser).name}</span>
+								    <span class="spn_02">
+								    <s:span  id="deliveryCode"><s:span rendered="#{obj.deliveryCode!=null}">配送条码：
+                                	<h:outputText value="#{obj.deliveryCode}" />
+                                	</s:span></s:span>
+								    </span>
+								</div>
+                    </div>
+					<table width="100%" class="pr_table" cellpadding="0" cellspacing="0" >
+                    	<tr>
+                    		<th class="pr_th" width="10%">ID</th>
+                    		<th class="pr_th" width="8%">订单商品</th>
+                    		<th class="pr_th" width="10%">物料编码</th>
+                    		<th class="pr_th" width="13%">数量</th>
+                    		<th class="pr_th" width="13%">扫描次数</th>
+                    		<th class="pr_th" width="21%" style="border-right:1px solid #ddd;">操作</th>
+                    	</tr>
+                    	<a4j:repeat value="#{obj.orderProductList}" var="_obj" rendered="#{not empty obj.orderProductList}" rowKeyVar="_index">
+                    	<tr>
+                            <td class="pr_td">#{_obj.orderProductId}</td>
+                    		<td class="pr_td">#{_obj.productName}</td>
+                    		<td class="pr_td">#{_obj.goodsInfo.goodsCode}</td>
+                    		<td class="pr_td"><h:outputText value="#{_obj.tempnum}"/></td>
+                    		<td class="pr_td"><h:outputText value="#{_obj.oneboxSet.size}"/></td>
+                            <td class="pr_td">
+                            <s:span rendered="#{index==orderInfoHome.packingList.size-1&amp;&amp;_obj.oneboxSet.size>0&amp;&amp;false}">
+                                	<a style="color:#2a2a2a;" href="javascript:void(0)" onclick="#{rich:component('standard')}.show();document.getElementById('standardform:deleteSn').focus();document.getElementById('standardform:deleteSn').value='';document.getElementById('standardform:dtype').value='#{index}';document.getElementById('standardform:orderProductId').value='#{_obj.orderProductId}';return false;">删除</a>
+                            </s:span>   	
+                            </td>
+                    	</tr>
+                    	</a4j:repeat>
+                    </table>
+                    </a4j:repeat>
+                    </h:panelGroup>
+                    <span style="display:block; margin-top:15px;">
+		    			<s:button view="/record/PackingOrderInfoList.xhtml" styleClass="edit_back" id="bn_left6" style="margin-left:10px" />
+		    		</span>
+ <!--翻页开始-->
+                    <!--翻页结束-->
+            <!--印刷管理下结束-->
+
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <rich:modalPanel id="standard" autosized="true" height="140" width="450" headerClass="modalHeader" style="position:relative;">
+		<div class="tck_div">
+       <div class="tck_ti" >
+       <h:outputLink value="#"
+                onclick="#{rich:component('standard')}.hide();document.getElementById('form:objsubmit').focus(); return false;">
+                    <img src="../images/close_17.jpg" width="20" height="20"/>
+                </h:outputLink>
+                </div>
+       <h:form id="standardform" >
+               	<table class="tck_table" style="margin-top:20px; margin-left:auto; margin-right:auto;">
+                    <tr>
+                    	<td width="100" align="left" class="font_td" style="font-size: 14px;color:black;"><strong>请扫描编码：</strong></td>
+                        <td width="240"  >
+						  	 <h:inputText  required="true" id="deleteSn" styleClass="z_r_ser_i " style="width:280px" value="#{orderInfoHome.deleteSn}">
+			                </h:inputText>
+			                <h:inputHidden value="#{orderInfoHome.orderProductId}" id="orderProductId"/>
+			                <h:inputHidden value="#{orderInfoHome.dtype}" id="dtype"/>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td colspan="2" align="center" valign="bottom">
+                    	<a4j:commandButton  style="width:74px;height:26px" image="/asset/images/delete.jpg"  styleClass="deletesubmit"
+		                	reRender="list" action="#{orderInfoHome.deleteObj2()}"
+		                	oncomplete="#{rich:component('standard')}.hide();document.getElementById('form:objsubmit').focus();"
+		                	/>&#160;
+		                	<h:outputLink value="#"
+                onclick="#{rich:component('standard')}.hide();document.getElementById('form:objsubmit').focus(); return false;"><img class="er_buttton" src="../images/button_17.jpg" width="74" height="26" />
+                </h:outputLink>
+                        </td>
+                    </tr>
+                </table>
+               
+       </h:form>
+       </div>
+   </rich:modalPanel>
+   <h:panelGroup id="error">
+   <script type="text/javascript">
+	var error = "#{orderInfoHome.error}";
+	
+	goUrl1 = function(){
+		if(error!=''){
+			alert(error);
+		}else{
+	 		window.location.href="#{request.contextPath}/record/PackingOrderInfoList.seam";
+		}
+	 }
+   </script>
+   </h:panelGroup>
+                <script type="text/javascript">
+                var b = false;
+                checkSub = function(){
+					return b;
+                }
+                subm = function(){
+					b=true;
+                }
+                okkk = function(){
+                	document.getElementById("form:objsubmit").focus();
+                	document.getElementById("form:objsubmit").value="";
+                }
+                document.onkeydown=function(event){ 
+                    e = event ? event :(window.event ? window.event : null); 
+                    if(e.keyCode==13){ 
+                        if(document.activeElement.id=="form:objsubmit"){
+							jquery(".submitclass").trigger("onclick");
+							okkk();
+                        }else if(document.activeElement.id=="standardform:deleteSn"){
+                        	jquery(".deletesubmit").trigger("onclick");
+                        }
+						e.keyCode=0;
+						 if (window.navigator.userAgent.indexOf("MSIE")==-1)
+			                {
+							 e.preventDefault();
+							 return false;
+			                }
+                    	e.returnValue=false;				
+                    } 
+                } 
+                jquery(document).ready(function(){
+                	document.getElementById("form:objsubmit").focus();
+                });
+               
+                
+del = function(a,b){
+	document.getElementById("deleteSn")
+ 	return false;
+}
+getDeliverCode = function(c,a,b){
+	deliveryCode(a,b);
+	c.style.display="none";
+}
+</script>
+
+<a4j:form>
+<a4j:jsFunction name="deliveryCode"  action="#{orderInfoHome.deliveryCode()}" reRender="deliveryCode">
+<a4j:actionparam name="dtype" assignTo="#{orderInfoHome.dtype}"/>
+<a4j:actionparam name="deletedId" assignTo="#{orderInfoHome.deleteId}"/>
+</a4j:jsFunction>
+</a4j:form>
+<a4j:form >
+<a4j:jsFunction name="deleted"  action="#{orderInfoHome.deleteObj2()}" reRender="list">
+<a4j:actionparam name="dtype" assignTo="#{orderInfoHome.dtype}"/>
+<a4j:actionparam name="deletedId" assignTo="#{orderInfoHome.deleteId}"/>
+</a4j:jsFunction>
+</a4j:form>	
+<a4j:form >
+<a4j:jsFunction name="addMore"  action="#{orderInfoHome.addMore2()}" reRender="list">
+</a4j:jsFunction>
+</a4j:form>		
+</td>
+	</ui:define>
+
+</ui:composition>

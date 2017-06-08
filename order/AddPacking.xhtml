@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+	<link href="#{request.contextPath}/asset/css/bootstrap3.min.css" rel="stylesheet"/>
+	<style>
+	.rt_top{top:0px;}
+	.nw340{width:340px;}
+	.pr_th{text-align: center;}
+	body{
+	font-family: "微软雅黑";
+	}
+	
+	 .fr{float:right;}
+	 .r_ulli1{float:right;}
+	</style>
+       <td valign="top"  width="100%">
+      <!-- #{orderInfoHome.addPackingOne()} -->
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">加工&#160;&gt;&#160;&#160;<font size="3">装箱管理</font></div>
+                    <div class="r_t_r">
+							<ul>
+								<li >
+									<a href="#{request.contextPath}/record/PackingList.seam" style="text-decoration:none;color:black;font-size: 12px;" >
+									
+				                 		<img src="#{request.contextPath}/asset/images/ziyou.png" width="13" height="10" />
+				              			装箱列表
+				              		</a>
+			        			</li>
+			        			<li style="border-right:1px solid #ccc;">
+									 <a href="#{request.contextPath}/record/PackingOrderInfoList.seam" style="text-decoration:none;color:black;font-size: 12px;" >
+									<img src="#{request.contextPath}/asset/images/0001_06.jpg" width="11" height="9" />
+			                      	装箱管理
+			                      	</a>
+			                    </li>
+			     			</ul>
+						</div>
+                    </div>
+                    
+                    <div class="z_r_ser" style="*margin-top:30px; *margin-bottom:30px;">
+                    <h:form id="form" >
+                    	<table cellpadding="0" cellspacing="0" style=" width:510px; margin:30px auto; *margin:0px auto;">
+                        	<tr>
+                        		<td style="font-size:14px;" width="17%">请扫描条码：</td>
+		                	   <td width="83%">
+                                <div class="public-search" style="float: left;width:340px;">   
+                                	<span class="octicon-search02"></span>
+                                	<h:inputText id="objsubmit" styleClass="form-control nw340 srarchfont" value="#{orderInfoHome.searchSn}"/>
+                                </div>
+                                	<a4j:commandButton reRender="list" styleClass="btn btn-primary submitclass2" style="margin-left:10px;" value="提交" onbeforedomupdate="" eventsQueue="default" action="#{orderInfoHome.addPackIngTwo()}">                                	
+	                                </a4j:commandButton>
+                                </td>
+                           </tr>
+                       </table>          
+                    </h:form>     
+                    </div>
+                    <h:panelGroup id="list">
+                    <a4j:repeat value="#{orderInfoHome.packingList}" var="obj" rendered="#{not empty orderInfoHome.packingList}" rowKeyVar="index">
+                    <div class="pr_ad">
+                        <div class="sp_d_iv">
+							<span class="spn_01">订单：#{orderInfoHome.instance.orderCode}</span>
+						    <span class="spn_01">箱编码：#{obj.sn}</span>
+						    <span class="spn_01">创建时间：<h:outputText value="#{obj.packingTime}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+												    </h:outputText></span>
+						    <span class="spn_01">操作人：#{orderInfoHome.getUser(obj.insertUser).name}</span>
+						    <span class="spn_02" aa="1">
+						    <s:span  id="deliveryCode"><s:span rendered="#{obj.deliveryCode!=null}">配送条码：
+                        	<h:outputText styleClass="tiaoma" value="#{obj.deliveryCode}" />
+                        	</s:span></s:span>
+                        	<s:button  styleClass="spn_inr" onclick="getDeliverCode(this,#{index},'#{_oneBox.productSnId}');return false;"
+                        	rendered="#{obj.deliveryCode==null}"/>
+						    </span>
+						    
+						</div>
+                    </div>
+					<table width="100%" class="pr_table" cellpadding="0" cellspacing="0" >
+                    	<tr>
+                    		<th class="pr_th" width="10%">ID</th>
+                    		<th class="pr_th" width="8%">订单商品</th>
+                    		<th class="pr_th" width="10%">物料编码</th>
+                    		<th class="pr_th" width="13%">包编码</th>
+                    		<th class="pr_th" width="13%">时间</th>
+                    		<th class="pr_th" width="21%" style="border-right:1px solid #ddd;">操作</th>
+                    	</tr>
+                    	<a4j:repeat value="#{obj.oneBoxList}" var="_oneBox" rendered="#{not empty obj.oneBoxList}" rowKeyVar="_index">
+                    	<tr>
+                            <td class="pr_td">#{_oneBox.productSnId}</td>
+                    		<td class="pr_td">#{_oneBox.goodsInfo.name}</td>
+                    		<td class="pr_td">#{_oneBox.goodsInfo.goodsCode}</td>
+                    		<td class="pr_td"><h:outputText value="#{_oneBox.productSnId}"/></td>
+                    		<td class="pr_td"><h:outputText value="#{_oneBox.insertTime}">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+						    </h:outputText></td>
+                            <td class="pr_td">
+                                	<a style="color:#2a2a2a;display: #{s:hasRole('detect_standard_del')?'hidden':'none'}" href="javascript:void(0)" onclick="del(#{index},'#{_oneBox.productSnId}');return false;">删除</a>
+                            </td>
+                    	</tr>
+                    	</a4j:repeat>
+                    </table>
+                    </a4j:repeat>
+                    </h:panelGroup>
+                    <span style="*display:block; *margin-top:15px;">
+                    <a href="#" onclick="addMore()" class="btn btn-success" style="margin-top:15px;display: #{s:hasRole('packing__add')?'hidden':'none'}">新增箱子</a>
+                    <input type="button" style="margin-top:15px;display: #{s:hasRole('packing__add')?'hidden':'none'}" id="update"  class="btn btn-primary" onclick="if(!savePackings())return false;" value="提交"/>
+		    			&#160;<s:button view="/record/PackingOrderInfoList.xhtml" styleClass="btn btn-default" id="bn_left6" style="margin-top:15px;margin-left:10px" value="返回"/>
+		    		</span>
+ <!--翻页开始-->
+                    <!--翻页结束-->
+            <!--印刷管理下结束-->
+
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <script type="text/javascript">
+                document.onkeydown=function(event){ 
+                    e = event ? event :(window.event ? window.event : null); 
+                    if(e.keyCode==13){ 
+						jquery(".submitclass2").trigger("onclick");
+						e.keyCode=0;
+						 if (window.navigator.userAgent.indexOf("MSIE")==-1)
+			                {
+							 e.preventDefault();
+							 return false;
+			                }
+                    	e.returnValue=false;				
+                    } 
+                } 
+                jquery(document).ready(function(){
+                	document.getElementById("form:objsubmit").focus();
+                });
+               
+                
+del = function(a,b){
+	if(confirm('确定删除?')){
+ 		deleted(a,b);
+ 		return true;
+ 	}
+ 	return false;
+}
+getDeliverCode = function(c,a,b){
+	deliveryCode(a,b);
+	c.style.display="none";
+	jquery(c).closest('.spn_02').attr('aa','2');
+}
+goUrl1 = function(){
+ 	window.location.href="#{request.contextPath}/record/PackingOrderInfoList.seam";
+ }
+function savePackings(){
+	var b = false;
+	jquery(".spn_02").each(function(){
+		if(jquery(this).attr("aa")==1){
+			b = true;
+			return false;
+		}
+			
+	});
+	if(!b){
+		savePacking();
+		return true;
+	}else{
+		alert("请获取配送条码！")
+		return false;
+	}
+	
+}
+</script>
+<a4j:form>
+<a4j:jsFunction name="savePacking"  action="#{orderInfoHome.savePacking()}"  oncomplete="goUrl1();">
+</a4j:jsFunction>
+</a4j:form>
+<a4j:form>
+<a4j:jsFunction name="deliveryCode"  action="#{orderInfoHome.deliveryCode()}" reRender="deliveryCode">
+<a4j:actionparam name="dtype" assignTo="#{orderInfoHome.dtype}"/>
+<a4j:actionparam name="deletedId" assignTo="#{orderInfoHome.deleteId}"/>
+</a4j:jsFunction>
+</a4j:form>
+<a4j:form >
+<a4j:jsFunction name="deleted"  action="#{orderInfoHome.deleteObj()}" reRender="list">
+<a4j:actionparam name="dtype" assignTo="#{orderInfoHome.dtype}"/>
+<a4j:actionparam name="deletedId" assignTo="#{orderInfoHome.deleteId}"/>
+</a4j:jsFunction>
+</a4j:form>	
+<a4j:form >
+<a4j:jsFunction name="addMore"  action="#{orderInfoHome.addMore()}" reRender="list">
+</a4j:jsFunction>
+</a4j:form>		
+</td>
+	</ui:define>
+
+</ui:composition>

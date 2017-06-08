@@ -1,0 +1,378 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+	<ui:define name="body">
+		#{purchaseQuoteInfoHome.initOff()}
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/off.css" />
+		<style>
+    		.focus_input{color: #323232 !important; }
+    		.star-r32{ float:left;margin-left:5px;height:32px;line-height:32px;color:red;font-size:12px;}
+		</style>
+		<script type="text/javascript" src="/supply/off.js"></script>
+		<td valign="top">
+			<!--右边开始-->
+			<div class="right_c clear">
+				<!-- 面包屑导航 开始 -->
+				<!-- right_c 开始 -->
+				<div class="right_c" style="min-height: 30px; padding-top: 20px;">
+					<div class="r_title clear"
+						style="margin-top: 0; height: 48px; border-bottom: 1px solid #f1f2f2;">
+						<div class="r_t_l fl">
+							<span>销售工具</span><em>&nbsp;&gt;&nbsp;</em><span>买手关注</span><em>&nbsp;&gt;&nbsp;</em><font
+								size="3">求购信息</font>
+						</div>
+					</div>
+
+					<!-- 我的报价 开始 -->
+					<div style="height: 30px; margin: 20px 0;">
+						<div class="public-search">
+							<span class="octicon-search02"></span> 
+							<input type="text" class="form-control nw300 srarchfont" value="#{purchaseQuoteInfoHome.search}" id="search" />
+						</div>
+						<button type="button" class="btn btn-primary"
+							style="float: left; margin-left: 5px;" id="searchPur">搜索</button>
+					</div>
+					<!-- 报价开始 -->
+					
+					<!-- 没有内容时 -->
+					<h:outputText rendered="#{purchaseQuoteInfoHome.pqiList eq null or purchaseQuoteInfoHome.pqiList.size() == 0}">
+						<div class="noContent">
+							<img src="#{request.contextPath}/asset/images/supply/warn.png" alt="" style="margin-top: 80px;" />
+							<p style="margin-top: 15px; margin-bottom: 5px; font-size: 16px; color: #909090;">暂无报价信息</p>
+							<p>您还没有报价的商品，快去采购页面报价吧！</p>
+						</div>
+					</h:outputText>
+					<!-- 有内容时 -->
+					<h:panelGroup id="quoteList">
+					<div class="offContent">
+						<h:outputText rendered="#{purchaseQuoteInfoHome.pqiList ne null or purchaseQuoteInfoHome.pqiList.size() > 0}">
+						<a4j:repeat value="#{purchaseQuoteInfoHome.pqiList}" var="_purchaseQuote" rowKeyVar="_index">
+							<div class="offList">
+								<div class="subTitle">
+									<table width="100%" cellpddding="0" cellspacing="0">
+										<tr>
+											<td width="70%">
+												<h4>#{_purchaseQuote.enterpriseInfo.name}</h4></td>
+												<td style="text-align: right;">
+												<img src="#{request.contextPath}/asset/images/supply/off_icon3.png" alt="" /> <span>报价时间</span> 
+												<span>#{_purchaseQuote.quoteTimeStr}</span>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<table class="offbbody" width="100%" cellpadding="0"
+									cellspacing="0">
+									<tr>
+										<td width="106">
+											<div class="pic">
+												<s:link view="/supply/Detail.seam">
+													<f:param name="purchaseQuoteInfoId" value="#{_purchaseQuote.purchaseQuoteInfoId}"/>
+													<f:param name="search" value="#{purchaseQuoteInfoHome.search}"/>
+													<f:param name="page" value="#{purchaseQuoteInfoHome.page}"/>
+													<h:outputText rendered="#{_purchaseQuote.purchaseProductInfo.plantImage ne null and _purchaseQuote.purchaseProductInfo.plantImage ne 'null' and _purchaseQuote.purchaseProductInfo.plantImage ne ''}">
+														<img src="#{_purchaseQuote.purchaseProductInfo.plantImage}" alt="" />
+													</h:outputText>
+													<h:outputText rendered="#{_purchaseQuote.purchaseProductInfo.plantImage eq null or _purchaseQuote.purchaseProductInfo.plantImage eq 'null' or _purchaseQuote.purchaseProductInfo.plantImage eq ''}">
+														<img src="../asset/images/851.jpg" alt="" />
+													</h:outputText>
+												</s:link>
+											</div>
+										</td>
+										<td width="60%" valign="top">
+											<table width="100%">
+												<tr>
+													<td colspan="3">
+														<s:link view="/supply/Detail.seam">
+															<f:param name="purchaseQuoteInfoId" value="#{_purchaseQuote.purchaseQuoteInfoId}"/>
+															<f:param name="search" value="#{purchaseQuoteInfoHome.search}"/>
+															<f:param name="page" value="#{purchaseQuoteInfoHome.page}"/>
+															<h4 style="color: #76c66d;">#{_purchaseQuote.purchaseProductInfo.plantName}</h4>
+														</s:link>
+														<div class="off_sum">
+															<span class="former">采购量</span> <span class="latter">
+																<h:outputText rendered="#{_purchaseQuote.purchaseProductInfo.purchaseNumStr ne null and _purchaseQuote.purchaseProductInfo.purchaseNumStr ne ''}">
+																#{_purchaseQuote.purchaseProductInfo.purchaseNumStr}#{_purchaseQuote.purchaseProductInfo.unitName}
+																</h:outputText>
+																<h:outputText rendered="#{_purchaseQuote.purchaseProductInfo.purchaseNumStr eq null or _purchaseQuote.purchaseProductInfo.purchaseNumStr eq ''}">
+																面议
+																</h:outputText>
+															</span>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<td width="27%">
+													<div style="width: 175px; height: 16px;  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+														<img src="#{request.contextPath}/asset/images/supply/off_icon2.png" alt="" /> <span>品种</span>
+														<h:outputText rendered="#{_purchaseQuote.purchaseProductInfo.breedName ne null and _purchaseQuote.purchaseProductInfo.breedName ne '' and _purchaseQuote.purchaseProductInfo.breedName ne 'null'}">
+														<span title="#{_purchaseQuote.purchaseProductInfo.breedName}">
+														#{_purchaseQuote.purchaseProductInfo.breedName}
+														</span>
+														</h:outputText>
+													</div>
+													</td>
+													<td width="40%">
+														<img src="#{request.contextPath}/asset/images/supply/prize.png" alt="" /> <span>采购价格</span>
+														<span>
+															<h:outputText rendered="#{_purchaseQuote.purchaseProductInfo.minPrice != 0 or _purchaseQuote.purchaseProductInfo.maxPrice != 0}">
+																#{purchaseProductInfoHome.getPriceDouble(_purchaseQuote.purchaseProductInfo.minPrice)}~
+																#{purchaseProductInfoHome.getPriceDouble(_purchaseQuote.purchaseProductInfo.maxPrice)}元/#{_purchaseQuote.purchaseProductInfo.unitName}
+															</h:outputText>
+															<h:outputText rendered="#{_purchaseQuote.purchaseProductInfo.minPrice == 0 and _purchaseQuote.purchaseProductInfo.maxPrice == 0}">
+																面议
+															</h:outputText>
+														</span>
+													</td>
+													<td>
+														<img src="#{request.contextPath}/asset/images/supply/time.png" alt="" /> <span>采购日期</span>
+														<span>#{_purchaseQuote.purchaseProductInfo.purchaseTimeStr}</span>
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td align="right" style="padding-right: 50px;position:relative;">
+											<img src="#{request.contextPath}/asset/images/supply/off_icon1.png" alt="" /> <span>报价</span> <span>￥
+											<i style="color: #ff5000; font-size: 22px; font-style: normal;">#{_purchaseQuote.price}</i>元/#{_purchaseQuote.purchaseProductInfo.unitName}
+											</span>
+											<em style="position:absolute; right:30px; top:10px;cursor:pointer;" onclick="bounced(#{_purchaseQuote.purchaseQuoteInfoId})"><img src="#{request.contextPath}/asset/images/orderManage/table_ico101.png" /></em>
+											<em style="position:absolute; right:10px; top:12px;cursor:pointer;" onclick="delPrice(#{_purchaseQuote.purchaseQuoteInfoId})"><img src="#{request.contextPath}/asset/images/02_62.png" /></em>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</a4j:repeat>
+						</h:outputText>
+						<!-- 分页开始 -->
+						<h:outputText rendered="#{purchaseQuoteInfoHome.pqiList ne null and purchaseQuoteInfoHome.pqiList.size() > 0}">
+						<table class="fenye">
+							<tr>
+								<td>
+									<table class="pageModel">
+										<tbody>
+											<tr>
+												<td>
+													<h:outputText rendered="#{purchaseQuoteInfoHome.firstEnable}">
+														<span> 
+															<a href="javascript:void(0);" onclick="findInfoByPageNum(1);" class="page_prev">首页</a>
+														</span> 
+													</h:outputText>
+													<h:outputText rendered="#{purchaseQuoteInfoHome.previousEnable}">
+														<span class="pagePrve"> 
+															<a href="javascript:void(0);" onclick="findInfoByPageNum(#{purchaseQuoteInfoHome.pageInt-1});">&lt;&lt;</a>
+														</span> 
+													</h:outputText>
+													<h:outputText rendered="#{purchaseQuoteInfoHome.numPageList ne null}">
+														<a4j:repeat value="#{purchaseQuoteInfoHome.numPageList}" var="_page" rowKeyVar="_index">
+															<h:outputText rendered="#{purchaseQuoteInfoHome.page eq _page}">
+																<span class="page_num page_Cur"> 
+																	<a href="javascript:void(0);">#{_page}</a>
+																</span>
+															</h:outputText>
+															<h:outputText rendered="#{purchaseQuoteInfoHome.page ne _page}">
+																<span class="page_num "> 
+																	<a href="javascript:void(0);" onclick="findInfoByPageNum(#{_page});">#{_page}</a>
+																</span>
+															</h:outputText>
+														</a4j:repeat>
+													</h:outputText>
+													<h:outputText rendered="#{purchaseQuoteInfoHome.nextEnable}">
+														<span class="page_next"> 
+															<a href="javascript:void(0);" onclick="findInfoByPageNum(#{purchaseQuoteInfoHome.pageInt+1});">&gt;&gt;</a>
+														</span>
+													</h:outputText>
+													<h:outputText rendered="#{purchaseQuoteInfoHome.lastEnable}">
+														<span id="j_id56"> 
+															<a href="javascript:void(0);" onclick="findInfoByPageNum(#{purchaseQuoteInfoHome.totalPages});">尾页</a>
+														</span> 
+													</h:outputText>
+													<span> 
+														<span class="pageCount" style="border-right: 0">
+															<a>共#{purchaseQuoteInfoHome.totalPages}页</a>
+														</span>
+													</span>
+												</td>
+												
+											</tr>
+										</tbody>
+									</table>
+								</td>
+								<td>
+									<div style="">
+								       	<s:button view="/supply/Purchase.seam" value="返回" styleClass="btn btn-default" id="bn_left6" style="margin-left:10px" propagation="none">
+											<f:param name="caigou" value="#{purchaseProductInfoHome.caigou}"/>
+											<f:param name="pinzhi" value="#{purchaseProductInfoHome.pinzhi}"/>
+											<f:param name="baozhuang" value="#{purchaseProductInfoHome.baozhuang}"/>
+											<f:param name="chandi" value="#{purchaseProductInfoHome.chandi}"/>
+											<f:param name="peisong" value="#{purchaseProductInfoHome.peisong}"/>
+											<f:param name="jiageOrder" value="#{purchaseProductInfoHome.jiageOrder}"/>
+											<f:param name="caigouTime" value="#{purchaseProductInfoHome.caigouTime}"/>
+											<f:param name="ifDB" value="#{purchaseProductInfoHome.ifDB}"/>
+											<f:param name="search" value="#{purchaseProductInfoHome.search}"/>
+										</s:button>
+							       </div>
+								</td>
+							</tr>
+						</table>
+						</h:outputText>
+						<!-- 分页 结束 -->
+					</div>
+					</h:panelGroup>
+					<!-- 我的报价 结束 -->
+				</div>
+				<!-- right_c 结束 -->
+			</div> <!--右侧结束-->
+			<!-- 我要报价 内容开始 -->
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			    <h:form id="from">
+			      <div class="modal-dialog">
+			      	<h:panelGroup id="baojia">
+			        <div class="modal-content" style="width:580px; left:50%; margin-left:-290px; top:117px;">
+			          <div class="modal-header">
+			            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			            <h4 class="modal-title" id="myModalLabel">报价信息<!-- <span id="plantName" style="font-size: 12px;" >aaa</span> --></h4>
+			          </div>
+			          <div class="modal-body">
+			           <table width="100%" class="pop-td">
+			             <tr>
+			               <td class="off-pop">报价企业</td>
+			               <td>#{purchaseProductInfoHome.findEnterpriseNameById(sessionTake.enterpriseInfoId)}</td>
+			             </tr>
+			             <tr>
+			               <td class="off-pop">联&nbsp;&nbsp;系&nbsp;&nbsp;人</td>
+			               <td>
+			               		<input id="contactPerson" type="text" class="form-control nw200 fl" value="#{purchaseQuoteInfoHome.purchaseQuoteInfo.contacter}"/>
+			              		<span class="star-r32">*</span>
+			               </td>
+			             </tr>
+			             <tr>
+			               <td class="off-pop">联系电话</td>
+			               <td>
+			               		<input id="contactPhone" type="text" class="form-control nw200 fl" value="#{purchaseQuoteInfoHome.purchaseQuoteInfo.phone}"/>
+			               		<span class="star-r32">*</span>
+			               </td>
+			             </tr>
+			             <tr>
+			               <td class="off-pop">价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格</td>
+			               <td>
+			               		<input id="purPrice" type="text" class="form-control nw200 fl" value="#{purchaseQuoteInfoHome.purchaseQuoteInfo.price}" style="color:#bfbfbf;"/>
+			               		<span class="star-r32">*</span>
+			               </td>
+			             </tr>
+			             <tr>
+			               <td class="off-pop">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注</td>
+			               <td>
+			               		<textarea id="purRemark" class="form-control nw300" rows="3">#{purchaseQuoteInfoHome.purchaseQuoteInfo.remark eq "null" ? "" : purchaseQuoteInfoHome.purchaseQuoteInfo.remark}</textarea>
+			               		<input type="hidden" value="#{purchaseQuoteInfoHome.purchaseProductInfoId}" id="purProId"/>
+			               </td>
+			             </tr>
+			           </table>
+			          </div>
+			          <div class="modal-footer">
+			            <button type="button" class="btn btn-success" onclick="submitSave();">提交</button>
+			            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			          </div>
+			        </div>
+			    	</h:panelGroup>
+			      </div>
+			      </h:form>
+			 </div>
+    		<!-- 我要报价 内容结束 -->
+			
+		</td>
+<a4j:form>
+	<a4j:jsFunction name="queryPurchaseQuoteList" action="#{purchaseQuoteInfoHome.initOff()}" reRender="quoteList" >
+		<a4j:actionparam name="search" assignTo="#{purchaseQuoteInfoHome.search}"/>
+		<a4j:actionparam name="pageNum" assignTo="#{purchaseQuoteInfoHome.page}"/>
+	</a4j:jsFunction>
+	
+	<a4j:jsFunction name="detailMess" action="#{purchaseQuoteInfoHome.initDetail()}" reRender="baojia" >
+		<a4j:actionparam name="purchaseQuoteInfoId" assignTo="#{purchaseQuoteInfoHome.purchaseQuoteInfoId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="submitPriceInfo" action="#{purchaseProductInfoHome.submitPriceInfo()}" data="#{purchaseProductInfoHome.callStr}" reRender="baojia" oncomplete="if(data == 'succ'){alert('修改报价成功！');jquery('#myModal').modal('hide')}else{alert('修改报价失败！');jquery('#myModal').modal('hide')} window.location.reload();" >
+		<a4j:actionparam name="contactPerson" assignTo="#{purchaseProductInfoHome.contactPerson}"/>
+		<a4j:actionparam name="contactPhone" assignTo="#{purchaseProductInfoHome.contactPhone}"/>
+		<a4j:actionparam name="purPrice" assignTo="#{purchaseProductInfoHome.purPrice}"/>
+		<a4j:actionparam name="purRemark" assignTo="#{purchaseProductInfoHome.purRemark}"/>
+		<a4j:actionparam name="purchaseProId" assignTo="#{purchaseProductInfoHome.purchaseProductInfoId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="delQuotedPrice" action="#{purchaseQuoteInfoHome.delQuotedPrice}" data="#{purchaseQuoteInfoHome.falg}"  oncomplete="delComplete(data)">
+		<a4j:actionparam name="purchaseQuoteInfoId" assignTo="#{purchaseQuoteInfoHome.purchaseQuoteInfoId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="listPageDelBack" action="#{purchaseQuoteInfoHome.listPageDelBack}" >
+	</a4j:jsFunction>
+</a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+/* 文本域的控制 */
+/* jquery(function(){
+    jquery('input[type=text]').focus(function(){
+        var txt_value = jquery(this).val();
+        if(txt_value==this.defaultValue){
+            jquery(this).val("");    
+        };  
+    });
+    jquery('input[type=text]').blur(function(){
+        var txt_value = jquery(this).val();
+        if(txt_value==""){
+            jquery(this).val(this.defaultValue); 
+        };  
+    }); 
+}) */
+
+//点击搜索按钮触发事件
+jquery("#searchPur").click(function() {
+	//搜索条件
+	var search = "";
+	search = jquery("#search").val();
+	//根据条件查询采购列表
+	var pageNum = 1;
+	queryPurchaseQuoteList(search,pageNum);
+})
+
+
+//分页查询
+function findInfoByPageNum(page){
+	var pageNum = page;
+	//搜索条件
+	var search = "";
+	search = jquery("#search").val();
+	queryPurchaseQuoteList(search,pageNum);
+}
+
+//点击回车触发事件
+jquery("#search").keypress(function(event){
+	var key_code = event.keyCode;
+	if (key_code == 13 || key_code == 108){
+		//搜索条件
+		var search = jquery("#search").val();
+		//根据条件查询采购列表
+		var pageNum = 1;
+		queryPurchaseQuoteList(search,pageNum);
+	}
+})
+//删除报价
+    function delPrice(id){
+		var flag = confirm("删除后渠道商将看不到您的报价信息，确定删除？");
+		if(flag){
+			delQuotedPrice(id);
+		}
+    }
+//删除报价回调
+function delComplete(data){
+	if(data){
+		listPageDelBack();
+	}else{
+		alert("删除失败，请稍后再试!");
+	}
+}
+//]]>
+</script>
+</ui:define>
+</ui:composition>

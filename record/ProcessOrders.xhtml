@@ -1,0 +1,353 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	template="/layout/template_new2.xhtml">
+<ui:define name="body">
+	<!--右边开始-->
+            <td valign="top" width="100%">
+            <div class="right_c">
+                            	<div class="r_title">
+                    	<div class="r_t_l">采销存&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/order/OrderInfoList.seam">订单管理</a>&#160;&gt;&#160;&#160;<font size="3">订单处理</font></div>
+                    </div>
+
+            	<div class="chage">
+                	<div class="chage_title">订单统计</div>
+                    <table class="ckd_table12" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <th class="ckd_thc8">物料编码</th>
+                            <th class="ckd_thc8">物料名称</th>
+                            <th class="ckd_thc8">规格</th>
+                            <th class="ckd_thc8">包装数量</th>
+                        </tr>
+                        <a4j:repeat value="#{processOrdersHome.goodsInfoList}" var="_ginfo" rowKeyVar="_index">
+	                        <tr>
+	                            <td class="bao_td8">#{_ginfo.goodsCode}</td>
+	                            <td class="bao_td8">#{_ginfo.name}</td>
+	                            <td class="bao_td8">#{_ginfo.goodsSpec}</td>
+	                            <td class="bao_td8 bao_tdcolor">#{processOrdersHome.getIntByFloat(_ginfo.productSum)}</td>
+	                        </tr>
+                        </a4j:repeat>
+                    </table>
+                    
+                	<div class="chage_title">
+                    	<span>包装单</span>
+                        <span class="chage_sp"><a class="pr_aimg3" href="#" onclick="batchPrintMember();return false;"><strong style="cursor: pointer;">打印包装单</strong></a></span>
+                    </div>
+                    <table class="ckd_table13" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <th class="ckd_thc9">物料编码</th>
+                            <th class="ckd_thc9">物料名称</th>
+                            <th class="ckd_thc9">规格</th>
+                            <th class="ckd_thc9">包装数量</th>
+                            <th class="ckd_thc9">库存数量</th>
+                            <th class="ckd_thc9">应包装数量</th>
+                        </tr>
+                        <a4j:repeat value="#{processOrdersHome.goodsInfoListTow}" var="_ginfo" rowKeyVar="_index">
+	                        <tr>
+	                            <td class="bao_td9">#{_ginfo.goodsCode}</td>
+	                            <td class="bao_td9">#{_ginfo.name}</td>
+	                            <td class="bao_td9">#{_ginfo.goodsSpec}</td>
+	                            <td class="bao_td9">#{processOrdersHome.getIntByFloat(_ginfo.productSum)}</td>
+	                            <td class="bao_td9">#{processOrdersHome.getIntByFloat(_ginfo.packageHarvesting)}</td>
+	                            <td class="bao_td9 bao_tdcolor">
+	                            <h:outputText value="#{processOrdersHome.getIntByFloat(_ginfo.productSum - _ginfo.packageHarvesting)}" rendered="#{_ginfo.productSum - _ginfo.packageHarvesting gt 0}"/>
+	                            <h:outputText value="-" rendered="#{_ginfo.productSum - _ginfo.packageHarvesting le 0}"/>
+	                            </td>
+	                        </tr>
+                        </a4j:repeat>
+                    </table>
+               <div style="width:100%;">     
+                	<div class="chage_title">
+                    	<span>原料出库单</span>
+                        <span class="chage_sp"><a class="pr_aimg3" href="#" onclick="batchPrint();return false;"><strong style="cursor: pointer;">打印原料出库单</strong></a></span>
+                    </div>
+                    <div id="baozhuang">
+	                    <table id="ckd_table13" class="ckd_table14" cellpadding="0" cellspacing="0">
+	                        <tr>
+	                        	<th name="ckd_thc8" class="ckd_thc8" style="display: none;">序号</th>
+	                            <th class="ckd_thc8">物料编码</th>
+	                            <th class="ckd_thc8">物料名称</th>
+	                            <th class="ckd_thc8">规格</th>
+	                            <th class="ckd_thc8">包装数量</th>
+	                        </tr>
+	                        <a4j:repeat value="#{processOrdersHome.goodsInfoOutboundList}" var="_pp" rowKeyVar="_index">
+		                        <tr>
+		                        	<td name="ckd_thc8" class="bao_td8" style="display: none;">#{_index+1}</td>
+		                            <td class="bao_td8">#{_pp.goodsCode}</td>
+		                            <td class="bao_td8">#{_pp.name}</td>
+		                            <td class="bao_td8">#{_pp.goodsSpec}</td>
+		                            <td class="bao_td8"><h:outputText class="bao#{_pp.goodsInfoId}" value="#{processOrdersHome.getIntByFloat(_pp.packageQuantity)}" /></td>
+		                        </tr>
+		                    </a4j:repeat>
+	                    </table>
+                    </div>
+                    <table class="ckd_table15" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <th class="ckd_thc10">转换率</th>
+                        </tr>
+                         <a4j:repeat value="#{processOrdersHome.goodsInfoOutboundList}" var="_go" rowKeyVar="_index">
+                        <tr>
+                            <td class="bao_td10">
+                         <ui:fragment rendered="#{empty from}">    <input onblur="updateDiscount(#{_go.goodsInfoId},#{processOrdersHome.goodsChangeInfoList[_go.goodsInfoId].rawMaterialGoods.goodsInfoId},this.value);" type="text" class="chage_input" value="#{processOrdersHome.goodsChangeInfoList[_go.goodsInfoId].rawMaterialCount}"/> 
+                         </ui:fragment>
+                         <ui:fragment rendered="#{not empty from}"> 
+                            #{processOrdersHome.goodsChangeInfoList[_go.goodsInfoId].rawMaterialCount}
+                            </ui:fragment>
+                            </td>
+                        </tr>
+                        </a4j:repeat>
+                    </table>
+                    <div id="chuku">
+                    <table id="ckd_table13" class="ckd_table14" cellpadding="0" cellspacing="0">
+                        <tr>
+                        	<th name="ckd_thc8" class="ckd_thc8" style="display: none;">序号</th>
+                            <th class="ckd_thc8" width="30%">原料编码</th>
+                            <th class="ckd_thc8" width="20%">原料名称</th>
+                            <th class="ckd_thc8" width="20%">规格</th>
+                            <th class="ckd_thc8" width="30%">数量</th>
+                        </tr>
+                        <a4j:repeat value="#{processOrdersHome.goodsInfoOutboundList}" var="_goodsChange" rowKeyVar="_index">
+	                        <tr>
+	                        	<td width="10%" name="ckd_thc8" class="bao_td8" style="display: none;">#{_index+1}</td>
+	                            <td width="25%" class="bao_td8"><h:outputText value="#{processOrdersHome.goodsChangeInfoList[_goodsChange.goodsInfoId].rawMaterialGoods.goodsCode}" /></td>
+	                            <td width="25%" class="bao_td8"><h:outputText value="#{processOrdersHome.goodsChangeInfoList[_goodsChange.goodsInfoId].rawMaterialGoods.name}" /></td>
+	                            <td width="20%" class="bao_td8"><h:outputText value="#{processOrdersHome.goodsChangeInfoList[_goodsChange.goodsInfoId].rawMaterialGoods.goodsSpec}" /></td>
+	                            <td width="20%" class="bao_td8 bao_tdcolor"><h:outputText class="yuan#{processOrdersHome.goodsChangeInfoList[_goodsChange.goodsInfoId].rawMaterialGoods.goodsInfoId}" value="#{processOrdersHome.goodsChangeInfoList[_goodsChange.goodsInfoId].rawMaterialGoods.num}" /></td>
+	                        </tr>
+                        </a4j:repeat>
+                    </table>
+                    </div>
+                  	<div class="clear"></div>  
+              </div>      
+                    
+                	<div class="chage_title">
+                    	<span>采收单</span>
+                        <span class="chage_sp"><a class="pr_aimg3" href="#" onclick="harvesting();return false;"><strong style="cursor: pointer;">打印采收单</strong></a></span>
+                    </div>
+                    <table class="ckd_table13" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <th class="ckd_thc9" width="20%">物料编码</th>
+                            <th class="ckd_thc9" width="20%">物料名称</th>
+                            <th class="ckd_thc9" width="10%">单位</th>
+                            <th class="ckd_thc9" width="10%">数量</th>
+                            <th class="ckd_thc9" width="20%">库存数量</th>
+                            <th class="ckd_thc9" width="20%">应采收数量</th>
+                        </tr>
+                         <a4j:repeat value="#{processOrdersHome.harvestingList}" var="_harvesting" rowKeyVar="_index">
+                        <tr>
+                            <td class="bao_td9">#{_harvesting.goodsCode}</td>
+                            <td class="bao_td9">#{_harvesting.name}</td>
+                            <td class="bao_td9">#{_harvesting.goodsSpec}</td>
+                            <td class="bao_td9"><h:outputText class="cai#{_harvesting.goodsInfoId}" value="#{_harvesting.harvestingSum}" /></td>
+                            <td class="bao_td9"><h:outputText class="cun#{_harvesting.goodsInfoId}" value="#{_harvesting.packageHarvesting}" /></td>
+                            <td class="bao_td9 bao_tdcolor"> 
+                            	<h:outputText class="yincai#{_harvesting.goodsInfoId}" value="#{_harvesting.harvestingSum - _harvesting.packageHarvesting gt 0 ? processOrdersHome.getFloatbyTow(_harvesting.harvestingSum - _harvesting.packageHarvesting):'-'}" />
+                            </td>
+                        </tr>
+                        </a4j:repeat>
+                    </table>
+                    <rich:panel id="deliverAddressTable" style="border:none;">
+                    <div id="harvesting" style="display: none;">
+                    <table class="ckd_table13" cellpadding="0" cellspacing="0" >
+                        <tr>
+                        	<th name="ckd_thc8" class="ckd_thc8" style="display: none;">序号</th>
+                            <th class="ckd_thc9">物料编码</th>
+                            <th class="ckd_thc9">物料名称</th>
+                            <th class="ckd_thc9">单位</th>
+                            <th class="ckd_thc9">应采收数量</th>
+                        </tr>
+                         <a4j:repeat value="#{processOrdersHome.harvestingListTow}" var="_harvesting" rowKeyVar="_index">
+                        <tr>
+                        	<td name="ckd_thc8" class="bao_td8" style="display: none;">#{_index+1}</td>
+                            <td class="bao_td9">#{_harvesting.goodsCode}</td>
+                            <td class="bao_td9">#{_harvesting.name}</td>
+                            <td class="bao_td9">#{_harvesting.goodsSpec}</td>
+                            <td class="bao_td9 bao_tdcolor"> 
+                            	<h:outputText class="yincai#{_harvesting.goodsInfoId}" value="#{_harvesting.packageQuantity gt 0 ? processOrdersHome.getFloatbyTow(_harvesting.packageQuantity):'-'}" />
+                            </td>
+                        </tr>
+                        </a4j:repeat>
+                    </table>
+                    </div>
+                    </rich:panel>
+                    <div class="ckd_button">
+                    	<s:decorate rendered="#{processOrdersHome.typeInfo ne 1}">
+	                    	<ui:fragment rendered="#{empty from}"> 
+	                    		<a href="#" onclick="updateStatus();return false;" class="btn btn-primary">完成</a>
+	                    	</ui:fragment>
+	                    		<a href="#{request.contextPath}/order/OrderInfoProcess.seam?orderInfoIds=#{processOrdersHome.orderInfoIds}" class="btn btn-default" >上一步</a>&#160;&#160;
+	                    </s:decorate>
+	                    <s:decorate rendered="#{processOrdersHome.typeInfo eq 1}">
+		                    <ui:fragment rendered="#{empty from}"> 
+		                    	<a href="#" onclick="updateStatus2();return false;" class="btn btn-primary">完成</a>
+		                    </ui:fragment>
+		                    	<a href="#{request.contextPath}/record/ProcessRecordList.seam" class="btn btn-default">返回</a>&#160;&#160;
+	                    </s:decorate>
+                    </div>
+					<div class="clear"></div>
+                </div>
+                
+				<div class="clear"></div>
+          </div>
+            </td>    
+            <a4j:form id="pr">
+            	<input id="ps2" type="hidden" name="ps" readonly="true" value="#{processOrdersHome.instance.psPrintStatus}"/>
+            	<input id="hs2" type="hidden" name="hs" readonly="true" value="#{processOrdersHome.instance.msPrintStatus}"/>
+            	<input id="ms2" type="hidden" name="ms" readonly="true" value="#{processOrdersHome.instance.hsPrintStatus}"/>
+		   		<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+				<a4j:jsFunction name="updateHarv" action="#{processOrdersHome.updateHarv}" reRender="deliverAddressTable">
+					<a4j:actionparam name="orderInfoIds" assignTo="#{processOrdersHome.orderInfoIds}"/>
+					<a4j:actionparam name="ppId" assignTo="#{processOrdersHome.ppId}"/>
+					<a4j:actionparam name="sum" assignTo="#{processOrdersHome.sum}"/>
+				</a4j:jsFunction>
+				<a4j:jsFunction name="updateOrder" action="#{processOrdersHome.updateOrder}" oncomplete="gologin();">
+					<a4j:actionparam name="orderInfoIds" assignTo="#{processOrdersHome.orderInfoIds}"/>
+					<a4j:actionparam name="psPrintStatus" assignTo="#{processOrdersHome.instance.psPrintStatus}"/>
+					<a4j:actionparam name="msPrintStatus" assignTo="#{processOrdersHome.instance.msPrintStatus}"/>
+					<a4j:actionparam name="hsPrintStatus" assignTo="#{processOrdersHome.instance.hsPrintStatus}"/>
+				</a4j:jsFunction>
+				<a4j:jsFunction name="updateOrder2" action="#{processOrdersHome.updateOrder}" oncomplete="gologin2();">
+					<a4j:actionparam name="orderInfoIds" assignTo="#{processOrdersHome.orderInfoIds}"/>
+					<a4j:actionparam name="psPrintStatus" assignTo="#{processOrdersHome.instance.psPrintStatus}"/>
+					<a4j:actionparam name="msPrintStatus" assignTo="#{processOrdersHome.instance.msPrintStatus}"/>
+					<a4j:actionparam name="hsPrintStatus" assignTo="#{processOrdersHome.instance.hsPrintStatus}"/>
+				</a4j:jsFunction>
+			</a4j:form>
+    <!--右边结束-->
+    <script type="text/javascript">
+    //修改折扣信息
+	function updateDiscount(goId,ppId, discount){
+		var orderInfoIds = "#{processOrdersHome.orderInfoIds}";
+		if(!isNaN(discount)){
+			if (discount == 0) {
+				alert("请输入正确转换率...");
+			}else {
+				var bao = jquery(".bao"+goId).html();
+
+				
+				jquery(".yuan"+ppId).html(Math.round(discount * bao*100)/100);
+				jquery(".cai"+ppId).html(Math.round(discount * bao*100)/100);
+				var cun = jquery(".cun"+ppId).html();
+				var count = discount * bao - cun;
+				var sum = discount * bao;
+				if (count &lt;= 0) {
+					jquery(".yincai"+ppId).html("-");
+				}else{
+					jquery(".yincai"+ppId).html(Math.round(count * 100)/100);
+				}
+				updateHarv(orderInfoIds,ppId,sum);
+			}
+		}else {
+			alert("请输入正确转换率...");
+		}
+	}
+	function updateStatus(){
+		updateOrder("#{processOrdersHome.orderInfoIds}",jquery("#ps2").val(),jquery("#ms2").val(),jquery("#hs2").val());
+	}
+	function updateStatus2(){
+		updateOrder2("#{processOrdersHome.orderInfoIds}",jquery("#ps2").val(),jquery("#ms2").val(),jquery("#hs2").val());
+	}
+	function gologin(){
+		window.location.href="#{request.contextPath}/order/OrderInfoList.seam";
+	}
+	function gologin2(){
+		window.location.href="#{request.contextPath}/record/ProcessRecordList.seam";
+	}
+	//打印包装单 
+	var t;
+	function batchPrintMember(){
+		var baozhuang = document.getElementById("baozhuang").innerHTML;
+		var newwindow = null;
+		if (confirm("确定批量打印包装单!")){
+			newwindow = window.open('#{request.contextPath}/record/PackageInfoList.seam','newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			ss(newwindow,baozhuang);
+		} else {
+			return false;
+		}
+	}
+	//打印出库单 
+	function batchPrint(){
+		var processRecordId = "#{processOrdersHome.instance.id}";
+		var baozhuang = document.getElementById("chuku").innerHTML;
+		var newwindow = null;
+		if (confirm("确定批量打印包装单!")){
+			newwindow = window.open('#{request.contextPath}/record/OutboundInfoList.seam?processRecordId='+processRecordId,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			ss(newwindow,baozhuang);
+		} else {
+			return false;
+		}
+	}
+	//打印 采收单
+	function harvesting(){
+		var processRecordId = "#{processOrdersHome.instance.id}";
+		var baozhuang = document.getElementById("harvesting").innerHTML;
+		var newwindow = null;
+		if (confirm("确定批量打印包装单!")){
+			newwindow = window.open('#{request.contextPath}/record/HarvestingInfoList.seam?processRecordId='+processRecordId,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			hh(newwindow,baozhuang);
+		} else {
+			return false;
+		}
+	}
+	function ss (obj,str){
+		if(obj.document.getElementById("baozhuang")==null){
+			t = setTimeout(function(){ss(obj,str);},100);
+		}else{
+			obj.document.getElementById("baozhuang").innerHTML = str;
+			obj.document.getElementById("ckd_table13").className="ckd_table13"; 
+			var th = obj.document.getElementsByTagName("th")[0];
+			th.style.display="";
+			var td = obj.document.getElementsByTagName("td");
+			for ( var i = 0; i &lt; td.length; i++) {
+				td[i].style.display="";
+			}
+		}
+	}
+	function hh (obj,str){
+		if(obj.document.getElementById("baozhuang")==null){
+			t = setTimeout(function(){hh(obj,str);},100);
+		}else{
+			obj.document.getElementById("baozhuang").innerHTML = str;
+			var th = obj.document.getElementsByTagName("th")[0];
+			th.style.display="";
+			var td = obj.document.getElementsByTagName("td");
+			for ( var i = 0; i &lt; td.length; i++) {
+				td[i].style.display="";
+			}
+		}
+	}
+	//批量打印客户配送单 
+	function batchPrintOutStoreroom(typeinfo,obj){
+		if (typeinfo == 1) {
+			if (confirm("确定批量打印装箱拣货单!")){
+				var orderInformationIds = "";
+				jquery("input[name='td']:checked").each(function(){
+					orderInformationIds+=this.value+",";		
+				});
+				if (orderInformationIds == ""){
+					alert("请选择需要处理的配送单!");
+					return false;
+				}
+				window.open('#{request.contextPath}/record/PackingPrintInfoList.seam?orderInfoId=' + orderInformationIds,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			} else {
+				return false;
+			}
+		}else{
+			if (confirm("确定打印装箱拣货单!")){
+				window.open('#{request.contextPath}/record/PackingPrintInfoList.seam?orderInfoId=' + obj+",",'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			} else {
+				return false;
+			}
+		}
+	}
+	</script>
+	
+</ui:define>
+</ui:composition>

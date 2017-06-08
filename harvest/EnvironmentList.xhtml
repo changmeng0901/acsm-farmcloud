@@ -1,0 +1,1009 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+	<ui:define name="foot">
+		<!-- 选择基地 开始 -->
+		<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+		<!-- 选择基地 结束 -->  
+	</ui:define>
+	<ui:define name="body">	
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/FarmingManage.css"/>
+<style>
+.farmingMage_pics3{ min-width:400px; height:40px;padding-left:1px;}
+.farmingMage_pics3 li{ float:left; position:static; width:45px; height:40px;}
+.farmingMage_pics3 li a{ display:block; width:40px; height:40px; margin-left:5px;}
+.farmingMage_pics3 a img{ width:32px; height:32px;}
+
+.letter_has{ width:5px;float:left;padding-right:3px;margin-top: 2px;}
+
+.icheckbox_minimal-blue,.icheckbox_minimal-blue.checked{ float:left;}
+.iradio_minimal-blue,.iradio_minimal-blue.checked{ float:left;}
+.iCheck_ul li{ width:73px;float:left;}
+.farmingMageTab_jl{width:641px; }
+#myModa2 .farmingMageTab_jl td{line-height:normal;}
+#myModa3 .farmingMageTab_j3 td{ line-height:34px;padding-bottom:0px; font-size:12px;}
+.farmingMageTab_j3{width:510px;}
+.modal-adds{margin-left:auto;margin-right:auto;}
+.modal-adds td{padding-bottom:20px; font-size:12px;}
+
+
+.box2 .cm_printDate{ border:none;}
+
+
+</style>
+	<script type="text/javascript">
+		jQuery1027 = jQuery.noConflict();
+		jQuery1027(function(){
+			jQuery1027('.selectpicker').selectpicker();
+		});
+		
+</script>
+	#{environmentList.detectionInit()}
+  <td valign="top">
+            <div style="width:100%;">
+                <div class="right_c clear">
+                	<!-- 公用头部 开始 -->
+                	<div class="r_title clear">
+                    	<div class="r_t_l fl">采销存&#160;&gt;&#160;&#160;质检&#160;&gt;&#160;&#160;<font size="3">基地环境</font></div>
+                    	 <div class="fr" style="margin-bottom:-1px;float:right;">
+                        	<ul class="cm_resumeList clear">
+								 <li>
+								    <a disabled="true" class="borderBt" style="cursor:default;" href="javascript:void(0)"><img src="../asset/images/huanjing.png"/><span>基地环境</span></a>
+								 
+                                </li> 
+								<li>
+                                	<a href="#{request.contextPath}/harvest/ProductionRunList.seam"><img src="../asset/images/shengchan.png"/><span>生产过程</span></a>
+                                </li> 
+                                
+                                <li>
+                                	<a href="#{request.contextPath}/harvest/DetectionInfoList.seam"><img src="../asset/images/jiagong.png"/><span>加工过程</span></a>
+                                
+                                </li> 
+                             </ul>   
+                        </div>
+                    </div>
+                               
+					<!-- 公用头部 结束 -->
+                    <!-- 农事管理内容 开始 -->
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    	<tr>
+                        	<td valign="top">
+                            <div class="cm_resumeLt pr20 pt20" style="min-width:740px;">
+                            <!-- 农事管理内容 左侧 开始 -->
+                                <div class="cm_resumeLtTp clear">
+                                <h:form>
+                                    <div class="col-lg-6 fl" style="padding-left:0; padding-right:5px; width:350px;">
+                                      <div class="input-group iptSeletAuto">
+                                        <div class="public-search" style="margin-left:-1px;">
+                                        <span class="octicon-search02"></span>
+                                        
+                                   		<h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" style="width:350px; height:33px; border-radius:4px;" id="searchParam" styleClass="form-control srarchfont" value="#{environmentList.searchParam}"/>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <h:inputHidden value="#{environmentList.baseId}" id="baseId"/>
+                                    <div class="fl"><h:commandButton id="search" styleClass="btn btn-primary" value="搜索" action="/harvest/EnvironmentList.xhtml">                                	
+										</h:commandButton></div>
+                                    </h:form> 
+                                    <div class="farmmingAdd fr"> 
+                                       <button style="display: #{s:hasRole('base_environment_add')?'block':'none'}"  class="btn btn-success" onclick="addNewDe()">添加</button>
+                                        
+                                        <!-- Modal 添加检测弹窗 开始 -->
+                                        <h:form id="tian1">
+                                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" style="width:470px; margin-top:150px;">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"> </button>
+                                                    <h4 class="modal-title font14" id="myModalLabel" style="float:left">新增检测项</h4>
+                                                      <font color="#aaaaaa" style="font-size:12px; line-height: 20px; margin-left: 4px;"> #{environmentHome.myCode()}</font>
+                                                    </div>
+                                                    <div class="modal-body" style="padding-bottom:0;">
+                                                   	<table width="358" cellpadding="0" cellspacing="0"  class="modal-adds">
+                                                      <tr>
+                                                      	<td width="100" align="right">项目名称</td>
+                                                      	<td style="padding-left:15px;">
+                                                      		<h:inputText  class="form-control fl ab1"  value="#{environmentHome.detections}" style="width:180px; margin-right:5px;" type="text"/> 
+                                                      	</td>
+                                                      </tr>
+                                                      <tr>   <td align="right">整改内容</td><td style="padding-left:15px;">	<h:inputTextarea class="form-control ab2"  value="#{environmentHome.detectionContent}" style="width:249px; resize:none; font-size:12px;" rows="3"></h:inputTextarea> </td></tr>
+                                                      <tr>
+                                                      	<td width="100" align="right">整改时间</td>
+                                                      	<td style="padding-left:15px;">
+	                                                        <div class="input-append date form_datetime dt1" style="font-family:'微软雅黑';">
+                                                                    <input size="26" type="text" value="" id="carryOutTimeId" class="ab3" readonly="readonly" />
+                                                                    <span class="add-on"><i class="icon-th"></i></span>
+    														     </div>
+    														<h:inputHidden  value="#{environmentHome.carryOutTime}" id="carryOutTime" name="carryOutTime"/>
+    														     
+                                                        </td>
+                                                      </tr>
+                                                    </table>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    <h:inputHidden value="#{environmentHome.baseId}" id="baseIds"/>
+                                                    <h:inputHidden value="#{environmentList.baseId}" id="baseIdli"/>
+                                                    <a4j:commandButton styleClass="btn btn-success jiancbutton" onclick="if(!newAdd())return false;jquery('.jiancbutton').prop('disabled','true');"  oncomplete="jquery('.jiancbutton').removeAttr('disabled');" action="#{environmentHome.persistTwo}" value="提交" ></a4j:commandButton>
+                                                   <button class="btn btn-default" type="button" data-dismiss="modal">返回</button>
+                                                  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </h:form> 
+                                        <!-- Modal 添加检测弹窗 结束 -->
+                                        
+                                             
+                                        
+								  <!-- Modal 展示检测结果开始 -->
+                                    <div class="modal fade" id="myModa3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" style="width:574px; margin-top:120px;">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"> </button>
+                                                    <h4 class="modal-title font14" id="myModalLabel" style="float:left">查看检测结果</h4>
+                                                    
+                                                    </div>
+                                                    <h:panelGroup id="examineId">
+                                                    <div class="modal-body" style="padding-bottom:0; max-height:450px; overflow-y:auto;">
+                                                       	<table class="farmingMageTab_j3">
+                                                        	<tr>
+                                                            	<td width="65" align="right">整改批次</td>
+                                                                <td width="180" style="padding-left:15px;">#{environmentHome.namenum}
+                                                                </td>
+                                                                <td width="65" align="right">项目名称</td>
+                                                                <td width="180" style="padding-left:15px;">#{environmentHome.name}</td>
+                                                             </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right">完成期限</td>
+                                                                <td width="180" style="padding-left:15px;" class="timelimitcl" >#{environmentHome.carryOutTime}</td>
+                                                                <td width="65" align="right"> 整改内容</td>
+                                                                <td width="180" style="padding-left:15px;" class="contentcl">#{environmentHome.detectionContent} </td>
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right">整改时间</td>
+                                                                <td width="180" style="padding-left:15px;">
+																<h:outputText style="width:190px;" id="shij" value="#{environmentHome.examineInfo.detectTime}">
+																    <f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8"/>   
+																</h:outputText>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right" valign="middle" style="padding-bottom:5px;"><span>上传结论</span></td>
+                                                                <td valign="top" colspan="3" style="padding-bottom:5px; padding-left:15px;">
+                                                                	<div class="farmingInputs_wp">
+                                                                <a4j:repeat value="#{environmentHome.examineInfo.imagesGroupUrl.split(',')}" var="_img" rowKeyVar="_imgindex">
+                                                              	<div class="farmingInputs fl" style="margin-bottom:10px;">
+                                                                        	<a class="farmingInputs_pic" href="javascript:;"><img src="#{_img}" width="128" height="128" /></a>
+                                                                        </div>
+                                                                         
+                                                                        <div class="farmingMage_Magnifier2">
+                                                                            <em class="MagnifierClose2"><img src="#{request.contextPath}/asset/images/farmingIco05.png" width="28" height="28" /></em>
+                                                                            <div class="MagnifierBox2"><img src="#{_img}" width="780" height="380" /></div>
+                                                                        </div>
+                                                                 </a4j:repeat>
+                                                                        
+                                                                   </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right" valign="middle">情况概述</td>
+                                                                <td valign="top" colspan="3" style="padding-left:15px;">#{environmentHome.examineInfo.inConclusion}</td>
+                                                            </tr>
+                                                        </table>	
+                                                    
+                                                    </div>
+                                                    </h:panelGroup>
+                                                    <div class="modal-footer">
+                                                   <button class="btn btn-default" type="button" data-dismiss="modal">返回</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                <!-- Modal 展示检测结果结束 -->
+                                 <!-- Modal 编辑检测结果开始 -->
+                                 <h:form id="xiu">
+                                    <div class="modal fade" id="myModa4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" style="width:740px; margin-top:120px;">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"> </button>
+                                                    <h4 class="modal-title font14" id="myModalLabel" style="float:left">编辑检测结果</h4>
+                                                     
+                                                    </div>
+                                                    <h:panelGroup id="upId">
+                                                    <div class="modal-body" style="padding-bottom:0; max-height:450px; overflow-y:auto;">
+                                                       	<table class="farmingMageTab_jl" style="width:676px;">
+                                                        	<tr>
+                                                            	<td width="65" align="right">整改批次</td>
+                                                                <td width="255" style="padding-left:15px;">#{environmentHome.namenum}</td>
+                                                                <td width="65" align="right"> 项目名称</td>
+                                                                <td width="220" style="padding-left:15px;">#{environmentHome.name}</td>
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right">完成期限</td>
+                                                                <td width="255" style="padding-left:15px;" class="timelimitcl" >#{environmentHome.carryOutTime}</td>
+                                                                <td width="65" align="right"> 整改内容</td>
+                                                                <td width="220" style="padding-left:15px;" class="contentcl">#{environmentHome.detectionContent} </td>
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right">整改时间</td>
+                                                                <td width="255" style="padding-left:15px;">
+                                                                <div class="input-append date form_datetime " >
+                                                                <h:inputText  style="width:190px;" id="xshij"  value="#{environmentHome.examineInfo.detectTime}">
+																    <f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8"/>   
+																</h:inputText>
+                                                                <span class="add-on"><i class="icon-th"></i></span>
+                                                                </div>
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right" valign="middle" style="padding-bottom:5px;"><span>上传结论</span></td>
+                                                                <td valign="top" colspan="3" style="padding-bottom:5px; padding-left:15px;">
+                                                               	<div class="farmingInputs_wp">
+                                                               	<input type="hidden" value="#{environmentHome.record_url}" class="record_url" name="record_url"/>
+                                                               
+                                                                    	<div class="farmingInputs" style="width:100%">
+                                                                			<iframe src="#{request.contextPath}/harvest/EnvironmentImages.seam?batid=#{environmentHome.examineInfo.id==null ? 0 :environmentHome.examineInfo.id}" id="myframe4" name="myframe4" frameBorder="0" scrolling="no" width="" height="155" onLoad="" style="width:100%; height:155px"></iframe>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                
+                                                            	<td width="65" align="right" valign="middle">情况概述</td>
+                                                                <td valign="top" colspan="3" style="padding-left:15px;">
+                                                                	<h:inputTextarea class="form-control" id="xnote" style="width:200px; resize:none; font-size:12px;" value="#{environmentHome.examineInfo.inConclusion}" ></h:inputTextarea>
+                                                                </td>
+                                                            </tr>
+                                                        </table>	
+                                                    
+                                                    </div>
+                                                    </h:panelGroup>
+                                                    <div class="modal-footer">
+                                                     <h:inputHidden value="#{environmentHome.page}" id="xiuPageHidden"/>
+                                                    <a4j:commandButton styleClass="btn btn-success bianjbutton" onclick="if(!checkUp())return false;jquery('.bianjbutton').prop('disabled','true');"  oncomplete="jquery('.bianjbutton').removeAttr('disabled');" action="#{environmentHome.amendUp}" value="提交" ></a4j:commandButton>
+                                                    
+                                                    <button class="btn btn-default" type="button" data-dismiss="modal">返回</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </h:form>
+                                <!-- Modal 编辑检测结果结束 -->
+                                
+                                
+                                  <!-- Modal 添加检测结果开始 -->
+                                         <h:form id="tian">
+                                        <div class="modal fade" id="myModa2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" style="width:740px; margin-top:120px;">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"> </button>
+                                                    <h4 class="modal-title font14" id="myModalLabel" style="float:left">添加检测结果</h4>
+                                                     
+                                                    </div>
+                                                    <div class="modal-body" style="padding-bottom:0; max-height:450px; overflow-y:auto;">
+                                                       	<table class="farmingMageTab_jl">
+                                                        	<h:inputHidden id="baid" value="#{environmentHome.instance.batchId}" />
+                                                        	
+                                                        	<tr>
+                                                            	<td width="65" align="right">整改批次</td>
+                                                                <td width="255" style="padding-left:15px;" class="namenum" ></td>
+                                                                <td width="65" align="right"> 项目名称</td>
+                                                                <td width="220" style="padding-left:15px;" class="namenum2"> </td>
+                                                            </tr>
+                                                           <tr>
+                                                            	<td width="65" align="right">完成期限</td>
+                                                                <td width="255" style="padding-left:15px;" class="timelimitcl" ></td>
+                                                                <td width="65" align="right"> 整改内容</td>
+                                                                <td width="220" style="padding-left:15px;" class="contentcl"> </td>
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right">整改时间</td>
+                                                                <td width="255" style="padding-left:15px;">
+                                                                <div class="input-append date form_datetime " >
+                                                                <h:inputText  style="width:190px;" id="tshij" value="#{environmentHome.instance.detectTime}">
+																    <f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8"/>   
+																</h:inputText>
+                                                                <span class="add-on"><i class="icon-th"></i></span>
+                                                                </div>
+                                                                </td>
+                                                                
+                                                               
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="80" align="right" valign="middle" style="padding-bottom:5px;"><span>上传结论</span><br></br><span style="color:red; font-size:9px;">图片小于1M</span></td>
+                                                                <td valign="top" colspan="3" style="padding-bottom:0; padding-left:15px;">
+                                                               <h:panelGroup id="imag">
+                                                               	<div class="farmingInputs_wp">
+                                                                    	<div class="farmingInputs" style="width:100%;">
+                                                                			<input type="hidden" value="#{environmentHome.record_url}" id="record_url" name="record_url"/>
+                                                                			<iframe src="#{request.contextPath}/harvest/EnvironmentImages.seam" id="myframe2" name="myframe2" frameBorder="0" scrolling="no" width="" height="155" onLoad="" style="width:100%; height:155px"></iframe>
+                                                                        </div>
+                                                                         
+                                                                      </div>
+                                                                      </h:panelGroup>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                            	<td width="65" align="right" valign="middle">情况概述</td>
+                                                                <td valign="top" colspan="3" style="padding-left:15px;">
+                                                                	<h:inputTextarea class="form-control" id="tnote" style="width:200px; resize:none; font-size:12px;" value="#{environmentHome.instance.inConclusion}" ></h:inputTextarea>
+                                                                </td>
+                                                            </tr>
+                                                        </table>	
+                                                    
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    <h:inputHidden value="#{environmentHome.page}" id="pageHidden"/>                                                   
+                                                    <a4j:commandButton styleClass="btn btn-success tianjbutton" onclick="if(!checkInput())return false;jquery('.tianjbutton').prop('disabled','true');"  oncomplete="jquery('.tianjbutton').removeAttr('disabled');" action="#{environmentHome.persist}" value="提交" >
+                                                    	
+                                                    </a4j:commandButton>
+                                                    
+                                                    <button class="btn btn-default" type="button" data-dismiss="modal">返回</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </h:form>
+                                        <!-- Modal 添加检测记录 结束 -->
+                                    </div>
+                                </div>
+                               <s:div rendered="#{environmentList.tjb}">
+	                                <s:link view="/harvest/EnvironmentList.xhtml" action="#{environmentList.reset()}" styleClass="queryClear mt20 clear" includePageParams="false">
+	                                <span class="clearAll_serDel">
+	                                <img src="#{request.contextPath}/asset/images/selectMenu-close03.png" />
+	                                </span>清除所有搜索条件
+	                                </s:link>
+                                </s:div>
+                                <div class="cm_resumeLtBt mt20 clear">
+                                    <div class="cm_resumeMore clearfix">
+                                        <h2>基地环境管理表</h2>
+                                        <div class="fr">
+                                          <div class="fl">
+                                                <!-- 时间 开始 -->
+                                                <div class="farmingInputs_add1">
+                                                    <div class="farmingbgIco18" style="padding-right:0; padding-left:0;">
+                                                    <input type="button" onclick="jquery(this).parent().next('div').show();" class="filter-option pull-left" style="width:40px; background:none;" value="时间" /><span class="caret" style="margin-top:13px;"></span></div>
+                                                    <div class="farmingInputs_mini" style="top:45px; left:auto; right:-100px; width:300px;  font-size:12px;">
+                                                        <div class="farmingInputs_miniHd"><h3 style="font-size:14px; font-weight:bold;">按时间搜索</h3>
+                                                        <input type="button" class="close" onclick="jquery(this).closest('.farmingInputs_mini').hide()"> </input></div>
+                                                        <div class="farmingInputs_miniBd">
+                                                        <table>
+                                                        <tr>
+                                                            <td width="70" align="right" valign="middle">开始时间：</td>
+                                                            <td width="200">
+                                                                 <div class="input-append date form_datetime dt1" style="font-family:'微软雅黑';">
+                                                                    <input size="26" type="text" value="" id="start_" readonly="readonly" />
+                                                                    <span class="add-on"><i class="icon-th"></i></span>
+    														     </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="70" align="right" valign="middle">结束时间：</td>
+                                                            <td width="200">
+                                                                <div class="input-append date form_datetime dt1" style="font-family:'微软雅黑';" >
+                                                                    <input size="26" type="text" value="" id="end_" readonly="readonly" />
+                                                                    <span class="add-on"><i class="icon-th"></i></span>
+    														     </div>
+                                                            </td>
+                                                        </tr>
+                                                        </table>
+                                                        </div>
+                                                        <div class="farmingInputs_miniFt">
+                                                            <input style="margin-left: 5px;" class="btn btn-success" onclick="if(!tme())return false;" type="button" value="提交"></input>
+                                                            <input class="btn btn-default" onclick="jquery(this).closest('.farmingInputs_mini').hide()" style="margin-left: 5px;" type="button" value="返回"></input>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- 时间 结束 -->
+                                                </div>
+                                        
+                                        
+                                        	<!-- 添加人等下拉框控件 开始 -->
+                                        </div>
+                                    </div>
+                                    <!-- 农事管理表表格1 开始 -->
+                                    <div >
+									<h:form id="stockControlFrom">
+										<a4j:commandLink id="refreshShow"  reRender="showPanel"></a4j:commandLink>
+									</h:form>
+									 <h:panelGroup id="showPanel" style="margin:0; border:none; padding: 0; display:block;">
+									 <script type="text/javascript">
+								   		var pageNum=#{environmentList.page};
+								   		jquery("#tian\\:pageHidden").val(pageNum);
+								   		jquery("#xiu\\:xiuPageHidden").val(pageNum);
+								   	</script>
+										<div class="box2">
+											<div>
+									<s:div styleClass="farming_nodata" rendered="#{empty environmentList.resultList}">
+                                    	<div class="warning_noData">
+                                        	<em>很遗憾，没有品质管理</em>
+                                            <p>品质管理可以帮助您有效进行人员管理，全程追溯农事内容，保证蔬菜安全放心，快来添加吧！</p>
+                                        </div>
+                                    </s:div>
+                                    <table width="100%" class="farmingMageTab">
+                                        <tbody>
+                                            	<a4j:repeat value="#{environmentList.resultList}" var="_sc" rowKeyVar="_index">
+                                       
+			                                     <ui:fragment rendered="#{_index==0}">
+			                                     <tr>
+			                                      <td colspan="5">
+			                         	           <div class="cm_printDate clear"><img src="#{request.contextPath}/asset/images/cm_lsllIco02.png" />#{_sc[2]}</div>
+			                               		</td></tr>
+			                               		 </ui:fragment>           
+			                            		<ui:fragment rendered="#{_index!=0  &amp;&amp; _sc[2] ne environmentList.resultList[_index-1][2]}">
+			                            		<tr>
+			                            	 	   <td colspan="5">
+			                            	 	   <div class="cm_printDate clear"><img src="#{request.contextPath}/asset/images/cm_lsllIco02.png" />#{_sc[2]}</div>
+			                            	 	</td></tr>
+				                           		 </ui:fragment>  
+                                              <tr>
+                                           	
+                                                <td valign="middle">
+                                                    <dl class="baseDl_jl">
+                                                    	
+                                                        <dt>
+                                                       	 <ui:fragment rendered="#{_sc[5] !=0}">
+                                                       	 	 <ui:fragment rendered="#{s:hasRole('base_environment_edit')}">
+	                                                        	 <a href="#" data-toggle="modal"  onclick="compileShow('#{_sc[0]}','#{_sc[1]}','#{_sc[6]}','#{_sc[11]}','#{_sc[9]}')">
+	                                                        	 <img src="#{request.contextPath}/asset/images/farmingIco02.png" width="14" height="14" />
+	                                                        	 <span>#{_sc[0]}</span><strong>#{_sc[1]}</strong></a>
+	                                                         </ui:fragment>
+	                                                         <ui:fragment rendered="#{!s:hasRole('base_environment_edit')}">
+	                                                        	 <a><img src="#{request.contextPath}/asset/images/farmingIco02.png" width="14" height="14" />
+	                                                         	 <span>#{_sc[0]}</span><strong>#{_sc[1]}</strong></a>
+ 	                                                         </ui:fragment> 
+                                                          </ui:fragment> 
+                                                          <ui:fragment rendered="#{_sc[5]==0}">
+                                                          	 <ui:fragment rendered="#{s:hasRole('base_environment_add')}">
+	                                                        	 <a href="#" data-toggle="modal" onclick="addbatch('#{_sc[0]}','#{_sc[1]}','#{_sc[10]}','#{_sc[5]}','#{_sc[6]}','#{_sc[7]}','#{_sc[11]}','#{_sc[9]}')">
+	                                                        	 <img src="#{request.contextPath}/asset/images/farmingIco01.png" width="14" height="14" />
+	                                                        	 <span>#{_sc[0]}</span><strong>#{_sc[1]}</strong></a>
+                                                             </ui:fragment> 
+                                                             <ui:fragment rendered="#{!s:hasRole('base_environment_add')}">
+	                                                             <img src="#{request.contextPath}/asset/images/farmingIco01.png" width="14" height="14" />
+	                                                             <span>#{_sc[0]}</span><strong>#{_sc[1]}</strong>
+                                                             </ui:fragment>
+                                                           </ui:fragment>
+                                                       
+                                                        </dt>
+                                                        <dd>
+                                                        <span>完成时间：#{_sc[9]}</span>
+                                                       </dd>
+                                                    </dl>
+                                                </td>
+                                                <td>
+                                                   
+                                                    <ul class="farmingMage_pics3" >
+                                                    <ui:fragment rendered="#{_sc[4]!=1}">
+                                                    <a4j:repeat value="#{_sc[4].split(',')}" var="_im" rowKeyVar="_imindex">
+                                                     <ui:fragment rendered="#{_imindex &lt; 5}">
+                                                        <li>
+                                                            <a href="javascript:;"><img src="#{_im}" /></a>
+                                                            <div class="farmingMage_Magnifier">
+                                                            	<em class="MagnifierClose"><img src="#{request.contextPath}/asset/images/farmingIco05.png" width="28" height="28" /></em>
+                                                                <div class="MagnifierBox"><img src="#{_im}" id="zzid"/></div>
+                                                            </div>
+                                                        </li>
+                                                       </ui:fragment> 
+                                                     </a4j:repeat> 
+                                                      </ui:fragment>  
+                                                    </ul>
+                                                          
+                                                      
+                                                </td>
+                                               
+                                                <td width="52">
+                                                	<ui:fragment rendered="#{_sc[5]==0}">
+	                                                	<ui:fragment rendered="#{s:hasRole('base_environment_add')}">
+	                                                  		<span>
+	                                                  			<a  onclick="addbatch('#{_sc[0]}','#{_sc[1]}','#{_sc[10]}','#{_sc[5]}','#{_sc[6]}','#{_sc[7]}','#{_sc[11]}','#{_sc[9]}')" target="_blank" class="letter_has" style="float:left;padding-right:3px;margin-top: 2px;">0</a>
+	                                                  		</span>
+	                                                    </ui:fragment>
+	                                                    <ui:fragment rendered="#{!s:hasRole('base_environment_add')}">
+	                                                  		<span>
+	                                                  			<a  target="_blank" class="letter_has" style="float:left;padding-right:3px;margin-top: 2px;">0</a>
+	                                                  		</span>
+	                                                    </ui:fragment> 
+	                                                    <ui:fragment rendered="#{s:hasRole('base_environment_del')}">
+	                                                  		<span>
+	                                                  			<a class="list_delete" title="删除"  onclick="del('#{_sc[10]}');return false;" href="#"></a>
+	                                                   		 </span>
+	                                                    </ui:fragment>
+	                                                     
+                                                    </ui:fragment>
+                                                   <ui:fragment rendered="#{_sc[5] !=0 }">
+		                                                <div style="width:27px;" class="completePerson_wp completeNum1" id="completeNum1"  rel="tooltip" data-placement="right" data-original-title="#{_sc[8]}">
+	                                                		<ui:fragment  rendered="#{s:hasRole('base_environment_show')}">
+		                                                  		 <span>
+		                                                  		 	<a onclick="addbatch('#{_sc[0]}','#{_sc[1]}','#{_sc[10]}','#{_sc[5]}','#{_sc[6]}','#{_sc[7]}','#{_sc[11]}','#{_sc[9]}')" target="_blank" class="letter_has" style="float:left;padding-right:3px;margin-top: 2px;">1</a>
+	                                                  			</span>
+	                                                  		</ui:fragment>
+		                                                    <ui:fragment rendered="#{!s:hasRole('base_environment_show')}">
+		                                                  	     <span>
+		                                                  	     <a  target="_blank" class="letter_has" style="float:left;padding-right:3px;margin-top: 2px;">1</a>
+		                                                  	     </span>
+		                                                    </ui:fragment> </div> 
+		                                                     <ui:fragment rendered="#{s:hasRole('base_environment_del')}">
+	                                                  			<span>
+	                                                  			<a class="list_delete" title="删除"  onclick="del('#{_sc[10]}');return false;" href="#"></a>
+	                                                  			</span>
+	                                                   		 </ui:fragment>
+		                                                 
+                                                   </ui:fragment>
+                                                </td>
+                                            </tr>
+                                             
+                                               
+                                            
+                                             </a4j:repeat> 
+                                        </tbody>
+                                    </table>
+                                    <!-- 农事管理表表格1 结束 -->
+                                  
+                                
+                                </div>
+                            
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+			
+                                
+                                
+                                
+                                
+                                    <!-- 分页 开始 -->
+                              <h:form id="pageFrom">
+							<h:inputHidden id="baseIdObj" value="#{environmentList.baseId}" />
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{!environmentList.hasPreviousPage }">
+										<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="32" /></td>
+									</s:fragment>
+									<s:fragment rendered="#{environmentList.hasPreviousPage and environmentList.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<a4j:commandLink style="color:#333333;" id="firstPage" action="#{environmentList.pageFind(1)}" rendered="#{environmentList.hasPreviousPage and environmentList.totalPages > 1}" reRender="showPanel">首页</a4j:commandLink>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a4j:commandLink styleClass="no_n" id="previousPage" action="#{environmentList.pageFind(environmentList.previousPage)}" rendered="#{environmentList.hasPreviousPage and environmentList.totalPages > 1}" reRender="showPanel">&lt;</a4j:commandLink>
+										</td>
+									</s:fragment>
+									<a4j:repeat var="_page" value="#{environmentList.showPageList}" rowKeyVar="_index">
+										<td class="td_t_b #{environmentList.hasPreviousPage  or _index >0 ?' td_t_t' : ''} #{_page eq environmentList.page ? 'onp' : ''}">
+											<a4j:commandLink id="thisPage" action="#{environmentList.pageFind(_page)}" reRender="showPanel">#{_page}</a4j:commandLink>
+										</td>
+									</a4j:repeat>
+									<s:fragment rendered="#{environmentList.hasNextPage}">
+										<td class="td_t_b td_t_t">
+											<a4j:commandLink styleClass="no_d"  id="nextPage" action="#{environmentList.pageFind(environmentList.nextPage)}" rendered="#{environmentList.hasNextPage and environmentList.totalPages > 1}" reRender="showPanel">&gt;</a4j:commandLink>
+										</td>
+										<td class="td_t_b td_t_t">
+											<a4j:commandLink style="color:#333333;"  id="lastPage" action="#{environmentList.pageFind(environmentList.totalPages)}" rendered="#{environmentList.hasNextPage and environmentList.totalPages > 1}" reRender="showPanel">尾页</a4j:commandLink>
+										</td>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{environmentList.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+                                <!-- 分页 结束 -->
+                                </h:panelGroup>
+		</div>
+                                </div>
+                            <!-- 农事管理内容 左侧 结束 -->
+                            </div>
+                            </td>
+                            <td valign="top" style="width:300px;">
+                            <div class="cm_resumeRt pt20" style="width:300px;">
+                            <!-- 农事管理内容 右侧 开始 -->
+                               <div class="cm_resumeRtTp">
+                                    <div class="cm_resumeMore2 clear">
+                                        <h2>品质管理标准</h2>
+                                      
+					                    <s:link  view="/harvest/QualityStandardList.xhtml" propagation="none" >更多
+					                    	<f:param name="baseId" value="#{environmentList.baseId}"/>
+					                    </s:link>
+                                    </div>
+                                    <div class="cm_llTotal clear">
+                                        <span class="farming_cugl"><font>共</font><b class="colorYell font20">#{environmentList.qualityCount}</b><font>项</font></span>
+                                      
+                                    </div>
+                                    <div class="p_ltrb" style="padding-top:0;">
+                                        <table width="100%" class="cm_buildTab">
+                                            <tbody>
+	                                             <a4j:repeat value="#{environmentList.qualityList}" var="var"  rowKeyVar="_index">
+	                                          	  <ui:fragment rendered="#{_index lt 5}">
+	                                                <tr>
+	                                                    <td width="80%"><span>#{var.title}</span></td>
+	                                                </tr>
+	                                              </ui:fragment>
+	                                            </a4j:repeat> 
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                               
+                            <!-- 农事管理内容 右侧 结束 -->
+                            </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- 农事管理内容 结束 -->
+					
+                </div><!--right_c结束-->
+            </div>
+            </td>  
+          <h:form>
+            <input type="hidden" value="#{environmentList.start}" id="start" name="start"/>
+            <input type="hidden" value="#{environmentList.end}" id="end" name="end"/>
+            <h:commandButton value="" action="/harvest/EnvironmentList.xhtml" styleClass="but_" style="display:none"/>
+            </h:form>  
+ 	<a4j:form>
+         <a4j:jsFunction name="examine" reRender="examineId,upId,imag" action="#{environmentHome.examine()}" oncomplete="huidiao()">
+      		<a4j:actionparam name="batid" assignTo="#{environmentHome.batid}"/>
+            <a4j:actionparam name="namenum" assignTo="#{environmentHome.namenum}"/>
+            <a4j:actionparam name="name" assignTo="#{environmentHome.name}"/>
+             <a4j:actionparam name="detectionContent" assignTo="#{environmentHome.detectionContent}"/>
+              <a4j:actionparam name="carryOutTime" assignTo="#{environmentHome.carryOutTime}"/>
+        </a4j:jsFunction>
+ 	</a4j:form>
+ 	<a4j:form >
+		<a4j:jsFunction name="deleted"  action="#{environmentHome.deleteObj}">
+			<a4j:actionparam name="batid" assignTo="#{environmentHome.batid}"/>
+		</a4j:jsFunction>
+	</a4j:form>
+<script type="text/javascript">
+   //<![CDATA[
+	   del = function(id){
+			if(confirm('确定删除?')){
+		 		deleted(id);
+		 		return true;
+		 	}
+		 	return false;
+		}
+	   function  objFocus(obj){
+			if(obj.value=="请输入搜索条件"){
+				obj.value="";
+				jQuery("#j_id318\\:searchParam").css("color","#000");
+			}
+			
+		} 
+		function objBlur(obj){
+		   if(obj.value==""){
+				obj.value="请输入搜索条件";
+				jQuery("#j_id318\\:searchParam").css("color","#a8a8a8");
+			}
+		}
+    	 jquery(function(){
+    		jquery(".completeNum1,.tooltip_").tooltip();
+    		var searchText = jQuery("#j_id318\\:searchParam").val();
+			if(searchText == null || searchText == ""){
+				jQuery("#j_id318\\:searchParam").val("请输入搜索条件");
+				jQuery("#j_id318\\:searchParam").css("color","#a8a8a8");
+			}else if(searchText == "请输入搜索条件"){
+				jQuery("#j_id318\\:searchParam").css("color","#a8a8a8");
+			}else{
+				jQuery("#j_id318\\:searchParam").css("color","#000");
+			}
+    	});
+		function addbatch(name,number,batchid,numstate,id,myty,content,timelimit){
+			if(numstate !=0){
+				examine(id,number,name,content,timelimit);
+				jquery("#myModa3").modal("show");
+			}else{
+				examine(id,number,name,content,timelimit);
+				jquery("#myframe2").contents().find(".photo001").parent().remove();
+				jquery(".namenum").html(number);
+				jquery(".namenum2").html(name);
+				jquery("#tian\\:baid").val(batchid);
+				jquery("#tian\\:mycode").val(myty);
+				jquery(".contentcl").html(content);
+				jquery(".timelimitcl").html(timelimit);
+				jquery("#myModa2").modal("show");
+				jquery("#myframe2").attr("style","width:100%; height:155px");
+				jquery("input[name='iCheck2']").removeAttr("checked");
+				jquery("input[name='iCheck1']").attr("checked", true);
+				var tim=new Date().format("yyyy-MM-dd hh:mm");
+				document.getElementById("tian:tshij").value=tim;
+				document.getElementById("tian:tnote").value="";
+				pictures();
+			}
+		}
+     	function checkInput(){
+    		var v = "";
+			jquery("#myframe2").contents().find(".plant_imgbd").each(function(){
+				v +=jquery(this).attr('src')+",";
+			})
+			jquery("#record_url").attr("value",v);
+			if(document.getElementById("tian:tnote").value == ""){
+		    	alert("情况概述不能为空！");
+				return false;
+		 	}
+			if(document.getElementById("tian:tshij").value == ""){
+		    	alert("整改时间不能为空！");
+				return false;
+			}
+			return true;
+    	}
+		function compileShow(name,number,id,content,timelimit){
+			examine(id,number,name,content,timelimit);
+			jquery("#myModa4").modal("show");
+			
+		}
+		function huidiao(){
+			
+			if(jquery(".checked").attr("aa")==1){
+				jquery("input[name='iCheck1']").attr("checked", true);
+			}
+			if(jquery(".checked").attr("aa")==2){
+				jquery("input[name='iCheck2']").attr("checked", true);
+			}
+			jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd hh:ii",
+			    autoclose: true,
+				 weekStart: 1,
+				  //startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+			    
+			    pickerPosition: "bottom-left"
+			 });
+			pictures();
+		}
+		function checkUp(){
+			var im = "";
+			jQuery("#myModa4").contents().find(".imgs").each(function(){
+				if(jquery(this).parent().parent('.fl').attr('style')!="display: none;"){
+					im +=jquery(this).attr('src')+",";
+				}
+			})
+			var v = "";
+			jquery("#myframe4").contents().find(".plant_imgbd").each(function(){
+				v +=jquery(this).attr('src')+",";
+			})
+			var all=im+v
+			jquery(".record_url").attr("value",all);
+			if(document.getElementById("xiu:xnote").value == ""){
+		    	alert("情况概述不能为空！");
+				return false;
+		 	}
+			if(document.getElementById("xiu:xshij").value == ""){
+		    	alert("整改时间不能为空！");
+				return false;
+			}
+			return true;
+		}
+		var len = #{environmentList.basicList.size()};
+		var baseId=#{environmentList.baseId};
+//		判断有没有选基地，没有则弹出框选择
+		function addNewDe(){
+			if(checkBaseModule(true)){
+				showAddModul(baseId);
+			}
+		}
+		function callBack(backBaseId){
+			showAddModul(backBaseId);
+			
+		}
+		function showAddModul(bid){
+			jquery("#myModal").modal("show");
+			jquery(".ab1").val("");
+			jquery(".ab2").val("");
+			jquery("#tian1\\:baseIds").attr("value",bid);
+			jquery("#tian1\\:baseIdli").attr("value",bid);
+		}
+		function newAdd(){
+			jquery("#tian1\\:carryOutTime").val(jquery("#carryOutTimeId").val());
+			if(jquery(".ab1").val() == ""){
+				alert("项目名称不能为空！");
+				return false;
+			}
+			if(jquery(".ab2").val() == ""){
+				alert("整改内容不能为空！");
+				return false;
+			}
+			if(jquery("#carryOutTimeId").val()==""){
+				alert("完成时间不能为空！");
+				return false;
+			}
+			
+			return true;
+
+			
+		}
+		function tme(){
+			jquery("#start").val(jquery("#start_").val());
+			jquery("#end").val(jquery("#end_").val());
+			if(jquery("#start_").val()>jquery("#end_").val()){
+				alert("结束时间不能小于开始时间!");
+				return false;
+			}
+			jquery(".but_").trigger("click");
+			return true;
+		}
+		
+		jquery(document).ready(function(){
+			jquery("#end_").val(new Date().format("yyyy-MM-dd"));
+			jquery("#start_").val(new Date().format("yyyy-MM-dd"));
+				 });
+
+				
+			  Date.prototype.format = function(format)
+			  {
+			  	var o = {
+			  	"M+" : this.getMonth()+1, //month
+			  	"d+" : this.getDate(),    //day
+			  	"h+" : this.getHours(),   //hour
+			   	"m+" : this.getMinutes(), //minute
+			  	"s+" : this.getSeconds(), //second
+			   	"q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+			   	"S" : this.getMilliseconds() //millisecond
+			  	}
+
+			  	if(/(y+)/.test(format)) 
+			  	{
+			  		format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+			  	}
+			  	
+			   	for(var k in o)
+			  	{
+			  		if(new RegExp("("+ k +")").test(format))
+			  		{
+			   			format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+			  		}
+			  	}
+			  	return format;
+			  }  
+//]]>
+</script>  
+<script type="text/javascript">   
+//<![CDATA[
+function pictures(){
+	jQuery = jQuery.noConflict();
+	/* 投入品点击删除和农事图片点击放大 */
+	jQuery(function(){
+		jQuery('.farmingInputs2').mouseover(function(){
+			jQuery(this).children('.closeInputs2').css('display','block');	
+		});
+		jQuery('.farmingInputs2').mouseout(function(){
+			jQuery(this).children('.closeInputs2').css('display','none');	
+		});
+		jQuery('.farmingInputs2 .closeInputs2').click(function(){
+			jQuery(this).parent('.farmingInputs2').css('display','none');
+			jQuery(this).parent('.farmingInputs2').next('.farmingMage_Magnifier2').css('display','none');	
+		});	
+		jQuery('.farmingInputs2 a img').click(function(){
+			jQuery('.farmingMage_Magnifier2').css('display','none');
+			jQuery(this).parents('.farmingInputs2').next('.farmingMage_Magnifier2').css('display','block');	
+		});
+		jQuery('.MagnifierClose2').click(function(){
+			jQuery(this).parent('.farmingMage_Magnifier2').css('display','none');	
+		});
+	});
+	
+	/* 投入品点击删除 */
+	jQuery(function(){
+		jQuery('.farmingInputs').mouseover(function(){
+			jQuery(this).children('.closeInputs').css('display','block');	
+		});
+		jQuery('.farmingInputs').mouseout(function(){
+			jQuery(this).children('.closeInputs').css('display','none');	
+		});
+		jQuery('.farmingInputs .closeInputs').click(function(){
+			jQuery(this).parent().css('display','none');
+		});	
+		jQuery('.farmingInputs .closeInputs').click(function(){
+			jQuery(this).parent('.farmingInputs').css('display','none');
+			jQuery(this).parent('.farmingInputs').next('.farmingMage_Magnifier2').css('display','none');	
+		});	
+		jQuery('.farmingInputs a img').click(function(){
+			jQuery('.farmingMage_Magnifier2').css('display','none');
+			jQuery(this).parents('.farmingInputs').next('.farmingMage_Magnifier2').css('display','block');	
+			jQuery('.farmingInputs_mini').css('display','none');
+		});
+		jQuery('.MagnifierClose').click(function(){
+			jQuery(this).parent('.farmingMage_Magnifier2').css('display','none');	
+		});	
+	});
+}
+//]]>
+</script> 
+<script type="text/javascript">
+//<![CDATA[
+jquery(".dt1").datetimepicker({
+	format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+	autoclose: true,
+	 weekStart: 1,
+	  //startDate: "2014-08-14 10:00",
+	 language:  'zh-CN',
+	 startView: 3,
+	minView: 2,
+	maxView: 4,		
+	pickerPosition: "bottom-left"
+});
+				jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd hh:ii",
+			    autoclose: true,
+				 weekStart: 1,
+				// startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+			    
+			    pickerPosition: "bottom-left"
+			    });
+			    
+			  window.onload = function () {
+			    jquery('.selectpicker').selectpicker();
+			  };
+//]]>
+</script> 
+<script>
+//<![CDATA[
+jQuery = jQuery.noConflict();
+/*  放大镜js */
+jQuery(function(){
+	
+	jquery('.farmingMage_pics3 li a').click(function(){
+		var img = jquery(this).find("img");
+		var _th = jquery(this);
+		var realWidth;//真实的宽度
+		var realHeight;//真实的高度
+		jquery("<img/>").attr("src", jquery(img).attr("src")).load(function() {
+			realWidth = this.width;
+			realHeight = this.height;
+			var width = document.body.clientWidth-30;
+			var height = document.body.clientHeight-40;
+			var a1 = realWidth/width;
+			var a2 = realHeight/height;
+		//console.log(a1+"+++"+a2);
+			if(a1>a2){
+				_th.next().css("max-width",width+"px");
+				_th.next().find(".MagnifierBox").css("max-width",width+"px");
+				_th.next().find("#zzid").css("max-width",width+"px");
+					if(realWidth>width){
+						_th.next().css("left","15px");
+						var x = width/realWidth*realHeight;
+						_th.next().css("top",(height-x)/2+"px");
+					}else{
+						_th.next().css("top",(height-realHeight)/2+"px");
+						_th.next().css("left",(width-realWidth)/2+"px");
+					}
+			}else{
+				_th.next().css("max-height",height+"px");
+				_th.next().find(".MagnifierBox").css("max-height",height+"px");
+				_th.next().find("#zzid").css("max-height",height+"px");
+					if(realHeight>height){
+						_th.next().css("top","15px");
+						var x = height/realHeight*realWidth;
+						_th.next().css("left",(width-x)/2+"px");
+					}else{
+						_th.next().css("top",(height-realHeight)/2+"px");
+						_th.next().css("left",(width-realWidth)/2+"px");
+					}
+			}
+			_th.next().css('display','block')
+			.parent().siblings().children('a').next().hide();
+			jquery('.MagnifierClose').click(function(){
+				jquery(this).parent().hide();	
+			});
+		});
+	});
+	jquery('.farmingMage_pics3 li a').blur(function(){
+		jquery(this).next('.farmingMage_Magnifier').fadeOut();	
+	});
+});
+//]]>
+</script>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,142 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+       <td valign="top" >
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">
+                    	<s:link propagation="none"  view="/record/BatchRecordList.xhtml" style="text-decoration:none;color:black;" value="批量管理 ">
+                    	</s:link>
+						&#160;&gt;&#160;&#160;<font size="4">#{bdOperatingInfoList.operatingTypeObj eq 1?'采摘对应关系':'检测对应关系'}</font></div>
+                    </div>
+					<br/>
+					<!-- #{bdOperatingInfoList.work()} -->
+                    <div class="sp_d_iv">
+                    				<span class="spn_01">批次编号：#{bdOperatingInfoList.batch.batchNumber}</span>
+                    </div>
+                     <!--添加按钮开始-->
+                    <div class="tjan_011">
+                    	<s:link view="/record/BdOperatingInfoEdit.xhtml" propagation="none" styleClass="btn btn-success" >
+                    	<f:param name="bdOperatingInfoId" />
+                    	<f:param name="batchId" value="#{bdOperatingInfoList.batchId}" />
+                    	<f:param name="operatingTypeObj" value="#{bdOperatingInfoList.operatingTypeObj}"/>添加</s:link>
+                    </div>
+                    <!--添加按钮结束-->
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="6" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                            
+                    		<th class="ze_bg" width="15%">#{bdOperatingInfoList.operatingTypeObj eq 1?'采摘名称':'检测机构'}</th>
+                    		
+                    		<th class="ze_bg" width="15%">操作类型</th>
+                    		<th class="ze_bg" width="20%">操作时间</th>
+                    		<th class="ze_bg" width="20%">开始编号</th>
+                    		<th class="ze_bg" width="20%">结束编号</th>
+                    		<th class="ze_bg" width="10%">操作</th>
+                            
+                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                    	</tr>
+						<ui:repeat value="#{bdOperatingInfoList.resultList}" var="_bdOpe" rendered="#{not empty bdOperatingInfoList.resultList}" rowKeyVar="_index">
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            
+                    		<td class="ze_bg2"><h:outputText value="#{_bdOpe.name}"/></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText rendered="#{_bdOpe.operatingType eq 1}" value="采摘"/>
+                    			<h:outputText rendered="#{_bdOpe.operatingType eq 2}" value="检测"/>
+                    		</td>
+                    		<td class="ze_bg2">
+                    		<h:outputText value="#{_bdOpe.operatingTime}">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+						    </h:outputText>
+                    		</td>
+                    		<td class="ze_bg2"><h:outputText value="#{_bdOpe.beginNumber}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_bdOpe.endNumber}"/></td>
+                    		<td class="ze_bg2">
+                                <s:link propagation="none"  view="/record/BdOperatingInfoEdit.xhtml"   styleClass="list_edit" id="userEdit" title="编辑" rendered="#{empty from}">
+                                <f:param name="bdOperatingInfoId" value="#{_bdOpe.id}" />
+                                <f:param name="batchId" value="#{bdOperatingInfoList.batchId}" />
+                                <f:param name="operatingTypeObj" value="#{bdOperatingInfoList.operatingTypeObj}" />
+								</s:link>&#160;
+								<s:link propagation="none"  view="/record/BdOperatingInfoEdit.xhtml"  styleClass="list_delete" action="#{bdOperatingInfoHome.remove}" title="删除" onclick="return confirm('确定删除吗？');" id="userDelete" rendered="#{empty from}">
+                                <f:param name="bdOperatingInfoId" value="#{_bdOpe.id}" />
+                                <f:param name="batchId" value="#{bdOperatingInfoList.batchId}" />
+                                <f:param name="operatingTypeObj" value="#{bdOperatingInfoList.operatingTypeObj}" />
+                                </s:link>
+                            </td>
+                            
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</ui:repeat>
+                    </table>
+                    <!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty bdOperatingInfoList.resultList}">
+			               <s:decorate rendered="#{!bdOperatingInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{bdOperatingInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{bdOperatingInfoList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/record/BdOperatingInfoList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/record/BdOperatingInfoList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{bdOperatingInfoList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{bdOperatingInfoList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{bdOperatingInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq bdOperatingInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/record/BdOperatingInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{bdOperatingInfoList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/record/BdOperatingInfoList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{bdOperatingInfoList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/record/BdOperatingInfoList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{bdOperatingInfoList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{bdOperatingInfoList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                            </s:div>
+                            <td>
+		    			       <s:button view="/record/BatchRecordList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" />
+                            </td>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+		
+</td>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,487 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_analysisnew.xhtml">
+
+<ui:define name="body">
+<style type="">
+.fxy_lidate {
+    margin: 0px 5px 5px 0px;
+}
+</style>
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/bootstrap_radio.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/bootstrap_radio3.js"></script>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+	<!-- #{farmStatisticsHome.selectInputsRecord()} -->
+	<td valign="top">
+		<div class="right_c" style="min-height:30px;">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">农场统计分析</font></div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <ui:fragment rendered="#{s:hasRole('farm_land_resources_search')}">	
+                   
+				<h:form id="search">
+				<!-- 区域日期种植环境 开始 -->
+				<div class="cm_tjfxHd02 pt20">
+                    <ul class="dateSelt pb15 clear">
+                    	<li class="dateSeltLi01 fl">日期选择：</li>
+                        <li class="fl">
+                        
+                        <table cellpadding="0" cellspacing="0">
+                        	<tbody>
+                            	<tr>
+                                	<td width="180">
+                                     <div class="input-append date form_datetime" >
+	                                	<input id="beginTime" size="26" type="text" readonly="readonly" value="#{farmStatisticsHome.beginTime}" />
+	                                	<span class="add-on"><i class="icon-th"></i></span>
+	                                	<h:inputHidden id="beginTimes" value="#{farmStatisticsHome.beginTime}" />
+	                                 </div>
+                                    </td>
+                                    <td width="20" style="text-align:center;">—</td>
+                                    <td width="180">
+                                     <div class="input-append date form_datetime" >
+                                     
+	                                	<input id="endTime" size="26" type="text" readonly="readonly" value="#{farmStatisticsHome.endTime}" />
+	                                	<span class="add-on"><i class="icon-th"></i></span>
+	                                	<h:inputHidden id="endTimes" value="#{farmStatisticsHome.endTime}" />
+	                                 </div> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </li>
+                        <li class="fl" style="margin-top: 5px;">
+                           	（投入使用设施量）
+                        </li>
+                    </ul>
+                    <ul class="plantSelt pb15 clear">
+                    	<li class="plantSeltLi01 fl">种植环境：</li>
+                        <li class="fl" style="padding-top: 5px;">
+                            <div class="lapc_div">
+                            <label for="ee" style="float: left;">
+                            <a href="javascript: void(0);" class="#{farmStatisticsHome.getChecked('1,2,3,4,5,6,7,8,0') eq 'checked'?'a':'b'}"></a>
+                            <input type="checkbox" class="#{farmStatisticsHome.getChecked('1,2,3,4,5,6,7,8,0') eq 'checked'?'a':'b'}"  id="cheAll" name="cheAll" style="display:none;" />
+                            </label>
+                            
+                            <span class="s_pan" style="float: right; font-size:12px; margin-left:0; font-family:'宋体'; line-height:23px;">全选</span>
+                            </div>
+                         </li>
+                         <li class="fl" style="padding-top: 5px;">
+                            <ul id="male" class="fxy_ul">
+								<a:repeat value="#{farmStatisticsHome.getPlantEnvType()}" var="_pet" rowKeyVar="_index">
+                                <li class="fxy_lidate">
+                                <div class="lapc_div">
+                                <input type="checkbox" aa="#{farmStatisticsHome.getChecked(_pet.id)}" id="#{_pet.id}" name="sex" value="#{_pet.id}"/>
+                                <label class="#{farmStatisticsHome.getChecked(_pet.id)}">#{_pet.name}</label>
+                                </div>
+                                </li>
+                                </a:repeat>
+                                <li class="fxy_lidate">
+                                <div class="lapc_div">
+                                <input type="checkbox" aa="#{farmStatisticsHome.getChecked(0)}" id="0" name="sex" value="0"/>
+                                <label class="#{farmStatisticsHome.getChecked(0)}">其他</label>
+                                </div>
+                                </li>
+                                <h:inputHidden id="plantEnvTypes" value="#{farmStatisticsHome.plantEnvTypes}" />
+							</ul> 
+                        </li>
+                        <li class="fl">
+                        <input type="hidden" value="1" name="goodsInfoSearch:flag" id="goodsInfoSearch:flag"/>
+                        <h:commandButton id="search" styleClass="btn btn-primary mr7" value="搜索" action="/analysis/FarmStatistics.xhtml" onclick="selectai()"/>
+                        <h:commandButton action="#{farmStatisticsHome.reset}" id="reset" styleClass="btn btn-default" value="重置"/>
+                        </li>
+                    </ul>
+                </div>
+                </h:form>
+				<!-- 区域日期种植环境 结束 -->
+                <div class="borderBt1"></div>
+                </ui:fragment>
+                <!-- 排名图 详情表 开始 -->
+                <div class="cm_tjfxBd pt20">
+                	<div class="tjfxTabTp">
+                     <ul class="nav nav-tabs" role="tablist" id="myTab">
+                      <li class="active ml30"><a href="#home" role="tab" data-toggle="tab">排名图</a></li>
+                      <li class=""><a href="#profile" role="tab" data-toggle="tab">详情表</a></li>
+                    </ul>
+                    </div>
+                    <div class="tjfxTabBt pt40 ml30 mr30">
+                        <div class="tab-content">
+                            <div class="tab-pane active clear" id="home">
+                                <div class="cm_pmtCon pb20">
+                                    <table class="cm_userHd">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                	<span>农场数量</span>
+	                                                <em class="farmsNum">
+	                                                	<h:outputText id="irIndex" value="#{farmStatisticsHome.irIndex}" />
+	                                                </em>
+	                                            </td>
+                                                <td >
+                                                	<span id="selectName">农场面积</span>
+                                                	<em class="facNum">
+                                                		<h:outputText id="irSum" value="#{farmStatisticsHome.irSum}#{farmStatisticsHome.inputsType eq 1 or farmStatisticsHome.inputsType eq null?'亩':'个'}" />
+                                                	</em>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                 <div class="pb20">
+                                	<select class="selectpicker" onchange="selectInputsRecord(this.value);jquery('#login').show();">
+                                	<h:panelGroup rendered="#{farmStatisticsHome.inputsType eq 1 or farmStatisticsHome.inputsType eq null}">
+                                		<option value="1" selected="selected">农场面积</option>
+                                	</h:panelGroup>
+                                    <h:panelGroup rendered="#{farmStatisticsHome.inputsType ne 1 and farmStatisticsHome.inputsType ne null}">
+                                		<option value="1" >农场面积</option>
+                                	</h:panelGroup>
+                                	<h:panelGroup rendered="#{farmStatisticsHome.inputsType eq 2}">
+                                		<option value="2" selected="selected">设施总量</option>
+                                	</h:panelGroup>
+                                	<h:panelGroup rendered="#{farmStatisticsHome.inputsType ne 2}">
+                                		<option value="2" >设施总量</option>
+                                	</h:panelGroup>
+                                	<h:panelGroup rendered="#{farmStatisticsHome.inputsType eq 3}">
+                                		<option value="3" selected="selected">投入使用设施</option>
+                                	</h:panelGroup>
+                                    <h:panelGroup rendered="#{farmStatisticsHome.inputsType ne 3}">
+                                		<option value="3" >投入使用设施</option>
+                                	</h:panelGroup>
+                                    </select>
+                                </div>
+                                <div class="cm_pmtZhu">
+                                	<div id="container" style="min-width:700px;height:400px;"></div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="profile">
+                                <div class="cm_xqbCon">
+                                <table class="tableXqb" cellpadding="0" cellspacing="0" width="1000">
+                                	<thead>
+                                    	<tr>
+                                        	<td width="60">序号</td>
+                                            <td width="250">农场名称</td>
+                                            <td width="150">农场面积</td>
+                                            <td width="150">设施总量</td>
+                                            <td width="220">投入使用设施</td>
+                                            <td width="150" style="#{farmStatisticsHome.getChecked(1) eq 'checked'?'':'display:none;'}">加热温室</td>
+                                            <td width="150" style="#{farmStatisticsHome.getChecked(2) eq 'checked'?'':'display:none;'}">日光温室</td>
+                                            <td width="150" style="#{farmStatisticsHome.getChecked(3) eq 'checked'?'':'display:none;'}">连栋温室</td>
+                                            <td width="150" style="#{farmStatisticsHome.getChecked(4) eq 'checked'?'':'display:none;'}">春秋棚</td>
+                                            <td width="150" style="#{farmStatisticsHome.getChecked(5) eq 'checked'?'':'display:none;'}">菜园</td>
+                                            <td width="150" style="#{farmStatisticsHome.getChecked(6) eq 'checked'?'':'display:none;'}">果园</td>
+                                            <td width="150" style="#{farmStatisticsHome.getChecked(7) eq 'checked'?'':'display:none;'}">水面</td>
+                                            <td width="150" style="#{farmStatisticsHome.getChecked(8) eq 'checked'?'':'display:none;'}">养殖</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    	<a:repeat value="#{farmStatisticsHome.fsList}" var="_fs" rowKeyVar="_index">
+	                                    	<tr>
+	                                        	<td>#{_index+1}</td>
+	                                            <td>#{_fs.name}</td>
+	                                            <td>#{_fs.numberarea}亩</td>
+	                                            <td>#{_fs.number}个</td>
+	                                            <td>#{_fs.numbertow}个</td>
+	                                            <td style="#{farmStatisticsHome.getChecked(1) eq 'checked'?'':'display:none;'}">#{_fs.penut1}个</td>
+	                                            <td style="#{farmStatisticsHome.getChecked(2) eq 'checked'?'':'display:none;'}">#{_fs.penut2}个</td>
+	                                            <td style="#{farmStatisticsHome.getChecked(3) eq 'checked'?'':'display:none;'}">#{_fs.penut3}个</td>
+	                                            <td style="#{farmStatisticsHome.getChecked(4) eq 'checked'?'':'display:none;'}">#{_fs.penut4}个</td>
+	                                            <td style="#{farmStatisticsHome.getChecked(5) eq 'checked'?'':'display:none;'}">#{_fs.penut5}个</td>
+	                                            <td style="#{farmStatisticsHome.getChecked(6) eq 'checked'?'':'display:none;'}">#{_fs.penut6}个</td>
+	                                            <td style="#{farmStatisticsHome.getChecked(7) eq 'checked'?'':'display:none;'}">#{_fs.penut7}个</td>
+	                                            <td style="#{farmStatisticsHome.getChecked(8) eq 'checked'?'':'display:none;'}">#{_fs.penut8}个</td>
+	                                        </tr>
+                                        </a:repeat>
+                                    </tbody>
+                                </table> 
+                            	</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 排名图 详情表 结束 -->
+                
+                <div style="height:30px; width:100%;"></div>
+                <div class="clear"></div>
+                <!--right_c结束-->
+                <a:form>
+					<a:queue requestDelay="10" ignoreDupResponses="true"/>
+				    <a:jsFunction name="selectInputsRecord" action="#{farmStatisticsHome.selectInputsRecord}" reRender="irIndex,irSum" data="#{farmStatisticsHome.irNameString}_#{farmStatisticsHome.irProportionString}_#{farmStatisticsHome.maxString}_#{farmStatisticsHome.inputsType}" oncomplete="charimg(data);jquery('#login').hide();">
+				        <a:actionparam name="inputsType" assignTo="#{farmStatisticsHome.inputsType}"/>
+			        </a:jsFunction>
+		        </a:form>
+		        <script type="text/javascript"> 
+                jquery(".cm_xqbCon").css("width",(document.body.clientWidth- 362) +"px ");
+                jquery(".tableXqb").css("width",(document.body.clientWidth- 272) +"px ");
+                jquery(window).resize(function(){
+						 var onLoadWidth = document.body.clientWidth;
+						 jquery(".cm_xqbCon").css("width",(document.body.clientWidth- 362)+"px ");
+						 jquery(".tableXqb").css("width",(document.body.clientWidth- 272)+"px ");
+			
+					})
+				</script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/jquery-1.8.3.min.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/exporting.js"></script>
+				
+                <script type="text/javascript">
+              	//<![CDATA[
+                
+                jquery(".form_datetime").datetimepicker({
+    				format: "yyyy-mm-dd",
+    			    autoclose: true,
+    				weekStart: 1,
+    				//startDate: "2014-08-14 10:00",
+    				language:  'zh-CN',
+    				minView:2,
+    			    pickerPosition: "bottom-left"
+    			});
+				var mapObj = {};	
+				var checkBoxLen = jquery("input[type = 'checkbox']").length;			
+				/*
+				if(checkBoxLen > 1){
+						for(var i = 1;i<(checkBoxLen - 1);i++){
+							mapObj[i] = 'checked';
+						}
+					}*/
+				
+                jquery(document).ready(function(){
+                	
+                	jquery('input').iCheck({
+                	    checkboxClass: 'icheckbox_minimal-blue',
+                	    radioClass: 'iradio_minimal-blue',
+                	    increaseArea: '20%' // optional
+                	  });
+                	jquery("#cheAll").on("ifClicked", function(event){
+                		if (this.checked) {
+                			jquery("input[name='sex']").iCheck("uncheck"); 
+                			jquery("input[name='sex']").attr("aa","unchecked");
+                			if(checkBoxLen > 1){
+        						for(var i = 1;i<checkBoxLen;i++){
+        							mapObj[i] = 'unchecked';
+        						}
+        					}
+                		} else {
+                			jquery("input[name='sex']").iCheck("check"); 
+                			jquery("input[name='sex']").attr("aa","checked");
+                			if(checkBoxLen > 1){
+        						for(var i = 1;i<checkBoxLen;i++){
+        							mapObj[i] = 'checked';
+        						}
+        					}
+                		}
+                	});
+
+                	
+                	jquery("input[name='sex']").on("ifClicked", function(event){
+                		if(!this.checked) {
+                			var id = this.id;
+                			mapObj[id] = "checked";
+                		}else{
+                			var id = this.id;
+                			mapObj[id] = "unchecked";
+                    	}
+                    	var checkAllOrNot = false;
+                    	for(var i in mapObj){
+							if(mapObj[i] == "unchecked"){
+								checkAllOrNot = true;
+							}
+							
+                        }
+                        if(checkAllOrNot){
+                        	jquery("#cheAll").iCheck("uncheck");
+                           }else{
+                        	jquery("#cheAll").iCheck("check");
+                        }
+                        checkAllOrNot = false;
+                	});
+                	jquery("input[name='sex']").on("ifChanged", function(event){
+                		if(!this.checked) {
+                			jquery("#cheAll").iCheck("uncheck"); 
+                			jquery(this).attr("aa","unchecked");
+                		}else{
+                			jquery(this).attr("aa","checked");
+                    	}
+                	});
+                	});
+
+            	
+                window.onload = function() 
+                {
+                	var obj = jquery("#cheAll").attr("class");
+					if(obj == "a"){
+						jquery("#cheAll").iCheck("check");
+						}
+                	var idStr = "";
+                	var obj = false;
+                	jquery("input[name='sex']").each(function(){
+                		var cbBoolean = jquery(this).attr("aa");
+                		
+                		//alert(jquery(this).attr("id"));
+                		if(cbBoolean == "checked"){
+                			jquery(this).iCheck("check");
+                			jquery(this).attr("aa","checked"); 
+                		}else{
+                			obj = true;
+                			jquery(this).iCheck("uncheck");
+                			jquery(this).attr("aa","unchecked"); 
+                		}
+                		if(obj){
+                			jquery("#envAll").iCheck("uncheck"); 
+                		}
+                	});
+                	
+    				for(var i=0;i<checkBoxLen;i++){					
+    					mapObj[i+1] =jquery("input[name='sex']").eq(i).attr("aa");
+    				}
+                }
+				
+					function selectai(){
+						jquery("#search\\:beginTimes").val(jquery("#beginTime").val());
+						jquery("#search\\:endTimes").val(jquery("#endTime").val());
+						var aastring = '';
+						jquery("input[name='sex']").each(function(){
+							if(jquery(this).attr('aa')=="checked"){
+								aastring += jquery(this).attr('id')+',';
+							}
+						});
+						jquery("#search\\:plantEnvTypes").val(aastring);
+					}
+					$(function () { 
+						var irNameString = "#{farmStatisticsHome.irNameString}";
+						var irProportionString = "#{farmStatisticsHome.irProportionString}";
+						var maxString = "#{farmStatisticsHome.maxString}";
+						var inputsType = "#{farmStatisticsHome.inputsType eq null ?1:farmStatisticsHome.inputsType}";
+						var imgall = irNameString+"_"+irProportionString+"_"+maxString+"_"+inputsType;
+						charimg(imgall);
+					});
+					function charimg (imgall) {
+						jquery("#selectName").html(jquery(".selectpicker :selected").text());
+						var imgalls = imgall.split("_");
+						var colors = Highcharts.getOptions().colors;
+						var	categories = '';
+						var	name = '农场统计';
+						var	data = '';
+						var	maxString = '';
+						var inputsType='';
+						eval("categories = "+imgalls[0]);
+						eval("data = "+imgalls[1]);
+						eval("maxString = "+imgalls[2]);
+						eval("inputsType = "+imgalls[3]);
+						function setChart(name, categories, data, color) {
+							chart.xAxis[0].setCategories(categories, false); 
+							chart.series[0].remove(false); 
+							chart.addSeries({ 
+								name: name, 
+								data: data, 
+								color: color || 'white' 
+							}, false); 
+							chart.redraw(); 
+						} 
+						if(maxString == '1'){
+							var chart = $('#container').highcharts({ 
+								chart: { type: 'column' }, 
+								title: { text: '' }, 
+								xAxis: { categories: categories,min:0}, 
+								scrollbar: {enabled: true},
+								yAxis: { title: { text: '统计数量' } ,min:0}, 
+								plotOptions: { 
+									column: { 
+										cursor: 'pointer', 
+										dataLabels: { 
+											enabled: true, 
+											color: colors[0], 
+											style: { fontWeight: 'bold' }, 
+											formatter: function() {
+												if(inputsType == 1){
+													return this.y +'亩'; 
+												}else{
+													return this.y +'个'; 
+												}
+											} 
+										} 
+									} 
+								}, 
+								tooltip: { 
+									formatter: function() {
+										 var point = this.point, 
+										 	 s = this.x +'：<b>'+ this.y ; 
+										    if(inputsType == 1){
+										    	s +='亩</b><br>'; 
+											}else{
+												s +='个</b><br>'; 
+											}
+										 return s; 
+									} 
+								}, 
+								series: [{ 
+									name: name, 
+									data: data, 
+									color: 'white' 
+								}], 
+								exporting: { 
+									enabled: false 
+								} }) 
+								.highcharts(); // return chart
+							}else{
+								var chart = $('#container').highcharts({ 
+									chart: { type: 'column' }, 
+									title: { text: '' }, 
+									xAxis: { categories: categories,max:10}, 
+									scrollbar: {enabled: true},
+									yAxis: { title: { text: '统计数量' } ,min:0}, 
+									plotOptions: { 
+										column: { 
+											cursor: 'pointer', 
+											dataLabels: { 
+												enabled: true, 
+												color: colors[0], 
+												style: { fontWeight: 'bold' }, 
+												formatter: function() { 
+													if(inputsType == 1){
+														return this.y +'亩'; 
+													}else{
+														return this.y +'个'; 
+													}
+												} 
+											} 
+										} 
+									}, 
+									tooltip: { 
+										formatter: function() {
+											 var point = this.point, 
+											 	 s = this.x +'：<b>'+ this.y;
+											   if(inputsType == 1){
+											    	s +='亩</b><br>'; 
+												}else{
+													s +='个</b><br>'; 
+												} 
+											 return s; 
+										} 
+									}, 
+									series: [{ 
+										name: name, 
+										data: data, 
+										color: 'white' 
+									}], 
+									exporting: { 
+										enabled: false 
+									} }) 
+									.highcharts(); // return chart
+							} 
+						}
+					//]]>
+				</script>
+	</td>
+	
+</ui:define>
+</ui:composition>

@@ -1,0 +1,336 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template_new.xhtml">
+	<ui:define name="body">
+	<script  type="text/javascript">
+	//<![CDATA[
+	function BtHide(id){var Div = document.getElementById(id);if(Div){Div.style.display="none"}}
+	function BtShow(id){var Div = document.getElementById(id);if(Div){Div.style.display="block"}}
+	
+	function BtPopload(showId){//蒙版生成div+iframe
+		jquery("#insert").attr("disabled",false);
+		var h = Math.max(document.documentElement.scrollHeight,document.documentElement.clientHeight) + 'px';
+		var w = document.documentElement.scrollWidth + 'px';
+		var popCss = "background:#000;opacity:0.3;filter:alpha(opacity=30);position:absolute;left:0;top:0;overflow:hidden;"
+		var exsit = document.getElementById("popBox");
+		if (!exsit) {
+			pop_Box = document.createElement("div");pop_Box.id = "popBox";
+			document.getElementsByTagName("body")[0].appendChild(pop_Box);
+			pop_Box.style.cssText = popCss;pop_Box.style.zIndex = "10";
+			pop_Box.style.height = h;pop_Box.style.width = w;
+			
+			pop_Iframe = document.createElement("iframe");pop_Iframe.id = "popIframe";
+			document.getElementsByTagName("body")[0].appendChild(pop_Iframe);	
+			pop_Iframe.style.cssText = popCss;pop_Iframe.style.zIndex = "9";
+			pop_Iframe.style.height = h;pop_Iframe.style.width = (parseInt(w)-5)+"px";
+		}
+		BtShow("popIframe");BtShow("popBox");BtShow(showId);
+		pop_Win = document.getElementById(showId);
+		pop_Win.style.position = "absolute";
+		pop_Win.style.zIndex = "11";
+		pop_Win.style.top = document.documentElement.scrollTop+document.documentElement.clientHeight/2-pop_Win.offsetHeight/2+ 'px';
+		pop_Win.style.left = (document.documentElement.clientWidth/2-pop_Win.offsetWidth/2) + 'px';
+	}
+	function BtPopShow(Bid,Did) { 
+		var UploadBtn = document.getElementById(Bid);
+		if (UploadBtn){UploadBtn.onclick = function() {clearAll();BtPopload(Did);return false;}}
+	}
+	function BtPopHide(Bid,Did) { 
+		var UploadBtn = document.getElementById(Bid);
+		if (UploadBtn){UploadBtn.onclick = function() {BtHide(Did);BtHide("popBox");BtHide("popIframe");return false;}}	
+	}
+	function clearAll(){
+		document.getElementById("name").value = "";
+		document.getElementById("content").value = "";
+	}
+	function checkSubmit(){
+		 var realPlantId = document.getElementById("combobox2").value; 
+		 
+		   if(realPlantId ==null || realPlantId == ""){
+				document.getElementById("spanValue").innerHTML = "请选择种植区域！";
+				jquery("#myModal").modal('show');
+				return false;
+			}
+		   document.getElementById("user:realPlantId").value = realPlantId;
+		var optime = document.getElementById("user:plantBeginTime").value;
+		if(optime == ""){
+			document.getElementById("spanValue").innerHTML = "预计时间不能为空！";
+			jquery("#myModal").modal('show');
+	      return false;
+		}
+	}
+	function insertAr(){
+		jquery("#insert").attr("disabled",true);
+		var name = jquery("#name").val(); 
+		var content = jquery("#content").val(); 
+		if(name == ""){
+			document.getElementById("spanValue").innerHTML = "名称不能为空";
+			jquery("#myModal").modal('show');
+    		return false;
+		}
+		insertArInfo(name,content);
+	}
+
+	function aritInfoAll(data){
+		if(data == "0"){
+			checkComplete();
+			return false;
+		}
+		jquery("#user\\:plantingPattern").val(data);
+		jquery('.selectpicker').selectpicker();
+		
+		//jquery("#user\\:plantingPattern").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery("#user\\:tunnelInfoId").selectmenu("destroy").selectmenu({style:'dropdown'});
+		//jquery(".rich-calendar-input").addClass("r_c_text_date");
+		//jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+	    jquery('#close').click();
+	}
+	function checkComplete(){
+		   document.getElementById("spanValue").innerHTML = "已添加过操作类型，请重新添加！";
+		   jquery("#myModal").modal('show');
+		   jquery("#login").hide();
+	}
+	//]]>
+	</script>
+	<td valign="top" width="210" style=" border-right:1px solid #e1e4eb;">
+                <div class="left_c2">
+                	<ul class="lt_c_ul">
+						 <li><a href="#{request.contextPath}/map/CompanyList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/enterpriseInfoMation_03.png"/>&#160;公司信息</a></li>
+                		<li><a href="#{request.contextPath}/map/FarmList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/jichu_03.png"/>&#160;基地信息</a></li>
+                		
+                		<li><a href="#{request.contextPath}/map/FarmerInfoManageList.seam" ><img class="tbimg"  src="#{request.contextPath}/asset/images/renyuan.png"/>&#160;人员管理</a></li>
+                		<li><a href="#{request.contextPath}/map/InstrumentInfoList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/jixie.png"/>&#160;农机管理</a></li>
+                		<li>
+                        	<a href="#{request.contextPath}/map/PartitionList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/dikuai.png"/>&#160;地块信息</a>
+                        </li>
+                          <li>
+                        	<a href="#{request.contextPath}/archive/PlantInfoList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/plant_21.png"/>&#160;种植信息</a>
+                        </li>
+                        <li><a href="#{request.contextPath}/farming/AmRemindedHtiList.seam" class="fon_07"><strong><img class="tbimg"  src="#{request.contextPath}/asset/images/far_jihua.png"/>&#160;农事计划</strong></a></li>
+                         <li><a href="#{request.contextPath}/farming/AmAgriculturalInfoList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/far_jilu_21.png"/>&#160;农事记录</a></li>
+                        <li><a href="#{request.contextPath}/harvest/PreHarvestList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/yucai.png"/>&#160;预采信息</a></li>
+                    		<li><a href="#{request.contextPath}/realplant/RealPlantList.seam"><img class="tbimg"  src="#{request.contextPath}/asset/images/caishou.png"/>&#160;采收记录</a></li>
+                    </ul>
+                    <ul class="lt_c_ul2">
+                    	<li><s:link propagation="none"  view="/contract/MemberInfoListOne.xhtml"><img src="#{request.contextPath}/asset/images/biao_03.png" width="10" height="10" />&#160;客户管理</s:link></li>
+                    	<li><s:link propagation="none"  view="/contract/ContractList.xhtml"><img src="#{request.contextPath}/asset/images/hetong.png" width="12" height="12" />&#160;合同管理</s:link></li>
+                    </ul>
+                	<div class="clear"></div>
+                </div>
+            </td>
+		<td valign="top">
+		<h:form id="user">
+                <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="工作 ">
+                    	</s:link>&#160;&gt;&#160;&#160;<font size="3">农事计划</font><rich:messages styleClass="messages"></rich:messages></div>
+                    </div>
+				<!--入库订单列表开始-->
+				<div class="all_d3">
+				<s:div styleClass="all_da all_w01" rendered="#{amRemindedHtiHome.baseId ne null and amRemindedHtiHome.baseId ne 0}">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">基地名称：</td>
+                                    <td>
+                                       <h:outputText value="#{baseHome.getBaseEdit(amRemindedHtiHome.baseId)}" id="bName"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </s:div>
+						<div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">区域：</td>
+                                    <td>
+										<h:inputHidden id="realPlantId" value="#{amRemindedHtiHome.realPlantId}"  />
+										<select  style="display: none;" id="combobox2" class="selectpicker" data-live-search="true">
+										    <a:repeat value="#{amRemindedHtiHome.getRealPlantList()}" var="_rp">
+										    	<h:panelGroup rendered="#{amRemindedHtiHome.realPlantId eq _rp.realPlantId}">
+										    		<option value="#{_rp.realPlantId}" selected="selected">#{_rp.tunnelInfoId.tunnelName}--#{_rp.breedBreedId.plant.name}</option>
+										    	</h:panelGroup>
+										    	<h:panelGroup rendered="#{amRemindedHtiHome.realPlantId ne _rp.realPlantId}">
+										    		<option value="#{_rp.realPlantId}" >#{_rp.tunnelInfoId.tunnelName}--#{_rp.breedBreedId.plant.name}</option>
+										    	</h:panelGroup>
+										    </a:repeat>
+										</select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="all_da all_w01">
+                        	
+                        	<table>
+                                <tr>
+                                    <td class="all_te">操作类型：</td>
+                                    <td>
+                                    	<h:panelGroup id="arit">
+											<h:selectOneMenu  id="plantingPattern"  styleClass="selectpicker" class="selectpicker" data-live-search="true"  value="#{amRemindedHtiHome.aritIdInfo}" >
+												<s:selectItems value="#{amRemindedHtiHome.getARTList()}" var="var" label="#{var.name}" itemValue="#{var.id}"/>
+											</h:selectOneMenu>
+										</h:panelGroup>
+                                    </td>
+                                    <td>
+                                    	<a href="javascript:void(0);" id="open" ><img src="../asset/images/six_03.png" /></a>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                        </div>
+                        
+                        <div class="all_da all_w01">
+                        	<table>
+                                <tr>
+                                    <td class="all_te">预计时间：</td>
+                                    <td>
+                                   		 <div class="input-append date form_datetime " >
+								    <h:inputText  id="plantBeginTime" styleClass="new_time" value="#{amRemindedHtiHome.instance.sendTime}">
+								    <f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+								    </h:inputText>
+								    <span class="add-on"><i class="icon-th"></i></span>
+								    </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                         <div class="all_da all_w01" style="width:724px;">
+                        	<table>
+                                <tr>
+								<td class="all_te">工作内容：</td>
+								<td>
+									<h:inputTextarea id="content" styleClass="form-control nw420" rows="3" value="#{amRemindedHtiHome.instance.content}" />
+	                            </td>
+								</tr>
+                            </table>
+                        </div>
+                        
+				</div>
+					<table class="r_c_table" cellpadding="0" cellspacing="0">
+                       <tr>
+							<td class="r_c_td"></td>
+							<td>
+						<h:commandButton id="persist" styleClass="btn btn-primary" value="提交" action="#{amRemindedHtiHome.persist}" rendered="#{!amRemindedHtiHome.managed}" onclick="return checkSubmit();" />
+		            	<h:commandButton id="update"  styleClass="btn btn-primary" value="提交" action="#{amRemindedHtiHome.update}" rendered="#{amRemindedHtiHome.managed}" onclick="return checkSubmit();" />
+		    			&#160;<s:link view="/farming/AmRemindedHtiList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" >
+		    			<f:param name="baseId" value="#{amRemindedHtiHome.baseId}"/>
+		    			<f:param name="pageNum" value="#{amRemindedHtiHome.pageNum}"/>
+		    			</s:link>
+                            </td>
+						</tr>
+					</table>
+				<!--入库订单列表结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <div class="clear"></div>
+              </h:form>
+              				<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="spanValue">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	          <h:panelGroup id="aritInfo">
+              <table class="pop" id="pop" width="530" height="270" cellpadding="0" cellspacing="0">
+                	<tr>
+                    	<td><img src="../asset/images/left_top.png" width="9" height="8" /></td>
+                        <td width="100%" height="8" style="background:url(../asset/images/top_cen.png) repeat-x;"></td>
+                        <td><img src="../asset/images/right_top.png" width="9" height="8" /></td>
+                    </tr>
+                	<tr>
+                    	<td width="9" height="100%" style="background:url(../asset/images/left_cen.png) repeat-y;"></td>
+                        <td class="pop_td" valign="top">
+                        	<table width="100%" cellpadding="0" cellspacing="0">
+                            	<tr>
+                                	<td align="left" width="19" height="17" class="tcdbor"><img src="../asset/images/tck_12.jpg" width="19" height="17" /></td>
+                                    <td align="left" class="tcdbor tcdtext">添加操作类型</td>
+                                    <td align="right" class="tcdbor"><a href="#" id="close"><img src="../asset/images/close_12.jpg" width="17" height="17" /></a></td>
+                            	</tr>
+                              </table>  
+                              <table cellpadding="0" cellspacing="0" style=" margin:15px auto 0 auto;"> 
+                                <tr>
+                                    <td class="tck_text">名称：</td>
+                                    <td align="left" class="tckinput" style="width: 190px;">
+                                    	<h:inputText styleClass="form-control nw221" id="name" value=""/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tck_text">描述：</td>
+                                    <td align="left" class="tckinput" style="width: 190px;">
+                                    	<h:inputTextarea  styleClass="form-control nw400" rows="3" id="content" value=""/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                	<td colspan="3" align="center" style="height: 50px;">
+                                		<a href="javascript:void(0);" class="btn btn-primary" id="insert" onclick="insertAr();">保存</a>&#160;&#160;
+                                		<a href="javascript:void(0);" class="btn btn-default" id="closetow">取消</a>
+                                	</td>
+                                </tr>
+                                
+                                
+                            </table>
+                            
+                        </td>
+                        <td width="9" height="100%" style="background:url(../asset/images/right_cen.png) repeat-y;"></td>
+                    </tr>
+                	<tr>
+                    	<td width="9" height="8"><img src="../asset/images/left_bot.png" width="9" height="8" /></td>
+                        <td width="100%" height="8" style="background:url(../asset/images/bot_cen.png) repeat-x;"></td>
+                        <td width="9" height="8"><img src="../asset/images/right_bot.png" width="9" height="8" /></td>
+                    </tr>
+                </table>
+                </h:panelGroup>
+                <a:form>
+		  			<a:queue requestDelay="10" ignoreDupResponses="true"/>
+			  		<a:jsFunction name="insertArInfo" action="#{amRemindedHtiHome.insertArInfo}" reRender="arit" data="#{amRemindedHtiHome.aritId}" oncomplete="aritInfoAll(data);">
+			  			<a:actionparam name="name" assignTo="#{amRemindedHtiHome.name}"/>
+						<a:actionparam name="content" assignTo="#{amRemindedHtiHome.content}"/>
+					</a:jsFunction>
+				</a:form>
+	            <script type="text/javascript">
+					BtPopShow("open","pop");
+					BtPopHide("close","pop");
+					BtPopHide("closetow","pop");
+				</script>
+              	<script  type="text/javascript">
+				//<![CDATA[
+				//]]>
+				</script>
+            </td> 
+           <script type="text/javascript">
+           jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd hh:ii",
+			    autoclose: true,
+				 weekStart: 1,
+				  //startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+			    
+			    pickerPosition: "bottom-left"
+			    });
+			    
+			  window.onload = function () {
+			    jquery('.selectpicker').selectpicker();
+			  };
+			</script>
+	</ui:define>
+
+</ui:composition>

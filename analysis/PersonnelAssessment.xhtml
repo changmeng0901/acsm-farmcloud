@@ -1,0 +1,398 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_analysisnew.xhtml">
+
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/analysis/assessment.css" />
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+	<style>
+	.cm_xqbCon {width: 100%;overflow-x:hidden;}
+	.bootstrap-select{ width: 195px;}
+	.neir .bootstrap-select{ width: 295px;}
+	</style>
+	<!-- #{personnelAssessmentHome.begin()} -->
+	<td valign="top">
+		<div class="right_c" style="min-height:30px;">
+			<div class="r_title">
+				<div class="r_t_l"><font size="3">人员考核</font></div>
+			</div>
+			<div class="clear"></div>
+		</div>   
+		<h:form id="search">
+		<div class="people_top pt20 pl30 pr30">
+        	<ul class="dateSelt pb15 clear">
+            	<li class="dateSeltLi01 mb15">日期选择</li>
+            	<li>
+                	<table cellpadding="0" cellspacing="0">
+                      <tbody>
+                          <tr>
+                              <td width="140">
+                              	<div class="input-append date form_datetime">
+									<h:inputText id="startTime" size="18" type="text" value="#{personnelAssessmentHome.beginTime}" readonly="#{facesContext.renderResponse}"></h:inputText>
+                                  	<span class="add-on"><i class="icon-th"></i></span>
+                               </div>
+                              </td>
+                              <td width="20">—</td>
+                              <td width="140">
+                              	<div class="input-append date form_datetime">
+									<h:inputText id="endTime" size="18" type="text" value="#{personnelAssessmentHome.endTime}" readonly="#{facesContext.renderResponse}"></h:inputText>
+                                  <span class="add-on"><i class="icon-th"></i></span>
+                               </div> 
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+                      </li>
+                       <li style="float:right" >
+                           <s:link   view="/analysis/PersonnelAssessment.xhtml" action="#{personnelAssessmentHome.exportExcelMain}" >
+                               <img src="#{request.contextPath}/asset/images/fxdc.jpg"/>
+                           </s:link>
+                       </li> 
+                      <li class="dateSeltLi01 mb15 quyu" style="padding-left:25px;">区域</li>
+                      <li >
+                          <select  id="paId" class="selectpicker"  data-live-search="true" style="display: none;" multiple="multiple">
+							<a:repeat value="#{personnelAssessmentHome.paList}" var="var">
+								<option value="#{var.id}">#{var.name}</option>
+							</a:repeat>
+							</select>
+							<h:inputHidden value="#{personnelAssessmentHome.paId}" id="paId2"/>
+                      </li>
+                     
+                      <li class="dateSeltLi01 " style="clear:both;" >操作内容</li>
+                      <li class="neir">
+                           <select  id="amId"  class="selectpicker"  data-live-search="true" style="display: none;" multiple="multiple">
+									<a:repeat value="#{personnelAssessmentHome.amList}" var="var">
+										<option value="#{var.id}">#{var.name}</option>
+									</a:repeat>
+							</select>
+							<h:inputHidden value="#{personnelAssessmentHome.amId}" id="amId2"/>
+	                   </li>
+	                   <li class="dateSeltLi01 pl20 mr5 caoz" >操作人</li>
+	                      <li>
+	                           <select  id="faId" class="selectpicker"  data-live-search="true" style="display: none;" multiple="multiple">
+									<a:repeat value="#{personnelAssessmentHome.faList}" var="var">
+										<option value="#{var[0]}">#{var[1]}</option>
+									</a:repeat>
+							</select>
+							<h:inputHidden value="#{personnelAssessmentHome.faId}" id="faId2"/>
+                      </li>
+                      <li style="margin-left:20px" >
+                           <h:commandButton action="/analysis/PersonnelAssessment.xhtml" onclick="return checksub()"  styleClass="btn btn-primary" value="搜索" style="float:left;margin-right:10px"/>
+           				 <h:commandButton id="reset" action="#{personnelAssessmentHome.reset}"  includePageParams="false" styleClass="btn btn-default" value="重置" style="float:left;"/>
+                      </li>
+                  </ul>  
+              </div>
+		
+		
+		
+			
+		</h:form>
+		<div class="clear"></div>
+		<div class="cm_tjfxBd pt20">
+		<h:inputHidden id="aName"/>
+                	<div class="tjfxTabTp">
+                     <ul class="nav nav-tabs" role="tablist" id="myTab">
+                      <li class="active ml30"><a href="#home" role="tab" data-toggle="tab" onclick="clickHome()">排名图</a></li>
+                      <li class=""><a href="#profile" role="tab" data-toggle="tab" onclick="clickProfile()">详情表</a></li>
+                    </ul>
+                    </div>
+                    
+                    
+                    
+                    
+                    <div class="tjfxTabBt pt40 ml30 mr30">
+                        <div class="tab-content ">
+                            <div class="tab-pane active clear" id="home">
+                       	<div class="tabTop " style="text-align:center; margin-bottom:30px;">
+                       		<div class="tabTopL mr30 " style="display:inline;">
+                       			<img src="#{request.contextPath}/asset/images/analysis/gongshi-icon.png"  width="35px" height="35px"/>
+                       			<span style="font-size: 16px;">工时</span>
+                       			<span style="color:#56a9cf;">#{personnelAssessmentHome.allTime}</span>
+                       			<span>小时</span>
+                       		</div>
+                       		<div class="tabTopL" style="display:inline;">
+                       		<img src="#{request.contextPath}/asset/images/analysis/gongzuoliang-icon.png"  width="35px" height="35px"/>
+                       			<span style="font-size: 16px;">农事工作量</span>
+                       			<span style="color:#ff7200;">#{personnelAssessmentHome.allNum}</span>
+                       			<span>件次</span>
+                       		</div>
+                       	</div>
+                                <!--  <div class="cm_pmtCon pb20">
+                                    <table class="cm_userHd">
+                                        <tbody>
+                                            <tr>
+                                           		<td>
+                                                	<span>人员考核统计</span>
+	                                            </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>-->
+                                <div class="cm_pmtZhu">
+                                	<div id="flot-placeholder" class="chart22" style="height:300px;"></div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="profile">
+                            <div class="tabTop tabTop2" style="text-align:center; margin-bottom:30px;">
+                       		<div class="tabTopL mr30 " style="display:inline;">
+                       			<img src="#{request.contextPath}/asset/images/analysis/gongshi-icon.png"  width="35px" height="35px"/>
+                       			<span style="font-size: 16px;">工时</span>
+                       			<span style="color:#56a9cf;">#{personnelAssessmentHome.allTime}</span>
+                       			<span>小时</span>
+                       		</div>
+                       		<div class="tabTopL" style="display:inline;">
+                       		<img src="#{request.contextPath}/asset/images/analysis/gongzuoliang-icon.png"  width="35px" height="35px"/>
+                       			<span style="font-size: 16px;">农事工作量</span>
+                       			<span style="color:#ff7200;">#{personnelAssessmentHome.allNum}</span>
+                       			<span>件次</span>
+                       		</div>
+                       	</div>
+                            <div style="float: right; margin-top:-25px;" class="paixu"> <input type="checkbox"  id="cheAll" name="cheAll" ><span style="margin-left:5px;">按工时排序</span></input></div>
+                               
+                                <div class="cm_xqbCon">
+                                <h:panelGroup id="order">
+                                <table class="tableXqb" cellpadding="0" cellspacing="0" width="100%">
+                                	<thead>
+                                    	<tr>
+                                        	<td width="60">排名</td>
+                                            <td width="250">操作人</td>
+                                            <td width="150">工时（小时）</td>
+                                            <td width="150">农事工作量（件次）</td>
+                                            <td width="220">操作</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    	<a:repeat value="#{personnelAssessmentHome.diagramList}" var="_fs" rowKeyVar="_index">
+	                                    	<tr>
+	                                        	<td>#{_index+1}</td>
+	                                            <td>#{_fs[2]}</td>
+	                                            <td>#{_fs[0]}</td>
+	                                            <td>#{_fs[1]}</td>
+	                                            <td><a href="javascript:;"  onclick="aname('#{_fs[2]}','#{_fs[3]}')">查看详情 </a></td>
+	                                        </tr>
+                                        </a:repeat>
+                                    </tbody>
+                                </table>
+                                </h:panelGroup> 
+                            	</div>
+                            	
+                            	
+                            	<div id="infoinfo" style="display:none">
+                             <s:div id="infoinfo_">
+                             	<div class="clear" style="margin-top:20px;">
+		                             <div id="infoname" style="float:left;height:30px;line-height:30px;">
+			                             		<span>操作人:</span>
+			                             		<span id="infoname_"></span>
+			                             		<span style="padding-left: 20px">总工时：#{personnelAssessmentHome.oneTime} </span>
+			                             		<span style="padding-left: 20px">农事工作量：#{personnelAssessmentHome.oneNum}</span>
+			                             
+		                             </div>
+		                             <input type="button" onclick="jquery('#infoinfo').hide();jquery('.cm_xqbCon').show();fanhui()" class="btn btn-default fr" value="返回" id="bn_left6" style="margin-left:10px" />
+                             	</div>
+                             <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:15px;">
+                                 <tr>
+                                     <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                                     <td colspan="4" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                                     <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                                 </tr>
+                                 <tr>
+                                     <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                                     <th class="fxze_bg2" style="text-align: center;">区域</th>
+                                     <th class="fxze_bg2" style="text-align: center;">操作项</th>
+                                     <th class="fxze_bg2" style="text-align: center;">工时（小时）</th>
+                                     <th class="fxze_bg2" style="text-align: center;">农事工作量（件次）</th>
+                                     <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                                 </tr>
+                                 <h:panelGroup rendered="#{empty personnelAssessmentHome.diagramList}">
+                                 	<tr >
+	                                     <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+	                                     <td class="ze_bg2" colspan="8">没有找到符合条件的记录</td>
+	                                     <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                 	</tr>
+                                 </h:panelGroup>
+                                 <a:repeat value="#{personnelAssessmentHome.listobj}" var="obj" rowKeyVar="_index" rendered="#{not empty personnelAssessmentHome.listobj}">
+                                 	<tr >
+                                     <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                                   	<ui:fragment rendered="#{_index==0}">
+                                   		<td class="ze_bg2">#{obj[3]}</td>
+                             		</ui:fragment>           
+                           			<ui:fragment rendered="#{_index!=0  &amp;&amp; obj[3] ne personnelAssessmentHome.listobj[_index-1][3]}">
+                           				<td class="ze_bg2">#{obj[3]}</td>
+                           		 	</ui:fragment>  
+                           		 	<ui:fragment rendered="#{_index!=0  &amp;&amp; obj[3] eq personnelAssessmentHome.listobj[_index-1][3]}">
+                           				<td class="ze_bg2"></td>
+                           		 	</ui:fragment>
+                                     
+                                     <td class="ze_bg2">#{obj[2]}</td>
+                                     <td class="ze_bg2">#{obj[0]}</td>
+                                     <td class="ze_bg2">#{obj[1]}</td>
+                                     <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                                 </tr>
+                                 </a:repeat>
+                             </table> 
+                             </s:div>
+                             </div>
+                            	
+                            	
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a:form id="formid" >
+                <a:jsFunction name="lookinfo"  eventsQueue="mainQueue"  action="#{personnelAssessmentHome.selectOrderList()}" reRender="infoinfo_" oncomplete="jquery('#infoinfo').show();jquery('.cm_xqbCon').hide();huidiao()">
+				<a:actionparam name="aafarId" assignTo="#{personnelAssessmentHome.aafarId}"/>
+				</a:jsFunction>
+				<a:jsFunction name="allsort"  eventsQueue="mainQueue"  action="#{personnelAssessmentHome.allSort()}" reRender="order">
+				<a:actionparam name="orderId" assignTo="#{personnelAssessmentHome.orderId}"/>
+				</a:jsFunction>
+				</a:form>
+                <script language="javascript" type="text/javascript" src="#{request.contextPath}/asset/js/jquery.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script>
+                <script type="text/javascript">
+	//<![CDATA[
+	
+	var workName = #{personnelAssessmentHome.workName};
+	var workTime = #{personnelAssessmentHome.workTime}
+	var workNum = #{personnelAssessmentHome.workNum}
+	
+	$J = jQuery.noConflict();
+	$J(function() {
+		$J('#flot-placeholder').highcharts({
+			title :{
+			    text:null
+			},
+	        scrollbar: {
+	               enabled: true
+	          },
+          xAxis: {
+        	 	 max:(workName.length>20?20:workName.length-1),
+	            categories: workName
+	        },
+			yAxis:[{
+				min:0,
+				title: {
+	                text: '农事工作量'
+	            }
+			},{
+				opposite: true,
+				min:0,
+				title: {
+	                text: '工时'
+	            }
+			}],
+			
+	        series: [{
+	        	type: 'column',
+	        	yAxis: 1,
+	        	name:'工时',
+	            data: workTime
+	        },{
+	        	name:'农事工作量',
+	        	yAxis: 0,
+	            data: workNum,
+	            color:'#FF8800',
+	            marker: {
+					lineWidth: 2,
+					lineColor: "#FF8800"
+				}
+	        }
+	        ]
+	    });
+	}); 
+
+
+	 jquery(document).ready(function(){
+     	
+     	jquery('input').iCheck({
+     	    checkboxClass: 'icheckbox_minimal-blue',
+     	    radioClass: 'iradio_minimal-blue',
+     	    increaseArea: '20%' // optional
+     	  });
+   	  
+     	jquery(".form_datetime").datetimepicker({
+		    format: "yyyy-mm-dd",
+		    autoclose: true,
+			 weekStart: 1,
+			  //startDate: "2014-08-14 10:00",
+			 language:  'zh-CN',
+			 minView:2,
+		    pickerPosition: "bottom-left"
+		    });
+
+     	jquery('.selectpicker').selectpicker();
+		jquery('#paId').selectpicker({noneSelectedText:"全部"});
+	    jquery('#paId').selectpicker('deselectAll');
+		jquery('#amId').selectpicker({noneSelectedText:"全部"});
+		jquery('#amId').selectpicker('deselectAll');
+		jquery('#faId').selectpicker({noneSelectedText:"全部"});
+		jquery('#faId').selectpicker('deselectAll'); 
+
+		if(jquery("#search\\:paId2").val()!=""){
+			jquery('#paId').selectpicker('val',jquery("#search\\:paId2").val().split(','));
+		}
+		if(jquery("#search\\:amId2").val()!=""){
+			jquery('#amId').selectpicker('val',jquery("#search\\:amId2").val().split(','));
+		}
+		if(jquery("#search\\:faId2").val()!=""){
+			jquery('#faId').selectpicker('val',jquery("#search\\:faId2").val().split(','));
+		}
+
+
+		jquery("#cheAll").on("ifClicked", function(event){
+
+			if(jquery("#cheAll").parent().attr('class').indexOf('checked')==-1){
+				allsort(1);
+			}else{
+				allsort(0);
+				}
+		})
+	 })
+	 
+	 function checksub(){
+		 jquery("#search\\:paId2").val(jquery("#paId").val());
+		 jquery("#search\\:amId2").val(jquery("#amId").val());
+		 jquery("#search\\:faId2").val(jquery("#faId").val());
+		
+		 }
+
+	 function huidiao(){
+		 jquery('.tabTop2').attr('style','display:none;');
+		 jquery('.paixu').attr('style','display:none;');
+		jquery('.tjfxTabBt').attr('class','tjfxTabBt ml30 mr30');
+		jquery('#infoname_').text(jquery('#aName').val());
+		 
+	}
+	function fanhui(){
+		jquery('.tabTop2').attr('style','text-align:center;margin-bottom:30px;');
+		jquery('.paixu').attr('style','float: right; margin-top:-25px;');
+		jquery('.tjfxTabBt').attr('class','tjfxTabBt pt40 ml30 mr30');
+	}
+	function clickHome(){
+		if(jquery('.tjfxTabBt').attr('class').indexOf('pt40')==-1){
+			jquery('#home').find('.tabTop').attr('class','tabTop pt40');
+		}
+	}
+	function clickProfile(){
+		jquery('#home').find('.tabTop').attr('class','tabTop');
+		}
+	function aname(name,id){
+		jquery('#aName').val(name);
+		lookinfo(id);
+		}
+	//]]>
+	</script>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/analysis/assessment.css" />
+	
+	</td>
+	
+</ui:define>
+</ui:composition>

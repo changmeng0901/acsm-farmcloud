@@ -1,0 +1,326 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+
+	<title>供货管理</title>
+    <link type="text/css" rel="stylesheet" href="../asset/css/bootstrap/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="../asset/css/bootstrap-select.min.css" />
+    <link type="text/css" rel="stylesheet" href="http://taitems.github.com/UX-Lab/core/css/prettify.css" />
+	<link type="text/css" rel="stylesheet" href="../asset/js/gantt/gtstyle2.css" />
+    <link type="text/css" rel="stylesheet" href="../asset/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="../asset/css/commons/commons.css" />
+    <link type="text/css" rel="stylesheet" href="../asset/css/supply/SypplyGantt.css" />
+
+</head>
+
+<body>
+<div class="top">
+	<div class="logo"><img src="../images/commons/logo_01.jpg" width="200" height="60" /></div>
+</div>
+
+<div class="content">
+    <table width="100%" height="100%" cellpadding="0" cellspacing="0">
+    	<tr>
+        	<td class="left_c" valign="top" width="76">
+            <!--左边开始-->
+            <div class="left_c1">
+                
+            </div>
+            <!--左边结束-->
+            </td>      
+            <td valign="top">
+            <div class="right_c" style="min-height:30px; padding-bottom:15px; padding-top:15px;">
+            	<!-- 面包屑导航 开始 -->
+                <div class="r_title">
+	         		<div class="r_t_l cm_r_t_l"><span>销售工具</span><em>&nbsp;&gt;&nbsp;</em><font	size="3">供货管理</font></div>
+	            </div>
+                <div class="search_header clear">
+                    <div class="search_selected fl mr5">
+                        <dl class="se_selt180 fl">
+                            <dt>产品状态</dt>
+                            <dd class="boot_selected_100">
+                            <select style="display: none;" class="selectpicker">
+                            	<option selected="selected">全部</option>
+                            	<option>现货</option>
+                            	<option>预售</option>
+                            </select>
+                            </dd>
+                        </dl>
+                        <dl class="se_selt180 fl">
+                            <dt>供应类型</dt>
+                            <dd class="boot_selected_100">
+                            <select style="display: none;" class="selectpicker">
+                            	<option selected="selected">全部</option>
+                            	<option>已上架</option>
+                            	<option>未上架</option>
+                            </select>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="search_blt">
+                        <div class="public-search fl mr5">
+                            <span class="octicon-search02"></span>
+	            			<input class="form-control srarchfont w140" value="请输入产品名称" onfocus="FocusFn(this,'#333','请输入产品名称')" onblur="BlurFn(this,'#a8a8a8','请输入产品名称')"></input>
+                        </div>
+        				<button class="btn btn-primary fl mr10">搜索</button>
+        				<a class="btn btn-success fl">添加</a>
+                    </div>
+                    <div class="fr mt5">
+	                    <div class="year_box fl mr10">
+	                    	<span class="y_item y_lt" onclick="MinusoneFn()">&lt;</span>
+	                    	<span class="y_item y_ct" id="iYear"></span>
+	                    	<span class="y_item y_rt" onclick="PlusoneFn()">&gt;</span>
+	                    </div>
+	                    <div class="sort_way fl">
+		                	<p class="btn_tb">图表</p>
+		                	<p class="btn_xq dq_cur">详情</p>
+		                </div>
+	                </div>
+                </div>
+                <!-- 主体 -->
+                <div>
+                	<div class="gantt_wrap">
+						<div class="gantt_spacer">
+							<p class="txt_name">产品名称</p>
+							<p class="txt_status">产品状态</p>
+						</div>
+						<div class="gantt">
+						</div>
+					</div>
+                </div>
+                <!-- 主体 -->
+            </div>
+            </td>    
+    	</tr>  
+   </table> 
+</div>
+
+
+<script type="text/javascript" src="../asset/js/gantt/jquery-1.10.2.min.js"></script>
+<script>
+	Array.prototype.del = function(n) {  
+		if(n<0){
+			return this;
+		}else{
+			return this.slice(0,n).concat(this.slice(n+1,this.length));
+		}
+	} ;
+	var nowpage; //gantt当前页数
+	var totalSize;//gantt数据总条数
+	var max;
+</script>
+<script type="text/javascript" src="../asset/js/gantt/bootstrap.min.js"></script>
+<script type="text/javascript" src="../asset/new_clone/bootstrap-select.js"></script>
+<script type="text/javascript" src="../asset/js/gantt/jquery.fn.gantt2.js"></script>
+<script type="text/javascript" src="../asset/js/gantt/prettify.js"></script>
+<script type="text/javascript">
+	//(1)下拉菜单
+	_Q('.selectpicker').selectpicker(); 
+	//(2)获取焦点，失去焦点
+    function FocusFn(obj,oColor,txt_val){
+    	if(_Q(obj).val()==txt_val){
+    		_Q(obj).val('');
+    		_Q(obj).css('color',oColor)
+    	}
+    }
+    function BlurFn(obj,oColor,txt_val){
+    	if(_Q(obj).val()==''){
+    		_Q(obj).val(txt_val);
+    		_Q(obj).css('color',oColor)
+    	}
+    }
+    //(3)年的计算
+    var newdate = new Date();
+    var iYear = newdate.getFullYear();
+    _Q('#iYear').html(iYear);
+    function MinusoneFn(){
+    	var _minus = Number(_Q('#iYear').html());
+    	_Q('#iYear').html(_minus-1);
+    }
+    function PlusoneFn(){
+    	var _plus = Number(_Q('#iYear').html());
+    	_Q('#iYear').html(_plus+1);
+    }
+    
+    var source = [{
+		name: "黄瓜",
+		desc: "现货",
+		values: [{
+            from: "/Date(1485878400000)/",
+			to: "/Date(1488326400000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttRed",
+			desc: "现货",
+			dataObj:{id:1}
+		}]
+	},{
+		name: " ",
+		desc: "现货",
+		values: [{
+            from: "/Date(1485878400000)/",
+			to: "/Date(1488326400000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttOrange"
+		}]
+	},{
+		name: " ",
+		desc: "现货",
+		values: [{
+			from: "/Date(1488326400000)/",
+			to: "/Date(1506816000000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttBlue"
+		}]
+	},{
+		name: "土豆",
+		desc: "现货",
+		values: [{
+			from: "/Date(1488326400000)/",
+			to: "/Date(1506816000000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttGreen"
+		}]
+	},{
+		name: "土豆",
+		desc: "现货",
+		values: [{
+			from: "/Date(1488326400000)/",
+			to: "/Date(1512086400000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttGreen"
+		}]
+	},{
+		name: "黄瓜",//每一行最左侧的一列以粗体显示
+		desc: "现货",//每一行左侧第二列
+		values: [{//甘特图日期范围项
+            from: "/Date(1488326400000)/",//开始时间，以毫秒为换算单位
+			to: "/Date(1512086400000)/",//结束时间，以毫秒为换算单位
+			label: "供应量：1000kg",//甘特项显示文本
+			customClass: "ganttRed"//甘特项的自定义class
+		}]
+	},{
+		name: "黄瓜",
+		desc: "现货",
+		values: [{
+            from: "/Date(1485878400000)/",
+			to: "/Date(1488326400000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttRed"
+		}]
+	},{
+		name: " ",
+		desc: "现货",
+		values: [{
+            from: "/Date(1485878400000)/",
+			to: "/Date(1488326400000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttRed"
+		}]
+	},{
+		name: " ",
+		desc: "现货",
+		values: [{
+			from: "/Date(1488326400000)/",
+			to: "/Date(1506816000000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttBlue",
+			dataObj:{real_plant_id:1,tunnel_info_id:2}
+		}]
+	},{
+		name: "土豆",
+		desc: "现货",
+		values: [{
+			from: "/Date(1488326400000)/",
+			to: "/Date(1506816000000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttGreen"
+		}]
+	},{
+		name: "土豆",
+		desc: "现货",
+		values: [{
+			from: "/Date(1488326400000)/",
+			to: "/Date(1512086400000)/",
+			label: "供应量：1000kg",
+			customClass: "ganttOrange"
+		}]
+	}];
+
+    nowpage=0; //gantt当前页数
+	totalSize = 10;//gantt数据总条数
+    pageSize =5;//gantt一页显示几条数据
+    max = totalSize/pageSize;
+    function mygantt(_source,pageSize){
+		"use strict";
+		_Q(".gantt").gantt({
+			source: _source,
+			navigate: "scroll",//时间范围的级别 例如：["hours", "days", "weeks", "months"]
+			scale: "weeks",
+			minScale: "weeks",
+			maxScale: "weeks",
+			waitText:"等待提示文本",
+			months : ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+			itemsPerPage:pageSize,//分页的每页数据行数
+			//startPos : '', //默认开始位置日期
+			scrollToToday: true,
+			onItemClick: function(data) {
+				//alert("Item clicked - show some details");
+				alert(data.id);
+			},
+			onAddClick: function(dt, rowId) {
+				//alert(dt+"|"+rowId);
+				//alert("Empty space clicked - add an item!");
+			},
+			onRender: function() {
+				if (window.console && typeof console.log === "function") {
+					console.log("chart rendered");
+				}
+			}
+		});
+		
+		/* for(var i=0;i<_source.length;i++){
+			_Q(".gantt").popover({
+				selector: ".bar",
+				title: _source[i].name,
+				//content: _source[i].desc,
+				placement : 'top',
+				content: '<p style="background:red;">'+_source[i].name+'</p></br><p style="background:#f1f1f1;">'+_source[i].desc+'</p>',
+				trigger: "hover",
+				html : true
+			});
+		} */ 
+    }
+    mygantt(source,pageSize);
+
+
+	//加载下一页数据方法
+	function next_page(max){
+   		nowpage = nowpage+1;
+		if(nowpage>max){
+			nowpage = max;
+			return;
+		}
+   		//重新调用gantt方法
+   		mygantt(source,pageSize);
+    }
+	//加载上一页数据方法
+    function prev_page(){
+   		nowpage = nowpage-1;
+		if(nowpage<0){
+			nowpage = 0;
+			return;
+		}
+   		//重新调用gantt方法
+   		mygantt(source,pageSize);
+    }
+	
+	
+	prettyPrint();
+</script>
+
+
+</body>
+</html>
+

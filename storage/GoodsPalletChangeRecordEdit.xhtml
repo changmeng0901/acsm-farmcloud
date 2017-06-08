@@ -1,0 +1,161 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+	 <rich:panel>
+        <f:facet name="header">出库单信息</f:facet>
+
+
+        <s:decorate id="name" template="/layout/display.xhtml">
+            <ui:define name="label">出库单名称</ui:define>
+            <h:outputText value="#{storageChangeFormHome.instance.name}"/>
+        </s:decorate>
+
+        <s:decorate id="createTime" template="/layout/display.xhtml">
+            <ui:define name="label">创建时间</ui:define>
+            <h:outputText value="#{storageChangeFormHome.instance.createTime}"/>
+        </s:decorate>
+
+        <s:decorate id="insertTime" template="/layout/display.xhtml">
+            <ui:define name="label">插入时间</ui:define>
+            <h:outputText value="#{storageChangeFormHome.instance.insertTime}"/>
+        </s:decorate>
+
+        <s:decorate id="storageChangeTypeId" template="/layout/display.xhtml">
+            <ui:define name="label">仓储类型</ui:define>
+            <h:outputText value="#{storageChangeFormHome.instance.storageChangeTypeId.name}"/>
+        </s:decorate>
+
+        <s:decorate id="operater" template="/layout/display.xhtml">
+            <ui:define name="label">明细</ui:define>
+            <h:outputText value="#{storageChangeFormHome.instance.operater}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+       
+
+        <s:button view="/storage/#{empty storageChangeFormFrom ? 'StorageChangeFormList' : storageChangeFormFrom}.xhtml"
+                    id="done"
+                 value="返回"/>
+
+    </div>
+	<table width="900" class="nsjl" cellpadding="0" cellspacing="0" >
+	        	<tr>
+	        		<th width="14%">名称—</th>
+	        		<th width="14%">数量—</th>
+	        		<th width="15%">物料—</th>
+	        	</tr>
+	         	<a4j:repeat rendered="#{not empty storageChangeFormHome.storageGoodsChangeFormList}" value="#{storageChangeFormHome.storageGoodsChangeFormList}" var="_var" rowKeyVar="_index">
+	            <tr>
+	                <td>
+	                	#{_var.name}
+	                </td>
+	                 <td>
+	                	#{_var.goodsNum}
+	                </td>
+	                 <td>
+	                	#{_var.goodsInfoId.name}
+ 	                </td>
+	        	</tr>
+	            </a4j:repeat>
+	       	</table>
+       		<s:link propagation="none"  view="/storage/GoodsPalletChangeRecordEdit.xhtml" action="#{storageChangeFormHome.addorderGoods()}" value="添加" immediate="true" id="add" onclick="submitYouFrom();">
+			</s:link>
+	    	<table width="900" class="nsjl" cellpadding="0" cellspacing="0" >
+	        	<tr>
+	        		<th width="10%">产品批次—</th>
+	        		<th width="10%">托盘—</th>
+	        		<th width="10%">变动类型—</th>
+	        		<th width="10%">物料数量—</th>
+	        		<th width="10%">重量—</th>
+	        		<th width="10%">总重量—</th>
+	        		<th width="10%">操作人—</th>
+	        		<th width="10%">操作—</th>
+	        	</tr>
+	         	<a4j:repeat rendered="#{not empty storageChangeFormHome.goodsPalletChangeRecordList}" value="#{storageChangeFormHome.goodsPalletChangeRecordList}" var="_varg" rowKeyVar="_index">
+	            <tr>
+	                <td>
+	                  <h:form>
+	                	<s:decorate id="goodsBatchIdField" template="../layout/edit.xhtml">
+							<rich:inplaceSelect value="#{_varg.goodsBatchId.goodsBatchId}" id="goodsBatchId" required="true" defaultLabel="请选择" >
+								 <f:selectItems value="#{storageChangeFormHome.batchCood}" />
+								<a4j:support event="onviewactivated" reRender="outputnoe,palletIdField" />
+							</rich:inplaceSelect>
+						</s:decorate>
+						<h:outputText id="outputnoe" value="#{storageChangeFormHome.getStoragePalletList(_varg.goodsBatchId.goodsBatchId, _index)}"/>
+    				</h:form>
+						
+	                </td>
+	                 
+	                 <td>
+	                 	 <h:form>
+		                 	<s:decorate id="palletIdField" template="../layout/edit.xhtml">
+			                 	<rich:inplaceSelect value="#{_varg.palletId.storagePalletId}" id="palletId" defaultLabel="请选择" required="true">
+									 <f:selectItems value="#{storageChangeFormHome.storagePallet}" />
+									<a4j:support event="onviewactivated" reRender="outputtow"/>
+								</rich:inplaceSelect>
+		                	</s:decorate>
+		                	<h:outputText id="outputtow" value="#{storageChangeFormHome.getStoragePalletList2(_varg.palletId.storagePalletId, _index )}"/>
+		                </h:form>
+	                </td>
+	                <h:form id="form3">
+	                 <td>
+	                	<rich:inplaceInput layout="block" value="#{_varg.changeType}" id="changeType" selectOnEdit="true" editEvent="ondblclick">
+	                        <a4j:support event="onviewactivated" reRender="table"/>
+	                    </rich:inplaceInput>
+ 	                </td>
+ 	                <td>
+	                	<rich:inplaceInput layout="block" value="#{_varg.goodsNum}" id="goodsNum" selectOnEdit="true" editEvent="ondblclick">
+	                        <a4j:support event="onviewactivated" reRender="table"/>
+	                    </rich:inplaceInput>
+ 	                </td>
+ 	                <td>
+	                	<rich:inplaceInput layout="block" value="#{_varg.itemWeight}" id="itemWeight" selectOnEdit="true" editEvent="ondblclick">
+	                        <a4j:support event="onviewactivated" reRender="table"/>
+	                    </rich:inplaceInput>
+ 	                </td>
+ 	                <td>
+	                	<rich:inplaceInput layout="block" value="#{_varg.totalWeight}" id="totalWeight" selectOnEdit="true" editEvent="ondblclick">
+	                        <a4j:support event="onviewactivated" reRender="table"/>
+	                    </rich:inplaceInput>
+ 	                </td>
+ 	                <td>
+	                	<rich:inplaceInput layout="block" value="#{_varg.operater}" id="operater" selectOnEdit="true" editEvent="ondblclick">
+	                        <a4j:support event="onviewactivated" reRender="table"/>
+	                    </rich:inplaceInput>
+ 	                </td>
+ 	                </h:form>
+ 	                <td>
+	                	<rich:inplaceInput layout="block" value="#{_varg.operater}" id="operater" selectOnEdit="true" editEvent="ondblclick">
+	                        <a4j:support event="onviewactivated" reRender="table"/>
+	                    </rich:inplaceInput>
+ 	                </td>
+ 	                 <td>
+ 	                <s:link propagation="none"  view="/storage/GoodsPalletChangeRecordEdit.xhtml" action="#{storageChangeFormHome.goodsReset(_index)}" value="删除" immediate="true" id="re" >
+					</s:link>
+					</td>
+	        	</tr>
+	            </a4j:repeat>
+	       	</table>
+<script type="text/javascript" language="javascript">
+function submitYouFrom(){
+ 	document.getElementById("form3").submit();
+}
+</script>
+</ui:define>
+
+</ui:composition>

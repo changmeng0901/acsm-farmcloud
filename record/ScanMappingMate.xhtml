@@ -1,0 +1,162 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+	
+	<ui:define name="body">
+	<link rel="stylesheet" href="#{request.contextPath}/asset/css/record/ResumeMatchOperation.css" type="text/css" />
+	
+	<div class="box_back" id="login" style="display:none;z-index:1000">
+    <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" />
+  	</div>
+</div>
+	<!-- #{scanMappingInfoHome.beginMate()} -->
+		<td valign="top">
+            <div class="right_c" style="min-height:30px; padding-bottom:20px; padding-top:20px;">
+                <!-- 面包屑导航 开始 -->
+                <div class="r_title clear" style="margin-top:0;">
+                    <div class="r_t_l fl">精准营销&#160;&gt;&#160;&#160;<span>履历</span><em>&gt;</em><font size="3">履历匹配</font></div>
+                </div>
+                <!-- 面包屑导航 结束 -->
+                <!-- 履历匹配内容 开始 -->
+                <div class="resume-match-search">
+                	<div class="crop-match-con">
+                    	<h3 class="crop-name">#{param.name}履历匹配</h3>
+                        <div class="crop-search" style="overflow:hidden;">
+                        	<div class="public-search fl">
+                                <span class="octicon-search02"></span>
+                                <input class="form-control srarchfont" type="text" value="搜索履历"/>
+                            </div>
+                            <dl class="dl-dl fr">
+                                <dt class="dl-dt">
+                                    <span class="bg-ico ico-lvli"></span>履历
+                                </dt>
+                                <dd class="dl-dd">
+                                    <strong class="num">#{scanMappingInfoHome.mateList.size()}</strong>张
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding-left:50px;">
+                	<em class="resume-match-tip"><span>提示：</span>选择想要的履历请点击右上角对号，也可以进入详情页确认</em>
+                    <ul class="designUl1 clear">
+                    	<a4j:repeat  value="#{scanMappingInfoHome.mateList}"  var="var"  rendered="#{not empty scanMappingInfoHome.mateList}" rowKeyVar="_index">
+                    		<li>
+	                            <div class="designDiv1">
+	                            <a href="#" onclick="goUrl('#{request.contextPath}/record/ScanMappingRecord.seam?productRecordProductInfoId=#{var.productInfoId}&amp;id=#{param.id}&amp;name=#{param.name}')">
+	                                <div class="designConWap1">
+	                                    <div class="designCon1">
+	                                        <div class="designHd1">
+	                                            <span class="designLogo1">
+		                                            <ui:fragment rendered="#{var.phoneModelInfoId.logoImageUrl!=null and var.phoneModelInfoId.logoImageUrl!=''}">
+										        		<img src="#{var.phoneModelInfoId.logoImageUrl}"  width="50" height="18" />
+											        </ui:fragment>
+											        <ui:fragment rendered="#{var.phoneModelInfoId.logoImageUrl==null or  var.phoneModelInfoId.logoImageUrl ==''}">
+											        	<img src="#{request.contextPath}/asset/images/logo_03.png" width="50" height="18" />
+											        </ui:fragment>
+	                                            </span>
+	                                            <span class="designReturn1"><img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" /></span>
+	                                        </div>
+	                                        <div class="designCt1">
+	                                        	<ui:fragment rendered="#{var.breed.plant.plantImgRound!=null}">
+										        	<img src="#{_pro.breed.plant.plantImgRound}" width="68" height="68" /> 
+										        </ui:fragment>
+										        <ui:fragment rendered="#{var.breed.plant.plantImgRound==null}">
+										       		<img src="#{request.contextPath}/asset/images/pic_04.png" class="designImg1" width="68" height="68" />
+										        </ui:fragment>  
+	                                        </div>
+	                                        <h4 id="#{var.productInfoId}_pName" style="#{var.productName eq null or _pro.productName eq ''?'':'display:none'}">#{var.breed.plant.name}</h4>
+              								<h4 id="#{var.productInfoId}_pName2" style="#{var.productName ne null and _pro.productName ne ''?'':'display:none'}">#{var.productName}</h4>
+	                                        <h5>#{var.breed.plant.englishName}</h5>
+	                                        <p style="overflow: hidden; height: 18px;">基地：#{scanMappingInfoHome.getBaseInfoByEi(var.tunnelInfo.baseId).name}(#{var.tunnelInfo.tunnelName})</p>
+	                                    </div>
+	                                </div>
+	                                </a>
+	                                <a class="enter-resume-xx" href="#" onclick="make('#{param.name}','#{var.plantName}','#{param.id}','#{var.productInfoId}')"><img src="#{request.contextPath}/asset/images/record/resume-match-icos2.jpg" /></a>
+	                            </div>
+	                            <h3 title="#{var.plantName}">#{var.plantName}</h3>
+	                        </li>
+                    	</a4j:repeat>
+                    </ul> 
+                </div>
+                <!-- 履历匹配内容 结束 -->
+            </div>
+            <h:form id="save">
+	            <h:inputHidden value="#{scanMappingInfoHome.smiId}" id="smiId"/>
+	            <h:inputHidden value="#{scanMappingInfoHome.prId}" id="prId"/>
+            	<h:commandButton id="persist"   action="#{scanMappingInfoHome.saveMate}" />
+            </h:form>
+             <div class="mes_mailBtn" style="margin:50px 0 100px;">
+                 <a class="btn btn-default" href="ScanMappingInfoList.seam">返回</a>
+             </div>
+    	</td> 
+    	
+<script>
+jQuery.noConflict();
+
+jQuery(document).ready(function(){
+	document.onkeydown = function(e){
+	    var ev = document.all ? window.event : e;
+	    if(ev.keyCode==13) {
+	    	searchName();//点击回车时,走搜索方法
+	     }
+	}
+});
+
+
+jQuery(function(){
+	//文本框获取焦点失去焦点变化
+	jQuery('input[type=text]').focus(function(){
+		var txt_value = jQuery(this).val();
+		if( txt_value == this.defaultValue ){
+			jQuery(this).val("");	
+			jQuery(this).css('color','#323232');
+		}	
+	});	
+	jQuery('input[type=text]').blur(function(){
+		var txt_value = jQuery(this).val();
+		if( txt_value == "" ){
+			jQuery(this).val(this.defaultValue);	
+			jQuery(this).css('color','#d2d2d2');
+		}	
+	});	
+
+});
+
+function searchName(){
+	var va=jQuery('.srarchfont').val().trim();
+	if(va !='搜索履历'){
+		jQuery('.designUl1 li h3').each(function(){
+			if(jQuery(this).text().indexOf(va)!=-1){
+				jQuery(this).parent().css('display','block');
+			}else{
+				jQuery(this).parent().css('display','none');
+			}
+		})
+	}
+}
+
+function make(sVa,lVa,sId,pId){
+	if(confirm('确定将商品'+sVa+'与履历'+lVa+'匹配？')){
+		jQuery('#save\\:smiId').val(sId);
+		jQuery('#save\\:prId').val(pId);
+		jQuery('#save\\:persist').click();
+		jQuery("#login").show();
+	}
+}
+
+function goUrl(url){
+	window.location.href=url;
+
+	}
+</script> 
+	</ui:define>
+</ui:composition>

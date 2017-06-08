@@ -1,0 +1,1088 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_analysis.xhtml">
+
+<ui:define name="body">
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/tab.js"> </script>
+	<script>
+		//<![CDATA[
+		Date.prototype.format =function(format){
+			var o = {
+					"M+" : this.getMonth()+1, //month
+					"d+" : this.getDate(), //day
+					"h+" : this.getHours(), //hour
+					"m+" : this.getMinutes(), //minute
+					"s+" : this.getSeconds(), //second
+					"q+" : Math.floor((this.getMonth()+3)/3), //quarter
+					"S" : this.getMilliseconds() //millisecond
+			}
+			if(/(y+)/.test(format)) format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4- RegExp.$1.length));
+			for(var k in o)if(new RegExp("("+ k +")").test(format))
+				format = format.replace(RegExp.$1, RegExp.$1.length==1? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+			return format;
+		}
+		
+		window.onload = function () {
+			jquery(".selectpicker").selectpicker();
+			labels = document.getElementById('male').getElementsByTagName('label');
+		  	radios = document.getElementById('male').getElementsByTagName('input');
+		  	for(i=0,j=labels.length ; i<j ; i++){
+		   		labels[i].onclick=function(){
+					if(this.className == '') {
+			 			for(k=0,l=labels.length ; k<l ; k++){
+							labels[k].className='';
+							radios[k].checked = false;
+						}
+			 			this.className='checked';
+			 			try{
+							document.getElementById(this.name).checked = true;
+			 			} catch (e) {}
+					}
+		   		}
+		  	}
+		  	var nowStr =new Date().format('yyyy-MM-dd');
+		  	jquery("#startTime").val(nowStr);
+			jquery("#endTime").val(nowStr);
+		  	jquery(".form_datetime").datetimepicker({
+		  		format: "yyyy-mm-dd",
+			    autoclose: true,
+				weekStart: 1,
+				language:  'zh-CN',
+				minView:2,
+			    pickerPosition: "bottom-left"
+			});
+		  	var nowStr2 =new Date().format('yyyy-MM');
+		  	jquery("#beginMonth").val(nowStr2);
+		  	jquery(".form_datetime2").datetimepicker({
+		  		format: "yyyy-mm",
+		  		language:  'zh-CN',
+		        weekStart: 1,
+		        todayBtn:  1,
+				autoclose: 1,
+				todayHighlight: 1,
+				startView: 3,
+				minView: 3,
+				forceParse: 0,
+				pickerPosition: "bottom-left"
+			});
+		};
+		
+		function usr(){
+			if(scroll1.style.display=='none'){
+				scroll1.style.display='block'; 
+				reido1.style.backgroundImage='url(../asset/images/radio1.gif)';
+			}else{
+				scroll1.style.display='none';
+				reido1.style.backgroundImage='url(../asset/images/radio2.gif)';
+			}
+		};
+		function usrnew(){
+			if(ftitle08.style.display=='none'){
+				ftitle08.style.display='block'; 
+				gjtop08.style.backgroundImage='url(../asset/images/gjtop.jpg)';
+			}else{
+				ftitle08.style.display='none';
+				gjtop08.style.backgroundImage='url(../asset/images/gjbottom.jpg)';
+			}
+		};
+
+		function chos(t){
+			onTab = t;
+			for(var i=1;i<=4;i++){
+				if(i==t){ 
+					jquery("#tar"+t).css("display", "block");
+					jquery(".targe"+t).addClass("current");
+				}else{
+					jquery("#tar"+i).css("display", "none");
+					jquery(".targe"+i).removeClass("current");
+				}
+			}
+			gainResult();
+		}
+
+		//]]>
+	</script>
+	<style>
+	
+.fr{float:right;}
+		  .r_ulli1{float:right;}
+	
+	html{ overflow-x: hidden;}
+		.input-append.date .add-on i, .input-prepend.date .add-on i{margin-top:0px\0;}
+	.gaojisearch{border:1px solid #cfe3f3; border-top:1px solid #ffffff;  width:90px; text-align:center; margin:0 auto;margin-top:-2px;height:25px; line-height:25px; }
+	.line07{border-top:1px solid #cfe3f3; height:1px;}
+	.line09{padding:0 5px 0 8px;}
+	/*选项卡*/
+	.zwudiv { border-bottom: 1px solid #DBDBDB;height: 36px;padding-left:31px;padding-top:30px;}
+	.zuowuul { float: left; height: 36px;}
+	h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form, img, p, input {border: medium none; list-style-type: none;margin: 0; padding: 0;}
+	.zwli.current { background: url("../asset/images/zuowubg.jpg") no-repeat scroll left center rgba(0, 0, 0, 0);display: inline-block;float: left; height: 36px; padding-left: 10px;}
+	.zwli { bottom: -1px; float: left; font-size: 14px;  height: 36px; line-height: 36px; margin-right: 2px; padding: 0 10px; position: relative; }
+	.zwli.current a { background: url("../asset/images/zuowubg.jpg") no-repeat scroll right center rgba(0, 0, 0, 0); float: left; height: 36px; margin-right: -10px; padding-right: 10px;}
+	a {text-decoration: none;}
+	.zhexiantu{ padding-left:15px; padding-right:15px;}
+	.tubiao{ padding-left:15px; padding-right:15px;}
+	/*选项卡结束*/
+	/*表格*/
+	.s_pan{color: #333;}
+	.tc_font{ color: #333;}
+	body {
+	    color: #000000;
+	    font-family: '微软雅黑';
+	    font-size: 12px;
+	    line-height: 150%;
+	}
+	.khtable_001, .khtable_002 {
+	    border-collapse: collapse;
+	    table-layout: fixed;
+	}
+	.kh_td {
+	    border: 1px solid #bbd4e8;
+	    height: 39px;
+	    text-align: center;
+	    vertical-align: middle;
+	}
+	.kh_th_font01 {
+	    color: #272727;
+	    font-size: 14px;
+	}
+	.kh_th_bg01 {
+	    background: none repeat scroll 0 0 #ebf6ff;
+	}
+	.kh_td_font01 {
+	    color: #666666;
+	    font-family: "宋体";
+	    font-size: 12px;
+	}
+	.kh_leftbg01 {
+	    background: none repeat scroll 0 0 #ffffff;
+	}
+	.scroll101 {
+	    float: left;
+	    overflow-x: auto;
+	}
+	.khtable_002 {
+	    background-color: #DDDDDD;
+	    margin-left: 0;
+	}
+	.kh_each_thbgy {
+	    background: none repeat scroll 0 0 #ebf6ff;
+	    min-width: 90px;
+	}
+	.kh_each_tdbgy {
+	    background: none repeat scroll 0 0 #ffffff;
+	    min-width: 90px;
+	}
+	.all_Arial01 {
+	    color: #666666;
+	    font-family: Arial,Helvetica,sans-serif;
+	    font-size: 12px;
+	    font-weight: bold;
+	    line-height: 39px;
+	    text-align: center;
+	    width: 100%;
+	}
+	.khyy_each_thbg02 {
+	    background: none repeat scroll 0 0 #ebf6ff;
+	    min-width: 90px;
+	}
+	.khyy_each_tdbg02 {
+	    background: none repeat scroll 0 0 #ffffff;
+	    min-width: 90px;
+	}
+	.y_01{background: none repeat scroll 0 0 #f5f5f5;}
+	.y_02{background: none repeat scroll 0 0 #ebf6ff;}
+	/*单选按钮*/
+	.fxy_ul {
+	    margin: 5px 0;
+	    width: 100%;
+	}
+	.fxy_li {
+	    float: left;
+	    height: 26px;
+	    line-height: 26px;
+	    
+	    min-width: 75px;
+	}
+	.fxy_lidate {
+	    float: left;
+	    height: 27px;
+	    line-height: 38px;
+	    margin: 0 5px 5px;
+	    min-width: 68px;
+	}
+	#sex_male, #sex_male1, #sex_male2, #sex_male3, #sex_female, #sex_female1, #sex_female2, #sex_female3, #sex_nomale, .sex_nomale, #sex_nomale1, #sex_nomale2, #sex_nomale3 {
+	    display: none;
+	}
+	table input[type="checkbox"], table input[type="radio"] {
+	    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+	    padding: 0;
+	}
+	.six3 label {
+	    cursor: pointer;
+	    display: inline-block;
+	    line-height: 19px;
+	    margin: 0px 5px 5px 0;
+	    padding-left: 25px;
+	}
+	/*表格结束*/
+	/*折线图*/
+		.need_font{width:907px;  line-height:50px; text-align: center; font-size:16px; color:#333;}
+		.reili .six3 label { background: url("../asset/images/forms-radio2.gif") no-repeat scroll left top rgba(0, 0, 0, 0); cursor: pointer; display: inline-block;  line-height: 19px; margin: 5px 5px 5px 0; padding-left: 25px; width: auto;}
+		.reili .six3 label.checked { background: url("../asset/images/forms-radio2.gif") no-repeat scroll left bottom rgba(0, 0, 0, 0); width: auto; }
+		.dk_list2 .current a {  color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff; background-color:#ffffff;position:relative; z-index:5;}
+		.dk_list2 .li2.current{ color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff;}
+		.dk_list2 {width:100% ;height:36px;   border-left:1px solid #ddd; }
+		.dk_list2 li {float:left;  border-right:1px solid #ddd; border-top:1px solid #ddd;}
+		.dk_list2 li a {display:block; width:101px; height:36px;  line-height:36px; text-align:center; font-size:14px;	color:#383838;}
+		#gjtop08{ background:url(../asset/images/gjtop.jpg) right no-repeat; color:#4c4c4c; text-decoration:none; padding-right:14px;}
+		#ftitle08{padding:3px 30px; }
+		.la_div02{padding-right:15px; *padding-right:0px; display:inline-block; *display:inherit; float:left;}
+		.la_div02 .s_pan{ float:left; *margin-right:15px; margin-left:5px;font-size:11px; width:100px; width:auto;\9; *width:auto; word-break:normal;}
+		.fxy_title {
+		    border-bottom:none;
+		    padding: 3px 30px;
+		}
+		.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+	    width: 76px;
+		}
+		.form_datetime input {
+		    border: 1px solid #ccc;
+		    float: left;
+		    height: 30px;
+		    margin-top:-3px;
+		    line-height: 30px;
+		}	
+		.form_datetime2 input {
+		    border: 1px solid #ccc;
+		    float: left;
+		    height: 30px;
+		    margin-top:-3px;
+		    line-height: 30px;
+		}	
+		label {
+		    display: inline-block;
+		    font-weight: 700;
+		    margin-bottom: 5px;
+		    max-width: 100%;
+		
+		    color:#333333;
+		}
+		.input-append{float:left;width:150px;margin-top:3px;}	
+		.fxy_lidate02 {
+	    float: left;
+	    height: 30px;
+	        margin-top:4px;
+	    margin-right: 10px;
+	    min-width: 77px;
+	}
+		.bootstrap-select{ width: 100px;}
+		.zwudiv {
+		    border-bottom: 1px solid #dbdbdb;
+		    height: 67px;
+		    padding-left: 31px;
+		    padding-top: 30px;
+		}	
+		.fxy_title . .fx_tckli {    width: 80px;}
+		 .fx_tckli {
+		    float: left;
+		    height: 30px;
+		  
+		    line-height: 30px;
+		    width: 193px;
+		    height:auto;
+		}
+		.zwudiv {
+		    border-bottom: 1px solid #dbdbdb;
+		    height: 37px;
+		    padding-left: 31px;
+		    padding-top: 30px;
+		}
+		
+		.div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+width: 200px;
+}
+
+	</style>
+	#{visitAnalysis.visitAnalysisInit()}
+	<td valign="top">
+		<div class="right_c" style="min-height:30px;">
+			<div class="r_title">
+				<div class="r_t_l"><font size="3">履历访问量按品种统计</font></div>
+			</div>
+			<div class="clear"></div>
+		</div> 
+		<ui:fragment rendered="#{s:hasRole('resume_access_analyse_search')}">  
+		<div class="fxy_title">
+			<ul class="fxy_ul">
+				<li id="sevenDay" onclick="switchSearchType(1)" style="padding-left:0; cursor:pointer" class="fxy_li01 fxyon"><a><b>最近7天</b></a></li>
+				<li id="thirtyMonth" style="cursor:pointer" onclick="switchSearchType(2)" class="fxy_li01 "><a><b>最近30天</b></a></li>
+				<li id="sameYear" onclick="switchSearchType(3)" style="background:none; cursor:pointer" class="fxy_li01 "><a><b>当年年份</b></a></li>
+				<li class="ie7clear"></li>
+				<ui:fragment rendered="#{s:hasRole('resume_access_analyse_exp')}">  
+				
+				<div style="float:right;  margin-top: -20px;">
+					<s:link view="/analys/VisitAnalysis.xhtml" action="#{visitAnalysis.exportExcelMain}" >
+						<img src="../asset/images/fxdc.jpg" width="82" height="16" /> 
+					</s:link>
+				</div>
+				</ui:fragment>
+			</ul>
+			<ul class="fxy_ul six3" id="male" >
+				<li class="fxy_li" style="line-height:38px;">日期选择：</li>
+				<li class="fxy_lidate" onclick="switchDateType(1)" style="margin-top:10px\0; ">
+					<input type="radio" value="1" name="dateType" id="dateType1" style="display: none;"></input>
+					<label id="dateTypeLabel1">按日</label>
+				</li>
+				<li class="fxy_lidate" onclick="switchDateType(2)" style="margin-top:10px\0; ">
+					<input type="radio" value="2" name="dateType" id="dateType2"  style="display: none;"></input>
+					<label id="dateTypeLabel2" >按月</label>
+				</li>
+				<li class="fxy_lidate" onclick="switchDateType(3)" style="margin-top:10px\0; ">
+					<input type="radio" value="3" name="dateType" id="dateType3"  style="display: none;"></input>
+					<label id="dateTypeLabel3" >按年</label>
+				</li>
+				<li class="fxy_lidate02" id="dayLi" style="display:none">
+					<font style="*position:relative; *top:-7px;width:70px;float: left; display: block;">开始时间：</font>
+					<div class="input-append date form_datetime ">
+						<input id="startTime" size="18" type="text" value="" readonly="readonly"></input>
+						<span class="add-on"><i class="icon-th"></i></span>
+					</div>
+					<font style="*position:relative; *top:-7px;width:70px;float: left; display: block;">结束时间：</font>
+					<div class="input-append date form_datetime " >
+						<input id="endTime" size="18" type="text" value="" readonly="readonly"></input>
+						<span class="add-on"><i class="icon-th"></i></span>
+					</div>
+				</li>
+				<li class="fxy_lidate02" id="monthLi" style="display: none;">
+					<font style="*position:relative; *top:-7px;width:70px;float: left; display: block;">月份：</font>
+					<div class="input-append date form_datetime2 ">
+						<input id="beginMonth" size="18" type="text" value="" readonly="readonly"></input>
+						<span class="add-on"><i class="icon-th"></i></span>
+					</div>
+				</li>
+				<li class="fxy_lidate02" id="yearLi" style="display:none">
+					<font style="*position:relative; *top:-7px;">日期：</font>
+					<h:selectOneMenu value="#{visitAnalysis.searchYear}" id="beginYear" styleClass="selectpicker" immediate="true">
+						<f:selectItems value="#{calendarConstant.getYearlist()}"/>
+					</h:selectOneMenu>
+					<font style="*position:relative; *top:-7px;">&#160;年&#160;</font>
+				</li>
+				<li class="fxy_lidate02">
+					<a href="javascript:void(0);" onclick="if(!gainResult()){return false;};" style="cursor: hand; cursor: pointer;"><img src="../asset/images/fxb_11.png" width="78" height="32" /></a>&#160;&#160;
+				</li>
+				<li class="ie7clear"></li>
+			</ul>
+			<div class="fxy_div">
+			<table cellpadding="0" cellspacing="0" style="float:left;">
+						<tr>
+							<td align="right" class="tpcc_font">选择作物：</td>
+							<td align="left" style="padding-left:4px;" id="male" class="six3" >
+								<div class="div200">
+				<select  id="plantCheck" name="plantCheck"  data-live-search="true">
+						<a:repeat value="#{visitAnalysis.plantList}" var="var">
+						<optgroup label="#{var}">
+							<a:repeat value="#{visitAnalysis.allPlant[var]}" var="_var">
+								<option value="#{_var.plantId}">#{_var.name}</option>
+							</a:repeat>
+						</optgroup>
+						</a:repeat>
+				</select>
+							</div>
+							</td>
+						</tr>
+					</table>
+				
+			</div>
+			            <s:fragment rendered="#{sessionTake.levelId == 1}">
+			            <br/><br/>
+                <div class="fxy_div" >
+                    <a href="javascript:void(0);" onclick="clickQiyeDiv(1);"><img src="../asset/images/qiye.png" width="148" height="23"></img></a>
+                    <div class="fxy_tck" id="qiyeShowDiv">
+                        <ul>
+                            <li class="fx_tckli">
+                                <input id="qiyeCheckAll" name="qiyeCheckAll" type="checkbox" value="0"/>全选
+                            </li>
+                            <a:repeat value="#{visitAnalysis.enterpriseInfoList}" var="_enterpriseInfo">
+                                <li class="fx_tckli">
+                                    <input id="qiyeItem#{_enterpriseInfo.id}" name="qiyeCheck" type="checkbox" value="#{_enterpriseInfo.id}" style="float: left;margin-top:9px;" />
+                                    <label id="qiyeLabel#{_enterpriseInfo.id}" style="width:160px;float:left;">#{_enterpriseInfo.name}</label>
+                                </li>
+                            </a:repeat>
+                            <li class="ie7clear"></li>
+                        </ul>
+                        <div class="fx_tckbu">
+                            <a href="javascript:void(0);"><img src="../asset/images/fxysu_21.jpg" width="65" height="28" onclick="qiyeTijiao();"/></a>&#160;&#160;
+                            <a href="javascript:void(0);" title="关闭窗口" onclick="clickQiyeDiv(2);"><img src="../asset/images/fxysu_23.jpg" width="65" height="28" /></a>
+                        </div>
+                    </div>
+                </div>
+                <ul class="fxy_ul02" id="qiyeUl">
+                    <li class="fxy_li">已选企业：</li>
+                    <li class="ie7clear"></li>
+                </ul>
+            </s:fragment>
+			
+			<div class="clear"></div>
+		</div>
+		</ui:fragment>
+		<ui:fragment rendered="#{!s:hasRole('resume_access_analyse_search')  and s:hasRole('resume_access_analyse_exp')}">  
+		<div style="float:right;  margin-top: 10px;margin-right:20px;">
+					<s:link view="/analys/VisitAnalysis.xhtml" action="#{visitAnalysis.exportExcelMain}" >
+						<img src="../asset/images/fxdc.jpg" width="82" height="16" /> 
+					</s:link>
+				</div>
+		</ui:fragment>
+		<div class="line07" ></div>
+		<div class="clear"></div>
+		<div class="zwudiv" >
+			<ul class="dk_list2">
+				<li class="targe1 current "><a onclick="chos(1)" href="javascript:"><font  color="#333">访问统计</font></a></li>
+				<li class="targe2"><a class="a03" onclick="chos(2)" href="javascript:"><font  color="#333">详情</font></a></li>
+			</ul>
+		</div>
+		<div class="zuowudiv">
+			<div id="tar1" style="display: block;width:100%; margin:0 auto; text-align: center;">
+				<rich:panel id="showPanel" style="width:100%; border: none;">
+					<div class="need_font" >标签访问量：#{visitAnalysis.visitTitleNumber}张&#160;&#160;标签访问次数：#{visitAnalysis.visitNumber}次</div>
+				</rich:panel>
+				<div id="container" class="chart22" style="height: 400px; width: 98%"></div>
+				<div id="containerPie" class="chart22" style="height: 400px; margin-top: 5px; width: 98%;"></div>
+			</div>
+			<div style="display: none;" id="tar2">
+				<div class="pc_ul six4 la_aa" style="border-bottom: none;    float: left;  height: 31px;">
+					<div style="   float: left; margin-left: 40px;  margin-top: 15px;">
+						<span style="float:left">
+							<a href="javascript:void(0);" id="showDetailTable" name="showDetailTable" class="b" onclick="switchDetails();"></a>
+							<input type="checkbox" id="showDetailTableChecked" name="showDetailTableChecked" value="1" style="display:none;" />
+						</span>
+						<span class="pc_span">详细信息</span>
+					</div> 
+				</div>        
+				<rich:panel id="showTable" style="width:100%; border: none;">   
+					<div style="padding-right:25px; margin-top:30px; padding-left:25px;" class="dateAll" id="plantTable">         
+						<div style="width:100%; float:left;">
+							<table width="100%" height="100%"  cellspacing="0" cellpadding="0" class="khtable_001" style="border:1px solid #bbd4e8; border-collapse:collapse; ">
+								<tr>
+									<td class="kh_td kh_th_font01 kh_th_bg01" >序号</td>
+									<td class="kh_td kh_th_font01 kh_th_bg01" >品种名称</td>
+									<td class="kh_td kh_th_font01 kh_th_bg01" >标签访问量</td>
+									<td class="kh_td kh_th_font01 kh_th_bg01" >标签访问次数</td>
+								</tr>
+								<a:repeat value="#{visitAnalysis.showPlantList}" var="_showPlant" rowKeyVar="_index_1">
+									<tr>
+										<td class="kh_td kh_td_font01 kh_leftbg01 #{_index_1 % 2 == 0 ? 'y_01' : ''}" >#{_index_1 + 1}</td>
+										<td class="kh_td kh_td_font01 kh_leftbg01 #{_index_1 % 2 == 0 ? 'y_01' : ''}" >#{_showPlant[0]}</td>
+										<td class="kh_td kh_td_font01 kh_leftbg01 #{_index_1 % 2 == 0 ? 'y_01' : ''}" >#{_showPlant[2]}</td>
+										<td class="kh_td kh_td_font01 kh_leftbg01 #{_index_1 % 2 == 0 ? 'y_01' : ''}" >#{_showPlant[1]}</td>
+									</tr>
+								</a:repeat>
+							</table>       
+						</div> 
+						<div class="clear"></div>                         
+					</div>
+					<div style="padding-right:25px; margin-top:30px; padding-left:25px; display: none;" class="dateAll" id="detailsTable">
+						<h:outputText value="#{visitAnalysis.resultTableStr}" escape="false"/>     
+					</div>
+				</rich:panel>
+			</div>
+		</div>   
+		<h:form id="visitAnalyFrom">
+			<a:commandLink id="refreshShow"  reRender="showPanel"></a:commandLink>
+			<a:commandLink id="refreshTable"  reRender="showTable"></a:commandLink>
+		</h:form>
+	</td>
+	<a:form>
+  		<a:queue requestDelay="100" ignoreDupResponses="true"/>
+		<a:jsFunction name="queryResultFind" action="#{visitAnalysis.queryResultFind}" data="#{visitAnalysis.resultSource}" oncomplete="refreshAction(data);" >
+			<a:actionparam name="searchType" assignTo="#{visitAnalysis.searchType}"/>
+			<a:actionparam name="dateType" assignTo="#{visitAnalysis.dateType}"/>
+			<a:actionparam name="yearNumber" assignTo="#{visitAnalysis.searchYear}"/>
+			<a:actionparam name="monthNumber" assignTo="#{visitAnalysis.searchMonth}"/>
+			<a:actionparam name="beginTime" assignTo="#{visitAnalysis.beginTime}"/>
+			<a:actionparam name="endTime" assignTo="#{visitAnalysis.endTime}"/>
+			<a:actionparam name="plantIdStr" assignTo="#{visitAnalysis.plantIdStr}"/>
+			<a:actionparam name="enterpriseInfoIdStr" assignTo="#{visitAnalysis.enterpriseInfoIdStr}"/>
+		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript">
+	//<![CDATA[
+		//日期搜索类型
+		var searchType = 1;
+		var dateType = 1;
+		var plantStr = "";
+		var qiyeStr = "";
+		var onTab = 1;
+		var plantSize = '#{visitAnalysis.plantList.size()}';
+		var qiyeSize = '#{visitAnalysis.enterpriseInfoList.size()}';
+		var levelFlag = '#{sessionTake.levelId == 1}';
+
+		function switchDetails(){
+			if (jquery("#showDetailTable").attr("class") == 'a') {
+				jquery("#showDetailTable").removeClass().addClass("b");
+				jquery("#showDetailTableChecked").attr("checked", false);
+				jquery("#detailsTable").hide();
+			} else {
+				jquery("#showDetailTable").removeClass().addClass("a");
+				jquery("#showDetailTableChecked").attr("checked", true);
+				jquery("#detailsTable").show();
+			}
+		}
+
+		function toDate(str){
+		    var sd=str.split("-");
+		    return new Date(sd[0],sd[1],sd[2]);
+		}
+
+		function getDateDiff(date1,date2){
+	        var arr1=date1.split('-');
+			var arr2=date2.split('-');
+			var d1=new Date(arr1[0],arr1[1],arr1[2]);
+			var d2=new Date(arr2[0],arr2[1],arr2[2]);
+			if ((d2.getTime()-d1.getTime())/(1000*3600*24) > 60) {
+				return false;
+			}else {
+				return true;
+			}
+		}
+
+		//搜索提交方法 
+		function gainResult(){
+			var pids = "";
+			if(jquery("#plantCheck").val()!=null){
+				pids = jquery("#plantCheck").val().toString();
+			}
+			
+			if (searchType == 1 || searchType == 2) {
+				queryResultFind(Number(searchType), Number(dateType), 0, 0, '', '',pids,qiyeStr);
+				return true;
+			}else if (searchType == 3) {
+				queryResultFind(Number(searchType), Number(dateType), 0, 0, '', '',pids,qiyeStr);
+				return true;
+			}else {
+				if (dateType == 1) {
+					var beginDate = jquery("#startTime").val();
+					if (beginDate == null || beginDate == '') {
+						alert("请选择开始日期...");
+						return false;
+					}
+					var endDate = jquery("#endTime").val();
+					if (endDate == null || endDate == '') {
+						alert("请选择结束日期...");
+						return false;
+					}
+					var begin =toDate(beginDate);
+					var end =toDate(endDate);
+					if (begin > end) {
+						alert("开始时间不能大于结束时间...");
+						return false;
+					}
+					if (!getDateDiff(beginDate, endDate)) {
+						alert("请搜索2个月之间的数据...");
+						return false;
+					}
+					queryResultFind(Number(searchType), Number(dateType), '', '', beginDate, endDate,pids,qiyeStr);
+					return true;
+				}else if (dateType == 2) {
+					//var d = new Date();
+					//var yearValue = d.getFullYear();
+					//var yearValue = jquery("#beginYear").val();
+					var monthValue = jquery("#beginMonth").val();
+					var year = monthValue.substr(0, 4);
+					var month = monthValue.substr(5, 6);
+					queryResultFind(Number(searchType), Number(dateType), Number(year), Number(month), '', '',pids,qiyeStr);
+					return true;
+				}else if (dateType == 3) {
+					var yearValue = jquery("#beginYear").val();
+					queryResultFind(Number(searchType), Number(dateType), Number(yearValue), 0, '', '',pids,qiyeStr);
+					return true;
+				}
+			}
+		}
+
+		//显示隐藏公共方法
+		function showHiddenDiv(showType){
+			jquery(".fxy_li01").removeClass("fxyon");
+			jquery("#dayLi").hide();
+			jquery("#yearLi").hide();
+			jquery("#monthLi").hide();
+			if (showType == 1) {
+				jquery("#sevenDay").addClass("fxyon");
+				jquery(".checked").removeClass("checked");
+				dateType = 1;
+				gainResult();
+			} else if (showType == 2) {
+				jquery("#thirtyMonth").addClass("fxyon");
+				jquery(".checked").removeClass("checked");
+				dateType = 1;
+				gainResult();
+			} else if (showType == 3) {
+				jquery("#sameYear").addClass("fxyon");
+				jquery(".checked").removeClass("checked");
+				dateType = 2;
+				gainResult();
+			}
+		}
+		
+		//切换搜索日期类型方法 7天 30天 当年 
+		function switchSearchType(type){
+			searchType = type;
+			showHiddenDiv(searchType);
+		}
+
+		//搜索日期类型方法 按天 按月 按年  
+		function switchDateType(type){
+			showHiddenDiv(4);
+			dateType = type;
+			searchType = 4;
+			jquery("input[name='dateType']").removeAttr("checked");
+			jquery("#dateType" + type).attr("checked", true);
+			if (type == 1) {
+				jquery("#dayLi").show();
+				jquery("#yearLi").hide();
+				jquery("#monthLi").hide();
+			} else if (type == 2) {
+				jquery("#dayLi").hide();
+				jquery("#yearLi").hide();
+				jquery("#monthLi").show();
+			} else if (type == 3) {
+				jquery("#dayLi").hide();
+				jquery("#yearLi").show();
+				jquery("#monthLi").hide();
+			}
+		}
+		
+		function checkAll_(){
+			var pc = 0 ;
+			jquery("input[name='plantCheck']:checkbox").each(function(){
+	  			if(!jquery(this).is(':checked'))
+	  				pc++;
+			});
+			if(pc==0)
+				jquery("#plantCheckAll").prop("checked",true);
+			else
+				jquery("#plantCheckAll").prop("checked",false);
+		}
+
+		jquery("input[name='plantCheck']:checkbox").click(function(){checkAll_()});
+		
+		//打开关闭作物选择列表
+		function clickPlantDiv(type){
+			
+			if (type == 1) {
+				checkAll_();
+				jquery("#plantShowDiv").show();
+				jquery("#qiyeShowDiv").hide();
+			}else {
+				jquery("#plantShowDiv").hide();
+				var plantIds = plantStr.split(","); 
+		  		var plantCount = 0;
+		  		jquery("input[name='plantCheck']:checkbox").each(function(){
+		  			plantCount ++;
+				});
+		  		jquery("input[name='plantCheck']").removeAttr("checked");
+				for ( var i = 0; i < plantIds.length; i++) {
+					var plantId = "plantItem" + plantIds[i];
+					document.getElementById(plantId).checked = true;
+					plantCount++;
+				}
+				if (plantCount == plantIds.length) {
+					jquery("input[name='plantCheckAll']").attr("checked", true);
+				}else {
+					jquery("input[name='plantCheckAll']").removeAttr("checked");
+				}
+			}
+		}
+
+		//打开关闭企业选择列表
+		function clickQiyeDiv(type){
+			if (type == 1) {
+				jquery("#qiyeShowDiv").show();
+				jquery("#plantShowDiv").hide();
+			}else {
+				jquery("#qiyeShowDiv").hide();
+				var qiyeIds = qiyeStr.split(","); 
+		  		var qiyeCount = 0;
+		  		jquery("input[name='qiyeCheck']:checkbox").each(function(){
+		  			qiyeCount ++;
+				});
+		  		jquery("input[name='qieyCheck']").removeAttr("checked");
+				for ( var i = 0; i < qiyeIds.length; i++) {
+					var qiyeId = "qiyeItem" + qiyeIds[i];
+					document.getElementById(qiyeId).checked = true;
+					qiyeCount++;
+				}
+				if (qiyeCount == qiyeIds.length) {
+					jquery("input[name='qiyeCheckAll']").attr("checked", true);
+				}else {
+					jquery("input[name='qiyeCheckAll']").removeAttr("checked");
+				}
+			}
+		}
+
+	    jquery(document).ready(function(){
+	    	 //全选企业事件
+			jquery("#qiyeCheckAll").click(function(){
+				jquery("input[name='qiyeCheck']").prop("checked", this.checked); 
+			});
+			//全选作物事件
+			jquery("#plantCheckAll").click(function(){
+		    	jquery("input[name='plantCheck']").prop("checked", this.checked);
+			});
+		});
+
+	  //作物选择确定
+	  	function plantTijiao(){
+	  		var checked_num = jquery("input[name='plantCheck']:checkbox:checked").length;
+	  		plantStr = "";
+	  		jquery("#plantUl").empty();
+	  		jquery("#plantUl").append("<li class='fxy_li'>已选作物：</li>");
+	  		if (plantSize == checked_num) {
+	  			jquery("input[name='plantCheck']:checkbox:checked").each(function(){
+		  			plantStr += jquery(this).val() + ",";
+				});
+	  			var addLiMsg = "<li class='fxy_liyx'>全部作物</li>";
+				jquery("#plantUl").append(addLiMsg);
+			} else {
+				jquery("input[name='plantCheck']:checkbox:checked").each(function(){
+		  			plantStr += jquery(this).val() + ",";
+		  			var plantName = jquery("#plantLabel" + jquery(this).val()).html();
+		  			var addLiMsg = "<li class='fxy_liyx'>" + plantName + "</li>";
+					jquery("#plantUl").append(addLiMsg);
+				});
+			}
+	  		jquery("#plantUl").append("<li class='ie7clear'></li>");
+	  		if (plantStr == "") {
+				alert("请至少选择一个作物...");
+				return false;
+			} else {
+				plantStr = plantStr.substr(0,plantStr.length - 1);
+				jquery("#plantShowDiv").hide();
+			}
+	  	}
+
+		//企业选择确定
+	  	function qiyeTijiao(){
+	  		var checked_num = jquery("input[name='qiyeCheck']:checkbox:checked").length;
+	  		qiyeStr = "";
+	  		jquery("#qiyeUl").empty();
+	  		jquery("#qiyeUl").append("<li class='fxy_li'>已选企业：</li>");
+	  		if (qiyeSize == checked_num) {
+	  			jquery("input[name='qiyeCheck']:checkbox:checked").each(function(){
+	  				qiyeStr += jquery(this).val() + ",";
+				});
+	  			var addLiMsg = "<li class='fxy_liyx'>全部企业</li>";
+				jquery("#qiyeUl").append(addLiMsg);
+			} else {
+				jquery("input[name='qiyeCheck']:checkbox:checked").each(function(){
+					qiyeStr += jquery(this).val() + ",";
+		  			var qiyeName = jquery("#qiyeLabel" + jquery(this).val()).html();
+		  			var addLiMsg = "<li class='fxy_liyx'>" + qiyeName + "</li>";
+					jquery("#qiyeUl").append(addLiMsg);
+				});
+			}
+	  		jquery("#qiyeUl").append("<li class='ie7clear'></li>");
+	  		if (qiyeStr == "") {
+				alert("请至少选择一个企业...");
+				return false;
+			} else {
+				qiyeStr = qiyeStr.substr(0,qiyeStr.length - 1);
+				jquery("#qiyeShowDiv").hide();
+			}
+	  	}
+
+	  	jquery(function () {
+	  		jquery('#plantCheck').attr("multiple","multiple");
+	  		jquery("select").selectpicker({noneSelectedText:"全部"});
+	  		jquery('select').selectpicker('deselectAll');
+			plantStr = '#{visitAnalysis.plantIdStr}';
+			var checkStr = plantStr.split(",");
+			if(jquery("#plantCheck option").length!=checkStr.length)
+				jquery("#plantCheck").selectpicker("val",checkStr);
+
+			qiyeStr = '#{visitAnalysis.enterpriseInfoIdStr}';
+			if (levelFlag == 'true') {
+		  		var qiyeIds = qiyeStr.split(","); 
+		  		jquery("#qiyeUl").empty();
+		  		jquery("#qiyeUl").append("<li class='fxy_li'>已选企业：</li>");
+		  		if (qiyeSize == qiyeIds.length) {
+		  			for ( var i = 0; i < qiyeIds.length; i++) {
+						var qiyeId = "qiyeItem" + qiyeIds[i];
+						document.getElementById(qiyeId).checked = true;
+					}
+		  			var addLiMsg = "<li class='fxy_liyx'>全部企业</li>";
+					jquery("#qiyeUl").append(addLiMsg);
+				} else {
+					for ( var i = 0; i < qiyeIds.length; i++) {
+						var qiyeId = "qiyeItem" + qiyeIds[i];
+						document.getElementById(qiyeId).checked = true;
+						var qiyeName = jquery("#qiyeLabel" + qiyeIds[i]).html();
+			  			var addLiMsg = "<li class='fxy_liyx'>" + qiyeName + "</li>";
+						jquery("#qiyeUl").append(addLiMsg);
+					}
+				}
+		  		jquery("#qiyeUl").append("<li class='ie7clear'></li>");
+				jquery("#qiyeShowDiv").hide();
+			}
+
+			var data = '#{visitAnalysis.jsonResult}';
+			data = eval("(" + data + ")");
+			jquery('#container').highcharts({
+				chart: {
+		            type: 'spline',
+		            	backgroundColor: {
+		    			linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+		    			stops: [
+		    				[0, 'rgb(255, 255, 255)'],
+		    				[1, 'rgb(255, 255, 255)']
+		    			]
+		    		},
+		    		//borderWidth: 2,
+		    		//plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+		    		plotShadow: true,
+		    		//plotBorderWidth: 1
+		        },
+		        lang: {
+		            noData: "暂无数据!"
+		        },
+		        noData: {
+		            style: {    
+		                fontWeight: 'bold',     
+		                fontSize: '15px',
+		                color: '#303030'        
+		            }
+		        },
+		        title: { text: '' },
+		        subtitle: {text: ''},
+		        credits:{enabled:false},
+		        xAxis: {
+		        	tickInterval:data.lineJson.tickInterval,
+		        	 categories: data.lineJson.categories,
+		        	 gridLineWidth: 0, //设置网格宽度为1 
+		        },
+		        yAxis: {
+		        	min: 0, 
+			        title: { text: '访问量' }, 
+			        allowDecimals:false
+	             },
+		        tooltip: {
+		            formatter: function() {
+		                    return '<b>'+ this.series.name +'</b><br/>'+
+		                    this.x +' '+ this.y + '次';
+		            }
+		        },
+		        series: data.lineJson.resultSource
+		    });
+
+			jquery('#containerPie').highcharts({
+				chart: {
+					backgroundColor: {
+					linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+					stops: [
+							[0, 'rgb(255, 255, 255)'],
+							[1, 'rgb(255, 255, 255)']
+						]
+					},
+					//borderWidth: 2,
+					//plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+					plotShadow: true,
+					//plotBorderWidth: 1
+		        },
+		        lang: {
+		            noData: "暂无数据!"
+		        },
+		        noData: {
+		            style: {    
+		                fontWeight: 'bold',     
+		                fontSize: '15px',
+		                color: '#303030'        
+		            }
+		        },
+	            legend: {
+	    			layout: 'horizontal' ,
+	    			itemStyle: {
+	    				font: '9pt Trebuchet MS, Verdana, sans-serif',
+	    				color: 'black'
+
+	    			},
+	    			itemHoverStyle: {
+	    				color: '#039'
+	    			},
+	    			itemHiddenStyle: {
+	    				color: 'gray'
+	    			}
+	    		},
+	            credits:{enabled:false},
+	            title: {text: '' },
+	            tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
+	            plotOptions: {
+	                pie: {
+	                    allowPointSelect: true,
+	                    cursor: 'pointer',
+	                    dataLabels: {
+	                    enabled: true,
+	                    color: '#000000',
+	                    connectorColor: '#000000',
+	                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+	                },
+	                    showInLegend: true
+	                }
+	            },
+	            series: [{
+	                type: 'pie',
+	                name: '所占百分比',
+	                data: data.pieJson.data
+	            }]
+	        });
+		});
+
+		//刷新
+		function refreshAction(data){
+			data = eval("(" + data + ")");
+			jquery('#container').highcharts({
+				chart: {
+		            type: 'spline',
+		            	backgroundColor: {
+		    			linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+		    			stops: [
+		    				[0, 'rgb(255, 255, 255)'],
+		    				[1, 'rgb(255, 255, 255)']
+		    			]
+		    		},
+		    		//borderWidth: 2,
+		    		//plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+		    		plotShadow: true,
+		    		//plotBorderWidth: 1
+		        },
+		        lang: {
+		            noData: "暂无数据!"
+		        },
+		        noData: {
+		            style: {    
+		                fontWeight: 'bold',     
+		                fontSize: '15px',
+		                color: '#303030'        
+		            }
+		        },
+		        legend: {   
+		        	itemStyle: {
+					font: '9pt Trebuchet MS, Verdana, sans-serif',
+					color: 'black'
+	
+					},
+					itemHoverStyle: {
+						color: '#039'
+					},
+					itemHiddenStyle: {
+						color: 'gray'
+					}
+		        },  
+		        title: { text: '' },
+		        subtitle: {text: ''},
+		        credits:{enabled:false},
+		        xAxis: {
+		        	tickInterval:data.lineJson.tickInterval,
+		        	 categories: data.lineJson.categories,
+		        	 gridLineWidth: 0, //设置网格宽度为1 
+		        },
+		        yAxis: {
+		        	min: 0, 
+			        title: { text: '访问量' }, 
+			        allowDecimals:false,
+			        max: data.lineJson.maxYData
+	             },
+		        tooltip: {
+		            formatter: function() {
+		                    return '<b>'+ this.series.name +'</b><br/>'+
+		                    this.x +' '+ this.y + '次';
+		            }
+		        },
+		        series: data.lineJson.resultSource
+		    });
+
+			jquery('#containerPie').highcharts({
+				chart: {
+					backgroundColor: {
+					linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+					stops: [
+							[0, 'rgb(255, 255, 255)'],
+							[1, 'rgb(255, 255, 255)']
+						]
+					},
+					//borderWidth: 2,
+					//plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+					plotShadow: true,
+					//plotBorderWidth: 1
+		        },
+		        lang: {
+		            noData: "暂无数据!"
+		        },
+		        noData: {
+		            style: {    
+		                fontWeight: 'bold',     
+		                fontSize: '15px',
+		                color: '#303030'        
+		            }
+		        },
+	            legend: {
+	    			layout: 'vertical', align: 'right', verticalAlign: 'middle', borderWidth: 0 ,
+	    			itemStyle: {
+	    				font: '9pt Trebuchet MS, Verdana, sans-serif',
+	    				color: 'black'
+
+	    			},
+	    			itemHoverStyle: {
+	    				color: '#039'
+	    			},
+	    			itemHiddenStyle: {
+	    				color: 'gray'
+	    			}
+	    		},
+	            credits:{enabled:false},
+	            title: {text: '' },
+	            tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
+	            plotOptions: {
+	                pie: {
+	                    allowPointSelect: true,
+	                    cursor: 'pointer',
+	                    dataLabels: {
+	                    enabled: true,
+	                    color: '#000000',
+	                    connectorColor: '#000000',
+	                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+	                },
+	                    showInLegend: true
+	                }
+	            },
+	            series: [{
+	                type: 'pie',
+	                name: '所占百分比',
+	                data: data.pieJson.data
+	            }]
+	        });
+	        
+		    if (onTab == 1) {
+		    	document.getElementById("visitAnalyFrom:refreshShow").onclick();
+			} else {
+				document.getElementById("visitAnalyFrom:refreshTable").onclick();
+			}
+		    jquery("#showDetailTable").removeClass().addClass("b");
+			jquery("#showDetailTableChecked").attr("checked", false);
+			jquery("#detailsTable").hide();
+		}
+	//]]>
+	</script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts-more.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/themes/highcharts-them.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/modules/no-data-to-display.js"></script>
+	
+</ui:define>
+</ui:composition>

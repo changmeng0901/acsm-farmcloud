@@ -1,0 +1,843 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_left.xhtml">
+
+	<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>	
+	<style>
+	.rich-calendar-exterior{line-height: 20px;}
+	.legendLabel {font-size: 13px;float: left;}
+	.ui-selectmenu{*display:inline-block;}
+	#reido1{width:20px; height:18px;  background:url(../asset/images/radio1.gif) no-repeat; display:block; float:right; margin-top:13px;}
+	.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width: 84px;}
+	 .newelement .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
+          width:200px
+          }
+	.fxy_lidate02 {
+    margin-right: 15px;
+	}
+	.fxy_lidate{margin:5px 5px 5px 0;}
+	.lookAll .icheckbox_minimal-blue{ float:right; margin-top:12px;}
+	</style>
+	
+	<td valign="top"><!-- #{membershipCardAnalysisHome.work()} -->
+                 <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">会员卡销售统计分析 </font></div>
+                    	
+                    </div>
+                    <div class="clear"></div>
+                 </div>   
+				<!--分析页开始-->
+				<ui:fragment rendered="#{s:hasRole('order_amount_analyse_search')}">	
+				
+				<h:form id="search">
+					<div class="fxy_title">
+                    	<ul class="fxy_ul">
+                   		  	<li class="fxy_li01 #{membershipCardAnalysisHome.dateType eq 2?'fxyon':''}" style="padding-left:0;">
+                        		<a href="javascript:;" onclick="goUrl(2,6)" style="text-decoration:none;"><b>最近&#160;7天</b></a>
+                            </li>
+                        	<li class="fxy_li01 #{membershipCardAnalysisHome.dateType eq 1?'fxyon':''}" >
+                        		<a href="javascript:;" onclick="goUrl(1,6)" style="text-decoration:none;"><b>最近30天</b></a>
+							</li>
+                            <li class="fxy_li01 #{membershipCardAnalysisHome.dateType eq 3?'fxyon':''}" style="background:none;">
+                        		<a href="javascript:;" onclick="goUrl(3,4)" style="text-decoration:none;"><b>当年年份</b></a>
+                            </li>
+                            <ui:fragment rendered="#{s:hasRole('order_amount_analyse_exp')}">	
+                            <li class="fxy_li02"> 
+                            	<s:link   view="/analysis/MembershipCardAnalysis.xhtml" action="#{membershipCardAnalysisHome.exportExcelMain}" >
+                            		<f:param name="btype" value="#{membershipCardAnalysisHome.dateType eq 1?'6':''}#{membershipCardAnalysisHome.dateType eq 2?'6':''}#{membershipCardAnalysisHome.dateType eq 3?'4':''}#{membershipCardAnalysisHome.dateType eq 0?'0':''}"></f:param>
+                            		<f:param name="startTime" value="#{membershipCardAnalysisHome.startTime}"></f:param>
+                            		<f:param name="endTime" value="#{membershipCardAnalysisHome.endTime}"></f:param>
+                            		<img src="#{request.contextPath}/asset/images/fxdc.jpg" width="82" height="16" /> 
+								</s:link>
+							</li>
+							</ui:fragment>
+                            <li class="ie7clear"></li>
+                        </ul>
+                        
+                    	<ul class="fxy_ul" id="male">
+                        	<li class="fxy_li">日期选择：</li>
+                            <li class="fxy_lidate">
+								<h:inputHidden value="#{membershipCardAnalysisHome.btype}" id="btype"/>
+								<h:inputHidden value="#{membershipCardAnalysisHome.dateType}" id="dateType"/>
+								<h:inputHidden value="#{membershipCardAnalysisHome.typeMess}" id="typeMess"/>
+								<input type="radio" value="6" name="sex" id="sex6"  style="display: none;"/><label style="font-weight: 100; margin-left: 5px;">按日</label>
+							</li>
+                            <li class="fxy_lidate">
+                           		<input type="radio" value="5" name="sex" id="sex5"  style="display: none;"/><label style="font-weight: 100; margin-left: 5px;">按月</label>
+                           	</li>
+                           	<li class="fxy_lidate">
+                           		<input type="radio" value="4" name="sex" id="sex4"  style="display: none;"/><label style="font-weight: 100; margin-left: 5px;">按年</label>
+                           	</li>
+                           <li class="fxy_lidate02 sex_male1" style="#{membershipCardAnalysisHome.btype eq 4 or membershipCardAnalysisHome.btype eq 5?'':'display:none'};"><font style="position:relative;[;top:0;]">日期：</font>
+	                           <h:selectOneMenu value="#{membershipCardAnalysisHome.year}" styleClass="selectpicker" title="全部">
+	                           		<f:selectItems value="#{membershipCardAnalysisHome.years}"></f:selectItems>
+	                           </h:selectOneMenu>
+                           <font style="position:relative;[;top:0;]"> &#160;年&#160;</font>
+                           </li>
+                           <li class="fxy_lidate02 sex_female1" style="#{membershipCardAnalysisHome.btype eq 5?'':'display:none'}">
+	                           <h:selectOneMenu value="#{membershipCardAnalysisHome.month}" styleClass="selectpicker" title="全部">
+	                           		<f:selectItems value="#{membershipCardAnalysisHome.months}"></f:selectItems>
+	                           </h:selectOneMenu>
+							<font style="position:relative; [;top:0;]">&#160;月</font>
+                           </li>
+                            <li class="fxy_lidate02 sex_nomale1" style="#{membershipCardAnalysisHome.btype==6 ?'':'display:none'}"><span style="float: left;">开始时间：</span>
+                          <div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="startTime"  styleClass="new_time nw100" value="#{membershipCardAnalysisHome.startTime}" readonly="#{facesContext.renderResponse}" >								   			    
+						    	<f:convertDateTime pattern="yyyy-MM-dd"/>
+                            </h:inputText>
+						    <h:inputHidden value="#{membershipCardAnalysisHome.startTime}" id="strartTimeHidden"/>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    </div>
+                            </li>
+                            <li class="fxy_lidate02 sex_nomale1" style="#{membershipCardAnalysisHome.btype==6 ?'':'display:none'}"><span style="float: left;">结束时间：</span>
+                            <div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="endTime"  styleClass="new_time nw100" value="#{membershipCardAnalysisHome.endTime}" readonly="#{facesContext.renderResponse}" >
+						    	<f:convertDateTime pattern="yyyy-MM-dd"/>
+                            </h:inputText>
+						    <h:inputHidden value="#{membershipCardAnalysisHome.endTime}" id="endTimeHidden"/>
+						    <span class="add-on"><i class="icon-th"></i></span>
+						    </div>
+                            </li>
+                            <li class="fxy_li newelement" style="clear:both;height:36px">
+                            	<span style="width: 72px; float: left; text-align: right;">会员卡类型：</span>
+	                            <input type="hidden" id="cardType" name="cardType"/>
+	                            <select class="selectpicker"  id="selOfCardType" name="selOfCardType" title="全部">
+		                            <a:repeat value="#{membershipCardAnalysisHome.carTypeList}" var="var">
+		                            	<option value="#{var.value}">#{var.label}</option>
+		                            </a:repeat>
+	                            </select>
+                            </li>
+                           <li class="fxy_li newelement" style="margin-left: 40px">销售人：
+                            	<input type="hidden" id="saleName" name="saleName"/>
+                            	<select class="selectpicker" id="farmerInfoId_"  name="farmerInfoId_" title="全部">
+                            		<option value="0">全部</option>
+                            		<a:repeat value="#{membershipCardAnalysisHome.farmerInfoIdList}" var="var">
+                            			<option value="#{var.value}">#{var.label}</option>
+                            		</a:repeat>
+                            	</select>
+                            </li>
+                            <li class="fxy_lidate03 newelement" style="width:165px;width: 165px; margin-left: 40px;">
+                            <input type="hidden" value="0" name="dateType"/>
+                            <h:inputHidden value="#{membershipCardAnalysisHome.productPage}"  id="productPageHide"/>
+                            <h:inputHidden value="#{membershipCardAnalysisHome.homePage}"  id="homePageHide"/>
+                            <h:inputHidden value="#{membershipCardAnalysisHome.storePage}"  id="storePageHide"/>
+                            <h:commandButton action="/analysis/MembershipCardAnalysis.xhtml" onclick="return checksub()" styleClass="btn btn-primary" value="搜索" style="float:left; margin-right:10px;" id="searchButton"/>
+                            <s:button id="reset" includePageParams="false" styleClass="btn btn-default" value="重置" style="float:left;">
+                            	<f:param name="dateType" value="1"/>
+                            	<f:param name="btype" value="6"/>
+                            	<f:param name="resetType" value="1"/>
+                            </s:button>
+                            </li>
+                            <li class="ie7clear"></li>
+                        </ul>
+                    	<div class="clear"></div>
+                    </div>
+                </h:form>
+				<!--分析页结束-->
+             	 </ui:fragment>
+               	<ui:fragment rendered="#{!s:hasRole('order_amount_analyse_search') and s:hasRole('order_amount_analyse_exp')}">
+               		 <div style="float:right;padding-top: 10px;margin-right:20px;"> 
+                        <s:link   view="/analysis/OrdersStatistics.xhtml" action="#{membershipCardAnalysisHome.exportExcelMain}" >
+                        	<img src="#{request.contextPath}/asset/images/fxdc.jpg" width="82" height="16" /> 
+						</s:link>
+					</div>
+               	</ui:fragment>
+
+                <div class="right_c">
+                    <!--会员卡销售开始-->
+                    <div class="fxy_print3">
+                    	<ul>
+                        	<li class="fxy_pli03" style="width:50%;box-sizing:border-box;">
+                            	<table class="pli_table">
+                                	<tr>
+                                    	<td rowspan="2"><img class="pli_img" src="#{request.contextPath}/asset/images/fxydx_03.jpg" width="46" height="46" /></td>
+                                        <td class="pli_font01" height="23">销售总额</td>
+                                    </tr>
+                                    <tr>
+                                    	<td class="pli_font02" height="16"><h:outputText value="#{membershipCardAnalysisHome.saleMoney}"><f:convertNumber pattern="##.##"/></h:outputText>&#160;<font style="font-size:12px; font-family:'微软雅黑';">元</font></td>
+                                    </tr>
+                                </table>
+                            </li>
+                            <li class="fxy_pli03" style="width:50%;box-sizing:border-box;">
+                            	<table class="pli_table">
+                                	<tr>
+                                    	<td rowspan="2"><img class="pli_img" src="#{request.contextPath}/asset/images/fxyxs_05.jpg" width="46" height="46" /></td>
+                                        <td class="pli_font01" height="23">销售数量</td>
+                                    </tr>
+                                    <tr>
+                                    	<td class="pli_font02" height="16">#{membershipCardAnalysisHome.saleNum}&#160;<font style="font-size:12px; font-family:'微软雅黑';">单</font></td>
+                                    </tr>
+                                </table>
+                            </li>
+                    	</ul>
+                    </div>
+                    <!--会员卡销售开始-->
+                    <!--折线图开始-->
+                    <div class="ybp_02">
+						<div class="bzl_30">销售数量统计趋势</div>
+						<!-- lines -->
+						<div class="row-fluid">
+							<div class="span12">
+								<div class="box corner-all">
+									<div class="box-body">
+										<div id="placeholder2" class="chart22"></div>
+										<div id="xxx" style="text-align: center;"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /lines -->
+						<div class="clear"></div>
+					</div>
+                    
+                    <!--折线图结束-->
+                    <!--表格开始-->
+                       <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                           <tr>
+                               <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                               <td colspan="5" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                               <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                           </tr>
+                           <tr>
+                               <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                               
+                               <th class="fxze_bg3" align="left"  colspan="5">#{_ei[1]}</th>
+                               
+                               <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                           </tr>
+   
+                           <tr>
+                               <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                               <td class="ze_bg2" width="25%">序号</td>
+                               <td class="ze_bg2" width="25%">会员卡种类</td>
+                               <td class="ze_bg2" width="25%">销售数量</td>
+                               <td class="ze_bg2" width="25%">总金额</td>
+                               <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                           </tr>
+                            <a:repeat value="#{membershipCardAnalysisHome.totalSaleList}" var="_obj" rowKeyVar="_index">
+                               <tr>
+                                   <td class="ze_bg2 ze_bt_le" width="5" height="4" ></td>
+                                   <td class="ze_bg2">#{_index + 1}</td>
+                                   <td class="ze_bg2">#{_obj[1]}</td>
+                                   <td class="ze_bg2">#{_obj[0]}</td>
+                                   <td class="ze_bg2">#{_obj[2]}</td>
+                                   <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                               </tr>
+                           </a:repeat>
+                       </table>
+                      <!--  商品卡  begin-->
+                      <s:fragment rendered="#{membershipCardAnalysisHome.cardType eq 0 or membershipCardAnalysisHome.cardType eq 1 }">
+                      <rich:panel id="showPanel" style="margin:0; border:none; padding: 0;overflow-x:auto;">
+                       <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                           <tr>
+                               <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                               <td colspan="6" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                               <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                           </tr>
+                           <tr>
+                               <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                               <th class="fxze_bg3" align="left"  colspan="5">商品卡</th>
+                               <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                           </tr>
+                           <tr>
+                               <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                               <td class="ze_bg2" width="16%">序号</td>
+                               <td class="ze_bg2" width="17%">卡类型</td>
+                               <td class="ze_bg2" width="16%">卡金额</td>
+                               <td class="ze_bg2" width="17%">销售客户</td>
+                               <td class="ze_bg2" width="17%">销售人</td>
+                               <td class="ze_bg2" width="17%">销售时间</td>
+                               <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                           </tr>
+                           <a:repeat value="#{membershipCardAnalysisHome.productCardList}" var="_obj" rowKeyVar="_index">
+                               <tr>
+                                   <td class="ze_bg2 ze_bt_le" width="5" height="4" ></td>
+                                   <td class="ze_bg2">#{_index + 1}</td>
+                                   <td class="ze_bg2">#{_obj[1]}</td>
+                                   <td class="ze_bg2">#{_obj[2]}</td>
+                                   <td class="ze_bg2">#{_obj[3]}</td>
+                                   <td class="ze_bg2">#{_obj[4]}</td>
+                                   <td class="ze_bg2">#{_obj[5]}</td>
+                                   <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                               </tr>
+                           </a:repeat>
+                       </table> 
+                       <div class="pageModel_wap" style="padding:0px 0 30px;">
+                           <h:form id="productPageFrom" rendered="#{null ne membershipCardAnalysisHome.productCardList and membershipCardAnalysisHome.productCardList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{membershipCardAnalysisHome.productPageModel.hasPreviousPage and membershipCardAnalysisHome.productPageModel.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+											<s:fragment rendered="#{membershipCardAnalysisHome.productPageModel.hasPreviousPage and membershipCardAnalysisHome.productPageModel.totalPages > 1}">
+											<a href="javascript:void(0)" style="color:#333333;" id="productFirstPage" onclick="productQueryPage(1)"  >首页</a>
+											</s:fragment>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a href="javascript:void(0)" class="no_n" id="productPreviousPage" onclick="productQueryPage(#{membershipCardAnalysisHome.productPageModel.previousPage})"  >&lt;</a>
+										</td>
+									</s:fragment>
+									<a:repeat var="_pageDetail" value="#{membershipCardAnalysisHome.productPageModel.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_pageDetail gt 0 and _pageDetail le membershipCardAnalysisHome.productPageModel.totalPages}">
+											<td class="td_t_b #{membershipCardAnalysisHome.productPageModel.hasPreviousPage  or _index ge 0 ?' td_t_t' : ''} #{_pageDetail eq membershipCardAnalysisHome.productPage ? 'onp' : ''}" >
+												<a href="javascript:void(0)" id="thisProductPage"  onclick="productQueryPage(#{_pageDetail})"  >#{_pageDetail}</a>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{membershipCardAnalysisHome.productHasNextPage}">
+										<s:fragment rendered="#{membershipCardAnalysisHome.productHasNextPage and membershipCardAnalysisHome.productPageModel.totalPages > 1}">
+										<td class="td_t_b td_t_t">
+											<a href="javascript:void(0)" class="no_d"  id="ProductNextPage" onclick="productQueryPage(#{membershipCardAnalysisHome.productPageModel.nextPage})" >&gt;</a>
+										</td>
+										</s:fragment>
+										<s:fragment rendered="#{membershipCardAnalysisHome.productHasNextPage and membershipCardAnalysisHome.productPageModel.totalPages > 1}">
+										<td class="td_t_b td_t_t">
+											<a href="javascript:void(0)" style="color:#333333;"  id="lastProcutPage" onclick="productQueryPage(#{membershipCardAnalysisHome.productPageModel.totalPages})"  >尾页</a>
+										</td>
+										</s:fragment>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{membershipCardAnalysisHome.productPageModel.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+                        </div> 
+                       </rich:panel>
+                       </s:fragment>
+                        <!--  商品卡  end--> 
+                        
+                        <!--  宅配卡  begin-->
+                        <s:fragment rendered="#{membershipCardAnalysisHome.cardType eq 0 or membershipCardAnalysisHome.cardType eq 2 }">
+                       <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                           <tr>
+                               <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                               <td colspan="6" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                               <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                           </tr>
+                           <tr>
+                               <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                               <th class="fxze_bg3" align="left"  colspan="5">宅配卡</th>
+                               <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                           </tr>
+                           <tr>
+                               <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                               <td class="ze_bg2" width="16%">序号</td>
+                               <td class="ze_bg2" width="17%">卡类型</td>
+                               <td class="ze_bg2" width="16%">卡金额</td>
+                               <td class="ze_bg2" width="17%">销售客户</td>
+                               <td class="ze_bg2" width="17%">销售人</td>
+                               <td class="ze_bg2" width="17%">销售时间</td>
+                               <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                          <a:repeat value="#{membershipCardAnalysisHome.homeCardList}" var="_obj" rowKeyVar="_index">
+	                          <tr>
+	                              <td class="ze_bg2 ze_bt_le" width="5" height="4" ></td>
+	                              <td class="ze_bg2">#{_index + 1}</td>
+	                              <td class="ze_bg2">#{_obj[1]}</td>
+	                              <td class="ze_bg2">#{_obj[2]}</td>
+	                              <td class="ze_bg2">#{_obj[3]}</td>
+	                              <td class="ze_bg2">#{_obj[4]}</td>
+	                              <td class="ze_bg2">#{_obj[5]}</td>
+	                              <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                          </tr>
+                           </a:repeat>
+                           </tr>
+                       </table> 
+                       <div class="pageModel_wap" style="padding:0px 0 30px;">
+                           <h:form id="homePageFrom" rendered="#{null ne membershipCardAnalysisHome.homeCardList and membershipCardAnalysisHome.homeCardList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{membershipCardAnalysisHome.homePageModel.hasPreviousPage and membershipCardAnalysisHome.homePageModel.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<s:fragment rendered="#{membershipCardAnalysisHome.homePageModel.hasPreviousPage and membershipCardAnalysisHome.homePageModel.totalPages > 1}">
+										<td class="td_t_b">
+											<a href="javascript:void(0)"  style="color:#333333;" id="homeFirstPage" onclick="homeQueryPage(1)"  >首页</a>
+										</td>
+										</s:fragment>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a href="javascript:void(0)" class="no_n" id="homePreviousPage" onclick="homeQueryPage(#{membershipCardAnalysisHome.homePageModel.previousPage})"  >&lt;</a>
+										</td>
+									</s:fragment>
+									<a:repeat var="_pageDetail" value="#{membershipCardAnalysisHome.homePageModel.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_pageDetail gt 0 and _pageDetail le membershipCardAnalysisHome.homePageModel.totalPages}">
+											<td class="td_t_b #{membershipCardAnalysisHome.homePageModel.hasPreviousPage  or _index ge 0 ?' td_t_t' : ''} #{_pageDetail eq membershipCardAnalysisHome.homePage ? 'onp' : ''}" >
+												<a href="javascript:void(0)" id="thisHomePage"  onclick="homeQueryPage(#{_pageDetail})"  >#{_pageDetail}</a>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{membershipCardAnalysisHome.homeHasNextPage}">
+									<s:fragment rendered="#{membershipCardAnalysisHome.homeHasNextPage and membershipCardAnalysisHome.homePageModel.totalPages > 1}" >
+										<td class="td_t_b td_t_t">
+											<a href="javascript:void(0)" class="no_d"  id="homeNextPage" onclick="homeQueryPage(#{membershipCardAnalysisHome.homePageModel.nextPage})" >&gt;</a>
+										</td>
+									</s:fragment>
+										<s:fragment rendered="#{membershipCardAnalysisHome.homeHasNextPage and membershipCardAnalysisHome.homePageModel.totalPages > 1}">
+										<td class="td_t_b td_t_t">
+											<a href="javascript:void(0)" style="color:#333333;"  id="homelLastPage" onclick="homeQueryPage(#{membershipCardAnalysisHome.homePageModel.totalPages})"  >尾页</a>
+										</td>
+									    </s:fragment>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{membershipCardAnalysisHome.homePageModel.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+                        </div>
+                        </s:fragment>
+                        <!--  宅配卡  end--> 
+                        
+                         <!--  储值卡  begin-->
+                         <s:fragment rendered="#{membershipCardAnalysisHome.cardType eq 0 or membershipCardAnalysisHome.cardType eq 3 }">
+                       <table width="100%" class="ze_table" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+                           <tr>
+                               <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                               <td colspan="6" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                               <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                           </tr>
+                           <tr>
+                               <th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                               <th class="fxze_bg3" align="left"  colspan="5">储值卡</th>
+                               <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                           </tr>
+                           <tr>
+                               <td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                               <td class="ze_bg2" width="16%">序号</td>
+                               <td class="ze_bg2" width="17%">卡类型</td>
+                               <td class="ze_bg2" width="16%">卡金额</td>
+                               <td class="ze_bg2" width="17%">销售客户</td>
+                               <td class="ze_bg2" width="17%">销售人</td>
+                               <td class="ze_bg2" width="17%">销售时间</td>
+                               <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                           </tr>
+                           <a:repeat value="#{membershipCardAnalysisHome.storeCardList}" var="_obj" rowKeyVar="_index">
+	                          <tr>
+	                              <td class="ze_bg2 ze_bt_le" width="5" height="4" ></td>
+	                              <td class="ze_bg2">#{_index + 1}</td>
+	                              <td class="ze_bg2">#{_obj[1]}</td>
+	                              <td class="ze_bg2">#{_obj[2]}</td>
+	                              <td class="ze_bg2">#{_obj[3]}</td>
+	                              <td class="ze_bg2">#{_obj[4]}</td>
+	                              <td class="ze_bg2">#{_obj[5]}</td>
+	                              <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+	                          </tr>
+                           </a:repeat>
+                       </table> 
+                        <div class="pageModel_wap" style="padding:0px 0 30px;">
+                           <h:form id="storePageFrom" rendered="#{null ne membershipCardAnalysisHome.storeCardList and membershipCardAnalysisHome.storeCardList.size() gt 0}">
+							<table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:fragment rendered="#{membershipCardAnalysisHome.storePageModel.hasPreviousPage and membershipCardAnalysisHome.storePageModel.totalPages > 1}">
+										<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="32" /></td>
+										<td class="td_t_b">
+										<s:fragment rendered="#{membershipCardAnalysisHome.storePageModel.hasPreviousPage and membershipCardAnalysisHome.storePageModel.totalPages > 1}">
+											<a href="javascript:void(0)" style="color:#333333;" id="storeFirstPage" onclick="storeQueryPage(1)"  >首页</a>
+									</s:fragment>
+										</td>
+										<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+											<a href="javascript:void(0)" class="no_n" id="storePreviousPage" onclick="storeQueryPage(#{membershipCardAnalysisHome.storePageModel.previousPage})"  >&lt;</a>
+										</td>
+									</s:fragment>
+									<a:repeat var="_pageDetail" value="#{membershipCardAnalysisHome.storePageModel.showPageList}" rowKeyVar="_index">
+										<s:fragment rendered="#{_pageDetail gt 0 and _pageDetail le membershipCardAnalysisHome.storePageModel.totalPages}">
+											<td class="td_t_b #{membershipCardAnalysisHome.storePageModel.hasPreviousPage  or _index ge 0 ?' td_t_t' : ''} #{_pageDetail eq membershipCardAnalysisHome.storePage ? 'onp' : ''}" >
+												<a href="javascript:void(0)" id="thisStorePage"  onclick="storeQueryPage(#{_pageDetail})"  >#{_pageDetail}</a>
+											</td>
+										</s:fragment>
+									</a:repeat>
+									<s:fragment rendered="#{membershipCardAnalysisHome.storeHasNextPage and membershipCardAnalysisHome.storePageModel.totalPages > 1}">
+										<s:fragment rendered="#{membershipCardAnalysisHome.storeHasNextPage and membershipCardAnalysisHome.storePageModel.totalPages > 1}" >
+											<td class="td_t_b td_t_t">
+												<a href="javascript:void(0)" class="no_d"  id="storeNextPage" onclick="storeQueryPage(#{membershipCardAnalysisHome.storePageModel.nextPage})" >&gt;</a>
+											</td>
+										</s:fragment>
+										<s:fragment rendered="#{membershipCardAnalysisHome.storeHasNextPage and membershipCardAnalysisHome.storePageModel.totalPages > 1}">
+											<td class="td_t_b td_t_t">
+												<a href="javascript:void(0)" style="color:#333333;"  id="storeLastPage" onclick="storeQueryPage(#{membershipCardAnalysisHome.storePageModel.totalPages})"  >尾页</a>
+											</td>
+										</s:fragment>
+									</s:fragment>
+									<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{membershipCardAnalysisHome.storePageModel.totalPages}页</td>
+									<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="32" /></td>
+								</tr>
+							</table>
+						</h:form>
+                        </div>
+                        </s:fragment>
+	                   <!--  储值卡  end--> 
+                       <div class="clear"></div>
+                    </div>
+                    <!--表格结束-->
+                    <div style="height:30px; width:100%;"></div>
+
+
+                    <div class="clear"></div>
+                <div class="clear"></div>
+ <script type="text/javascript">
+//<![CDATA[
+	jquery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd",
+			    autoclose: true,
+				 weekStart: 1,
+				  //startDate: "2014-08-14 10:00",
+				 language:  'zh-CN',
+				 minView:2,
+			    pickerPosition: "bottom-left"
+			    });
+	jquery(document).ready(function(){
+				  jquery('.selectpicker').not(".newelement select").selectpicker();
+				  jquery('.selectpicker').selectpicker();
+				  var cardType = "#{membershipCardAnalysisHome.cardType}";
+				  var farmerInfoId = "#{membershipCardAnalysisHome.saleName}";
+				 
+				  jquery("#selOfCardType").selectpicker("val",cardType);
+				  jquery("#farmerInfoId_").selectpicker("val",farmerInfoId);
+				  //jquery('#farmerInfoId_').selectpicker({noneSelectedText:"全部"});
+
+	});
+	//]]>
+	</script>
+	               
+	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="#{request.contextPath}/asset/js/excanvas.min.js"></script><![endif]-->
+                <script src="#{request.contextPath}/asset/js/jquery.js"></script>
+		 <script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highcharts.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+           function goUrl (dateType,btype){
+        	  var cardType =  jquery('#selOfCardType').val();
+			  if(cardType != null)
+				  cardType = cardType.toString();
+			  else
+				  cardType = 0;
+			  var farmerInfoId = jquery('#farmerInfoId_').val();
+			  if(farmerInfoId != null)
+				  farmerInfoId = farmerInfoId.toString();
+			  else
+				  farmerInfoId = "";
+			  
+			  jquery('#search\\:typeMess').val(1);
+			  
+        	  window.location.href = "#{request.contextPath}/analysis/MembershipCardAnalysis.seam?dateType="+dateType+"&btype="+btype +"&cardType="+cardType+"&saleName="+farmerInfoId+"&typeMess=1";
+           }
+           
+jquery(".ui-selectmenu").remove();
+jquery(".rich-calendar-input").addClass("gjss1");
+jquery(".rich-calendar-input").removeClass("rich-calendar-input");
+jquery(".ui-selectmenu").addClass("small2");
+jquery(".ui-selectmenu-menu").css("width","98px");
+
+window.onload = function() 
+{
+ labels = document.getElementById('male').getElementsByTagName('label');
+ radios = document.getElementById('male').getElementsByTagName('input');
+ for(i=0,j=labels.length ; i<j ; i++)
+ {
+  labels[i].onclick=function() 
+  {
+	if(this.className == '') {
+	 for(k=0,l=labels.length ; k<l ; k++)
+	 {
+	  labels[k].className='';
+	  radios[k].checked = false;
+	 }
+	 this.className='checked';
+	 try{
+		document.getElementById("search:btype").value=this.getAttribute("aa");
+		document.getElementById(this.getAttribute("name")).checked = true;
+		if(this.getAttribute("aa")=="4"){
+			jquery(".sex_male1").show();
+			jquery(".sex_female1").hide();
+			jquery(".sex_nomale1").hide();
+		}else if(this.getAttribute("aa")=="5"){
+			jquery(".sex_male1").show();
+			jquery(".sex_female1").show();
+			jquery(".sex_nomale1").hide();
+		}else if(this.getAttribute("aa")=="6"){
+			jquery(".sex_male1").hide();
+			jquery(".sex_female1").hide();
+			jquery(".sex_nomale1").show();
+		}
+	 } catch (e) {}
+	}
+  }
+ }
+}
+
+che = function(obj,o){
+	if(o.getAttribute("aaa")=="false"){
+		o.setAttribute("aaa","true");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("b");
+		jquery("#"+o.id).addClass("a");
+	}else{
+		o.setAttribute("aaa","false");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("a");
+		jquery("#"+o.id).addClass("b");
+	}
+	checkChecked();
+}
+
+
+
+checkAll = function(obj){
+	if(obj.getAttribute("aaa")=="true"){
+		jquery(".chccc").each(function(){
+			jquery(this).attr("aaa","false");
+			jquery("#"+jquery(this).attr("xx")).attr("aaa","false");
+			jquery(this).removeClass("a");
+			jquery(this).addClass("b");	   
+		});
+		document.getElementById("search:allC").value="false";
+		obj.setAttribute("aaa","false");
+		jquery(obj).removeClass("a");
+		jquery(obj).addClass("b");
+	}else{
+		jquery(".chccc").each(function(){
+			jquery(this).attr("aaa","true");
+			jquery("#"+jquery(this).attr("xx")).attr("aaa","true");
+			jquery(this).removeClass("b");
+			jquery(this).addClass("a");	  
+				
+		});
+		obj.setAttribute("aaa","true");
+		document.getElementById("search:allC").value="true";
+		jquery(obj).removeClass("b");
+		jquery(obj).addClass("a");
+	}
+}
+
+checkChecked =function(){
+	var obj = document.getElementById("search:allC")
+	if(obj.value=="false"){
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+				break;
+			}else if(i==check.length-1){
+				jquery("#b").attr("aaa","true");
+				document.getElementById("search:allC").value="true";
+				jquery("#b").removeClass("b");
+				jquery("#b").addClass("a");
+			}
+		}
+	}else{
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+			//}else if(i==check.length-1){
+				document.getElementById("search:allC").value="false";
+				jquery("#b").attr("aaa","false");
+				jquery("#b").removeClass("a");
+				jquery("#b").addClass("b");
+				break;
+			}
+		}
+	}
+	
+}
+function CompareDate(d1,d2)
+{
+  return ((new Date(d1.replace(/-/g,"\/"))) > (new Date(d2.replace(/-/g,"\/"))));
+}
+
+function labelFormatter(label, series) {
+	return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+}
+function setCode(lines) {
+	jQuery("#code").text(lines.join("\n"));
+}
+
+var typ1 = "#{membershipCardAnalysisHome.dateType }";
+var typ2 = "#{membershipCardAnalysisHome.btype}";
+
+//折线图
+jquery(document).ready(function(){
+	var data = #{membershipCardAnalysisHome.polylineName}
+	Highcharts.setOptions({ global: { useUTC: false } });
+	jQuery("#placeholder2").highcharts({
+		title :{
+		    text:null
+		},
+		xAxis: {  
+			#{membershipCardAnalysisHome.polylineType}
+		        type: 'datetime', //定义x轴上日期的显示格式  
+		        labels: {  
+		        formatter: function() {  
+		            var vDate=new Date(this.value);  
+		            return Highcharts.dateFormat('#{membershipCardAnalysisHome.tickformat}', this.value);  
+		        },  
+		        align: 'center' ,
+		        style:{
+		        	color:"black"
+		        }
+		    }  
+	    }, 
+		tooltip: {
+	    	formatter: function() {
+	            return '<b>'+ this.series.name +'</b><br/>'+
+	            Highcharts.dateFormat('#{membershipCardAnalysisHome.tickformat}',this.x) +'：'+ this.y+"单" ;
+	    	}
+	    },
+		yAxis:{
+			minRange:5,
+			min:0,
+			title:{
+				text:null
+			}
+		},
+		series :data
+	});
+});
+takea = function(){
+	if(jquery(".takeaway").css("display")=='none'){
+		jquery(".takeaway").show();
+		reido1.style.backgroundImage='url(../asset/images/radio1.gif)';
+	}else{
+		jquery(".takeaway").hide();
+		reido1.style.backgroundImage='url(../asset/images/radio2.gif)';
+ 	}
+}
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+jquery(document).ready(function(){
+	jquery('input').iCheck({
+	    checkboxClass: 'icheckbox_minimal-blue',
+	    radioClass: 'iradio_minimal-blue',
+	    increaseArea: '20%' // optional
+	  });
+
+	jquery("input[name='sex']:radio").on("ifChecked", function(event){
+		var type = this.value;
+		document.getElementById("search:btype").value=type;
+		jquery(".fxyon").removeClass("fxyon");
+		jquery("input[name='sex']").removeAttr("checked");
+		jquery("#sex" + type).attr("checked", true);
+		if(type=="4"){
+			jquery(".sex_male1").show();
+			jquery(".sex_female1").hide();
+			jquery(".sex_nomale1").hide();
+		}else if(type=="5"){
+			jquery(".sex_male1").show();
+			jquery(".sex_female1").show();
+			jquery(".sex_nomale1").hide();
+		}else if(type=="6"){
+			jquery(".sex_male1").hide();
+			jquery(".sex_female1").hide();
+			jquery(".sex_nomale1").show();
+		}
+	});	
+
+	jquery("input[name='lookAll']").on("ifClicked", function(event){
+		
+		if(jquery(".takeaway").css("display")=='none'){
+			
+			jquery("#lookAll").iCheck("check"); 
+			jquery(".takeaway").show();
+		}else{
+			jquery(".takeaway").hide();
+	 	}
+	});	
+	});
+window.onload = function() 
+{
+	var type = document.getElementById("search:btype").value;
+	if(type != null){
+		jquery("#sex" + type).iCheck("check"); 
+	}
+}
+
+checksub = function(){
+	
+	if(document.getElementById("checkone")!=null){
+		var str = "";
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="true"){
+				str+=check[i].value+"_";
+			}
+		}
+		if(str.length>1){
+			str = str.substring(0,str.length-1);
+		}
+		document.getElementById("search:check").value=str;
+	}
+	
+	var type = document.getElementById("search:btype").value;
+	if(type == 6){
+		var stime = jquery("#search\\:startTime").val();
+		var etime = jquery("#search\\:endTime").val();
+		
+		if(stime == ""){
+			alert("请填写开始时间!");
+			return false;
+		}else if(etime == ""){
+			alert("请填写开始时间!");
+			return false;
+		}else if(CompareDate(stime,etime)){
+			alert("开始时间不能大于结束时间!");
+			return false;
+		}
+		}
+	 
+	 var t1 = jquery("#farmerInfoId_").val();
+	 if(t1!=null){
+		 jquery("#saleName").val(t1.toString());
+	 }else{
+		 jquery("#saleName").val("0");
+	 }
+	 var cardType = jquery("#selOfCardType").val();
+	 if(cardType!=null){
+		 jquery("#cardType").val(cardType.toString());
+	 }else{
+		 jquery("#cardType").val();
+	 }
+
+	 jquery('#search\\:typeMess').val(0);
+	jquery("#search\\:strartTimeHidden").val(stime);
+	jquery("#search\\:endTimeHidden").val(etime);
+	return true;
+}
+
+function productQueryPage(page){
+	jquery("#search\\:productPageHide").val(page);
+	jquery("#search\\:searchButton").trigger("click");
+}
+function homeQueryPage(page){
+	jquery("#search\\:homePageHide").val(page);
+	jquery("#search\\:searchButton").trigger("click");
+}
+function storeQueryPage(page){
+	jquery("#search\\:storePageHide").val(page);
+	jquery("#search\\:searchButton").trigger("click");
+}
+//]]>
+</script>
+
+            </td>     
+	
+          <style>
+          #xxx table{margin: 0 auto;}
+          .newelement{
+          margin-top:15px;
+          }
+          </style>  
+	</ui:define>
+
+</ui:composition>

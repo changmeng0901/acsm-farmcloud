@@ -1,0 +1,176 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_new.xhtml">
+	<ui:define name="body">
+		<style>
+			.dr-pnl {
+			    padding: 0px;
+			    border: none;
+			}
+			.dr-pnl-b {
+			    padding: 0px;
+			    border: none;
+			}
+			body{ color:#525252;}
+			.cm_tjfxHd{ padding:0 30px;}
+			.cm_tjfxHd02{ min-width:630px; margin:0 30px;}
+			.public-search {
+			    position: relative;
+			}
+			.octicon-search02 {
+			    background:url(#{request.contextPath}/asset/images/cjsearch_bg.png) no-repeat;
+			    display: block;
+			    float: left;
+			    height: 13px;
+			    left: 8px;
+			    position: absolute;
+			    top: 10px;
+			    width: 13px;
+			    z-index: 3;
+			}
+			.srarchfont {
+			    color: #d2d2d2;
+			    text-indent: 15px;
+			}
+			.nw300 {
+			    width: 300px;
+			}
+			.commonHd3{ padding:0 30px;}
+			.commonTable thead tr{ background:#ebf6ff;}
+			.commonTable th,.commonTable td{ border:1px solid #bbd4e8; border-collapse:collapse; line-height:38px; text-align:center; font-size:14px; font-family:'宋体'; font-weight:normal;}
+			.commonTable tbody tr{ background:#fff;}
+			.commonTable tbody tr.trCur{ background:#fbfcfe;}
+			.commonTable tbody tr.trHover{ background:#ecf7e6;}
+			.list_bei{ background:url(#{request.contextPath}/asset/images/cm_wuliao1.png) no-repeat 0 0; cursor:pointer; display:inline-block; height:15px; width:16px;}
+		</style>
+		#{goodsLevelControl.queryGoodsLevelInit()}
+		<td valign="top" width="210" style=" border-right:1px solid #e1e4eb;">
+			<div class="left_c2">
+				<ul class="lt_c_ul">
+                    	<li><s:link propagation="none"  view="/user/UpdateEnterpriseSettings.xhtml"><f:param name="enterpriseId" value="#{sessionTake.enterpriseInfoId}"/><img src="#{request.contextPath}/asset/images/biao_qysz.png" width="12" height="12" />&#160;企业设置</s:link></li>
+                    	
+                    	<li><a href="#{request.contextPath}/message/TunnelGroupList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/caishou_03.png"/>&#160;分组管理</a></li>
+                    	<li><a href="#{request.contextPath}/dictionary/DataDicinfoList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/cangku2.png" width="12px;"/>&#160;字段管理</a></li>
+                    	<li><a href="#{request.contextPath}/product/GoodsInfoList.seam" class="fon_07"><strong><img class="tbimg" src="#{request.contextPath}/asset/images/wuliao.png"/>&#160;物料信息</strong></a></li>
+                    	<li><a href="#{request.contextPath}/product/ProductInfoList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/product_info.png"/>&#160;商品信息</a></li>
+                    	<li>
+                        	<a href="#{request.contextPath}/device/DeviceList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/shebei2.png"/>&#160;设备管理</a>
+                        </li>
+                        <li>
+                        	<a href="#{request.contextPath}/device/VideoList.seam" ><img class="tbimg" src="#{request.contextPath}/asset/images/shipin2.png"/>&#160;视频管理</a>
+                        </li>
+                         <li>
+                        	<a href="#{request.contextPath}/farming/AmRfidInfoList.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/rfid.png"/>&#160;RFID卡管理</a>
+                        </li><li>
+                        	<a href="#{request.contextPath}/system/RecycleInfoList_1.seam"><img class="tbimg" src="#{request.contextPath}/asset/images/huishouzhantupian.png"/>&#160;回收站</a>
+                        </li>
+                    </ul>
+				<div class="clear"></div>
+			</div>
+		</td>
+		<td valign="top">
+			<div class="right_c" style="min-height:30px;">
+				<div class="r_title">
+					<div class="r_t_l"><font size="3">物料等级管理</font></div>
+				</div>
+				<div class="clear"></div>
+			</div>   
+			<div class="cm_tjfxHd02 pt20">
+				<ul class="clear">
+					<li class="fl">
+						<span class="octicon-search02"></span>
+						<input id="addGoodsName" style="padding:0px;" onclick="removeMe()"  type="text" value="请输入物料等级" class="form-control nw300 srarchfont"></input>
+					</li>
+					<li class="fr" style="padding-left:5px;float:left;">
+						<button class="btn btn-success" type="button" onclick="addLevel();">添加</button>
+					</li>
+				</ul>
+			</div>
+			<div class="cm_tjfxBd">
+				<div class="right_c">
+					<div class=" pt30">
+						<h:form id="saveFrom">
+							<a:commandLink id="refreshShow" reRender="showPanel"></a:commandLink>
+						</h:form>
+						<rich:panel id="showPanel" style="width:100%;">
+							<table class="ze_table" width="100%" cellpadding="0" cellspacing="0">
+								<tbody>
+									<tr class="alt">
+										<td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" height="4" width="5"></img></td>
+										<td colspan="3" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+										<td height="4" width="5"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" height="4" width="5"></img></td>
+	                            </tr>
+								<tr class="">
+									<th class="ze_bg ze_bt_le" height="4" width="5"></th>
+									<th class="ze_bg" width="40%">等级名称</th>
+									<th class="ze_bg" width="40%">创建时间</th>
+									<th class="ze_bg" width="20%">操作</th>
+									<th class="ze_bg ze_bt_ri" height="4" width="5"></th>
+								</tr>
+								<a:repeat value="#{goodsLevelControl.goodsLevelList}" var="_goodsLevel" rowKeyVar="_index">
+									<tr class="#{_index % 2 == 0 ? 'alt' : ''}">
+										<td class="ze_bg2 ze_bt_le" height="4" width="5"></td>
+										<td class="ze_bg2">#{_goodsLevel.name}</td>
+										<td class="ze_bg2"><h:outputText value="#{_goodsLevel.insertTime}" ><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText></td>
+										<td class="ze_bg2">
+											<a href="javascript:void(0);" onclick="removeLevel(#{_goodsLevel.goodsLevelId});" title="删除" class="list_delete"></a>
+										</td>
+										<td class="ze_bg2 ze_bt_ri" height="4" width="5"></td>
+									</tr>
+								</a:repeat>
+							</tbody>
+						</table>
+					</rich:panel>
+				</div>  
+			</div>
+		</div>
+		<div class="ckd_button" style="text-align:center;">
+			<s:button view="/product/GoodsInfoList.seam" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px">
+				<f:param name="pageNum" value="#{goodsLevelControl.pageNum}" />
+			</s:button>
+		</div>
+		<div style="height:30px; width:100%;"></div>
+		<div class="clear"></div>
+	</td>
+	<a:form>
+		<a:queue requestDelay="100" ignoreDupResponses="true"/>
+		<a:jsFunction name="addGoodsLevel" action="#{goodsLevelControl.addGoodsLevel}" oncomplete="refreshAction();" >
+			<a:actionparam name="addLevelName" assignTo="#{goodsLevelControl.addLevelName}"/>
+		</a:jsFunction>
+		<a:jsFunction name="removeGoodsInfo" action="#{goodsLevelControl.removeGoodsInfo}" oncomplete="refreshAction();" >
+			<a:actionparam name="deleteLevelId" assignTo="#{goodsLevelControl.deleteLevelId}"/>
+		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript">
+	//<![CDATA[
+		function removeLevel(goodsLevelId){
+			removeGoodsInfo(Number(goodsLevelId));
+		}
+		
+		function addLevel(){
+			var addGoodsName = jquery("#addGoodsName").val();
+			addGoodsLevel(addGoodsName);
+			jquery("#addGoodsName").attr("onclick","removeMe()");
+			jquery('#addGoodsName').val("请输入物料等级");
+		}
+	
+		//刷新
+		function refreshAction(){
+			document.getElementById("saveFrom:refreshShow").onclick();
+		}
+
+		function removeMe(){
+			jquery("#addGoodsName").removeAttr("onclick");
+			jquery("#addGoodsName").val("");
+		}
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

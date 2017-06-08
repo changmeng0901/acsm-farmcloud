@@ -1,0 +1,196 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+    
+
+<ui:define name="body">
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/points/change.css" type="text/css" />
+
+
+   <td valign="top">
+   <!-- #{pointsProductInfoHome.recordBegin()} -->
+        <!--右边开始-->
+        <div class="right_c clear">
+            <!-- 面包屑导航 开始 -->
+            <div class="r_title clear">
+                <div class="r_t_l fl"><font size="3">积分兑换记录</font></div>
+                <div class="fr"><img src="#{request.contextPath}/asset/images/points/contact.png" style="padding-right:10px; padding-bottom:3px;"/>联系我们<span style="color:#428bca; padding-left:10px;">400-819-9586</span></div>
+            </div>
+            <!-- 面包屑导航 结束 -->
+            <!-- 积分兑换记录内容 开始 -->
+            <h:form id="search">
+            <div class="changeList clear">
+                <div class="fl mr10"><input type="text" class="form-control" id="searchId"  value="请输入收货人/商品名称" style="width:270px; height:34px;"/></div>
+                <div class="fl mr10">
+                    <table>
+                        <tr>
+                            <td class="pr5">订单状态</td>
+                            <td class="orderSelect">
+                                <select class="selectpicker" id="stateId">
+                                <option value="0">全部</option>
+                                <option value="1">订单未配送</option>
+                                <option value="2">订单配送中</option>
+                                <option value="3">订单已取消</option>
+                                <option value="4">订单已完成</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>  
+                </div>
+                <div class="fl mr10">
+                    <table>
+                        <tr>
+                            <td class="pr5">兑换时间</td>
+                            <td>
+                                <div class="input-append date form_datetime " >
+                                  
+                                    <input size="26" type="text" value="" readonly="readonly"  id="changeTimeId"/>
+                                    <span class="add-on"><i class="icon-th"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="fl">
+                  	<h:inputHidden value="#{pointsProductInfoHome.changeTime}"  id="changeTime"/>
+                	<h:inputHidden value="#{pointsProductInfoHome.recordSearch}" id="recordSearch"/>
+                	<h:inputHidden value="#{pointsProductInfoHome.state}" id="state"/>
+                	<h:commandButton action="#{pointsProductInfoHome.recordBegin()}" value="搜索" styleClass="btn btn-primary" onclick="beginSearch()"/>
+                </div>
+            </div>
+            </h:form>
+            <a4j:repeat value="#{pointsProductInfoHome.crpList}" var="_crp" rowKeyVar="_index">
+	            <div class="changeContent">
+	                <table class="changeTable" width="100%" cellpadding="0" cellspcing="0">
+	                    <thead>
+	                        <tr>
+	                            <th width="15%" class="pl20">
+	                            <span>
+	                            <h:outputText value="#{_crp.convertTime}">
+	                            	<s:convertDateTime type="both" dateStyle="short" pattern="MM/dd HH:mm:ss" />
+	                            </h:outputText>
+	                            </span>
+	                            </th>
+	                            <th width="20%"><span class="c64">订单号&#160;</span><span>#{_crp.orderCode}</span></th>
+	                            <th width="20%"><span class="c64">#{_crp.expressName==null?'':'物流公司'}&#160;</span><span>#{_crp.expressName}</span></th>
+	                            <th width="30%"><span class="c64">#{_crp.expressCode==null?'':'物流单号'}&#160;</span><span>#{_crp.expressCode}</span></th>
+	                            <th width="15%" class="pr20" style="text-align:right;">#{_crp.status==1?'订单未配送':''}#{_crp.status==2?'订单配送中':''}#{_crp.status==3?'订单已取消':''}#{_crp.status==4?'订单已完成':''}</th>
+	                        </tr>
+	                    </thead>
+	                </table>
+	                <table  width="100%" cellpadding="0" cellspcing="0" class="tableContent">
+	                    <tr>
+	                        <td width="10%" style="text-align:center;">
+	                        	<h:panelGroup rendered="#{_crp.pointsProductInfoId.productImages !=null &amp;&amp; _crp.pointsProductInfoId.productImages !=''}">                             
+		                        	<img src="#{_crp.pointsProductInfoId.productImages.split(',')[0]}" width="50px" height="63px"/>
+		                        </h:panelGroup>
+		                        <h:panelGroup rendered="#{_crp.pointsProductInfoId.productImages ==null || _crp.pointsProductInfoId.productImages ==''}">                             
+		                         	<img src="#" width="50px" height="63px"/>
+		                        </h:panelGroup>
+	                        </td>
+	                        <td width="25%" style="font-weight:bold;">#{_crp.pointsProductInfoId.name}</td>
+	                        <td width="20%"><img src="#{request.contextPath}/asset/images/points/no1.png" class="pr5"/><span class="c64 pr5">兑换数量</span><span>#{_crp.convertNum}</span></td>
+	                        <td width="20%"><img src="#{request.contextPath}/asset/images/points/no1.png" class="pr5"/><span class="c64 pr5">总计</span><span style="color:#ff5000;">#{_crp.pointsNum}</span></td>
+	                        <td width="25%">
+	                            <div class="receiver">
+	                                <img src="#{request.contextPath}/asset/images/points/no1.png" class="pr5"/><span class="c64 pr5">收货人</span><span>#{_crp.userDeliverAddressId.receiveName}</span>
+	                                <div class="popDetail">
+	                                    <em class="arrow"><img src="#{request.contextPath}/asset/images/points/arrow.png" /></em>
+	                                    <table width="100%">
+	                                        <tr>
+	                                            <td width="25" style="vertical-align:top;"><img src="#{request.contextPath}/asset/images/points/no3.png" /></td>
+	                                            <td style="font-weight:bold;">#{_crp.userDeliverAddressId.receiveName}</td>
+	                                        </tr>
+	                                        <tr>
+	                                            <td width="25" style="vertical-align:top;"><img src="#{request.contextPath}/asset/images/points/no4.png" /></td>
+	                                            <td>#{_crp.userDeliverAddressId.deliverAddress}</td>
+	                                        </tr>
+	                                        <tr>
+	                                            <td width="25" style="vertical-align:top;"><img src="#{request.contextPath}/asset/images/points/no5.png" /></td>
+	                                            <td style="font-weight:bold;">#{_crp.userDeliverAddressId.phone}</td>
+	                                        </tr>
+	                                    </table>
+	                                </div>
+	                            </div> 
+	                        </td>
+	                    </tr>
+	                </table>
+	            </div>
+            </a4j:repeat>
+            <div style="text-align:center; padding:40px 0;">
+            	<s:fragment rendered="#{sessionTake.urlTemp eq '/welCome.seam'}"></s:fragment>
+            	<a href="#{sessionTake.urlTemp eq '/welCome.seam'?'/points/PointsProductInfoList.seam':sessionTake.urlTemp}" type="button" class="btn btn-default mr5">返回</a>
+            </div>
+            <!-- 积分兑换记录 结束 -->
+        </div>
+        <!--右侧结束-->
+        </td>    
+<script type="text/javascript">
+//<![CDATA[
+jquery(function(){
+	
+	jquery('.selectpicker').selectpicker();  // 下拉框控件
+	
+	
+	jquery('input[type=text]').focus(function(){  //文本框获取焦点失去焦点变化
+		var txt_value = jquery(this).val();
+		if( txt_value == this.defaultValue ){
+			jquery(this).val("");	
+		}	
+	});	
+	jquery('input[type=text]').blur(function(){
+		var txt_value = jquery(this).val();
+		if( txt_value == "" ){
+			jquery(this).val(this.defaultValue);	
+		}	
+	});
+
+    jquery(".form_datetime").datetimepicker({
+		format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+		autoclose: true,
+		 weekStart: 1,
+		  //startDate: "2014-08-14 10:00",
+		 language:  'zh-CN',
+		 startView: 3,
+		minView: 2,
+		maxView: 4,		
+		pickerPosition: "bottom-left"
+    });
+    if(jquery('#search\\:recordSearch').val()!=''){
+    	jquery('#searchId').val(jquery('#search\\:recordSearch').val())
+    }
+    if(jquery('#search\\:state').val()!=''){
+    	jquery('#stateId').selectpicker('val',jquery('#search\\:state').val());
+    }
+
+    if(jquery('#search\\:changeTime').val()!=''){
+    	jquery('#changeTimeId').val(jquery('#search\\:changeTime').val());
+    }
+    
+});
+
+function beginSearch(){
+	if(jquery('#searchId').val()=='请输入收货人/商品名称'){
+		jquery('#search\\:recordSearch').val('');
+	}else{
+		jquery('#search\\:recordSearch').val(jquery('#searchId').val());
+	}
+	jquery('#search\\:state').val(jquery('#stateId').val());
+	if(jquery('#changeTimeId').val()==''){
+		jquery('#search\\:changeTime').val('');
+	}else{
+		jquery('#search\\:changeTime').val(jquery('#changeTimeId').val());
+	}
+}
+//]]>
+</script>
+</ui:define>
+
+</ui:composition>

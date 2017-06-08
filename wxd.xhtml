@@ -1,0 +1,131 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:a="http://richfaces.org/a4j"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   contentType="text/html">
+<html lang="en">
+<head>
+	<s:decorate rendered="#{identity.isLoggedIn()}"> 
+		<meta http-equiv="Refresh" content="0; URL=#{request.contextPath}#{sessionTake.getUrlTemp()}" />
+	</s:decorate> 
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<title>蛙农场</title>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/wxd/frog.css"/>
+	<style >
+		.bs-example{position:fixed;top:0;width:100%;}
+	</style>
+</head>
+<body style="background-color:#f7fcf6; ">
+<h:form id="loginForm">
+<!-- #{messages.right} -->
+	<div class="frog">
+		<div class="flower"></div>
+		<div class="header clearfix">
+			<div class="left fl">
+				<img src="#{request.contextPath}/asset/images/wxd/logo1.png" alt=""/>
+				<span class="line"></span>
+				<img src="#{request.contextPath}/asset/images/wxd/logo2.png" alt=""/>
+			</div>
+			<div class="right fr"><img src="#{request.contextPath}/asset/images/wxd/tel.png" width="24" height="24" />蛙农场服务热线：400-966-9229</div>
+		</div>
+		<div class="content">
+			<div class="left fl"></div>
+			<div class="right fr">
+				<div class="top">
+					<ul>
+						<li class="user"><h:inputText id="username" value="#{credentials.username }"/></li>
+						<li class="code"><h:inputSecret id="password" value="#{credentials.password }"/></li>
+					</ul>
+			<div class="fl">
+				<font class="font01" style="#{authenticator.messageString eq 1 ?'':'display:none;'}">
+		        	<img style="vertical-align: -3px;" src="#{request.contextPath}/asset/images/login/fuhao.png"/>	            
+		            <span >用户名错误！</span>	       
+		        </font>
+		        <font class="font01" style="#{authenticator.messageString eq 3 ?'':'display:none;'}">
+		        	<img style="vertical-align: -3px;" src="#{request.contextPath}/asset/images/login/fuhao.png"/>	            
+		            <span >未获得相应权限！</span>	       
+		        </font>
+		        <font class="font01" style="#{authenticator.messageString eq 4 ?'':'display:none;'}">
+		        	<img style="vertical-align: -3px;" src="#{request.contextPath}/asset/images/login/fuhao.png"/>	            
+		            <span >该用户已被暂停，请联系客服：400-8199-586</span>
+		        </font> 
+		        <font class="font01" style="#{authenticator.messageString eq 2 ?'':'display:none;'}">
+		        	<img style="vertical-align: -3px;" src="#{request.contextPath}/asset/images/login/fuhao.png"/>
+		            <span >密码错误！</span>
+		        </font>
+	        </div> 
+					<p class="forget"><a href="#{request.contextPath}/resetPwd.seam">忘记密码？</a></p>
+				</div>
+				<!-- <div class="login">登&nbsp;&nbsp;录</div> -->
+				<h:commandButton id="submitId" styleClass="login"  action="#{authenticator.wxdLogin()}" value="登录"/>
+			</div>
+			<div class="bs-example bs-example-standalone" style="display: none;">
+			    <div role="alert" class="alert alert-danger alert-dismissible fade in">
+			      <button data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+			      <h4>IE8以下已经不被支持</h4>
+			      <p>请您查看您的浏览器版本，升级到IE8或是使用火狐浏览器，Safari浏览器，谷歌浏览器，360浏览器查看。如需升级IE8版本请点击进入</p>
+			    </div>
+			</div>
+			
+		</div>
+		<p class="copyright">Copyright 北京奥科美技术服务有限公司 版权所有 </p>
+	</div>	
+</h:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/new/jquery.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+           
+      var checkInfo = "#{authenticator.messageString}";  
+      var logName =   "#{authenticator.logNameString}";
+      if(logName != "" && checkInfo=="2"){
+		$("#loginForm\\:username").val(logName);
+      }
+	$(document).ready(function() {
+		var userAgent = window.navigator.userAgent.toLowerCase();
+		$.browser.msie7 = $.browser.msie && /msie 7\.0/i.test(userAgent);
+		$.browser.msie6 = !$.browser.msie8 && !$.browser.msie7 && $.browser.msie && /msie 6\.0/i.test(userAgent);
+		if($.browser.msie7 || $.browser.msie6){
+			$(".bs-example").show();
+			$("#loginForm\\:submitId").attr("disabled","disabled");
+		}
+		$('.frog').css('height', $(window).height());
+		if($(window).height()<=780){
+			$('.copyright').css("position","static");
+		}else{
+			$('.copyright').css("position","absolute");
+		}
+		$('input[type=text]').focus(function(){
+			var txt_value = $(this).val();
+			if(txt_value==this.defaultValue){
+				$(this).val("");
+	            
+			};	
+		});
+		$('input[type=text]').blur(function(){
+			var txt_value = $(this).val();
+			if(txt_value==""){
+				$(this).val(this.defaultValue);
+			};	
+	         
+		});	
+	});
+	$(window).resize(function() {
+		$('.frog').css('height', $(window).height());
+		if($(window).height()<=780){
+			$('.copyright').css("position","static");
+		}else{
+			$('.copyright').css("position","absolute");
+		}
+	});
+
+	
+//]]>
+</script>
+</body>
+</html>
+</f:view>

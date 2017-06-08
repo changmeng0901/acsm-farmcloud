@@ -1,0 +1,108 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	#{orderOperate.scanCodeShipmentsInit()}
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/AllOrder.css"/>
+	<style>
+		body{ min-width:1002px;}
+		.r_t_l{ width:340px;}
+	</style>
+	<td valign="top" >
+		<div class="right_c clear" style="padding-top:20px; padding-bottom:20px;">
+			<div class="r_title clear" style="margin-top:0;">
+				<div class="r_t_l fl">
+					订单<span style="padding:0 5px;">&gt;</span>订单管理<span style="padding:0 5px;">&gt;</span>订单待发货<span style="padding:0 5px;">&gt;</span><font size="3">扫码发货</font>
+				</div>
+			</div>
+			<div class="search-header mb20" style="position:relative; text-align:center;">
+				<s:button view="/orderManage/OrderDeliveryList.xhtml" style="position:absolute; left:0; top:0;" styleClass="btn btn-default" propagation="end" value="返回">
+            		<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+            	</s:button>
+				<div class="search-header-lt" style="display:inline-block; float:none;">
+					<div class="public-search">
+						<span class="octicon-search02"></span>
+						<input id="orderCode" type="text" value="" class="form-control srarchfont" style="width:330px;"></input>
+					</div>
+					<button class="btn btn-primary" type="button" onclick="scanCodeAction();">扫描条形码</button>
+				</div>
+			</div>
+			<div class="listGoods_con">
+				<table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th width="15%">订单编号</th>
+							<th width="10%">收货人</th>
+							<th width="10%">收货人电话</th>
+							<th width="10%">下单时间</th> 
+							<th width="10%">总金额</th> 
+							<th width="15%">配送时间</th> 
+							<th width="15%">配送路线</th>       
+							<th width="15%">订单状态</th>       
+						</tr>
+					</thead>
+				</table>
+				<s:div styleClass="tableFixed_scroll" style="border-bottom:1px solid #e1e1e1;" id="orderDiv">
+					<table class="tableModel tbody" width="100%" cellpadding="0" cellspacing="0">
+						<tbody>
+							<a:repeat value="#{orderOperate.orderInfoList}" var="_orderInfo">
+								<tr class="odd">
+									<td width="15%">#{_orderInfo.orderCode}</td> 
+									<td width="10%">#{_orderInfo.receiveName}</td>
+									<td width="10%">#{_orderInfo.receivePhone}</td>
+									<td width="10%">
+										<h:outputText value="#{_orderInfo.insertTime}">
+					        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+					        			</h:outputText>
+									</td>
+									<td width="10%">¥#{_orderInfo.paymentAccount}</td>
+									<td width="15%">
+										<h:outputText value="#{_orderInfo.deliverTime}">
+					        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+					        			</h:outputText>
+									</td>
+									<td width="15%">#{_orderInfo.routeInfo.name}</td>
+									<td width="15%">#{orderConstant.getOrderStatusLabel(_orderInfo.orderStatus)}</td>
+								</tr>
+							</a:repeat>
+						</tbody>
+					</table>
+				</s:div>
+			</div>
+		</div>
+	</td>
+	
+	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="scanCodeShipmentsFind" action="#{orderOperate.scanCodeShipmentsFind}" reRender="orderDiv">
+			<a:actionparam name="orderCode" assignTo="#{orderOperate.orderCode}"/>
+		</a:jsFunction>
+	</a:form>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+
+		jQuery(function(){
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+		});
+
+		//扫码发货
+		function scanCodeAction(){
+			var orderCode = jQuery("#orderCode").val();
+			scanCodeShipmentsFind(orderCode);
+		}
+
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

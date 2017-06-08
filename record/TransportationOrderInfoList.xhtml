@@ -1,0 +1,161 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new2.xhtml">
+
+	<ui:define name="body">
+       <td valign="top"  width="100%">
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">加工&#160;&gt;&#160;&#160;<font size="3">运输管理</font></div>
+                    <div class="r_t_r">
+							<ul>
+								<li >
+									<a href="#{request.contextPath}/record/TransportationList.seam" style="text-decoration:none;color:black;" >
+				                 		<img src="#{request.contextPath}/asset/images/transport.png" width="11" height="9" />
+				              			运输列表
+				              		</a>
+			        			</li>
+			     			</ul>
+						</div>
+                    </div>
+                    <div class="z_r_ser" style="*margin-top:30px; *margin-bottom:30px;">
+                    <h:form id="transportationOrderInfoSearch">
+                    	<table cellpadding="0" cellspacing="0" style=" width:472px; margin:30px auto; *margin:0px auto;">
+                            <tr>
+                                <td>
+                                <div class="public-search">   
+                                	<span class="octicon-search02"></span>
+                                	<h:inputText id="name" styleClass="form-control nw300 srarchfont" value="#{transportInfoList.transportInfo.transportCode}"/>
+                                </div>
+                                
+                                	<h:commandButton id="search" styleClass="btn btn-primary" value="搜索" action="/record/TransportationOrderInfoList.xhtml">                                	
+	                                </h:commandButton>
+                                </td>
+                           </tr>
+                       </table>    
+                       </h:form>           
+                    </div>
+
+                   <div class="pr_ad">
+                   	<a class="btn btn-success" style="display: #{s:hasRole('dispatch_standard_add')?'hidden':'none'}" href="#{request.contextPath}/record/FreeLoadingList.seam" >装车</a>
+                    </div>
+					<table width="100%" class="pr_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	 <th class="pr_th" width="2%" style="border-left:1px solid #ddd;"></th>
+                    		<th class="pr_th" width="20%">车次</th>
+                    		<th class="pr_th" width="20%">路线</th>
+                    		<th class="pr_th" width="15%">电话</th>
+                    		<th class="pr_th" width="15%">司机</th>
+                    		
+                    		<th class="pr_th" width="15%">时间</th>
+                    		<th class="pr_th" width="15%" style="border-right:1px solid #ddd;">操作</th>
+                    	</tr>
+                    	<a4j:repeat value="#{transportInfoList.resultList}" var="obj" rendered="#{not empty transportInfoList.resultList}" rowKeyVar="_index">
+                    	<tr>
+                    		<td class="pr_td">
+                    		</td>
+                            <td class="pr_td"><h:outputText value="#{obj.transportCode}" /></td>
+                            <td class="pr_td"><h:outputText value="#{obj.routeInfo.name}" /></td>
+                    		<td class="pr_td"><h:outputText value="#{obj.routeInfo.phone}"/></td>
+                    		<td class="pr_td"><h:outputText value="#{obj.driverInfo.name}"/></td>
+                    		<td class="pr_td">
+                    		<h:outputText value="#{obj.insertTime}">
+                    		<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></td>
+                            <td class="pr_td">
+                            	<s:link propagation="none" style="display: #{s:hasRole('dispatch_standard_edit')?'hidden':'none'}" styleClass="print_fa" view="/record/FreeLoadingListEdit.xhtml"  value="编辑"  immediate="true" id="Approval">
+									<f:param name="transportInfoId" value="#{obj.transportInfoId}" />
+								</s:link>
+                            </td>
+                    	</tr>
+                    	</a4j:repeat>
+                    </table>
+ 			<!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty transportInfoList.resultList}">
+			                <s:decorate rendered="#{!transportInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{transportInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{transportInfoList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/record/TransportationOrderInfoList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/record/TransportationOrderInfoList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{transportInfoList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{transportInfoList.pageList}" rowKeyVar="_index">
+					        	<td class="td_t_b #{transportInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq transportInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/record/TransportationOrderInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{transportInfoList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/record/TransportationOrderInfoList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{transportInfoList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/record/TransportationOrderInfoList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{transportInfoList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+			                <td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{transportInfoList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+							</s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+            <!--印刷管理下结束-->
+
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+		
+</td>
+<script>
+function checkAll (name,obj){
+	jquery("input[name='"+name+"']").attr("checked",jquery(obj).attr("checked"));
+}
+
+//装车完成
+function del(url){
+	var str = "";
+	jquery("input[name='td']:checked").each(function(){
+		str+=this.value+",";			
+	});
+	if(str==""){
+		alert("请选择需要完成装车的数据!");
+		return;
+	}
+	if(window.confirm("确认完成装车？")){
+		window.location.href=url+str;
+	}
+}
+function del2(url){
+	var str = "";
+	jquery("input[name='td']:checked").each(function(){
+		str+=this.value+",";			
+	});
+		window.location.href=url+str;
+}
+</script>
+	</ui:define>
+
+</ui:composition>

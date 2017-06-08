@@ -1,0 +1,1554 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+	
+<ui:define name="body">
+	<style>	
+	</style>   
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/skinBlue.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/sort.css" />     
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/aerialphoto/LocusEdit.css" />
+       
+
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/kindeditor/lang/zh_CN.js"></script>
+	 <script type="text/javascript" src="#{request.contextPath}/asset/js/richwidgets-demo.min.js"></script>
+ 	<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+
+#{aerialVideoGroupHome.AerialGroupDatainit()}
+ <td valign="top">
+            <div class="panorama_main">
+            	<!-- 航拍左侧二级导航 -->
+            	<s:div id="aerialVideoGroupList">
+	                <div class="panorama_level_wap" style="display:#{aerialVideoGroupHome.aerialVideoGroupList.size() gt 0 ? '':'none'};">
+	                    <div class="panorama_level" >
+	                        <ol class="pano_second">	                        	
+	                        	<a4j:repeat value="#{aerialVideoGroupHome.aerialVideoGroupList}" var="_avg">
+                        			<li class="sed_item #{_avg.aerialVideoGroupId eq aerialVideoGroupHome.aerialVideoGroup.aerialVideoGroupId ?'sed_cur':''}" onclick="searchGroupInfo('#{_avg.aerialVideoGroupId}')">
+		                                <a href="javascript:;">
+		                                    <i class="i_icon"></i>
+		                                    <span class="p_text">#{_avg.groupName}</span>
+		                                </a>
+		                            </li>	                        		
+	                        	</a4j:repeat>	                        	
+	                        </ol>
+	                    </div>
+	                    <i class="collapse_btn"></i>
+	                </div>
+                </s:div>
+                <h:form name="searchGroupForm" id="searchGroupForm">
+                	<h:inputHidden value="#{aerialVideoGroupHome.groupId}" id="hidGroupId"/>           	
+                	<h:commandButton id="searchGroupBtn" styleClass="btn btn-primary" style="display:none" action="/map/AerialVideoGroupEdit.xhtml"></h:commandButton>
+                </h:form>
+                <!-- 航拍左侧二级导航 -->
+                <!-- 航拍右侧 -->
+                <div class="panorama_content pl30 pr30">
+                    <div class="breadNav_wap">
+                        <div class="breadNav_lt"><a href="#">精准营销</a><span>&gt;</span><a href="#">航拍</a><span>&gt;</span><strong>航拍编辑</strong></div>
+                        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+                            <ul class="resumeList clear">
+                                <li class="cur">
+                                    <a href="AerialVideoGroupEdit.seam"><img src="#{request.contextPath}/asset/images/panorama/panorama_icon1.png"/><span>航拍列表</span></a>
+                                </li>
+                                <li>
+                                    <a href="AerialVideoList.seam"><img src="#{request.contextPath}/asset/images/panorama/panorama_icon2.png" /><span>素材库</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="search_header mb10 clear" style="padding-right:150px;">
+                        <div class="search_selected fl" style="height:30px;">
+                            <dl style="width:500px;display:#{empty aerialVideoGroupHome.aerialVideoGroup?'none':''};" class="se_selt180 fl">
+                                <dt style="width:100px;">航拍视频名称</dt>
+                                <dd class="inline_block bootSelt180">
+                                    <input type="text" style="width:380px;" value="" id="aerialVideoGroupName" class="form-control"/>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="search_header_rt">
+                            <button type="button"  class="btn btn-primary"   onclick="createGroup();">添加视频组</button>
+                        </div>
+                    </div>
+                    <s:div id="groupInfoDiv">
+                    <!-- 编辑无数据 -->
+                    <div class="panorama_nodata" style="display:#{empty aerialVideoGroupHome.aerialVideoGroup?'':'none'};">
+                    	<table cellpadding="0" cellspacing="0">
+                        	<tr>
+                            	<td width="400">
+                                	<p class="p_text1">创建航拍可以使用户身临其境般观察您的农场</p>
+                                    <p class="p_text2">还在等什么，赶快去创建吧！</p>
+                                </td>
+                                <td align="right">
+                                	<img src="#{request.contextPath}/asset/images/panorama/panorama_pic1.jpg" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- 编辑有数据 -->
+                    <div class="panorama_search_wap" style="display:#{empty aerialVideoGroupHome.aerialVideoGroup?'none':''};">
+                    	<div class="allSetting_wap mb15">
+                        	<div class="allSetting_hd clear">
+                            	<h3><img src="#{request.contextPath}/asset/images/aerialphoto/LocusEdit_icon4.png" />航拍视频</h3>
+                                <div class="fr">                        
+                                	<input type="button" class="btn btn-default sm_btn" data-target="#MaterialModal" data-toggle="modal" onclick="searchVideoListByName('')" value="从素材库添加视频"/>
+                                    <input type="button" class="btn btn-default sm_btn" data-target="#CommentModal" data-toggle="modal" value="管理评论" style="display:none;"/>
+                                    <input type="button" class="btn btn-default sm_btn" data-target="#SortModal" data-toggle="modal" id="sortBtn" value="排序" />
+                                </div>
+                            </div>
+                            <div class="panoPic_bd">
+                            	<s:div id="groupVideoList">
+	                            	<table width="100%" cellpadding="0" cellspacing="0">                           		
+	                            		<a4j:repeat value="#{aerialVideoGroupHome.aerialGroupList}" var="_ag" rowKeyVar="_index">
+	                            			<s:fragment rendered="#{_ag.deleted ne true}">
+		                            			<tr class="pano_tr">
+			                                    	<td width="100">
+			                                        	<img class="pano_img" src="#{_ag.aerialVideo.thumbnailImageUrl}" />
+			                                        </td>
+			                                        <td width="30%">
+			                                        	<p class="pano_des" title="#{_ag.aerialVideo.aerialName}">#{_ag.aerialVideo.aerialName}</p>
+			                                        </td>
+			                                        <td>
+			                                        	<span class="praise_num" title="点赞量" style="display:none;"><img src="#{request.contextPath}/asset/images/panorama/panorama_praise.png" />#{_ag.goodCount eq null ? 0 :_ag.goodCount}</span>
+			                                            <span class="browse_num" title="浏览量" style="display:none;"><img src="#{request.contextPath}/asset/images/panorama/panorama_browse.png" />#{_ag.viewCount eq null ? 0 :_ag.viewCount}</span>
+			                                        </td>
+			                                        <td width="240">
+			                                            <span class="pano_btn" data-toggle="modal" onclick="sceneIntroduce('#{_ag.description}','#{_ag.aerialVideo.aerialVideoId}',#{_index});">场景介绍</span>
+			                                            <span class="pano_btn" style="display:none;">管理评论</span>
+			                                            <span class="pano_btn" onclick="delGroupVideo('#{_ag.id}','#{_ag.aerialVideo.aerialVideoId}',#{_index})">删除</span>
+			                                        </td>
+			                                    </tr>
+			                                </s:fragment>
+	                            		</a4j:repeat>	                            		
+	                                </table>
+	                                <script>
+	                                	//没有视频，不能点排序按钮
+										var videoSize=jQuery("#groupVideoList tr").length;
+										if(videoSize>0){
+											jQuery("#sortBtn").removeAttr("disabled");
+										}else{
+											jQuery("#sortBtn").attr("disabled","disabled");
+										}
+	                                </script>
+                                </s:div>
+                            </div>
+                        </div>
+                        <div class="allSetting_wap mb15">
+                        	<div class="allSetting_hd clear">
+                            	<h3><img src="#{request.contextPath}/asset/images/panorama/panorama_icon3.png" />视频设置</h3>
+                            </div>
+                            <div class="panoSetting_bd">
+                            	<ul class="panoSetting_list clear">
+                                	<li class="pano_item" style="display:none;">
+                                    	<dl data-toggle="tooltip" title="为视频添加背景音乐">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_bjyy.png" />背景音乐：
+                                                <p class="text_name" id="musicName"  style="display: none">流行音乐1</p>
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<input class="iCheck" type="checkbox" starusing="unchecked" id="music_show"/>启用
+                                                </div>
+                                                <span class="setting_btn" data-target="#MusicModal" data-toggle="modal" id="setMusicBtn" style="display: none">设置&gt;</span>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item" style="display:none-;">
+                                    	<dl data-toggle="tooltip" title="播放视频时默认打开弹幕">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_xspl.png" />显示弹幕：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<input class="iCheck" type="checkbox" starusing="unchecked" id="danmu_show"/>启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="设置是否自动打开视频列表">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_icon1.png" />视频列表：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<input class="iCheck" type="checkbox" starusing="unchecked" id="video_show"/>启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="默认打开无人机轨迹">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/aerialphoto/panorama_psgj.png" />拍摄轨迹：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<input class="iCheck" type="checkbox" starusing="unchecked" id="track_show"/>启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item" id="zyghLi" style="display:none;">
+                                    	<dl data-toggle="tooltip" title="是否显示基地的资源规划信息">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_zygh.png" />资源规划：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<input class="iCheck" type="checkbox" starusing="unchecked" id="assets_show"/>启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="在视频中展示企业LOGO">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_qyLOGO.png" />企业LOGO：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<input class="iCheck" type="checkbox" starusing="unchecked" id="logo_show"/>启用
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li class="pano_item">
+                                    	<dl data-toggle="tooltip" title="展示您企业的名片信息">
+                                        	<dt>
+                                            	<img class="icon_img" src="#{request.contextPath}/asset/images/panorama/panorama_qymp.png" />企业名片：
+                                            </dt>
+                                            <dd>
+                                            	<div class="star_using">
+                                                	<input class="iCheck" type="checkbox" starusing="unchecked" id="business_card_show"/>启用
+                                                </div>
+                                                <span class="setting_btn" data-target="#CardModal" data-toggle="modal" id="setCardBtn" style="display:none;">设置&gt;</span>
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="allSetting_wap">
+                        	<div class="allSetting_hd clear">
+                            	<h3><img src="#{request.contextPath}/asset/images/panorama/panorama_icon5.png" />分享设置</h3>
+                            </div>
+                            <div class="shareSetting_bd">
+                            	<table width="100%" cellpadding="0" cellspacing="0">
+                                	<tr>
+                                    	<td width="50%">
+                                        	<dl class="set_dl">
+                                            	<dt class="set_dt">分享标题</dt>
+                                                <dd class="set_dd">
+                                                	<input type="text" id="share_title" class="form-control" value="" maxlength="15" />
+                                                </dd>
+                                            </dl>
+                                        </td>
+                                        <td width="50%" rowspan="2">
+                                        	<div class="code_block">
+                                            	<img id="codeImage" src="#{request.contextPath}/asset/images/panorama/panorama_code.jpg" />
+                                            	<script>
+													//<![CDATA[						
+														jQuery("#codeImage").attr("src","#{request.contextPath}/GenerateCodeImage?groupId=#{aerialVideoGroupHome.groupId}&type=2");
+													//]]>
+									           </script>
+                                            </div>
+                                            <p class="text_share">分享链接</p>
+                                            <dl class="set_dl" style="width:80%; padding-left:0; padding-right:120px;">
+                                            	<dt class="set_dt" style="left:inherit; right:0;width:120px; padding-right:0; ">
+                                                	<button class="btn btn-default copy_link" onclick="copyShareUrl()">复制链接</button>
+                                                </dt>
+                                                <dd class="set_dd">
+                                                	<input type="text" id="share_url" class="form-control" value="" style="width:100%;" readonly="readonly"/>
+                                                </dd>
+                                            </dl>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td width="50%">
+                                        	<dl class="set_dl">
+                                            	<dt class="set_dt">分享描述</dt>
+                                                <dd class="set_dd">
+                                                	<textarea type="text" id="share_description" class="form-control textarea">请输入描述内容</textarea>
+                                                </dd>
+                                            </dl>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <h:form name="groupForm" id="groupForm">
+                        	<h:inputHidden id="aerialVideoGroupIdHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.aerialVideoGroupId}"/>
+	                        <h:inputHidden id="groupNameHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.groupName}"/>
+							<h:inputHidden id="backGroundMusicHidden" value="#{aerialVideoGroupHome.musicId}"/>
+							<h:inputHidden id="danmuShowHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.danmuShow}"/>
+							<h:inputHidden id="videoListShowHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.videoListShow}"/>
+							<h:inputHidden id="trackShowHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.trackShow}"/>
+							<h:inputHidden id="assetsShowHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.assetsShow}"/>
+							<h:inputHidden id="logoShowHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.logoShow}"/>
+							<h:inputHidden id="businessCardShowHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.businessCardShow}"/>
+							<h:inputHidden id="businessNameHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.businessName}"/>
+							<h:inputHidden id="businessTelHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.businessTel}"/>
+							<h:inputHidden id="businessEmailHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.businessEmail}"/>
+							<h:inputHidden id="businessWeiboHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.businessWeibo}"/>
+							<h:inputHidden id="businessAddressHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.businessAddress}"/>
+							<h:inputHidden id="businessCardIntroduceHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.businessCardIntroduce}"/>
+							<h:inputHidden id="shareTitleHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.shareTitle}"/>
+							<h:inputHidden id="shareDescriptionHidden" value="#{aerialVideoGroupHome.aerialVideoGroup.shareDescription}"/>
+							<h:inputHidden id="showModalHidden" value="#{aerialVideoGroupHome.showModal}"/>							
+							<h:inputHidden id="changeGroupIdHidden" value="#{aerialVideoGroupHome.chageGroupId}"/>
+							<h:inputHidden id="groupIdHidden" value="#{aerialVideoGroupHome.groupId}"/>
+							
+	                        <div class="pt30 pb30" style="text-align:center;">
+	                        	<a class="btn btn-preview" href="#" style="display:none;">预览</a>
+	                        	<h:commandButton id="save" value="保存" styleClass="btn btn-primary" style="margin-left:4px;" onclick="if(!checkSubmit()){return false;};" action="#{aerialVideoGroupHome.editAerialVideoGroup()}"/>
+	                        	<s:fragment rendered="#{not aerialVideoGroupHome.aerialVideoGroup.groupType}">
+	                        		<h:commandButton id="del" value="删除" styleClass="btn btn-default" style="margin-left:4px;" onclick="if(!deleteGroup()){return false;};" action="#{aerialVideoGroupHome.delAerialVideoGroup()}"/>
+	                        	</s:fragment>	                        	
+								<h:commandButton id="cancel" value="取消" styleClass="btn btn-default" style="margin-left:4px;" action="/map/AerialVideoGroupEdit.xhtml"/>
+								
+	                        </div>
+                        </h:form>
+                        
+                    </div>
+                    <!-- 编辑有数据 -->
+                    <script type="">
+						jQuery('input[class="iCheck"]').iCheck({
+							checkboxClass: 'icheckbox_minimal-blue'
+						});
+					</script>
+                    </s:div>
+                </div>
+                <!-- 航拍右侧 -->
+            </div>   
+            <!-- (1)创建分组模态框 -->
+<div class="modal fade" id="GroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog group_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">创建视频组</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+        <table class="edit_infor_table" cellpadding="0" cellspacing="0">
+        	<tr>
+            	<td class="td_lt" width="130">航拍视频名称</td>
+                <td class="td_rt">
+                	<input type="text" id="groupName" value="" class="form-control w400" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary"  onclick="saveGroup();">保存</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- (2)创建分组保存提示模态框 -->
+<div class="modal fade" id="SaveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<div class="modal-dialog pano_dialog save_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">提示</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+    	<input type="hidden" id="saveModalType"/>
+        <p class="text_tip1">您要保存对当前分组所做的更改吗？</p>
+        <p class="text_tip2">如果不保存，您更改的内容将会丢失。</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" data-target="#GroupModal" onclick="saveAndOperateGroup();">保存</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelOperate()">取消</button>
+        <button type="button" class="btn btn-default" onclick="notSaveGroup();">不保存</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- (3)从素材库添加视频模态框 -->
+<div class="modal fade" id="MaterialModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog material_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">从素材库添加视频</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+    	<!--全选及搜索-->
+        <div class="search_header clear" style="margin:0; padding:10px 20px; border-bottom:1px dashed #ddd;">
+            <div class="search_selected fl">
+                <dl style="width:60px;" class="se_selt180 fl">
+                    <dd class="inline_block bootSelt180">
+                        <div class="inline_block" style="padding-top:8px;">
+                            <input class="iCheck" type="checkbox" allname="unchecked" />
+                        </div>
+                    </dd>
+                    <dt style="width:40px; padding-right: 2px; text-align: center;">全选</dt>
+                </dl>
+            </div>
+            <div class="search_selected fl">
+                <dl style="width:500px;" class="se_selt180 fl">
+                    <dd class="inline_block bootSelt180">
+                    	<div class="public-search fl">
+                        	<span class="octicon-search02"></span>
+                        	<input type="text" value="请输入视频名称" id="aerialVideoName" class="form-control mr5 w200" />
+                        </div>
+                        <button type="button" class="btn btn-primary fl" onclick="searchVideoListByName(jQuery('#aerialVideoName').val())">搜索</button>
+                    </dd>
+                    <dt style="width:200px; padding-left:10px; text-align:left;">
+                    	已选择<span style="font-size:14px; color:#ff8400;" id="checkVideoSize"></span>个视频
+                    </dt>
+                </dl>
+            </div>
+        </div>
+        <!--搜索列表-->
+        <s:div id="videoList">
+	        <ol class="panopic_list">
+	        	<a4j:repeat value="#{aerialVideoGroupHome.videoList}" var="_av" >
+	        	<li class="li_item">
+	            	<dl class="dl_dl">
+	                	<dt class="dl_dt">
+	                		<s:fragment rendered="#{_av[3] ne null and _av[3] eq 'checked'}">
+	                			<input class="iCheck" type="checkbox" value="#{_av[0]}" checked="checked" itemname="checked"/> 
+	                			<img class="m_panopic m_bor" src="#{_av[2]}" />
+	                		</s:fragment>
+	                		<s:fragment rendered="#{_av[3] ne null and _av[3] ne 'checked'}">
+	                			<input class="iCheck" type="checkbox" value="#{_av[0]}" checked="checked" itemname="checked" itemtype="#{_av[3]}" disabled="disabled"/> 
+	                			<img class="m_panopic m_bor" src="#{_av[2]}" />
+	                		</s:fragment>
+	                    	<s:fragment rendered="#{_av[3] eq null}">
+		                    	<input class="iCheck" type="checkbox" value="#{_av[0]}" itemname="unchecked" itemtype=""/> 
+		                    	<img class="m_panopic" src="#{_av[2]}" />
+		                    	<script>
+									jQuery('.modal_body').find('input[allname]').iCheck('uncheck');
+								</script>
+	                    	</s:fragment>
+	                       
+	                    </dt>
+	                    <dd class="dl_dd">
+	                    	<p class="text_name">#{_av[1]}</p>
+	                    </dd>
+	                </dl>
+	            </li>
+	            </a4j:repeat>
+	        </ol>
+	        <script type="">
+				jQuery('input[class="iCheck"]').iCheck({
+					checkboxClass: 'icheckbox_minimal-blue'
+				});
+			jQuery("#checkVideoSize").html(jQuery('#MaterialModal').find('input[itemname=checked]').length);
+				// (8-1)素材库模态框
+			jQuery('.material_dialog input[allname]').on('ifClicked', function(){ //从素材库添加全选				
+				if (this.checked) {
+					jQuery(this).attr("allname","unchecked");
+					jQuery(this).parents('.modal_body').find('input[itemname]').iCheck('uncheck');
+					jQuery(this).parents('.modal_body').find('input[itemname]').attr("itemname","unchecked");
+					jQuery(this).parents('.modal_body').find(".m_panopic").removeClass("m_bor");
+
+					//保持已经选择的视频状态，非本次选择的视频不可以在该页面进行取消选择
+					jQuery(this).parents('.modal_body').find('input[itemtype]').iCheck('check');
+					jQuery(this).parents('.modal_body').find('input[itemtype]').attr("itemname","checked");
+					jQuery(this).parents('.modal_body').find(".m_panopic").addClass("m_bor");
+				} else {
+					jQuery(this).attr("allname","checked");
+					jQuery(this).parents('.modal_body').find('input[itemname]').iCheck('check');
+					jQuery(this).parents('.modal_body').find('input[itemname]').attr("itemname","checked");
+					jQuery(this).parents('.modal_body').find(".m_panopic").addClass("m_bor");
+				}
+				jQuery("#checkVideoSize").html(jQuery('#MaterialModal').find('input[itemname=checked]').length);
+			});
+			jQuery('.material_dialog input[itemname]').on('ifClicked', function(){ //从素材库添加取消全选
+				if (this.checked) {
+					jQuery(this).attr("itemname","unchecked");
+					jQuery(this).parents('.modal_body').find('input[allname]').iCheck('uncheck');
+					jQuery(this).parents(".dl_dt").find(".m_panopic").removeClass("m_bor");
+				} else {
+					jQuery(this).attr("itemname","checked");
+					jQuery(this).parents(".dl_dt").find(".m_panopic").addClass("m_bor");
+					var len = jQuery(this).parents('.modal_body').find('input[itemname=checked]').length;
+					if(len == jQuery('.material_dialog input[itemname]').length){
+						jQuery(this).parents('.modal_body').find('input[allname]').iCheck('check');	
+					}
+				}
+				jQuery("#checkVideoSize").html(jQuery('#MaterialModal').find('input[itemname=checked]').length);
+			});
+			</script>
+        </s:div>
+        <!--搜索列表-->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="addVideoFromLibrary();">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- (4)评论管理模态框 -->
+<div class="modal fade" id="CommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog comment_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">评论管理</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+        <table class="edit_infor_table" cellpadding="0" cellspacing="0">
+        	<tr class="item_tr">
+            	<th width="320">
+                	<div class="inline_block fl mr5 ml5" style="padding-top:8px;">
+                        <input class="iCheck" type="checkbox" allaa="unchecked" />
+                        <label class="pl5">全选</label>
+                    </div>
+                	<div class="public-search fl ml20 mr5">
+                        <span class="octicon-search02"></span>
+                        <input type="text" value="请输入全景图名称" class="form-control mr5 w200" />
+                    </div>
+                </th>
+            	<th width="190">
+                	<p class="text_th">评论人</p>
+                </th>
+            	<th width="170">
+                	<p class="text_th">评论日期</p>
+                </th>
+            	<th>
+                	<p class="text_th">
+                		<span class="icon_delete" onClick="DeleteCommentAll(this,'.item_tr','.modal_body')">批量删除</span>
+                    </p>
+                </th>                
+            </tr>
+        	<tr class="item_tr">
+            	<td>
+                	<div class="inline_block fl mr5 mt5 ml5">
+                        <input class="iCheck" type="checkbox" itembb="unchecked" />
+                    </div>
+                    <p class="text_name" title="评论测试使用评测测试使用">评论测试使用评测测试使用</p>
+                </td>
+                <td>
+                	<img class="people_pic" src="#{request.contextPath}/asset/images/panorama/panorama_pic4.jpg" />胡歌
+                </td>
+                <td>2016/06/14 21：09 </td>
+                <td>
+                	<span class="icon_delete" onClick="DeleteComment(this,'.item_tr')">删除</span>
+                </td>
+            </tr>
+        	<tr class="item_tr">
+            	<td>
+                	<div class="inline_block fl mr5 mt5 ml5">
+                        <input class="iCheck" type="checkbox" itembb="unchecked" />
+                    </div>
+                    <p class="text_name" title="评论测试使用评测测试使用">评论测试使用评测测试使用</p>
+                </td>
+                <td>
+                	<img class="people_pic" src="#{request.contextPath}/asset/images/panorama/panorama_pic4.jpg" />李光洁
+                </td>
+                <td>2016/06/14 21：09 </td>
+                <td>
+                	<span class="icon_delete" onClick="DeleteComment(this,'.item_tr')">删除</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- (5)排序管理模态框 -->
+<div class="modal fade" id="SortModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog sort_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">排序管理</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+    
+        <!--<div id="messageValue"></div>-->
+        <div class="sp_px">
+        <div class="ordering-list select-list" tabindex="-1">
+            <div class="content with-handle">
+                <div class="scroll-box">
+                	<s:div id="groupVideoSortList">
+	                    <ol id="list_dragselect" class="list ui-sortable ui-selectable">	                    	
+	                    	<a4j:repeat value="#{aerialVideoGroupHome.aerialGroupList}" var="_ag" rowKeyVar="_index">
+		                        <s:fragment rendered="#{_ag.deleted ne true}">
+		                    		<li class="ui-selectee" data-key="#{_ag.aerialVideo.aerialVideoId}"><img class="pano_pic" src="#{_ag.aerialVideo.thumbnailImageUrl}" />#{_ag.aerialVideo.aerialName}<input type="hidden" value="4084_1_6" id="parIdObj_7" class="testClass"/></li>
+		                    	</s:fragment>
+	                    	</a4j:repeat>	                        
+	                    </ol>
+	                    <script type="">
+							jQuery('#list_dragselect').orderingList({
+								dragSelect: true
+							});
+							jQuery(".btn-first").text("置顶");
+							jQuery(".btn-up").text("向上");
+							jQuery(".btn-down").text("向下");
+							jQuery(".btn-last").text("置底"); 
+						</script>
+                    </s:div>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="videoSort();">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- (6)音乐设置模态框 -->
+<div class="modal fade" id="MusicModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog music_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">选择音乐</h4>
+    </div>
+    <div class="modal-body modal_body">
+        <ul class="nav nav-tabs" role="tablist" id="myTab">
+            <li class="active">
+            	<a href="#music_library" role="tab" data-toggle="tab">音乐库</a>
+            </li>
+            <li style="display: none;">
+            	<a href="#my_music" role="tab" data-toggle="tab">我的音乐</a>
+            </li>
+        </ul>
+        
+        <div class="tab-content">
+            <div class="tab-pane active" id="music_library">
+            <!--音乐库pane-->
+            	<div class="music_title clear">
+                	<p class="text_rt">已选择：<span id="selectMusic"></span></p>
+                </div>
+                <ol class="library_list">
+
+                </ol>
+            <!--音乐库pane-->
+            </div>
+            <div class="tab-pane" id="my_music">
+            <!--我的音乐pane-->
+            	<div class="music_title clear">
+                	<p class="text_rt">已选择：音乐1.mp3</p>
+                </div>
+                <ol class="library_list">
+                	<li class="m_item" onclick="MusicStatue(this,'m_cur')">
+                    	<i class="icon_yy"></i>
+                        <p class="text_name">音乐1.mp3</p>
+                        <p class="icon_btn">
+
+                        </p>
+                    </li>
+                </ol>
+            <!--我的音乐pane-->
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- (7)场景介绍模态框 -->
+<div class="modal fade" id="SceneModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog scene_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">场景介绍</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+        	<input type="hidden" id="sceneHidVideoId"/>
+        	<input type="hidden" id="sceneHidIndexNum"/>
+        	<textarea id="sceneArea" name="sceneArea"></textarea>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="saveScene();">保存</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- (8)企业名片模态框 -->
+<div class="modal fade" id="CardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog pano_dialog card_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">企业名片</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+    
+        <table class="edit_infor_table" cellpadding="0" cellspacing="0" style="width:100%;">
+        	<s:fragment>	
+	        	<tr>
+	            	<td class="td_lt" width="70">企业名称</td>
+	                <td class="td_rt" width="260">
+	                	<input type="text" id="business_name" value="#{aerialVideoGroupHome.showFlag ? aerialVideoGroupHome.enterpriseInfo.name : aerialVideoGroupHome.aerialVideoGroup.businessName}" class="form-control w220" />
+	                </td>
+	                <td class="td_lt" width="90">联系方式</td>
+	                <td class="td_rt">
+	                	<input type="text" id="business_tel" value="#{aerialVideoGroupHome.showFlag ? aerialVideoGroupHome.enterpriseInfo.contactPhone : aerialVideoGroupHome.aerialVideoGroup.businessTel}" class="form-control w220" />
+	                </td>
+	            </tr>
+	            <tr>
+	            	<td class="td_lt">邮<span class="inline_block two_12"></span>箱</td>
+	                <td class="td_rt">
+	                	<input type="text" id="business_email" value="#{aerialVideoGroupHome.showFlag ? aerialVideoGroupHome.enterpriseInfo.email : aerialVideoGroupHome.aerialVideoGroup.businessEmail}" class="form-control w220" />
+	                </td>
+	                <td class="td_lt">微<span class="inline_block two_12"></span>博</td>
+	                <td class="td_rt">
+	                	<input type="text" id="business_weibo" value="#{aerialVideoGroupHome.showFlag ? aerialVideoGroupHome.enterpriseInfo.microBlog : aerialVideoGroupHome.aerialVideoGroup.businessWeibo}" class="form-control w220" />
+	                </td>
+	            </tr>
+	            <tr>
+	            	<td class="td_lt">地<span class="inline_block two_12"></span>址</td>
+	                <td class="td_rt" colspan="3">
+	                	<input type="text" id="business_address" value="#{aerialVideoGroupHome.showFlag ? aerialVideoGroupHome.enterpriseInfo.address : aerialVideoGroupHome.aerialVideoGroup.businessAddress}" class="form-control w400" />
+	                </td>
+	            </tr>
+	            <tr>
+	            	<td class="td_lt">企业介绍</td>
+	                <td class="td_rt" colspan="3">
+	                     <textarea id="business_introduce" name="companyArea">#{aerialVideoGroupHome.showFlag ? aerialVideoGroupHome.enterpriseInfo.description : aerialVideoGroupHome.aerialVideoGroup.businessCardIntroduce}</textarea>
+	                </td>
+	            </tr>
+            </s:fragment>
+        </table>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="checkBusinessCard();">保存</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+    </div>
+</div>
+</div>
+</div>
+<h:form name="saveGroupForm" id="saveGroupForm">
+ 	<h:inputHidden value="#{aerialVideoGroupHome.name}" id="hidGroupName"/>
+ 	<h:commandButton id="saveGroupBtn" styleClass="btn btn-primary" style="display:none" action="#{aerialVideoGroupHome.saveAerialVideoGroup()}"></h:commandButton>
+ </h:form>
+<a4j:form id="videoGroupForm" >
+	<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+	<a4j:jsFunction  eventsQueue="mainQueue" name="searchVideoListByName" action="#{aerialVideoGroupHome.searchVideoListByName()}" reRender="videoList" >
+		<a4j:actionparam name="videoName" assignTo="#{aerialVideoGroupHome.name}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction  eventsQueue="mainQueue" name="checkGroupName" action="#{aerialVideoGroupHome.checkGroupName()}"  data="#{aerialVideoGroupHome.errorMsg}" oncomplete="checkGroupNameBack(data);">
+		<a4j:actionparam name="groupName" assignTo="#{aerialVideoGroupHome.name}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction  eventsQueue="mainQueue" name="saveTempAerialVideo" action="#{aerialVideoGroupHome.saveTempAerialVideo()}" reRender="groupVideoList,groupVideoSortList" >
+		<a4j:actionparam name="videoIdStr" assignTo="#{aerialVideoGroupHome.videoIdStr}"/>
+		<a4j:actionparam name="uncheckVideoIdStr" assignTo="#{aerialVideoGroupHome.uncheckVideoIdStr}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction  eventsQueue="mainQueue" name="delTempAerialVideo" action="#{aerialVideoGroupHome.delTempAerialVideo()}" reRender="videoList,groupVideoList,groupVideoSortList" >
+		<a4j:actionparam name="groupVideoId" assignTo="#{aerialVideoGroupHome.groupId}"/>
+		<a4j:actionparam name="aerialVideoId" assignTo="#{aerialVideoGroupHome.aerialVideoId}"/>
+		<a4j:actionparam name="indexNum" assignTo="#{aerialVideoGroupHome.indexNum}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction  eventsQueue="mainQueue" name="groupVideoSort" action="#{aerialVideoGroupHome.groupVideoSort()}" reRender="groupVideoList" >
+		<a4j:actionparam name="sortCode" assignTo="#{aerialVideoGroupHome.sortCode}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction  eventsQueue="mainQueue" name="saveSceneIntroduce" action="#{aerialVideoGroupHome.saveSceneIntroduce()}" reRender="groupVideoList" >	
+		<a4j:actionparam name="aerialVideoId" assignTo="#{aerialVideoGroupHome.aerialVideoId}"/>		
+		<a4j:actionparam name="indexNum" assignTo="#{aerialVideoGroupHome.indexNum}"/>
+		<a4j:actionparam name="name" assignTo="#{aerialVideoGroupHome.name}"/>
+	</a4j:jsFunction>
+</a4j:form>
+</td>    
+	
+<script type="text/javascript">
+//视频设置
+var agroupName='';
+var amusicShow='';
+var adanmuShow='';
+var avideoListShow='';
+var atrackShow='';
+var aassetsShow='';
+var alogoShow='';
+var abusinessCardShow='';
+var ashareTitle='';
+var ashareDescription='';
+var abusinessName='';
+var abusinessTel='';
+var abusinessEmail='';
+var abusinessWeibo='';
+var abusinessAddress='';
+var abusinessIntroduce='';
+//<![CDATA[
+jQuery(function(){	
+	// (1)获取焦点和失去焦点状态
+/*     jQuery('input[type=text],textarea').focus(function(){
+        var txt_value = jQuery(this).val();
+        if(txt_value==this.defaultValue){
+            jQuery(this).val("");    
+        };  
+    });
+    jQuery('input[type=text],textarea').blur(function(){
+        var txt_value = jQuery(this).val();
+        if(txt_value==""){
+            jQuery(this).val(this.defaultValue); 
+        };  
+    });  */
+	var groupSize=#{aerialVideoGroupHome.aerialVideoGroupList.size};
+	//(3)航拍下的左侧二级菜单
+	var menuOnOff = true;
+	var oWindowW = jQuery(window).width();
+	var oWindowH = jQuery(window).height();
+	if( oWindowW < 1280 || groupSize<=1){
+		jQuery('.panorama_level').hide();
+		jQuery('.panorama_content').addClass('hide_pano');
+		menuOnOff = false;		
+	}else{
+		jQuery('.panorama_level').show();
+		jQuery('.panorama_content').removeClass('hide_pano');
+		menuOnOff = true;	
+	}
+	jQuery('.collapse_btn').click(function(){
+		if( menuOnOff == true ){
+			jQuery('.panorama_level').hide();
+			jQuery('.panorama_content').addClass('hide_pano');
+			menuOnOff = false;	
+		}else{
+			jQuery('.panorama_level').show();
+			jQuery('.panorama_content').removeClass('hide_pano');
+			menuOnOff = true;		
+		}	
+	});
+	
+	
+	
+	
+	//(4)计算主体高度及折叠按钮居中
+	var IESpace = 0;//为了解决ie8大屏出滚动条问题，html和body差4PX
+	if( jQuery("html").height() > jQuery("body").height() ){
+		IESpace	= 4;
+	}else{
+		IESpace	=0
+	}
+	jQuery('.panorama_level').css({ 
+		'min-height' : oWindowH - 60 -IESpace,
+		    'height' : jQuery(document).height() - 60  -IESpace
+	});
+	//jQuery('.panorama_level').niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+	jQuery('.panorama_main').css({ 
+		'min-height' : oWindowH - 60 -IESpace,
+		    'height' : jQuery(document).height() - 60 -IESpace
+	});
+	jQuery(".panorama_nodata").css({
+		"height" : jQuery(".panorama_main").outerHeight()-45-64-20
+	})
+	if( oWindowH < 400 ){
+		jQuery('.collapse_btn').css( 'top' , 220 );
+	}else{
+		jQuery('.collapse_btn').css( 'top' , parseInt(oWindowH/2) + jQuery(window).scrollTop() );	
+	}
+	oWindowH < 500 ? jQuery(".pano_dialog").addClass("pano_top") : 	jQuery(".pano_dialog").removeClass("pano_top")
+
+	
+	
+	//(5)左侧二级导航的选择状态控制
+	jQuery(".pano_second .sed_item").each(function(index, elem) {
+        jQuery(elem).click(function(){
+			//jQuery(this).addClass("sed_cur").siblings().removeClass("sed_cur");	
+		});
+    });
+    
+	// (8)模态框--物料列表全选功能
+	jQuery('input[class="iCheck"]').iCheck({
+		checkboxClass: 'icheckbox_minimal-blue'
+	});
+	jQuery("#checkVideoSize").html(jQuery('#MaterialModal').find('input[itemname=checked]').length);
+	// (8-1)素材库模态框
+	jQuery('.material_dialog input[allname]').on('ifClicked', function(){ //从素材库添加全选
+		if (this.checked) {
+			jQuery(this).attr("allname","unchecked");
+			jQuery(this).parents('.modal_body').find('input[itemname]').iCheck('uncheck');
+			jQuery(this).parents('.modal_body').find('input[itemname]').attr("itemname","unchecked");
+			jQuery(this).parents('.modal_body').find(".m_panopic").removeClass("m_bor");
+			//保持已经选择的视频状态，非本次选择的视频不可以在该页面进行取消选择
+			jQuery(this).parents('.modal_body').find('input[itemtype]').iCheck('check');
+			jQuery(this).parents('.modal_body').find('input[itemtype]').attr("itemname","checked");
+			jQuery(this).parents('.modal_body').find(".m_panopic").addClass("m_bor");
+		} else {
+			jQuery(this).attr("allname","checked");
+			jQuery(this).parents('.modal_body').find('input[itemname]').iCheck('check');
+			jQuery(this).parents('.modal_body').find('input[itemname]').attr("itemname","checked");
+			jQuery(this).parents('.modal_body').find(".m_panopic").addClass("m_bor");
+		}
+		jQuery("#checkVideoSize").html(jQuery('#MaterialModal').find('input[itemname=checked]').length);
+	});
+	jQuery('.material_dialog input[itemname]').on('ifClicked', function(){ //从素材库添加取消全选
+		if (this.checked) {
+			jQuery(this).attr("itemname","unchecked");
+			jQuery(this).parents('.modal_body').find('input[allname]').iCheck('uncheck');
+			jQuery(this).parents(".dl_dt").find(".m_panopic").removeClass("m_bor");
+		} else {
+			jQuery(this).attr("itemname","checked");
+			jQuery(this).parents(".dl_dt").find(".m_panopic").addClass("m_bor");
+			var len = jQuery(this).parents('.modal_body').find('input[itemname=checked]').length;
+			if(len == jQuery('.material_dialog input[itemname]').length){
+				jQuery(this).parents('.modal_body').find('input[allname]').iCheck('check');	
+			}
+		}
+		jQuery("#checkVideoSize").html(jQuery('#MaterialModal').find('input[itemname=checked]').length);
+	});
+	// (8-2)评论管理模态框
+	jQuery('.comment_dialog input[allaa]').on('ifClicked', function(){ //评论管理全选
+		if (this.checked) {
+			jQuery(this).attr("allaa","unchecked");
+			jQuery(this).parents('.modal_body').find('input[itembb]').iCheck('uncheck');
+			jQuery(this).parents('.modal_body').find('input[itembb]').attr("itembb","unchecked");
+		} else {
+			jQuery(this).attr("allaa","checked");
+			jQuery(this).parents('.modal_body').find('input[itembb]').iCheck('check');
+			jQuery(this).parents('.modal_body').find('input[itembb]').attr("itembb","checked");
+		}
+	});
+	jQuery('.comment_dialog input[itembb]').on('ifClicked', function(){ //评论管理取消全选
+		if (this.checked) {
+			jQuery(this).attr("itembb","unchecked");
+			jQuery(this).parents('.modal_body').find('input[allaa]').iCheck('uncheck');
+		} else {
+			jQuery(this).attr("itembb","checked");
+			var len = jQuery(this).parents('.modal_body').find('input[itembb=checked]').length;
+			if(len == jQuery('.comment_dialog input[itembb]').length){
+				jQuery(this).parents('.modal_body').find('input[allaa]').iCheck('check');	
+			}
+		}
+	});
+	
+	jQuery('#business_card_show').on('ifChanged', function(){ //企业名片
+		if (this.checked) {
+			jQuery("#setCardBtn").show();
+		} else {
+			jQuery("#setCardBtn").hide();
+		}
+	});	
+	jQuery('#music_show').on('ifChanged', function(){ //音乐
+		 if (this.checked) {
+			jQuery("#setMusicBtn").show();
+			jQuery("#musicName").show();
+		} else {
+			jQuery("#setMusicBtn").hide();
+			jQuery("#musicName").hide();
+		}
+	});
+	jQuery('#track_show').on('ifChanged', function(){ //拍摄轨迹选中资源规划显示
+		if (this.checked) {
+			jQuery("#zyghLi").show();
+		} else {
+			jQuery("#zyghLi").hide();
+		}
+	});
+	//是否显示创建组框 show:显示
+	var showModal='#{aerialVideoGroupHome.showModal}';
+	if(showModal=="show"){
+		jquery("#GroupModal").modal("show");
+	}
+	//视频设置
+	agroupName='#{aerialVideoGroupHome.aerialVideoGroup.groupName}';
+	jQuery("#aerialVideoGroupName").val(agroupName);
+	amusicShow='#{aerialVideoGroupHome.aerialVideoGroup.backGroundMusic}';
+	adanmuShow='#{aerialVideoGroupHome.aerialVideoGroup.danmuShow}';
+	avideoListShow='#{aerialVideoGroupHome.aerialVideoGroup.videoListShow}';
+	atrackShow='#{aerialVideoGroupHome.aerialVideoGroup.trackShow}';
+	aassetsShow='#{aerialVideoGroupHome.aerialVideoGroup.assetsShow}';
+	alogoShow='#{aerialVideoGroupHome.aerialVideoGroup.logoShow}';
+	abusinessCardShow='#{aerialVideoGroupHome.aerialVideoGroup.businessCardShow}';
+	if(amusicShow!=""){
+		jQuery('#music_show').iCheck('check');
+	}else{
+		jQuery('#music_show').iCheck('uncheck');
+	}
+	if(adanmuShow=="true"){
+		jQuery('#danmu_show').iCheck('check');
+	}else{
+		jQuery('#danmu_show').iCheck('uncheck');
+	}
+	if(avideoListShow=="true"){
+		jQuery('#video_show').iCheck('check');
+	}else{
+		jQuery('#video_show').iCheck('uncheck');
+	}
+	if(atrackShow=="true"){
+		jQuery('#track_show').iCheck('check');
+		jQuery("#zyghLi").show();
+	}else{
+		jQuery('#track_show').iCheck('uncheck');
+		jQuery("#zyghLi").hide();
+	}
+	if(aassetsShow=="true"){
+		jQuery('#assets_show').iCheck('check');
+	}else{
+		jQuery('#assets_show').iCheck('uncheck');
+	}
+	if(alogoShow=="true"){
+		jQuery('#logo_show').iCheck('check');
+	}else{
+		jQuery('#logo_show').iCheck('uncheck');
+	}
+	if(abusinessCardShow=="true"){
+		jQuery('#business_card_show').iCheck('check');
+	}else{
+		jQuery('#business_card_show').iCheck('uncheck');
+	}
+	//分享
+	ashareTitle='#{aerialVideoGroupHome.aerialVideoGroup.shareTitle}';
+	if(ashareTitle!=""){
+		jQuery("#share_title").val(ashareTitle);
+	}else{
+		jQuery("#share_title").val('航拍视频欣赏');
+	}
+	ashareDescription='#{aerialVideoGroupHome.aerialVideoGroup.shareDescription}';
+	if(ashareDescription!=""){
+		jQuery("#share_description").val(ashareDescription);
+	}
+	//企业名片
+	var showFlag='#{aerialVideoGroupHome.showFlag}';
+	if(showFlag=="true"){//显示默认企业信息
+		abusinessName='#{aerialVideoGroupHome.enterpriseInfo.name}';
+		abusinessTel='#{aerialVideoGroupHome.enterpriseInfo.contactPhone}';
+		abusinessEmail='#{aerialVideoGroupHome.enterpriseInfo.email}';
+		abusinessWeibo='#{aerialVideoGroupHome.enterpriseInfo.microBlog}';
+		abusinessAddress='#{aerialVideoGroupHome.enterpriseInfo.address}';
+	}else{
+		abusinessName='#{aerialVideoGroupHome.aerialVideoGroup.businessName}';
+		abusinessTel='#{aerialVideoGroupHome.aerialVideoGroup.businessTel}';
+		abusinessEmail='#{aerialVideoGroupHome.aerialVideoGroup.businessEmail}';
+		abusinessWeibo='#{aerialVideoGroupHome.aerialVideoGroup.businessWeibo}';
+		abusinessAddress='#{aerialVideoGroupHome.aerialVideoGroup.businessAddress}';
+	}
+		
+	var domainUrl='#{dataDicConstant.getDomainNameUrl()}';
+	jquery("#share_url").val(domainUrl+"/map/AerialVideo.seam?groupId="+'#{aerialVideoGroupHome.groupId}');
+	//(11)dragSelect,js需要在其他控件之上
+	jQuery('#list_dragselect').orderingList({
+		dragSelect: true
+	});
+	jQuery(".btn-first").text("置顶");
+	jQuery(".btn-up").text("向上");
+	jQuery(".btn-down").text("向下");
+	jQuery(".btn-last").text("置底");    
+	
+	jquery('#SceneModal').on('shown.bs.modal', function (e) {
+		//加上下面这句！解决了~
+	    jquery(document).off('focusin.modal');
+	    // 打开Dialog后创建编辑器
+	    KindEditor.create('textarea[name="sceneArea"]', {
+				resizeType : 0,
+			allowPreviewEmoticons : false,
+			uploadJson : '#{request.contextPath}/asset/js/kindeditor/upload_json.jsp?directoryType=15&businessType=3&enterpriseId=' + #{sessionTake.getEnterpriseInfoId()},
+			allowImageUpload : true,
+			items : [ 
+			 		'source', '|', 'undo', 'redo', '|', 'code', 'cut', 'copy', 'paste',
+			 		'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+			 		'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+			 		'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
+			 		'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+			 		'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+			 		'anchor', 'link', 'unlink',
+			 	],
+				width : "70%", //编辑器的宽度为70%，最后在样式表里重置的
+		 	});
+    });
+
+	jquery('#SceneModal').on('hidden.bs.modal', function () {
+	    // 关闭Dialog前移除编辑器
+	    KindEditor.remove('textarea[name="sceneArea"]');
+	});
+	
+	jquery('#CardModal').off('shown.bs.modal').on('shown.bs.modal', function (e) {
+		//加上下面这句！解决了~
+	    jquery(document).off('focusin.modal');
+	    // 打开Dialog后创建编辑器
+	    KindEditor.create('textarea[name="companyArea"]', {
+				resizeType : 0,
+			allowPreviewEmoticons : false,
+			uploadJson : '#{request.contextPath}/asset/js/kindeditor/upload_json.jsp?directoryType=15&businessType=3&enterpriseId=' + #{sessionTake.getEnterpriseInfoId()},
+			allowImageUpload : true,
+			items : [ 
+			 		'source', '|', 'undo', 'redo', '|', 'code', 'cut', 'copy', 'paste',
+			 		'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+			 		'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+			 		'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
+			 		'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+			 		'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+			 		'anchor', 'link', 'unlink',
+			 	],
+				width : "70%", //编辑器的宽度为70%，最后在样式表里重置的
+		 	});
+    });
+
+	jquery('#CardModal').on('hidden.bs.modal', function () {
+	    // 关闭Dialog前移除编辑器
+	    KindEditor.remove('textarea[name="companyArea"]');
+	});
+
+	jQuery(window).resize(function(e) {
+		jQuery(document).scrollTop(0);
+		//(3)航拍下的左侧二级菜单
+        var menuOnOff = true;
+		var oWindowW = jQuery(window).width();
+		var oWindowH = jQuery(window).height();
+		if( oWindowW < 1280 ){
+			menuOnOff = false;
+			jQuery('.panorama_level').hide();
+			jQuery('.panorama_content').addClass('hide_pano');
+			
+		}else{
+			menuOnOff = true;
+			jQuery('.panorama_level').show();
+			jQuery('.panorama_content').removeClass('hide_pano');	
+		}		
+		jQuery('.collapse_btn').click(function(){
+			if( menuOnOff == true ){
+				jQuery('.panorama_level').hide();
+				jQuery('.panorama_content').addClass('hide_pano');
+				menuOnOff = false;	
+			}else{
+				jQuery('.panorama_level').show();
+				jQuery('.panorama_content').removeClass('hide_pano');
+				menuOnOff = true;		
+			}	
+		});
+		
+		
+		//(4)计算主体高度及折叠按钮居中
+		var IESpace = 0; //为了解决ie8大屏出滚动条问题，html和body差4PX
+		if( jQuery("html").height() > jQuery("body").height() ){
+			IESpace	= 4;
+		}else{
+			IESpace	=0
+		}
+		jQuery('.panorama_level').css({ 
+			'min-height' : oWindowH - 60 -IESpace,
+				'height' : jQuery(document).height() - 60 -IESpace
+		});
+		jQuery('.panorama_main').css({ 
+			'min-height' : oWindowH - 60 -IESpace,
+				'height' : jQuery(document).height() - 60 -IESpace
+		});
+		jQuery(".panorama_nodata").css({
+			"height" : jQuery(".panorama_main").outerHeight()-45-64-20
+		})
+		jQuery('.collapse_btn').css( 'top' , parseInt(oWindowH/2) + jQuery(window).scrollTop() );
+		if( oWindowH < 400 ){
+			jQuery('.collapse_btn').css( 'top' , 220 );
+		}else{
+			jQuery('.collapse_btn').css( 'top' , parseInt(oWindowH/2) + jQuery(window).scrollTop() );	
+		}
+		oWindowH < 500 ? jQuery(".pano_dialog").addClass("pano_top") : 	jQuery(".pano_dialog").removeClass("pano_top")
+		
+    });
+	
+	jQuery(window).scroll(function(){
+		var oWindowH = jQuery(window).height();
+		if( oWindowH < 400 ){
+			jQuery('.collapse_btn').css( 'top' , 220 );
+		}else{
+			jQuery('.collapse_btn').css( 'top' , parseInt(oWindowH/2) + jQuery(window).scrollTop() );	
+		}
+	});
+	
+});
+//(6-1)删除该分组
+function deleteGroup (){
+	var r=confirm("删除该分组将清空该分组下视频的全部弹幕、点赞数，确定删除？");   
+	if(r==true){
+		return true;
+	}else{
+		return false;   
+	}	
+}
+//(6-2)通用的删除对应的每一项
+function DeleteCommon ( obj , oItems ){
+	jQuery( obj ).parents( "." + oItems ).remove();
+}
+
+//(9)评论管理删除及批量删除
+function DeleteComment( obj , oParent ){
+	jQuery( obj ).parents( oParent ).remove();	
+}
+function DeleteCommentAll( obj , oItems , oParent ){
+	jQuery( obj ).parents(oParent).find("input[itembb=checked]").parents( oItems ).remove();	
+}
+
+
+//(10-1)音乐库和我的音乐下的"奇偶变化"
+jQuery("#music_library .library_list li").each(function(index, elem) {	
+	
+    if( jQuery(elem).index()%2 == 0 ){
+		jQuery(elem).addClass("m_even");
+	}
+});
+if("#{aerialVideoGroupHome.aerialVideoGroup.backGroundMusic.musicId}" ==""){
+	jQuery("#music_library .library_list li").eq(0).addClass("m_cur");
+}
+var selectMusic=jQuery("#music_library .library_list .m_cur .text_name").html();
+jQuery("#selectMusic").html(selectMusic);
+jQuery("#musicName").html(selectMusic);	
+
+jQuery("#my_music .library_list li").each(function(index, elem) {
+    if( jQuery(elem).index()%2 == 0 ){
+		jQuery(elem).addClass("m_even");
+	}
+});
+//(10-2)音乐库--控制选中音乐的状态
+function MusicStatue( obj , oClassName ){
+	jQuery( obj ).addClass( oClassName ).siblings().removeClass( oClassName );
+	var selectMusic=jQuery("#music_library .library_list .m_cur .text_name").html();
+	jQuery("#selectMusic").html(selectMusic);
+	jQuery("#musicName").html(selectMusic);	
+}
+//(10-3)音乐库--控制音乐播放
+jQuery(".media_audio").each(function(index,elem) {
+	jQuery( this )[0].pause();
+});
+function AutoPlay( obj , iClassName ){
+	
+	if( jQuery( obj ).hasClass('i_off') ){
+		jQuery( obj ).removeClass('i_off');	
+		jQuery( obj ).find('.media_audio')[0].pause();
+	}else{
+		jQuery( obj ).addClass('i_off');		
+		jQuery(".media_audio").each(function(index,elem) {
+			jQuery( this )[0].pause();
+		});
+		jQuery( obj ).find('.media_audio')[0].play();
+		jQuery( obj ).parents('.m_item').siblings().find( iClassName ).removeClass('i_off');
+	}
+	
+}
+//(10-4)删除我的音乐中的每一项
+function DeleteMusic ( obj , oItems ){
+	jQuery( obj ).parents( "." + oItems ).remove();
+	jQuery("#my_music .library_list li").each(function(index, elem) {
+		if( jQuery(elem).index()%2 == 0 ){
+			jQuery(elem).addClass("m_even");
+		}else{
+			jQuery(elem).removeClass("m_even");	
+		}
+	});
+}
+var editFlag=false;//是否编辑过
+function checkIfEdit(){
+	if(!editFlag){
+		if(amusicShow!=""){
+			amusicShow=true;
+		}else{
+			amusicShow=false;
+		}
+		var groupName=jQuery("#aerialVideoGroupName").val()
+		var musicShow=jQuery("#music_show").is(':checked');
+		
+		var danmuShow=jQuery("#danmu_show").is(':checked');
+		var videoShow=jQuery("#video_show").is(':checked');
+		var trackShow=jQuery("#track_show").is(':checked');
+		var assetsShow=jQuery("#assets_show").is(':checked');
+		var logoShow=jQuery("#logo_show").is(':checked');
+		var cardShow=jQuery("#business_card_show").is(':checked');
+		var businessName=jQuery("#business_name").val();
+		var businessTel=jQuery("#business_tel").val();
+		var businessEmail=jQuery("#business_email").val();
+		var businessWeibo=jQuery("#business_weibo").val();
+		var businessAddress=jQuery("#business_address").val();
+		var businessIntroduce=jQuery("#business_introduce").val();
+		var shareTitle=jQuery("#share_title").val();
+		var shareDescription=jQuery("#share_description").val();
+		if(ashareTitle=="" && shareTitle=="航拍视频欣赏"){
+			shareTitle="";
+		}
+		if(shareDescription=="请输入描述内容"){
+			shareDescription="";
+		}
+
+		if(agroupName!=groupName || amusicShow!=musicShow || adanmuShow!=danmuShow.toString()
+				|| avideoListShow!=videoShow.toString() || atrackShow!=trackShow.toString() || aassetsShow!=assetsShow.toString() 
+				|| alogoShow!=logoShow.toString() || abusinessCardShow!=cardShow.toString() || ashareTitle!=shareTitle
+				|| ashareDescription!=shareDescription || abusinessName!=businessName || abusinessTel!=businessTel
+				|| abusinessEmail!=businessEmail || abusinessWeibo!=businessWeibo || abusinessAddress!=businessAddress){
+			editFlag=true;
+		}
+	}
+
+}
+//创建组弹出框
+function createGroup(){
+	var groupId="#{aerialVideoGroupHome.groupId}";
+	jQuery("#groupName").val("");
+	checkIfEdit();//是否编辑过
+	if(editFlag && groupId!=""){		
+		jQuery("#saveModalType").val("create");
+		jquery("#SaveModal").modal('show');
+	}else{
+		jquery("#GroupModal").modal('show');
+	}
+}
+//保存并创建组
+function saveAndOperateGroup(){
+	var type=jQuery("#saveModalType").val();
+	if(type=="create"){//创建分组
+		jQuery("#groupForm\\:showModalHidden").val("show");
+		jQuery("#groupForm\\:save").click();
+	}else if(type=="change"){//切换分组		
+		jQuery("#groupForm\\:changeGroupIdHidden").val(jQuery("#searchGroupForm\\:hidGroupId").val());
+		jQuery("#groupForm\\:save").click();
+	}	
+}
+//不保存
+function notSaveGroup(){
+	var type=jQuery("#saveModalType").val();
+	if(type=="create"){
+		jquery('#SaveModal').modal('hide');
+		jquery('#GroupModal').modal('show');
+	}else if(type=="change"){
+		jquery('#SaveModal').modal('hide');
+		jQuery("#searchGroupForm\\:searchGroupBtn").click();
+	}	
+}
+//保存组名称
+function saveGroup(){
+	var name=jQuery("#groupName").val();
+	if(name==""){
+		alert("视频组名称不能为空！");
+		return false;
+	}else if(name.length>50){
+		alert("视频组名称不能超过50字！");
+		return false;
+	}
+	checkGroupName(name);
+}
+function cancelOperate(){
+	editFlag=false;
+}
+//保存组名称回调
+function checkGroupNameBack(msg){
+	if(msg!=""){
+		alert(msg);
+	}else{
+		jQuery("#saveGroupForm\\:hidGroupName").val(jQuery("#groupName").val());
+		jQuery("#saveGroupForm\\:saveGroupBtn").trigger("click");
+	}
+}
+//场景介绍
+function sceneIntroduce(description,aerialVideoId,indexNum){
+	jQuery("#sceneHidVideoId").val(aerialVideoId);
+	jQuery("#sceneHidIndexNum").val(indexNum);		
+	//jQuery(window.frames[0].document.body).html(description);	
+	jQuery("#sceneArea").val(description);
+	jquery("#SceneModal").modal("show");
+}
+function saveScene(){
+	var id=jQuery("#sceneHidVideoId").val();
+	var index=jQuery("#sceneHidIndexNum").val();
+	var content=jQuery(window.frames[0].document.body).html();
+	jQuery("#sceneArea").val(content);
+	saveSceneIntroduce(id,index,content);
+	jquery("#SceneModal").modal("hide");
+}
+function addVideoFromLibrary(){
+	var videoIds="";
+	var uncheckVideoIds="";
+	jQuery('#MaterialModal').find('input[itemname=checked]').each(function(){ 			
+		videoIds+=jQuery(this).val()+",";
+	}); 
+	jQuery('#MaterialModal').find('input[itemname=unchecked]').each(function(){ 			
+		uncheckVideoIds+=jQuery(this).val()+",";
+	}); 
+	if(videoIds!=""){
+		videoIds=videoIds.substring(0,videoIds.length-1);		
+	}	
+	if(uncheckVideoIds!=""){
+		uncheckVideoIds=uncheckVideoIds.substring(0,uncheckVideoIds.length-1);		
+	}
+	saveTempAerialVideo(videoIds,uncheckVideoIds);
+	jquery("#MaterialModal").modal("hide");
+	editFlag=true;
+}
+function delGroupVideo(groupVideoId,videoId,indexNum){
+	editFlag=true;
+	//该视频展示中，删除后将从分组中去掉，并且清空全部浏览量、点赞数、评论，并不能还原，确定删除？
+	if(confirm("该视频展示中，删除后将从分组中去掉，确定删除？")){	
+		delTempAerialVideo(groupVideoId,videoId,indexNum);
+		return true;
+	}else{
+		return false;   
+	}		
+}
+//视频排序
+function videoSort(){
+	var sortCode = "";
+	jQuery('#SortModal ol[id="list_dragselect"] li').each(function(){
+		sortCode += jQuery(this).attr("data-key") + ",";
+	});
+	if (sortCode != "") {
+		sortCode = sortCode.substring(0, sortCode.length - 1);
+	}
+	groupVideoSort(sortCode);
+	editFlag=true;
+}
+var mobileData = /^(([0\+]\d{2,3}-)?(0\d{2,3})-)?(\d{7,8})(-(\d{3,}))?$/;
+var re= /^(13[0-9]|15[012356789]|17[01236789]|18[0-9]|14[57])[0-9]{8}$/;
+var emailReg = /^([a-z0-9A-Z]+[_-|\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\.)+[a-zA-Z]{2,}$/;
+function checkBusinessCard(){
+	var businessName=jQuery("#business_name").val();
+	var businessTel=jQuery("#business_tel").val();
+	var businessEmail=jQuery("#business_email").val();
+	var businessWeibo=jQuery("#business_weibo").val();
+	var businessAddress=jQuery("#business_address").val();
+	var businessIntroduce=jQuery(window.frames[0].document.body).html();
+	jQuery("#business_introduce").val(businessIntroduce);
+	if(businessName.length>50){
+		alert("企业名称不能超过50字！");
+		return false;
+	}
+	if(businessTel != "" && !mobileData.test(businessTel) && !re.test(businessTel)){
+		alert("请输入正确的业联系方式");
+		return false;
+	}
+	//邮箱
+	if(businessEmail != "" && !emailReg.test(businessEmail)){
+		alert("请输入正确的电子邮件地址");
+		return false;
+	}
+	if(businessWeibo.length>50){
+		alert("企业微博不能超过50字！");
+		return false;
+	}
+	if(businessAddress.length>50){
+		alert("企业地址不能超过50字！");
+		return false;
+	}
+	jquery("#CardModal").modal('hide');
+}
+//保存前检查
+function checkSubmit(){
+	var groupName=jQuery("#aerialVideoGroupName").val()
+	if(groupName==""){
+		alert("航拍视频名称不能为空！");
+		return false;
+	}else{
+		jQuery("#groupForm\\:groupNameHidden").val(groupName);
+	}
+	
+	var musicShow=jQuery("#music_show").is(':checked');
+	var danmuShow=jQuery("#danmu_show").is(':checked');
+	var videoShow=jQuery("#video_show").is(':checked');
+	var trackShow=jQuery("#track_show").is(':checked');
+	var assetsShow=jQuery("#assets_show").is(':checked');
+	var logoShow=jQuery("#logo_show").is(':checked');
+	var cardShow=jQuery("#business_card_show").is(':checked');
+	var businessName=jQuery("#business_name").val();
+	var businessTel=jQuery("#business_tel").val();
+	var businessEmail=jQuery("#business_email").val();
+	var businessWeibo=jQuery("#business_weibo").val();
+	var businessAddress=jQuery("#business_address").val();
+	var businessIntroduce=jQuery("#business_introduce").val();
+	var shareTitle=jQuery("#share_title").val();
+	var shareDescription=jQuery("#share_description").val();
+	var backGroundMusic="";
+	if(musicShow){
+		backGroundMusic=jQuery("#music_library .library_list .m_cur input").val();		
+	}
+	jQuery("#groupForm\\:backGroundMusicHidden").val(backGroundMusic);	
+	jQuery("#groupForm\\:danmuShowHidden").val(danmuShow);
+	jQuery("#groupForm\\:videoListShowHidden").val(videoShow);
+	jQuery("#groupForm\\:trackShowHidden").val(trackShow);
+	if(trackShow==true){
+		jQuery("#groupForm\\:assetsShowHidden").val(assetsShow);
+	}else{
+		jQuery("#groupForm\\:assetsShowHidden").val(false);
+	}
+	jQuery("#groupForm\\:logoShowHidden").val(logoShow);
+	jQuery("#groupForm\\:businessCardShowHidden").val(cardShow);
+	if(cardShow){
+		if(businessName.length>50){
+			alert("企业名称不能超过50字！");
+			return false;
+		}
+		if(businessTel != "" && !mobileData.test(businessTel) && !re.test(businessTel)){
+			alert("请输入正确的业联系方式");
+			return false;
+		}
+		//邮箱		
+		if(businessEmail != "" && !emailReg.test(businessEmail)){
+			alert("请输入正确的电子邮件地址");
+			return false;
+		}
+		if(businessWeibo.length>30){
+			alert("企业微博不能超过30字！");
+			return false;
+		}
+		if(businessAddress.length>50){
+			alert("企业地址不能超过50字！");
+			return false;
+		}
+		jQuery("#groupForm\\:businessNameHidden").val(businessName);
+		jQuery("#groupForm\\:businessTelHidden").val(businessTel);
+		jQuery("#groupForm\\:businessEmailHidden").val(businessEmail);
+		jQuery("#groupForm\\:businessWeiboHidden").val(businessWeibo);
+		jQuery("#groupForm\\:businessAddressHidden").val(businessAddress);
+		jQuery("#groupForm\\:businessCardIntroduceHidden").val(businessIntroduce);
+	}
+	if(shareTitle.length>15){
+		alert("分享标题不能超过15字！");
+		return false;
+	}
+	jQuery("#groupForm\\:shareTitleHidden").val(shareTitle);
+	if(shareDescription.length>30){
+		alert("分享描述不能超过30字！");
+		return false;
+	}
+	if(""==shareDescription || "请输入描述内容"==shareDescription){
+		jQuery("#groupForm\\:shareDescriptionHidden").val("");
+	}else{
+		jQuery("#groupForm\\:shareDescriptionHidden").val(shareDescription);
+	}	
+	jQuery("#login").show();
+	return true;
+}
+
+function searchGroupInfo(groupId){
+	jQuery("#searchGroupForm\\:hidGroupId").val(groupId);
+	checkIfEdit();//是否编辑过
+	if(editFlag){
+		jQuery("#saveModalType").val("change");
+		jquery("#SaveModal").modal('show');
+	}else{			
+		jQuery("#searchGroupForm\\:searchGroupBtn").click();
+	}	
+}
+//复制链接
+function copyShareUrl(){
+	var Url2=document.getElementById("share_url");
+	Url2.select();
+	var supportFlag=document.execCommand("Copy");
+	if(supportFlag){
+		alert('已复制该内容');
+	}else{
+		alert('此浏览器不支持复制功能，请手动复制一下吧！');
+	}
+	
+}
+//]]>
+</script>
+
+</ui:define>
+
+</ui:composition>

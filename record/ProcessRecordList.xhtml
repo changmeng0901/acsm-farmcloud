@@ -1,0 +1,171 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+		<style>
+			.cm_resumeList{}
+			.cm_resumeList li{ float:left;}
+			.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'微软雅黑';}
+			.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+			.cm_resumeList li img{ float:left; margin-top:16px;}
+			.cm_resumeList li span{ float:left; text-indent:10px;}
+			.borderBt{ border-bottom:2px solid #33aedc;}
+			.borderBt02{ border-bottom:1px solid #cbcbcb;}
+		</style>
+       <td valign="top" >
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">采销存&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/order/OrderInfoList.seam">订单管理</a>&#160;&gt;&#160;&#160;<font size="3">处理历史记录</font>
+                    </div>
+                    <div class="fr" style="margin-bottom:-1px;">
+	                    <ul class="cm_resumeList clear">
+	                    	<li>
+	                    		<a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                    	<li>
+	                            <a href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg" /><span>订单管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a class="borderBt" href="#{request.contextPath}/record/ProcessRecordList.seam"><img src="#{request.contextPath}/asset/images/pass_03.jpg" /><span>处理历史记录</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/order/OrdersPrintRecordList.seam"><img src="#{request.contextPath}/asset/images/newlvli_05.jpg"/><span>订单打印历史记录</span></a>
+	                        </li>
+	                    </ul>
+	                </div>
+                    </div>
+					<br/>
+                    <div class="z_r_ser" style="text-align: center;">
+                    <h:form id="storageTypeSearch">
+                    	<table cellpadding="0" cellspacing="0" align="center" style="margin-left: auto;margin-right: auto;">
+                            <tr>
+                                <td>
+                                <div class="public-search">   
+                                	<span class="octicon-search02"></span>
+                                	<h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="objString" styleClass="form-control nw300 srarchfont" value="#{processRecordList.objString}"/>
+                                </div>
+                                
+                                	<h:commandButton id="search" styleClass="btn btn-primary" value="搜索" onclick="return checkSearch();"  action="/record/ProcessRecordList.xhtml">                                	
+	                                </h:commandButton>
+                                </td>
+                           </tr>
+                       </table> 
+                    </h:form>                         
+                    </div>
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="7" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                    		<th class="ze_bg" width="25%">订单编号</th>
+                    		<th class="ze_bg" width="15%">操作人</th>
+                    		<th class="ze_bg" width="15%">操作时间</th>
+                    		<th class="ze_bg" width="10%">包装单</th>
+                    		<th class="ze_bg" width="15%">原料出库单</th>
+                    		<th class="ze_bg" width="10%">采收单</th>
+                            <th class="ze_bg" width="10%">操作</th>
+                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                    	</tr>
+						<ui:repeat value="#{processRecordList.resultList}" var="_processRecord" rendered="#{not empty processRecordList.resultList}" rowKeyVar="_index">
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                    		<td class="ze_bg2"><h:outputText value="#{stringUtil.shortString(_processRecord.orderNumbers,20)}" title="#{_processRecord.orderNumbers}"/></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_processRecord.processUser.nickname}"/></td>
+                    		<td class="ze_bg2"> 
+                    			<h:outputText value="#{_processRecord.processTime}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText>
+                    		</td>
+                    		<td class="ze_bg2"> 
+                    			 <h:outputText value="#{_processRecord.psPrintStatus eq 1 ? '已打印':'未打印'}" />
+                    		</td>
+                    		<td class="ze_bg2"> 
+                    		 	<h:outputText value="#{_processRecord.msPrintStatus eq 1 ? '已打印':'未打印'}" />
+                    		</td>
+                    		<td class="ze_bg2"> 
+                    			 <h:outputText value="#{_processRecord.hsPrintStatus eq 1 ? '已打印':'未打印'}" />
+                    		</td>
+                    		<td class="ze_bg2"> 
+                    			<s:link propagation="none"  view="/record/ProcessOrders.seam?orderInfoIds=#{_processRecord.orderIds}," styleClass="list_view"  id="View" title="查看">
+									<f:param name="processRecordId" value="#{_processRecord.id}" />
+									<f:param name="typeInfo" value="1" />
+									<f:param name="from" value="from"></f:param>
+								</s:link>&#160;
+                    		</td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</ui:repeat>
+                    </table>
+                    <!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	
+                    	<s:div rendered="#{not empty processRecordList.resultList}">
+			                <s:decorate rendered="#{!processRecordList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{processRecordList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{processRecordList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/record/ProcessRecordList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/record/ProcessRecordList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{processRecordList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					       <a4j:repeat var="_page" value="#{processRecordList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{processRecordList.previousExists or _index >0 ?'td_t_t':''} #{_page eq processRecordList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/record/ProcessRecordList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{processRecordList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/record/ProcessRecordList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{processRecordList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/record/ProcessRecordList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{processRecordList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{processRecordList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                            </s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                <script type="text/javascript">
+
+			  jquery(document).ready(function(){
+					var v = document.getElementById("storageTypeSearch:objString").value;
+					if(v == ""){
+						document.getElementById("storageTypeSearch:objString").value = "请输入搜索条件";
+						}
+					});
+			</script>
+		
+</td>
+	</ui:define>
+
+</ui:composition>

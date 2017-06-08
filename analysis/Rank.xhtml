@@ -1,0 +1,178 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_left.xhtml">
+
+<ui:define name="body">
+<style>
+.rich-calendar-exterior{line-height: 20px;}
+.legend{display: none;}
+#xxx table{margin: 0 auto;}
+#reido1{width:20px; height:18px;  background:url(../asset/images/radio2.gif) no-repeat; display:block; float:right; margin-top:13px;}
+.highcharts-button{display: none;}
+.stype .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+    width: 100px;
+}
+</style>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/exporting.js"></script>
+ <!--二级列表开始-->
+ 			<!-- #{rankHome.lod()} -->
+    <!--二级列表结束-->
+    
+	<!--右边开始-->
+            <td valign="top">
+                 <div class="right_c" style="min-height:30px;">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">区域管理排名查询</font></div>
+                    </div>
+                    <div class="clear"></div>
+                 </div> 
+                 <!--分析页开始-->
+                <ui:fragment rendered="#{s:hasRole('environmental_manage_analyse_search')}">
+                 
+				<h:form id="forecast">
+					<div class="fxy_title">
+                    	
+                    	<ul class="fxy_ul six3">
+                            <li class="reili">
+                                <table cellpadding="0" cellspacing="0" style="float:left;">
+                                    <tr>
+                                        <td align="right" class="tpcc_font">分区：</td>
+                                        <td align="left" class="tc_strong" width="340">
+                                            <div style="float:left">
+                                            	<h:selectOneMenu value="#{rankHome.partitionId}"  styleClass="selectpicker">
+                                            		<f:selectItem itemLabel="全部" itemValue="0" />
+					                            	<s:selectItems value="#{rankHome.getPartitionList()}" var="_partition" label="#{_partition.name}" itemValue="#{_partition.id}"/>
+					                            </h:selectOneMenu>
+                                             </div>
+                                             <div style="float:left;width:110px" class="stype">
+                                            	<h:selectOneMenu value="#{rankHome.stype}"  styleClass="selectpicker">
+                                            		<f:selectItem itemLabel="健康指数" itemValue="0" />
+                                            		<f:selectItem itemLabel="空气温度" itemValue="1" />
+                                            		<f:selectItem itemLabel="空气湿度" itemValue="2" />
+                                            		<f:selectItem itemLabel="土壤温度" itemValue="3" />
+                                            		<f:selectItem itemLabel="光照强度" itemValue="4" />
+					                            </h:selectOneMenu>
+                                             </div>
+                                        </td>
+                                       <td class="tpcc_font"> 
+                                        	<div class="fxy_div" style="width: 400px;height:40px;">
+					                            <table cellpadding="0" cellspacing="0" style="float:right;">
+					                             	<tr>
+					                                	<td width="80" align="right">
+					                                		<h:commandButton  styleClass="btn btn-primary" value="搜索" onclick="return checksub()" />
+					                                	</td>
+					                                	<td width="90" align="right">
+					                                		<h:commandButton action="#{rankHome.reset}" id="reset" styleClass="btn btn-default" value="重置"/>
+					                                	</td>
+					                                  
+					                                </tr>
+					                             </table>
+					                        </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </li>
+                        </ul>
+                    	<div class="clear"></div>
+                    </div>
+                </h:form>
+				
+				</ui:fragment>
+				<!--分析页结束-->  
+                <div class="right_c">
+                    <!--折线图开始-->
+                    <div class="ybp_02">
+                        <div class="fxy_xse">区域管理排名</div>
+                        <div class="fxy_zxt">
+                        	 <div id="container" style="min-width:600px;height:400px"></div>
+                        </div>
+                       
+                        <div class="clear"></div>
+                    </div>
+                    <!--折线图结束-->
+                    <div style="height:80px; width:100%;"></div>
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+                
+            </td>    
+    <!--右边结束-->
+    <script type="text/javascript">
+				  jquery('.selectpicker').selectpicker();
+	</script>
+<script type="text/javascript">
+//<![CDATA[
+	$(function () {
+		var str = "";
+		var stype = #{rankHome.stype};
+		if(stype==0){
+			str = "区域环境健康指数排名";
+		}else if(stype==1){
+			str = "区域环境空气温度指数排名";
+		}else if(stype==2){
+			str = "区域环境空气湿度指数排名";
+		}else if(stype==3){
+			str = "区域环境土壤温度指数排名";
+		}else if(stype==4){
+			str = "区域环境光照强度指数排名";
+		}
+		 $('#container').highcharts({
+	            chart: {
+	                type: 'column'
+	            },
+	            title: {
+	                text: str
+	            },
+	            xAxis: {
+	                categories: #{rankHome.rankNameString},
+	                #{rankHome.maxString}
+	            },
+	            yAxis: {
+	                min: 0,
+	                max:100,
+	                title: {
+	                    text: '指数值'
+	                }
+	            },
+	            tooltip: {
+	                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+	                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+	                    '<td style="padding:0"><b>{point.y} %</b></td></tr>',
+	                footerFormat: '</table>',
+	                shared: true,
+	                useHTML: true
+	            },
+	            credits:{
+					enabled:false
+		        },
+	            plotOptions: {
+	                column: {
+	                    pointPadding: 0.2,
+	                    borderWidth: 0
+	                }
+	            },
+	            series: [{
+	                name: '大棚',
+	                data: #{rankHome.rankString}
+
+	            }],
+	            scrollbar: {
+	    			enabled: true
+	    		}
+	        });
+		});
+
+
+	//]]>
+</script>
+</ui:define>
+
+</ui:composition>

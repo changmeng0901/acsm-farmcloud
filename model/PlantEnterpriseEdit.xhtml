@@ -1,0 +1,158 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"	
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j" 
+    template="/layout/order_template.xhtml">
+
+<ui:define name="body">
+<td valign="top" width="100%">
+	<div class="right_c">
+						<div style="width:170px; height:32px; position:fixed; z-index:150; top:150px; right:30px;">
+                            <a href="#{request.contextPath}/model/ModelInfoOne.seam?fType=#{plantEnterpriseHome.fInfoId}"><img src="#{request.contextPath}/asset/images/success_03.png" style="#{checkPlantId eq 2?'display:block':'display:none'}" width="170" height="54" /></a>
+			            	<a href="#{request.contextPath}/index.seam"><img src="#{request.contextPath}/asset/images/success_03.png" style="#{checkPlantId eq 4?'display:none':'display:none'}" width="170" height="54" /></a>
+                       </div>
+                	<div class="r_title">
+                    	<div class="r_t_l">
+                    	<s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="工作 ">
+                        </s:link>
+                    	&#160;&gt;&#160;&#160;<font size="3">
+						蔬菜
+						</font>
+						</div>
+                     </div>
+			            
+					 <div class="z_r_ser" style="margin-top:60px;">
+                     <h:form id="plantEnterpriseSearch">
+                    	<table cellpadding="0" cellspacing="0" width="476" style="margin:0 auto;">
+                        	<tr>
+                        		<td style="font-size:14px;" >查询条件：</td>
+                                <td><h:inputText id="plantName" class="z_r_ser_i" value="#{plantEnterpriseHome.plantName}"/></td>
+                                <td>
+                                   <h:commandButton id="search" action="/model/PlantEnterpriseEdit.xhtml"  styleClass="search_btn_search"/>
+                                </td>
+                           </tr>
+                       </table>  
+                      </h:form>                        
+                    </div>
+                    <!--茄果类开始-->
+                    <a:repeat value="#{plantEnterpriseHome.fList}" var="_floristics" rendered="#{not empty plantEnterpriseHome.fList}" rowKeyVar="_floristicsindex">
+                    	<s:div styleClass="ybp_02" style="margin-top:35px;" id="persistList" >
+                    	<div style="margin-bottom:30px;" class="hideDiv2">
+                    		<div class="zw_fl_#{_floristicsindex % 3}">
+                    		    <div style="float:left; height:46px;"><img a="true" class="sj_142" style="cursor:pointer;" src="#{request.contextPath}/asset/images/disb.png" width="17" height="46" /></div>
+                            	<div style="float:left;"><font class="zw_font_#{_floristicsindex % 3}">#{_floristics.name}</font><font class="zw_font_hui">#{_floristics.englishName}</font></div>
+                            </div>
+                            <div class="_idel2">
+                            <!--plant开始-->
+                              	<ul class="zw_ul">
+                                    <a:repeat value="#{plantEnterpriseHome.phasMap.get(_floristics.floristicsId)}" var="_plant" rowKeyVar="_index">
+	                                      <li class="zw_libg001">
+	                                           	<a href="javascript:void(0);" onclick="plantPersistInfo(#{_plant.plantId},'#{plantEnterpriseHome.plantMap.get(_plant.plantId)}');" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image#{_plant.plantId}','','../asset/images/image2.png',1)">
+													<img class="zw_bgt001" src="../asset/images/image_bg#{plantEnterpriseHome.plantMap.get(_plant.plantId)}.png" width="137" height="137" id="Image#{_plant.plantId}" />
+	                                           	</a>
+	                                            <a class="zw_libg_img001" href="#">
+	                                				<img src="#{_plant.plantImgRound eq null or _plant.plantImgRound eq ''?'../asset/images/851.jpg':_plant.plantImgRound}" width="137" height="137"/>
+	                                            </a>
+	                                           <div class="zw_text001"> 
+	                                           		<table align="center">
+	                                           			<tr>
+	                                           				<td valign="top">
+	                                           					<a href="javascript:void(0);" class="#{plantEnterpriseHome.plantMap.get(_plant.plantId) eq 2 ?'new_checkbox1':'new_checkbox1_2'}"  onclick="plantPersistInfo(#{_plant.plantId},'#{plantEnterpriseHome.plantMap.get(_plant.plantId)}');"></a>
+	                                           				</td>
+	                                           				<td valign="top" align="left">
+	                                           				 	<font class="s_pan">#{_plant.name}</font>
+	                                           				</td>
+	                                           			</tr>
+	                                           		</table>
+	                                           </div>
+	                                      </li>
+                                    </a:repeat>
+                              	</ul>
+                            <!--plant结束-->
+                            </div>
+                            </div>
+                        <div class="clear"></div>
+                    </s:div>
+                    </a:repeat>
+                    <!--茄果类开始-->
+                    <!--植物分类结束-->
+            <!--分类下结束-->
+            <div class="clear"></div>
+		</div><!--right_c结束-->
+		<a:form>
+	  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+			<a:jsFunction name="insertPE" action="#{plantEnterpriseHome.insertPE}" reRender="persistList" oncomplete="jquery('#login').hide();">
+				<a:actionparam name="plantId" assignTo="#{plantEnterpriseHome.plantId}"/>
+			</a:jsFunction>
+			<a:jsFunction name="deletePe" action="#{plantEnterpriseHome.deletePe}" reRender="persistList" oncomplete="jquery('#login').hide();">
+				<a:actionparam name="plantId" assignTo="#{plantEnterpriseHome.plantId}"/>
+			</a:jsFunction>
+		</a:form>
+</td>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/DD_belatedPNG.js" ></script>
+
+<script type="text/javascript">
+DD_belatedPNG.fix('.zw_bgt img');
+
+</script>
+
+<!--鼠标移上圆圈去-->
+<script type="text/javascript">
+//<![CDATA[
+           
+jquery(document).ready(function(){
+    jquery(".sj_142").click(function(){
+      	if(jquery(this).attr("a")=="true"){
+      		jquery(this).attr("a","false");
+      		jquery(this).attr("src","../asset/images/disn.png");
+    		jquery(this).closest(".hideDiv2").find("._idel2").hide();
+      	}else{
+      		jquery(this).attr("a","true");
+      		jquery(this).attr("src","../asset/images/disb.png");
+      		jquery(this).closest(".hideDiv2").find("._idel2").show();
+      	}
+      });
+})
+
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+
+function plantPersistInfo(plant,typeinfo){
+	if(typeinfo == 2){
+		if (confirm("确定删除模型!")){
+			jquery("#login").show();
+			deletePe(plant);
+		}
+	}else{
+		jquery("#login").show();
+		insertPE(plant);
+	}
+}
+//]]>
+</script>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,227 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+	
+	<ui:define name="foot">
+		<!-- 选择基地 开始 -->
+		<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+		<!-- 选择基地 结束 -->  
+	</ui:define>
+	<ui:define name="body">
+	    
+	<style>
+.tjqu_dl2 {
+    height: 180px;
+}
+.farming_nodata{ overflow:hidden; background:#fcfcfc;}
+.warning_noData{ width:508px; padding-top:60px; margin:125px auto 220px; text-align:center; background:url(#{request.contextPath}/asset/images/nongji2.png) no-repeat center top;}
+.warning_noData em{ font-style:normal; font-family:'微软雅黑'; font-size:18px; color:#333;}
+.warning_noData p{ line-height:26px; margin-top:24px; font-size:14px; font-family:'黑体'; color:#5c5c5c;}
+
+</style>
+		<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<td valign="top">
+               		
+            <!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="spanValue">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="if(del()) return true;">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+		<div class="right_c">
+		<div class="r_title">
+                    	<div class="r_t_l">数字农场&#160;&gt;&#160;&#160;<font size="3">设备档案</font></div>
+                    </div>
+                	<!--入库订单列表开始-->
+                	<!-- #{instrumentInfoHome.getFarmerMethod()} -->
+                	
+                <div class="ybp_02" style="padding-top:22px;">
+		         <div class="tjan_05">
+						    <div class="btn-group" style="margin-top:-8px;">
+		                		<s:link rendered="#{s:hasRole('farm_engine_add')}" id="Primary" styleClass="btn btn-success" value="添加农机" propagation="none" view="/map/InstrumentInfoEdit.xhtml" onclick="changeVal(id);return checkBase(this)">
+		            	          <f:param name="instrumentInfoId" />
+		            	          <f:param name="baseId" value="#{instrumentInfoHome.baseId}"/>
+		                    	</s:link>
+							</div><!-- /btn-group -->
+			                 </div>
+                  <!--东区开始-->
+                  
+		                <s:div styleClass="farming_nodata" style="display:none;">
+		                  	<div class="warning_noData">
+		                      	<em>很遗憾，没有任何农机信息</em>
+		                        <p>完善的农机信息，可以帮助您准确掌握农机现状、及时了解使用状况、随时查询维修信息，让您对农场的农机都了如指掌，快来添加吧！</p>
+		                        
+		                      </div>
+		                </s:div>
+                        <a4j:repeat value="#{instrumentInfoHome.ddList}" var="_dd" rendered="#{not empty instrumentInfoHome.ddList}" rowKeyVar="_index">
+                        	<s:div style="margin-bottom:30px;" styleClass="hideDiv2" rendered="#{not empty instrumentInfoHome.getInstrumentInfoMe(_dd.dataDicId)}">
+                        	
+                          <div class="qu_title" >
+	                        	<table cellpadding="0" cellspacing="0" style="float:left;">
+	                            	<tr>
+	                                	<td width="17" align="left"><img a="true" class="sj_142" style="cursor:pointer;" src="#{request.contextPath}/asset/images/sjj_down1.jpg" width="14" height="19" /></td>
+	                                    <td align="left" style="padding-left:2px;">
+											<font class="qu_font">#{_dd.name}</font>
+										</td>
+	                                </tr>
+	                            </table> 
+                        </div>
+                        <div class="_idel2">
+                            <a4j:repeat value="#{instrumentInfoHome.getInstrumentInfoMe(_dd.dataDicId)}" var="_instrument" rendered="#{not empty instrumentInfoHome.getInstrumentInfoMe(_dd.dataDicId)}" rowKeyVar="_index">
+	                        	<dl class="tjqu_dl2" id="delDiv#{_instrument.id}">
+	                        	<s:decorate rendered="#{_instrument.picture ne null}">
+	                            <dt class="tjqu_dt">
+	                            	<s:link propagation="none"  view="/map/InstrumentInfoUpdate.xhtml">
+	                            	<f:param name="instrumentInfoId" value="#{_instrument.id}"/>
+	                            	<f:param name="addType" value="#{_dd.dataDicId}"/>
+	                            	<img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157"/>
+									<img class="tjqu_a_img" src="#{_instrument.picture}" width="144" height="144"/>
+	                                </s:link>
+	                                <a href="#{request.contextPath}/map/InstrumentInfoUpdate.seam?instrumentInfoId=#{_instrument.id}&amp;addType=#{_dd.dataDicId}" style="position:relative; z-index:900; cursor:pointer;" > 
+		                                <div class="tjdd">
+		                                	<a  onclick="isDel(#{_instrument.id})" style="#{s:hasRole('farm_engine_del')?'':'display:none;'}">
+		                                    	<ul class="rr_llul">
+		                                       <li class="rr_lli"><img src="#{request.contextPath}/asset/images/dele_15.jpg" width="17" height="14" /></li>
+		                                   		</ul>
+		                                    </a>
+		                                </div>
+	                                </a>
+	                            </dt>
+	                            </s:decorate>
+	                            <s:decorate rendered="#{_instrument.picture eq null}">
+	                            <dt class="tjqu_dt">
+	                            	<s:link propagation="none"  view="/map/InstrumentInfoUpdate.xhtml">
+	                            	<f:param name="instrumentInfoId" value="#{_instrument.id}"/>
+	                            	<f:param name="addType" value="#{_dd.dataDicId}"/>
+	                            	<img class="tjqu_img" src="#{request.contextPath}/asset/images/img_bg_03.png" width="156" height="157"/>
+	                                    <img class="tjqu_a_img" src="#{request.contextPath}/asset/images/qixie.jpg" width="144" height="144"/>
+	                                </s:link>
+	                                <a href="#{request.contextPath}/map/InstrumentInfoUpdate.seam?instrumentInfoId=#{_instrument.id}&amp;addType=#{_dd.dataDicId}" style="position:relative; z-index:900; cursor:pointer;" > 
+		                                <div class="tjdd">
+		                                	<a  onclick="isDel(#{_instrument.id})" style="#{s:hasRole('farm_engine_del')?'':'display:none;'}">
+		                                    	<ul class="rr_llul">
+		                                       <li class="rr_lli"><img src="#{request.contextPath}/asset/images/dele_15.jpg" width="17" height="14" /></li>
+		                                   		</ul>
+		                                    </a>
+		                                </div>
+	                                </a>
+	                            </dt>
+	                            </s:decorate>
+	                            <dd class="tjqu_dd"><font class="ncgj">名称</font><font>#{_instrument.name}</font></dd>
+	                            <dd class="ncgj_dd">型号：&#160;#{_instrument.model==''?'暂无':_instrument.model}</dd>
+	                           </dl>
+	                           </a4j:repeat>
+	                           </div>
+	                           <div class="clear"></div>
+                	    </s:div>
+                        </a4j:repeat>
+                        
+                	<!--东区结束-->
+                </div>
+				<!--入库订单列表结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+
+</td>
+		<a4j:form>
+	        <a4j:jsFunction name="deleteObj" action="#{instrumentInfoHome.delete()}" oncomplete="remo()">
+	        <a4j:actionparam name="delId" assignTo="#{instrumentInfoHome.delId}"/>
+	        </a4j:jsFunction>
+	        <a4j:jsFunction name="deleteObj1" action="#{instrumentInfoHome.delete()}" oncomplete="remo1()">
+	        <a4j:actionparam name="delGtiId" assignTo="#{instrumentInfoHome.delGtiId}"/>
+	        </a4j:jsFunction>
+	        
+        </a4j:form>
+<script type="text/javascript">
+jquery(document).ready(function(){
+    jquery(".sj_142").click(function(){
+      	if(jquery(this).attr("a")=="true"){
+      		jquery(this).attr("a","false");
+      		jquery(this).attr("src","../asset/images/sjj_right.jpg");
+    		jquery(this).closest(".hideDiv2").find("._idel2").hide();
+      	}else{
+      		jquery(this).attr("a","true");
+      		jquery(this).attr("src","../asset/images/sjj_down1.jpg");
+      		jquery(this).closest(".hideDiv2").find("._idel2").show();
+      	}
+      });
+    
+    var len = jquery(".hideDiv2").length;
+    if(len == 0){
+		jquery(".farming_nodata").show();
+    }
+})
+jquery(function(){
+	 jquery('.tjqu_dt').hover(function(){
+	  jquery(this).find('.tjdd').show();
+	 },function(){
+	  jquery(this).find('.tjdd').hide();
+	 })
+	})
+    var id = 0;
+	function isDel(xx){
+		id = xx;
+		document.getElementById("spanValue").innerHTML = "确定删除？";
+		jquery("#myModal").modal('show');
+    }
+		
+		function del(){
+			deleteObj(id);
+			jquery("#myModal").modal('hide');
+			return true;
+    	}
+		remo = function(){
+			jquery("#delDiv"+id).hide();
+    	}
+
+		</script>
+		<script type="text/javascript">
+		//<![CDATA[
+  window.onload = function () {
+    jquery('.selectpicker').selectpicker();
+  };
+  function changeVal(obj){
+		var objVal = document.getElementById(obj).innerHTML;
+		jquery("#Primary").text(objVal);
+}
+//]]>
+</script>
+	</ui:define>
+
+</ui:composition>

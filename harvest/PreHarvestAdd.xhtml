@@ -1,0 +1,671 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/superTables_compressed.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/icheck.css" />
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/archive/report.css" />
+    <style>
+    .start{color:Red;font-weight:bold;font-size:14px;}
+	.btn .dropdown-toggle .selectpicker{width:100px;}
+    .btn-group .bootstrap-select{width:100px;}
+    .sBase .sDefault {font-family: '微软雅黑';}
+    .sDefault th{background:#f0f5fb;}
+    .tableModel tr td{white-space:normal;box-sizing:border-box;}
+    .tableModel th:first-child{border-radius:0;}
+    .tableModel th:last-child{border-radius:0;}
+    .tableModel th{height:80px;box-sizing:border-box;}
+    .frame_form_k .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:178px;}
+    .frame_form_k .bootstrap-select{width:178px;}
+    .frame_form_k{ display:inline-block; padding:6px 0px;}
+    .frame_form_k  input[type=text].form-control {height: 34px;line-height: 20px;padding: 6px 30px;box-sizing: border-box;font-family: '微软雅黑';color: '#ababab';background: url('#{request.contextPath}/asset/images/cjsearch_bg.png') 8px center no-repeat;}
+	.frame_form_k ul li{float: left;margin-right: 34px;} 
+	.frame_form_k ul li i {display: inline-block;width: 20px;height: 20px;margin-top: 4px;vertical-align: top;}
+	.tableModel .add_crop {display: inline-block;height: 20px;line-height: 20px;margin: 7px 0 0 0;padding-left: 20px;background: url("#{request.contextPath}/asset/css/images/BatchRecord_add1.png") no-repeat left center;font-size: 14px;color: #44af2c;cursor: pointer;}
+	.format1 i{display: inline-block;width: 20px;height: 20px;margin-top: 4px;vertical-align: top;  }
+	.yearLi .w20, .monthLi .w20, .form_date .w20{ margin-left: 0;}
+	.bootstrap-select.btn-group .dropdown-menu li:hover,
+	.bootstrap-select.btn-group .dropdown-menu li a:hover{ background: #fff;}
+	.tableModel .delect_crop{ cursor:pointer;width:14px;height:14px;}
+	.btn{ height: 34px; line-height:18px;box-sizing:border-box;padding: 7px 19px;}
+	.bootSelt_dengji .bootstrap-select:not([class*=span]):not([class*=col-]):not([class*=form-control]):not(.input-group-btn){ width:100%;}
+	.bootSelt_dengji .bootstrap-select.btn-group .dropdown-menu.inner{height:100px;}
+	.farming_nodata{ overflow:hidden; border-bottom:1px solid #ddd; background:#fcfcfc;}
+	.warning_noData{ width:508px; padding-top:60px; margin:125px auto 220px; text-align:center; background:url(#{request.contextPath}/asset/images/farming/farmingIco20.png) no-repeat center top;}
+	.warning_noData em{ font-style:normal; font-family:'微软雅黑'; font-size:18px; color:#333;}
+	.warning_noData p{ line-height:26px; margin-top:24px; font-size:14px; font-family:'黑体'; color:#5c5c5c;}
+	.tableModel th,.tableModel td{ text-align:center;}
+</style>   
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModalYz" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- #{preHarvestProductList.preHarvestAddOrUpInit()}; -->
+<td valign="top" id ="test1">
+	<div id="iframceContent" style="height:100%;width:100%;min-height:500px;overflow: auto-;">
+		<div class="right_c">
+	    	<div class="filtrate_header">
+	    		<h:panelGroup id="canSubmitId">
+	    			<h:inputHidden value="#{preHarvestProductList.canSubmit}" id="canSubmitHidId"/>
+	    		</h:panelGroup>
+                <div class="clear" style="padding:15px 0;">
+                <div class="frame_form_k fl mr10 search">
+                      <input type="text" style="width:250px;font-size:12px; " value="请输入关键字进行搜索" class="form-control mr5 fl zz1" />
+                    <button class="btn btn-primary fl mr5" type="button" style="padding: 7px 19px;" onclick="primary()">搜索</button>
+                </div>
+                 <div class="frame_form_k fl mr10">
+                 	<div class="fl place" style="height: 35px; line-height: 36px">录入时间：</div>
+                 	<h:panelGroup rendered="#{preHarvestProductList.addOrUp eq 'add'}" >
+                    <div class="input-append date form_date fl form1" id="entry_time" >
+                       <input id = "entryTimeId" size="26" type="text" value="#{preHarvestProductList.preHarvestEntryTime}" readonly="readonly" style="height:35px" />
+                       <span class="add-on"><i class="icon-th"></i></span>
+                    </div>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{preHarvestProductList.addOrUp ne 'add'}" >
+                    <div id="entryTimeSpan" class="fl place" style="height: 35px; line-height: 36px;">#{preHarvestProductList.preHarvestEntryTime}</div>
+                	</h:panelGroup>
+                </div>
+                <div class="frame_form_k fl mr10">
+                <span class="frame_form_k fl mr10 format1 mt5" style="font-size:14px;">
+                    <i style=" background:  url('#{request.contextPath}/asset/css/images/ren.png') 0 0 no-repeat; "></i>录入人：<span>#{sessionTake.nickname}</span>
+                </span>
+                </div>                
+                 </div>
+                <div class="frame_form_k  clear" style="margin-bottom:15px; font-size:14px;">                   
+                   <ul class="fxy_ul clear" id="preTimeCheck">
+                    <li class="fxy_li">预采时间选择：</li>
+                    <li id="dateType1">
+                        <input type="radio" class="iRadio"  name="ccc" />
+                        <label style="font-weight: 100; margin-left: 5px;">按日</label>
+                    </li>
+                    <li id="dateType2">
+                        <input type="radio" class="iRadio" name="ccc" />
+                        <label style="font-weight: 100; margin-left: 5px;">按周</label>
+                    </li>
+                    <li id="dateType3">
+                        <input type="radio" class="iRadio" name="ccc"  />
+                        <label style="font-weight: 100; margin-left: 5px;">按月</label>
+                    </li>
+                    <li id="dateType4">
+                        <input type="radio" class="iRadio" name="ccc" />
+                        <label style="font-weight: 100; margin-left: 5px;">按年</label>
+                    </li>
+                    <h:panelGroup rendered="#{preHarvestProductList.preHarvestTimeType eq 1}">
+                    <li class="dayLi Li" onoff="false">
+                    	<span class="fl place" style="width:110px;">选择预采时间：</span>
+                    	<h:panelGroup rendered="#{preHarvestProductList.addOrUp eq 'add'}">
+                        <div class="input-append date form_date form_datetime fl form2" id="day_start">
+                           <input id="day_startText" size="26" type="text" value="#{preHarvestProductList.preHarvestStartTime}" />
+                           <span class="add-on"><i class="icon-th"></i></span>
+                        </div>
+                        <p id="hide_daystart" class="fl"></p>
+                        <span class="fl w20">--</span>
+                        <div class="input-append date form_date form_datetime fl form3" id="day_end">
+                           <input id="day_endText"  size="26" type="text" value="#{preHarvestProductList.preHarvestEndTime}" />
+                           <span class="add-on"><i class="icon-th"></i></span>
+                        </div>  
+                        <button type="button" class="btn btn-primary fl ml10" onclick="changeDateFn()" id="dayId">确定</button>
+                    	</h:panelGroup>
+                    	<h:panelGroup rendered="#{preHarvestProductList.addOrUp ne 'add'}">
+                    		<span class="fl place" style="width:85px;" id="day_startSpan">#{preHarvestProductList.preHarvestStartTime}</span>
+                    		<span class="fl w20">--</span>
+                    		<span class="fl place" style="width:85px;" id="day_endSpan">#{preHarvestProductList.preHarvestEndTime}</span>
+                    	</h:panelGroup>
+                    </li>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{preHarvestProductList.preHarvestTimeType eq 2}">
+					<li class="weekLi Li" onoff="false">
+						<span class="fl place" style="width:110px;">选择预采时间：</span>
+						<h:panelGroup rendered="#{preHarvestProductList.addOrUp eq 'add'}">
+						<div class="fl mr10" id="weekSelect">
+						<select class="selectpicker" style="display: none;" multiple="multiple" id="weekId" >
+							<a:repeat value="#{preHarvestProductList.yearOrWeekStrList}" var="_yowList" >
+								<option  value="#{_yowList}">#{_yowList}</option>
+							</a:repeat>
+						</select> 
+						</div>  
+						<button type="button" class="btn btn-primary fl ml10" onclick="changeWeekFn()" id="weekIdButton">确定</button>
+						</h:panelGroup>
+						<h:panelGroup rendered="#{preHarvestProductList.addOrUp ne 'add'}">
+							<div class="fl mr10" id="weekSpan">
+								<span>#{preHarvestProductList.preHarvestYearOrWeek}</span>
+							</div>
+						</h:panelGroup>
+					</li>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{preHarvestProductList.preHarvestTimeType eq 3}">
+                    <li class="monthLi Li" onoff="false">
+                    	<span class="fl place" style="width:110px;">选择预采时间：</span>
+                    	<h:panelGroup rendered="#{preHarvestProductList.addOrUp eq 'add'}">
+                        <div class="input-append date form_datetime fl fom2" id="month_start">
+                           <input  id="month_startText" size="26" type="text" value="#{preHarvestProductList.preHarvestStartTime}" />
+                           <span class="add-on"><i class="icon-th"></i></span>
+                        </div>
+                        <span class="fl ">--</span>
+                        <div class="input-append date form_datetime fl fom3" id="month_end">
+                           <input id="month_endText" size="26" type="text" value="#{preHarvestProductList.preHarvestEndTime}" />
+                           <span class="add-on"><i class="icon-th"></i></span>
+                        </div> 
+                        <button type="button" class="btn btn-primary fl ml10" onclick="changeMonthFn()" id="monthId">确定</button>   
+                    	</h:panelGroup>
+                    	<h:panelGroup rendered="#{preHarvestProductList.addOrUp ne 'add'}">
+                    		<span class="fl place" style="width:60px;" id="month_startSpan">#{preHarvestProductList.preHarvestStartTime}</span>
+                        	<span class="fl ">--</span>
+                        	<span class="fl place" style="width:60px;" id="month_endSpan">#{preHarvestProductList.preHarvestEndTime}</span>    
+                    	</h:panelGroup>
+                    </li>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{preHarvestProductList.preHarvestTimeType eq 4}">
+                    <li class="yearLi Li" onoff="false">
+                    	<span class="fl place" style="width:110px;">选择预采时间：</span>
+                    	<h:panelGroup rendered="#{preHarvestProductList.addOrUp eq 'add'}">
+                    	<div class="fl mr10" id="yearSelect">
+                        <select class="selectpicker" style="display: none;" multiple="multiple" id="yearId">
+							<a:repeat value="#{preHarvestProductList.yearOrWeekStrList}" var="_yowList" >
+								<option value="#{_yowList}">#{_yowList}</option>
+							</a:repeat>
+						</select>  
+						</div>
+						<button type="button" class="btn btn-primary fl ml10" onclick="changeYearFn()" id="yearIdButton">确定</button>
+                    	</h:panelGroup>
+                    	<h:panelGroup rendered="#{preHarvestProductList.addOrUp ne 'add'}">
+                    		<div class="fl mr10" id="yearSpan">
+								<span>#{preHarvestProductList.preHarvestYearOrWeek}</span>
+							</div>
+                    	</h:panelGroup>
+                    </li> 
+                    </h:panelGroup>        
+                </ul>
+                </div>
+            </div>
+            <div id="enterpriseInfoList" style="overflow: hidden; height: 600px;min-height:260px;" >
+                <table cellpadding="0" cellspacing="0" id="demoTable" style="margin-top: -23px-; margin-left: -99px-; " class="tableModel">
+                    <tbody id="enterp">
+                    <h:panelGroup rendered="#{preHarvestProductList.creatTable ne 'n'}">
+                        <tr>
+                            <th >序号</th>
+                            <h:panelGroup rendered="#{preHarvestProductList.preHarvestType eq 2}">
+                            	<th >大棚</th>
+                            </h:panelGroup>
+                            <th>作物名称</th>
+                            <h:panelGroup rendered="#{preHarvestProductList.preHarvestType eq 2}">
+                            	<th>单位</th>
+                            </h:panelGroup>
+                            <th style="width:120px">等级</th>
+                            <a:repeat value="#{preHarvestProductList.timeSplitControl}" var="_timeSplit">
+                            	<th style="width:120px">#{_timeSplit}</th>
+                            </a:repeat>
+                            <h:panelGroup rendered="#{preHarvestProductList.addOrUp ne 'see'}">
+                            <th class="th_caozuo" width="100px;" >操作</th>
+                            </h:panelGroup>
+                        </tr>
+                    </h:panelGroup>       
+                    <a:repeat value="#{preHarvestProductList.plantList}" var="_plantList" id = "refreshList0" >
+                        <tr class = "realPlant_Pro" id = "refreshList">
+                        	<h:panelGroup rendered="#{_plantList[0] ne '-1'}">
+                            	<td>#{_plantList[0]}</td>
+                            	<h:panelGroup rendered="#{preHarvestProductList.preHarvestType eq 2}">
+                            		<td class="zhavest housesname">#{_plantList[3]}</td>
+                            	</h:panelGroup>
+                            	<td class="zhavest cropsname borderRt">#{_plantList[1]}</td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{_plantList[0] eq '-1'}">
+                            	<td></td>
+                            	<h:panelGroup rendered="#{preHarvestProductList.preHarvestType eq 2}">
+                            	<td></td>
+                            	</h:panelGroup>
+                            	<td></td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{preHarvestProductList.preHarvestType eq 2}">
+                            	<td>#{_plantList[4]}</td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{preHarvestProductList.preHarvestType eq 2}">
+                            	<td class="goodsLevel">
+                            	<span class="bootSelt110 bootSelt_dengji">
+									<h:selectOneMenu  styleClass="selectpicker"   value="#{_plantList[10]}" >
+										<s:selectItems value="#{_plantList[5]}" var="_level" label="#{_level[1]}"  itemValue="#{_level[0]}"/>
+									</h:selectOneMenu>
+								</span>
+                            	</td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{preHarvestProductList.preHarvestType eq 1}"><!-- 作物 -->
+                            	<td class="goodsLevel">
+                            	<span class="bootSelt110 bootSelt_dengji">
+									<h:selectOneMenu  styleClass="selectpicker"   value="#{_plantList[6]}" >
+										<s:selectItems value="#{_plantList[5]}" var="_level" label="#{_level[1]}"  itemValue="#{_level[0]}"/>
+									</h:selectOneMenu>
+								</span>
+                            	</td>
+                            </h:panelGroup>
+                            <a:repeat value="#{_plantList[2]}" var="_product" >                          	
+                            	<td class="hiddenTrPro">
+                            		<input type="text" class = "judgePro" value="#{_product[3]}" style="display: none" />
+                            		<input type="text" class = "preTime" value="#{_product[1]}" style="display: none" />
+                            		<input type="text" class = "preTotal" value="#{_product[2]}" style="display: none" />
+                            		<h:panelGroup rendered="#{_product[3] eq 0}"><!-- 记录不可编辑 -->
+                            			<h:inputText value="#{_product[2]}" disabled="true" styleClass="form-control" style="width:100%"/>
+                            		</h:panelGroup>
+                            		<h:panelGroup rendered="#{_product[3] eq 1}"><!-- 记录可编辑 -->
+                            			<h:inputText value="#{_product[2]}" styleClass="form-control look" style="width:100%" onchange="preTotalChange(this)" maxlength="6"/>
+                            		</h:panelGroup>
+                            	</td>
+                            </a:repeat> 
+                            <h:panelGroup rendered="#{preHarvestProductList.addOrUp ne 'see'}">
+                            <td class="td_caozuo hiddenTd" >  
+                            	<h:panelGroup rendered="#{_plantList[0] ne '-1'}">
+                                	<span class="add_crop" onclick="AddCropColspan(this)">添加</span>
+                                </h:panelGroup> 
+                                <h:panelGroup rendered="#{_plantList[0] eq '-1'}">              
+                            		<img class="delect_crop" src="#{request.contextPath}/asset/images/harvest/delect_crop.png" onclick="DelectCropColspan(this)" />
+                            	</h:panelGroup>
+                            	<div style="display: none" class="hiddenDiv">
+                            	<input type="text" class = "tunnelInfoId" value="#{_plantList[6]}" /><!-- tunnel_info_id -->
+                            	<input type="text" class = "breedId" value="#{_plantList[7]}" /><!-- breed_id -->
+                            	<input type="text" class = "realPlantId" value="#{_plantList[8]}" /><!-- real_plant_id -->
+                            	<input type="text" class = "plantId" value="#{_plantList[3]}" /><!-- plant_id -->
+                            	</div>
+                            </td>
+                            </h:panelGroup>
+                        </tr>
+                     </a:repeat>                 
+                    </tbody>
+                </table>
+            	<h:panelGroup  rendered="#{preHarvestProductList.creatTable eq 'n'}">
+           			<div id="no_date">
+            			<div class="farming_nodata">
+                   			<div class="warning_noData">
+                       			<em>很遗憾，没有菜品预采信息</em>
+                       			<p>准确的菜品预采信息，是销售部门掌握菜品出产情况，制定销售目标的重要保证，请及时更新哦！</p>
+                   			</div>
+                		</div>
+            		</div>
+           		</h:panelGroup>
+            </div>
+            <h:form id="saveMyFrom" enctype="multipart/form-data">      
+            	<h:inputHidden value="#{preHarvestProductList.addOrUp}" id="addOrUpHid" /><!-- 添加或编辑 -->
+            	<h:inputHidden value="#{preHarvestProductList.preHarvestType}" id="preHarvestTypeHid" /><!-- 采收类型 -->
+				<h:inputHidden value="#{preHarvestProductList.preHarvestTimeType}" id="preHarvestTimeTypeHid" /><!-- 采收时间类型 -->
+				<h:inputHidden value="#{preHarvestProductList.preHarvestEntryTime}" id="preHarvestEntryTimeHid" /><!-- 录入时间 -->
+				<h:inputHidden value="#{preHarvestProductList.preHarvestStartTime}" id="preHarvestStartTimeHid" /><!-- 采收开始时间 -->
+				<h:inputHidden value="#{preHarvestProductList.preHarvestEndTime}" id="preHarvestEndTimeHid" /><!-- 采收结束时间 -->
+				<h:inputHidden value="#{preHarvestProductList.preHarvestYearOrWeek}" id="preHarvestYearOrWeekHid" /><!-- 采收时间字符串 -->
+				<h:inputHidden value="#{preHarvestProductList.preHarvestId}" id="preHarvestIdHid" /><!-- 编辑采收记录的id -->
+				<h:inputHidden value="#{preHarvestProductList.preHarvestJsonArray}" id="preHarvestJsonArrayHid" /><!-- 采收JSON串 -->
+            <div class="return" style="margin: 20px;text-align:center;">
+                <h:commandButton id="savePreHarvestPro" value="提交" styleClass="btn btn-primary" style="margin-right:10px;" action="#{preHarvestProductList.preHarvestAddOrUpSave()}" onclick="return saveOrUpdate()" rendered="#{preHarvestProductList.addOrUp ne 'see'}" />
+                <s:link propagation="none"  styleClass="btn btn-default" view="/harvest/PreHarvestListNew.seam" value = "返回">  	 	
+                	<f:param name="selectPageNum" value="#{preHarvestProductList.selectPageNum}" />
+					<f:param name="preHarvestTime" value="#{preHarvestProductList.preHarvestTime}" />
+					<f:param name="preHarType" value="#{preHarvestProductList.preHarType}" />
+					<f:param name="preHarTimeType" value="#{preHarvestProductList.preHarTimeType}" />
+                </s:link>  
+            </div>
+            </h:form> 
+		</div>
+		<h:inputHidden value="#{preHarvestProductList.selectPageNum}" id="thisPageId" /><!-- 添加或编辑 -->
+        <h:inputHidden value="#{preHarvestProductList.preHarvestTime}" id="preHarvestTimeId" /><!-- 采收类型 -->
+		<h:inputHidden value="#{preHarvestProductList.preHarType}" id="preHarTypeId" /><!-- 采收时间类型 -->
+		<h:inputHidden value="#{preHarvestProductList.preHarTimeType}" id="preHarTimeTypeId" /><!-- 录入时间 -->
+    </div>
+</td>		
+<a:form>
+	<a:jsFunction name="judgeIfAddDay" action="#{preHarvestProductList.judgeIfAddPreDayOrMonth()}" reRender="canSubmitId" data="#{preHarvestProductList.alertMessage}" oncomplete="ifAdd(data)" >
+		<a:actionparam name="dayStart" assignTo="#{preHarvestProductList.preHarvestStartTime}"/>
+		<a:actionparam name="dayEnd" assignTo="#{preHarvestProductList.preHarvestEndTime}"/>
+		<a:actionparam name="preHarvestType" assignTo="#{preHarvestProductList.preHarvestType}"/>
+		<a:actionparam name="preHarvestTimeType" assignTo="#{preHarvestProductList.preHarvestTimeType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="judgeIfAddMonth" action="#{preHarvestProductList.judgeIfAddPreDayOrMonth()}" reRender="canSubmitId" data="#{preHarvestProductList.alertMessage}" oncomplete="ifAdd(data)" >
+		<a:actionparam name="monthStart" assignTo="#{preHarvestProductList.preHarvestStartTime}"/>
+		<a:actionparam name="monthEnd" assignTo="#{preHarvestProductList.preHarvestEndTime}"/>
+		<a:actionparam name="preHarvestType" assignTo="#{preHarvestProductList.preHarvestType}"/>
+		<a:actionparam name="preHarvestTimeType" assignTo="#{preHarvestProductList.preHarvestTimeType}"/>
+	</a:jsFunction>
+	<a:jsFunction name="judgeIfAddWeekOrYear" action="#{preHarvestProductList.judgeIfAddPreWeekOrYear()}" reRender="canSubmitId" data="#{preHarvestProductList.alertMessage}" oncomplete="ifAdd(data)" >
+		<a:actionparam name="preHarvestYearOrWeek" assignTo="#{preHarvestProductList.preHarvestYearOrWeek}"/>
+		<a:actionparam name="preHarvestType" assignTo="#{preHarvestProductList.preHarvestType}"/>
+		<a:actionparam name="preHarvestTimeType" assignTo="#{preHarvestProductList.preHarvestTimeType}"/>
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/harvest/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/harvest/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/contract/superTables_compressed.js"></script>
+<script type="text/javascript">
+//<![CDATA[      
+    var creatTable = "#{preHarvestProductList.creatTable}";
+	var preHarvestType = jQuery("#saveMyFrom\\:preHarvestTypeHid").val();
+    var preHarAddOrUp = jQuery("#saveMyFrom\\:addOrUpHid").val();
+    var alertFirst = jQuery("#alertMessageHidId").val();
+    var preHarTimeType = jQuery("#saveMyFrom\\:preHarvestTimeTypeHid").val();
+    if(creatTable=="y"){  
+    	var timeNum = Number("#{preHarvestProductList.timeNum}");     
+        if(preHarvestType=="2"){
+        	createTableDaPeng(timeNum);
+            }
+        else{
+        	createTableZuoWu(timeNum);
+            }
+        createTableHei();
+    }
+    else{
+    	jQuery("enterpriseInfoList").hide();
+        }  
+    var _colWidths;
+    function createTableDaPeng(timeNum){
+        if(preHarAddOrUp=="see"){
+        	timeNum = timeNum - 1;
+        }
+        _colWidths=[100,200,200,200,200,120]  
+        for(var i=0;i<timeNum;i++){
+        	_colWidths.push(120);
+        }     
+        new superTable("demoTable", {
+            cssSkin: "sDefault",
+            headerRows : 1,
+            fixedCols: 4,
+            colWidths:_colWidths
+        });
+    }
+    function createTableZuoWu(timeNum){
+        if(preHarAddOrUp=="see"){
+        	timeNum = timeNum - 1;
+        }
+        _colWidths=[100,200,200,120]     
+        for(var i=0;i<timeNum;i++){
+        	_colWidths.push(120);
+        }
+        new superTable("demoTable", {
+            cssSkin: "sDefault",
+            headerRows : 1,
+            fixedCols: 2,
+            colWidths:_colWidths
+        });
+    }
+    function createTableHei(){
+    	var contentHei = jquery(window).outerHeight();
+        var contentWid = jQuery(".filtrate_header").width();
+        var filtrateHei = jQuery('.filtrate_header').height();
+        var sFHeader_width = jQuery(".sFHeader").width();
+        var sHeader_height = jQuery('.sHeader').height();
+        var sHeader_width = jQuery('.sHeader').width();
+        var sDate_width = contentWid - sFHeader_width;
+        var return_height = jQuery('.return').height();
+        var sDate_height = contentHei - filtrateHei - sHeader_height;
+        jQuery("#enterpriseInfoList").css({
+        	width  : contentWid ,
+        	height : contentHei - filtrateHei
+        });
+        var tr_height = 0;
+        var th_width = 0;
+        var tr_length = jQuery('.sFData tr').length;
+        var th_length = jQuery('.sHeader th').length;
+        for(var i=0;i<tr_length;i++){
+        	tr_height += jQuery('.sFData tr').eq(i).outerHeight();
+        }
+        for(var i=0;i<th_length;i++){
+        	th_width += jQuery('.sHeader th').eq(i).outerWidth();
+        }
+        if(tr_height<(sDate_height+return_height)){
+        	sDate_height = tr_height-sHeader_height;
+        }
+        if(th_width<contentWid){
+        	sDate_width = sHeader_width-sFHeader_width;
+        }
+        jQuery(".sData").css({
+        	width  : sDate_width,
+        	height : sDate_height+1
+        });
+        jQuery("#enterpriseInfoList").css({ 
+       	 width  : contentWid , 
+       	 height : sDate_height+sHeader_height
+        });    
+    }
+   if(preHarTimeType=="1"){
+    		jQuery("#dateType1 input").attr("checked", true);
+            jQuery('.dayLi').attr('onoff','true');
+            if(preHarAddOrUp!='add'){
+            	jQuery('#dateType2').hide();
+            	jQuery('#dateType3').hide();
+            	jQuery('#dateType4').hide();           	
+            }
+        }
+    else if(preHarTimeType=="2"){
+    		jQuery("#dateType2 input").attr("checked", true);
+            jQuery('.weekLi').attr('onoff','true');
+            if(preHarAddOrUp!='add'){
+            	jQuery('#dateType1').hide();
+            	jQuery('#dateType3').hide();
+            	jQuery('#dateType4').hide();
+            }
+        }
+    else if(preHarTimeType=="3"){
+    		jQuery("#dateType3 input").attr("checked", true);
+            jQuery('.monthLi').attr('onoff','true');
+            if(preHarAddOrUp!='add'){
+            	jQuery('#dateType2').hide();
+            	jQuery('#dateType1').hide();
+            	jQuery('#dateType4').hide();
+            }
+    }
+    else if(preHarTimeType=="4"){
+        	jQuery("#dateType4 input").attr("checked", true);
+            jQuery('.yearLi').attr('onoff','true');
+            if(preHarAddOrUp!='add'){
+            	jQuery('#dateType2').hide();
+            	jQuery('#dateType3').hide();
+            	jQuery('#dateType1').hide();
+            }
+    }
+    jQuery(".form_date").datetimepicker({
+        format: "yyyy-mm-dd", 
+        autoclose: true,
+        weekStart: 1,
+        language:  'zh-CN',
+        startView: 3,
+        minView: 2,
+        maxView: 4,     
+        pickerPosition: "bottom-left"
+    });    
+    jQuery(".form_datetime").datetimepicker({
+        format: "yyyy-mm",  
+        autoclose: true,
+        weekStart: 1,
+        language:  'zh-CN',
+        startView: 3,
+        minView: 3,
+        maxView: 4,     
+        pickerPosition: "bottom-left"
+    });
+    jQuery('input[class=iRadio]').iCheck({
+        radioClass: 'iradio_minimal-blue',
+    });
+    jQuery('#entry_time').datetimepicker().on('changeDate', function(ev){
+        if( jQuery('.dayLi').attr('onoff')=='true' ){
+        	entryTimeChange("1");
+        }else if( jQuery('.weekLi').attr('onoff')=='true' ){
+        	entryTimeChange("2");
+        }else if( jQuery('.monthLi').attr('onoff')=='true' ){
+        	entryTimeChange("3");
+        }else if( jQuery('.yearLi').attr('onoff')=='true' ){
+        	entryTimeChange("4");
+        }
+    });
+    jQuery("#dateType1 input").on("ifChecked", function(event){
+        buttonChange("1");
+    }); 
+	jQuery("#dateType2 input").on("ifChecked", function(event){
+        buttonChange("2");
+    }); 
+	jQuery("#dateType3 input").on("ifChecked", function(event){
+        buttonChange("3");
+    }); 
+    jQuery("#dateType4 input").on("ifChecked", function(event){
+        buttonChange("4");
+    });    
+    function AddCropColspan(obj){
+    	var preHarAddOrUpSee = jQuery("#saveMyFrom\\:addOrUpHid").val();
+    	var canSubmit = jQuery("#canSubmitHidId").val();
+        if(canSubmit=="N"){
+            return false;
+            }
+    	var cloneTr = jQuery(obj).parent().parent('tr').clone();
+    	var cloneTr2 = cloneTr.clone();
+    	var  preHarvestTypeJudge = jQuery("#saveMyFrom\\:preHarvestTypeHid").val();
+    	jQuery(obj).parents('#enterpriseInfoList').find('.sFData .tableModel tr').eq(jQuery(obj).parents('tr').index()).after(cloneTr);
+    	jQuery(obj).parents('#enterpriseInfoList').find('.sData .tableModel tr').eq(jQuery(obj).parents('tr').index()).after(cloneTr2);
+    	jQuery('.sFData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td').eq(0).html('');
+    	jQuery('.sData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td').eq(0).html('');
+    	jQuery('.sFData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td').eq(1).html('');
+    	jQuery('.sData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td').eq(1).html('');
+		if(preHarvestTypeJudge=="2"){
+			jQuery('.sFData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td').eq(2).html('');
+			jQuery('.sData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td').eq(2).html('');
+			}
+    	var cloneTd = "<img class='delect_crop' src='#{request.contextPath}/asset/images/harvest/delect_crop.png' onclick='DelectCropColspan(this)' /> <div style='display: none' class='hiddenDiv'>"+jQuery(obj).parent().find("div[class='hiddenDiv']").html()+"</div>";
+    	jQuery('.sFData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td.td_caozuo').html('');
+    	jQuery('.sData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td.td_caozuo').html('');
+    	jQuery('.sFData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td.td_caozuo').html(cloneTd);
+    	jQuery('.sData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td.td_caozuo').html(cloneTd);
+    	jQuery('.selectpicker').selectpicker();
+    	jQuery('.sFData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find('td.goodsLevel').find("div[class='btn-group bootstrap-select']").next().remove();
+    	jQuery(obj).parent().parent('tr').next().find("div[class='btn-group bootstrap-select']").next().remove();
+		jQuery('.sData .tableModel tr').eq(jQuery(obj).parents('tr').index()+1).find("td[class='hiddenTrPro']").each(function(){			
+			jQuery(this).find("input[class='preTotal']").val("");
+			jQuery(this).find("input[class='form-control look']").val("");
+		});
+    	createTableHei();
+    }
+    function DelectCropColspan(obj){
+    	var canSubmit = jQuery("#canSubmitHidId").val();
+        if(canSubmit=="N"){
+            return false;
+            }
+        	jQuery(obj).parents('#enterpriseInfoList').find('.sFData .tableModel tr').eq(jQuery(obj).parents('tr').index()).remove();
+        	jQuery(obj).parents('#enterpriseInfoList').find('.sData .tableModel tr').eq(jQuery(obj).parents('tr').index()).remove();
+    } 
+    function ifAdd(data){
+        if(data=="0"){
+        	submitForm();
+        } 
+        else{
+    	   	document.getElementById("productMsg").innerHTML = data; 
+    		jQuery("#myModalYz").modal("show");  
+        }
+    }
+    function submitForm(){
+   	 var addOrUpHid = jQuery("#saveMyFrom\\:addOrUpHid").val();
+   	 var typeHid = jQuery("#saveMyFrom\\:preHarvestTypeHid").val();
+   	 var timeTypeHid = jQuery("#saveMyFrom\\:preHarvestTimeTypeHid").val();
+   	 var entryTimeHid = jQuery("#saveMyFrom\\:preHarvestEntryTimeHid").val();
+   	 var startTimeHid = jQuery("#saveMyFrom\\:preHarvestStartTimeHid").val();
+   	 var endTimeHid = jQuery("#saveMyFrom\\:preHarvestEndTimeHid").val();
+   	 var yearOrWeekHid = jQuery("#saveMyFrom\\:preHarvestYearOrWeekHid").val();
+   	 var preHarvestIdHid = jQuery("#saveMyFrom\\:preHarvestIdHid").val();
+   	 var selectPageNum = jQuery("#thisPageId").val();
+   	 var preHarvestTime = jQuery("#preHarvestTimeId").val();
+     var preHarType = jQuery("#preHarTypeId").val();
+     var preHarTimeType = jQuery("#preHarTimeTypeId").val();
+   	 var url = "&addOrUp="+addOrUpHid+"&preHarvestType="+typeHid+"&preHarvestTimeType="+timeTypeHid+"&preHarvestEntryTime="+entryTimeHid+"&preHarvestStartTime="+startTimeHid+"&preHarvestEndTime="+endTimeHid+"&preHarvestYearOrWeek="+yearOrWeekHid+"&preHarvestId="+preHarvestIdHid+"&selectPageNum="+selectPageNum+"&preHarvestTime="+preHarvestTime+"&preHarType="+preHarType+"&preHarTimeType="+preHarTimeType;
+   	 window.location.href="#{request.contextPath}/harvest/PreHarvestAdd.seam?"+url;
+   } 
+    jQuery('.selectpicker').selectpicker(); 
+   if(preHarTimeType=="2"){ 
+	   var  yearOrWeek = "#{preHarvestProductList.preHarvestYearOrWeek}";
+       var weekSplit = new Array();
+       weekSplit = yearOrWeek.split(",");
+      	if(weekSplit!=null){
+      		jQuery("#weekId").selectpicker("val",weekSplit);
+      	   	}
+       }
+   else if(preHarTimeType=="4"){
+	   var  yearOrWeek = "#{preHarvestProductList.preHarvestYearOrWeek}";
+       var yearSplit = new Array();
+       yearSplit = yearOrWeek.split(",");
+      	if(yearSplit!=null){
+      		jQuery("#yearId").selectpicker("val",yearSplit);
+      	   	}
+       }
+   jQuery('input[type=text],textarea').focus(function(){
+       var txt_value = jQuery(this).val();
+       if(txt_value==this.defaultValue){
+    	   jQuery(this).val("");    
+       };  
+   });
+   jQuery('input[type=text],textarea').blur(function(){
+       var txt_value = jQuery(this).val();
+       if(txt_value==""){
+    	   jQuery(this).val(this.defaultValue); 
+       };  
+   }); 
+   function primary(){
+ 	   jquery(".housesname").attr("class","zhavest housesname");
+ 	   jquery(".cropsname").attr("class","zhavest cropsname borderRt");
+        var search=jquery(".zz1").val();
+        jquery(".tableModel").contents().find(".zhavest").each(function(){
+				var cla=jquery(this).attr("class");
+				if(cla.indexOf("housesname")!=-1){
+					var housesname=jquery(this).text();
+					if(housesname.indexOf(search)!=-1){
+						jquery(this).attr("class","zhavest housesname start");
+					}
+				}
+				if(cla.indexOf("cropsname")!=-1){
+					var cropsname=jquery(this).text();
+					if(cropsname.indexOf(search)!=-1){
+						jquery(this).attr("class","zhavest cropsname start");
+					}
+				}
+			});
+			jquery(".table-newTable").contents().find(".zhavest").each(function(){
+				var cla=jquery(this).attr("class");
+				if(cla.indexOf("housesname")!=-1){
+					var housesname=jquery(this).text();
+					if(housesname.indexOf(search)!=-1){
+						var top1=jquery(this).offset().top;
+						jquery(document).scrollTop(top1);
+						return false; 
+					}
+				}
+				if(cla.indexOf("cropsname")!=-1){
+					var cropsname=jquery(this).text();
+					if(cropsname.indexOf(search)!=-1){
+						var top1=jquery(this).offset().top;
+						jquery(document).scrollTop(top1);
+						 return false; 
+					}
+				}
+			});       
+        }
+   if(preHarAddOrUp=="see"){
+	   jQuery(".selectpicker").prop('disabled', true);	
+	   }
+   document.getElementById("selectBaseDiv").style.display="none"; 
+  //]]>  
+</script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/harvest/preHarvestAdd.js"></script>
+</ui:define>
+</ui:composition> 

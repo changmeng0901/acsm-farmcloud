@@ -1,0 +1,817 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+<ui:define name="head_next">
+<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/commons/commons.css"/>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/marketPrice/price.css" />
+<script type="text/javascript" src="#{request.contextPath}/asset/js/marketPrice/echarts.js"></script>
+<style>.td_t_b{padding:0 4px;}</style>
+</ui:define>
+<ui:define name="body">
+
+<td valign="top">
+	<!-- #{marketPriceHome.allbegin()} -->
+	<div class="right_c">
+		<!-- 面包屑导航 -->
+		<div class="breadNav_wap clear" style="border-bottom:0;">
+			<div class="breadNav_lt"><span style="color:#333; font-size:14px;">当前位置：</span>销售<span>&gt;</span>价格</div>
+		</div>
+		<!-- 内容开始 -->
+		<div class="select-kind">
+			<div class="area-time clearfix">
+				<div class="selected-area">
+					<div class="btn-group">
+						<select class="selectpicker" data-live-search="true" id="area_name" name="area_name" onchange="changeAreaName(this.value)">
+                            <a4j:repeat value="#{marketPriceHome.areaList}" var="var" >
+	                            <ui:fragment rendered="#{marketPriceHome.area_name==var}">
+	                            	<option value="#{var}" selected="selected">#{var}</option>
+	                            </ui:fragment>
+	                            <ui:fragment rendered="#{marketPriceHome.area_name!=var}">
+	                            	<option value="#{var}">#{var}</option>
+	                            </ui:fragment>	
+                            </a4j:repeat>
+                        </select>
+					</div>
+				</div>
+				<div class="selected-time">
+					<div class="input-append date form_datetime " >
+						<h:inputText value="#{marketPriceHome.beginTime}" id="begin_time" onchange="changeBeginTime(this.value)"/>
+						<span class="add-on"><i class="icon-th"></i></span>
+						<span class="caret"></span>
+					</div>
+				</div>
+			</div>
+			<div class="selected-plant">
+				<ul class="clearfix">
+					<li class="active" onclick="floristicsClick(1)" style="cursor:pointer;">
+						<div class="plantt-pic veg"></div>
+						<p>蔬菜</p>
+						<p>Vegtables</p>
+					</li>
+					<li onclick="floristicsClick(2)" style="cursor:pointer;">
+						<div class="plantt-pic fru"></div>
+						<p>水果</p>
+						<p>Fruits</p>
+					</li>
+					<li onclick="floristicsClick(3)" style="cursor:pointer;">
+						<div class="plantt-pic gra"></div>
+						<p>粮食作物</p>
+						<p>Grain crops</p>
+					</li>
+					<li onclick="floristicsClick(4)" style="cursor:pointer;">
+						<div class="plantt-pic eco"></div>
+						<p>经济作物</p>
+						<p>Economic crops</p>
+					</li>
+					<li onclick="floristicsClick(5)" style="cursor:pointer;">
+						<div class="plantt-pic tea"></div>
+						<p>茶叶</p>
+						<p>Tea</p>
+					</li>
+					<li onclick="floristicsClick(6)" style="cursor:pointer;">
+						<div class="plantt-pic gre"></div>
+						<p>绿化植物</p>
+						<p>Greening plants</p>
+					</li>
+					<li onclick="floristicsClick(8)" style="cursor:pointer;">
+						<div class="plantt-pic oth"></div>
+						<p>其他</p>
+						<p>Other</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="select-list clearfix">
+		 	<h:panelGroup id="floristicsListId">
+				<div class="left-list">
+					<div class="filter clearfix">
+						<p>类别</p>
+						<select class="selectpicker" data-live-search="true" multiple="multiple" id="floristics_ids">
+	                        <a4j:repeat value="#{marketPriceHome.floristicsList}" var="var" >
+		                        <ui:fragment rendered="#{var[2]=='floristics2'}">
+		                        	<option value="#{var[0]}" disabled="disabled">#{var[1]}</option>
+		                        </ui:fragment>	
+		                        <ui:fragment rendered="#{var[2]=='floristics'}">
+		                        	<option value="#{var[0]}" style="padding-left: 40px;" fl='floristics'>#{var[1]}</option>
+		                        </ui:fragment>
+	                        </a4j:repeat>
+	                    </select>
+						<div class="my-follow">
+							<input type="checkbox" id="flagPlantId" value="#{marketPriceHome.flagPlant}" onclick="clickFollow()"/>
+							<div style="float:right;">
+								<span>我关注的</span>
+							</div>
+						</div>
+					</div>
+					<div class="filter-list">
+						<h:panelGroup id="floristicsListIds">
+							<h:panelGroup rendered="#{marketPriceHome.selectPlantList.size()==0}">
+								<div class="left_p" align="center">
+									<img src="#{request.contextPath}/asset/images/marketPrice/left_price.png" style="padding-top: 150px"></img>
+								</div>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{marketPriceHome.selectPlantList.size()!=0}">
+							<div class="filter-list2" style="overflow-y:auto;">
+								<ul>
+										<a4j:repeat value="#{marketPriceHome.selectPlantList}" var="var_" rowKeyVar="_index">
+											<li class="clearfix #{_index==0?'current':''}" id="#{var_[0]}" style="cursor:pointer;">
+												 <ui:fragment rendered="#{var_[2] eq null or var_[2] eq ''}">
+	                                            	<img src="../asset/images/851.jpg"/>
+	                                            </ui:fragment>
+	                                			<ui:fragment rendered="#{var_[2] ne null and var_[2] ne ''}">
+													<img src="#{var_[2]}"/>
+	                                            </ui:fragment>
+												<h4 style="display: block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" title="#{var_[1]}">#{var_[1]}</h4>
+												<div class="market-p rate">
+													<p>
+														<h:panelGroup rendered="#{var_[3]!=null}">
+															市场价格
+														</h:panelGroup>
+													</p>
+													<strong>
+														<h:panelGroup rendered="#{var_[3]!=null}">
+															¥#{var_[3]}/公斤
+														</h:panelGroup>
+													</strong>
+												</div>
+												<div class="life-p rate">
+													<p>
+														<h:panelGroup rendered="#{var_[4]!=null}">
+															本来生活
+														</h:panelGroup>
+													</p>
+													<strong>
+														<h:panelGroup rendered="#{var_[4]!=null}">
+															¥#{var_[4]}/公斤
+														</h:panelGroup>
+													</strong>
+												</div>
+												<div class="follow #{var_[5] eq null || var_[5] eq ''?'':'follow-on'}">
+													<img class="follow-succ" src="#{request.contextPath}/asset/images/marketPrice/icon_success.png" alt="关注成功"/>
+													<img class="follow-can" src="#{request.contextPath}/asset/images/marketPrice/icon_faild.png" alt="取消关注"/>
+													<img class="follow-to" src="#{request.contextPath}/asset/images/marketPrice/icon_tip_follow.png" alt="关注"/>
+													<img class="follow-act" src="#{request.contextPath}/asset/images/marketPrice/icon_follow_ready.png" alt="已关注"/>
+												</div>
+											</li>
+										</a4j:repeat>
+								</ul>
+							</div>
+							<table style="height:30px;margin:0 auto;" cellpadding="0" cellspacing="0">
+								<tr>
+									<ui:fragment rendered="#{not empty marketPriceHome.selectPlantList}">
+										<ui:fragment rendered="#{!marketPriceHome.previousExists }">
+											<td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+										</ui:fragment>
+										<ui:fragment rendered="#{marketPriceHome.previousExists }">
+											<td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+										</ui:fragment>
+										<ui:fragment rendered="#{marketPriceHome.previousExists }">
+											<td class="td_t_b">
+												<a href="#" onclick="jump(0);return false;">首页</a>
+											</td>
+											<td class="td_t_b td_t_t" style="padding:0; width:30px;">
+												<a href="#" onclick="jump(#{marketPriceHome.previousFirstResult});return false;" class="no_n">
+												&lt;
+												</a>
+											</td>
+										</ui:fragment>
+										<a4j:repeat var="_page" value="#{marketPriceHome.pageList}" rowKeyVar="_index">
+											<td class="td_t_b #{marketPriceHome.previousExists or _index >0 ?'td_t_t':''} #{_page eq marketPriceHome.pageNum?'onp':''}">
+												<a href="#" onclick="jump(#{_page});return false;">
+												#{_page}
+												</a>
+											</td>
+										</a4j:repeat>
+										<ui:fragment rendered="#{marketPriceHome.nextExists}">
+											<td class="td_t_b td_t_t">
+												<a href="#" class="no_d" onclick="jump(#{marketPriceHome.nextFirstResult});return false;">
+												&gt;
+												</a>
+											</td>
+											<td class="td_t_b td_t_t">
+												<a href="#" onclick="jump(#{marketPriceHome.PAGE_COUNT});return false;">
+												尾页
+												</a>
+											</td>
+										</ui:fragment>
+										<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{marketPriceHome.PAGE_COUNT}页</td>
+										<td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+									</ui:fragment>
+								</tr>
+							</table>
+							</h:panelGroup>
+						</h:panelGroup>
+					</div>
+				</div>
+				<h:panelGroup id="floristicsListIds2">
+					<h:panelGroup rendered="#{marketPriceHome.selectPlantList.size()==0}">
+						<div class="right_p" align="center" >
+							<img src="#{request.contextPath}/asset/images/marketPrice/right_price.png" style="padding-top: 200px"></img>
+						</div>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{marketPriceHome.selectPlantList.size()!=0}">
+					<div class="right-list">
+						<div class="right-tab">
+							<ul class="tabs clearfix">
+								<li class="cur" style="cursor:pointer;">价格趋势</li>
+								<li style="cursor:pointer;">趋势对比</li>
+							</ul>
+						</div>
+						<div class="tab-block">
+							<div class="price-trend">
+								<div class="time-span">
+									<h:inputHidden value="#{marketPriceHome.realObjectList}" id="dmyId"/>
+									<h:inputHidden value="#{marketPriceHome.weekMonthYear}" id="weekMonthYearId"/>
+									<ol class="clearfix">
+										<li class="#{marketPriceHome.weekMonthYear==1?'on':''}" onclick="weekMonthYearClick(1)">周</li>
+										<li class="#{marketPriceHome.weekMonthYear==2?'on':''}" onclick="weekMonthYearClick(2)">月</li>
+										<li class="#{marketPriceHome.weekMonthYear==3?'on':''}" style="border-right:none;" onclick="weekMonthYearClick(3)">年</li>
+									</ol>
+								</div>
+								<div id="container" style="height:100%;"></div>
+							</div>
+							<div class="trend-contrast">
+								<div class="trend-title clearfix">
+									<p class="price-source">价格来源</p>
+									<p class="price-name">名称</p>
+									<p class="price-num">价格</p>
+									<p class="price-yestoday">较前一天涨跌</p>
+									<p class="price-lastyear">较去年同期涨跌</p>
+								</div>
+								<div class="trend-list">
+									<h:panelGroup id="oneplantDataListId">
+										<ul>
+											<a4j:repeat value="#{marketPriceHome.onePlantDataList}" var="var_" rowKeyVar="_index">
+												<li class="clearfix">
+													<p class="price-source">
+														<h:panelGroup rendered="#{var_[9] eq 1}">#{var_[1]}</h:panelGroup>
+														<h:panelGroup rendered="#{var_[9] eq 2}">本来生活</h:panelGroup>
+													</p>
+													<p class="price-name">#{var_[2]}</p>
+													<p class="price-num">￥#{var_[3]}</p>
+													<p class="#{var_[6] eq 2?'price-down':''}#{var_[6] eq 1?'price-up':''}">#{var_[4]}<strong></strong></p>
+													<p class="#{var_[7] eq 2?'price-down':''}#{var_[7] eq 1?'price-up':''}">#{var_[5]}<strong></strong></p>
+												</li>
+											</a4j:repeat>
+										</ul>
+									</h:panelGroup>
+								</div>
+							</div>
+						</div>
+					</div>
+					</h:panelGroup>
+				</h:panelGroup>
+			</h:panelGroup>
+		</div>
+	</div>
+	<a4j:form id="formid" >
+		<a4j:jsFunction  name="floristicslist" action="#{marketPriceHome.floristicsList}" reRender="floristicsListId" oncomplete="returnFloristicslist()">
+			<a4j:actionparam name="floristicsId" assignTo="#{marketPriceHome.floristicsId}"/>
+			<a4j:actionparam name="beginTime" assignTo="#{marketPriceHome.beginTime}"/>
+			<a4j:actionparam name="area_name" assignTo="#{marketPriceHome.area_name}"/>
+			<a4j:actionparam name="flagPlant" assignTo="#{marketPriceHome.flagPlant}"/>
+		</a4j:jsFunction>
+		<a4j:jsFunction  name="selectPlantlist" action="#{marketPriceHome.selectPlantList}" reRender="floristicsListIds,floristicsListIds2" oncomplete="returnSelectPlantlist()">
+			<a4j:actionparam name="floristicsIds" assignTo="#{marketPriceHome.floristicsIds}"/>
+			<a4j:actionparam name="beginTime" assignTo="#{marketPriceHome.beginTime}"/>
+			<a4j:actionparam name="area_name" assignTo="#{marketPriceHome.area_name}"/>
+			<a4j:actionparam name="pageNum" assignTo="#{marketPriceHome.pageNum}"/>
+			<a4j:actionparam name="flagPlant" assignTo="#{marketPriceHome.flagPlant}"/>
+		</a4j:jsFunction>
+		<a4j:jsFunction  name="savefollow" action="#{marketPriceHome.saveFollow}">
+			<a4j:actionparam name="plantId" assignTo="#{marketPriceHome.plantId}"/>
+		</a4j:jsFunction>
+		<a4j:jsFunction  name="delfollow" action="#{marketPriceHome.delFollow}" reRender="floristicsListIds,floristicsListIds2" oncomplete="returnSelectPlantlist()">
+			<a4j:actionparam name="plantId" assignTo="#{marketPriceHome.plantId}"/>
+			<a4j:actionparam name="floristicsIds" assignTo="#{marketPriceHome.floristicsIds}"/>
+			<a4j:actionparam name="beginTime" assignTo="#{marketPriceHome.beginTime}"/>
+			<a4j:actionparam name="area_name" assignTo="#{marketPriceHome.area_name}"/>
+			<a4j:actionparam name="pageNum" assignTo="#{marketPriceHome.pageNum}"/>
+			<a4j:actionparam name="flagPlant" assignTo="#{marketPriceHome.flagPlant}"/>
+		</a4j:jsFunction>
+		<a4j:jsFunction  name="oneplantDataList" action="#{marketPriceHome.onePlantDataList}"  reRender="oneplantDataListId" oncomplete="returnooneplantDataList()">
+			<a4j:actionparam name="plantId" assignTo="#{marketPriceHome.plantId}"/>
+			<a4j:actionparam name="beginTime" assignTo="#{marketPriceHome.beginTime}"/>
+			<a4j:actionparam name="area_name" assignTo="#{marketPriceHome.area_name}"/>
+		</a4j:jsFunction>
+		<a4j:jsFunction  name="oneplantData" action="#{marketPriceHome.onePlantData}"  reRender="floristicsListIds2" oncomplete="returnoneplantData()">
+			<a4j:actionparam name="plantId" assignTo="#{marketPriceHome.plantId}"/>
+			<a4j:actionparam name="beginTime" assignTo="#{marketPriceHome.beginTime}"/>
+			<a4j:actionparam name="area_name" assignTo="#{marketPriceHome.area_name}"/>
+		</a4j:jsFunction>
+		<a4j:jsFunction  name="oneplantData2" action="#{marketPriceHome.onePlantData}"  reRender="floristicsListIds2" oncomplete="returnoneplantData2()">
+			<a4j:actionparam name="plantId" assignTo="#{marketPriceHome.plantId}"/>
+			<a4j:actionparam name="beginTime" assignTo="#{marketPriceHome.beginTime}"/>
+			<a4j:actionparam name="area_name" assignTo="#{marketPriceHome.area_name}"/>
+			<a4j:actionparam name="weekMonthYear" assignTo="#{marketPriceHome.weekMonthYear}"/>
+		</a4j:jsFunction>
+		
+	</a4j:form>
+</td>  
+<script>
+//<![CDATA[
+           
+var floristicsIds=jquery('#floristics_ids').val();
+var begin_time=jquery('#begin_time').val();
+var area_name=jquery('#area_name').val();
+jquery(document).ready(function(){
+	// 初始列表下拉框
+	jquery('.selectpicker').selectpicker();
+	jquery('#floristics_ids').selectpicker({noneSelectedText:"全部"});
+	jquery('#floristics_ids').selectpicker('deselectAll');
+	
+	// 日期下拉框
+	jquery(".form_datetime").datetimepicker({
+		format: "yyyy-mm-dd",
+		autoclose: true,
+		weekStart: 1,
+		startDate: "2016-01-01",
+		language:  'zh-CN',
+		startView: 3,
+		minView: 2,
+		maxView: 4,	
+		pickerPosition: "bottom-left"
+	});
+
+	// 作物切换
+	jquery('.selected-plant ul li').on('click',function(){
+		jquery(this).addClass('active').siblings().removeClass('active');
+	});
+
+	//选择3级作物
+	jquery(document).click(function(){ 
+		if((floristicsIds==null && jquery('#floristics_ids').val()!=null) || (floristicsIds!=null && jquery('#floristics_ids').val()==null)){
+				//if(floristicsIds.toString()!=jquery('#floristics_ids').val().toString())){
+			floristicsIds=jquery('#floristics_ids').val();
+			if(floristicsIds!=null){
+				jquery('#login').show();
+				selectPlantlist(floristicsIds.toString(),begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+			}else{
+				var str=allStr();
+				if(str!=""){
+					jquery('#login').show();
+					selectPlantlist(str,begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+				}
+			}
+		}else if(floristicsIds!=null && jquery('#floristics_ids').val()!=null && floristicsIds.toString()!=jquery('#floristics_ids').val().toString()){
+			floristicsIds=jquery('#floristics_ids').val();
+			if(floristicsIds!=null){
+				jquery('#login').show();
+				selectPlantlist(floristicsIds.toString(),begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+			}else{
+				var str=allStr();
+				if(str!=""){
+					jquery('#login').show();
+					selectPlantlist(str,begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+				}
+			}
+		}
+
+	});  
+
+	leftClick();
+	richtClick();
+	plantFollow();
+	changeW();
+});
+
+
+jquery(window).resize(changeW);
+
+//布局大小 
+function changeW(){
+	var w = jquery(window).width();
+	var h = jquery(window).height();
+	if(h<661){
+		h=661;
+	}
+	if(w<1349){
+		w=1349;
+	}
+	
+	if(jquery('#dmyId').val()!="" && jquery('#dmyId').val()!=null){
+		jquery('.filter-list').css({"height":(h-356),"min-height":610});
+		jquery('.filter-list2').css({"height":(h-356)-30,"min-height":580});
+		jquery('.right-list').css({"width":jquery('.select-list').width()-320,"height":jquery('.left-list').height(),"min-height":664,"overflow-x":"auto", "overflow-y":"hidden"});
+		jquery('.tab-block').css({"height":jquery('.right-list').height()-60,"min-height":604,"min-width":793});
+		jquery('.trend-list').css({"height":jquery('.tab-block').height()-44,"min-height":560});
+		lineGraph(0);
+	}else{
+		jquery('.right_p').height(jquery(window).height()-jquery('.breadNav_wap').height()-jquery('.select-kind').height()-200);
+		jquery('.left_p').height(jquery(window).height()-jquery('.breadNav_wap').height()-jquery('.select-kind').height()-jquery('.filter').height()-150);
+	}
+}     
+
+//选择大品种
+function floristicsClick(num){
+	jquery('#login').show();
+	floristicslist(num,begin_time,area_name,jquery('#flagPlantId')[0].checked);
+}
+
+
+//选择大品种 回调
+function returnFloristicslist(){
+	dayjson="";
+	monthjson="";
+	yearjson="";
+	jquery('#floristics_ids').selectpicker({noneSelectedText:"全部"});
+	jquery('#floristics_ids').selectpicker('deselectAll');
+	floristicsIds=jquery('#floristics_ids').val();
+	if(jquery('#flagPlantId').val()=="true"){
+		jquery('#flagPlantId')[0].checked=true;
+	}	
+	plantFollow();
+	leftClick();
+	richtClick();
+	changeW();
+	jquery('#login').hide();
+}
+
+//选择3级作物回调
+function returnSelectPlantlist(){
+	dayjson="";
+	monthjson="";
+	yearjson="";
+	floristicsIds=jquery('#floristics_ids').val();
+	plantFollow();
+	leftClick();
+	richtClick();
+	changeW();
+	jquery('#login').hide();
+}
+
+//选择4级作物回调
+function returnoneplantData(){
+	dayjson="";
+	monthjson="";
+	yearjson="";
+	richtClick();
+	changeW();
+	jquery('#login').hide();
+}
+
+function returnoneplantData2(){
+	richtClick();
+	changeW();
+	jquery('#login').hide();
+}
+
+//趋势回调
+function returnooneplantDataList(){
+	jquery('.trend-list li').each(function(){
+		if(dayjson!="" && "-"==jquery(this).find('p').eq(3).text()){
+			var json=jquery.parseJSON(dayjson);
+			var json_data=json.result_date
+			for(var p in json_data){
+				var name_=json_data[p].name;
+				if(name_==jquery(this).find('p').eq(0).text()){
+					var data_=json_data[p].data;
+					if(data_[data_.length-2]!=null){
+						jquery(this).find('p').eq(3).text("0.00%");
+					}
+				}
+			    
+			}
+		}
+
+	})
+	jquery('#login').hide();
+}
+
+//区域下拉框改变
+function changeAreaName(val){
+	area_name=val;
+	if(floristicsIds!=null){
+		jquery('#login').show();
+		selectPlantlist(floristicsIds.toString(),begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+	}else{
+		var str=allStr();
+		if(str!=""){
+			jquery('#login').show();
+			selectPlantlist(str,begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+		}
+	}
+}
+
+//时间改变
+function changeBeginTime(val){
+	begin_time=val;
+	if(floristicsIds!=null){
+		jquery('#login').show();
+		selectPlantlist(floristicsIds.toString(),begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+	}else{
+		var str=allStr();
+		if(str!=""){
+			jquery('#login').show();
+			selectPlantlist(str,begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+		}
+	}
+}
+
+//点击关注
+function clickFollow(){
+	if(floristicsIds!=null){
+		jquery('#login').show();
+		selectPlantlist(floristicsIds.toString(),begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+	}else{
+		var str=allStr();
+		if(str!=""){
+			jquery('#login').show();
+			selectPlantlist(str,begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+		}
+	}
+}
+
+//分页
+function jump(index){
+	var str=allStr();
+	if(str!=""){
+		jquery('#login').show();
+		selectPlantlist(str,begin_time,area_name,index,jquery('#flagPlantId')[0].checked);
+	}
+}
+
+//下拉框选中的作物
+function allStr(){
+	var str="";
+	jquery("[fl='floristics']").each(function(){
+		str+=jquery(this).val()+","
+	})
+	if(str!=""){
+		str=str.substring(0,str.length-1)
+	}
+	return str;
+}
+
+
+//左侧列表移入点击事件
+function leftClick(){
+	//左侧列表移入点击事件
+	var index = 0;
+	jquery('.filter-list ul li').on('click',function(){
+		index = jquery(this).index();
+		jquery(this).addClass('current').siblings().removeClass('current');
+		jquery(this).off('mouseleave').off('mouseenter');
+		hoverty(index);
+		jquery('.tabs li').eq(1).removeAttr('flag');
+		jquery('.tabs li').eq(0).click();
+		if(jquery('.filter-list2 .current').attr('id')!=null){
+			jquery('#login').show();
+			oneplantData(jquery('.filter-list2 .current').attr('id'),begin_time,area_name);
+		}
+		
+	});
+	hoverty(index);
+}
+
+function hoverty(n){
+	for(var i = 0;i<jquery('.filter-list ul li').length;i++){
+		(function(m){
+			if(m!=n){
+				jquery('.filter-list ul li').eq(m).on('mouseenter',function(){
+					jquery('.filter-list ul li').eq(m).addClass('current');
+				});
+				jquery('.filter-list ul li').eq(m).on('mouseleave',function(){
+					jquery('.filter-list ul li').eq(m).removeClass('current');
+				});	
+			}
+		})(i);
+	}
+}
+
+// 右侧tab切换
+function richtClick(){
+	jquery('.tabs li').on('click',function(){
+		jquery(this).addClass('cur').siblings().removeClass('cur');
+		jquery('.tab-block').children('div').eq(jquery(this).index()).show();
+		jquery('.tab-block').children('div').eq(jquery(this).index()).siblings('div').hide();
+		if(jquery(this).index()==1 && jquery(this).attr('flag')==null){
+			jquery(this).attr('flag','true');
+			if(jquery('.filter-list2 .current').attr('id')!=null){
+				jquery('#login').show();
+				oneplantDataList(jquery('.filter-list2 .current').attr('id'),begin_time,area_name);
+			}
+		}
+	});
+	//jquery('.time-span ol li').on('click',function(){
+	//	jquery(this).addClass('on').siblings().removeClass('on');
+	//});
+}
+
+//周月年
+function weekMonthYearClick(num){
+	jquery('.time-span ol li').eq(num-1).addClass('on').siblings().removeClass('on');
+	if(num==1){
+		if(dayjson !=""){
+			lineGraph(1);
+		}else{
+			if(jquery('.filter-list2 .current').attr('id')!=null){
+				jquery('#login').show();
+				oneplantData2(jquery('.filter-list2 .current').attr('id'),begin_time,area_name,1);
+			}
+		}	
+	}else if(num==2){
+		if(monthjson !=""){
+			lineGraph(2);
+		}else{
+			if(jquery('.filter-list2 .current').attr('id')!=null){
+				jquery('#login').show();
+				oneplantData2(jquery('.filter-list2 .current').attr('id'),begin_time,area_name,2);
+			}
+		}		
+	}else if(num==3){
+		if(yearjson!=""){
+			lineGraph(3);
+		}else{
+			if(jquery('.filter-list2 .current').attr('id')!=null){
+				jquery('#login').show();
+				oneplantData2(jquery('.filter-list2 .current').attr('id'),begin_time,area_name,3);
+			}
+		}	
+	}
+}
+
+
+//关注事件
+function plantFollow(){
+	jquery('.filter-list ul li').hover(function(){
+		jquery(this).children('.follow').fadeIn();
+	},function(){
+		jquery(this).children('.follow').fadeOut();
+		
+	});
+
+	// 关注事件
+	jquery.each(jquery('.filter-list ul li .follow'),function(){
+		jquery(this).hover(function(){
+			if(!jquery(this).hasClass('follow-on')){
+				jquery(this).children('.follow-to').fadeIn();
+			}else{
+				jquery(this).children('.follow-act').fadeIn();
+			}
+		},function(){
+			if(!jquery(this).hasClass('follow-on')){
+				jquery(this).children('.follow-to').fadeOut();
+			}else{
+				jquery(this).children('.follow-act').fadeOut();
+			}
+		});
+		jquery(this).on('click',function(e){
+			e.stopPropagation();
+			var plantId=jquery(this).parent().attr('id');
+			jquery(this).children('.follow-to').fadeOut();
+			jquery(this).children('.follow-act').fadeOut();
+			var _this = jquery(this);
+			if(!jquery(this).hasClass('follow-on')){
+				jquery(this).addClass('follow-on');
+				jquery(this).children('.follow-succ').fadeIn();
+				setTimeout(function(){
+					_this.children('.follow-succ').fadeOut();
+				},1000);
+				savefollow(plantId);
+			}else{
+				jquery(this).removeClass('follow-on');
+				jquery(this).children('.follow-can').fadeIn();
+				setTimeout(function(){
+					_this.children('.follow-can').fadeOut();
+				},1000);
+				
+				if(jquery('#floristics_ids').val()!=null){
+					jquery('#login').show();
+					delfollow(jquery(this).parent().attr('id'),jquery('#floristics_ids').val().toString(),begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+				}else{
+					var str=allStr();
+					if(str!=""){
+						jquery('#login').show();
+						delfollow(jquery(this).parent().attr('id'),str,begin_time,area_name,1,jquery('#flagPlantId')[0].checked);
+					}
+				}
+				
+			}
+		});
+	});
+}
+
+var dayjson="";
+var monthjson="";
+var yearjson="";
+//折线图
+function lineGraph(num){
+	var weekMonthYear=jquery('#weekMonthYearId').val();
+	var json="";
+	if(num==0){
+		if(weekMonthYear==1){
+			if(dayjson==""){
+				dayjson=jquery('#dmyId').val();
+			}
+			json=jquery.parseJSON(dayjson);
+		}else if(weekMonthYear==2){
+			if(monthjson==""){
+				monthjson=jquery('#dmyId').val();
+			}
+			json=jquery.parseJSON(monthjson);
+		}else if(weekMonthYear==3){
+			if(yearjson==""){
+				yearjson=jquery('#dmyId').val();
+			}
+			json=jquery.parseJSON(yearjson);
+		}
+	}else{
+		if(num==1){
+			json=jquery.parseJSON(dayjson);
+		}else if(num==2){
+			json=jquery.parseJSON(monthjson);
+		}else if(num==3){
+			json=jquery.parseJSON(yearjson);
+		}
+	}
+	//x坐标
+	var x_coordinates=json.x_coordinates
+	//曲线数据
+	var json_data=json.result_date
+
+	var legend_data=[];
+	var series=[];
+	for(var p in json_data){
+		var name_=json_data[p].name;
+		var data_=json_data[p].data;
+	    series.push({
+	    	name:name_,
+			type:'line',
+			connectNulls:true,
+			step: 'start',
+			data:data_
+        });
+	    legend_data.push(name_ );
+	}
+	var dom = document.getElementById("container");
+	var myChart = echarts.init(dom);
+	var app = {};
+	option = null;
+	option = {
+		tooltip: {
+			trigger: 'axis'
+		},
+		legend: {
+			bottom:'2%',
+			data:legend_data
+		},
+		grid: {
+			y2: 120,
+			left: '3%',
+			right: '4%',
+			containLabel: true
+		},
+		xAxis: {
+			type: 'category',
+			data: x_coordinates
+		},
+		yAxis: {
+			type: 'value'
+		},
+		tooltip: {
+			triggerOn: 'mousemove',
+	        formatter: function(params) {  
+	              var res = params.name+'<br/>';  
+	              var myseries = option.series;  
+	       
+	              for (var i = 0; i < myseries.length; i++) {  
+	                res+= myseries[i].name;
+	              
+	                 for(var j=0;j<myseries[i].data.length;j++){  
+	                    
+	                      if(j==params.dataIndex){
+		                      if(myseries[i].data[j]==null){
+		                    	  res+=' :-</br>';  
+			                  }else{
+			                	  res+=' : '+myseries[i].data[j]+'元</br>';  
+				              }
+	                      }  
+	                  }         
+	              }  
+	              return res;  
+	        }  
+	        
+	    },
+		series:series
+	};
+	if (option && typeof option === "object") {
+		myChart.setOption(option, true);
+		
+	}
+}
+
+
+//]]>	
+</script>
+</ui:define>
+
+</ui:composition>

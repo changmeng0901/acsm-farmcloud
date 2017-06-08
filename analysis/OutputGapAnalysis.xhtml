@@ -1,0 +1,822 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_analysis.xhtml">
+
+<ui:define name="body">
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/tab.js"> </script>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/tubiaoFx.css" />
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/contract/superTables_compressed.js"></script>
+
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts4/highcharts.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts4/highcharts-more.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts4/no-data-to-display.js"></script>
+<!-- 	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts.js"></script> -->
+<!-- 	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/highcharts-more.js"></script> -->
+<!-- 	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/themes/highcharts-them.js"></script> -->
+<!-- 	<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts/modules/no-data-to-display.js"></script> -->
+	
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/superTables_compressed.css" />
+	<style>
+	.fr{float:right;}
+		  .r_ulli1{float:right;}
+  /*缺口产量表格样式*/
+  .fakeContainer
+  {
+    margin: 0 0;
+    padding: 0px;
+    border: none;
+    width: 98.5%; /* Required to set */
+/*     height: 400px;*/ /* Required to set */ 
+    overflow: hidden; /* Required to set */
+  }
+  .fakeContainer .total{ display:block; text-align:left; color:#429ad0;}
+  .sData table{ border:1px solid #eee; }
+  .sDefault-Fixed{ background:#fff;}
+  
+  .sDefault th,.sDefault td{ padding:8px 15px; line-height:14px; text-align:center; border:1px solid #f1f1f1;}
+  .sDefault th.borderBNone,.sDefault td.borderBNone{ border-bottom:none;}
+  .sDefault th{ background:#fff; color:#737373; font-size:12px; font-family:'微软雅黑';}
+  .sDefault td{font-family:'微软雅黑';  font-size:13px; font-weight:bold; color:#737373;}
+  
+  .zuowuTime{ position:relative; width:115px; height:53px; left:0; top:0;}
+  .zuowuTime .zuowu{ position:absolute; z-index:3; bottom:0; left:0; font-size:14px;}
+  .zuowuTime .time{ position:absolute; z-index:3; top:0; right:0; font-size:14px;}
+  .zuowuTime .xianBg{ position:absolute; z-index:2; width:144px; height:69px; top:-8px; left:-15px;}
+  .zuowuTime .xianBg img{ width:144px; height:69px;}
+  
+  .zhezhaoWp{ float:left; width:29px; height:29px; position:relative; display:inline; margin-right:10px;}
+  .zhezhaoWp .zhezhao{ width:29px; height:29px; position:absolute; left:0; top:0; z-index:5;}
+  .zhezhaoWp .zhezhaoImg{ width:29px; height:29px; position:absolute; left:0; top:0; z-index:4;}
+  .zhezhaoTxt{ float:left; line-height:29px; text-align:left; color:#429ad0; font-size:12px; font-family:'微软雅黑'; width:76px;overflow:hidden;}
+  
+  .colorB{ color:#317aaf; font-weight:normal;}
+  .colorG{ color:#4cb35c; font-weight:normal;}
+  .colorP{ color:#6567a8; font-weight:normal;}
+  .colorR{ color:#d9534f; font-weight:normal;}
+  .baseDateWap{float:left;border:none;margin-top:0px;margin-left: 50px;}
+  .baseDateLt,.baseDateRt{border:1px solid #dadada;}
+  .baseDateCt{border-top:1px solid #dadada;border-bottom:1px solid #dadada;}
+  	.plantType{width:120px;}
+  	.selectpickerList .selectpickerLi .bootstrap-select span{font-family:"微软雅黑"}
+</style>
+	
+	
+	<style>
+		html{ overflow-x: hidden;}
+		.gaojisearch{border:1px solid #cfe3f3; border-top:1px solid #ffffff;  width:90px; text-align:center; margin:0 auto;margin-top:-2px;height:25px; line-height:25px; }
+		.line07{border-top:1px solid #cfe3f3; height:1px;}
+		.line09{padding:0 5px 0 8px;}
+		/*选项卡*/
+		.zwudiv { border-bottom: 1px solid #DBDBDB;height: 36px;padding-left:31px;padding-top:30px;}
+		.zuowuul { float: left; height: 36px;}
+		h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form, img, p, input {border: medium none; list-style-type: none;margin: 0; padding: 0;}
+		.zwli.current { background: url("../asset/images/zuowubg.jpg") no-repeat scroll left center rgba(0, 0, 0, 0);display: inline-block;float: left; height: 36px; padding-left: 10px;}
+		.zwli { bottom: -1px; float: left; font-size: 14px;  height: 36px; line-height: 36px; margin-right: 2px; padding: 0 10px; position: relative; }
+		.zwli.current a { background: url("../asset/images/zuowubg.jpg") no-repeat scroll right center rgba(0, 0, 0, 0); float: left; height: 36px; margin-right: -10px; padding-right: 10px;}
+		a {text-decoration: none;}
+		.zhexiantu{ padding-left:15px; padding-right:15px;}
+		.tubiao{ padding-left:15px; padding-right:15px;}
+		/*选项卡结束*/
+		/*表格*/
+		.s_pan{color: #333;}
+		.tpcc_font{ color: #333;}
+		.khtable_001, .khtable_002 { border-collapse: collapse; table-layout: fixed;  }
+
+		.kh_td { border: 1px solid #bbd4e8; height: 39px; text-align: center; vertical-align: middle; }
+		.kh_th_font01 { color: #272727; font-size: 14px; }
+		.kh_th_bg01 { background: none repeat scroll 0 0 #ebf6ff; }
+		.kh_td_font01 { color: #666666; font-family: "宋体";  font-size: 12px; }
+		.kh_leftbg01 { background: none repeat scroll 0 0 #ffffff; }
+		.scroll101 {float: left; overflow-x: auto; }
+		.khtable_002 { background-color: #DDDDDD; margin-left: 0; }
+		.kh_each_thbgy { background: none repeat scroll 0 0 #ebf6ff; min-width: 90px; }
+		.kh_each_tdbgy { background: none repeat scroll 0 0 #ffffff; min-width: 90px; }
+		.all_Arial01 { color: #666666;  font-family: Arial,Helvetica,sans-serif; font-size: 12px; font-weight: bold; line-height: 39px; text-align: center; width: 100%;}
+		.khyy_each_tabg02 { background: none repeat scroll 0 0 #ebf6ff;  max-width: 270px; }
+		.khyy_each_thbg02 { background: none repeat scroll 0 0 #ebf6ff;  min-width: 90px; }
+		.khyy_each_tdbg02 { background: none repeat scroll 0 0 #ffffff; min-width: 90px; }
+		.y_01{background: none repeat scroll 0 0 #f5f5f5;}
+		.y_02{background: none repeat scroll 0 0 #ebf6ff;}
+		#sex_male, #sex_male1, #sex_male2, #sex_male3, #sex_female, #sex_female1, #sex_female2, #sex_female3, #sex_nomale, .sex_nomale, #sex_nomale1, #sex_nomale2, #sex_nomale3 {display: none;}
+		table input[type="checkbox"], table input[type="radio"] { background: none repeat scroll 0 0 rgba(0, 0, 0, 0); padding: 0;}
+		.six3 label {background: url(../asset/images/button_03.png) no-repeat scroll left top rgba(0, 0, 0, 0); cursor: pointer;  display: inline-block;  line-height: 19px; margin: 5px 5px 5px 0;padding-left: 25px;}
+		/*表格结束*/
+		/*折线图*/
+		.need_font{line-height:50px; text-align: center; font-size:16px; color:#333;}
+		.reili .six3 label { background: url("../asset/images/forms-radio2.gif") no-repeat scroll left top rgba(0, 0, 0, 0); cursor: pointer; display: inline-block;  line-height: 19px; margin: 5px 5px 5px 0; padding-left: 25px; width: auto; font-weight:normal}
+		.reili .six3 label.checked { background: url("../asset/images/forms-radio2.gif") no-repeat scroll left bottom rgba(0, 0, 0, 0); width: auto; }
+		.dk_list2 .current a {  color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff; background-color:#ffffff;position:relative; z-index:5;}
+		.dk_list2 .li2.current{ color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff;}
+		.dk_list2 {width:100% ;height:36px;   border-left:1px solid #ddd; }
+		.dk_list2 li {float:left;  border-right:1px solid #ddd; border-top:1px solid #ddd;}
+		.dk_list2 li a {display:block; width:101px; height:36px;  line-height:36px; text-align:center; font-size:14px;	color:#383838;}
+		#gjtop08{ background:url(../asset/images/gjtop.jpg) right no-repeat; color:#4c4c4c; text-decoration:none; padding-right:14px;}
+		#ftitle08{padding:3px 30px; }
+		.la_div02{padding-right:15px; *padding-right:0px; display:inline-block; *display:inherit; float:left;}
+		.la_div02 .s_pan{ float:left; *margin-right:15px; margin-left:5px;font-size:11px; width:100px; width:auto;\9; *width:auto; word-break:normal;}
+		.fxy_title {
+		    border-bottom:none;
+		    padding: 3px 30px;
+		}
+		.khspan007{max-width:100px; overflow:hidden;}
+		.uboxstyle5 DIV.tag_select, .uboxstyle5 DIV.tag_select_open {
+		    width: 179px;
+		}
+		.uboxstyle5 .select_box {
+		    width: 212px;
+		}
+		.uboxstyle5 UL.tag_options {
+		    width: 211px;
+		}
+		.uboxstyle5 UL.tag_options LI {
+		    width: 195px;
+		}
+		.uboxstyle5 .ui-corner-all {
+		    width: 212px;
+		}
+		.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+	    	width: 76px;
+		}
+		.form_datetime input {
+		    border: 1px solid #ccc;
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		}	
+		label {
+		    display: inline-block;
+		    font-weight: 700;
+		    margin-bottom: 5px;
+		    max-width: 100%;
+		    color:#333333;
+		}
+		.input-append{float:left;width:120px;margin-top:3px;}	
+	.fxy_lidate02 {
+    float: left;
+    height: 30px;
+    margin-right: 10px;
+    min-width: 77px;
+}
+		.bootstrap-select{ width: 100px;}
+		.zwudiv {
+		    border-bottom: 1px solid #dbdbdb;
+		    height: 38px;
+		    padding-left: 31px;
+		    padding-top: 30px;
+		}	
+		.fxy_title  .fx_tckli {    width: 80px;}
+		 .fx_tckli {
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		    width: 193px;
+		    height:auto;
+		}
+		.fxy_tck .fx_tckli {
+		    float: left;
+		    height: auto;
+		    line-height: 30px;
+		    width: 193px;
+		}
+		.kh_td {
+		    height: 40px;
+		    text-align: center;
+		    vertical-align: middle;
+		}
+		.zwudiv {
+		    border-bottom: 1px solid #dbdbdb;
+		    height: 37px;
+		    padding-left: 31px;
+		    padding-top: 30px;
+		}
+.div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {width: 200px;}
+.reili{padding:0px;}
+.dr-pnl-b{padding:0px;}
+.lackTable{min-width:600px}
+.zwudiv{padding-top:10px;} 
+.dr-pnl-b{padding-top:8px;}
+.dateAll{margin-top:5px; margin-left:10px;}
+#container{min-height:260px;}
+
+  .baseDateWap{margin-right: 15px;}
+  .exportDiv{float: right;display: inline;margin-left: 10px;margin-right: 0px;}
+  .btn{padding: 7px 20px}
+
+	</style>
+	<td valign="top">
+	<div style="background:url(../asset/images/bg_png.png) repeat; width:100%; height:100%; position:fixed; z-index:180; display:none;" id="login">
+		<div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" /></div>
+	</div>
+	<a:status id="ajaxStatus" forceId="true" onstart="jquery('#login').show()" onstop="jquery('#login').hide()" />
+	
+		<div class="right_c" style="min-height:30px;">
+			<div class="r_title">
+				<div class="r_t_l"><font size="3">缺口产量查询</font></div>
+			</div>
+			<div class="clear"></div>
+		</div>   
+		<ui:fragment rendered="#{s:hasRole('notch_yield_analyse_search')}">
+		<div class="fxy_title">
+			<ul class="fxy_ul six3">
+				<li class="reili" style="" >
+						<div class="clear">
+
+                            <h:form id="search">
+                            	<div class="fl mt10">
+                                    <ul class="selectpickerList">
+                                        <!-- 	#{plantSelects.queryPlantSelects()} -->
+                                        <li class="selectpickerLi">
+											<select id="plantIdStr"  name="plantIdStr2"  data-live-search="true"  class="selectpicker nw100"  onchange="gainResult()">
+													<a:repeat value="#{plantSelects.plantList}" var="var">
+														<optgroup label="#{var}">
+															<a:repeat value="#{plantSelects.allPlant[var]}" var="_var">
+																<option value="#{_var.plantId}">#{_var.name}</option>
+															</a:repeat>
+														</optgroup>
+													</a:repeat>
+											</select>
+                                        </li>
+                                        <li class="selectpickerLi">
+											<select id="and_planted"  name="and_planted"  class="selectpicker nw100 plantType"  onchange="gainResult()">
+													<option value="0">包含种植</option>
+													<option value="1">不包含种植</option>
+											</select>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <ui:fragment rendered="#{s:hasRole('notch_yield_analyse_exp')}">
+                                 <div class="exportDiv">
+                                     	<input type="hidden" value="#{lackSum.plantIdStr}" id="plantIdStrHidden" name="plantIdStr"/>
+                                       	<h:commandButton id="export" styleClass="btn btn-default" onclick="exportCheck();" action="#{lackSum.exportExcel()}" value="导出" style="">                                	
+                               			</h:commandButton> 
+	                              </div>
+	                              </ui:fragment>
+                                 <div class="baseDateWap fr">
+	                                    <div class="baseDateLt" onclick="reset_gantt(1)" ></div>
+	                                    <div class="baseDateCt" id="baseDateCt"> </div>
+	                                    <div class="baseDateRt" onclick="reset_gantt(2)"></div>
+	                              </div>
+                              </h:form>
+                              
+                                <script type="text/javascript">
+                                    function reset_gantt(ty){
+        
+                                        var year = document.getElementById("baseDateCt").innerHTML;
+                                        if(ty==1){
+                                            year = parseInt(year,10)-1;
+                                        }else{
+                                            year = parseInt(year,10)+1;
+                                        }
+                                        document.getElementById("baseDateCt").innerHTML = year;
+                                        
+                                        gainResult();
+                                    };
+                                    jquery(function(){
+                                        document.getElementById("baseDateCt").innerHTML = new Date().getFullYear();		
+                                    })
+                                </script>
+
+                            </div>
+				</li>
+			</ul>
+			
+			<br />
+		</div>
+		</ui:fragment>      
+		
+		<ui:fragment rendered="#{!s:hasRole('notch_yield_analyse_search') and s:hasRole('notch_yield_analyse_exp')}">
+		 <div class="exportDiv" style="float:right;padding-top: 10px;margin-right:20px; ">
+              	<input type="hidden" value="#{lackSum.plantIdStr}" id="plantIdStrHidden" name="plantIdStr"/>
+                	<h:commandButton id="export" styleClass="btn btn-default" onclick="exportCheck();" action="#{lackSum.exportExcel()}" value="导出" style="">                                	
+        			</h:commandButton> 
+        </div>
+		</ui:fragment>			                           
+<!--  #{lackSum.createAnalysisJson()} -->
+		<div class="clear"></div>
+		<div class="zwudiv" >
+			<ul class="dk_list2">
+				<li class="targe1 current "><a onclick="chos(1)" href="javascript:"><font  color="#333">折线图</font></a></li>
+				<li class="targe2"><a onclick="chos(2)" href="javascript:"><font  color="#333">图表</font></a></li>
+			</ul>
+		</div>
+		<div class="zuowudiv">
+			<div id="tar1" style="display: block;width:100%; margin:0 auto; text-align: center;">
+				<rich:panel id="showPanel" style="width:100%; border: none;">
+					<div class="need_font" >缺口品种：<h:outputText id="cropNumber" value="#{lackSum.lackAnalyCount}" />&#160;&#160;&#160;缺口产量：<h:outputText id="outPutTotal" value="#{lackSum.lackAnalySum}" ><f:convertNumber pattern="#0.00"/></h:outputText>kg</div>
+				</rich:panel>
+				<div id="container" class="chart22" style="height: 460px; width: 98%;"></div>
+			</div>
+			<div style="display: none;" id="tar2">
+			<div class="dateAll" id="dateAll0">         
+				<rich:panel id="showTable" style="width:100%; border: none;">
+					<div class="lackTable">
+
+                            <div class="clear">
+<!-- ajax 刷新部分start -->
+						<rich:panel id="showPanel2" style="margin:0; border:none; padding: 0;">
+                            	<div class="fakeContainer">
+                                <table cellpadding="0" cellspacing="0" id="demoTable" class=" sDefault sDefault-Main">
+                                    <colgroup>
+                                        <col width="98" />
+                                        <col width="91" />
+                                        <col width="89" />
+                                        <col width="40" />
+                                        <col width="83" />
+                                        <col width="217" />
+                                        <col width="115" />
+                                        <col width="130" />
+                                        <col width="115" />
+                                        <col width="130" />
+                                        <col width="115" />
+                                        <col width="130" />
+                                     </colgroup>
+                                  <tbody>
+                                      <tr>
+                                          <th rowspan="2" style="border-top:2px solid #f37f73; border-bottom:none;">
+                                          <div class="zuowuTime">
+                                          <span class="zuowu">作物</span>
+                                          <span class="time">时间</span>
+                                          <span class="xianBg"><img src="#{request.contextPath}/asset/images/contract/bg_paichanH.png" /></span>
+                                          </div>
+                                          </th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #babbe4;">一月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #9dd6a6;">二月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #84b9e0;">三月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #babbe4;">四月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #9dd6a6;">五月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #84b9e0;">六月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #babbe4;">七月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #9dd6a6;">八月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #84b9e0;">九月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #babbe4;">十月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #9dd6a6;">十一月(kg)</th>
+                                          <th colspan="4" style="font-size:14px; border-top:2px solid #84b9e0;">十二月(kg)</th>   
+                                      </tr>
+                                      <tr>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                          <th class="borderBNone"><span class="colorB">需求</span></th>
+                                          <th class="borderBNone"><span class="colorG">排产</span></th>
+                                          <th class="borderBNone"><span class="colorP">外采</span></th>
+                                          <th class="borderBNone"><span class="colorR">缺口</span></th>
+                                       </tr>
+                                       
+                                      <a:repeat value="#{lackSum.resultData}" var="_result" rowKeyVar="_index" rendered="#{lackSum.resultData.size > 0}"> 
+                                      <tr>
+                                          <td align="left" title="#{_result.name}">
+	                                          <span class="zhezhaoWp">
+		                                          <img class="zhezhao" src="#{request.contextPath}/asset/images/contract/zhezhao.png" width="29" height="29" />
+		                                          <img class="zhezhaoImg" src="#{_result.imgUrl == 'null' ? '/asset/images/wt.png' : _result.imgUrl}" />
+	                                          </span>
+                                          <span class="zhezhaoTxt">#{_result.name}</span>
+                                          </td>
+                                          
+                                           <a:repeat value="#{_result.datads}" var="_arrValue" rowKeyVar="_index2">
+                                           		 <a:repeat value="#{_arrValue}" var="_arrs" >
+                                           		 	<td><h:outputText value="#{_arrs[0]}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                           		 	<td><h:outputText value="#{_arrs[1]}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                           		 	<td><h:outputText value="#{_arrs[2]}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                           		 	<td><h:outputText value="#{_arrs[3]}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                           		 </a:repeat>
+                                         </a:repeat>
+                                      </tr>
+                                     </a:repeat>
+                                 	<ui:fragment rendered="#{lackSum.resultData.size == 0}">    
+                                     <tr style="visibility:hidden;height: 2px;">
+                                          <td style="visibility:hidden;height: 2px;" >
+                                          </td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                          <td>0</td>
+                                      </tr>
+                                      </ui:fragment>
+                                  </tbody>
+                                </table>
+                                </div>
+                                </rich:panel>
+                            </div>                
+						<div class="clear"></div>
+					</div>
+				</rich:panel>                         
+			</div>
+		</div>
+		</div>
+		<h:form id="outputGapFrom">
+			<a:commandLink id="refreshShow"  reRender="showPanel"></a:commandLink>
+		</h:form>
+	</td>
+	<a:form>
+  		<a:queue requestDelay="50" ignoreDupResponses="true"/>
+		<a:jsFunction status="ajaxStatus" name="queryResultFind" action="#{lackSum.createAnalysisJson}" reRender="showPanel" data="#{lackSum.resultAnalysisDate}" oncomplete="refreshAction(data);" >
+			<a:actionparam name="searchTime" assignTo="#{lackSum.searchTime}"/>
+			<a:actionparam name="baseId" assignTo="#{lackSum.baseId}"/>
+			<a:actionparam name="plantIdStr" assignTo="#{lackSum.plantIdStr}"/>
+			<a:actionparam name="andPlanted" assignTo="#{lackSum.andPlanted}"/>
+		</a:jsFunction>
+		
+		<a:jsFunction status="ajaxStatus" name="queryResult" action="#{lackSum.queryContractSum}" reRender="showPanel2"   oncomplete="refreshAction2();" >
+			<a:actionparam name="searchTime" assignTo="#{lackSum.searchTime}"/>
+			<a:actionparam name="baseId" assignTo="#{lackSum.baseId}"/>
+			<a:actionparam name="plantIdStr" assignTo="#{lackSum.plantIdStr}"/>
+			<a:actionparam name="andPlanted" assignTo="#{lackSum.andPlanted}"/>
+		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript">
+	//<![CDATA[
+	 function exportCheck(){
+		var plantIdStr = "";
+		if(jquery("#plantIdStr").val() != null){
+			plantIdStr = jquery("#plantIdStr").val().toString();
+		}
+	   	jquery("#plantIdStrHidden").val(plantIdStr);
+		return true;	
+	 }
+	
+		//搜索提交方法 
+		function submitResult(){
+			var startTime = jquery("#startTime").val();
+			startTime = '2015';
+			if (startTime == null || startTime == '') {
+				alert("请选择开始时间...");
+				return false;
+			}
+			if(jquery("#plantCheck").val()==null){
+				alert("请选择作物!");
+				return false;
+			}
+			var endTime = startTime + "-12";
+			startTime = startTime + "-01";
+			var beginDate = startTime + "-01";
+			var endDate = endTime + "-28";
+			var outPutType = jquery('input[name="outputType"][checked]').val();
+			jquery("#usableSpan").css("display","none");
+			jquery("#disabledSpan").css("display","");
+			queryResultFind(beginDate, endDate, Number(outPutType), jquery("#plantCheck").val().toString());
+		}
+
+		//搜索提交方法 
+		function gainResult(){
+			var baseId2 = "#{lackSum.baseId}";
+			var baseId = jquery("#baseId").val();
+			if(baseId == "undefined" || baseId == null){
+				if(baseId2 != "" && baseId2 != "0"){
+					baseId = baseId2;
+				}else{
+					baseId = 0;
+				}
+			}
+			var and_planted = jquery("#and_planted").val();
+			var plantIdStr = "";
+			if(jquery("#plantIdStr").val() != null){
+				plantIdStr = jquery("#plantIdStr").val().toString();
+			}
+			var searchTime = document.getElementById("baseDateCt").innerHTML;
+//		 	console.log(searchTime+ "baseid=" + baseId+ ";platnid="+plantIdStr + ";and_planted = " + and_planted);
+			queryResult( searchTime, baseId,plantIdStr,and_planted);
+			queryResultFind(searchTime, baseId,plantIdStr,and_planted);
+		    return true;
+		}
+		//highcharts 公用配置
+		Highcharts.setOptions({
+		 	legend: {   
+		        	itemStyle: {
+					font: '9pt 微软雅黑',
+					color: 'black'
+	
+					},
+					itemHoverStyle: {
+						color: '#039'
+					},
+					itemHiddenStyle: {
+						color: 'gray'
+					}
+		        },  
+	        lang: {
+	            noData: "暂无数据!"
+	        },
+	        noData: {
+	            style: {    
+	                fontWeight: 'bold',     
+	                fontSize: '15px',
+	                color: '#303030'        
+	            }
+	        },
+	        title: { text: '' },
+	        subtitle: {text: ''},
+	        credits:{enabled:false},
+			exporting:{
+				enabled:false
+			},
+		 });
+
+		 var highChartData;
+		//创建hchart
+		 function createHighChart(data){
+			 resizeTubiao();
+			 
+			 highChartData = data;
+			 data = eval("(" + data + ")");
+			jquery('#container').highcharts({
+				
+				chart: {
+		            type: 'spline'
+		        },
+		        xAxis: {
+		        	tickInterval:data.tickInterval,
+		        	 categories: data.categories,
+		        	 gridLineWidth: 0, //设置网格宽度为1 
+		        },
+		        yAxis: {
+		        	max:data.maxYData,
+		        	plotLines:[{ color: 'red',
+		                width: 2,
+		                value: 0
+		            }],
+// 			        title: { 
+// 			        	style: {
+// 			        		fontSize: '9pt',
+// 			        		fontFamily:' 微软雅黑'
+// 		                },
+// 				        text: '缺口产量 (kg)' 
+// 					 }
+			        title: {
+						text: ''
+					},
+					 labels: {
+		 	        	formatter: function () {
+		 	        		return this.value + 'kg';
+		 	        	}
+		 	        }
+	             },
+		        tooltip: {
+		        	valueSuffix: 'kg'
+		        },
+		        series: data.resultSource
+		    });
+		 
+		 }
+
+		//刷新
+		function refreshAction(data){
+			createHighChart(data);
+// 	    	document.getElementById("outputGapFrom:refreshShow").onclick();
+		    jquery("#usableSpan").css("display","");
+			jquery("#disabledSpan").css("display","none");
+		}
+		//刷新
+		function refreshAction2(){
+		 		createTable();
+		 		change();
+		 		noSelectedTOall();
+		}
+
+		function chos(t){
+			for(var i=1;i<=4;i++){
+				if(i==t){ 
+					jquery("#tar"+t).css("display", "block");
+					jquery(".targe"+t).addClass("current");
+				}else{
+					jquery("#tar"+i).css("display", "none");
+					jquery(".targe"+i).removeClass("current");
+				}
+			}
+			gainResult();
+			
+		}
+		/* 表格控件 */
+		function createTable(){
+			var oWindowWid = jquery(window).width();
+			var num = oWindowWid/200;
+			new superTable("demoTable", {
+				cssSkin: "sDefault",
+				headerRows : 2,
+				fixedCols: 1,
+				colWidths:[
+				146,
+				12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+				12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+				12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+				12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+				12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+				12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num
+				]
+			});
+		}
+		/* 隔行换色 */
+		function changColor(){
+			jquery('.sFDataInner tbody tr:even').css('background','#fafafa');	
+			jquery('.sData tbody tr:even').css('background','#fafafa');
+		};
+		
+		/* 计算表格宽高一屏显示 */
+		function change(){
+			var marginWidth = 300;
+			var marginHight = 300;
+			var sDataWidth = 146;
+			
+			var oCliHei = jquery(window).outerHeight();
+			var  tr_height_sum = 0;
+			jquery("div.sData #demoTable tr").each(
+					function(){
+						tr_height_sum += jquery(this).height();
+					}
+				);
+			var height_c = 0;
+			if(tr_height_sum < (oCliHei -marginHight)){
+				height_c = oCliHei -marginHight - tr_height_sum - 25;
+			}
+			
+			var oCliWidth = jquery(window).outerWidth();
+			
+			var oFakeContainerWid = oCliWidth -marginWidth;
+			var oFakeContainerHei = oCliHei -marginHight - height_c;
+			
+			jquery('.fakeContainer').css({
+				width : oFakeContainerWid + 1 ,
+				height : oFakeContainerHei	
+			});
+			
+			jquery('.sFHeader .sDefault-FixedHeaders').css({
+				width : oFakeContainerWid		
+			});
+			jquery('.sFHeader colgroup').css({
+				width : oFakeContainerWid		
+			});
+			jquery('.sHeader').css({
+				width : oFakeContainerWid + 1		
+			});
+			jquery('.sHeaderInner').css({
+				width : oFakeContainerWid		
+			});
+			jquery('.sHeaderInner .sDefault-Headers').css({
+				width : oFakeContainerWid		
+			});
+			jquery('.sFData').css({
+				width : oFakeContainerWid
+			});
+			
+			jquery('.sFHeader').css('width',147);
+			jquery('col:first-child').css('width',146);
+			jquery('.sData').css({
+				width : oFakeContainerWid-146,
+				height :  oFakeContainerHei - 72,
+				marginLeft : 147,	
+			});
+			jquery('.sData .sDefault-Main').css({
+				width : oFakeContainerWid+146,
+				marginLeft : -147	
+			});
+			
+			jquery('.sData .sDefault-Main colgroup').css({
+				width : oFakeContainerWid,
+				marginLeft : -147	
+			});
+		};
+
+		function noSelectedTOall(){
+			jquery(".filter-option").each(
+					function(){
+						if(jquery(this).text() == "无可选择项目"){
+							
+							jquery(this).text('全部');
+						}
+					}
+				);
+		}
+
+
+		jquery(function(){
+			jquery('#plantIdStr').attr("multiple","multiple");
+			/* 下拉框 */
+			jquery('.selectpicker').selectpicker('deselectAll');
+			plantStr = '#{lackSum.plantIdStr}';
+			var checkStr = plantStr.split(",");
+			jquery("#plantCheck").selectpicker("val",checkStr);
+			
+			var data = '#{lackSum.analysisJson}';
+			createHighChart(data);
+			/* 表格控件 */
+			createTable();
+			
+			change();
+			noSelectedTOall();
+			
+			changColor();
+			
+			/* 改变浏览器窗口 */
+			jquery(window).resize(function(){
+				change();	
+				changColor();
+				createHighChart(highChartData)
+			});	
+
+		});	
+
+		//计算图表控件的高 
+		function resizeTubiao(){
+			var oContubiaoWid = jquery('#container').outerWidth();
+			var oCliHei = jquery(window).outerHeight();
+// 			jquery('#tar1').css('padding-top',(oContubiaoWid/oCliHei)*0.03);
+			jquery('#container').css({height:(oContubiaoWid + oCliHei)*0.197});
+		}
+		resizeTubiao();
+	//]]>
+	</script>
+	
+</ui:define>
+</ui:composition>

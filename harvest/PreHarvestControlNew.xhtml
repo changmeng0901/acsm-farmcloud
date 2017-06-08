@@ -1,0 +1,297 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+	<ui:define name="body">
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/superTables_compressed.css" />
+    <style>
+    .start{color:Red;font-weight:bold;font-size:14px;}
+	.btn .dropdown-toggle .selectpicker{width:100px;}
+    .btn-group .bootstrap-select{width:100px;}
+    .sBase .sDefault {font-family: '微软雅黑';}
+    .sDefault th{background:#f0f5fb;}
+    .tableModel tr td{white-space:normal;}
+    .tableModel th:first-child{border-radius:0;}
+    .tableModel th:last-child{border-radius:0;}
+    .tableModel th{height:80px;}
+    .farming_nodata{ overflow:hidden; border-bottom:1px solid #ddd; background:#fcfcfc;}
+    .warning_noData{ width:508px; padding-top:60px; margin:125px auto 220px; text-align:center; background:url(#{request.contextPath}/asset/images/farming/farmingIco20.png) no-repeat center top;}
+	.warning_noData em{ font-style:normal; font-family:'微软雅黑'; font-size:18px; color:#333;}
+	.warning_noData p{ line-height:26px; margin-top:24px; font-size:14px; font-family:'黑体'; color:#5c5c5c;}
+    .frame_form_k .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:178px;}
+    .frame_form_k .bootstrap-select{width:178px;}
+    .frame_form_k{ display:inline-block; padding:6px 0px;}
+    .frame_form_k  input[type=text].form-control {height: 34px;line-height: 20px;padding: 6px 30px;box-sizing: border-box;font-family: '微软雅黑';color: '#ababab';background: url('#{request.contextPath}/asset/images/cjsearch_bg.png') 8px center no-repeat;}
+    .frame_form_k ul li{float: left;margin-right: 80px;} 
+    .frame_form_k ul li i {display: inline-block;width: 20px;height: 20px;margin-top: 4px;vertical-align: top;}
+	.ull1{width: 100%;}
+	.ull1 li{float: left;height: 44px;line-height: 44px;text-align:center;margin-bottom:0;}
+	.ull1 li:first-child{width: 100%;border-bottom:1px solid #cadbeb;}
+	.ull1 .items{border-right: 1px solid #cadbeb;}
+	.tableModel th,
+	.tableModel td{ text-align:center;}
+</style>
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModalYz" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- #{preHarvestProductList.preHarvestControlInit()} -->
+<td valign="top">
+	<div id="iframceContent" style="height:100%;width:100%;min-height:500px;overflow: auto-;">
+		<div class="right_c">    
+            	<div class="filtrate_header">
+	                <div class="frame_form_k clear" style="margin:15px 0; width:100%;">
+	                      <input type="text" style="width:250px;font-size:12px; " value="" class="form-control mr5 fl zz1" />
+	                    <button class="btn btn-primary fl mr5" type="button" style="padding: 7px 19px;" onclick="primary()">搜索</button>                                  
+	                </div>
+	                <div class="frame_form_k  clear" style="margin-bottom:15px 0; font-size:14px;">                   
+	                    <ul class="clear">
+	                        <li class="items1">
+	                           <strong><i style=" background:  url('#{request.contextPath}/asset/images/harvest/icon1.png') 0 0 no-repeat;"></i>基地名称：</strong>
+	                           <span>#{preHarvestProductList.baseName}</span> 
+	                        </li>
+	                        <li class="items2">
+	                        <strong><i style=" background:  url('#{request.contextPath}/asset/images/harvest/time.png') 0 0 no-repeat;"></i>录入时间： </strong><span>#{preHarvestProductList.entryTime}</span>
+	                        </li >
+	                        <li class="items3">
+	                        	<i style=" background:  url('#{request.contextPath}/asset/css/images/ren.png') 0 0 no-repeat;"></i>录入人： <span>#{preHarvestProductList.userName}</span>
+	                        </li>
+	                    </ul>
+	                </div>  
+            </div>	        
+            <div id="enterpriseInfoList" style="overflow: hidden;height: 600px;min-height:260px;">
+                <table cellpadding="0" cellspacing="0" id="demoTable" style="margin-top: -23px-; margin-left: -99px-; " class="tableModel">
+                    <tbody>
+                    	<h:panelGroup rendered="#{preHarvestProductList.preHarvestControlList ne null and preHarvestProductList.preHarvestControlList.size() gt 0}">
+                        <tr>
+                            <th rowspan="2">序号</th>
+                            <th rowspan="2">作物名称</th>
+                            <th rowspan="2">等级</th>
+                            <th rowspan="2">单位</th>
+                            <th rowspan="2">商品规格</th>
+                            <th rowspan="2">商品编码</th>
+                            <a:repeat value="#{preHarvestProductList.timeSplitControl}" var="_timeSplit" >
+                                <th colspan="4">#{_timeSplit}</th>
+                            </a:repeat>
+                        </tr>
+                        <tr >
+                            <a:repeat value="#{preHarvestProductList.timeSplitControl}" var="_timeSplit" >
+                                <th class="items" style="width:99px; ">预采量</th>
+                                <th class="items" style="width:99px;">包装数</th>
+                                <th class="items" style="width:108px;">当日入库量</th>
+                                <th class="items" style="width:74px;">冻结量</th>
+                            </a:repeat>
+                        </tr>
+                        </h:panelGroup>
+                        <a:repeat value="#{preHarvestProductList.preHarvestControlList}" var="_preHarvestControl" rowKeyVar="_index" >
+                        <tr class = "preHarvest_Control">
+                            <td>#{_index+1}</td>
+                            <td class="zhavest housesname">#{_preHarvestControl[0]}</td>
+                            <td class = "hiddenTd">                      
+                            	<input type="text" class = "productInfoId" value="#{_preHarvestControl[9]}" style="display: none"/><!-- product_info_id -->
+                        		<span>#{_preHarvestControl[1]}</span>                                                    
+                            </td>
+                            <td>#{_preHarvestControl[2]}</td>
+                            <td>
+                            	#{_preHarvestControl[3] &gt; 0 and _preHarvestControl[3]!=null ? _preHarvestControl[3] :''}#{_preHarvestControl[2]}#{_preHarvestControl[5].trim()!=null and _preHarvestControl[5].trim()!=''?'/':''}#{_preHarvestControl[5]}                           
+                            </td>
+                            <td>#{_preHarvestControl[6]}</td>
+                           <a:repeat value="#{_preHarvestControl[8]}" var="_proControl">
+                            <td class="hiddenTdPackage">
+                            	<span>#{_proControl[2] !=null ? _proControl[2] :'0'}#{_preHarvestControl[2]}</span>                           
+                            	<input type="text" class = "ppId" value="#{_proControl[5]}" style="display: none" /><!-- pp.id -->
+                            	<input type="text" class = "prePackageNum" value="#{_proControl[3]}" style="display: none" /><!-- pp.pre_package_num -->
+                            	<input type="text" class = "phpId" value="#{_proControl[0]}" style="display: none"/><!-- php.id -->
+                            	<input type="text" class = "preTime" value="#{_proControl[1]}" style="display: none"/><!-- php.preTime -->
+                            </td>        
+                            <h:panelGroup rendered="#{_preHarvestControl[4] ne null and _proControl[0] ne null and _preHarvestControl[9] ne null}">
+                            <td>
+                            <div class="c_input">
+                                    <input type="text" class="form-control" value="#{_proControl[3]}" onchange="packageTotalChange(this)" maxlength="7"/>
+                                </div>
+                            </td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{_preHarvestControl[4] eq null or _proControl[0] eq null or _preHarvestControl[9] eq null}">
+                            <td>
+                            <div class="c_input">
+                                    <input type="text" class="form-control" value="#{_proControl[3]}" disabled="disabled"/>
+                                </div>
+                            </td>
+                            </h:panelGroup>
+                                                                                 
+                            <h:panelGroup rendered="#{_proControl[4] ne '' and _proControl[4] ne null }">
+                            <td>#{_proControl[4]}#{_preHarvestControl[2]}</td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{_proControl[4] eq '' or _proControl[4] eq null}">
+                            <td>0#{_preHarvestControl[2]}</td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{_proControl[7] ne '' and _proControl[7] ne null and _proControl[1] eq preHarvestProductList.controlToday}">
+                            <td>#{_preHarvestControl[7]}#{_preHarvestControl[2]}</td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{(_proControl[7] eq '' or _proControl[7] eq null) and _proControl[1] eq preHarvestProductList.controlToday}">
+                            <td>0#{_preHarvestControl[2]}</td>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{(_proControl[7] eq '' or _proControl[7] eq null) and _proControl[1] ne preHarvestProductList.controlToday}">
+                            <td>--</td>
+                            </h:panelGroup>
+                           </a:repeat>                          
+                        </tr>
+                        </a:repeat>
+                    </tbody>
+                </table>
+                  <h:panelGroup  rendered="#{preHarvestProductList.preHarvestControlList eq null or preHarvestProductList.preHarvestControlList.size() eq 0}">
+           			<div id="no_date">
+            			<div class="farming_nodata">
+                   			<div class="warning_noData">
+                       			<em>很遗憾，没有预采信息</em>
+                       			<p>准确的预采信息，是销售部门掌握出产情况，制定销售目标的重要保证，请及时添加或编辑哦！</p>
+                   			</div>
+                		</div>
+            		</div>
+           		</h:panelGroup>
+            </div>
+		</div>
+         	<h:form id="saveControlFrom" enctype="multipart/form-data">
+         	<h:inputHidden value="#{preHarvestProductList.preHarvestControlJsonArray}" id="controlHid" /> 
+        	<div class="return" style="margin: 20px;text-align:center;">
+              <h:commandButton id="savePreHarvestPro" value="提交" styleClass="btn btn-primary" style="margin-right:10px;" action="#{preHarvestProductList.preHarvestControlSave()}" onclick="saveOrUpdate()" rendered="#{preHarvestProductList.preHarvestControlList ne null and preHarvestProductList.preHarvestControlList.size() gt 0}"/>  
+              	<s:link propagation="none"  styleClass="btn btn-default" view="/harvest/PreHarvestListNew.seam" value = "返回">  	 	
+					<f:param name="selectPageNum" value="#{preHarvestProductList.selectPageNum}" />
+					<f:param name="preHarvestTime" value="#{preHarvestProductList.preHarvestTime}" />
+					<f:param name="preHarType" value="#{preHarvestProductList.preHarType}" />
+					<f:param name="preHarTimeType" value="#{preHarvestProductList.preHarTimeType}" />
+                </s:link>   
+            </div> 
+            </h:form>
+    </div>
+  </td>
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/harvest/bootstrap.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/harvest/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/harvest/bootstrap-datetimepicker.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/harvest/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/contract/superTables_compressed.js"></script>
+<script type="text/javascript">
+//<![CDATA[ 
+        var timeNum = #{preHarvestProductList.timeNum};
+        createTable(timeNum);
+        function createTable(timeNum){
+            var _colWidths = [70,200,200,100,100,215];
+            for(var i=0;i<timeNum;i++){
+            	_colWidths.push(100,100,110,80);
+            }
+            new superTable("demoTable", {
+                cssSkin: "sDefault",
+                headerRows : 2,
+                fixedCols: 6,
+                colWidths:_colWidths
+            });         
+        }
+        function createTableHei(){
+        	var contentHei = jquery("#iframceContent").height();
+            var contentWid = jquery(".filtrate_header").width();
+            var filtrateHei = jquery('.filtrate_header').height();
+            var sFHeader_width = jquery(".sFHeader").width();
+            var sHeader_height = jquery('.sHeader').height();
+            var sHeader_width = jquery('.sHeader').width();     
+            var sDate_width = contentWid - sFHeader_width;
+            var return_height = jquery('.return').height();
+            var sDate_height = contentHei - filtrateHei - sHeader_height - return_height;    
+            var tr_height = 0;
+            var th_width = 0;
+            var tr_length = jquery('.sFData tr').length;
+            var th_length = jquery('.sHeader th').length;
+            for(var i=0;i<tr_length;i++){
+            	tr_height += jquery('.sFData tr').eq(i).outerHeight();
+            }
+            for(var i=0;i<th_length;i++){
+            	th_width += jquery('.sHeader th').eq(i).outerWidth();
+            }
+            if((tr_height-sHeader_height)<sDate_height){
+            	sDate_height = tr_height - sHeader_height ;
+            }
+            if(th_width<contentWid){
+            	sDate_width = sHeader_width-sFHeader_width;
+            }
+            var enterpriseInfoList_height = 0;
+            if((contentHei - filtrateHei - return_height)>=(sDate_height+filtrateHei+return_height+sHeader_height)){
+            	enterpriseInfoList_height = sDate_height+return_height+sHeader_height+10;
+                }
+            else{
+            	enterpriseInfoList_height = contentHei - filtrateHei - return_height;
+                }
+            jquery("#enterpriseInfoList").css({
+            	width  : contentWid ,
+            	height : enterpriseInfoList_height + 18
+            });
+            jquery(".sData").css({
+            	width  : sDate_width,
+            	height : sDate_height + 18
+            });
+        }
+        createTableHei();      
+        function primary(){
+      	   jquery(".housesname").attr("class","zhavest housesname");
+      	   jquery(".cropsname").attr("class","zhavest cropsname borderRt");
+             var search=jquery(".zz1").val();
+             jquery(".tableModel").contents().find(".zhavest").each(function(){
+     				var cla=jquery(this).attr("class");
+     				if(cla.indexOf("housesname")!=-1){
+     					var housesname=jquery(this).text();
+     					if(housesname.indexOf(search)!=-1){
+     						jquery(this).attr("class","zhavest housesname start");
+     					}
+     				}
+     				if(cla.indexOf("cropsname")!=-1){
+     					var cropsname=jquery(this).text();
+     					if(cropsname.indexOf(search)!=-1){
+     						jquery(this).attr("class","zhavest cropsname start");
+     					}
+     				}
+     			});
+     			jquery(".table-newTable").contents().find(".zhavest").each(function(){
+     				var cla=jquery(this).attr("class");
+     				if(cla.indexOf("housesname")!=-1){
+     					var housesname=jquery(this).text();
+     					if(housesname.indexOf(search)!=-1){
+     						var top1=jquery(this).offset().top;
+     						jquery(document).scrollTop(top1);
+     						return false; 
+     					}
+     				}
+     				if(cla.indexOf("cropsname")!=-1){
+     					var cropsname=jquery(this).text();
+     					if(cropsname.indexOf(search)!=-1){
+     						var top1=jquery(this).offset().top;
+     						jquery(document).scrollTop(top1);
+     						 return false; 
+     					}
+     				}
+     			});      
+             }   
+        jQuery("#enterpriseId").selectpicker("val",[0,1]);
+        document.getElementById("selectBaseDiv").style.display="none"; 
+     //]]>
+</script>   
+<script type="text/javascript" src="#{request.contextPath}/asset/js/harvest/preHarvestControl.js"></script> 
+</ui:define>
+</ui:composition>

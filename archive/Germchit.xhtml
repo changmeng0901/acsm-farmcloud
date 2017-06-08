@@ -1,0 +1,140 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/settings/EnterpriseSettings.css" />
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/EnterpriseLeftMenu.js"></script>
+   <style>
+   		.str_text{text-align:center;}
+   </style>
+	<script type="text/javascript">
+jquery(document).ready(function(){  //这个就是传说的ready
+
+	jquery(".str_t tr:even").addClass("alt");
+
+                //给class为stripe的表格的偶数行添加class值为alt
+});
+</script>
+
+		<td valign="top">
+                <div class="inbentory_file_main">
+                <div class="inbentory_content">
+		<div class="right_c">
+		<div class="r_title">
+		<div class="r_t_l">生产管理&#160;&gt;&#160;&#160;<font size="4">种苗</font></div>
+		</div>
+
+		<!--表格开始-->
+		<div class="str_box">
+
+		<table width="100%" cellpadding="0" cellspacing="0" class="str_t">
+			<tr >
+				<td  class="str_td" width="20%">品种名称</td>
+				<td  class="str_text" width="30%">#{germchitHome.instance.breedId.name}</td>
+				<td class="str_td" width="20%">类型</td>
+           	 	<td class="str_text" width="30%">#{germchitHome.instance.germchitType ==0?"种子":"种苗"}</td>
+			</tr>
+			<tr >
+				<td class="str_td" width="20%">来源</td>
+				<td class="str_text" width="30%">#{germchitHome.instance.sourceType == 0?"自繁":"外采"}</td>
+				<td class="str_td" width="20%"><h:outputText value="成苗时间" id="seedlingTime" /></td>
+           	 	<td class="str_text" width="30%">
+           	 		<h:outputText value="#{germchitHome.instance.seedlingTime}">
+						<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+					</h:outputText>
+           	 	</td>
+			</tr>
+			<tr>
+				<td class="str_td" width="20%"><h:outputText value="生产基地" id="seedlingPlace" /></td>
+				<td class="str_text" width="30%">#{germchitHome.instance.seedlingAddress}</td>
+				<td class="str_td" width="20%"><h:outputText value="生产企业" id="seedlingCompany" style="display:none"/></td>
+				<td class="str_text" width="30%">#{germchitHome.instance.seedlingCompany}</td>
+			</tr>
+	        <tr >
+				<td class="str_td" width="20%">种苗图片</td>
+				<td class="str_text" width="30%">
+                  	<img src="#{germchitHome.instance.seedlingImage}" alt="图片" width="128" height="128"/>
+                </td>
+              
+				
+				<td class="str_td" width="20%">检疫图片</td>
+                <td class="str_text" width="20%">
+                 	<img src="#{germchitHome.instance.quarantineImgae}" alt="检疫图片" width="128" height="128"/>
+                </td>
+			</tr>
+			<tr >
+				<td class="str_td" width="20%">检疫结果</td>
+				<td class="str_text" width="30%">#{germchitHome.instance.quarantineResult == 0?"合格":"不合格"}</td>
+				<td class="str_td" width="20%">检疫机构</td>
+           	 	<td class="str_text" width="30%">#{germchitHome.instance.quarantineAgencies}</td>
+			</tr>
+			<tr >
+				<td class="str_td" width="20%">检疫时间</td>
+				<td class="str_text" width="30%">
+					<h:outputText value="#{germchitHome.instance.quarantineTime}">
+						<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+					</h:outputText>
+				</td>
+				<td class="str_td" width="20%"></td>
+           	 	<td class="str_text" width="30%"></td>
+			</tr>
+		</table>
+
+
+		<table width="180" style="margin:35px auto 0 auto;">
+						<tr>
+							<td>
+		    			<s:button id="cancel" value="返回" styleClass="btn btn-default" propagation="end" view="/archive/GermchitList.xhtml">
+		    				<f:param name="pageNum" value="#{germchitList.pageNum}"></f:param>
+		    			</s:button>
+                            </td>
+						</tr>
+                   </table> 
+		</div>
+
+		<!--表格结束-->
+
+
+
+		<div class="clear"></div>
+		</div>
+		</div>
+		</div>
+		</td>
+		<script type="text/javascript">
+		//<![CDATA[
+		// 页面加载完成
+		jQuery(document).ready(function() {
+			if(#{germchitHome.instance.germchitType} == 0 && #{germchitHome.instance.sourceType} == 0){
+				jQuery("#seedlingCompany").css("display","none");
+				jQuery("#seedlingTime").html("生产时间");
+				jQuery("#seedlingPlace").html("生产地点");
+			}else if(#{germchitHome.instance.germchitType} == 0 && #{germchitHome.instance.sourceType} == 1){
+				jQuery("#seedlingCompany").css("display","");
+				jQuery("#seedlingTime").html("生产时间");
+				jQuery("#seedlingPlace").html("生产地点");
+			}else if(#{germchitHome.instance.germchitType} == 1 && #{germchitHome.instance.sourceType} == 0){
+				jQuery("#seedlingCompany").css("display","none");
+				jQuery("#seedlingTime").html("成苗时间");
+				jQuery("#seedlingPlace").html("生产基地");
+			}else if(#{germchitHome.instance.germchitType} == 1 && #{germchitHome.instance.sourceType} == 1){
+				jQuery("#seedlingCompany").css("display","");
+				jQuery("#seedlingTime").html("生产时间");
+				jQuery("#seedlingPlace").html("生产地点");
+			}
+
+		});
+		
+		//]]>
+	</script>
+		
+		
+</ui:define>
+</ui:composition>

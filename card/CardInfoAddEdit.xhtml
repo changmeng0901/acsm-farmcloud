@@ -1,0 +1,504 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/empty_template.xhtml">
+
+	<ui:define name="body">
+	<!-- #{cardsInfoHome.wire2()} -->
+	<style>
+		.form-control{float:left;}
+		.bootSelt105{margin-right:10px;}
+		.bootSelt105 .btn-group .btn{height:30px;}
+		.bootSelt105 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width:105px; margin-right:0;}
+		.bootSelt105 .bootstrap-select{width:105px; margin-right:0;}
+		.finput{font-family: "宋体";}
+		.all_da .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){ margin-right:0;}
+		.cardcategory_add {background: rgba(0, 0, 0, 0) url("../asset/images/farmingIco14.jpg") no-repeat scroll 0 0;border: medium none;float: left;height: 34px;width: 34px;}
+	</style>
+	<div class="box_back" id="login" style="display: none; z-index: 1000">
+				<div id="login2"
+					style="width: 60px; height: 60px; margin: 220px auto 0 auto;">
+					<img src="../asset/images/loginda.gif" />
+				</div>
+			</div>
+	<td valign="top">
+	
+		<h:form id="driverInfo" enctype="multipart/form-data">
+			<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">提示框</h4>
+						</div>
+						<div class="modal-body">
+							<span id="productMsg">*号部分为必填项！</span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="right_c">
+				<div class="r_title">
+					<div class="r_t_l">采销存<span style="padding:0 5px;">&gt;</span>订单管理<span style="padding:0 5px;">&gt;</span><font size="3">会员卡管理</font></div>
+					<div class="fr" style="margin-bottom:-1px;">
+						<ul class="cm_resumeList clear">
+							<li>
+								<a href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg" /><span>订单管理</span></a>
+							</li>
+							<li>
+								<a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+							</li>
+							<li>
+								<a class="borderBt" href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+							</li>
+							<h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                           </h:panelGroup>
+						</ul>
+					</div>
+				</div>
+				<div class="all_d3" style="width:860px; margin:50px auto 0;">
+					<div class="all_da all_w01">
+						<table>
+							<tr>
+								<td class="all_te">卡种类：</td>
+								<td>
+								<div style="float: left;">
+									<h:selectOneMenu styleClass="selectpicker"  id="cardType" value="#{cardsInfoHome.cardType3}" immediate="true" onchange="changeCardType(this.value);">
+										<f:selectItems value="#{cardConstant.getCardTypeList()}"/>
+									</h:selectOneMenu>
+								</div>
+		                   			<span class="finput" style="color:#FF0000;float:right;">*</span>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="all_da all_w01">
+						<table>
+							<tr>
+								<td class="all_te">卡类型：</td>
+								<td>
+								<div style="float: left;">
+									<h:selectOneMenu styleClass="selectpicker" id="cardCategoryId" value="#{cardsInfoHome.cardCategoryId}" immediate="true" onchange="getRemark(this.value);">
+										<s:selectItems value="#{cardsInfoHome.cardCategoryList}" var="_cc" itemValue="#{_cc.cardCategoryId}" label="#{_cc.name}"/>
+									</h:selectOneMenu>
+								</div>
+		                   			<span class="finput" style="color:#FF0000;float:right;">*</span>
+								</td>
+								<td>
+									<div class="addContent">
+									<input type="button" class="cardcategory_add" onclick="goCardCategoryAdd();"/>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="money" class="all_da all_w01">
+						<table>
+							<tr>
+								<td class="all_te">卡金额：</td>
+								<td>
+									<h:inputText id="amount" styleClass="form-control nw221" value="#{cardsInfoHome.amount}"/>
+									<span style="float:left;line-height:30px;padding:0 5px;">元</span>
+									<span class="finput" style="color:#FF0000">*</span>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="all_da all_w01">
+						<table>
+							<tr>
+								<td class="all_te">卡尾号位数：</td>
+								<td>
+									<h:inputText id="cardLength" styleClass="form-control nw221" value="#{cardsInfoHome.cardLength}"/>
+									<span class="finput"  style="color:#FF0000">*</span>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="all_da all_w01">
+						<table>
+							<tr>
+								<td class="all_te">卡编号开头：</td>
+								<td>
+									<h:inputText id="cardCodeFirst" styleClass="form-control nw221" value="#{cardsInfoHome.cardCodeFirst}"/>
+									<span class="finput"  style="color:#FF0000">*</span>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="all_da all_w01">
+						<table>
+							<tr>
+								<td class="all_te">卡编号尾号：</td>
+								<td>
+									<h:inputText id="cardCodeLastBegin" styleClass="fl form-control nw221" value="#{cardsInfoHome.cardCodeLastBegin}" style="width:105px;" />
+									<span style="float:left;display:block;width:10px; height:30px; line-height:30px;text-align:center;">-</span>
+									<h:inputText id="cardCodeLastEnd" styleClass="fl form-control nw221" value="#{cardsInfoHome.cardCodeLastEnd}" style="width:105px;"/>
+									<span class="finput"  style="color:#FF0000">*</span>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="all_da all_w01" id="deliverNumDiv">
+						<table>
+							<tr>
+								<td class="all_te">卡密码：</td>
+								<td>
+									<div class="fl bootSelt105">
+										<h:selectOneMenu styleClass="selectpicker" id="cardPwdType" value="#{cardsInfoHome.cardPwdType}" immediate="true" onchange="changePwdType(this.value);">
+											<f:selectItem itemLabel="随机生成" itemValue="1"></f:selectItem>
+											<f:selectItem itemLabel="固定密码" itemValue="2"></f:selectItem>
+											<f:selectItem itemLabel="不生成密码" itemValue="3"></f:selectItem>
+										</h:selectOneMenu>
+									</div>
+									<h:inputText id="cardPwd" styleClass="fl form-control nw221" value="#{cardsInfoHome.cardPwd}" style="width:105px;"/>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<h:outputText rendered="#{cardsInfoHome.type ne 2 and cardsInfoHome.type ne 1}" >
+					<div class="all_da all_w01" >
+						<table>
+							<tr>
+								<td class="all_te">卡状态：</td>
+								<td>
+									<div class="fl bootSelt105">
+										<h:selectOneMenu styleClass="selectpicker" id="cardStatus" value="#{cardsInfoHome.cardStatus}" immediate="true" onchange="changeCardStatus(this.value);">
+											<f:selectItem itemLabel="未售出" itemValue="10"></f:selectItem>
+											<f:selectItem itemLabel="已售出" itemValue="20"></f:selectItem>
+										</h:selectOneMenu>
+										<h:inputHidden id="status" value="#{cardsInfoHome.cardStatus}" />
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="all_da all_w01" id="saletime" style="display: none">
+						<table>
+							<tr>
+								<td class="all_te">售出时间：</td>
+								<td>
+									<div class="fl bootSelt105">
+										<div class="input-append date form_datetime " >
+										    <h:inputText id="saleTimeId" styleClass="new_time" readonly="true" value="#{cardsInfoHome.saleTime}">
+										    <f:convertDateTime pattern="yyyy-MM-dd"/>   
+										    </h:inputText>
+										    <span class="add-on"><i class="icon-th" style="margin-top:6px;"></i></span>
+									    </div>
+									</div>
+									<span class="finput"  style="color:#FF0000;margin-left: 0px;">*</span>
+									<h:inputHidden id="subtime" value="#{cardsInfoHome.saleTime}"/>
+								</td>
+							</tr>
+						</table>
+					</div>
+					
+					<div class="all_da all_w01" id="salepeople" style="display: none">
+						<table>
+							<tr>
+								<td class="all_te">销售人：</td>
+								<td>
+									<div class="fl bootSelt105">
+										<h:selectOneMenu styleClass="selectpicker" id="salePeopleId" value="#{cardsInfoHome.salePeopleId}" immediate="true" >
+											<s:selectItems value="#{cardsInfoHome.ffList}" var="_ff" itemValue="#{_ff[0]}" label="#{_ff[1]}"/>
+										</h:selectOneMenu>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					</h:outputText>
+					<div class="all_da all_w01" style="width:80%; display: block;">
+						<rich:panel id="remarkDiv" style="border:0;">
+						<table>
+							<tr>
+								<td class="all_te">描述：</td>
+								<td colspan="3"><h:inputTextarea id="remark" styleClass="form-control nw420" rows="3" value="#{cardsInfoHome.remark}"  /></td>
+							</tr>
+						</table>
+						</rich:panel>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<table width="180" style="margin:35px auto 0 auto;">
+					<tr>
+						<td>
+							<h:commandButton id="persist"  styleClass="btn btn-primary" value="提交" action="#{cardsInfoHome.persist}" onclick="if(!submitAction()){return false;};" rendered="#{cardsInfoHome.type eq 0}"/>
+							
+							<s:button view="/card/CardInfoList.xhtml" styleClass="btn btn-default" value="返回" id="bn_left6" style="margin-left:10px" >
+								<f:param name="pageNum" value="#{cardsInfoHome.pageNum}" />
+								<f:param name="cardType" value="0" />
+							</s:button>
+						</td>
+					</tr>
+				</table> 
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+		</h:form>
+		
+		<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="messageTitle">提示</h4>
+					</div>
+					<div class="modal-body">
+						<span id="messageValue"></span>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</td> 
+	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="gainCardCategory" action="#{cardsInfoHome.gainCardCategory}" reRender="remarkDiv" data="#{cardsInfoHome.cardCategoryItem}" oncomplete="oncomplete(data);">
+			<a:actionparam name="cardType" assignTo="#{cardsInfoHome.cardType3}"/>
+		</a:jsFunction>
+		<a:jsFunction name="getRemark1" action="#{cardsInfoHome.getCardRemark}" reRender="remarkDiv" >
+			<a:actionparam name="cardCategoryId" assignTo="#{cardsInfoHome.cardCategoryId}"/>
+		</a:jsFunction>
+	</a:form>
+	<script type="text/javascript">
+	//<![CDATA[
+		jQuery(document).ready(function(){
+			jQuery("#driverInfo\\:cardType").val(1);
+			gainCardCategory(1);
+			jQuery('.selectpicker').selectpicker();  // 下拉框控件
+			var pwdType = '#{cardsInfoHome.cardPwdType}';
+			changePwdType(pwdType);
+			
+			var msg = '#{cardsInfoHome.msg}';
+			if (msg != null && msg != '') {
+				alert(msg);
+			}
+			jQuery("#money").css("display", "none");
+		});
+		 window.onload = function () {
+			 var cardStatus =jQuery("#driverInfo\\:status").val();
+			 changeCardStatus(cardStatus);
+		 };
+		function changeCardStatus(cardStatus){
+			if(cardStatus==20){
+				jQuery("#saletime").css("display", "");
+				jQuery("#salepeople").css("display", "");
+				jQuery("#driverInfo\\:saleTimeId").val("");
+				jQuery("#driverInfo\\:status").val(cardStatus);
+			}else{
+				jQuery("#saletime").css("display", "none");
+				jQuery("#salepeople").css("display", "none");
+				jQuery("#driverInfo\\:saleTimeId").val("");
+				jQuery("#driverInfo\\:status").val(cardStatus);
+			}
+			jQuery(".form_datetime").datetimepicker({
+			    format: "yyyy-mm-dd",
+			    autoclose: true,
+			    weekStart: 1,
+				 language:  'zh-CN',
+				 minView:2,
+			    pickerPosition: "bottom-left"
+			    });
+		}
+		//验证
+		function submitAction(){
+			var cardCategoryId = jQuery("#driverInfo\\:cardCategoryId").val();
+			var cardCodeFirst = jQuery("#driverInfo\\:cardCodeFirst").val();
+			var cardCodeLastBegin = jQuery("#driverInfo\\:cardCodeLastBegin").val();
+			var cardCodeLastEnd = jQuery("#driverInfo\\:cardCodeLastEnd").val();
+			var cardPassWord = jQuery("#driverInfo\\:cardPwdType").val();
+			var cardLength = jQuery("#driverInfo\\:cardLength").val();
+			var regex = new RegExp("^[0-9a-zA-Z]*$");
+			var cardStatus =jQuery("#driverInfo\\:status").val();
+
+
+			var reg2 = new RegExp("^[0-9]*$");
+			
+			if (cardCategoryId == null) {
+				jQuery("#messageValue").html("卡类型不能为空！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			if (cardCodeFirst == null || cardCodeFirst == '') {
+				jQuery("#messageValue").html("卡编号开头不能为空！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}else{
+				if(!regex.test(cardCodeFirst)){
+					jQuery("#messageValue").html("卡编号开头必须为数字或字母！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+			}
+			if(cardCodeFirst.length>10){
+				jQuery("#messageValue").html("卡编号开头输入长度过长！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			if (cardCodeLastBegin == null || cardCodeLastBegin == '') {
+				jQuery("#messageValue").html("卡编号尾号开头不能为空！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}else {
+				if (!regex.test(cardCodeLastBegin)) {
+					jQuery("#messageValue").html("卡编号尾号开头必须为数字！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+			}
+			if (cardCodeLastEnd == null || cardCodeLastEnd == '') {
+				jQuery("#messageValue").html("卡编号尾号结束不能为空！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}else {
+				if (!regex.test(cardCodeLastEnd)) {
+					jQuery("#messageValue").html("卡编号尾号结束必须为数字！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+			}
+
+			if((cardCodeLastEnd - cardCodeLastBegin)>10000){
+				jQuery("#messageValue").html("每次生成会员卡数量不能超过一万张！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+
+			if (!reg2.test(cardCodeLastBegin)) {
+				jQuery("#messageValue").html("卡编号尾号开头必须是整数！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			if (!reg2.test(cardCodeLastEnd)) {
+				jQuery("#messageValue").html("卡编号尾号结束必须是整数！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			
+			if(cardPassWord==2){
+				var passWord=jQuery("#driverInfo\\:cardPwd").val();
+				if(passWord==null ||  $.trim(passWord)==""){
+					jQuery("#messageValue").html("必须输入固定密码选项的固定密码才允许提交！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}else{
+// 					var reg = new RegExp("^[0-9a-zA-Z]{8}$");
+					var reg = new RegExp("^[0-9a-zA-Z]*$");
+					if(!reg.test(passWord)){
+// 						jQuery("#messageValue").html("固定密码必须是8位数字或字母！");
+						jQuery("#messageValue").html("固定密码必须是数字或字母！");
+						jQuery("#messageDiv").modal('show');
+						return false;
+					}
+				}
+			}
+			if (Number(cardCodeLastBegin) > Number(cardCodeLastEnd)) {
+				jQuery("#messageValue").html("卡编号结尾须大于卡编号开头！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+
+			if (cardLength > 11) {
+				jQuery("#messageValue").html("卡尾号位数过长！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			if (!reg2.test(cardLength)) {
+				jQuery("#messageValue").html("卡尾号必须是整数！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+
+			if (cardCodeLastEnd.length > cardLength) {
+				jQuery("#messageValue").html("卡编号位数过短！");
+				jQuery("#messageDiv").modal('show');
+				return false;
+			}
+			if(cardStatus==20){
+				var time=jQuery("#driverInfo\\:saleTimeId").val();
+				if(time==null|| time==''){
+					jQuery("#messageValue").html("售出时间不能为空！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+				jQuery("#driverInfo\\:subtime").val(time);
+			}
+			if(jQuery("#driverInfo\\:cardType").val()==2){
+				var money = jQuery("#driverInfo\\:amount").val();
+				if(money=='' || money==0){
+					jQuery("#messageValue").html("请输入卡金额！");
+					jQuery("#messageDiv").modal('show');
+		 		    return false;
+				}
+				var reg = new RegExp("^(-?\\d+)(\\.\\d+)?$");
+				if(!reg.test(money)){
+					jQuery("#messageValue").html("卡金额必须是数字！");
+					jQuery("#messageDiv").modal('show');
+		 		    return false;
+				}
+			}
+			var baseId = "#{sessionTake.baseModel.baseId}";
+	        if(baseId == null || baseId == "" || baseId==0){
+	        	jQuery("#messageValue").html("请选择基地！");
+				jQuery("#messageDiv").modal('show');
+	 		    return false;
+	        }
+	        jQuery("#login").show();
+			return true;
+		}
+
+		//卡种类联动类型
+		function changeCardType(cardType){
+			if(cardType==2){
+				jQuery("#money").css("display", "");
+			}else{
+				jQuery("#money").css("display", "none");
+			}
+			gainCardCategory(Number(cardType));
+		}
+		function getRemark(cardCategoryId){
+			if(cardCategoryId!=''&& cardCategoryId!=0){
+				getRemark1(cardCategoryId);
+			}
+		}
+		//卡种类联动类型回调
+		function oncomplete(data){
+			jQuery("#driverInfo\\:cardCategoryId").empty();
+			jQuery(data).appendTo("#driverInfo\\:cardCategoryId");
+			jQuery("#driverInfo\\:cardCategoryId").selectpicker("refresh");
+		}
+
+		//密码类型切换
+		function changePwdType(pwdType){
+			if (pwdType == 2) {
+				jQuery("#driverInfo\\:cardPwd").css("display", "");
+			} else {
+				jQuery("#driverInfo\\:cardPwd").css("display", "none");
+			}
+		}
+
+		//快速添加卡类型
+		function goCardCategoryAdd(){
+			window.location.href = "#{request.contextPath}/card/CardCategoryEdit.seam?cardCategoryId=&pageNum=1&goType=2";
+		}
+		
+	//]]>
+	</script>
+	</ui:define>
+</ui:composition>

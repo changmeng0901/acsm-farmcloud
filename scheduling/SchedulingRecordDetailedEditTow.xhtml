@@ -1,0 +1,309 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+ <style>
+
+.box_back{background:url(../asset/images/bg_png.png) repeat; width:100%; height:100%; position:absolute; z-index:80; display:none;}
+
+  </style>
+ 
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-1.4.2.min.js"> </script> 
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-ui.js"></script>        
+<script type="text/javascript" src="#{request.contextPath}/asset/js/map/jquery-ui-select.js"> </script> 
+
+<script  type="text/javascript">
+//<![CDATA[
+function BtHide(id){var Div = document.getElementById(id);if(Div){Div.style.display="none"}}
+function BtShow(id){var Div = document.getElementById(id);if(Div){Div.style.display="block"}}
+
+function BtPopload(showId){//蒙版生成div+iframe
+	var h = Math.max(document.documentElement.scrollHeight,document.documentElement.clientHeight) + 'px';
+	var w = document.documentElement.scrollWidth + 'px';
+	var popCss = "background:#000;opacity:0.3;filter:alpha(opacity=30);position:absolute;left:0;top:0;overflow:hidden;"
+	var exsit = document.getElementById("popBox");
+	if (!exsit) {
+		pop_Box = document.createElement("div");pop_Box.id = "popBox";
+		document.getElementsByTagName("body")[0].appendChild(pop_Box);
+		pop_Box.style.cssText = popCss;pop_Box.style.zIndex = "10";
+		pop_Box.style.height = h;pop_Box.style.width = w;
+		
+		pop_Iframe = document.createElement("iframe");pop_Iframe.id = "popIframe";
+		document.getElementsByTagName("body")[0].appendChild(pop_Iframe);	
+		pop_Iframe.style.cssText = popCss;pop_Iframe.style.zIndex = "9";
+		pop_Iframe.style.height = h;pop_Iframe.style.width = (parseInt(w)-5)+"px";
+	}
+	BtShow("popIframe");BtShow("popBox");BtShow(showId);
+	pop_Win = document.getElementById(showId);
+	pop_Win.style.position = "absolute";
+	pop_Win.style.zIndex = "11";
+	pop_Win.style.top = document.documentElement.scrollTop+document.documentElement.clientHeight/2-pop_Win.offsetHeight/2+ 'px';
+	pop_Win.style.left = (document.documentElement.clientWidth/2-pop_Win.offsetWidth/2) + 'px';
+	displayTag();
+}
+function BtPopShow(Bid,Did) { 
+	
+	var UploadBtn = document.getElementById(Bid);
+	if (UploadBtn){UploadBtn.onclick = function() {BtPopload(Did);return false;}}
+}
+function BtPopHide(Bid,Did) { 
+	var UploadBtn = document.getElementById(Bid);
+	if (UploadBtn){UploadBtn.onclick = function() {BtHide(Did);BtHide("popBox");BtHide("popIframe");return false;}}	
+}
+var onLoadWidth
+jquery(document).ready(function(){  
+	onLoadWidth = document.body.clientWidth;
+	displayTag();
+	alertInfo();
+	_$("select").selectmenu({style:'dropdown'});
+	_$(".rich-calendar-input").addClass("r_c_text_date");
+    _$(".rich-calendar-input").removeClass("rich-calendar-input");
+    _$(".ui-selectmenu-dropdown").addClass("small322");
+    _$(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+    _$(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall");
+    _$(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+});
+function alertInfo(){
+	jquery('.pc_name').hover(function(){
+ 		jquery(this).find('.pc_p').show();
+	},function(){
+ 		jquery(this).find('.pc_p').hide();
+	});
+}
+function displayTag (){
+	 var apob=onLoadWidth-document.body.clientWidth;
+	 var sizesum = #{schedulingRecordDetailedHome.dateTime.size};
+	 var alltd = sizesum * 65;
+	 var divwidth = onLoadWidth-412-apob;
+	 var scr02width = onLoadWidth-370-apob;
+	 jquery('.pc__1').css("width",(onLoadWidth-156)+ "px");
+	 jquery('.scroll1').css("width",(onLoadWidth-429)+ "px"); 
+	   
+	jquery('.scr02').css("width",scr02width+ "px"); 
+	jquery('._tccen').css("width",(onLoadWidth-195-apob)+ "px"); 
+	if(divwidth > alltd){
+		jquery('.pc_borb').css("width",(parseInt(divwidth/sizesum))+ "px");
+	}else{
+		jquery('.pc_borb').css("width","65px");
+		jquery('.pc_bor_t').css("width",alltd+ "px");
+	}
+	if(scr02width > alltd){
+		jquery('.tc_pcccd').css("width",(parseInt(scr02width/sizesum)-1)+ "px");
+		jquery('.tcs').css("width",(parseInt(scr02width/sizesum)-1)+ "px");
+	}
+}
+
+function marclick(index){
+  	jquery("#sslistted"+index).toggle();  
+  	var min_17;
+ 	min_17=onLoadWidth-document.body.clientWidth;
+  	jquery('.scroll1').css("width",(onLoadWidth-412-min_17)+ "px"); 
+	jquery('.scr02').css("width",(onLoadWidth-370-min_17)+ "px"); 
+	jquery('._tccen').css("width",(onLoadWidth-195-min_17)+ "px"); 
+}
+
+//]]>
+</script>
+<!--弹出框结束-->
+
+<style>
+.zp_lsm .even{ background:#fbfcfe;}
+</style>
+ <!--弹出框开始-->
+                      <div class="box_back" id="login">
+                      	 <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif"/>
+					  	</div>
+					</div>
+					 
+					 
+					  <!--弹出框结束-->     
+<!--右边开始-->
+            <td valign="top" width="100%">
+                <div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">预估</font></div>
+                    	<div class="r_t_r">
+                        	<div class="est">
+                             	<ul style="float:right;">
+                                 	<li class="current"  style=" padding:0 5px; width:70px; ">
+                                 		<a class="zjjh08" style="float:right; " href="#{request.contextPath}/scheduling/SchedulingRecordDetailedEditTow.seam?yearString=#{schedulingRecordHome.yearString}" >
+                                  			<strong>排产详情</strong>
+                                  		</a>
+                                 	</li>
+                                  	<li style=" padding:0 5px; width:70px; background:url(../asset/images/lne_09.jpg) right center no-repeat;">
+                                  		<a class="zjjh08" href="#{request.contextPath}/scheduling/SchedulingRecordEdit.seam">
+                                 			<strong>预估列表</strong>
+                                 		</a>
+                                  	</li>
+                             	</ul>
+                         	</div>    	
+                        </div>
+                    </div>
+
+                <div style="padding-top:15px; overflow:hidden;">
+                		<!--标题开始-->
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:5px; table-layout:fixed;">
+                                	<tr>
+                                    	<td align="left" width="16" height="30" valign="middle"><img src="../asset/images/dahg_03.jpg" width="16" height="15" /></td>
+                                    	<td align="left" class="zname" height="30">
+                                        	<div class="erbot2">
+                                            	<div class="kss">排产详细</div>
+                                            </div>
+                                         </td>
+                                    </tr>
+                                </table>
+                      <!--标题框结束-->
+                      
+                
+                  <div class="erbot">  
+				 <s:div id="srdTowId" styleClass="_ss" >
+                	<div >
+                        <!--下拉table开始-->
+                         <a:repeat value="#{schedulingRecordDetailedHome.petBySrdList}" var="_petInfo" rowKeyVar="_petindex">
+                              <div class="pc__1">
+                                <div style="width:100%;">
+                                    <div class="hjtj">
+                                        <table cellpadding="0" cellspacing="0" class="paic_table">
+                                            <tr style="display:#{_petindex eq 0 ?'':'none'}">
+                                                <td class="paicth1 paic_border" height="79" width="100" >环境条件</td>
+                                                <td class="paicth1 paic_border" height="79" width="73">比对项</td>
+                                            </tr>
+                                            <tr>
+                                                <td rowspan="3" class="paic_th paic_border" height="79" width="100" >#{_petInfo.name}</td>
+                                                <td class="paic_td paic_border" height="79" width="73">预估面积</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="paic_td paic_border">可用面积</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="paic_td paic_border">剩余面积</td>
+                                            </tr>
+                                            
+                                        </table>
+                                    </div>
+                                    <div class="scroll1" >  
+                                            <table cellpadding="0" cellspacing="0" id="kuan#{_petindex}" class="paic_cen pc_bor_t ">
+                                                <tr style="display:#{_petindex eq 0 ?'':'none'}">
+                                                    <td class="paicmoon pc_bor_b" colspan="#{schedulingRecordDetailedHome.dateTime.size}">月份及面积（亩）</td>
+                                                </tr>
+                                                <tr style="display:#{_petindex eq 0 ?'':'none'}">
+                                                <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index" >
+                                                    <td class="paicth2 pc_bor_b pc_borb" ><h:outputText value="#{_dateInfo.substring(2, _dateInfo.length())}"></h:outputText>月</td>
+                                                </a:repeat>
+                                                </tr>
+                                                <tr>
+                                                <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+                                                    <td class="paic_03 pc_bor_b pc_borb" >#{schedulingRecordDetailedHome.petArea.get(_petInfo.id).get(_dateInfo)}</td>
+                                                </a:repeat>
+                                                </tr>
+                                                <tr>
+                                                 <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+                                                    <td class="paic_03 pc_bor_b pc_borb" >#{stringUtil.floatFormat2(_petInfo.tunnelArea)}</td>
+                                                 </a:repeat>
+                                                </tr>
+                                                <tr>
+                                                <a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+                                                    <td class="paic_03 pc_bor_b pc_borb" >#{stringUtil.floatFormat2(_petInfo.tunnelArea - schedulingRecordDetailedHome.petArea.get(_petInfo.id).get(_dateInfo))}</td>
+                                                </a:repeat>
+                                                </tr>
+                                            </table>
+                                   </div> 
+                                   
+                                    <div class="paic_cz">
+                                        <table cellpadding="0" cellspacing="0" class="paic_table">
+                                            <tr style="display:#{_petindex eq 0 ?'':'none'}">
+                                                <td class="paicth1 paic_border" height="79" width="100" >操作</td>
+                                               
+                                            </tr>
+                                            <tr>
+                                                <td class="paic_th paic_border" height="119" width="100" ><span class="mar" onclick="marclick(#{_petindex});displayTag();">详情<br /><img style="margin-top:5px;" src="../asset/images/pcxq_03.jpg" width="9" height="5" /></span></td>
+                                            </tr>
+                                           
+                                        </table>
+                                    </div>
+                                <div class="clear"></div>   
+                            </div>	
+                          <div class="sslistted" id="sslistted#{_petindex}">
+                              <div class="_tccen">      
+                            	<div style="width:173px; float:left; border-bottom:1px solid #ddd; border-right:1px solid #ddd;">
+                                	<table cellpadding="0" cellspacing="0" class="khtable_01" width="173" height="80" >
+                                    	<tr>
+                                            <td rowspan="2" class="tc_pc00" width="70" style="border-bottom:none;">序号</td>
+                                            <td rowspan="2" class="tc_pc00" width="100" style="border-bottom:none;border-right: 1px solid #DDDDDD;">名称</td>
+                                        </tr>
+                                 	</table>       
+                                    <table cellpadding="0" cellspacing="0" class="khtable_01" width="173" style="border-top:1px solid #ddd;">
+                                    	<a:repeat value="#{schedulingRecordDetailedHome.srdListByPet.get(_petInfo.id)}" var="_srdbInfo" rowKeyVar="_srdbindex">
+                                        <tr>
+                                            <td class="tc_pc03" width="70">#{_srdbindex+1}</td>
+                                            <td class="tc_pc03" width="100" style="border-right: 1px solid #DDDDDD;">
+                                            <h:outputText value="#{_srdbInfo.breedId.name}..." title="#{_srdbInfo.breedId.name}——#{_srdbInfo.schedulingModelInfoId.name}"/></td>
+                                        </tr>
+                                        </a:repeat>
+                                	</table>
+                                </div>
+                                <div class="scr02"> 
+									<table cellpadding="0" cellspacing="0" class="tc_pctable">
+                                    	<tr>
+                                        	<a:repeat value="#{schedulingRecordDetailedHome.dateTime}" var="_dateInfo" rowKeyVar="_index">
+                                            	<td class="tc_pcccd">
+                                                	<table cellpadding="0" cellspacing="0" class="tcpctable">
+                                                    	<tr>
+                                                        	<td class="tc_pc07 tcs" height="40"><h:outputText value="#{_dateInfo.substring(2, _dateInfo.length())}"></h:outputText>月</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="tc_pc07 tcs">亩数</td>
+                                                        </tr>
+														<a:repeat value="#{schedulingRecordDetailedHome.srdListByPet.get(_petInfo.id)}" var="_srdbInfo" rowKeyVar="_srdbindex">
+                                                        <tr>
+                                                        	<td class="tc_pc04 tcs">
+                                                            	<h:panelGroup rendered="#{_srdbInfo.schedulingModelInfoId.plantEndTime gt _srdbInfo.schedulingModelInfoId.valueTime}">
+                                                            		#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) ge _srdbInfo.schedulingModelInfoId.valueTime and schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) le _srdbInfo.schedulingModelInfoId.plantEndTime ? _srdbInfo.area : 0.0}
+                                                            	</h:panelGroup>
+                                                            	<h:panelGroup rendered="#{_srdbInfo.schedulingModelInfoId.plantEndTime lt _srdbInfo.schedulingModelInfoId.valueTime}">
+                                                            		#{schedulingRecordDetailedHome.srdByDateTime.get(_dateInfo) ge _srdbInfo.schedulingModelInfoId.valueTime ? _srdbInfo.area : 0.0}
+                                                            	</h:panelGroup>
+                                                            </td>
+                                                        </tr>
+                                                        </a:repeat>
+                                                    </table>
+                                              	</td>
+                                            </a:repeat>
+										</tr>
+									</table>   
+                                </div>
+                                     <div class="clear"></div>                       
+                                </div><!--_tccen结束-->
+                               <div class="clear"></div>    
+                           </div>        
+	                       <div class="clear"></div>   
+                  </div>
+                 </a:repeat>	             
+               <div class="clear"></div>
+           </div> 
+           
+          </s:div><!--_ss-->   
+          </div><!--erbot-->
+
+        </div><!--padding-->      
+             <div style=" height:33px; text-align:right; margin:15px 5px;"> 
+	    		<s:button id="button" style="width:128px; height:37px;" image="../asset/images/order/retu_11.jpg" propagation="end" view="/scheduling/SchedulingRecordEdit.xhtml">
+	    			<f:param name="spId" value="#{schedulingRecordDetailedHome.yearString}" />
+	    		</s:button>
+			</div> 
+            <div class="clear"></div>
+          </div><!--right_c结束-->
+      </td>    
+    <!--右边结束-->
+<!--选择表格js开始-->
+ </ui:define>
+</ui:composition>

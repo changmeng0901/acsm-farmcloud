@@ -1,0 +1,602 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"	
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j" 
+    template="/layout/template_new_order.xhtml">
+
+<ui:define name="body">
+
+<td valign="top" >
+	<style>
+		.dr-table-footercell {
+		    background: none repeat scroll 0 0 #FFFFFF;
+		    border-bottom: 1px solid #C0C0C0;
+		    border-right: 1px solid #C0C0C0;
+		    color: #000000;
+		    font-family: Arial,Verdana,sans-serif;
+		    font-size: 14px;
+		    font-weight: bold;
+		    height: 35px;
+		    padding: 4px;
+		    text-align: right;
+		}
+		.stripe3 th a{
+		    color: #171717;
+		    font-family: "宋体";
+		    font-size: 12px;
+		
+		}
+		.dr-table {
+		    border-left: 1px solid #C0C0C0;
+		    border-right: 1px solid #C0C0C0;
+		}
+		.dr-sb-shadow {
+		    border: 1px solid;
+		    height: auto;
+		    position: absolute;
+		    width: 100%;
+		    z-index: 1;
+		}
+		.dr-pnl-b tr{
+		 	height:26px; line-height:26px;
+		}
+		.dr-rich-tool-tip {
+		    background-color: #FAE6B0;
+		    border: 1px solid #E5973E;
+		    display: none;
+		    float: left;
+		    font-family: Arial,Verdana,sans-serif;
+		    font-size: 11px;
+		    padding: 7px;
+		    position: absolute;
+		    min-height: 100px;
+		}
+		.dr-pnl{border-style:none;border:none; width: 100%; padding:0;}
+		.dr-pnl-b{font-size:12px; width: 100%; padding:0;}
+		.dr-sb-ext-decor-2 {
+		    background-color: #FFFFFF;
+		    border:1px solid #bed6f8;
+		}
+		.dr-sb-common-container {
+		    text-align: center;
+		}
+		.dr-table-cell {
+		    border-bottom: 1px solid #C0C0C0;
+		    border-right: 1px solid #C0C0C0;
+		    color: #000000;
+		    font-family: Arial,Verdana,sans-serif;
+		    background-color:
+		    font-size: 11px;
+		    padding: 4px;
+		}
+		.dr-sb-int-sel {
+		    background-color: #BED6F8;
+		    background-image:none;
+		    color: #000000;
+		    font-family: Arial,Verdana,sans-serif;
+		    font-size: 11px;
+		}
+		.th1{width: 30%;}
+		.th2{width: 30%;}
+		.th3{width: 30%;}
+		.search_table .input{width:157px;}
+		.dr-pnl{background:none}
+		.td_img_big{width:75px; height:75px; border:1px solid #f0f0f0; display:block;}
+		.td_img{width:40px; height:40px; border:1px solid #f0f0f0; display:block;}
+		.cath{ height:32px; line-height:32px; font-size:12px; text-align:center; border-left:1px solid #ccc; }
+		.catd{ padding:5px 0; line-height:25px; font-size:12px; text-align:center;}
+		.carp input{ width:45px; height:18px; text-align:center;border:1px solid #ccc;}
+		.list_td {background: url("../asset/images/order/calls_y8.jpg") repeat-y scroll right center rgba(0, 0, 0, 0);min-height: 304px;}
+		.lis2_table {width: 100%;}
+		.right_b{height:auto;}
+		.left_b{height:auto;}
+		.dr-pnl{border:0px;}
+		.dr-pnl{border-style:none;border:none; width: 100%; padding:0;}
+		.fr{float:right;}
+		 .r_ulli1{float:right;} 
+	</style>
+	<div class="right_c">
+		<div class="r_title">
+			<div class="r_t_l cm_r_t_l"><span>计划&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/contract/PurchaseContractList.seam">外采</a></span><em>&gt;</em><font size="3">选择商品</font><rich:messages styleClass="messages"></rich:messages></div>
+<!--                         <div class="tabLink fr" style="margin:8px 0 0 5px;float: right;"> -->
+<!--                         	<a class="link1 cur" href="#{request.contextPath}/contract/PurchaseContractList.seam">外采管理</a> -->
+<!--                         	<span class="line"></span><a class="link2" href="#{request.contextPath}/contract/PurchaseMemberInfoListOne.seam">供应商管理</a> -->
+<!--                         </div> -->
+        </div>
+        
+        <!-- Modal 添加产品弹窗开始 -->
+								<div class="modal fade" id="myModalAdd" tabindex="-1" role="dialog"
+									aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog" style="width:400px;">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">
+												</button>
+												<h4 class="modal-title font14" id="myModalLabel">生成商品</h4>
+											</div>
+											<div class="modal-body" style="padding-bottom: 0;">
+												<h5 class="modal-title font14" id="mesg" style="color:red;margin-bottom:10px;">*请选择您的种植信息/模型库中的作物自动生成相应商品！</h5>
+												<table class="farmingMageTab_fjxx" style="width:100%;">
+													<tr id="easy">
+														<td width="80" align="right">种植信息:</td>
+														<td width="242" style="padding-left: 15px;">
+															<select id="mateId" class="selectpicker" data-live-search="true" multiple="multiple">
+																<option value="-1">请选择</option>
+																<a:repeat value="#{purchaseContractHome.cropInfoList}" var="_floristics">
+																	<s:fragment rendered="#{!_floristics[2]}">
+																		<option value="#{_floristics[0]}" disabled="disabled">#{_floristics[1]}</option>
+																	</s:fragment>
+																	<s:fragment rendered="#{_floristics[2]}">
+																		<option value="#{_floristics[0]}">#{_floristics[1]}</option>
+																	</s:fragment>
+																</a:repeat>
+			                                				</select>
+                        								</td>
+														
+													</tr>
+													<tr>
+														<td height="20"></td>
+													</tr>
+													<tr></tr>
+													<tr id="diff1" >
+														<td width="80" align="right">模型库:</td>
+														<td width="242" style="padding-left: 15px;">
+															<select id="modelId" class="selectpicker" data-live-search="true" multiple="multiple">
+																<option value="-1">请选择</option>
+																<a:repeat value="#{purchaseContractHome.modelList}" var="_floristics">
+																	<s:fragment rendered="#{!_floristics[2]}">
+																		<option value="#{_floristics[0]}" disabled="disabled">#{_floristics[1]}</option>
+																	</s:fragment>
+																	<s:fragment rendered="#{_floristics[2]}">
+																		<option value="#{_floristics[0]}">#{_floristics[1]}</option>
+																	</s:fragment>
+																</a:repeat>
+			                                				</select>
+														</td>
+													</tr>
+												</table>
+											</div>
+											<input  type="hidden"  value="" id="maid"/>
+											<input  type="hidden"  value="" id="moid"/>
+											<div class="modal-footer" style="text-align:center;">
+												<input type="button" class="btn btn-primary jilubutton" value="生成" onclick="checkProductName()"></input>
+												<button type="button" onclick="goBack()"
+													class="btn btn-default">返回</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							  
+							
+							<!-- Modal 添加产品弹窗 结束 -->
+	<table width="100%" cellpadding="0" cellspacing="0" style=" margin-top:-3px; *margin-top:-3px; _margin-top:-9px;">
+		<tr>
+        	<td><div class="j001"></div></td>
+        	<td><div class="top_b_g"></div></td>
+        	<td><div class="j002"></div></td>
+   		</tr>
+   		<tr>
+   			<td height="100%"><div class="left_b"></div></td>
+   			<td align="center" valign="top" >
+   				<div class="rigtjr">
+   					<div class="con_left">
+						<div id="rightPanel" class="con_right">
+							<div class="call_com">
+							<div class="list_block">
+								<div class="list_title list_title01">供应商基本信息</div>
+                                <div class="list_ta">
+									<div class="list_ta01">
+										<div ></div>
+									</div>
+								</div>
+								<div class="list_tc">
+									<div >
+							    		<!--添加供应商基本信息模板  -->
+											<table width="100%" cellpadding="0" cellspacing="0" class="str_t">
+												<tr class="alt">
+													<td valign="middle" class="str_td">供应企业：</td>
+													<td valign="middle" class="str_text"><h:outputText
+														value="#{purchaseContractHome.memberInfo.realname}" /></td>
+													<td class="str_td">邮编：</td>
+													<td class="str_text">
+														<h:outputText
+														value="#{purchaseContractHome.memberInfo.homePort}" />
+													</td>
+												</tr>
+												<tr >
+													<td valign="middle" class="str_td">联系人：</td>
+													<td valign="middle" class="str_text" ><h:outputText
+														value="#{purchaseContractHome.memberInfo.nickName}" /></td>
+													<td valign="middle" class="str_td">联系人电话：</td>
+													<td valign="middle" class="str_text"><h:outputText
+														value="#{purchaseContractHome.memberInfo.phone}" /></td>
+												</tr>
+												
+												<tr class="alt">
+													<td class="str_td">性&#160;&#160;&#160;&#160;&#160;&#160;别：</td>
+													<td class="str_text">
+														<h:outputText value="#{purchaseContractHome.memberInfo.sex==1?'男':''}"/>
+														<h:outputText value="#{purchaseContractHome.memberInfo.sex==2?'女':''}"/>
+														<h:outputText value="#{purchaseContractHome.memberInfo.sex==3?'其它':''}"/>
+													</td>
+													<td valign="middle" class="str_td">Email：</td>
+													<td valign="middle" class="str_text">
+														<h:outputText value="#{purchaseContractHome.memberInfo.email}" />
+													</td>
+												</tr>	
+												<tr>
+													<td valign="middle" class="str_td">地&#160;&#160;&#160;&#160;&#160;&#160;&#160;址：</td>
+													<td valign="middle" class="str_text" colspan="3"><h:outputText
+														value="#{purchaseContractHome.memberInfo.workAddress}" /></td>
+												</tr>
+												<tr class="alt">
+													<td valign="middle" class="str_td">备&#160;&#160;&#160;&#160;&#160;&#160;&#160;注：</td>
+													<td valign="middle" class="str_text" colspan="3"><h:outputText
+														value="#{purchaseContractHome.memberInfo.remark}" /></td>
+												</tr>
+											</table>
+									</div>
+								</div>
+								<div >
+									<div >
+										<div ></div>
+									</div>
+							   </div>
+	                       <div class="clear"></div>
+                           </div> 
+                           
+                        <div class="list_block">   
+							<div class="list_title list_title02">订购时间范围选择</div>
+								<div class="car_list">
+									<table style="float:left; display:inline;"  >
+										<tr valign="middle">
+											<td width="180" align="left" style="font-size: 16px;">外采订购时间范围：</td>
+											<td width="175"  align="left">
+												<div class="input-append date form_datetime " >
+											    	<h:inputText  styleClass="new_time" id="beginTime" value="#{purchaseContractHome.beginTime}"/>
+											    	<span class="add-on"><i class="icon-th"></i></span>
+											    </div>
+											</td>
+											<td width="45" align="center"  style="font-size: 16px;" >至</td>
+											<td width="175"  align="left">
+												<div class="input-append date form_datetime " >
+											    	<h:inputText  styleClass="new_time" id="endTime" value="#{purchaseContractHome.endTime}"/>
+											    	<span class="add-on"><i class="icon-th"></i></span>
+											    </div>
+											</td>
+										</tr>
+										<tr valign="middle" style="height: 50px;">
+											<td width="180" align="left" style="font-size: 16px;">外采签订时间：</td>
+											<td width="175"  align="left">
+												<div class="input-append date form_datetime2 " >
+											    	<h:inputText  styleClass="new_time" id="signingTime" value="#{purchaseContractHome.signingTime}"/>
+											    	<span class="add-on"><i class="icon-th"></i></span>
+											    </div>
+											</td>
+											<td width="30" align="left"  style="font-size: 16px;" ></td>
+											<td width="120"  align="left">
+											</td>
+										</tr>
+									</table>
+	                       		</div>
+	                       	<div class="clear"></div>
+	               		</div> 								    
+                           
+	                   <div class="list_block "> 
+	                   <button id="divmyModal" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" style="display: none;"/>
+				    	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+							    	<div class="modal-header">
+							        	<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							        		<h4 class="modal-title" id="myModalLabel">提示信息</h4>
+							      		</div>
+							      	<div class="modal-body" id="productMsg"></div>
+							      	<div class="modal-footer">
+							        	<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+							      	</div>
+						    	</div>
+						  	</div>
+						</div>
+							<div class="cpccxx">
+								<div class="list_title3">产品添加购物车</div>
+							</div>
+	                        <div style="height: 40px;float: left;" >
+                        		<div class="ui-widget">
+                        			<table>
+                        				<tr>
+                        					<td style="font-size: 16px;font-family:'微软雅黑';width: 80px;">
+                        					品种选择：
+                        					</td>
+                        					<td style="width: 200px;" align="center">
+											<select id="combobox" class="selectpicker nw100" data-live-search="true">
+	                                    		<ui:repeat value="#{contractHome.getProductList()}" var="productInfo" >
+			                                        <option value="#{productInfo.productInfoId}">#{productInfo.name}</option>
+		                                        </ui:repeat>
+	                                        </select>
+                        					</td>
+                        					<td style="width: 50px;" valign="middle">
+				                              	<a href="javascript:void(0);" onclick="if(!submitProduct()){return false;};" class="btn btn-success" style="margin-left:15px;display: block;">
+						                    		添加
+						                    	</a>
+                        					</td>
+                        					<td style="width: 300px;" valign="middle">
+				                              	没有找到您需要的商品？<a href="javascript:void(0);" onclick="addProduct();" class="" >
+						                    		自动生成商品
+						                    	</a>
+                        					</td>
+                        				</tr>
+                        			</table>
+								</div>
+	                        </div>
+	                       	<div class="clear"></div>
+	               		</div> 	
+	                   <div class="list_block">   
+								<div class="car_list">
+									<rich:dataTable width="100%" id="cartList" var="_cartList" styleClass="car_table" value="#{purchaseContractHome.cartList}" 
+							              onRowMouseOver="this.style.backgroundColor='#e5f6ec'" onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'" rowKeyVar="index">
+								        <h:column headerClass="th1" >
+								        	<f:facet name="header">商品编号</f:facet>
+								            <center>
+								            	<h:outputText value="#{_cartList.productCode}"/>
+								            </center>
+								        </h:column>
+								        <h:column headerClass="th2">
+								        	<f:facet name="header">商品</f:facet>
+								        	<center>
+								        		<h:outputText value="#{_cartList.name}"/>
+							        		</center>
+								        </h:column>
+								        <h:column headerClass="th3">
+								        	<f:facet name="header">商品规格</f:facet>
+								            <center>
+								            	<h:outputText value="Kg" />
+								            </center>
+								        </h:column>
+								      
+								        <rich:column styleClass="action" width="10%" >
+								            <f:facet name="header">操作</f:facet>
+							            	<table class="ps" align="center">
+            		  							<tr>
+                   									<td>
+									            		<a href="javascript:void(0);" onclick="delOneProduct(#{index});">删除</a>
+			            							</td>
+		            							</tr>
+	            							</table>
+								        </rich:column>
+								    </rich:dataTable>
+								    <rich:panel id="totalPenal" style="width:100%;">
+								    <table class="car_table"  width="100%" style="border-top: none; border-color: #ccc;">
+								    	<tr>
+		                                    <td colspan="11" style="border-bottom:none; padding-bottom:10px;">
+		                                       <div class="car_dl"><a href="javascript:void(0);" onclick="if(confirm('确定要清空购物车？清空后商品采购详情无法还原！'))clearProductAll();">清空购物车</a></div>
+		                                       <div class="car_ul">
+		                                      
+		                                       </div>
+		                                    </td>
+	                                    </tr>
+								    </table>
+								    </rich:panel>
+	                                <div class="car_button">
+	                                	<h:inputHidden id="carsize" value="#{sessionTake.cartList.size}"/>
+								    	<h:form id="productCountFrom" style="wid" >
+								    		<h:inputHidden id="beginTime" value="#{purchaseContractHome.beginTime}"/>
+								    		<h:inputHidden id="endTime" value="#{purchaseContractHome.endTime}"/>
+								    		<h:inputHidden id="signingTime" value="#{purchaseContractHome.signingTime}"/>
+								    		<s:button view="/contract/PurchaseMemberInfoList.xhtml" styleClass="btn btn-default" value="返回" id="cancel" propagation="end">
+								    			<f:param name="baseId" value="#{purchaseContractHome.baseId}"/>
+								    			<f:param name="pageNum" value="#{purchaseContractHome.pageNum}"/>
+								    			<f:param name="pageNumh" value="#{purchaseContractHome.pageNumh}"/>
+								    		</s:button>
+								    		&#160;&#160;&#160;&#160;
+											<h:commandButton id="persist" styleClass="btn btn-primary"  action="#{purchaseContractHome.cartEnd}" value="下一步" onclick="if(!getProductCheck()){return false;};">
+												<f:param name="baseId" value="#{purchaseContractHome.baseId}"/>
+												<f:param name="pageNum" value="#{purchaseContractHome.pageNum}"/>
+								    			<f:param name="pageNumh" value="#{purchaseContractHome.pageNumh}"/>
+											</h:commandButton>
+								    	</h:form>
+	                                </div>
+	                       		</div>
+	                       	<div class="clear"></div>
+	               		</div> 								
+					</div>
+					</div>
+                    </div>
+				</div>
+   			</td>
+   			<td><div class="right_b"></div></td>
+   		</tr>
+   		<tr>
+   			<td valign="top" width="21"><div class="j003"></div></td>
+            <td><div class="bot_b_g"></div></td>
+            <td valign="top" width="21"><div class="j004"></div></td>
+   		</tr>
+   	</table>
+  	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+		<a:jsFunction name="clearOneProduct" action="#{purchaseContractHome.clearOneProduct}" reRender="cartList">
+			<a:actionparam name="index" assignTo="#{purchaseContractHome.index}"/>
+		</a:jsFunction>
+		<a:jsFunction name="clearCartAll" action="#{purchaseContractHome.clearCartAll}" reRender="cartList"/>
+		<a:jsFunction name="showListFiltel" action="#{purchaseContractHome.loadProductFind}" reRender="showPanel">
+			<a:actionparam name="searchName" assignTo="#{purchaseContractHome.searchName}"/>
+		</a:jsFunction>
+		<a:jsFunction name="insertPE" action="#{purchaseContractHome.insertPE}" reRender="cartList,carsize" oncomplete="jquery('#login').hide();">
+			<a:actionparam name="productInfoId" assignTo="#{purchaseContractHome.productInfoId}"/>
+		</a:jsFunction>
+	
+	<a:jsFunction name="addCommoInfo" action="#{purchaseContractHome.addCommoInfo}" >
+			<a:actionparam name="mateIds" assignTo="#{purchaseContractHome.mateIds}"/>
+			<a:actionparam name="modelIds" assignTo="#{purchaseContractHome.modelIds}"/>
+	</a:jsFunction>
+	<a:jsFunction name="checkName" action="#{purchaseContractHome.checkName}" data="#{purchaseContractHome.returnString}" oncomplete="insert(data)">
+			<a:actionparam name="mateIds" assignTo="#{purchaseContractHome.mateIds}"/>
+			<a:actionparam name="modelIds" assignTo="#{purchaseContractHome.modelIds}"/>
+	</a:jsFunction>
+	</a:form>
+<script type="text/javascript">
+//<![CDATA[
+    jquery(document).ready(function(){
+		jquery('#mateId').selectpicker({noneSelectedText:"请选择"});
+		jquery('#modelId').selectpicker({noneSelectedText:"请选择"});
+	});
+	jquery(".form_datetime").datetimepicker({
+    	format: "yyyy-mm",
+  		language:  'zh-CN',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 3,
+		minView: 3,
+		forceParse: 0,
+		pickerPosition: "bottom-left"
+	 });
+	 jquery(".form_datetime2").datetimepicker({
+	    format: "yyyy-mm-dd",
+	    autoclose: true,
+		weekStart: 1,
+		minView:2,
+		language:  'zh-CN',
+	    pickerPosition: "bottom-left"
+	  });   
+	  window.onload = function () {
+	    jquery('.selectpicker').selectpicker();
+	  };
+
+	
+    //添加选中商品到购物车
+    function submitProduct(){
+        var str = jquery("#combobox").val();
+		if (str != '') {
+			jquery("#login").show();
+			insertPE(str);
+	    	return true;
+		}else {
+			return false;
+		}
+    }
+
+  	//获得添加到购物车的商品数量
+    function getProductCheck(){
+    	var count = document.getElementById("carsize").value;
+    	var beginTime = document.getElementById("beginTime").value;
+        var endTime = document.getElementById("endTime").value;
+        var signingTime = document.getElementById("signingTime").value;
+
+        var arr = beginTime.split("-");
+        var starttime = new Date(arr[0], arr[1]);
+        var starttimes = starttime.getTime();
+
+        var arrs = endTime.split("-");
+        var lktime = new Date(arrs[0], arrs[1]);
+        var lktimes = lktime.getTime();
+    	
+      	if(count == 0){
+      		document.getElementById("productMsg").innerHTML = "请至少添加一个商品到购物车!";
+      		jQuery("#divmyModal").click();
+			return false;
+        }
+        if (starttimes >= lktimes) {
+        	document.getElementById("productMsg").innerHTML = "外采订购开始时间不能大于等于外采订购结束时间!";
+			jQuery("#divmyModal").click();;
+			return false;
+        }
+        if(beginTime == ""){
+        	document.getElementById("productMsg").innerHTML = "外采订购开始时间不能为空!";
+			jQuery("#divmyModal").click();;
+			return false;
+        }
+        if(endTime == ""){
+        	document.getElementById("productMsg").innerHTML = "外采订购结束时间不能为空!";
+			jQuery("#divmyModal").click();;
+			return false;
+        }
+        document.getElementById("productCountFrom:beginTime").value = beginTime;
+        document.getElementById("productCountFrom:endTime").value = endTime;
+        document.getElementById("productCountFrom:signingTime").value = signingTime;
+        return true;
+    }
+
+	//清空购物车
+	function clearProductAll(){
+		clearCartAll();
+	}
+
+	//删除单个
+	function delOneProduct(index){
+		if(confirm('确定删除商品吗？删除后商品采购详情无法还原。')){
+			clearOneProduct(index);
+		}
+	}
+
+
+	function addProduct(){
+		jquery("#myModalAdd").modal("show");
+	}
+
+	function goBack(){
+		  jquery("#myModalAdd").modal("hide");
+	 }
+
+	 function insert(){
+		 jquery("#maid").val(jquery("#mateId").val());
+		 jquery("#moid").val(jquery("#modelId").val());
+		var mateIds = jquery("#maid").val();
+		var modelIds = jquery("#moid").val();
+		if(mateIds == null && modelIds == null){
+			alert("种植和模型至少选择一种");
+			return false;
+		}
+		if(confirm("自动生成商品规格默认为kg，并且规格生成后不能修改，确认生成？")){
+			addCommoInfo(mateIds,modelIds);
+		}else{
+			 jquery("#myModalAdd").modal("hide");
+			 jquery("#mateId").val(null);
+			 jquery("#modelId").val(null);
+		}
+	}
+
+	//检测商品是否存在
+	 function checkProductName(){
+		 jquery("#maid").val(jquery("#mateId").val());
+		 jquery("#moid").val(jquery("#modelId").val());
+		var mateIds = jquery("#maid").val();
+		var modelIds = jquery("#moid").val();
+		if(mateIds == "" && modelIds == ""){
+			alert("种植和模型至少选择一种");
+			return false;
+		}
+		if(confirm("自动生成商品规格默认为kg，并且规格生成后不能修改，确认生成？")){
+			checkName(mateIds,modelIds);
+		}else{
+			 jquery("#myModalAdd").modal("hide");
+			 jQuery("#mateId").selectpicker("val",null);
+			 jQuery("#modelId").selectpicker("val",null);
+		}
+	}
+
+		//插入商品方法
+		function insert(data){
+			jquery("#maid").val(jquery("#mateId").val());
+			 jquery("#moid").val(jquery("#modelId").val());
+			var mateIds = jquery("#maid").val();
+			var modelIds = jquery("#moid").val();
+			if(data == "no"){
+				addCommoInfo(mateIds,modelIds);
+			}else{
+				alert("已存在"+data+",不允许添加!");
+				return false;
+			}
+		}
+//]]>
+</script>
+</div>
+</td> 
+</ui:define>
+</ui:composition>

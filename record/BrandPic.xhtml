@@ -1,0 +1,145 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_img.xhtml">
+
+<ui:define name="body">
+      <style>
+		body {    font-size: 14px;
+	    color: #000;
+	    font-family:"微软雅黑"; height:100%;
+	    line-height: 150%;
+	    margin: 0;
+	    padding: 0;
+	}
+	a:focus {
+	    outline:none;
+	    -moz-outline:none;
+	} 
+	html{ height:100%;}
+	h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form, p,input {
+	    border: medium none;
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	}
+	a{text-decoration:none;}
+	.file-block{
+		position:relative;
+		width:130px;
+		height:130px;
+		overflow:hidden;
+		background:#f1f1f1;
+		}
+	.file-block img{
+		width:100%;
+		min-height:100%;
+		}
+      .file-block .flie-btn{
+     	left:50%-;
+     	top:50%-;
+     	z-index:2;
+      	width:130px;
+      	height:130px;
+      	line-height:28px;
+      	margin:-15px 0 0 -40px-;      	border-radius:4px;
+      	box-sizing:border-box;
+      	font-size:14px;
+      	text-align:center;
+      	color:#333;
+      	cursor:pointer;
+      	}
+      .file-block .flie-btn	.BrandUrl{
+      	position:absolute;
+      	left:0;
+      	top:0;
+      	z-index:5;
+      	width:100%;
+      	height:100%;
+      	font-size:20px;
+      	cursor:pointer;
+      	opacity:0;
+      	filter:alpha(opacity=0);
+      	}
+      	.file-block{ position:relative;}
+      	.fclose_btn{ position:absolute; right:0; top:0; display:none; width:27px; height:23px; background:url(/asset/images/clo_04.jpg) no-repeat; cursor:pointer;}
+     	.file-block:hover .cur_btn{ display:block;}
+     	.hide{display:none}
+     	.rich-panel,
+     	.rich-panel-body{padding:0;}
+      </style>
+
+	<script  type="text/javascript">
+	//<![CDATA[
+	 var bucket_type = "#{dataDicConstant.getBucketType()}";
+     var oss_url="";   
+     if(bucket_type=="3"){
+         oss_url = "http://img5.farmeasy.cn/";
+      }else{
+    	 oss_url = "http://img4.farmeasy.cn/";
+      }   
+	  function previewImage(id,file){
+            	jquery("#inputsImages\\:insertImages").click();
+      }
+      function del(){
+    	  jquery("#inputsImages\\:hiddenUrl").val("");
+  		jquery("#inputsImages\\:hiddenUrlName").val("");
+  		jquery("#inputsImages\\:insertImages").click();
+      }
+	function apply(num,obj){
+		var entId='#{sessionTake.getEnterpriseInfoId()}';
+		if(num==1){
+			set_upload_param(uploader1, '', false,obj,entId);
+		}else if(num==2){
+			set_upload_param(uploader2, '', false,obj,entId);
+		}else if(num==3){
+			set_upload_param(uploader3, '', false,obj,entId);
+		}
+		
+	}
+
+	function callback(){
+		var url=jquery("b1").text();
+		var picName = jquery("#ossfile1").find("#honorFile").html();
+		jquery("b1").parent().remove();
+		jquery("#inputsImages\\:hiddenUrl").val(url);
+		jquery("#inputsImages\\:hiddenUrlName").val(picName);
+		jquery("#inputsImages\\:insertImages").click();
+	}
+
+	//]]>
+	</script>
+	
+    <h:form id="inputsImages" styleClass="edit" enctype="multipart/form-data">
+    <rich:panel  id="brandPic" style="border:0px;float:none;">
+		<div class="file-block">
+			<i class="fclose_btn #{phoneModelInfoHome.imgUrlBrand ne null and phoneModelInfoHome.imgUrlBrand ne ''?'cur_btn':''}" onclick="del()"></i>
+			<!-- <s:fragment rendered="#{phoneModelInfoHome.imgUrlBrand ne null and phoneModelInfoHome.imgUrlBrand ne '' }"> 
+			class="#{phoneModelInfoHome.imgUrlBrand eq null or phoneModelInfoHome.imgUrlBrand eq ''?'hide':''}"-->
+				<img src="#{phoneModelInfoHome.imgUrlBrand}" width="130px" height="130px"  id="showImg"  class="#{phoneModelInfoHome.imgFlag gt 0 ? '':'hide'}"/>
+		   	<!-- </s:fragment> -->
+			<div class="flie-btn #{phoneModelInfoHome.imgUrlBrand eq null or phoneModelInfoHome.imgUrlBrand eq ''?'':'hide'}">
+				<div id="container1">
+					<div  id="selectfiles1" class='btn'><img src="/asset/images/farmingIco15.jpg" width="130" height="130"/></div>
+							<a style="display:none" id="postfiles1" href="javascript:void(0);" class='btn' onclick="apply(1,32);" ></a>
+							<a style="display:none" id="callback1" href="javascript:void(0);" class='btn' onclick="callback();" ></a>
+				</div>
+			</div>
+		</div>
+		<div id="ossfile1" ></div>
+		<h:inputHidden value="#{phoneModelInfoHome.imgUrlBrand}" id="hiddenUrl"/>
+		<h:inputHidden value="#{phoneModelInfoHome.imgUrlNameBrand}" id="hiddenUrlName"/>
+		</rich:panel>
+		<h:commandButton id="insertImages"  styleClass="edit_save" action="#{phoneModelInfoHome.brandUpload}" style="display:none;" />
+    </h:form>
+<script type="text/javascript" src="#{request.contextPath}/asset/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/record/BrandPicUpload.js"></script>
+</ui:define>
+
+</ui:composition>

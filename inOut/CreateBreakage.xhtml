@@ -1,0 +1,584 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+<script src="#{request.contextPath}/asset/js/common-acsm.js"/>
+<style>
+	.input-append.date .add-on i, .input-prepend.date .add-on i {
+	    cursor: pointer;
+	    height: 14px;
+	    margin-left: -19px;
+	    margin-top: 7px;
+	    width: 14px;
+	}
+	.catd {
+	    font-size: 12px;
+	    line-height: 25px;
+	    padding: 5px 0;
+	    text-align: center;
+	}
+	.form_datetime input {
+	    border: 1px solid #ccc;
+	    float: left;
+	    height: 30px;
+	    line-height: 30px;
+	    width: 220px;
+	}	
+	a:focus {
+		outline:none;
+		-moz-outline:none;
+	}
+	.new_da {
+	    display: inline-block;
+	    float: none;
+	    margin-bottom: 15px;
+	    margin-right: 50px;
+	    min-height: 30px;
+	    min-width: 310px;
+	}
+	.dr-pnl {
+	    padding: 0px;
+	    border: none;
+	}
+	.dr-pnl-b {
+	    padding: 0px;
+	    border: none;
+	}
+	.catd {
+	    font-size: 12px;
+	    line-height: 25px;
+	    padding: 5px 0;
+	    text-align: center;
+	}
+	.form_datetime input {
+	    border: 1px solid #ccc;
+	    float: left;
+	    height: 30px;
+	    line-height: 30px;
+	    width: 220px;
+	}	
+	a:focus {
+		outline:none;
+		-moz-outline:none;
+	}
+	.new_da {
+	    display: inline-block;
+	    float: none;
+	    margin-bottom: 15px;
+	    margin-right: 50px;
+	    min-height: 30px;
+	    min-width: 310px;
+	}
+	.dr-pnl {
+	    padding: 0px;
+	    border: none;
+	}
+	.dr-pnl-b {
+	    padding: 0px;
+	    border: none;
+	}
+	.newble12 {width: 99%;}
+	.dr-table-subheadercell{background:#f3f7fc; line-height:36px;}
+	.dr-table-subheadercell{background:#f0f5fb; padding:0; line-height:36px; color:#4d4d4d; font-size:14px; font-family:"微软雅黑"; font-weight:normal;}
+	.dr-table-cell{color: #000; font-family:"微软雅黑"; font-size: 12px;}
+	.form-control{ font-size:12px;}
+	.rich-panel{border-style:none;}
+</style>
+
+<script type="text/javascript">
+jquery(document).ready(function(){
+	jquery('.b1').attr("data-live-search","true");
+	jquery(".selectpicker").selectpicker();
+	jquery("#breakageTime").val('#{repertoryChange.nowDate}');
+	jquery(".form_datetime").datetimepicker({
+		format: "yyyy-mm-dd hh:ii",
+	    autoclose: true,
+		weekStart: 1,
+		//startDate: new Date(),
+		language:  'zh-CN',
+	    pickerPosition: "bottom-left"
+	});
+});
+document.getElementById("selectBaseDiv").style.display="none";
+</script>
+<td valign="top" width="100%">
+	<div class="right_c">
+		<div class="r_title">
+			<div class="r_t_l">加工&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/inOut/StockRecord.seam">库存</a>&#160;&gt;&#160;&#160;<font size="3">出库管理</font>
+			</div>
+		</div>
+		#{breakageControl.breakageControlInit()}
+		<div class="all_d3" style=" margin-top:35px;">
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">所属库房：</td>
+						<td width="205">
+							<h:selectOneMenu styleClass="selectpicker" value="#{breakageControl.storageRoomId}"  id="storageRoomId" onchange="storageRoomChecked();">
+								<s:selectItems var="_storage" value="#{breakageControl.storageRoomList}" label="#{_storage.name}" itemValue="#{_storage.storageRoomId}" />
+							</h:selectOneMenu> 
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">操作人：</td>
+						<td><h:selectOneMenu styleClass="selectpicker b1 pers1" id="operater" value="#{breakageControl.operater}" onchange="personCheecked()">
+								<s:selectItems var="_attn" value="#{breakageControl.perList}" label="#{_attn[1]}" itemValue="#{_attn[0]}" />
+						</h:selectOneMenu></td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">报损时间：</td>
+						<td>
+							<div class="input-append date form_datetime " >
+								<input id="breakageTime" size="22" type="text" value="" readonly="readonly"></input>
+								<span class="add-on"><i class="icon-th"></i></span>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="new_da">
+				<table>
+					<tr>
+						<td class="all_tenew">操作时间：</td>
+						<td>#{dateUtil.getCurrentTime('yyyy-MM-dd HH:mm')}</td>
+					</tr>
+				</table>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="erlist2" style="margin-top:35px;">
+			<ul>
+				<li class="current" id="tab1"><a href="javascript:void(0);">搜索</a></li>
+			</ul>
+		</div>
+		<div class="erbox2">
+			<div id="tar1">
+				<div class="z_r_ser" style="margin:12px 0 30px;">
+					<table cellpadding="0" cellspacing="0" class="cxtja" style="width:547px">
+						<tr>
+							<td width="80" style="font-size:14px;"><span id="searchTitle">名称</span>：</td>
+							<td width="340">
+								<input type="text" id="searchName"  value="" class="form-control"/>
+							</td>
+							<td width="40" align="left">
+								<a href="javascript:void(0);" class="list_search searchClass" onclick="searchButton();"></a>
+							</td>
+						</tr>
+					</table>   
+				</div>
+				<rich:panel style="width:100%;" id="showPanel">
+				<div id="addTableDiv" style="border: 1px solid #DDDDDD; width:99%; margin:0 auto;  [;text-align:left;]; background: url(../asset/images/order/next_bg_24.jpg) repeat-x; color:#4e4d4d; border-right:1px solid #ccc; float: left;">
+					<div style="overflow-y:scroll;">
+					<table width="100%" cellspacing="0" cellpadding="0" border="0" style=" border-collapse:collapse; width:100%;   float:left;">
+						<tr>
+							<th class="catd" width="5%"><input type="checkbox" id="productCheckAll" onclick="selectedAll();"/></th>
+							<th class="catd" width="15%" >物料批次</th>
+							<th class="catd" width="10%" >来源</th>
+							<th class="catd" width="15%" >物料名称</th>
+							<th class="catd" width="15%" >物料规格</th>
+							<th class="catd" width="13%" >计量单位</th>
+							<th class="catd" width="13%" >物料数量</th>
+							<th class="catd" width="14%" >商品价格</th>
+						</tr>
+					</table>
+					</div>
+					<div style="width:100%; height:200px; overflow-y:scroll; overflow-x:hidden; margin:0 auto;  border-right:0px solid #ccc;">
+						<table width="100%" cellspacing="0" cellpadding="0" border="0">
+							<a:repeat value="#{breakageControl.showGoodsBatchList}" var="_showProduct" >
+								<tr>
+									<td class="catd" width="5%">
+										<input type="checkbox" onclick="selectedOne();" name="productCheck" id="productCheck" value="#{_showProduct.goodsBatchId}|" />
+									</td>
+									<td class="catd" width="15%"><h:outputText value="#{_showProduct.batchCode}"/></td>
+									<td class="catd" width="10%"><h:outputText value="#{_showProduct.tunnelName}"/></td>
+									<td class="catd" width="15%"><h:outputText value="#{_showProduct.name}"/></td>
+									<td class="catd" width="15%"><h:outputText value="#{_showProduct.goodsSpec}"/></td>
+									<td class="catd" width="13%"><h:outputText value="#{stockControl.getGoodsUnitName(_showProduct.goodsUnit)}"/></td>
+									<td class="catd" width="13%"><h:outputText value="#{_showProduct.goodsNum}"><f:convertNumber pattern="#.###"/></h:outputText></td>
+									<td class="catd" width="14%">￥<h:outputText value="#{_showProduct.price}"><f:convertNumber pattern="#0.00"/></h:outputText></td>
+								</tr>
+							</a:repeat>
+						</table>
+					</div>
+				</div>
+				</rich:panel>
+				<div class="clear"></div>
+				<div id="addGoodsInfoDiv" class="tjan_02" style=" width:100%; text-align:left; margin-top:27px; padding-bottom:27px;margin-left:30px;">
+					<a style="width:44px; height:30px;" href="javascript:void(0);" onclick="if(!submitProduct()){return false;};">
+						<img src="#{request.contextPath}/asset/images/tj_03.jpg" width="44" height="30" />
+					</a>
+				</div>
+			</div>
+		</div>
+		<rich:panel id="totalPenal" style="width:100%; margin-top:35px;">
+			<rich:dataTable width="99%" id="cartList" var="_cartList" styleClass="newble12" value="#{breakageControl.pickGoodsBatchList}" rowKeyVar="_index">
+		        <h:column>
+		        	<f:facet name="header">批次编号</f:facet>
+		            <center>
+		            	<h:outputText value="#{_cartList.batchCode}"/>
+		            	<input type="hidden" value="#{_cartList.goodsBatchId}" id="hiddenGoodsKey#{_index}"></input>
+		            </center>
+		        </h:column>
+		        <h:column>
+		        	<f:facet name="header">物料名称</f:facet>
+		            <center>
+		            	<h:outputText value="#{_cartList.name}"/>
+		            </center>
+		        </h:column>
+		        <h:column>
+		        	<input type="hidden" value="#{_cartList.oldGoodsNum}" id="oldGoodsNum#{_cartList.goodsBatchId}"/>
+		        	<f:facet name="header">物料数量</f:facet>
+		        	<center>
+						<input class="form-control _number" style="text-align: center;" onblur="updateNum(#{_cartList.goodsBatchId},this.value,2, this.id,#{_cartList.unitType});" id="number#{_cartList.goodsBatchId}" type="text" value="#{_cartList.goodsNum}"/>
+		            </center>
+		        </h:column>
+		        <h:column>
+		        	<f:facet name="header">商品规格</f:facet>
+		        	<center>
+		        		<h:outputText value="#{_cartList.goodsSpec}"/>
+	        		</center>
+		        </h:column>
+		        <h:column>
+		        	<f:facet name="header">计量单位</f:facet>
+		            <center>
+		            	<h:outputText value="#{goodsInfoConstant.getGoodUnitLabel(_cartList.goodsUnit)}"/>
+		            </center>
+		        </h:column>
+		        <h:column>
+		        	<input type="hidden" value="#{_cartList.price}" id="price#{_cartList.goodsBatchId}"/>
+		        	<f:facet name="header">商品价格</f:facet>
+		            <center>		            	
+		            	￥<h:outputText value="#{_cartList.price}"><f:convertNumber pattern="#0.00"/></h:outputText>
+		            </center>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">单品总价</f:facet>
+		            <center id="totalPrice#{_cartList.goodsBatchId}">
+						￥<h:outputText value="#{_cartList.sumPrice}"><f:convertNumber pattern="#0.00"/></h:outputText>
+		            </center>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">报损原因</f:facet>
+		            <center>
+						<input class="form-control _number" style="text-align: center;" name="cause" value="#{_cartList.breakageCause}" id="cause#{_cartList.goodsBatchId}"
+						onblur="updateCause(#{_cartList.goodsBatchId},this.value);"/>
+		            </center>
+		        </h:column>
+		        <rich:column styleClass="action" width="10%" style="border-right:none;">
+		            <f:facet name="header">操作</f:facet>
+					<table class="ps" align="center">
+						<tr>
+							<td style="border: none;">
+								<a href="javascript:void(0);" onclick="delOneProduct(#{_cartList.goodsBatchId},'#{_index}');">删除</a>
+							</td>
+						</tr>
+					</table>
+		        </rich:column>
+		    </rich:dataTable>
+		</rich:panel>
+		<h:form id="saveFrom">
+			<div style="height:25px;"></div>
+			<div style=" padding-top:35px; text-align:center;">
+				<a:commandLink id="refreshToral" reRender="totalPenal"></a:commandLink>
+				<a:commandLink id="refreshShow" reRender="showPanel"></a:commandLink>
+				<h:inputHidden id="storageRoomIdHidden" value="#{breakageControl.storageRoomId}"/>
+				<h:inputHidden id="operater" value="#{breakageControl.operater}"/>
+				<h:inputHidden id="breakageTimeHidden" value="#{breakageControl.breakageTime}"/>
+				<h:inputHidden id="goodsBatchStringsHidden" value="#{breakageControl.goodsBatchStrings}"/>
+				<a:commandButton id="save" style="width:77px; height:32px;" image="../asset/images/safe_03.jpg" onclick="if(!savebreakage())return false;jquery('#saveFrom\\:save').attr('disabled','true');" action="#{breakageControl.createBreakageInfo}"/>
+				&#160;
+				<s:button view="/inOut/#{stockUtil.changeStockUrl(sessionTake.stockParam)}.xhtml"  image="#{request.contextPath}/asset/images/safe_13.jpg"  style="width:77px;height:32px;">
+					<f:param name="baseId" value="#{breakageControl.baseId}"></f:param>
+				</s:button>
+			</div>
+			<div style="height:20px; width:100%;"></div>
+			<div class="clear"></div>
+		</h:form>
+	</div>
+</td>
+<a:form>
+	<a:queue requestDelay="10" ignoreDupResponses="true"/>
+	<a:jsFunction name="modifyGoodsInfo" action="#{breakageControl.modifyGoodsInfo}" data="#{breakageControl.pickSize}" oncomplete="refreshCartAction(data);" >
+		<a:actionparam name="goodsBatchId" assignTo="#{breakageControl.goodsBatchId}"/>
+		<a:actionparam name="modifyNumber" assignTo="#{breakageControl.modifyNumber}"/>
+	</a:jsFunction>
+	<a:jsFunction name="clearOneProduct" action="#{breakageControl.clearOneProduct}" data="#{breakageControl.pickSize}" oncomplete="refreshCartAction(data);" >
+		<a:actionparam name="goodsBatchId" assignTo="#{breakageControl.goodsBatchId}"/>
+		<a:actionparam name="goodsBatchStrings" assignTo="#{breakageControl.goodsBatchStrings}"/>
+		<a:actionparam name="listIndex" assignTo="#{breakageControl.listIndex}"/>
+	</a:jsFunction>
+	<a:jsFunction name="showListFiltel" action="#{breakageControl.showListFiltel}" oncomplete="searchOnComplete();" >
+		<a:actionparam name="batchNameCode" assignTo="#{breakageControl.batchNameCode}"/>
+	</a:jsFunction>
+	<a:jsFunction name="addCheckedGoodsInfo" action="#{breakageControl.addCheckedGoodsInfo}" data="#{breakageControl.pickSize}" oncomplete="refreshCartAction(data);">
+		<a:actionparam name="resultTree" assignTo="#{breakageControl.resultTree}"/>
+		<a:actionparam name="goodsBatchStrings" assignTo="#{breakageControl.goodsBatchStrings}"/>
+	</a:jsFunction>
+	<a:jsFunction name="modifyCause" action="#{breakageControl.modifyCause}" data="#{breakageControl.pickSize}" oncomplete="refreshCartAction(data);" >
+		<a:actionparam name="goodsBatchId" assignTo="#{breakageControl.goodsBatchId}"/>
+		<a:actionparam name="modifyCauseStr" assignTo="#{breakageControl.modifyCauseStr}"/>
+	</a:jsFunction>
+	<a:jsFunction name="storageRoomChangeGoodsBatch" action="#{breakageControl.storageRoomChangeGoodsBatch}" oncomplete="searchOnComplete();">
+		<a:actionparam name="storageRoomId" assignTo="#{breakageControl.storageRoomId}"/>
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript">
+//<![CDATA[
+	jquery(document).ready(function(){
+		jquery(".selectpicker").selectpicker();
+	});
+
+	function personCheecked(){
+		jquery("#saveFrom\\:operater").val(jquery(".pers1").val());
+	}
+	//库房联动出库物料信息
+	function storageRoomChecked(){
+		var storageRoomId = jquery('select[name="storageRoomId"]').val();
+        if ("org.jboss.seam.ui.NoSelectionConverter.noSelectionValue" == storageRoomId){
+        	alert("请选择库房....");
+		}else {
+			storageRoomChangeGoodsBatch(Number(storageRoomId));
+		}
+	}
+
+	function savebreakage(){
+		var flag = true;
+		var storageRoomId=jquery("#storageRoomId").val();		
+		var operater=jquery("#operater").val();
+		if(null==storageRoomId){
+			alert("请选择库房....");
+			return false;
+		}
+		if(null==operater){
+			alert("请选择操作人....");
+			return false;
+		}
+		jquery("input[name='cause']").each(function(){
+			if (jquery(this).val() == '') {
+				flag = false;
+			}
+		});
+		if(!flag){
+			alert("请填写报损原因...");
+			return false;
+		}
+		
+		jquery("#saveFrom\\:storageRoomIdHidden").val(storageRoomId);
+		jquery("#saveFrom\\:breakageTimeHidden").val(jquery("#breakageTime").val());
+		var goodsBatchStrings=getAddGoodsInfo();
+ 	   jquery("#saveFrom\\:goodsBatchStringsHidden").val(goodsBatchStrings);  	
+		return flag;
+	}    
+	//获取物料数据和报损原因
+	function getAddGoodsInfo(){		
+		var breakNumber="";
+		var breakCause="";
+        var goodsBatchStrings='{"resultDatas":[';
+ 	    var trObj=jquery("#cartList\\:tb").children("tr");
+ 	    trObj.each(function(i){     
+ 	 	    	var goodsKey=jquery("#hiddenGoodsKey"+i).val();  		
+				breakNumber=jquery("#number"+goodsKey).val();
+				breakCause=jquery("#cause"+goodsKey).val();
+				goodsBatchStrings+='{"goodsKey":"' + goodsKey + '","breakNumber":"' + breakNumber + '","breakCause":"' + breakCause + '"},';							
+     	});
+     	if(trObj.length>0){
+     		goodsBatchStrings = goodsBatchStrings.substring(0, goodsBatchStrings.length-1);
+        }
+ 	   goodsBatchStrings = goodsBatchStrings+']}';
+     	return goodsBatchStrings;
+	}    
+    function KeyDown(){    
+        if (event.keyCode == 13){     
+            event.returnValue=false;        
+         }
+     }
+
+    jquery('#searchName').keydown(function(e){
+    	if(e.keyCode==13){
+    		searchButton(); 
+    	}
+    }); 
+
+	//修改报损原因
+	function updateCause(productId, str){
+		//jquery("#saveFrom\\:save").attr("disabled","true");
+		//modifyCause(productId, str);
+	}
+	//是否是浮点类型
+	function isFloat(value){
+		var mny =RegExp(/^([0-9]+(\.?))?[0-9]+$/);
+		return mny.test(value);
+	}
+	    
+	//修改商品数量 1为减1 2为修改 3为加1
+	function updateNum(productId,num,type,Numberid,unitType){
+		if (productId != null && productId != 0) {
+			if (!isNaN(num)) {
+				if (num < 0 ) {
+					alert("物料数量必须大于0...");
+					document.getElementById(Numberid).value=0;
+					//modifyGoodsInfo(Number(productId), 1);
+				}else {
+					if (unitType == 1) {
+						if(isFloat(num) == true){
+							if (type == 1) {
+								var temp = num - 1;
+								if (temp < 1) {
+									alert("物料数量必须大于0...");
+									document.getElementById(Numberid).value=0;
+									//modifyGoodsInfo(Number(productId), 1);
+								}else {
+									//modifyGoodsInfo(Number(productId), temp);
+								}
+							}else if (type == 2) {
+								//modifyGoodsInfo(Number(productId), num);
+							}else if (type == 3){
+								var temp = num + 1;
+								//modifyGoodsInfo(Number(productId), temp);
+							}
+						}else {
+							alert("数量单位必须是整数...");
+							document.getElementById(Numberid).value=0;
+							//modifyGoodsInfo(Number(productId), 1);
+						}
+					}else {
+						if (type == 1) {
+							var temp = num - 1;
+							if (temp < 0) {
+								alert("物料数量必须大于0...");
+								document.getElementById(Numberid).value=0;
+								//modifyGoodsInfo(Number(productId), 1);
+							}else {
+								//modifyGoodsInfo(Number(productId), temp);
+							}
+						}else if (type == 2) {
+							if(isFloat(num) == true){
+								//modifyGoodsInfo(Number(productId), num);
+							}else{
+								var number = num.substr(0,num.indexOf('.')+4);
+								//modifyGoodsInfo(Number(productId), number);
+							}
+						}else if (type == 3){
+							var temp = num + 1;
+							//modifyGoodsInfo(Number(productId), temp);
+						}
+					}
+				}
+			}else {
+				alert("物料数量必须为数字...");
+				document.getElementById(Numberid).value=0;
+				//modifyGoodsInfo(Number(productId), 1);
+			}
+			var oldGoodsNum=parseFloat(jquery("#oldGoodsNum"+productId).val());
+			if(num>oldGoodsNum){
+				alert("报损数量大于物料的数量");
+				document.getElementById(Numberid).value=oldGoodsNum;
+			}
+			jquery("#totalPrice"+productId).html("￥"+(parseFloat(jquery("#number"+productId).val())*parseFloat(jquery("#price"+productId).val())).toFixed(2));
+		}
+	}
+    //添加选中商品到购物车
+    function submitProduct(){
+        var str = "";
+    	jquery("input[name='productCheck']:checkbox:checked").each(function(){
+          	str += jquery(this).val();
+      	});
+		if (str != '') {
+			var values = '{"resultDatas":[';
+			var temp = str.split("|"); 
+			for ( var i = 0; i < temp.length-1; i++) {
+				values += '{"goodsBatchId":' + temp[i] + '},';
+			}							
+	    	values = values.substring(0, values.length-1) + ']}';
+	    	jquery("#saveFrom\\:save").attr("disabled","true");	    	
+	 	  	var goodsBatchStrings=getAddGoodsInfo();
+	    	addCheckedGoodsInfo(values,goodsBatchStrings);
+	    	return true;
+		}else {
+			alert("请选择至少一个商品...");
+			return false;
+		}		
+    }
+    
+	//全选事件
+    function selectedAll(){
+		var checked = jquery("#productCheckAll").prop("checked");
+		jquery("input[name='productCheck']").prop("checked", checked);
+	}
+
+  	//单选事件
+    function selectedOne(){
+    	var str = "";
+    	jquery("input[name='productCheck']:checkbox:checked").each(function(){
+          	str += jquery(this).val();
+      	});
+      	if (str == '') {
+      		jquery("#productCheckAll").removeAttr("checked");
+		}
+	}
+           
+    //搜索商品
+    function searchButton(){
+		var searchName = jquery("#searchName").val();
+		showListFiltel(searchName);
+    }
+
+  	//搜索商品回调
+    function searchOnComplete(){
+    	document.getElementById("saveFrom:refreshShow").onclick();
+    }
+           
+	//删除单个
+	function delOneProduct(productId,listIndex){
+		if(confirm('确定删除吗？')){
+			var goodsBatchStrings=getAddGoodsInfo();
+			clearOneProduct(productId,goodsBatchStrings,listIndex);
+		}
+	}
+
+	//添加到购物车回调
+	function addProductComplete(data){
+		refreshCartAction();
+	}
+
+	//搜索商品回调
+    function searchOnComplete(){
+    	document.getElementById("saveFrom:refreshShow").onclick();
+    }
+
+	//修改数量回调
+	function modifyNumComplete(data){
+		refreshCartAction();
+	}
+
+	//刷新
+	function refreshCartAction(data){		
+		document.getElementById("saveFrom:refreshToral").onclick();
+		if (data > 0) {
+			jquery('select[name="storageRoomId"]').attr("disabled", true);
+		}else{
+			jquery('select[name="storageRoomId"]').attr("disabled", false);
+		}
+		jquery("#saveFrom\\:save").removeAttr("disabled");
+	}
+//]]>
+</script>
+</ui:define>
+</ui:composition>

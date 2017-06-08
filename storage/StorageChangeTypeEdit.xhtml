@@ -1,0 +1,100 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="storageChangeType" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{storageChangeTypeHome.managed ? '编辑' : '添加'} 仓储类型</f:facet>
+			<!-- #{storageChangeTypeHome.getSCT()} -->
+			<s:decorate id="funameField" template="/layout/edit.xhtml">
+			 <ui:define name="label">父仓储类型</ui:define>
+               <h:selectOneMenu value="#{storageChangeTypeHome.storageChangeType}">
+               		<s:selectItems value="#{storageChangeTypeHome.sctlist}" var="_sct" label="#{_sct.name}"/>
+               		<s:convertEntity/>
+               </h:selectOneMenu>
+			</s:decorate>
+
+            <s:decorate id="nameField" template="/layout/edit.xhtml">
+                <ui:define name="label">子仓储类型</ui:define>
+                <h:inputText id="name"
+                       required="true"
+                           size="50"
+                      maxlength="50"
+                          value="#{storageChangeTypeHome.instance.name}">
+                    <a:support event="onblur" reRender="nameField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="snField" template="/layout/edit.xhtml">
+                <ui:define name="label">编号</ui:define>
+                <h:inputText id="sn"
+                       required="true"
+                           size="50"
+                      maxlength="50"
+                          value="#{storageChangeTypeHome.instance.sn}">
+                    <a:support event="onblur" reRender="snField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="descriptionField" template="/layout/edit.xhtml">
+                <ui:define name="label">描述</ui:define>
+                <h:inputTextarea id="description"
+                               cols="80"
+                               rows="2"
+                              value="#{storageChangeTypeHome.instance.description}"/>
+            </s:decorate>
+
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+               必须
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="保存"
+                         action="#{storageChangeTypeHome.persist}"
+                       rendered="#{!storageChangeTypeHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="保存"
+                         action="#{storageChangeTypeHome.update}"
+                       rendered="#{storageChangeTypeHome.managed}"/>
+
+          
+
+            <s:button id="cancelEdit"
+                   value="返回"
+             propagation="end"
+                    view="/storage/StorageChangeTypeList.xhtml"
+                rendered="#{storageChangeTypeHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="返回"
+             propagation="end"
+                    view="/storage/#{empty storageChangeTypeFrom ? 'StorageChangeTypeList' : storageChangeTypeFrom}.xhtml"
+                rendered="#{!storageChangeTypeHome.managed}"/>
+
+        </div>
+    </h:form>
+
+
+</ui:define>
+
+</ui:composition>

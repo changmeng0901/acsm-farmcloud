@@ -1,0 +1,279 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_img.xhtml">
+
+	<ui:define name="body">
+	<title>商品详情页</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no"/>
+	<link rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/reset.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/swiper.min.css"/>
+	<link rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/productdetail.css"/>
+	<style >
+		.dis{display:none}
+		.name{display:inline-block;max-width:240px;height:20px; line-height:20px; margin-top:13px;vertical-align:top;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+     	.goods_pic img{display:block;max-width:100%;margin:auto;}
+     	.show .pic img{width: auto; height: auto;}
+     	.show .pic >img{width: 100%; height: 100%;}
+     	.swiper-container-horizontal>.swiper-pagination{bottom:50px;}
+	</style>
+	#{purchaseProductDetailHome.init()}
+	<div class="swiper-container">
+        <div class="swiper-wrapper" id="imgdiv">
+            <s:fragment rendered="#{purchaseProductDetailHome.productImageUrlList eq null or purchaseProductDetailHome.productImageUrlList.size() eq 0}">
+            	 <div class="swiper-slide"><a href="javascript:void(0)"><img src="#{request.contextPath}/asset/images/purchase/productNoImg.png" /></a>
+            	  </div>
+            </s:fragment>
+            <s:fragment rendered="#{purchaseProductDetailHome.productImageUrlList ne null or purchaseProductDetailHome.productImageUrlList.size() ne 0}">
+            	<a:repeat  value="#{purchaseProductDetailHome.productImageUrlList}" var="_url" rowKeyVar="_index">
+            		 <div class="swiper-slide">
+            			<img src="#{_url}" />
+            		</div>
+            	</a:repeat>
+            </s:fragment>
+        </div>
+         <button type="button" class="btn btn-default ml15 mr15 dis" id="imgButton" onclick="imgChange()">图片初始化</button>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+        <!-- logo -->
+        	<div id="logodiv" class="logo #{purchaseProductDetailHome.purchaseProduct.logoFlag ne null and purchaseProductDetailHome.purchaseProduct.logoFlag and purchaseProductDetailHome.enterpriseLogo ne ''? '':'dis'}" >
+        		<img id="logoimg" src="#{purchaseProductDetailHome.enterpriseLogo}" />
+        	</div>
+        	<!--立即查看履历追溯-->
+	        <div class="fixed_foot #{!purchaseProductDetailHome.purchaseProduct.phoneModelInfoDelFlag and purchaseProductDetailHome.purchaseProduct.phoneModelInfoFlag and purchaseProductDetailHome.purchaseProduct.phoneModelInfoGroupId ne null and purchaseProductDetailHome.purchaseProduct.phoneModelInfoGroupId ne '' and purchaseProductDetailHome.purchaseProduct.phoneModelInfoImageUrl ne '' and purchaseProductDetailHome.purchaseProduct.phoneModelInfoImageUrl ne null ? '':'dis'}" id="resume_blockinfo">
+	        	<p class="txt_tip">该商品有履历追溯哦！</p>
+	        	<a class="txt_link" href="">立即查看</a>
+	        </div>
+    </div>
+    <div class="title">
+    	<p class="content">
+    		<span class="txt detailName" style="line-height:28px;" id="detailName">#{purchaseProductDetailHome.purchaseProduct.displayName}</span>
+    		<span class="tip " style="display:inline-block;vertical-align:top;">
+    			<i id="freeFerightFlag" class="#{purchaseProductDetailHome.purchaseProduct.freefreightPriceFlag  or purchaseProductDetailHome.purchaseProduct.freeFreightPrice eq 0 or purchaseProductDetailHome.purchaseProduct.freeFreightPrice eq '0.0' or ((purchaseProductDetailHome.purchaseProduct.freightPrice eq '' or purchaseProductDetailHome.purchaseProduct.freightPrice eq null) and purchaseProductDetailHome.purchaseProduct.freightFlag)  or purchaseProductDetailHome.purchaseProduct.freightPrice eq 0? '':'dis'}">
+    				<img src="#{request.contextPath}/asset/images/purchase/freefreight.png" alt="" />
+    			</i>
+    			<span id="freeFeright" class="#{!purchaseProductDetailHome.purchaseProduct.freefreightPriceFlag and purchaseProductDetailHome.purchaseProduct.freeFreightPrice ne null and purchaseProductDetailHome.purchaseProduct.freeFreightPrice ne 0 ? '':'dis'}">
+    			满#{purchaseProductDetailHome.purchaseProduct.freeFreightPrice}元包邮
+    			</span>
+    		</span>
+    	</p>
+    	<p class="prize">
+    		<i>￥</i><span id="productPrice">#{purchaseProductDetailHome.purchaseProduct.productPrice}</span>
+    		<span class="fr" style="color: #999;font-size: 1.345rem;">销量:#{purchaseProductDetailHome.purchaseProduct.saleNum}</span>
+    	</p>
+    </div>
+    <div class="detail">
+    	<p class="line" style="border-bottom:1px solid #e1e1e1;"><span class="fl">运费<i id="freight">￥
+    	<s:fragment rendered="#{purchaseProductDetailHome.purchaseProduct.freefreightPriceFlag or purchaseProductDetailHome.purchaseProduct.freightPrice eq null}">
+    		--
+    	</s:fragment>
+    	<s:fragment rendered="#{!purchaseProductDetailHome.purchaseProduct.freefreightPriceFlag and purchaseProductDetailHome.purchaseProduct.freightFlag  and purchaseProductDetailHome.purchaseProduct.freightPrice ne null}">
+    		#{purchaseProductDetailHome.purchaseProduct.freightPrice}
+    	</s:fragment>
+    	</i></span>
+    	<span class="fr"><i>产地</i><i id="province">#{purchaseProductDetailHome.purchaseProduct.province}</i></span>
+    	</p>
+    	<p class="line"><span class="fl">已选<i class="name" title="#{purchaseProductDetailHome.productUnit}">#{purchaseProductDetailHome.productUnit}</i></span><span class="fr">></span></p>
+    </div>
+    <div class="tabs">
+        <ul class="item">
+            <li class="cur">商品详情</li>
+            <li>评价<span>(#{purchaseProductDetailHome.commentNum})</span></li>
+        </ul>
+        <div class="details current">
+            <div class="goods_pic" id="introductiondiv">
+            	 <!-- <h:inputTextarea  style="width:100%;height:380px" value="#{purchaseProductDetailHome.purchaseProduct.productIntroduction}" />  -->
+            </div>
+             
+        </div>
+        
+        <div class="details">
+        <s:fragment rendered="#{purchaseProductDetailHome.commentList ne null and purchaseProductDetailHome.commentList.size() gt 0}">
+            <!-- 有评价 -->
+            <ul class="has_evaluate">
+            <a:repeat value="#{purchaseProductDetailHome.commentList}" var="_comment" rowKeyVar="_index">
+                <li>
+                    <div class="top_line">
+                        <span class="photo fl"><img src="#{_comment.icounUrl}" alt=""/></span>
+                        <span class="tel fl">#{_comment.phone}</span>
+                        <span class="date fr">#{_comment.commentTime}</span>
+                    </div>
+                    <div class="stars sta#{_comment.score}">
+                    	<p  class="stars#{_comment.score}"></p>
+                    </div>
+                    <p class="txt">#{_comment.comment}</p>
+                    <s:fragment rendered="#{_comment.commentImgList ne null and _comment.commentImgList.size() gt 0}">
+	                    <div class="comment_pics">
+	                    	<a:repeat value="#{_comment.commentImgList}" var="_img" rowKeyVar="_ix">
+	                        	<img src="#{_img}" alt=""/>
+	                        </a:repeat>
+	                    </div>
+                    </s:fragment>
+                </li>
+                </a:repeat>
+            </ul>
+            </s:fragment>
+             <s:fragment rendered="#{purchaseProductDetailHome.commentList eq null or purchaseProductDetailHome.commentList.size() eq 0}">
+            <!-- 没评价 -->
+            <div class="no_evaluate">
+                <img src="#{request.contextPath}/asset/images/purchase/txt.png" alt=""/>
+                <p>暂无评价</p>
+            </div>
+            </s:fragment>
+        </div>
+    </div>
+    <div class="show" id="farmintroduction">
+    	<h4><span class="line"></span><span>农场介绍</span><span class="line"></span></h4>
+    	<div class="goods_pic" id="farmintroductiondiv">
+        </div>
+    </div>
+    <div class="show">
+    	<h4 id="farmTitle"><span class="line"></span><span>农场风光</span><span class="line"></span></h4>
+    	<div  id="k4div" class="pic #{!purchaseProductDetailHome.purchaseProduct.krpanos4groupDelFlag and  purchaseProductDetailHome.purchaseProduct.krpanos4groupFlag and purchaseProductDetailHome.purchaseProduct.krpanosGroupId ne null and purchaseProductDetailHome.purchaseProduct.krpanosGroupId ne '' and purchaseProductDetailHome.purchaseProduct.krpanosImageUrl ne '' and purchaseProductDetailHome.purchaseProduct.krpanosImageUrl ne null? '':'dis'}">
+    		<img id="k4img" src="#{purchaseProductDetailHome.purchaseProduct.krpanosImageUrl}" />
+    		<i class="icon1"></i>
+    		<p>#四季田景#</p>
+    		<!-- <div class="mask"></div> -->
+    	</div>
+        <div id="aeriadiv" class="pic #{!purchaseProductDetailHome.purchaseProduct.aerialVideoDelFlag and purchaseProductDetailHome.purchaseProduct.aerialVideoFlag and purchaseProductDetailHome.purchaseProduct.aerialVideoGroupId ne null and purchaseProductDetailHome.purchaseProduct.aerialVideoGroupId ne '' and purchaseProductDetailHome.purchaseProduct.aerialVideoImageUrl ne '' and purchaseProductDetailHome.purchaseProduct.aerialVideoImageUrl ne null? '':'dis'}">
+            <img id="aeriaimg" src="#{purchaseProductDetailHome.purchaseProduct.aerialVideoImageUrl}" />
+            <i class="icon2"></i>
+            <p>#航拍视频#</p>
+            <div class="mask"></div>
+        </div>
+        <div id="showdiv" class="pic #{!purchaseProductDetailHome.purchaseProduct.farmMapDelFlag and purchaseProductDetailHome.purchaseProduct.propagandasFlag and purchaseProductDetailHome.purchaseProduct.propagandasGroupId ne null and purchaseProductDetailHome.purchaseProduct.propagandasGroupId ne '' and purchaseProductDetailHome.purchaseProduct.propagandasImageUrl ne '' and purchaseProductDetailHome.purchaseProduct.propagandasImageUrl ne null? '':'dis'}" >
+            <img id="showimg" src="#{purchaseProductDetailHome.purchaseProduct.propagandasImageUrl}" />
+            <i class="icon3"></i>
+            <p>#农场名片#</p>
+            <div class="mask"></div>
+        </div>
+    </div>
+    <!-- <div id="recorddiv" class="show #{!purchaseProductDetailHome.purchaseProduct.phoneModelInfoDelFlag and purchaseProductDetailHome.purchaseProduct.phoneModelInfoFlag and purchaseProductDetailHome.purchaseProduct.phoneModelInfoGroupId ne null and purchaseProductDetailHome.purchaseProduct.phoneModelInfoGroupId ne '' and purchaseProductDetailHome.purchaseProduct.phoneModelInfoImageUrl ne '' and purchaseProductDetailHome.purchaseProduct.phoneModelInfoImageUrl ne null ? '':'dis'}">
+        <h4><span class="line"></span><span>绿色履历</span><span class="line"></span></h4>
+        <div class="pic">
+            <img id="recordimg" src="#{purchaseProductDetailHome.purchaseProduct.phoneModelInfoImageUrl}" />
+            <i class="icon4"></i>
+            <p>#商品履历#</p>
+            <div class="mask"></div>
+        </div>
+    </div> -->
+    <div id="mapdiv" class="show #{!purchaseProductDetailHome.purchaseProduct.farmMapDelFlag and purchaseProductDetailHome.purchaseProduct.farmMapFlag and purchaseProductDetailHome.purchaseProduct.farmMapId ne null and purchaseProductDetailHome.purchaseProduct.farmMapId ne '' ? '':'dis'}">
+        <h4><span class="line"></span><span>农场地图</span><span class="line"></span></h4>
+        <div class="pic map">
+           <div style="width:100%; height:155px; margin-top:15px;" class="farmmapimg" id="map-canvas">
+           </div>
+           <input type="hidden" name="coordinateX" id="coordinateX" value="#{purchaseProductDetailHome.coordinateX}"/>
+           <input type="hidden" name="coordinateY" id="coordinateY" value="#{purchaseProductDetailHome.coordinateY}" />
+          <button type="button" class="btn btn-default ml15 mr15 dis" id="mapButton" onclick="createMap();">生成地图</button>
+        </div>
+    </div>
+    
+    <div class="show" style="border-bottom:0; padding:0;">
+        <h4><span class="line"></span><span>精选商品</span><span class="line"></span></h4>
+        <ul class="fruit clearfix">
+         <a:repeat value="#{purchaseProductDetailHome.optionProductList}" var="_option" rowKeyVar="_index">
+            <s:fragment rendered="#{_index le 3}">
+            <li class="right_b #{_index % 2 ne 0 ? 'right_b' : 'left_b'}">
+                <a href="">
+                    <img src="#{_option[3]}" />
+                    <h6>#{_option[1]}</h6>
+                    <p class="prize">￥#{_option[2]}</p>
+                </a>
+            </li>
+            </s:fragment>
+         </a:repeat>
+            <!-- <li class="left_b">
+                <a href="">
+                    <img src="../images/Buy/fruit2.jpg" />
+                    <h6>四川青李，1斤只售12.9！脆甜，香甜可口，富含有...</h6>
+                    <p class="prize">￥12.90</p>
+                </a>
+            </li> -->
+        </ul>
+    </div>
+    <div class="copyRight">Copyright 北京奥科美技术服务有限公司</div>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&amp;ak=pokmWUvo4GzGDVGGBb8HrM9h"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/purchase/jquery-1.11.3.min.js"></script>
+<script src="#{request.contextPath}/asset/js/purchase/commons/swiper.min.js"></script>
+<script>
+ $(function(){
+	 var introduction = '#{purchaseProductDetailHome.purchaseProduct.productIntroduction}';
+	 $("#introductiondiv").append(introduction);
+	 var farmintroduction = '#{purchaseProductDetailHome.purchaseProduct.farmIntroduction}';
+	 $("#farmintroductiondiv").append(farmintroduction);
+	 if(farmintroduction == ""){
+		 $("#farmintroduction").hide();
+	}
+	$("#mapButton").click(); 
+	var kclass = $("#k4div").hasClass("dis");
+	var aclass = $("#aeriadiv").hasClass("dis");
+	var sclass = $("#showdiv").hasClass("dis");
+	if(kclass){
+		if(aclass){
+			if(sclass){
+				$("#farmTitle").hide();
+			}
+		}
+	}
+}) 
+
+function createMap(){
+	var x = jQuery("input[name='coordinateX']").val();
+	var y = jQuery("input[name='coordinateY']").val();
+	var map = new BMap.Map("map-canvas");    
+	var point = new BMap.Point(y,x);    
+	map.centerAndZoom(point, 13);    
+	var marker = new BMap.Marker(point);        // 创建标注    
+	map.addOverlay(marker); 
+}
+ $(document).ready(function() {
+ 	//设置font-size
+    var fontsize = 16 * $(window).width() / 320;
+    $('html').css('font-size',fontsize);
+     //rem设置结束
+     //轮播图
+	     var swiper1 = new Swiper('.swiper-container', {
+	    	 runCallbacksOnInit : true,
+	    pagination: '.swiper-pagination',
+	    paginationClickable: true, //值为真时，当单击指示器时会执行过渡动画到目标slide...
+	    //autoplay: 2000,
+	    //speed : 2000,
+	    //autoplayDisableOnInteraction: false,  //触摸后状态，true之后停止自动播放，false之后还可以自动播放
+	    //loop : true, //无限循环切换
+	}); 
+    // 商品详情选项卡
+    $('.tabs .item li').click(function() {
+        var index = $(this).index();
+        $(this).addClass('cur').siblings().removeClass('cur');
+        $('.details').eq(index).addClass('current').siblings().removeClass('current');
+    });
+
+ });
+
+ function imgChange(){
+	swiper1 = new Swiper('.swiper-container', {
+		 	runCallbacksOnInit : true,
+		 	initialSlide:1,
+		    pagination: '.swiper-pagination',
+		    paginationClickable: true, //值为真时，当单击指示器时会执行过渡动画到目标slide...
+		    //autoplay: 2000,
+		    //speed : 2000,
+		    autoplayDisableOnInteraction: false,  //触摸后状态，true之后停止自动播放，false之后还可以自动播放
+		   // loop : true, //无限循环切换
+		}); 
+	$('.swiper-pagination span').eq(0).trigger('click');
+ }
+</script>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,960 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_left.xhtml">
+
+<ui:define name="body">
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/tab.js"> </script>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/tubiaoFx.css" />
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/contract/superTables_compressed.js"></script>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/contract/superTables_compressed.css" />
+	
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/exporting.js"></script>
+	#{productionAndDemandHome.showResultMe()}
+<style>
+	.fr{float:right;}
+		  .r_ulli1{float:right;}
+  /*缺口产量表格样式*/
+  .fakeContainer
+  {
+    margin: 0 0;
+    padding: 0px;
+    border: none;
+    width: 98.5%; /* Required to set */
+/*     height: 400px;*/ /* Required to set */ 
+    overflow: hidden; /* Required to set */
+  }
+  .fakeContainer .total{ display:block; text-align:left; color:#429ad0;}
+  .sData table{ border:1px solid #eee; }
+  .sDefault-Fixed{ background:#fff;}
+  
+  .sDefault th,.sDefault td{ padding:8px 15px; line-height:14px; text-align:center; border:1px solid #f1f1f1;}
+  .sDefault th.borderBNone,.sDefault td.borderBNone{ border-bottom:none;}
+  .sDefault th{ background:#fff; color:#737373; font-size:12px; font-family:'微软雅黑';}
+  .sDefault td{font-family:'微软雅黑';  font-size:13px; font-weight:bold; color:#737373;}
+  
+  .zuowuTime{ position:relative; width:115px; height:53px; left:0; top:0;}
+  .zuowuTime .zuowu{ position:absolute; z-index:3; bottom:0; left:0; font-size:14px;}
+  .zuowuTime .time{ position:absolute; z-index:3; top:0; right:0; font-size:14px;}
+  .zuowuTime .xianBg{ position:absolute; z-index:2; width:144px; height:69px; top:-8px; left:-15px;}
+  .zuowuTime .xianBg img{ width:144px; height:69px;}
+  
+  .zhezhaoWp{ float:left; width:29px; height:29px; position:relative; display:inline; margin-right:10px;}
+  .zhezhaoWp .zhezhao{ width:29px; height:29px; position:absolute; left:0; top:0; z-index:5;}
+  .zhezhaoWp .zhezhaoImg{ width:29px; height:29px; position:absolute; left:0; top:0; z-index:4;}
+  .zhezhaoTxt{ float:left; line-height:29px; text-align:left; color:#429ad0; font-size:12px; font-family:'微软雅黑'; width:76px;overflow:hidden;}
+  
+  .colorB{ color:#317aaf; font-weight:normal;}
+  .colorG{ color:#4cb35c; font-weight:normal;}
+  .colorP{ color:#6567a8; font-weight:normal;}
+  .colorR{ color:#d9534f; font-weight:normal;}
+  .baseDateWap{float:left;border:none;margin-top:0px;margin-left: 50px;}
+  .baseDateLt,.baseDateRt{border:1px solid #dadada;}
+  .baseDateCt{border-top:1px solid #dadada;border-bottom:1px solid #dadada;}
+  	.plantType{width:120px;}
+  	.selectpickerList .selectpickerLi .bootstrap-select span{font-family:"微软雅黑"}
+  	.reili .iradio_minimal-blue{margin-top:3px;}
+</style>
+	
+	
+	<style>
+		html{ overflow-x: hidden;}
+		.gaojisearch{border:1px solid #cfe3f3; border-top:1px solid #ffffff;  width:90px; text-align:center; margin:0 auto;margin-top:-2px;height:25px; line-height:25px; }
+		.line07{border-top:1px solid #cfe3f3; height:1px;}
+		.line09{padding:0 5px 0 8px;}
+		/*选项卡*/
+		.zwudiv { border-bottom: 1px solid #DBDBDB;height: 36px;padding-left:31px;padding-top:30px;}
+		.zuowuul { float: left; height: 36px;}
+		h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form, img, p, input {border: medium none; list-style-type: none;margin: 0; padding: 0;}
+		.zwli.current { background: url("../asset/images/zuowubg.jpg") no-repeat scroll left center rgba(0, 0, 0, 0);display: inline-block;float: left; height: 36px; padding-left: 10px;}
+		.zwli { bottom: -1px; float: left; font-size: 14px;  height: 36px; line-height: 36px; margin-right: 2px; padding: 0 10px; position: relative; }
+		.zwli.current a { background: url("../asset/images/zuowubg.jpg") no-repeat scroll right center rgba(0, 0, 0, 0); float: left; height: 36px; margin-right: -10px; padding-right: 10px;}
+		a {text-decoration: none;}
+		.zhexiantu{ padding-left:15px; padding-right:15px;}
+		.tubiao{ padding-left:15px; padding-right:15px;}
+		/*选项卡结束*/
+		/*表格*/
+		.s_pan{color: #333;}
+		.tpcc_font{ color: #333;}
+		.khtable_001, .khtable_002 { border-collapse: collapse; table-layout: fixed;  }
+
+		.kh_td { border: 1px solid #bbd4e8; height: 39px; text-align: center; vertical-align: middle; }
+		.kh_th_font01 { color: #272727; font-size: 14px; }
+		.kh_th_bg01 { background: none repeat scroll 0 0 #ebf6ff; }
+		.kh_td_font01 { color: #666666; font-family: "宋体";  font-size: 12px; }
+		.kh_leftbg01 { background: none repeat scroll 0 0 #ffffff; }
+		.scroll101 {float: left; overflow-x: auto; }
+		.khtable_002 { background-color: #DDDDDD; margin-left: 0; }
+		.kh_each_thbgy { background: none repeat scroll 0 0 #ebf6ff; min-width: 90px; }
+		.kh_each_tdbgy { background: none repeat scroll 0 0 #ffffff; min-width: 90px; }
+		.all_Arial01 { color: #666666;  font-family: Arial,Helvetica,sans-serif; font-size: 12px; font-weight: bold; line-height: 39px; text-align: center; width: 100%;}
+		.khyy_each_tabg02 { background: none repeat scroll 0 0 #ebf6ff;  max-width: 270px; }
+		.khyy_each_thbg02 { background: none repeat scroll 0 0 #ebf6ff;  min-width: 90px; }
+		.khyy_each_tdbg02 { background: none repeat scroll 0 0 #ffffff; min-width: 90px; }
+		.y_01{background: none repeat scroll 0 0 #f5f5f5;}
+		.y_02{background: none repeat scroll 0 0 #ebf6ff;}
+		#sex_male, #sex_male1, #sex_male2, #sex_male3, #sex_female, #sex_female1, #sex_female2, #sex_female3, #sex_nomale, .sex_nomale, #sex_nomale1, #sex_nomale2, #sex_nomale3 {display: none;}
+		table input[type="checkbox"], table input[type="radio"] { background: none repeat scroll 0 0 rgba(0, 0, 0, 0); padding: 0;}
+		.six3 label {background: url(../asset/images/button_03.png) no-repeat scroll left top rgba(0, 0, 0, 0); cursor: pointer;  display: inline-block;  line-height: 19px; margin: 5px 5px 5px 0;padding-left: 25px;}
+		/*表格结束*/
+		/*折线图*/
+		.need_font{line-height:50px; text-align: center; font-size:16px; color:#333;}
+		.reili .six3 label { background: url("../asset/images/forms-radio2.gif") no-repeat scroll left top rgba(0, 0, 0, 0); cursor: pointer; display: inline-block;  line-height: 19px; margin: 5px 5px 5px 0; padding-left: 25px; width: auto; font-weight:normal}
+		.reili .six3 label.checked { background: url("../asset/images/forms-radio2.gif") no-repeat scroll left bottom rgba(0, 0, 0, 0); width: auto; }
+		.dk_list2 .current a {  color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff; background-color:#ffffff;position:relative; z-index:5;}
+		.dk_list2 .li2.current{ color:#383838; font-size:14px; width:99px; border-bottom:1px solid #ffffff;}
+		.dk_list2 {width:100% ;height:36px;   border-left:1px solid #ddd; }
+		.dk_list2 li {float:left;  border-right:1px solid #ddd; border-top:1px solid #ddd;}
+		.dk_list2 li a {display:block; width:101px; height:36px;  line-height:36px; text-align:center; font-size:14px;	color:#383838;}
+		#gjtop08{ background:url(../asset/images/gjtop.jpg) right no-repeat; color:#4c4c4c; text-decoration:none; padding-right:14px;}
+		#ftitle08{padding:3px 30px; }
+		.la_div02{padding-right:15px; *padding-right:0px; display:inline-block; *display:inherit; float:left;}
+		.la_div02 .s_pan{ float:left; *margin-right:15px; margin-left:5px;font-size:11px; width:100px; width:auto;\9; *width:auto; word-break:normal;}
+		.fxy_title {
+		    border-bottom:none;
+		    padding: 3px 30px;
+		}
+		.khspan007{max-width:100px; overflow:hidden;}
+		.uboxstyle5 DIV.tag_select, .uboxstyle5 DIV.tag_select_open {
+		    width: 179px;
+		}
+		.uboxstyle5 .select_box {
+		    width: 212px;
+		}
+		.uboxstyle5 UL.tag_options {
+		    width: 211px;
+		}
+		.uboxstyle5 UL.tag_options LI {
+		    width: 195px;
+		}
+		.uboxstyle5 .ui-corner-all {
+		    width: 212px;
+		}
+		.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+	    	width: 76px;
+		}
+		.form_datetime input {
+		    border: 1px solid #ccc;
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		}	
+		label {
+		    display: inline-block;
+		    font-weight: 700;
+		    margin-bottom: 5px;
+		    max-width: 100%;
+		    color:#333333;
+		}
+		.input-append{float:left;width:120px;margin-top:3px;}	
+	.fxy_lidate02 {
+    float: left;
+    height: 30px;
+    margin-right: 10px;
+    min-width: 77px;
+}
+		.bootstrap-select{ width: 100px;}
+		.zwudiv {
+		    border-bottom: 1px solid #dbdbdb;
+		    height: 38px;
+		    padding-left: 31px;
+		    padding-top: 30px;
+		}	
+		.fxy_title  .fx_tckli {    width: 80px;}
+		 .fx_tckli {
+		    float: left;
+		    height: 30px;
+		    line-height: 30px;
+		    width: 193px;
+		    height:auto;
+		}
+		.fxy_tck .fx_tckli {
+		    float: left;
+		    height: auto;
+		    line-height: 30px;
+		    width: 193px;
+		}
+		.kh_td {
+		    height: 40px;
+		    text-align: center;
+		    vertical-align: middle;
+		}
+		.zwudiv {
+		    border-bottom: 1px solid #dbdbdb;
+		    height: 37px;
+		    padding-left: 31px;
+		    padding-top: 30px;
+		}
+.div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {width: 200px;}
+.reili{padding:0px;}
+.dr-pnl-b{padding:0px;}
+.lackTable{min-width:600px}
+.zwudiv{padding-top:10px;} 
+.dr-pnl-b{padding-top:8px;}
+.dateAll{margin-top:5px; margin-left:10px;}
+#container{min-height:260px;}
+
+  .baseDateWap{margin-right: 15px;}
+  .exportDiv{float: right;display: inline;margin-left: 10px;margin-right: 0px;}
+  .btn{padding: 7px 20px}
+
+	</style>
+
+
+<style>
+.rich-calendar-exterior{line-height: 20px;}
+	.legendLabel {font-size: 13px;float: left;}
+	#xxx table{margin: 0 auto;}
+#reido1{width:20px; height:18px;  background:url(../asset/images/radio2.gif) no-repeat; display:block; float:right; margin-top:13px;}
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){width: 100px;}
+</style>
+ <!--二级列表开始-->
+    <!--二级列表结束-->
+	<!--右边开始-->
+            <td valign="top">
+                 <div class="right_c" style="min-height:30px;">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">需求量与采收量对比分析</font></div>
+                    </div>
+                    <div class="clear"></div>
+                 </div>   
+				<!--分析页开始-->
+				<ui:fragment rendered="#{s:hasRole('plant_analyse_search')}">
+				
+				<h:form id="production">
+					<div class="fxy_title" style="padding:20px 30px;">
+                    	<ul class="fxy_ul">
+                            <li class="reili" style="height:34px;">
+                                <table cellpadding="0" cellspacing="0" style="float:left;">
+                                    <tr>
+                                        <td align="right" class="tpcc_font">选择日期：</td>
+                                        
+                                        <td align="left" class="tc_strong isri"  width="140">
+                                        <div class="input-append date beginInput form_datetime " style="position:relative;width:130px;" >
+    <input size="23" type="text"  readonly="readonly" id="beginTime" value="#{productionAndDemandHome.beginTime}" name="beginTime" autocomplete="off" style="width:130px"/> <!-- 0105 15:50 by zhz add style="width:130px" -->
+    <span class="add-on" style="position:absolute;right:5px;top:8px;"><i class="icon-th icon-notli" style="margin:0;"></i></span>
+    </div>
+                                        </td>
+                                        <td align="left" class="tc_strong isri"  width="140">
+                                        <div class="input-append date beginInput form_datetime" style="position:relative;width:130px;" >
+    <input size="23" type="text" readonly="readonly" id="endTime" value="#{productionAndDemandHome.endTime}" name="endTime" autocomplete="off" style="width:130px" />
+    <span class="add-on" style="position:absolute;right:5px;top:8px;"><i class="icon-th icon-notli" style="margin:0;"></i></span>
+    </div>
+                                        </td>
+                                        
+                               		 	<input name="searchStu" id="searchStu" type="hidden"/>
+                                    </tr>
+                                </table>
+                                
+                             <div style="float:right;"> 
+                               		<!-- <a href="#" onclick="jquery('.exportexcel').trigger('click')" > 
+                               			<img src="../asset/images/fxdc.jpg" width="82" height="16" />
+                               		</a> -->
+                               		<s:link   view="/analysis/Production.xhtml" action="#{productionAndDemandHome.exportExcel}" >
+                            		<img src="#{request.contextPath}/asset/images/fxdc.jpg" width="82" height="16" /> 
+								</s:link>
+                               </div>
+                            </li>
+                            <li class="reili" style="height: 100%;clear:both;height:34px;">
+                                <table cellpadding="0" cellspacing="0" style="float:left;" >
+                                    <tr>
+                                        <td class="tpcc_font"> 
+                                        	<div class="fxy_div" >
+					                          <input type="hidden" id="pIdString" name="pIdString" ></input>
+						                            	<table cellpadding="0" cellspacing="0" style="float:left;">
+						<tr>
+							<td align="right" class="tpcc_font">选择作物：</td>
+							<td align="left" style="padding-left:4px;" id="male" class="six3" >
+								<div class="div200">
+				<select  id="plantCheck" name="plantCheck"  data-live-search="true">
+						<a:repeat value="#{productionAndDemandHome.plantList}" var="var">
+						<optgroup label="#{var}">
+							<a:repeat value="#{productionAndDemandHome.allPlant[var]}" var="_var">
+								<option value="#{_var.plantId}">#{_var.name}</option>
+							</a:repeat>
+						</optgroup>
+						</a:repeat>
+				</select>
+							</div>
+							</td>
+						</tr>
+					</table>	
+					                            <table cellpadding="0" cellspacing="0" style="float:right;">
+					                             	<tr>
+					                             		<td width="80" align="right"><a id="gjbott2" onclick="usrnew()" href="Javascript: void(0)">高级搜索</a></td>
+					                                	<td width="80" align="right">
+					                                		<h:commandButton action="#{productionAndDemandHome.selectall()}" styleClass="btn btn-primary" value="搜索" onclick="return checksub2()"/>
+					                                		<h:commandButton action="#{productionAndDemandHome.exportExcel()}" styleClass="btn btn-primary exportexcel" style="display:none" value="导出" onclick="return checksub()" />
+					                                	</td>
+					                                	<td width="80" align="right">
+					                                		<h:commandButton action="#{productionAndDemandHome.reset}" id="reset" styleClass="btn btn-default" value="重置"/>
+					                                	</td>
+					                                    
+					                                </tr>
+					                             </table>
+					                        </div>
+					                        <div id="fxy_ul02">
+					                        </div>
+                                        </td>
+                                        
+                                    </tr>
+                                </table>
+                              
+                            </li>
+                        </ul>
+                    	<div class="clear"></div>
+                    </div>
+                    <div id="ftitle" style="display: none;">
+                    	<ul>
+                            <li class="reili">
+                                <table cellpadding="0" cellspacing="0" style="float:left;">
+                                    <tr>
+                                        <td align="right" class="tpcc_font">区域范围：</td>
+                                        <td align="left" class="tc_strong" width="145">
+                                            <div style="margin-right:10px;"><h:inputHidden name="pInfoIdInfo" value="#{productionAndDemandHome.pInfoId}" id="pInfoIdInfo"/>
+												<select name="pinfoid" id="pinfoid" class="selectpicker"  data-live-search="true">
+													<option value="0">全部</option>
+													<a:repeat value="#{productionAndDemandHome.pInfoList}" var="pinfo">
+                                                   		<h:panelGroup rendered="#{productionAndDemandHome.pInfoId eq pinfo.id}">
+															<option value="#{pinfo.id}" selected="selected">#{pinfo.name}</option>
+														</h:panelGroup>
+														<h:panelGroup rendered="#{productionAndDemandHome.pInfoId ne pinfo.id}">
+															<option value="#{pinfo.id}" >#{pinfo.name}</option>
+														</h:panelGroup>
+                                                   	</a:repeat>
+												</select>
+                                             </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                             
+                            </li>
+                            <li class="reili" style="padding-top: 20px">
+                                <table cellpadding="0" cellspacing="0" style="float:left;" id="checkone" width="100%">
+                                    <tr>
+                                        <td align="right" class="tpcc_font" width="70">种植环境：<h:inputHidden name="check" value="#{productionAndDemandHome.check}" id="check"/></td>
+                                        <td align="left" style="padding-left:4px;">
+                                            <div class="lapc_div">
+                                                <label class="la_aa" style="margin-bottom:0;margin-top:3px;">
+			                                        <input type="checkbox" checked="checked" name="envAll" id="envAll"></input>
+			                                        <h:inputHidden id="allC" value="#{productionAndDemandHome.allC}"/>
+				                                </label>
+				                                <span class="s_pan" style="float: left; font-size:11px; margin-left:0; font-family:'微软雅黑';margin-top:0;">全选</span>
+                                            </div>
+                                            
+                                            <a:repeat  value="#{productionAndDemandHome.petList}"  var="pet"   rowKeyVar="_index">
+				                            	<div class="lapc_div">
+					                                <label for="one#{_index}" style="float:left;margin-bottom:0;margin-top:3px;">
+					                                        <a href="javascript:void(0);" id="one#{_index}1" xx="one#{_index}" class="#{productionAndDemandHome.map[pet.id]} chccc"></a>
+					                                        <input type="checkbox" id="one#{_index}" name="cb" value="#{pet.id}" aaa="#{productionAndDemandHome.map2[pet.id]}" style="display:none;" />
+					                                </label>
+					                                <span class="s_pan" style="margin-top:0;">#{pet.name}</span>
+				                                </div>
+				                            </a:repeat>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </li>
+                            
+                             <li class="reili" style="padding-top: 10px;padding-bottom:20px;">
+                                <table cellpadding="0" cellspacing="0" style="float:left;">
+                                    <tr>
+                                        <td align="right" class="tpcc_font">种植标准：<h:inputHidden value="#{productionAndDemandHome.ddId}" id="ddId"/></td>
+                                        <td align="left" style="padding-left:4px;" id="male">
+                                        		<div  onclick="linksub(0)" style="float:left;">
+                                        		<input type="radio" value="0" name="sex" id="sex0" class="sex_nomale" />
+                                        		<label style="font-weight: 100; margin: 0 5px;"  for="sex_nomale"  name="sex_nomale">全部</label></div>
+                                             <a:repeat value="#{productionAndDemandHome.ddList}" var="dd" rowKeyVar="_index">
+                                             	<div style="float:left;">
+                                             	<input type="radio" value="#{dd.dataDicId}" name="sex" id="sex#{dd.dataDicId}"/>
+                                             	<label style="font-weight: 100; margin: 0 5px;"  for="sex_nomale#{_index}"  name="sex_nomale">#{dd.name}</label></div>
+                                             </a:repeat>
+                                        </td>
+                                   </tr>
+                                </table>
+                            </li>            
+                        </ul>
+                    </div>
+                </h:form>
+				</ui:fragment>
+				<ui:fragment rendered="#{!s:hasRole('plant_analyse_search')  and s:hasRole('plant_analyse_exp')}">
+					 <div style="float:right;padding-top: 10px;margin-right:20px;"> 
+                               		<s:link   view="/analysis/Production.xhtml" action="#{productionAndDemandHome.exportExcel}" >
+                            		<img src="#{request.contextPath}/asset/images/fxdc.jpg" width="82" height="16" /> 
+								</s:link>
+                               </div>
+				</ui:fragment>
+				<!--分析页结束-->
+				<div class="clear"></div>
+                    <!--折线图与图表开始-->
+                    		<div class="zwudiv" >
+							<ul class="dk_list2">
+								<li class="targe1 current "><a onclick="chos(1)" href="javascript:"><font  color="#333">折线图</font></a></li>
+								<li class="targe2"><a onclick="chos(2)" href="javascript:"><font  color="#333">图表</font></a></li>
+							</ul>
+						</div>
+						<div class="zuowudiv">
+							<div id="tar1" style="display: block;width:100%; margin:0 auto; text-align: center;">
+								<div id="container" class="chart22" style="height: 460px; width: 98%;"></div>
+							</div>
+							<div style="visibility:hidden;" id="tar2">
+							
+							<div style="float: right; margin:10px 0;" class="paixu"> <input type="checkbox"  id="allData" name="allData" ><span style="margin-left:5px;">查看全部数据</span></input></div>
+							<div class="dateAll" id="dateAll0">         
+								<rich:panel id="showTable" style="width:100%; border: none;">
+									<div class="lackTable">
+
+                        <div class="clear">
+                            	<div class="fakeContainer">
+                                <table cellpadding="0" cellspacing="0" id="demoTable" class=" sDefault sDefault-Main">
+                                  <tbody>
+                                      <h:outputText value="#{productionAndDemandHome.finalTableSb}" escape="false"/>  
+                                  </tbody>
+                                </table>
+                                </div>
+                            </div>                
+						<div class="clear"></div>
+					</div>
+				</rich:panel>                         
+			</div>
+		</div>
+		</div>
+                    <!--折线图结束-->
+                    
+<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+                    <div class="clear"></div>
+            </td>    
+    <!--右边结束-->
+	
+<script defer="defer">
+//<![CDATA[
+cheAll = function(obj){
+	jquery("input[name='checkBName']").prop("checked", obj.checked);
+}    
+jquery(document).ready(function(){ 
+	var str = "#{productionAndDemandHome.pIdString}";
+	if(str!=""){
+		var strs = str.split("_");
+		jquery("input[name='checkBName']").each(function(){
+			for(var i = 0;i<strs.length;i++){
+				if(jquery(this).attr("id")==strs[i]){
+					jquery(this).iCheck("check");
+				}
+			}	
+		});
+	}
+	
+	jquery(".beginInput").datetimepicker({
+	    format: "yyyy-mm-dd",
+	    autoclose: true,
+		 weekStart: 1,
+		  //startDate: "2014-08-14 10:00",
+		 language:  'zh-CN',
+	   minView:2,
+	    pickerPosition: "bottom-left"
+	    })
+});
+jq = jQuery.noConflict();
+
+var searchStuObj = #{productionAndDemandHome.searchStu};
+if(searchStuObj == 2){
+	ftitle.style.display='block'; 
+	gjbott2.style.backgroundImage='url(../asset/images/gjtop.jpg)';
+}else{
+	ftitle.style.display='none';
+	gjbott2.style.backgroundImage='url(../asset/images/gjbottom.jpg)';
+}
+
+var resultSource = '#{productionAndDemandHome.jsonResult}';
+resultSource = eval(resultSource);
+jq('#container').highcharts('StockChart', {
+	navigator: {
+            xAxis: {
+			tickWidth: 0,
+			lineWidth: 0,
+			gridLineWidth: 1,
+			tickPixelInterval: 200,
+			labels: {
+			    align: 'left',
+			    style: {
+			        color: '#888'
+			    },
+	   		    formatter: function() {  
+	               return  Highcharts.dateFormat('%Y-%m-%d', this.value);  
+	            }
+			}
+		}
+    },
+    rangeSelector : {
+        selected : 1
+    },
+    tooltip:{ 
+  	  formatter: function () {
+      var s = '<b>' + Highcharts.dateFormat('%Y-%m-%d', this.x) + '</b>';
+      jquery.each(this.points, function () {
+          s += '<br/>对比值： ' + this.y + "kg";
+      });
+
+      return s;
+  	}
+  
+  },
+    title : {
+        text : '采收量与需求量对比分析图'
+    },
+    
+    xAxis: {  
+    //  title :{  
+    //      text:"title"  
+    //  },  
+        type: 'datetime', //定义x轴上日期的显示格式  
+        labels: {  
+        formatter: function() {  
+            var vDate=new Date(this.value);  
+            //alert(this.value);  
+            return vDate.getFullYear()+"-"+(vDate.getMonth()+1)+"-"+vDate.getDate();  
+        },  
+        align: 'center'  
+    }  
+    },  
+    yAxis: {
+        allowDecimals:false,
+        opposite: false,
+        title: {
+            
+            text: '采收量与需求量对比分析(kg)',
+        }
+     },
+    series : resultSource,
+
+    exporting: {
+        enabled: false
+    },
+    rangeSelector:{
+        enabled:false   
+       }
+});
+
+function chos(t){
+	for(var i=1;i<=4;i++){
+		if(i==t){ 
+			jquery("#tar"+t).css("display", "block");
+			jquery("#tar"+t).css("visibility", "hidden");
+			jquery(".targe"+t).addClass("current");
+		}else{
+			jquery("#tar"+i).css("display", "none");
+			jquery("#tar"+t).css("visibility", "visible");
+			jquery(".targe"+i).removeClass("current");
+		}
+	}
+
+	/* 表格控件 */
+	createTable();
+	
+	change();
+	
+	changColor();
+	resizeTubiao();
+}
+
+/* 表格控件 */
+function createTable(){
+	var oWindowWid = jquery(window).width();
+	var num = oWindowWid/200;
+	new superTable("demoTable", {
+		cssSkin: "sDefault",
+		headerRows : 2,
+		fixedCols: 1,
+		colWidths:[
+		146,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num,
+		12*num,12*num,12*num,12*num,12*num,12*num,12*num,12*num
+		]
+	});
+}
+/* 隔行换色 */
+function changColor(){
+	jquery('.sFDataInner tbody tr:even').css('background','#fafafa');	
+	jquery('.sData tbody tr:even').css('background','#fafafa');
+};
+
+/* 计算表格宽高一屏显示 */
+function change(){
+	var marginWidth = 300;
+	var marginHight = 300;
+	var sDataWidth = 146;
+	
+	var oCliHei = jquery(window).outerHeight();
+	var tr_height_sum = 0;
+	jquery("div.sData #demoTable tr").each(	
+			function(){
+				tr_height_sum += jquery(this).height();
+			}
+		);
+	var height_c = 0;
+	if(tr_height_sum < (oCliHei -marginHight)){
+		height_c = oCliHei -marginHight - tr_height_sum - 25;
+	}
+	
+	var oCliWidth = jquery(window).outerWidth();
+	
+	var oFakeContainerWid = oCliWidth -marginWidth;
+	var oFakeContainerHei = oCliHei -marginHight - height_c;
+	if(oCliHei<700){
+		var oFakeContainerHei = 700 -marginHight - height_c;
+	}
+
+	jquery('.fakeContainer').css({
+		width : oFakeContainerWid + 1 ,
+		height : oFakeContainerHei	
+	});
+	
+	jquery('.sFHeader .sDefault-FixedHeaders').css({
+		width : oFakeContainerWid		
+	});
+	jquery('.sFHeader colgroup').css({
+		width : oFakeContainerWid		
+	});
+	jquery('.sHeader').css({
+		width : oFakeContainerWid + 1		
+	});
+	jquery('.sHeaderInner').css({
+		width : oFakeContainerWid		
+	});
+	jquery('.sHeaderInner .sDefault-Headers').css({
+		width : oFakeContainerWid		
+	});
+	jquery('.sFData').css({
+		width : oFakeContainerWid
+	});
+	
+	jquery('.sFHeader').css('width',147);
+	jquery('col:first-child').css('width',146);
+	jquery('.sData').css({
+		width : oFakeContainerWid-146,
+		height :  oFakeContainerHei - 72,
+		marginLeft : 147
+	});
+	jquery('.sData .sDefault-Main').css({
+		width : oFakeContainerWid+146,
+		marginLeft : -147	
+	});
+	
+	jquery('.sData .sDefault-Main colgroup').css({
+		width : oFakeContainerWid,
+		marginLeft : -147	
+	});
+};
+
+//计算图表控件的高 
+function resizeTubiao(){
+	var oContubiaoWid = jquery('#container').outerWidth();
+	var oCliHei = jquery(window).outerHeight();
+//		jquery('#tar1').css('padding-top',(oContubiaoWid/oCliHei)*0.03);
+	jquery('#container').css({height:(oContubiaoWid + oCliHei)*0.197});
+}
+//]]>
+</script>
+<script>
+//<![CDATA[
+function linkagebinfoid (data){
+	var strs = data.split(",");
+	jquery("#pinfoid").empty().append(strs[0]);
+	jquery('#pinfoid').selectpicker('refresh');
+	jquery('#pinfoid')[0].selectedIndex = 0;
+}
+
+function usrnew(){
+	if(ftitle.style.display=='none'){
+		jquery("#searchStu").val(2);
+		ftitle.style.display='block'; 
+		gjbott2.style.backgroundImage='url(../asset/images/gjtop.jpg)';
+	}else{
+		jquery("#searchStu").val(1);
+		ftitle.style.display='none';
+		gjbott2.style.backgroundImage='url(../asset/images/gjbottom.jpg)';
+ 	}
+}
+
+
+che = function(obj,o){
+	if(o.getAttribute("aaa")=="false"){
+		o.setAttribute("aaa","true");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("b");
+		jquery("#"+o.id).addClass("a");
+	}else{
+		o.setAttribute("aaa","false");
+		document.getElementById(obj).setAttribute("aaa",o.getAttribute("aaa"));
+		jquery("#"+o.id).removeClass("a");
+		jquery("#"+o.id).addClass("b");
+	}
+	checkChecked();
+}
+checkChecked =function(){
+	var obj = document.getElementById("production:allC")
+	if(obj.value=="false"){
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='production:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+				break;
+			}else if(i==check.length-1){
+				jquery("#b").attr("aaa","true");
+				document.getElementById("production:allC").value="true";
+				jquery("#b").removeClass("b");
+				jquery("#b").addClass("a");
+			}
+		}
+	}else{
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='production:allC')
+				continue;
+			if(check[i].getAttribute("aaa")=="false"){
+			//}else if(i==check.length-1){
+				document.getElementById("production:allC").value="false";
+				jquery("#b").attr("aaa","false");
+				jquery("#b").removeClass("a");
+				jquery("#b").addClass("b");
+				break;
+			}
+		}
+	}
+	
+}
+function getDateDiff(date1,date2){
+    var arr1=date1.split('-');
+	var arr2=date2.split('-');
+	var d1=new Date(arr1[0],arr1[1],arr1[2]);
+	var d2=new Date(arr2[0],arr2[1],arr2[2]);
+	if ((d2.getTime()-d1.getTime())/(1000*3600*24) > 90) {
+		return false;
+	}else {
+		return true;
+	}
+}
+checksub = function(){
+	var begin = jquery("#beginTime").val();
+	var end = jquery("#endTime").val();
+	var flag = getDateDiff(begin,end);
+	if(!flag){
+		document.getElementById("productMsg").innerHTML = "您选择的区域超过3个月，请选择3个月内数据查询。";
+		jquery("#myModal").modal('show');
+		return false;
+	}
+	if(document.getElementById("checkone")){
+		var str = "";
+		var check = document.getElementById("checkone").getElementsByTagName("input");
+		for(var i = 0;i<check.length;i++){
+			if(check[i].id=='search:allC' || check[i].id=='envAll')
+				continue;
+			if(check[i].getAttribute("aaa")=="true"){
+				str+=check[i].value+"_";
+			}
+		}
+		
+		if(str.length>1){
+			str = str.substring(0,str.length-1);
+		}
+		var item2 = jquery("#pinfoid  option:selected").val(); 
+		var pids = "";
+		if(jquery("#plantCheck").val()!=null){
+			pids = jquery("#plantCheck").val().toString();
+		}
+		jquery("#pIdString").val(pids);
+		document.getElementById("production:check").value=str;
+	    document.getElementById("production:pInfoIdInfo").value=item2;
+	}
+   
+	jquery("[type='submit']").attr('onclick','return checksub2()');
+	return true;
+}
+function checksub2(){
+	return false;
+}
+
+linksub = function(val){
+	document.getElementById("production:ddId").value=val;
+}
+jquery(document).ready(function(){
+	/* 表格控件 */
+	createTable();
+	
+	change();
+	
+	changColor();
+	resizeTubiao();
+	jquery('#plantCheck').attr("multiple","multiple");
+	jquery('select:not(#plantCheck)').selectpicker();
+    jquery('#plantCheck').selectpicker({noneSelectedText:"全部"});
+    jquery('#plantCheck').selectpicker('deselectAll');
+	jquery('input').iCheck({
+	    checkboxClass: 'icheckbox_minimal-blue',
+	    radioClass: 'iradio_minimal-blue',
+	    increaseArea: '20%' // optional
+	  });
+
+	jquery("input[name='lookAll']").on("ifClicked", function(event){
+		if(jquery("#lookAll").attr("aa")=='a'){
+			jquery("div[name='fakeContainer1']").hide();
+			jquery("div[name='fakeContainer']").show();
+			jquery("#lookAll").attr("aa","b");
+		}else{
+			var a = jquery("#scroll1").width();
+			jquery('.aaa2').css("width",a/12 + "px");
+			jquery("div[name='fakeContainer']").hide();
+			jquery("div[name='fakeContainer1']").show();
+			jquery("#lookAll").attr("aa","a");
+	 	}
+	});	
+	jquery("#production\\:checkAll").on("ifClicked", function(event){
+		if (this.checked) {
+			jquery("input[name='checkBName']").iCheck("uncheck"); 
+		} else {
+			jquery("input[name='checkBName']").iCheck("check"); 
+		}
+	});
+
+
+	jquery(".trs").each(function(){
+		var mdata=true;
+		jquery(this).find('.tds').each(function(){
+			if(jquery(this).text().indexOf('>')!=-1){
+				if(jquery(this).text().substring(1,jquery(this).text().length)!=0){
+					mdata=false;
+				}
+			}else{
+				if(jquery(this).text()!=0){
+					mdata=false;
+				}
+			}
+		})
+		if(mdata){
+			jquery(this).css('display','none'); 
+		}
+	})
+
+	jquery("#allData").on("ifClicked", function(event){
+		if (this.checked) {
+			jquery(".trs").each(function(){
+				var mdata=true;
+				jquery(this).find('.tds').each(function(){
+					if(jquery(this).text().indexOf('>')!=-1){
+						if(jquery(this).text().substring(1,jquery(this).text().length)!=0){
+							mdata=false;
+						}
+					}else{
+						if(jquery(this).text()!=0){
+							mdata=false;
+						}
+					}
+				})
+				if(mdata){
+					jquery(this).css('display','none'); 
+				}
+			})
+		} else {
+			jquery(".trs").each(function(){
+				jquery(this).css('display','table-row'); 
+			})
+		}
+	});
+	
+	jquery("#envAll").on("ifClicked", function(event){
+		if (this.checked) {
+			jquery("input[name='cb']").each(function(){
+				jquery(this).iCheck("uncheck"); 
+				jquery(this).attr("aaa",false);
+
+				})
+		} else {
+			jquery("input[name='cb']").each(function(){
+				jquery(this).iCheck("check"); 
+				jquery(this).attr("aaa",true);
+			})
+			
+		}
+	});
+	jquery("input[name='sex']:radio").on("ifChecked", function(event){
+		var type = this.value;
+		document.getElementById("production:ddId").value=type;
+	});
+	jquery("input[name='cb']").on("ifChanged", function(event){
+		if(!this.checked) {
+			jquery("#envAll").iCheck("uncheck"); 
+			jquery(this).attr("aaa",false);
+		}else{
+			jquery(this).attr("aaa",true);
+			}
+	});
+	
+	var plantStr = '#{productionAndDemandHome.pIdString}';
+	var checkStr = plantStr.split(",");
+	if(jquery("#plantCheck option").length!=checkStr.length)
+		jquery("#plantCheck").selectpicker("val",checkStr);
+	});
+
+window.onload = function() 
+{
+	var ddId = document.getElementById("production:ddId").value;
+	if(ddId != null){
+		jquery("#sex" + ddId).iCheck("check"); 
+	}
+	var idStr = "";
+	var obj = false;
+	jquery("input[name='cb']").each(function(){
+		var cbBoolean = jquery(this).attr("aaa");
+		//alert(jquery(this).attr("id"));
+		if(cbBoolean == "true"){
+			jquery(this).iCheck("check");
+			jquery(this).attr("aaa",true); 
+		}else{
+			obj = true;
+			jquery(this).iCheck("uncheck");
+			jquery(this).attr("aaa",false); 
+		}
+		if(obj){
+			jquery("#envAll").iCheck("uncheck"); 
+		}
+	});
+	jquery("[type='submit']").attr('onclick','return checksub()');
+}
+//]]>
+</script>
+</ui:define>
+
+</ui:composition>

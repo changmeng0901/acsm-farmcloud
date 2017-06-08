@@ -1,0 +1,3818 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib" contentType="text/html">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="format-detection" content="telephone=no"/>
+<title>绿色履历</title>
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/jquery-lvliUI.css" type="text/css" />
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/iphonetow.css" type="text/css" />
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/resume/iphone.css" type="text/css" />
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/record/idangerous.swiper.css" type="text/css"/>
+<link rel="stylesheet" href="#{request.contextPath}/asset/css/tree.css" type="text/css" />
+<style>
+/* 全景 */
+.return_iframB {position: absolute;left: 10px;top: 96px;z-index: 2002;height: 32px;line-height: 32px;padding: 0 10px;background-color: #b0d562;border-radius: 16px;font-size: 14px;color: #fff;}
+</style>
+<!-- Include jQuery and jquery.pin -->
+<script src="#{request.contextPath}/asset/js/jquery.min.js"></script>
+<script src="#{request.contextPath}/asset/js/jquery.knob.js"></script>
+<script src="#{request.contextPath}/asset/js/jquery_pin.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&amp;ak=pokmWUvo4GzGDVGGBb8HrM9h"></script>
+<script src="#{request.contextPath}/asset/js/jquery.slides.min.js"></script>
+<script src="#{request.contextPath}/asset/js/jquery.lazyload.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/highcharts-more.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-lvliUI.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/record/idangerous.swiper.min.js"></script>
+<script>
+//<![CDATA[
+	var enId="#{iphoneHomeTow.pri.enterpriseInfoId.id}";
+	var prduId="#{iphoneHomeTow.pri.productInfoId}";
+           /* 微信接口 开始 */
+	function fenxiang(myname1,enName1,imgUrl1,myurl1){
+		jQuery.ajax({
+			url : url,
+			data : {url:myurl1},
+			dataType: 'jsonp',  
+			crossDomain: true,  
+			success: function (data) { 
+				var wNoncestr=data.noncestr;
+				var wTimestamp=data.timestamp;
+				var wsignature=data.signature;
+				var appId = data.appid;
+				wx.config({
+					debug:false,
+					appId:appId,
+					timestamp:wTimestamp,
+					nonceStr:wNoncestr,
+					signature:wsignature,
+					jsApiList: ['checkJsApi',
+							'onMenuShareTimeline',
+							'onMenuShareAppMessage',
+							'onMenuShareQQ',
+							'onMenuShareWeibo','startRecord'
+							]
+				});
+				//步骤四：通过ready接口处理成功验证    
+				wx.ready(function(){            
+					wx.checkJsApi({                
+						jsApiList: ['onMenuShareTimeline']
+					});
+					wx.onMenuShareTimeline({
+						title: myname1,
+						desc: enName1,
+						link: myurl1,
+						imgUrl: imgUrl1,
+						trigger: function(res) {// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+						},
+						success: function(res) {
+							saveforward(prduId,1,enId);
+						},
+						cancel: function(res) {
+						}
+					});
+					wx.onMenuShareAppMessage({
+						title: myname1,
+						desc: enName1,
+						link: myurl1,
+						imgUrl: imgUrl1,
+						trigger: function (res) {// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+						},
+						success: function (res) {
+							saveforward(prduId,1,enId);
+						},
+						cancel: function (res) {
+						},
+						fail: function (res) {
+						}
+					});
+					wx.onMenuShareQQ({
+						title: myname1,
+						desc: enName1,
+						link: myurl1,
+						imgUrl: imgUrl1,
+						trigger: function (res) {
+						},
+						complete: function (res) {
+						},
+						success: function (res) {
+							saveforward(prduId,1,enId);
+						},
+						cancel: function (res) {
+						},
+						fail: function (res) {
+						}
+					});
+				})
+			},
+		    error: function(XMLHttpRequest, textStatus, errorThrown){
+			}
+		})
+	}
+	/* 微信接口 结束 */
+           
+           
+           
+          /*
+	微信分享  开始  放在所有方法前面为了第一个加载
+	url 请求微信接口 获取微信验证所要的数据 token,时间戳
+	myurl 当前URL(分享的链接)
+	myname 分项名称
+	enName 描述
+	imgUrl 图片
+	*/
+	var url = "#{dataDicConstant.getWxDomainNameUrl()}/weixinservice/farmeasy/adopter?callback=?&method=js_ticket";
+	var myurl = window.location.href.split("#")[0];
+//	var myname="";
+//	jQuery('.goodsul .goodsname').each(function(){
+//		if(jQuery(this).parent().css('display')!='none'){
+//			myname=jQuery(this).text();
+//		}
+//	})
+	var myname='#{iphoneHomeTow.pri.breed.plant.name}';
+	var myname2='#{iphoneHomeTow.pri.productName}';
+	if(myname2!="" && myname2!=null){
+		myname=myname2;
+	}
+	
+	myname=myname+'绿色履历';
+	var enName="#{iphoneHomeTow.pri.enterpriseInfoId.name}"+'\n ---义田全程追溯---';
+//	var imgUrl=jQuery('.peach_viewShzh img').eq(1).attr('src');
+	var imgUrl='#{iphoneHomeTow.pri.breed.plant.plantImgRound}';
+	var imgUrl2='#{iphoneHomeTow.pri.plantImage}';
+	if(imgUrl2!="" && imgUrl2!=null){
+		imgUrl=imgUrl2;
+	}
+	
+	var shareName='#{iphoneHomeTow.pri.shareName}';
+	var shareDescribe='#{iphoneHomeTow.pri.shareDescribe}';
+	if(shareName!="" && shareName!=null){
+		myname=shareName;
+		enName=shareDescribe.replace(/<\/br\>/g,"\n");
+	}
+	/*调取微信方法 */
+	fenxiang(myname,enName,imgUrl,myurl);
+           
+	/* 认证机构图片缩放  开始 */
+	 drawImage = function (imgd,fitwidth,fitheight){  
+   		var image=new Image();  
+	    image.src=imgd.src;  
+	    if(image.width>0 && image.height>0){  
+       	if(image.width/image.height>= fitwidth/fitheight){
+           	if(image.width>fitwidth){  
+	                imgd.width=fitwidth; 
+	                imgd.height=(image.height*fitwidth)/image.width;  
+	            }else{  
+	                imgd.width=image.width;   
+	               imgd.height=image.height;  
+	            }  
+       	}else{  
+           	imgd.width=image.width;   
+              	imgd.height=image.height;  
+              	if(image.width>fitwidth){
+           		imgd.width=fitwidth;
+               }
+			}  
+		} 
+	}
+	/* 认证机构图片缩放  结束 */
+//]]>
+</script>
+</head>
+<body style="position:fixed;left:50%;width:320px; margin-left:-160px;">
+	<div class="main" style="background:none repeat scroll 0 0 #{iphoneHomeTow.pmi.backgroundColor}">
+		<div class="maturity_block" style="display:none;">
+	    	<p class="tip_pic"><img src="/asset/images/map/maturity_ico2.png" /></p>
+	        <p class="tip_txt1">抱歉，您的履历不存在！</p>
+		</div>
+		<div class="black_op50" style="display:none;"></div>
+		<!-- 有机解释 开始 -->
+   		<div class="tck3" id="tck10" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+       		<div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(10)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">
+	     			有机蔬菜是指在蔬菜生产过程中严格按照有机生产规程，禁止使用任何化学合成的农药、化肥，以及基因工程生物及其产物，而是遵循自然规律和生态学原理，采取一系列可持续发展的农业技术，协调种植平衡，含有绿色食品标，维持农业生态系统持续稳定，且经过有机食品认证机构鉴定认证，并颁发有机食品证书的蔬菜产品。    
+	        	</p>
+			</div>
+   		</div>
+   		<div class="tck3" id="tck22" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+       		<div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(22)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">
+	     			绿色蔬菜是指遵循可持续发展的原则，在产地生态环境良好的前提下，按照特定的质量标准体系生产，并经专门机构认定，允许使用绿色食品标志的无污染的安全、优质、营养类蔬菜的总称。
+	        	</p>
+       		</div>
+    	</div>
+	    <div class="tck3" id="tck23" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(23)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">
+	     			无公害蔬菜是指蔬菜中有害物质（如农药残留、重金属、亚硝酸盐等）的含量，控制在国家规定的允许范围内，人们食用后对人体健康不造成危害的蔬菜。 
+	        	</p>
+	        </div>
+	    </div>
+    	<!-- 有机解释 结束 -->
+    	<!-- 环境指纹解释 开始 -->
+	    <div class="tck3" id="tck11" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(11)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">真实展示农产品生长环境特征，生长环境决定产品品质，较高的土壤条件和环境管理水平，是产出真正高品质水果的重要保障，生长环境越好，产品越健康！</p>
+	        </div>
+	    </div>
+	    <!-- 环境指纹解释 结束 -->
+	    <!-- 日夜温差解释 开始 -->
+	    <div class="tck3" id="tck12" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(12)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">昼夜温差可以改善果实品质，温差较大时会促进果实糖分的积累，提高水果甜度，使口感越好。</p>
+	        </div>
+	    </div>
+	    <!-- 日夜温差解释 结束 -->
+	    <!-- 糖分等级解释 开始 -->
+	    <div class="tck3" id="tck13" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(13)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">
+					含糖量是水果品质的重要指标，当含糖量达到种类标准的90%-100%为优，达到80%-89%为良，60%-79%为中，59%以下为差。
+					<br />含糖量在4%-7%的水果：西瓜、草莓、白兰瓜等；
+					<br />含含糖量在8%-10%的水果：梨、柠檬、樱桃、哈密瓜、葡萄、桃、菠萝等；
+					<br />含糖量在9%-13%的水果：苹果、杏、无花果、橙子、柚子、荔枝等；
+					<br />含糖量在14%以上的水果：柿子、桂圆、香蕉、杨梅、石榴等。
+				</p>
+	        </div>
+	    </div>
+	    <!-- 糖分等级解释 结束 -->
+	    <!-- 土质解释 开始 -->
+	    <div class="tck3" id="tck14" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(14)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">砂质土：水分和养料特别容易流失，通气性好。<br />壤土：水分和养料容易流失，通风性适中。<br />粘质土：水分和养料极易保存，通气性差。</p>
+	        </div>
+	    </div>
+	    <!-- 土质解释 结束 -->
+	    <!-- 有机质含量解释 开始 -->
+	    <div class="tck3" id="tck15" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(15)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt" style="margin-bottom:5px;">土壤有机质含量多少是土壤是否肥沃的标志：</p>
+	            <p class="txt">
+	            	<b class="lis">① 大于4％为营养丰富的土壤，无需人工添加养分；</b>
+	                <b class="lis">② 3%—4%为中上等营养丰富的土壤，无需人工添加养分；</b>
+	                <b class="lis">③ 2%—3%为中等营养的土壤，需要人工添加部分养分；</b>
+	                <b class="lis">④ 1%—2%为中下贫瘠的土壤，需要人工添加大量养分；</b>
+	                <b class="lis">⑤ 0.6%—1%为贫瘠的土壤，不适合蔬菜生长；</b>
+	                <b class="lis">⑥ 低于0.6%为严重贫瘠的土壤，不适合蔬菜生长；</b>
+	            </p>
+	        </div>
+	    </div>
+	    <!-- 有机质含量解释 结束 -->
+	    <!-- 果实生长温度趋势解释 开始 -->
+	    <div class="tck3" id="tck16" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(16)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">生长过程中温度是否适宜的评价，实际温度在蓝色适宜范围内，则蔬菜更健康，发生病害的可能性越低，防治病害的药品使用可能性越小。</p>
+	        </div>
+	    </div>
+	    <!-- 果实生长温度趋势解释 结束 -->
+	    <!-- 果实生长降水量趋势解释 开始 -->
+	    <div class="tck3" id="tck17" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(17)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">连续阴雨会增加蔬菜生长环境湿度，日照时数短，干物质积累减少，抗病能力减弱，蔬菜病虫害易呈高发趋势。</p>
+	        </div>
+	    </div>
+	    <!-- 果实生长降水量趋势解释 结束 -->
+	    <!-- 土壤营养状况解释 开始 -->
+	    <div class="tck3" id="tck18" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(18)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">从种菜到收菜，实际空气湿度在蓝色适宜范围内，蔬菜质量越好，使用农药可能性越低；如果空气相对湿度大于蓝色适宜范围，蔬菜发生病害的概率会相应提高，并且容易造成植株徒长、落花落果等情况。</p>
+	        </div>
+	    </div>
+	    <!-- 土壤营养状况解释 结束 -->
+	    <!-- ph值解释 开始 -->
+	    <div class="tck3" id="tck19" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(19)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt" style="margin-bottom:5px;">土壤酸碱度：</p>
+	            <p class="txt">
+	                <b class="lis">强酸性土（pH小于5），不适宜植物生长</b>
+	                <b class="lis">酸性土（pH5．0-6．5），喜欢酸性土壤：花生、马铃薯、芜菁、甘薯、西瓜、浆果类植物（如草莓）等。</b>
+	                <b class="lis">中性土（ph6．5-7．5），喜欢中性土壤：油菜、西红柿、白萝卜、豆类、羽衣甘蓝、玉米、棉花、茄子、大麦、燕麦、小麦、水稻、黑麦、荞麦、樱桃、葡萄、芥菜、香菜、桃树、梨树、苹果等。</b>
+	                <b class="lis"> 碱性土（pH7．5-8．5），喜欢碱性土壤：青花菜、花菜、卷心菜、胡萝卜、芹菜、菠菜、大葱、洋葱、生菜、韭菜、紫花苜蓿、芦笋、甜菜、牛皮菜、甜瓜、木瓜、秋葵等。</b>
+	                <b class="lis">强碱性土（pH大于8．5），不适宜植物生长</b>
+	            </p>
+	        </div>
+	    </div>
+	    <!-- ph值解释 结束 -->
+	    <!-- 生长光照趋势解释 开始 -->
+	    <div class="tck3" id="tck20" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(20)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">生长过程中光照强度是否适宜的评价，实际光照越接近适宜值，植物抵御病虫害入侵的能力越强，依靠药物防治的可能性越低。</p>
+	        </div>
+	    </div>
+	    <!-- 生长光照趋势解释 结束 -->
+	    <!-- 树的秘密解释 开始 -->
+	    <div class="tck3" id="tck21" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;min-height:20px;">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(21)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt">
+	            	<b>#{iphoneHomeTow.pri.breed.introduce}</b>
+	            </p>
+	        </div>
+	    </div>
+	    <!-- 树的秘密解释 结束 -->
+	    <!-- 农事操作内容开始 -->
+	    <div class="tck3" id="tck30" style="z-index:2000; max-width:290; max-height:100%; width:290; padding:15px;min-height:38px">
+	        <div class="explain-wap">
+	        	<i class="closeBtn" onclick="tckClose(30)"><img src="#{request.contextPath}/asset/images/colose_03.png" /></i>
+	            <p class="txt"></p>
+	        </div>
+	    </div>
+    	<!-- 农事操作内容 结束 -->
+		<div class="content2">
+        	<div  class="top_logo">
+				<div class="logo">
+                	<ui:fragment rendered="#{iphoneHomeTow.pmi.logoImageUrl!=null}">
+						<img style="margin-left: 15px; max-width:100px;max-height:100px;display:" src="#{iphoneHomeTow.pmi.logoImageUrl}" id="logo_s"/>
+					</ui:fragment>
+					<ui:fragment rendered="#{iphoneHomeTow.pmi.logoImageUrl==null}">
+						<img style="margin-left: 15px;max-width:100px;max-height:100px; display:" src="#{request.contextPath}/asset/images/logo_yt.png" id="logo_s" />
+					</ui:fragment>
+                </div>
+				<div class="fenx">
+                	<div class="city_nav" id="city_nav" onclick="this.className='city_nav city_hover';document.getElementById('city_link').className='tck city_hovers'">
+                    	<img src="#{request.contextPath}/asset/images/return.png" width="27" height="24" />
+                    </div>
+                    <div class="city_nav" id="city_nav2" onclick="clickShow();" style="#{iphoneHomeTow.pmi.antifakeShow and iphoneHomeTow.useBatch.length() eq 16 and iphoneHomeTow.verificationCode ne 0?'':'display:none;'}">   
+	              		<img src="#{request.contextPath}/asset/images/yzpn.png" width="31" height="30"/>    
+					</div>
+				</div>
+           	</div>
+			<div class="maturity">
+          		<h:inputHidden  value="#{iphoneHomeTow.pmi.discountShow}" id="discountShow"/>
+          		<h:inputHidden value="#{iphoneHomeTow.pmi.membershipShow}" id="membershipShow"/>
+          		<div class="calendar" style="display: none;">
+                	<div class="caleqi">保鲜期</div>
+                    <div class="caleday"><font color="#84b53c" size="3">3</font>&#160;<font color="#666666" size="1">天</font>&#160;<font color="#0b9ed5" size="1">(冷藏)</font></div>
+                </div>
+                <span class="chart" style="position:relative;width:200px;height:200px;margin:0 auto;display: #{iphoneHomeTow.pmi.growingShow?'block':'none'}">
+                	<img src="#{request.contextPath}/asset/images/canvasone.png" width="240" height="240" style="position:absolute; width:240px; height:240px; z-indent:20; left:-20px; top:-34px; "/>
+			  		<div style="position:absolute;width:200px;z-indent:2; top:-2px;">
+                    	<span class="percent" style="position:absolute;left:10px; top:160px;z-index:108;">#{iphoneHomeTow.maturity}</span>
+                    		<div class="#{!iphoneHomeTow.pmi.fingerprintShow ||  (iphoneHomeTow.soil =='' &amp;&amp; !iphoneHomeTow.noOrBl &amp;&amp; empty iphoneHomeTow.ltlist &amp;&amp; iphoneHomeTow.nowPh=='' &amp;&amp; iphoneHomeTow.aveTempArr.size()==0)?'':'pro_pic'}" id="fingerprint" style="position:absolute;left:24px; top:8px; width:150px;height:150px;">
+	                   	 		<ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.plantStandard==122}">
+                    				<span class="peach_shb" onclick="tckLink(10)">
+	                        	  		<img src="#{request.contextPath}/asset/images/peach_shb01.png" />
+	                        	  	</span>
+	                        	</ui:fragment> 
+	                        	<ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.plantStandard==123}">
+	                        		<span class="peach_shb" onclick="tckLink(22)">
+	                        	  		<img src="#{request.contextPath}/asset/images/ls.png" />
+	                        	  	</span>
+	                        	</ui:fragment> 
+	                        	<ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.plantStandard==124}">
+	                        		<span class="peach_shb" onclick="tckLink(23)">
+	                        	  		<img src="#{request.contextPath}/asset/images/wgh.png" />
+	                        	  	</span>
+	                        	</ui:fragment>  
+                        		<span class="peach_viewShzh">
+		                        	<img class="viewShzh_ico" src="#{request.contextPath}/asset/images/peach_viewShzh.png" style="#{!iphoneHomeTow.pmi.fingerprintShow ||  (iphoneHomeTow.soil =='' &amp;&amp; !iphoneHomeTow.noOrBl &amp;&amp; empty iphoneHomeTow.ltlist &amp;&amp; iphoneHomeTow.nowPh=='' &amp;&amp; iphoneHomeTow.aveTempArr.size()==0)?'display:none':'display:block'}"/>
+		                   			<ui:fragment rendered="#{iphoneHomeTow.pri.plantImage!=null}">
+		                   				<img src="#{iphoneHomeTow.pri.plantImage}@1000-1ci.png" width="150" height="150" />
+		                   			</ui:fragment>
+		                   			<ui:fragment rendered="#{iphoneHomeTow.pri.plantImage==null}">
+			                   			<img src="#{iphoneHomeTow.pri.breed.plant.plantImgRound}@1000-1ci.png" width="150" height="150" />
+		                   			</ui:fragment>
+		                        </span>
+                    
+                    		</div>
+                    		<div class="now_zt" style="position:absolute; width:100px;top:120px;left:-38px; z-index:105;">
+                    	 		<img src="#{request.contextPath}/asset/images/now_03.png" width="50" height="35"/>
+                    		</div>
+		                    <div class="now_font" style="position:absolute; left:-54px; top:160px;z-index:106;">
+		                        <font class="tt" onclick="this.className='t';document.getElementById('tck2').className='tck2 city_hovers'"><span style="cursor:pointer;" onclick="tckLink(2)">自然成熟度</span></font>&#160;&#160;&#160;&#160;&#160;&#160;&#160;%
+		                    </div>
+		                    <div class="nowcz_zt" style="position:absolute; left:135px; top:102px;display: #{iphoneHomeTow.eOne.operatingTime eq null?'none':''}">
+		                    	<img src="#{request.contextPath}/asset/images/now_04.png" width="78" height="30"/>
+		                    </div>
+                    		<table class="nowcz_font" style="position:absolute; left:160px; top:130px;width:100px;display: #{iphoneHomeTow.eOne.operatingTime eq null?'none':''}">
+		                    	<tr>
+		                        	<td align="left" width="55">采摘时间</td>
+		                        	<td align="left"><img src="#{request.contextPath}/asset/images/caiz.png" width="12" height="10" /></td>
+		                        </tr>
+		                        <tr>
+		                        	<td colspan="2" align="left"> 
+		                        		<h:outputText value="#{iphoneHomeTow.eOne.operatingTime}">
+											<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日 HH:mm"/>
+										</h:outputText>
+		                        	</td>
+		                        </tr>    
+                    		</table>
+		                    <div style="position:absolute;left:17px; top:0;width:165px; height:165px;">
+		                    	<input type="hidden" class="knob" data-fgColor="chartreuse" data-thickness="0.06" data-readOnly="true" value="#{iphoneHomeTow.maturity}"/>
+		                	</div>
+                		</div>
+                	</span>
+                	<div style="position:relative;display: #{iphoneHomeTow.pmi.growingShow?'none':''}">
+						<div class="#{!iphoneHomeTow.pmi.fingerprintShow ||  (iphoneHomeTow.soil =='' &amp;&amp; !iphoneHomeTow.noOrBl &amp;&amp; empty iphoneHomeTow.ltlist &amp;&amp; iphoneHomeTow.nowPh=='' &amp;&amp; iphoneHomeTow.aveTempArr.size()==0)?'':'pro_pic'}" id="fingerprint1" style="position:absolute;left:75px; top:8px; width:150px;height:150px;">
+							<ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.plantStandard==122}">
+	                   			<span class="peach_shb" onclick="tckLink(10)">
+	                        		<img src="#{request.contextPath}/asset/images/peach_shb01.png" />
+	                        	</span>
+							</ui:fragment> 
+	                        <ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.plantStandard==123}">
+	                        	<span class="peach_shb" onclick="tckLink(22)">
+	                        		<img src="#{request.contextPath}/asset/images/ls.png" />
+	                        	</span>
+	                        </ui:fragment> 
+	                        <ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.plantStandard==124}">
+	                       		<span class="peach_shb" onclick="tckLink(23)">
+	                        		<img src="#{request.contextPath}/asset/images/wgh.png" />
+	                        	</span>
+	                        </ui:fragment>  
+	                        <span class="peach_viewShzh">
+	                        	<img class="viewShzh_ico" src="#{request.contextPath}/asset/images/peach_viewShzh.png" style="#{!iphoneHomeTow.pmi.fingerprintShow ||  (iphoneHomeTow.soil =='' &amp;&amp; !iphoneHomeTow.noOrBl &amp;&amp; empty iphoneHomeTow.ltlist &amp;&amp; iphoneHomeTow.nowPh=='' &amp;&amp; iphoneHomeTow.aveTempArr.size()==0)?'display:none':'display:block'}"/>
+	                   			<ui:fragment rendered="#{iphoneHomeTow.pri.plantImage!=null}">
+	                   				<img src="#{iphoneHomeTow.pri.plantImage}@1000-1ci.png" width="150" height="150" />
+	                   			</ui:fragment>
+	                   			<ui:fragment rendered="#{iphoneHomeTow.pri.plantImage==null}">
+		                   			<img src="#{iphoneHomeTow.pri.breed.plant.plantImgRound}@1000-1ci.png" width="150" height="150" />
+	                   			</ui:fragment>
+	                        </span>
+                    	</div>
+                     	<div class="nowcz_zt2" style="position:absolute; left:200px; top:112px;display: #{iphoneHomeTow.eOne.operatingTime eq null?'none':''}">
+                    		<img src="#{request.contextPath}/asset/images/now_04.png" width="78" height="30"/>
+                    	</div>
+                    	<table class="nowcz_font2" style="position:absolute; left:225px; top:140px;width:100px;display: #{iphoneHomeTow.eOne.operatingTime eq null?'none':''}">
+	                    	<tr>
+	                        	<td align="left" width="55">采摘时间</td>
+	                        	<td align="left"><img src="#{request.contextPath}/asset/images/caiz.png" width="12" height="10" /></td>
+	                        </tr>
+	                        <tr>
+	                        	<td colspan="2" align="left"> 
+	                        		<h:outputText value="#{iphoneHomeTow.eOne.operatingTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日 HH:mm"/>
+									</h:outputText>
+	                        	</td>
+	                        </tr>    
+                    	</table>
+                	</div>
+          		</div>
+         
+          		<table class="goodsul" cellpadding="0" cellspacing="0">
+             		<tr style="#{iphoneHomeTow.pri.productName eq null or iphoneHomeTow.pri.productName eq ''?'':'display:none'}">
+              			<td  class="goodsname">#{iphoneHomeTow.pri.breed.plant.name}</td>
+            		</tr>
+		            <tr style="#{iphoneHomeTow.pri.productName ne null and iphoneHomeTow.pri.productName ne ''?'':'display:none'}"> 
+		            	<td  class="goodsname">#{iphoneHomeTow.pri.productName}</td>
+		            </tr> 
+		            <tr> 
+		            	<td  class="goodsname2">#{iphoneHomeTow.pri.breed.plant.englishName}</td>
+		            </tr>
+		            <tr> 
+		            	<td class="adress" valign="top" align="center">
+		            		<img src="#{request.contextPath}/asset/images/mapadd.png" width="11" height="15" />&#160;基地：#{iphoneHomeTow.getBaseInfo(iphoneHomeTow.pri.tunnelInfo.partition.base).name}(#{iphoneHomeTow.pri.tunnelInfo.tunnelName})
+		            	</td>
+		            </tr>  
+          		</table>
+			<div class="szzs" style="display: #{iphoneHomeTow.pmi.healthShow and iphoneHomeTow.environment ne 0?'block':'none'};">植物生长环境指数</div>
+          	<div class="jieduanbg" style="display: #{iphoneHomeTow.pmi.healthShow and iphoneHomeTow.environment ne 0?'block':'none'};">
+          		<img src="#{request.contextPath}/asset/images/jdbg.png" width="310" height="32"/>
+		  		<div style="position:absolute;width:100px;height:20px;z-indent:2;left:0px;top:0;">
+          	   		<div class="jieduans" >
+          	   			<img src="#{request.contextPath}/asset/images/jd.png" width="#{iphoneHomeTow.environment lt 2 ?2*3.1:iphoneHomeTow.environment*3.1}" height="32"/>
+		  				<div style="position:absolute;width:#{iphoneHomeTow.environment lt 2 ?2*3.1:iphoneHomeTow.environment*3.1}px;height:20px;z-indent:2;left:0px;top:-10px;">
+	               			<div class="qip">
+		               			<img src="#{request.contextPath}/asset/images/qip.png" width="48" height="25"/>
+							    <div style="position:absolute;width:100px;height:20px;z-indent:2;left:-25px;top:0;">
+							        #{iphoneHomeTow.environment}
+			               			#{iphoneHomeTow.environment ge 0 and iphoneHomeTow.environment lt 30?'差':''}
+			                    	#{iphoneHomeTow.environment ge 30 and iphoneHomeTow.environment lt 60?'良':''}
+			                    	#{iphoneHomeTow.environment ge 60 and iphoneHomeTow.environment lt 90?'优':''}
+			                    	#{iphoneHomeTow.environment ge 90?'极优':''}
+								</div>
+	               			</div>
+		                    <div class="xiaol">
+		                    	<img src="#{request.contextPath}/asset/images/xiaol4.png" width="24" height="24" style="display: #{iphoneHomeTow.environment ge 0 and iphoneHomeTow.environment lt 30?'block':'none'}"/>
+		                    	<img src="#{request.contextPath}/asset/images/xiaol3.png" width="24" height="24" style="display: #{iphoneHomeTow.environment ge 30 and iphoneHomeTow.environment lt 60?'block':'none'}"/>
+		                    	<img src="#{request.contextPath}/asset/images/xiaol2.png" width="24" height="24" style="display: #{iphoneHomeTow.environment ge 60 and iphoneHomeTow.environment lt 90?'block':'none'}"/>
+		                    	<img src="#{request.contextPath}/asset/images/xiaol1.png" width="24" height="24" style="display: #{iphoneHomeTow.environment ge 90?'block':'none'}"/>
+			            	</div>
+	                	</div>
+               		</div>
+            	</div>
+          	</div>
+    		<div class="clear"></div>
+		</div><!--content--> 
+       
+    	<div class="content2">
+    		<table width="100%" cellpadding="0" cellspacing="0" class="zhiwen"></table>
+            <!-- 环境指纹内容 开始 -->
+            <div id="divid">
+          		<i class="closeBtn"><img src="#{request.contextPath}/asset/images/peach_close.jpg" width="30" height="30" /></i>
+	        	<div class="fingerprint_ttl" style="#{!iphoneHomeTow.pmi.fingerprintShow ||  (iphoneHomeTow.soil =='' &amp;&amp; !iphoneHomeTow.noOrBl &amp;&amp; empty iphoneHomeTow.ltlist &amp;&amp; iphoneHomeTow.nowPh=='')?'display:none':'display:block'}">
+	        		<h2><span style="cursor:pointer;" onclick="tckLink(11)">环境指纹</span></h2><p>环境决定品质</p>
+	            </div>
+             	<table cellpadding="0" cellspacing="0" width="100%" style="table-layout:fixed;display: #{iphoneHomeTow.pri.realPlant.breedBreedId.plant.floristicsType==2 ?'block':'none'}">
+              		<tr>
+	                	<td class="table_font" valign="middle" align="center" width="80"><span style="cursor:pointer;" onclick="tckLink(12)">日夜温差<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></td>
+	                	<td class="tablewd" align="left"><span  class="wenduTxt" style="font-size:36px;">#{iphoneHomeTow.airTemp}℃</span></td>
+	                    <td class="table_font" width="80" valign="middle" align="center">&nbsp;&nbsp;<span style="cursor:pointer;" onclick="tckLink(13)">糖分等级<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></td>
+						<td class="tablewd2" align="left" valign="middle"><span  class="wenduTxt2" style="font-size:36px;">#{iphoneHomeTow.levelName}</span></td>
+	               </tr>
+              	</table>
+               	<div class="jyuliang2" style="display: #{iphoneHomeTow.soil==''?'none':'block'}"><span style="cursor:pointer;" onclick="tckLink(14)">土质类型<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+              	<div class="tuzhibox" style="position:relative;display: #{iphoneHomeTow.soil==''?'none':'block'}">
+                	<div class="shendu">&nbsp;</div>
+                    <div class="tuzhiimg"><img src="#{request.contextPath}/asset/images/peachiskin/tuzhiimg.jpg" width="70" height="90" /></div>
+                    <div class="zgst zgst01" style="display:#{iphoneHomeTow.organicContent==''?'none':''}">
+                    	<div class="tuzhib"><img src="#{request.contextPath}/asset/images/peachiskin/tuzhired.png" width="60" height="21" /></div>
+                        <div class="tuzhifont"><span style="cursor:pointer;" onclick="tckLink(15)">#{iphoneHomeTow.organicContent}<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+                    </div>
+                    <div class="zgst zgst02">
+                    	<div class="tuzhib"><img src="#{request.contextPath}/asset/images/peachiskin/tuzhilan.png" width="60" height="21" /></div>
+                        <div class="tuzhifont2"> #{iphoneHomeTow.soil} #{iphoneHomeTow.agrotype}</div>
+                    </div>
+                    <div class="wwrbox" style="right:5px;padding:0 15px; background:#74ccb2; border-radius:10px;"><font>#{iphoneHomeTow.contamination}</font></div>
+	              	<div class="clear"></div>
+				</div>
+              	<div class="wwrfont_div" style="display: #{iphoneHomeTow.soil==''?'none':'block'}">#{iphoneHomeTow.soilType}#{iphoneHomeTow.thicknessSoil} #{iphoneHomeTow.drainage}</div>
+               	<div class="jyuliang2" style="display:#{empty iphoneHomeTow.ltlist?'none':'block'}">土壤营养状况<em id="tryyzk-more">更多&gt;&gt;</em></div>
+              	<div class="kwztable-wap" style="display:#{empty iphoneHomeTow.ltlist?'none':'block'}">
+                	<ul class="tryyStatues">
+                  		<a4j:repeat value="#{iphoneHomeTow.ltlist}" var="ltvar" rowKeyVar="_index2">
+		                	<li class="items">
+		                  		#{ltvar[0]}<span class="tryy_txt">#{ltvar[1]}</span>
+		                  	</li>
+	                  	</a4j:repeat>
+					</ul>
+				</div>
+              
+              	<ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.breedBreedId.plant.floristicsType==2  &amp;&amp; iphoneHomeTow.aveTempShow !=null &amp;&amp; iphoneHomeTow.noOrBl}">
+					<div class="jyuliang2"><span style="cursor:pointer;" onclick="tckLink(16)">果实生长温度趋势<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+	              	<span style="padding-left:12px;">(℃)</span>
+	              	<div class="jyldiv" style="position:relative;width:300px;">
+		              	<span style="position:absolute; right:-8px; top:124px; font-size:10px;"></span>
+		                <div id="container" style="min-width:294px;width:294px;height:200px"></div>
+	              	</div>
+              	</ui:fragment>
+              	<ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.breedBreedId.plant.floristicsType!=2 &amp;&amp; iphoneHomeTow.noOrBl}">
+					<div class="jyuliang2" ><span style="cursor:pointer;" onclick="tckLink(16)">果实生长温度趋势<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+	            	<span style="padding-left:12px;">(℃)</span>
+	              	<div class="jyldiv" style="position:relative;width:300px;">
+		                <div id="container5" style="min-width:294px;width:294px;height:200px"></div>
+	              	</div>
+              	</ui:fragment>
+				<ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.breedBreedId.plant.floristicsType==2  &amp;&amp; iphoneHomeTow.suitableRainShow !=null}">
+                	<div class="jyuliang2" style="display:#{iphoneHomeTow.noOrBl ?'block':'none'}"><span style="cursor:pointer;" onclick="tckLink(17)">果实生长降水量趋势<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+                	<span style="padding-left:8px; display:#{iphoneHomeTow.noOrBl ?'block':'none'}">(mm)</span>
+              		<div class="jyldiv" style="position:relative;width:300px; display:#{iphoneHomeTow.noOrBl ?'block':'none'}">
+			            <span style="position:absolute; right:-8px; top:124px; font-size:10px;"></span>
+			            <div id="container2" style="min-width:294px;width:294px;height:200px"></div>
+		            </div>
+              	</ui:fragment>
+               	<ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.breedBreedId.plant.floristicsType!=2}">
+                	<div class="jyuliang2" style="display:#{iphoneHomeTow.noOrBl ?'block':'none'}"><span style="cursor:pointer;" onclick="tckLink(18)">果实生长湿度趋势<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+                	<span style="padding-left:8px;display:#{iphoneHomeTow.noOrBl ?'block':'none'}">(%)</span>
+	              	<div class="jyldiv" style="position:relative;width:300px;display:#{iphoneHomeTow.noOrBl ?'block':'none'} ">
+		             	<!--  <span style="position:absolute; right:-8px; top:124px; font-size:10px;">(日期)</span>-->
+		              	<div id="container4" style="min-width:294px;width:294px;height:200px"></div>
+	              	</div>
+				</ui:fragment>
+	            <div class="jyuliang2" style="display:#{iphoneHomeTow.nowPh==''?'none':'block'}"><span style="cursor:pointer;" onclick="tckLink(19)">PH值<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+              	<div class="phbox" style="position:relative;display:#{iphoneHomeTow.nowPh==''?'none':'block'}">
+              		<img class="soilka" src="#{request.contextPath}/asset/images/hjzs_soilka.jpg" />
+              		<div class="soilAcidity" style="left:1px;">
+                		<div class="soilka-valueTt" style="width:41px;">
+	                    	<span class="nowPhName" aa="#{iphoneHomeTow.nowPh}"> 当前#{iphoneHomeTow.nowPh}</span>
+	                        <img src="#{request.contextPath}/asset/images/hjzs_img1.png" />
+	                    </div>
+                   		<div class="soilka-valueBt" style="width:87px;">
+	                    	<table cellpadding="0" cellspacing="0">
+	                        	<tr>
+	                            	<td><img src="#{request.contextPath}/asset/images/hjzs_img2.png" /></td>
+	                                <td class="valueTdct" style="width:16px;"></td>
+	                                <td><img src="#{request.contextPath}/asset/images/hjzs_img3.png" /></td>
+	                            </tr>
+	                        </table>
+	                    	<span class="tablePhName">#{iphoneHomeTow.suitablePh}</span>
+						</div>
+					</div>
+              		<div class="clear"></div>
+              	</div>
+              
+              
+             <ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.breedBreedId.plant.floristicsType==2 &amp;&amp; iphoneHomeTow.weatherTempShow !=null}">  
+	          <div class="jyuliang2" style="display:#{iphoneHomeTow.dateForS==1 || !iphoneHomeTow.noOrBl ?'none':'block'}"><span style="cursor:pointer;" onclick="tckLink(20)">果实生长光照趋势<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+	          <span style="padding-left:18px;display:#{iphoneHomeTow.dateForS==1 || !iphoneHomeTow.noOrBl?'none':'block'}">(lux)</span>
+	          <div class="jyldiv" style="position:relative;width:300px;display:#{iphoneHomeTow.dateForS==1 || !iphoneHomeTow.noOrBl?'none':'block'} ">
+		          <span style="position:absolute; right:-8px; top:124px; font-size:10px;"></span>
+		          <div id="container3" style="min-width:294px;width:294px;height:200px"></div>
+	          </div>
+            </ui:fragment>
+            <ui:fragment rendered="#{iphoneHomeTow.pri.realPlant.breedBreedId.plant.floristicsType!=2}">  
+	          <div class="jyuliang2" style="display:#{iphoneHomeTow.dateForS==1 || !iphoneHomeTow.noOrBl ?'none':'block'}"><span style="cursor:pointer;" onclick="tckLink(20)">果实生长光照趋势<img class="i-ico" src="#{request.contextPath}/asset/images/i-ico.png" /></span></div>
+	          <span style="padding-left:18px;display:#{iphoneHomeTow.dateForS==1 || !iphoneHomeTow.noOrBl?'none':'block'}">(lux)</span>
+	          <div class="jyldiv" style="position:relative;width:300px;display:#{iphoneHomeTow.dateForS==1 || !iphoneHomeTow.noOrBl?'none':'block'} ">
+		          <!-- <span style="position:absolute; right:-8px; top:124px; font-size:10px;">(日期)</span>-->
+		          <div id="container6" style="min-width:294px;width:294px;height:200px"></div>
+	          </div>
+            </ui:fragment>
+              
+              
+          	  <div class="clear"></div>
+          </div>
+          <!-- 环境指纹内容 结束 -->
+    </div>   
+        <!-- 再次购买 开始 -->
+	<div class="content2">
+    	<ul class="purchase_again">
+        	<li class="items">
+            	<ui:fragment rendered="#{iphoneHomeTow.pmi.discountShow}">
+	            	<a href="javascript:;" id="tckLink_btn2" style="#{iphoneHomeTow.pmi.microMartShow ? 'display:none;' :''}">
+               			<img class="icoA discountShow" src="#{request.contextPath}/asset/images/peach_icoA2.jpg" />
+	                </a>
+					<ui:fragment rendered="#{iphoneHomeTow.pmi.microMartShow}">
+		            	<a href="#{iphoneHomeTow.pmi.discountAddress eq ''?'#':iphoneHomeTow.pmi.discountAddress}">
+                			<img class="icoA discountShow" src="#{request.contextPath}/asset/images/peach_icoA2.jpg" />
+		                </a>
+		            </ui:fragment>
+				</ui:fragment>
+				<ui:fragment rendered="#{!iphoneHomeTow.pmi.discountShow}">
+                	<img class="icoA discountShow1" src="#{request.contextPath}/asset/images/peach_icoB2.jpg" />
+				</ui:fragment>
+                <p class="txt" style="width:56px;">分享红包</p>
+			</li>
+            <li class="items">
+        		<ui:fragment rendered="#{iphoneHomeTow.pmi.twiceBuyShow}">
+        	 		<ui:fragment rendered="#{!iphoneHomeTow.pmi.microMartShow}">
+	                	<ui:fragment rendered="#{iphoneHomeTow.pri.twiceBuyOnekey == '' || iphoneHomeTow.pri.twiceBuyOnekey==null || iphoneHomeTow.pri.twiceBuyOnekey==0}">
+			            	<a href="javascript:;" id="tckLink_btn3">
+		        	 			<img class="icoA twiceBuyShow" src="#{request.contextPath}/asset/images/peach_icoA1.jpg" />
+			                </a>
+	                	</ui:fragment>
+	                	<ui:fragment rendered="#{iphoneHomeTow.pri.twiceBuyOnekey != '' &amp;&amp; iphoneHomeTow.pri.twiceBuyOnekey!=null &amp;&amp; iphoneHomeTow.pri.twiceBuyOnekey!=0}">
+		                 	<a href="#{request.contextPath}/purchase/purchaseIndex.seam?product_id=#{iphoneHomeTow.pri.twiceBuyOnekey}&amp;enterprise_info_id=#{iphoneHomeTow.enterpriseInfo.id}">
+		        	 			<img class="icoA twiceBuyShow" src="#{request.contextPath}/asset/images/peach_icoA1.jpg" />
+			                </a>
+	                	</ui:fragment>
+	            	</ui:fragment>
+           			<ui:fragment rendered="#{iphoneHomeTow.pmi.microMartShow}">
+	                	<ui:fragment rendered="#{iphoneHomeTow.pri.newBuyAddress == '' || iphoneHomeTow.pri.newBuyAddress==null}">
+		            		<a href="#{iphoneHomeTow.pmi.twiceBuyAddress}">
+	        	 				<img class="icoA twiceBuyShow" src="#{request.contextPath}/asset/images/peach_icoA1.jpg" />
+		                	</a>
+	                	</ui:fragment>
+	                	<ui:fragment rendered="#{iphoneHomeTow.pri.newBuyAddress != '' &amp;&amp; iphoneHomeTow.pri.newBuyAddress!=null}">
+		                 	<a href="#{iphoneHomeTow.pri.newBuyAddress}">
+		        	 			<img class="icoA twiceBuyShow" src="#{request.contextPath}/asset/images/peach_icoA1.jpg" />
+			                </a>
+	                	</ui:fragment>
+	            	</ui:fragment>
+				</ui:fragment>
+        	  	<ui:fragment rendered="#{!iphoneHomeTow.pmi.twiceBuyShow}">
+                	<img class="icoA twiceBuyShow1" src="#{request.contextPath}/asset/images/peach_icoB1.jpg" />
+        	 	</ui:fragment>
+                <p class="txt" style="width:56px;">我要购买</p>
+            </li>
+            <li class="items">
+        		<ui:fragment rendered="#{iphoneHomeTow.pmi.krpanosShow &amp;&amp; iphoneHomeTow.pmi.krpanosAddress!=null &amp;&amp; iphoneHomeTow.pmi.krpanosAddress!='' &amp;&amp; iphoneHomeTow.pmi.krpanosAddress!=0}">
+					<a onclick="openJj('#{iphoneHomeTow.pmi.krpanosAddress}')" style="cursor: pointer;">
+	        	 		<img class="icoA krpanosShow" src="#{request.contextPath}/asset/images/peach_icoA4.jpg" />
+	        	 	</a>
+        	 	</ui:fragment>
+				<ui:fragment rendered="#{!iphoneHomeTow.pmi.krpanosShow || iphoneHomeTow.pmi.krpanosAddress ==null || iphoneHomeTow.pmi.krpanosAddress =='' || iphoneHomeTow.pmi.krpanosAddress ==0}">
+	            	<img class="icoA krpanosShow1" src="#{request.contextPath}/asset/images/peach_icoB4.jpg" />
+				</ui:fragment>
+                <p class="txt" style="width:56px;">四季田景</p>
+            </li>
+			<li class="items">
+				<a style="position:relative;" onclick="thumbsUp()">
+	           		<i class="i_total" style="position:absolute;right:11px;top:0;z-index:1;width:24px;height:14px;line-height:14px;text-align:center;font-family: sans-serif;font-style:normal;font-size:12px;color:#fff;">#{iphoneHomeTow.pri.thumbsUp}</i>
+	               	<img class="icoA" src="#{request.contextPath}/asset/images/peach_icoA3.jpg" />
+                </a>
+                <p class="txt" style="width:56px;">好吃点赞</p>
+            </li> 
+        </ul>
+    </div>
+    <!-- 再次购买 结束 -->       
+	<!--tab切换开始-->
+	<div class="yyyy" style="margin-top: 30px;">
+		<center>
+		<div class="pin-wrapper"></div>
+         <div class="pingt_rk " style="display:none;background:#{iphoneHomeTow.pmi.backgroundColor};">
+            <ul >
+                <li id="qualityShow" a="a" checkbox="#{iphoneHomeTow.pmi.qualityShow?'checkbox':'checkboxb'}">
+                	<span a="b" class="pingt_rk_a">
+	                	<img src="#{request.contextPath}/asset/images/tabicon11.png" width="44" height="82"/>
+			  			<div style="position:relative;width:100%;z-indent:2;left:0;top:-40px;">
+			  				#{iphoneHomeTow.pmi.qualityName==null?'品质':iphoneHomeTow.pmi.qualityName}
+			  			</div>
+		  			</span>
+                </li>
+                <li id="brandShow" a="a" checkbox="#{iphoneHomeTow.pmi.brandShow?'checkbox':'checkboxb'}">
+                	<span a="a" class="pingt_rk_a">
+                		<img src="#{request.contextPath}/asset/images/tabicon2.png" width="44" height="82"/>
+			  			<div style="position:relative;width:100%;z-indent:2;left:0;top:-40px;">
+			  				#{iphoneHomeTow.pmi.brandName==null?'品牌':iphoneHomeTow.pmi.brandName}
+			  			</div>
+                	</span>
+                </li>
+                <li id="recipesShow" a="a" checkbox="#{iphoneHomeTow.pmi.recipesShow?'checkbox':'checkboxb'}">
+                	<span a="a" class="pingt_rk_a">
+                		<img src="#{request.contextPath}/asset/images/tabicon3.png" width="44" height="82"/>
+			  			<div style="position:relative;width:100%;z-indent:2;left:0;top:-40px;">
+			  				#{iphoneHomeTow.pmi.recipesName==null?'菜谱':iphoneHomeTow.pmi.recipesName}
+			  			</div>
+                	</span>
+                </li>
+                <li id="commentShow" a="a" checkbox="#{iphoneHomeTow.pmi.commentShow?'checkbox':'checkboxb'}"> 
+                	<span a="a" class="pingt_rk_a">
+                		<img src="#{request.contextPath}/asset/images/tabicon4.png" width="44" height="82"/>
+			  			<div style="position:relative;width:100%;z-indent:2;left:0;top:-40px;">
+			  				评论
+			  			</div>
+                	</span>
+                </li>
+            </ul>
+         </div>
+		</center>
+    <!--tab切换结束-->          
+	<div class="content2">      
+        <!--品质开始-->  
+		<div class="four_table" id="table1" style="display:block; ">   
+        	<div class="newicon expertsShow" style="display: #{iphoneHomeTow.pmi.expertsShow?'block':'none'}"><img src="#{request.contextPath}/asset/images/newicon.png" width="20" height="20" /><a href="#{iphoneHomeTow.pmi.expertsAddress eq ''?'#':iphoneHomeTow.pmi.expertsAddress}?number=#{iphoneHomeTow.useBatch}&#38;rpid=#{iphoneHomeTow.pri.realPlant.realPlantId}" class="ncfens">#{iphoneHomeTow.pmi.expertsMessage}</a></div>
+				<div class="tree_main">  
+					<div class="tree0" style="#{iphoneHomeTow.pmi.treeType==null || iphoneHomeTow.pmi.treeType==1?'display:block':'display:none'}">  
+						<div class="jd01"></div>
+		              	<div class="top_treebg">
+	                    	<div style="position:relative;">
+	                    		<!--包装-->  
+	                      		<s:div styleClass="#{iphoneHomeTow.pmi.produceShow?'width':''}" rendered="#{iphoneHomeTow.eThree != null}" style="display: #{iphoneHomeTow.pmi.produceShow?'':'none'};">
+		                  			<table class="witabel2" cellpadding="0" cellspacing="0">
+										<tr>
+		                                	<td class="lvli_icon2" valign="bottom"  width="30"><img src="#{request.contextPath}/asset/images/lvicon3.png" width="27" height="25"/></td>
+		                                 	<td class="witabtd2" valign="bottom" align="left">
+		                                 		<font class="wid32"> 
+			                                 		<h:outputText value="#{iphoneHomeTow.eThree.operatingTime}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日 HH:mm"/>
+													</h:outputText>
+			                                 	</font>
+		                                 	</td>
+		                             	</tr>
+										<tr>
+			                            	<td colspan="2" class="witabtd2z" valign="top" align="right"><font class="widhui24">包装</font>&#160;&#160;<font class="widhui" style="#{iphoneHomeTow.eThree.name!=null?'':'display:none'}">负责人：#{iphoneHomeTow.eThree.name}</font></td>
+			                            </tr>
+	                              		<tr style="#{iphoneHomeTow.packimgsLength eq 0?'display:none;':''}">
+	                              			<td colspan="2" class="witabtd2z" valign="top" align="right">
+				                               	<a class="openPack" style="position:relative;display:inline-block;" href="javascript: void(0)" onclick="document.getElementById('tck100').className='tck66 container22 city_hovers66 '">
+				                               		<img src="#{iphoneHomeTow.eThree.packimgs.split(',')[0]}@54w_54h_1e_1c_10-2ci.png" style="height: 54px;width: 54px;#{iphoneHomeTow.eThree.packimgs!=null?'':'display:none'}"/>
+				                               		<span class="lvli_carousel" style="position: absolute;right: 0;bottom: 0;padding: 0 5px;height: 18px;line-height: 18px;background: url(../asset/images/lvli_bg1.png);font-family: '微软雅黑';color: #fff;">#{iphoneHomeTow.packimgsLength}</span>
+				                               	</a>
+	                              			</td>
+	                             		</tr>
+	                         		</table>
+	                     		</s:div>
+	                      		<!--运输--> 
+	                      		<a4j:repeat rendered="#{not empty iphoneHomeTow.pdrInfoList}" value="#{iphoneHomeTow.pdrInfoList}" var="_var" rowKeyVar="_index">
+		                        	<s:div styleClass="#{iphoneHomeTow.pmi.produceShow?'width':''}" rendered="#{_var.deliveryType eq 42}" style="display: #{iphoneHomeTow.pmi.produceShow?'':'none'};">
+			                            <table class="witabel" cellpadding="0" cellspacing="0">
+			                                <tr>
+			                                    <td class="witabtd " valign="bottom" align="right"><font class="wid32"> 
+			                                    	<h:outputText value="#{_var.operationTime}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日 HH:mm"/>
+													</h:outputText>
+			                                    </font></td>
+			                                    <td class="lvli_icon" valign="bottom"  width="35"><img src="#{request.contextPath}/asset/images/lvicon2.png" width="27" height="17"/></td>
+			                                </tr>
+			                                <tr>
+			                                    <td colspan="2" class="witabtdz" valign="top" align="right"><font class="widhui">负责人：#{_var.operationPeople}</font>&#160;&#160;<font class="widhui24">运输</font></td>
+			                                </tr>
+			                            </table>
+			                        </s:div>
+			                        <!--包装时间为空  （备注：不存在这种情况）-->  
+		                        	<s:div styleClass="#{iphoneHomeTow.pmi.produceShow?'width':''}" rendered="#{_var.deliveryType eq 38 &amp;&amp; iphoneHomeTow.eThree == null}" style="display: #{iphoneHomeTow.pmi.produceShow?'':'none'};">
+		                            	<table class="witabel2" cellpadding="0" cellspacing="0">
+			                                <tr>
+			                                    <td class="lvli_icon2" valign="bottom"  width="30"><img src="#{request.contextPath}/asset/images/lvicon3.png" width="27" height="25"/></td>
+			                                    <td class="witabtd2" valign="bottom" align="left"><font class="wid32"> 
+			                                    	<h:outputText value="#{_var.operationTime}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日 HH:mm"/>
+													</h:outputText>
+			                                    </font></td>
+			                                </tr>
+			                                <tr>
+			                                    <td colspan="2" class="witabtd2z" valign="top" align="right"><font class="widhui24">包装</font>&#160;&#160;<font class="widhui">负责人：#{_var.operationPeople}</font></td>
+			                                </tr>
+			                                <tr>
+			                                 	<td colspan="2" class="witabtd2z" valign="top" align="right">
+				                                 	<a class="openPack" href="javascript: void(0)" onclick="document.getElementById('tck100').className='tck66 container22 city_hovers66 '">
+				                                 		<img src="#{iphoneHomeTow.eThree.packimgs.split(',')[0]}@54w_54h_1e_1c_10-2ci.png" style="height: 54px;width: 54px;#{iphoneHomeTow.eThree.packimgs!=null?'':'display:none'}"/>
+				                                 	</a>
+				                                 	
+			                                 	</td>
+			                                </tr>
+			                            </table>
+									</s:div>
+		                   		</a4j:repeat>
+		                   		<!--采摘 农残检测-->  
+	                       		<a4j:repeat rendered="#{not empty iphoneHomeTow.rsListtow}" value="#{iphoneHomeTow.rsListtow}" var="_var" rowKeyVar="_index">
+									<s:div styleClass="width" rendered="#{_index % 2 eq 0}">
+		                            	<table class="witabel" cellpadding="0" cellspacing="0">
+			                                <tr>
+			                                    <td class="witabtd " valign="bottom" align="right"><font class="wid32"> 
+			                                    	<h:outputText value="#{_var.dateString}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日 HH:mm"/>
+													</h:outputText>
+			                                    </font></td>
+			                                    <td class="lvli_icon" valign="bottom"  width="35"><img src="#{request.contextPath}/asset/images/lvicon#{6-iphoneHomeTow.rsListtow.size}.png" width="24" height="25"/></td>
+			                                </tr>
+			                                <tr>
+			                                    <td colspan="2" class="witabtdz" valign="top" align="right"><h:outputText escape="false" value="#{_var.nameString}"/></td>
+			                                </tr>
+			                            </table>
+									</s:div>
+	                        		<s:div styleClass="width" rendered="#{_index % 2 ne 0}">
+			                            <table class="witabel2" cellpadding="0" cellspacing="0">
+			                                <tr>
+			                                    <td class="lvli_icon2" valign="bottom"  width="30"><img src="#{request.contextPath}/asset/images/lvicon5.png" width="27" height="25"/></td>
+			                                    <td class="witabtd2" valign="bottom" align="right">
+			                                    	<font class="wid32"> 
+			                                    	<h:outputText value="#{_var.dateString}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日 HH:mm"/>
+													</h:outputText>
+			                                    	</font>
+			                                    	
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td colspan="2" class="witabtd2z" valign="top" align="right"><h:outputText escape="false" value="#{_var.nameString}"/></td>
+			                                </tr>
+			                            </table>
+			                        </s:div>
+								</a4j:repeat>
+	                    		<!--成熟期-->  
+	                    		<s:div rendered="#{iphoneHomeTow.rsListtow.size eq 2}" styleClass="#{iphoneHomeTow.allNum eq 0?'':'width'}" style="display: #{iphoneHomeTow.allNum eq 0?'none':''}">
+	                           		<table class="witabel" cellpadding="0" cellspacing="0">
+		                                <tr>
+		                                    <td class="lvli_icon" valign="bottom"  align="right" style="padding-right:19px;"><img src="#{request.contextPath}/asset/images/lvicon.png" width="22" height="22" /></td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="witabtdz" valign="top" align="right"><font class="widhon">共#{iphoneHomeTow.allNum}天成熟期</font></td>
+		                                </tr>
+	                            	</table>
+	                      		</s:div>
+	                      		<s:div rendered="#{iphoneHomeTow.rsListtow.size eq 1}" styleClass="#{iphoneHomeTow.allNum eq 0?'':'width'}" style="display: #{iphoneHomeTow.allNum eq 0?'none':''}">
+		                            <table class="witabel2" cellpadding="0" cellspacing="0">
+		                                <tr>
+		                                    <td class="lvli_icon2" width="54"><img src="#{request.contextPath}/asset/images/lvicon.png" width="22" height="22" /></td>
+		                                </tr>
+		                                <tr>
+		                                    <td colspan="2" class="witabtd2z" valign="top" align="right"><font class="widhon">共#{iphoneHomeTow.allNum}天成熟期</font></td>
+		                                </tr>
+		                            </table>
+		                        </s:div>
+	                  		</div>
+	                  	</div>
+	            		<!--阶段上面树形图结束--> 
+	                	<div class="centerbg"></div>
+			            <!--阶段下面树形图开始 -->
+			            <div class="bot_treebg">
+			              		<a4j:repeat rendered="#{not empty iphoneHomeTow.rsList2}" value="#{iphoneHomeTow.rsList2}" var="_var" rowKeyVar="_index">
+			                        <s:div styleClass="#{_var[0].objectId==null  &amp;&amp; _var[1].objectId==null?'width54':'width55'}" rendered="#{_index % 2 eq 0}" >
+			                            <table class="witabel4" cellpadding="0" cellspacing="0" >
+			                                <tr onclick="tckLink2(30,'#{_var[0].nameString}')">
+			                                    <td class="witabtd4" valign="top" align="left" >
+			                                       <font class="wid30"> 
+			                                       		<h:outputText value="#{_var[0].dateString}">
+															<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+														</h:outputText>
+			                                       </font><h:outputText escape="false" value="#{_var[0].nameString}" styleClass="farmingtext"/>
+			                                    </td>
+			                                </tr>
+			                                <ui:fragment rendered="#{_var[0].hasImage || _var[1].tlpImage}">
+			                                <tr>
+				                                <td  class="witabtd04">
+					                            	<ui:fragment rendered="#{_var[0].hasImage}">
+							                                <a  style="height: 54px;width: 54px" id="nongshi_#{_var[0].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[0].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[0].objectId}')" >
+							                                <img src="#{_var[0].firstImage}@54w_54h_1e_1c_10-2ci.png" style="height: 54px;width: 54px"/>
+							                                <span class="lvli_carousel">#{iphoneHomeTow.jsonLength(_var[0].objectId)}</span>
+							                                </a>
+						                                </ui:fragment>
+						                                <ui:fragment rendered="#{_var[1].tlpImage}">
+							                                <a   style="height: 54px;width: 54px" id="nongshi_#{_var[1].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[1].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[1].objectId}')" >
+							                                <ui:fragment rendered="#{_var[1].firsttlpImage==''}">
+							                                	<img src="#{request.contextPath}/asset/images/record/small_trp2.png"/>
+							                                </ui:fragment>
+							                                 <ui:fragment rendered="#{_var[1].firsttlpImage!=''}">
+							                                	<img src="#{_var[1].firsttlpImage}@54w_54h_1e_1c_10-2ci.png"  style="height: 54px;width: 54px"/>
+							                                </ui:fragment>
+							                                <span class="lvli_carousel">#{iphoneHomeTow.jsonLength(_var[1].objectId)}</span>
+							                                </a>
+						                             </ui:fragment>
+				                                </td>
+			                                </tr>
+			                                </ui:fragment>
+			                            </table>
+			                        </s:div>
+			                        <s:div styleClass="#{_var[0].objectId==null &amp;&amp; _var[1].objectId==null?'width53':'width56'}" rendered="#{_index % 2 ne 0}" >
+			                            <table class="witabel3" cellpadding="0" cellspacing="0" >
+			                                <tr onclick="tckLink2(30,'#{_var[0].nameString}')">
+			                                    <td class="witabtd3" valign="top" align="right" >
+			                                        <font class="wid30"> 
+			                                       		<h:outputText value="#{_var[0].dateString}">
+															<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+														</h:outputText>
+			                                       </font><h:outputText escape="false" value="#{_var[0].nameString}" styleClass="farmingtext"/>
+			                                    </td>
+			                                </tr>
+			                                <ui:fragment rendered="#{_var[0].hasImage || _var[1].tlpImage}">
+				                                <tr>
+					                                <td  class="witabtd03">
+						                                <ui:fragment rendered="#{_var[0].hasImage}">
+							                                <a style="height: 54px;width: 54px" id="nongshi_#{_var[0].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[0].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[0].objectId}')">
+							                                <img src="#{_var[0].firstImage}@54w_54h_1e_1c_10-2ci.png" style="height: 54px;width: 54px"/>
+							                                <span class="lvli_carousel">#{iphoneHomeTow.jsonLength(_var[0].objectId)}</span>
+							                                </a>
+						                                </ui:fragment>
+						                                <ui:fragment rendered="#{_var[1].tlpImage}">
+							                                <a  style="height: 54px;width: 54px" id="nongshi1_#{_var[1].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[1].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[1].objectId}')" >
+							                                <ui:fragment rendered="#{_var[1].firsttlpImage==''}">
+							                                	<img src="#{request.contextPath}/asset/images/record/small_trp2.png" />
+							                                </ui:fragment>
+							                                 <ui:fragment rendered="#{_var[1].firsttlpImage!=''}">
+							                                	<img src="#{_var[1].firsttlpImage}@54w_54h_1e_1c_10-2ci.png" style="height: 54px;width: 54px"/>
+							                                </ui:fragment>
+							                                <span class="lvli_carousel">#{iphoneHomeTow.jsonLength(_var[1].objectId)}</span>
+							                                </a>
+						                                </ui:fragment>
+					                                </td>
+				                                </tr>
+			                                </ui:fragment>
+			                            </table>
+			                        </s:div>
+			                    </a4j:repeat>
+			                     <h:panelGroup rendered="#{iphoneHomeTow.pri.breed !=null &amp;&amp; iphoneHomeTow.pri.breed.introduce !=null}">
+			                    <div class="width54" ></div>
+			                    <div class="width53"></div>
+			                    <div class="width53"></div>
+			                    </h:panelGroup>
+			                         <div class="clear"></div> 
+			                  </div>
+			            <!--阶段下面树形图结束-->  
+			  			<div style="width:100%; height:105px; background:url(#{request.contextPath}/asset/images/genbg_03.png) center top no-repeat;">
+		                   		<div class="TreeSecret"  onclick="tckLink(21)" style="cursor:pointer;z-index:3;display:#{iphoneHomeTow.pri.breed !=null &amp;&amp; iphoneHomeTow.pri.breed.introduce !=null ?'':'none'}">
+		                   			<div>
+			                        	<p style="line-height:33px">蔬菜的秘密</p>
+		                        	</div>
+		                        </div>
+		                    </div>	
+		    		</div>
+		    		<div class="tree1" style="#{iphoneHomeTow.pmi.treeType==2?'display:block':'display:none'}">
+						<table width="100%" cellpadding="0" cellspacing="0" class="quality">
+							<!--包装-->
+	                    	<ui:fragment rendered="#{iphoneHomeTow.eThree != null}" style="display: #{iphoneHomeTow.pmi.produceShow?'':'none'};">
+					            <tr>
+									<td width="50%" class="left">
+									</td>
+									<td width="50%" class="right">
+										<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>   
+										<div class="pic #{iphoneHomeTow.packimgsLength !=0?'txt':''}">
+											<img src="#{request.contextPath}/asset/images/arrowR.png" class="arrowR"/> 
+											<ui:fragment rendered="#{iphoneHomeTow.packimgsLength !=0}">
+												<div class="t_part">
+													<a class="openPack" style="position:relative;display:inline-block;" href="javascript: void(0)" onclick="document.getElementById('tck100').className='tck66 container22 city_hovers66 '">
+														<img src="#{iphoneHomeTow.eThree.packimgs.split(',')[0]}@94w_94h_1e_1c_10-2ci.png" style="height: 94px;width: 94px"/>
+													</a>
+													<span class="nub1">#{iphoneHomeTow.packimgsLength}<font>张</font></span>
+												</div>
+											</ui:fragment>
+											<div class="b_part">
+												<h4>包装&#160;&#160;
+													<ui:fragment rendered="#{iphoneHomeTow.eThree.name != null}">
+														#{iphoneHomeTow.eThree.name}
+													</ui:fragment>
+												</h4>
+												<p>
+													<h:outputText value="#{iphoneHomeTow.eThree.operatingTime}">
+														<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+													</h:outputText>
+												</p>
+											</div>
+										</div>
+									</td>
+								</tr>
+	                   		</ui:fragment>
+		                    <!--运输--> 
+	                     	<a4j:repeat rendered="#{not empty iphoneHomeTow.pdrInfoList &amp;&amp; iphoneHomeTow.pmi.produceShow}" value="#{iphoneHomeTow.pdrInfoList}" var="_var" rowKeyVar="_index">
+	                        	<ui:fragment rendered="#{_var.deliveryType eq 42}">
+									<tr>
+										<td class="left" width="50%" >
+											<div class="pic txt">
+												<img src="#{request.contextPath}/asset/images/arrowL.png" class="arrowL"/> 
+												<div class="b_part">
+													<h4>负责人：#{_var.operationPeople}&#160;&#160;运输</h4>
+													<p>
+														<h:outputText value="#{_var.operationTime}">
+															<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+														</h:outputText>
+													</p>
+												</div>
+									        </div>
+									     </td>
+										<td class="right"  width="50%" >
+										  <span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>
+										</td>
+									</tr>
+		                        </ui:fragment>
+	                   		</a4j:repeat> 		
+		                    <!--采摘 农残检测-->  
+	                      	<a4j:repeat rendered="#{not empty iphoneHomeTow.rsListtow}" value="#{iphoneHomeTow.rsListtow}" var="_var" rowKeyVar="_index">
+	                      		<ui:fragment rendered="#{_index % 2 eq 0}">
+	                      			<tr>
+										<td class="left" width="50%" >
+											<div class="pic txt">
+												<img src="#{request.contextPath}/asset/images/arrowL.png" class="arrowL"/> 
+												<div class="b_part">
+													<h4>#{_var.nameString}</h4>
+													<p>
+														<h:outputText value="#{_var.dateString}">
+															<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+														</h:outputText>
+													</p>
+												</div>
+									        </div>
+									     </td>
+										<td class="right"  width="50%" >
+										  <span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>
+										</td>
+									</tr>
+	                      		</ui:fragment>
+	                      		<ui:fragment rendered="#{_index % 2 ne 0}">
+		                            <tr>
+										<td width="50%" class="left">
+										</td>
+										<td width="50%" class="right">
+											<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>   
+											<div class="pic">
+												<img src="#{request.contextPath}/asset/images/arrowR.png" class="arrowR"/> 
+												<div class="b_part">
+													<h4>#{_var.nameString}</h4>
+													<p>
+														<h:outputText value="#{_var.dateString}">
+															<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+														</h:outputText>
+													</p>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</ui:fragment>
+							</a4j:repeat> 
+		                    <!--成熟期-->  
+	                   		<ui:fragment rendered="#{iphoneHomeTow.rsListtow.size !=0 &amp;&amp; iphoneHomeTow.allNum!= 0}">
+								<ui:fragment rendered="#{iphoneHomeTow.rsListtow.size eq 2}">
+	                      			<tr>
+										<td class="left" width="50%" >
+											<div class="pic txt">
+												<img src="#{request.contextPath}/asset/images/arrowL.png" class="arrowL"/> 
+												<div class="b_part">
+													<h4>>共#{iphoneHomeTow.allNum}天成熟期</h4>
+													<p></p>
+												</div>
+									        </div>
+									     </td>
+										<td class="right"  width="50%" >
+										  <span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>
+										</td>
+									</tr>
+	                      		</ui:fragment>
+	                      		<ui:fragment rendered="#{iphoneHomeTow.rsListtow.size eq 1}">
+		                            <tr>
+										<td width="50%" class="left">
+										</td>
+										<td width="50%" class="right">
+											<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>   
+											<div class="pic">
+												<img src="#{request.contextPath}/asset/images/arrowR.png" class="arrowR"/> 
+												<div class="b_part">
+													<h4>共#{iphoneHomeTow.allNum}天成熟期</h4>
+													<p></p>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</ui:fragment>
+	                        </ui:fragment>
+						
+							<a4j:repeat rendered="#{not empty iphoneHomeTow.rsList2}" value="#{iphoneHomeTow.rsList2}" var="_var" rowKeyVar="_index">
+								<ui:fragment rendered="#{_index % 2 eq 0}" >
+									<ui:fragment rendered="#{(_var[0].hasImage &amp;&amp; !_var[1].tlpImage) || (!_var[0].hasImage &amp;&amp; _var[1].tlpImage)}">
+										<tr>
+											<td width="50%" class="left">
+												<ui:fragment rendered="#{_index ==iphoneHomeTow.rsList2.size()-1}">
+												 	<span class="end"><img src="#{request.contextPath}/asset/images/bottom.png" width="44" height="44" /></span>
+												 </ui:fragment>
+												<div class="pic">
+													<img src="#{request.contextPath}/asset/images/arrowL.png" class="arrowL"/> 
+													<div class="t_part">
+														<ui:fragment rendered="#{_var[0].hasImage}">
+															<a style="height: 94px;width: 94px" id="nongshi_#{_var[0].objectId}" href="Javascript: void(0)"  onclick="this.className='t';document.getElementById('tck_#{_var[0].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[0].objectId}')" >
+																<img src="#{_var[0].firstImage}@94w_94h_1e_1c_10-2ci.png" style="height: 94px;width: 94px"/>
+															</a>
+															<span class="nub1">#{iphoneHomeTow.jsonLength(_var[0].objectId)}<font>张</font></span>
+							                            </ui:fragment>
+														<ui:fragment rendered="#{_var[1].tlpImage}">
+															<a style="height: 94px;width: 94px" id="nongshi_#{_var[1].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[1].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[1].objectId}')" >
+								                                <ui:fragment rendered="#{_var[1].firsttlpImage==''}">
+								                                	<img src="#{request.contextPath}/asset/images/record/small_trp.png" style="height: 94px;width: 94px"/>
+								                                </ui:fragment>
+								                                 <ui:fragment rendered="#{_var[1].firsttlpImage!=''}">
+								                                	<img src="#{_var[1].firsttlpImage}@94w_94h_1e_1c_10-2ci.png" style="height: 94px;width: 94px"/>
+								                                </ui:fragment>
+								                                <span class="nub1">#{iphoneHomeTow.jsonLength(_var[1].objectId)}<font>张</font></span>
+								                            </a>
+														</ui:fragment>
+													</div>
+													<div class="b_part">
+														<h4>#{_var[0].nameString}</h4>
+														<p>
+															<h:outputText value="#{_var[0].dateString}">
+																<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+															</h:outputText>
+														</p>
+													</div>
+												</div>
+											</td>
+											<td width="50%" class="right">
+												<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" /></span>                
+											</td>
+										</tr>
+									</ui:fragment>
+									<ui:fragment rendered="#{_var[0].hasImage &amp;&amp; _var[1].tlpImage}">
+										<tr>
+											<td class="left" width="50%">
+												<ui:fragment rendered="#{_index ==iphoneHomeTow.rsList2.size()-1}">
+												 	<span class="end"><img src="#{request.contextPath}/asset/images/bottom.png" width="44" height="44" /></span>
+												 </ui:fragment>
+												<div class="pic">
+													<img src="#{request.contextPath}/asset/images/arrowL.png" class="arrowL" />
+													<div class="t_part">
+														<div class="smallPic fl">
+															<a style="height: 54px;width: 54px" id="nongshi_#{_var[0].objectId}" href="Javascript: void(0)"  onclick="this.className='t';document.getElementById('tck_#{_var[0].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[0].objectId}')" >
+																<img src="#{_var[0].firstImage}@45w_45h_1e_1c_10-2ci.png" width="45" height="45"/>
+															</a>
+															<span class="nub1">#{iphoneHomeTow.jsonLength(_var[0].objectId)}<font>张</font></span>
+														</div>
+														<div class="smallPic fr">
+															<a style="height: 54px;width: 54px" id="nongshi_#{_var[1].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[1].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[1].objectId}')" >
+								                                <ui:fragment rendered="#{_var[1].firsttlpImage==''}">
+								                                	<img src="#{request.contextPath}/asset/images/record/small_trp.png"  width="45" height="45"/>
+								                                </ui:fragment>
+								                                 <ui:fragment rendered="#{_var[1].firsttlpImage!=''}">
+								                                	<img src="#{_var[1].firsttlpImage}@45w_45h_1e_1c_10-2ci.png"  width="45" height="45"/>
+								                                </ui:fragment>
+								                                <span class="nub1">#{iphoneHomeTow.jsonLength(_var[1].objectId)}<font>张</font></span>
+								                            </a>
+														</div>
+													</div>
+													<div class="b_part">
+														<h4>#{_var[0].nameString}</h4>
+														<p>
+															<h:outputText value="#{_var[0].dateString}">
+																<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+															</h:outputText>
+														</p>
+													</div>
+												</div>
+											</td>
+											<td class="right" width="50%">
+												<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" /></span>
+											</td>
+										</tr>
+									</ui:fragment>
+									<ui:fragment rendered="#{!_var[0].hasImage &amp;&amp; !_var[1].tlpImage}">
+										<tr>
+											<td class="left" width="50%" >
+												<ui:fragment rendered="#{_index ==iphoneHomeTow.rsList2.size()-1}">
+												 	<span class="end"><img src="#{request.contextPath}/asset/images/bottom.png" width="44" height="44" /></span>
+												 </ui:fragment>
+												<div class="pic txt">
+													<img src="#{request.contextPath}/asset/images/arrowL.png" class="arrowL"/> 
+													<div class="b_part">
+														<h4>#{_var[0].nameString}</h4>
+														<p>
+															<h:outputText value="#{_var[0].dateString}">
+																<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+															</h:outputText>
+														</p>
+													</div>
+										        </div>
+										     </td>
+											<td class="right"  width="50%" >
+											  <span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>
+											</td>
+										</tr>
+									</ui:fragment>
+								</ui:fragment>
+								<ui:fragment rendered="#{_index % 2 ne 0}" >
+									<ui:fragment rendered="#{(_var[0].hasImage &amp;&amp; !_var[1].tlpImage) || (!_var[0].hasImage &amp;&amp; _var[1].tlpImage)}">
+										<tr>
+											<td width="50%" class="left">
+												<ui:fragment rendered="#{_index ==iphoneHomeTow.rsList2.size()-1}">
+												 	<span class="end"><img src="#{request.contextPath}/asset/images/bottom.png" width="44" height="44" /></span>
+												 </ui:fragment>
+											</td>
+											<td width="50%" class="right">
+												<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>   
+												<div class="pic">
+													<img src="#{request.contextPath}/asset/images/arrowR.png" class="arrowR"/> 
+													<div class="t_part">
+														<ui:fragment rendered="#{_var[0].hasImage}">
+															<a style="height: 94px;width: 94px" id="nongshi_#{_var[0].objectId}" href="Javascript: void(0)"  onclick="this.className='t';document.getElementById('tck_#{_var[0].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[0].objectId}')" >
+																<img src="#{_var[0].firstImage}@94w_94h_1e_1c_10-2ci.png" style="height: 94px;width: 94px"/>
+															</a>
+															<span class="nub1">#{iphoneHomeTow.jsonLength(_var[0].objectId)}<font>张</font></span>
+							                            </ui:fragment>
+														<ui:fragment rendered="#{_var[1].tlpImage}">
+															<a style="height: 94px;width: 94px" id="nongshi_#{_var[1].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[1].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[1].objectId}')" >
+								                                <ui:fragment rendered="#{_var[1].firsttlpImage==''}">
+								                                	<img src="#{request.contextPath}/asset/images/record/small_trp.png" style="height: 94px;width: 94px"/>
+								                                </ui:fragment>
+								                                 <ui:fragment rendered="#{_var[1].firsttlpImage!=''}">
+								                                	<img src="#{_var[1].firsttlpImage}@94w_94h_1e_1c_10-2ci.png" style="height: 94px;width: 94px"/>
+								                                </ui:fragment>
+								                                <span class="nub1">#{iphoneHomeTow.jsonLength(_var[1].objectId)}<font>张</font></span>
+								                            </a>
+														</ui:fragment>
+													</div>
+													<div class="b_part">
+														<h4>#{_var[0].nameString}</h4>
+														<p>
+															<h:outputText value="#{_var[0].dateString}">
+																<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+															</h:outputText>
+														</p>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</ui:fragment>
+									<ui:fragment rendered="#{_var[0].hasImage &amp;&amp; _var[1].tlpImage}">
+										<tr>
+											<td class="left" width="50%">
+												<ui:fragment rendered="#{_index ==iphoneHomeTow.rsList2.size()-1}">
+												 	<span class="end"><img src="#{request.contextPath}/asset/images/bottom.png" width="44" height="44" /></span>
+												 </ui:fragment>
+											</td>
+											<td class="right" width="50%">
+												<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png"/></span>
+												<div class="pic">
+													<img src="#{request.contextPath}/asset/images/arrowR.png" class="arrowR" />
+													<div class="t_part">
+														<div class="smallPic fl">
+															<a style="height: 54px;width: 54px" id="nongshi_#{_var[0].objectId}" href="Javascript: void(0)"  onclick="this.className='t';document.getElementById('tck_#{_var[0].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[0].objectId}')" >
+																<img src="#{_var[0].firstImage}@45w_45h_1e_1c_10-2ci.png" width="45" height="45"/>
+															</a>
+															<span class="nub1">#{iphoneHomeTow.jsonLength(_var[0].objectId)}<font>张</font></span>
+														</div>
+														<div class="smallPic fr">
+															<a style="height: 54px;width: 54px" id="nongshi_#{_var[1].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[1].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[1].objectId}')" >
+								                                <ui:fragment rendered="#{_var[1].firsttlpImage==''}">
+								                                	<img src="#{request.contextPath}/asset/images/record/small_trp.png"  width="45" height="45"/>
+								                                </ui:fragment>
+								                                 <ui:fragment rendered="#{_var[1].firsttlpImage!=''}">
+								                                	<img src="#{_var[1].firsttlpImage}@45w_45h_1e_1c_10-2ci.png"  width="45" height="45"/>
+								                                </ui:fragment>
+								                                <span class="nub1">#{iphoneHomeTow.jsonLength(_var[1].objectId)}<font>张</font></span>
+								                            </a>
+														</div>
+													</div>
+													<div class="b_part">
+														<h4>#{_var[0].nameString}</h4>
+														<p>
+															<h:outputText value="#{_var[0].dateString}">
+																<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+															</h:outputText>
+														</p>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</ui:fragment>
+									<ui:fragment rendered="#{!_var[0].hasImage &amp;&amp; !_var[1].tlpImage}">
+										<tr>
+											<td class="left" width="50%" >
+												<ui:fragment rendered="#{_index ==iphoneHomeTow.rsList2.size()-1}">
+												 	<span class="end"><img src="#{request.contextPath}/asset/images/bottom.png" width="44" height="44" /></span>
+												 </ui:fragment>
+										     </td>
+											<td class="right"  width="50%" >
+											  <span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" alt="" /></span>
+											  <div class="pic txt">
+													<img src="#{request.contextPath}/asset/images/arrowR.png" class="arrowR"/> 
+													<div class="b_part">
+														<h4>#{_var[0].nameString}</h4>
+														<p>
+															<h:outputText value="#{_var[0].dateString}">
+																<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+															</h:outputText>
+														</p>
+													</div>
+										        </div>
+											</td>
+										</tr>
+									</ui:fragment>
+								</ui:fragment>
+							</a4j:repeat>	  
+						</table> 
+					</div> 
+		            <div class="tree2" style="#{iphoneHomeTow.pmi.treeType==3?'display:block':'display:none'}">
+		            	<!--包装-->
+                    	<ui:fragment rendered="#{iphoneHomeTow.eThree != null}" style="display: #{iphoneHomeTow.pmi.produceShow?'':'none'};">
+                       		<div class="action #{iphoneHomeTow.packimgsLength eq 0?'last':''}">
+								<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" /></span>
+								<p class="item">包装&#160;&#160;
+									<ui:fragment rendered="#{iphoneHomeTow.eThree.name != null}">
+										#{iphoneHomeTow.eThree.name}
+									</ui:fragment>
+								</p>
+								<p class="date">
+									<h:outputText value="#{iphoneHomeTow.eThree.operatingTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+									</h:outputText>
+								</p>
+								<ui:fragment rendered="#{iphoneHomeTow.packimgsLength != 0}">
+									<div class="swiper-container swiper-container#{_index+1000}">
+										<div class="swiper-wrapper">
+											<a4j:repeat value="#{iphoneHomeTow.eThree.packimgs.split(',')}" var="_img" rowKeyVar="_imgindex">
+												<div class="swiper-slide #{_imgindex==0?'former':'later'}">
+													<a class="openPack" style="height: 54px;width: 54px" href="javascript: void(0)" onclick="document.getElementById('tck100').className='tck66 container22 city_hovers66 '">
+														<img src="#{_img}@104h.src"/>
+													</a>
+												</div>
+											</a4j:repeat>
+										</div>
+									</div>
+								</ui:fragment>
+				            </div> 
+                   		</ui:fragment>
+	                    <!--运输--> 
+                     	<a4j:repeat rendered="#{not empty iphoneHomeTow.pdrInfoList &amp;&amp; iphoneHomeTow.pmi.produceShow}" value="#{iphoneHomeTow.pdrInfoList}" var="_var" rowKeyVar="_index">
+                        	<ui:fragment rendered="#{_var.deliveryType eq 42}">
+	                        	<div class="action last">
+		                            <span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" /></span>
+									<p class="item">负责人：#{_var.operationPeople}&#160;&#160;运输</p>
+									<p class="date">
+										<h:outputText value="#{_var.operationTime}">
+											<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+										</h:outputText>
+									</p>
+		                        </div>
+	                        </ui:fragment>
+                   		</a4j:repeat> 		
+	                    <!--采摘 农残检测-->  
+                      	<a4j:repeat rendered="#{not empty iphoneHomeTow.rsListtow}" value="#{iphoneHomeTow.rsListtow}" var="_var" rowKeyVar="_index">
+	                      	<div class="action last">
+	                            <span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" /></span>
+								<p class="item">#{_var.nameString}</p>
+								<p class="date">
+									<h:outputText value="#{_var.dateString}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+									</h:outputText>
+								</p>
+							</div>
+						</a4j:repeat> 
+	                    <!--成熟期-->  
+                   		<ui:fragment rendered="#{iphoneHomeTow.rsListtow.size !=0 &amp;&amp; iphoneHomeTow.allNum!= 0}">
+                   			<div class="action last">
+	                        	<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" /></span>
+								<p class="item">共#{iphoneHomeTow.allNum}天成熟期</p>
+								<p class="date"></p>
+							</div>
+                        </ui:fragment>
+	                  		
+	                      		
+						<a4j:repeat rendered="#{not empty iphoneHomeTow.rsList2}" value="#{iphoneHomeTow.rsList2}" var="_var" rowKeyVar="_index">
+							<div class="action #{!_var[0].hasImage &amp;&amp; !_var[1].tlpImage?'last':''}">
+								<ui:fragment rendered="#{_index ==iphoneHomeTow.rsList2.size()-1}">
+									<span class="cff"></span>
+								</ui:fragment>
+								<span class="dot"><img src="#{request.contextPath}/asset/images/dot.png" /></span>
+								<p class="item">#{_var[0].nameString}</p>
+								<p class="date">
+									<h:outputText value="#{_var[0].dateString}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="MM月dd日"/>
+									</h:outputText>
+								</p>
+								<ui:fragment rendered="#{_var[0].hasImage &amp;&amp; _var[1].tlpImage}">
+									<div class="swiper-container swiper-container#{_index}">
+										<div class="swiper-wrapper">
+											<div class="swiper-slide former">
+												<a style="height: 54px;width: 54px" id="nongshi_#{_var[0].objectId}" href="Javascript: void(0)"  onclick="this.className='t';document.getElementById('tck_#{_var[0].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[0].objectId}')" >
+													<img src="#{_var[0].firstImage}@104h.src" />
+												</a>
+												<span class="nub2">#{iphoneHomeTow.jsonLength(_var[0].objectId)}<font>张</font></span>
+											</div>
+											<div class="swiper-slide later"> 
+												<a style="height: 54px;width: 54px" id="nongshi_#{_var[1].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[1].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[1].objectId}')" >
+													<ui:fragment rendered="#{_var[1].firsttlpImage==''}">
+														<img src="#{request.contextPath}/asset/images/record/small_trp.png"  width="77" height="104"/>
+													</ui:fragment>
+													 <ui:fragment rendered="#{_var[1].firsttlpImage!=''}">
+														<img src="#{_var[1].firsttlpImage}@104h.src" />
+													</ui:fragment>
+												</a>
+												<span class="nub2">#{iphoneHomeTow.jsonLength(_var[1].objectId)}<font>张</font></span>
+											</div>
+										</div>
+									</div>
+								</ui:fragment>
+								<ui:fragment rendered="#{(_var[0].hasImage &amp;&amp; !_var[1].tlpImage) || (!_var[0].hasImage &amp;&amp; _var[1].tlpImage)}">
+									<div class="swiper-container swiper-container#{_index}">
+										<div class="swiper-wrapper">
+											<ui:fragment rendered="#{_var[0].hasImage}">
+												<a4j:repeat value="#{_var[0].imgUrls.split(',')}" var="_img" rowKeyVar="_imgindex">
+													<div class="swiper-slide #{_imgindex==0?'former':'later'}">
+														<a style="height: 54px;width: 54px" id="nongshi_#{_var[0].objectId}" href="Javascript: void(0)"  onclick="this.className='t';document.getElementById('tck_#{_var[0].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[0].objectId}')" >
+															<img src="#{_img}@104h.src"/>
+														</a>
+													</div>
+												</a4j:repeat>
+											</ui:fragment>
+											<ui:fragment rendered="#{_var[1].tlpImage}">
+												<a4j:repeat value="#{_var[1].imgUrls.split(',')}" var="_img" rowKeyVar="_imgindex">
+													<div class="swiper-slide #{_imgindex==0?'former':'later'}">
+														<a style="height: 54px;width: 54px" id="nongshi_#{_var[1].objectId}" href="Javascript: void(0)" onclick="this.className='t';document.getElementById('tck_#{_var[1].objectId}').className='tck66 container22 city_hovers66 ';nongshiClick('#{_var[1].objectId}')" >
+															<ui:fragment rendered="#{_img==null}">
+																<img src="#{request.contextPath}/asset/images/record/small_trp.png" width="77px" height="104px"/>
+															</ui:fragment>
+															 <ui:fragment rendered="#{_var[1].firsttlpImage!=''}">
+																<img src="#{_img}@104h.src"/>
+															</ui:fragment>
+														</a>
+													</div>
+												</a4j:repeat>
+											</ui:fragment>
+										</div>
+									</div>
+								</ui:fragment>
+				            </div> 
+						</a4j:repeat>	  
+					</div> 
+	           	 	
+		    		
+		    
+		    
+		    <!--实时监控开始-->
+            <div style="display:#{!empty iphoneHomeTow.tunnelImageList || (iphoneHomeTow.pri.realPlant.videoUrl != null &amp;&amp; iphoneHomeTow.pri.realPlant.videoUrl != '') || iphoneHomeTow.video != null ?'block;' :'none;'} margin-top:30px; padding:0 5px;">
+                <ul class="tab-mask-list">
+                	<h:panelGroup rendered="#{!empty iphoneHomeTow.tunnelImageList}">
+                    	<li class="#{iphoneHomeTow.pmi.environmentShow?'active':''}" style="display:#{iphoneHomeTow.pmi.environmentShow?'block':'none'}"><a href="javascript:;">环境实况</a></li>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{iphoneHomeTow.pri.realPlant.videoUrl != null}">
+                    	<li class="#{!iphoneHomeTow.pmi.environmentShow &amp;&amp; iphoneHomeTow.pmi.traceShow ?'active':''}" style="display: #{iphoneHomeTow.pmi.traceShow?'block':'none'}"><a href="javascript:;">视频追溯</a></li>
+                    </h:panelGroup>
+                   	<h:panelGroup rendered="#{iphoneHomeTow.video != null }">
+                    	<li class="#{!iphoneHomeTow.pmi.environmentShow &amp;&amp; !iphoneHomeTow.pmi.traceShow &amp;&amp; iphoneHomeTow.pmi.videoShow?'active':''}" style="display: #{iphoneHomeTow.pmi.videoShow?'block':'none'}"><a href="javascript:;">实况直播</a></li>
+                    </h:panelGroup>
+                </ul>
+                <div class="tab-content-wap" style="display:#{!iphoneHomeTow.pmi.environmentShow &amp;&amp; !iphoneHomeTow.pmi.traceShow &amp;&amp; !iphoneHomeTow.pmi.videoShow ?'none':'block'}">
+                     <h:panelGroup rendered="#{!empty iphoneHomeTow.tunnelImageList}">
+                    <div class="tab-content-items picture-tab-wap" style="display:#{iphoneHomeTow.pmi.environmentShow?'block':'none'}">
+                    	<div id="myCarousel" class="carousel slide" data-ride="carousel"> 
+                             <!-- 轮播（Carousel）项目 -->
+                             <div class="carousel-inner">
+                           	 	<a4j:repeat  value="#{iphoneHomeTow.tunnelImageList}" var="_var" rowKeyVar="_imag">
+	                                <div class="#{_imag!=0?'item':'item active'}">
+	                                   <img src="#{_var}" />
+	                                </div>
+	                               
+	                            </a4j:repeat>
+                             </div>
+                             <!-- 轮播（Carousel）导航 -->
+                             <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                             <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+                        </div>
+                        <p class="cur-picnum">
+                          <input type="text" id="amount"  style="border:0; color:#f6931f; font-weight:bold;"/>
+                        </p>
+                        <div id="slider-range-max"></div>
+
+                    </div>
+                    </h:panelGroup>
+                     <h:panelGroup rendered="#{iphoneHomeTow.pri.realPlant.videoUrl != null }">
+                    <div class="tab-content-items" style="display:#{(!iphoneHomeTow.pmi.environmentShow || empty iphoneHomeTow.tunnelImageList) &amp;&amp; iphoneHomeTow.pmi.traceShow ?'block':'none'}">
+                    	 <div id="player1">                           
+                            <div class="video1" id="HLSPlayer1">
+                            <script type="text/javascript">
+                            var vID        = ""; 
+                            var vWidth     = "100%";                //播放器宽度设置
+                            var vHeight    = 205;                   //播放器宽度设置
+                            var vPlayer    = "#{request.contextPath}/document/player.swf"; //播放器文件
+                            var vHLSset    = "#{request.contextPath}/document/HLS.swf";             //HLS配置
+                            var vPic       = "#{request.contextPath}/asset/images/iphone/videosImg.jpg"; 
+                            var vCssurl    = "#{request.contextPath}/asset/css/mini.css";     //移动端CSS应用文件
+                            
+                            var  vHLSurl    = "#{iphoneHomeTow.pri.realPlant.videoUrl}";
+                            //-->
+                            </script> 
+		                    <script type="text/javascript" src="#{request.contextPath}/asset/js/hls.min.js"></script>
+                            </div>
+                        </div>
+                    </div>
+                    </h:panelGroup>
+                     <h:panelGroup rendered="#{iphoneHomeTow.video != null }">
+                    <div class="tab-content-items" style="display:#{(!iphoneHomeTow.pmi.environmentShow || empty iphoneHomeTow.tunnelImageList) &amp;&amp; (!iphoneHomeTow.pmi.traceShow || iphoneHomeTow.pri.realPlant.videoUrl == null) &amp;&amp; iphoneHomeTow.pmi.videoShow?'block':'none'}">
+                    	<!-- 观学视频开始 -->
+                        <div id="player">                           
+                            <div class="video" id="HLSPlayer">
+                            <script type="text/javascript">
+                            var vID        = ""; 
+                            var vWidth     = "100%";                //播放器宽度设置
+                            var vHeight    = 205;                   //播放器宽度设置
+                            var vPlayer    = "#{request.contextPath}/document/player.swf"; //播放器文件
+                            var vHLSset    = "#{request.contextPath}/document/HLS.swf";             //HLS配置
+                            var vPic       = "#{request.contextPath}/asset/images/iphone/videosImg.jpg"; 
+                            var vCssurl    = "#{request.contextPath}/asset/css/mini.css";     //移动端CSS应用文件
+                            
+                            var  vHLSurl    = "#{iphoneHomeTow.video.webcamUrl}";
+                            //-->
+                            </script> 
+		                    <script type="text/javascript" src="#{request.contextPath}/asset/js/hls.min.js"></script>
+                            </div>
+                        </div>
+                        <!-- 观学视频结束 -->
+                    </div>
+                    </h:panelGroup>
+                </div>
+       		</div>
+            <!--实时监控结束-->
+    			
+              <div class="clear"></div> 
+        
+        </div> <!--tree_main结束-->
+       
+         
+            <!--农残检测信息开始-->
+            <div style="display: #{iphoneHomeTow.pmi.standardShow &amp;&amp; iphoneHomeTow.picList2Show.size>0?'block':'none'};margin-top:20px; padding:0 10px;">
+                <table cellpadding="0" cellspacing="0" height="25" width="100%" style="table-layout:fixed;">
+                    <tr>
+                        <td class="zwtitle">认证信息</td>
+                        
+                        <td width="137" align="right" style="vertical-align:middle;#{iphoneHomeTow.picList2Show.size>2?'':'display:none'}"><img src="#{request.contextPath}/asset/images/ycz_18.jpg" width="20" height="20" /><a class="ncfens" href="#{request.contextPath}/testreport.seam?eInfoId=#{iphoneHomeTow.enterpriseInfo.id}&#38;useBatch=#{iphoneHomeTow.useBatch}&#38;urlString=iphone&#38;prId=#{iphoneHomeTow.prId}&#38;bcbId=#{iphoneHomeTow.bcbId}&#38;baseId=#{iphoneHomeTow.baseId}&#38;poductId=#{iphoneHomeTow.pri.productInfoId}" >#{iphoneHomeTow.picList2Show.size}份</a></td>
+                    </tr>
+                </table>
+            <table cellpadding="0" cellspacing="0" width="100%" style="table-layout:fixed; margin-top:5px;">
+                <tr>
+                    <td valign="top">
+                        <table cellpadding="0" cellspacing="0" >
+                            <tr>
+                                <td class="ncfont" align="right"  width="80">认证种类：</td>
+                                <td class="ncfont" align="left">#{iphoneHomeTow.chInfo.name}</td>
+                            </tr>
+                            <tr>
+                                <td class="ncfont" align="right">认证机构：</td>
+                                <td class="ncfont" align="left">#{iphoneHomeTow.chInfo.from}</td>
+                            </tr>
+                            <tr>
+                                <td class="ncfont" align="right">认证时间：</td>
+                                <td class="ncfont" align="left"> 
+                                	<h:outputText value="#{iphoneHomeTow.chInfo.getTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy.MM.dd"/>
+									</h:outputText>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    
+                </tr>
+            
+            </table>
+            <div>
+                    <table style="margin:0 auto;">
+                        <tr>
+                            <td>
+                                <a4j:repeat value="#{iphoneHomeTow.picList3Show}" var="_var" rendered="#{not empty iphoneHomeTow.picList3Show}" rowKeyVar="_index">
+									<div class="ncjcdiv" style="max-height:10000px;text-align: center;">
+										<a target="_blank" href="#{_var}@.src">
+										<img src="#{_var}@200w_2e.src"/>
+										</a>
+									</div>
+								 </a4j:repeat>
+                            </td>
+                        </tr>
+                   </table>         
+                      
+               <div class="clear"></div>
+           </div>
+           </div>
+            <!--农残检测信息结束-->
+        
+       
+            
+            <!--认证信息开始-->
+             <div style="#{iphoneHomeTow.pmi.detectShow and iphoneHomeTow.eTow.name ne null and iphoneHomeTow.eTow.name ne '' and iphoneHomeTow.eTow.content ne null and iphoneHomeTow.eTow.content ne '' and iphoneHomeTow.eTow.content ne 'DETECTION' and iphoneHomeTow.eTow.content ne 'DETECTION'?'display: block;':'display: none;'}; padding:0 10px;margin-top:20px;">
+                <table cellpadding="0" cellspacing="0" height="25" width="100%" style="table-layout:fixed;">
+                    <tr>
+                        <td class="zwtitle">农残检测</td>
+                        <td width="137" align="right"></td>
+                    </tr>
+                </table>
+            <table cellpadding="0" cellspacing="0" width="100%" style="table-layout:fixed; margin-top:5px;">
+                <tr>
+                    <td valign="top">
+                        <table cellpadding="0" cellspacing="0" >
+                            <tr style="#{iphoneHomeTow.eTow.name ne null and iphoneHomeTow.eTow.name ne '' ?'':'display: none;'}">
+                            
+                                <td class="ncfont" align="right">检测种类：</td>
+                                <td class="ncfont" align="left">#{iphoneHomeTow.eTow.name}</td>
+                            </tr>
+                            <tr style="#{iphoneHomeTow.eTow.content ne null and iphoneHomeTow.eTow.content ne '' ?'':'display: none;'}">
+                                <td class="ncfont" align="right">检测机构：</td>
+                                <td class="ncfont" align="left">#{iphoneHomeTow.eTow.content}</td>
+                            </tr>
+                            <tr>
+                                <td class="ncfont" align="right">检测时间：</td>
+                                <td class="ncfont" align="left"> 
+                                	<h:outputText value="#{iphoneHomeTow.eTow.operatingTime}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy.MM.dd"/>
+									</h:outputText>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            
+            </table>
+            <!--认证信息结束-->
+    
+            
+             <div class="clear"></div> 
+        </div>
+        
+        <div style="#{iphoneHomeTow.eTow.content eq 'DETECTION' and iphoneHomeTow.eTow.content eq 'DETECTION' and iphoneHomeTow.detectionInfo ne null ?'display: block;':'display: none;'}; padding:0 10px;margin-top:20px;">
+                <table cellpadding="0" cellspacing="0" height="25" width="100%" style="table-layout:fixed;">
+                    <tr>
+                        <td class="zwtitle">农残检测</td>
+                        <td width="137" align="right" style="vertical-align:middle;"><img src="#{request.contextPath}/asset/images/ycz_18.jpg" width="20" height="20" />
+                        <a class="ncfens" href="#{request.contextPath}/testhistory.seam?eInfoId=#{iphoneHomeTow.enterpriseInfo.id}&#38;useBatch=#{iphoneHomeTow.useBatch}&#38;urlString=iphone&#38;plantId=#{iphoneHomeTow.plantId}&#38;testDate=#{stringUtil.showTime(iphoneHomeTow.eTow.operatingTime)}">历史检测</a></td>
+                    </tr>
+                </table>
+                <div>
+            <table style="margin:0 auto;">
+                        <tr>
+                            <td>
+                                <a4j:repeat value="#{iphoneHomeTow.detectionInfo.imagesGroupUrl.split(',')}" var="_var" rendered="#{not empty iphoneHomeTow.detectionInfo.imagesGroupUrl}" rowKeyVar="_index">
+									<div class="ncjcdiv">
+									<a class="openView" style="" href="javascript: void(0)" aa="_#{_index}_" onclick="document.getElementById('tck80').className='tck66 container22 city_hovers66 '">
+                                <img src="#{_var}" style="width:210px;"/></a>
+									</div>
+								 </a4j:repeat>
+                            </td>
+                        </tr>
+                   </table>     
+                   </div>    
+            <!--认证信息结束-->
+    
+            
+             <div class="clear"></div> 
+        </div>
+         </div>   
+        <!--品质结束-->
+        
+        <!--品牌开始-->
+        <div class="four_table" id="table2">
+        	<div class="brandInfoShow" style="display: #{iphoneHomeTow.pmi.brandInfoShow?'block':'none'}">
+           
+                <div style="width:100%; margin-top:15px;display:#{iphoneHomeTow.brandInformation.imgUrl eq null or iphoneHomeTow.brandInformation.imgUrl eq ''?'none':'block'}">
+                    <img src="#{iphoneHomeTow.brandInformation.imgUrl}@200h_302w.src" />
+                </div>
+                <div class="ppaititle">
+                	#{iphoneHomeTow.brandInformation.name}
+                </div>
+                <div class="ppaicont">            	
+					#{iphoneHomeTow.brandInformation.briefIntroduction}
+                    <div class="clear"></div>
+                </div>
+                <!--农场信息开始-->
+                <div class="farminfor">
+                    <span class="f_i_span" style="display:#{iphoneHomeTow.brandInformation.sinaBlog eq null or iphoneHomeTow.brandInformation.sinaBlog eq ''?'none':'block'}">
+                        <table cellpadding="0" cellspacing="0" height="30">
+                            <tr>
+                                <td width="30" height="22"><img src="#{request.contextPath}/asset/images/farmico_11.png" width="22" height="18" /></td>
+                                <td class="farm_i_font">新浪微博：</td>
+                                <td class="farm_mation"><a style="color:#5f5e5e;" href="#{iphoneHomeTow.brandInformation.sinaBlog eq null or iphoneHomeTow.brandInformation.sinaBlog eq ''?'#':iphoneHomeTow.brandInformation.sinaBlog}">#{iphoneHomeTow.brandInformation.sinaBlog}</a></td>
+                            </tr>
+                        </table>
+                    </span>
+                    <span class="f_i_span" style="display:#{iphoneHomeTow.brandInformation.tencentBlog eq null or iphoneHomeTow.brandInformation.tencentBlog eq ''?'none':'block'}">
+                        <table cellpadding="0" cellspacing="0" height="30">
+                            <tr>
+                                <td width="30" height="22"><img src="#{request.contextPath}/asset/images/farmico_14.png" width="22" height="18" /></td>
+                                <td class="farm_i_font">腾讯微博：</td>
+                                <td class="farm_mation"><a style="color:#5f5e5e;" href="#{iphoneHomeTow.brandInformation.tencentBlog eq null or iphoneHomeTow.brandInformation.tencentBlog eq ''?'#':iphoneHomeTow.brandInformation.tencentBlog}">#{iphoneHomeTow.brandInformation.tencentBlog}</a></td>
+                            </tr>
+                        </table>
+                    </span>
+                    <span class="f_i_span" style="display:#{iphoneHomeTow.brandInformation.website eq null or iphoneHomeTow.brandInformation.website eq ''?'none':'block'}">
+                        <table cellpadding="0" cellspacing="0" height="30">
+                            <tr>
+                                <td width="30" height="22"><img src="#{request.contextPath}/asset/images/farmico_17.png" width="22" height="18" /></td>
+                                <td class="farm_i_font">网&#160;&#160;&#160;&#160;&#160;&#160;&#160;址：</td>
+                                <td class="farm_mation"><a style="color:#5f5e5e;" href="#{iphoneHomeTow.brandInformation.website}">#{iphoneHomeTow.brandInformation.website}</a></td>
+                            </tr>
+                        </table>
+                    </span>
+                    <span class="f_i_span" style="display:#{iphoneHomeTow.brandInformation.userName eq null or iphoneHomeTow.brandInformation.userName eq ''?'none':'block'}">
+                        <table cellpadding="0" cellspacing="0" height="30">
+                        
+                            <tr>
+                                <td width="30" height="22"><img src="#{request.contextPath}/asset/images/farmico_18.png" width="22" height="18" /></td>
+                                <td class="farm_i_font">联&#160;&#160;系&#160;&#160;人：</td>
+                                <td class="farm_mation">#{iphoneHomeTow.brandInformation.userName}</td>
+                            </tr>
+                        </table>
+                    </span>
+                    <span class="f_i_span" style="display:#{iphoneHomeTow.brandInformation.phone eq null or iphoneHomeTow.brandInformation.phone eq ''?'none':'block'}">
+                        <table cellpadding="0" cellspacing="0" height="30">
+                            <tr>
+                                <td width="30" height="22"><img src="#{request.contextPath}/asset/images/farmico_21.png" width="22" height="18" /></td>
+                                <td class="farm_i_font">联系电话：</td>
+                                <td class="farm_mation">#{iphoneHomeTow.brandInformation.phone}</td>
+                            </tr>
+                        </table>
+                    </span>
+                    
+                    <span class="f_i_span" style="display:#{iphoneHomeTow.brandInformation.mailbox eq null or iphoneHomeTow.brandInformation.mailbox eq ''?'none':'block'}">
+                        <table cellpadding="0" cellspacing="0" height="30">
+                            <tr>
+                                <td width="30" height="22"><img src="#{request.contextPath}/asset/images/farmico_22.png" width="22" height="18" /></td>
+                                <td class="farm_i_font">邮&#160;&#160;&#160;&#160;&#160;&#160;&#160;箱：</td>
+                                <td class="farm_mation">#{iphoneHomeTow.brandInformation.mailbox}</td>
+                            </tr>
+                        </table>
+                    </span>
+                </div>
+                </div>
+                <!--农场信息结束-->
+                 <!--企业基地视频-->
+						<div class="eiVideoShow distanceTop" style="display: #{iphoneHomeTow.pmi.eiVideoShow &amp;&amp; iphoneHomeTow.pri.enterpriseInfoId.videoUrl !=null &amp;&amp; iphoneHomeTow.pri.enterpriseInfoId.videoUrl !=''?'block':'none'}">
+							<div class="people_name ">企业视频</div>
+                       		<div class="video" style="display:#{iphoneHomeTow.pri.enterpriseInfoId.videoFlag==1?'':'none'}" >
+	                              <script type="text/javascript">
+	                              var vID        = ""; 
+	                              var vWidth     = "100%";                //播放器宽度设置
+	                              var vHeight    = 229;                   //播放器宽度设置
+	                              var vPlayer    = "#{request.contextPath}/document/player.swf"; //播放器文件
+	                              var vHLSset    = "#{request.contextPath}/document/HLS.swf";             //HLS配置
+	                              var vPic       = "#{request.contextPath}/asset/images/iphone/videosImg.jpg";    //视频缩略图
+	                              var vCssurl    = "#{request.contextPath}/asset/css/mini.css";     //移动端CSS应用文件
+	                              
+	                              var  vHLSurl    = "#{iphoneHomeTow.pri.enterpriseInfoId.videoUrl}";
+	                              //-->
+	                              </script> 
+	                              <script type="text/javascript" src="#{request.contextPath}/asset/js/hls.min.js"></script>
+                        	</div>
+                        	<div class="video" style="display:#{iphoneHomeTow.pri.enterpriseInfoId.videoFlag==1?'none':''}" >
+                        		<img src="#{request.contextPath}/asset/images/record/videoloading.jpg" />
+                        	</div>
+              			</div>
+              			<div class="baseVideoShow distanceTop" style="display: #{iphoneHomeTow.pmi.baseVideoShow &amp;&amp; iphoneHomeTow.pri.realPlant.baseId.videoUrl !=null &amp;&amp; iphoneHomeTow.pri.realPlant.baseId.videoUrl !=''?'block':'none'}">
+							<div class="people_name ">基地视频</div>
+                       		<div class="video" style="display:#{iphoneHomeTow.pri.realPlant.baseId.videoFlag==1?'':'none'}">
+	                              <script type="text/javascript">
+	                              var vID        = ""; 
+	                              var vWidth     = "100%";                //播放器宽度设置
+	                              var vHeight    = 229;                   //播放器宽度设置
+	                              var vPlayer    = "#{request.contextPath}/document/player.swf"; //播放器文件
+	                              var vHLSset    = "#{request.contextPath}/document/HLS.swf";             //HLS配置
+	                              var vPic       = "#{request.contextPath}/asset/images/iphone/videosImg.jpg";    //视频缩略图
+	                              var vCssurl    = "#{request.contextPath}/asset/css/mini.css";     //移动端CSS应用文件
+	                              
+	                              var  vHLSurl    = "#{iphoneHomeTow.pri.realPlant.baseId.videoUrl}";
+	                              //-->
+	                              </script> 
+	                              <script type="text/javascript" src="#{request.contextPath}/asset/js/hls.min.js"></script>
+                        	</div>
+                        	<div class="video" style="display:#{iphoneHomeTow.pri.realPlant.baseId.videoFlag==1?'none':''}" >
+                        		<img src="#{request.contextPath}/asset/images/record/videoloading.jpg" />
+                        	</div>
+              			</div>
+       <!--种植者开始-->
+        <div class="distanceTop" style="display: #{iphoneHomeTow.pmi.keeperShow &amp;&amp; iphoneHomeTow.fInfo!=null?'block':'none'};">
+            	<table cellpadding="0" cellspacing="0" height="25" width="100%" style="table-layout:fixed;">
+                    <tr>
+                        <td class="zwtitle">农场主</td>
+                        <ui:fragment rendered="#{not empty iphoneHomeTow.fInfo.farmerDetailsImg}">
+                        <td width="40" align="right"><img src="#{request.contextPath}/asset/images/farmer_cio2.jpg" width="20" height="20" /></td>
+                        <td width="77" align="right"><font class="zfens">
+                        <span id="farmer_archives" onclick="this.className='t';document.getElementById('tck70').className='tck66 container22 city_hovers66 '">农场主档案</span>
+                        </font></td>
+                         </ui:fragment>
+                    </tr>
+                </table>
+                <table cellpadding="0" cellspacing="0" style="margin-bottom:20px; margin-top:15px;">
+                    <tr>
+                        <td>
+                            <div class="zzerimg">
+								<h:panelGroup rendered="#{iphoneHomeTow.fInfo.iePitcure!='' &amp;&amp; iphoneHomeTow.fInfo.iePitcure!=null}">
+									 <img src="#{iphoneHomeTow.fInfo.iePitcure}@120h_120w.src" width="120" height="120"/>   
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{iphoneHomeTow.fInfo.iePitcure=='' || iphoneHomeTow.fInfo.iePitcure==null}">
+	                            	<img src="/asset/images/noPerson.jpg" width="120" height="120"/>   
+                                </h:panelGroup>        
+                            </div>
+                       </td>
+                       <td>     
+                            <div class="zzerjs">
+                                <div style="height:27px; margin-bottom:10px;"><span class="zer_sapn"><font>#{iphoneHomeTow.fInfo.name}</font></span></div>
+                                <h:panelGroup rendered="#{iphoneHomeTow.fInfo.iePitcure!='' &amp;&amp; iphoneHomeTow.fInfo.iePitcure!=null}">
+	                                <div class="zer_wz" onclick="this.className='t';document.getElementById('tck3').className='tck2 city_hovers'">
+                                		<h:outputText value="#{stringUtil.shortStringtow(iphoneHomeTow.fInfo.wards,47)}" rendered="#{iphoneHomeTow.fInfo.wards ne null and iphoneHomeTow.fInfo.wards ne ''}" />
+                                	</div>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{iphoneHomeTow.fInfo.iePitcure=='' || iphoneHomeTow.fInfo.iePitcure==null}">
+	                                 <div class="zer_wz">
+	                                	<h:outputText value="#{stringUtil.shortStringtow(iphoneHomeTow.fInfo.wards,47)}" rendered="#{iphoneHomeTow.fInfo.wards ne null and iphoneHomeTow.fInfo.wards ne ''}" />
+	                                </div>
+                                </h:panelGroup>
+                            </div>
+                        </td>    
+                    </tr>
+                 </table>  
+                 
+             </div>
+              <div class="distanceTop" style="display: #{iphoneHomeTow.pmi.planterShow &amp;&amp; iphoneHomeTow.pri.tunnelInfo.keeperInfo!=null?'block':'none'};"> 
+	            <div class="people_name">
+	                	种植者
+	            </div>
+                <table cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+                    <tr>
+                        <td>
+                            <div class="zzerimg">
+								<h:panelGroup rendered="#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure!='' &amp;&amp; iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure!=null}">
+									<img src="#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure}@120h_120w.src" width="120" height="120"/>           
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure=='' || iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure==null}">
+	                            	<img src="/asset/images/noPerson.jpg" width="120" height="120"/>           
+                                </h:panelGroup>          
+                            </div>
+                       </td>
+                       <td>     
+                            <div class="zzerjs">
+                                <div style="height:27px; margin-bottom:10px;"><span class="zername">#{iphoneHomeTow.pri.tunnelInfo.tunnelName}</span><span class="zer_sapn"><font>#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.name}</font></span></div>
+                                <h:panelGroup rendered="#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure!='' &amp;&amp; iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure!=null}">
+	                                <div class="zer_wz" onclick="this.className='t';document.getElementById('tck4').className='tck2 city_hovers'">
+	                                	<h:outputText value="#{stringUtil.shortStringtow(iphoneHomeTow.pri.tunnelInfo.keeperInfo.wards,47)}" rendered="#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.wards ne null and iphoneHomeTow.pri.tunnelInfo.keeperInfo.wards ne ''}" />
+	                                </div>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure=='' || iphoneHomeTow.pri.tunnelInfo.keeperInfo.iePitcure==null}">
+	                                <div class="zer_wz">
+	                                	<h:outputText value="#{stringUtil.shortStringtow(iphoneHomeTow.pri.tunnelInfo.keeperInfo.wards,47)}" rendered="#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.wards ne null and iphoneHomeTow.pri.tunnelInfo.keeperInfo.wards ne ''}" />
+	                                </div>
+                                </h:panelGroup>
+                            </div>
+                        </td>    
+                    </tr>
+                 </table>   
+            </div>
+        <!--种植者结束-->
+            <!--农场访问路线开始-->
+            <div class="distanceTop" style=" width:100%; display: #{iphoneHomeTow.pmi.locationShow?'block':'none'};">
+                <table cellpadding="0" cellspacing="0" height="25" width="100%" style="table-layout:fixed;">
+                    <tr>
+                        <td class="zwtitle">农场访问路线</td>
+                        <td width="27" align="right"><img src="#{request.contextPath}/asset/images/car_22.jpg" width="20" height="16" /></td>
+                        <td width="90" align="right"><a class="zfens" href="http://api.map.baidu.com/marker?location=#{iphoneHomeTow.baseCoordinate}&#38;title=#{iphoneHomeTow.pri.realPlant.baseId.name}&#38;content=#{iphoneHomeTow.eInfoName}&#38;output=html&#38;src=acsm|acsm">查看行车路线</a></td>
+                    </tr>
+                </table>
+                 <div style="width:100%; height:155px; margin-top:15px;" class="farmmapimg" id="map-canvas">
+                </div>
+                <input type="hidden" name="coordinateX" value="#{iphoneHomeTow.coordinateX}"/>
+                <input type="hidden" name="coordinateY" value="#{iphoneHomeTow.coordinateY}"/>
+                
+                <div class="clear"></div>
+            </div>    
+            <!--农场访问路线结束-->
+            <!--企业荣誉开始-->
+            <div class="distanceTop" style="display: #{iphoneHomeTow.pmi.honorShow &amp;&amp; iphoneHomeTow.picListShows.size>0?'block':'none'};margin-top:20px;">
+            <div class="nongct">
+            	<table width="100%" height="25" cellspacing="0" cellpadding="0" style="table-layout:fixed;">
+                    <tbody><tr>
+                        <td class="zwtitle">企业荣誉</td>
+                        <td width="137" align="right" style="vertical-align:middle;#{iphoneHomeTow.picListShows.size>10?'':'display:none'}"><img src="#{request.contextPath}/asset/images/ycz_18.jpg" width="20" height="20" /><a class="ncfens" href="#{request.contextPath}/entlist.seam?eInfoId=#{iphoneHomeTow.enterpriseInfo.id}&#38;useBatch=#{iphoneHomeTow.useBatch}&#38;urlString=iphone&#38;prId=#{iphoneHomeTow.prId}&#38;bcbId=#{iphoneHomeTow.bcbId}" >#{iphoneHomeTow.picListShows.size}份</a></td>
+                    </tr>
+               		</tbody>
+               	</table>
+              </div>
+              <div class="ncryxq"> 
+                     <a4j:repeat value="#{iphoneHomeTow.picListShow}" var="_var" rowKeyVar="_index">
+                    	<dl class="ncrydl">
+                        	<dt class="ncrydt">
+                        		<a target="_blank" href="#{_var}">
+                        			<img src="#{_var}@246h_246w.src" />
+                        		</a>
+                        	</dt>
+                    </dl>
+					 </a4j:repeat>
+                <div class="clear"></div>
+              </div>
+              </div>  
+              <!--企业荣誉结束-->
+                
+              <div class="clear"></div>   
+           
+        </div>
+        <!--品牌结束-->
+        <!--菜谱开始-->
+        <div class="four_table" id="table3">
+            
+                <div class="caipu">
+                   <h:outputText escape="false" value="#{iphoneHomeTow.menuContent}" />
+                </div>
+                <div class="clear"></div>   
+        </div>
+        <!--菜谱结束-->
+        <!--评论开始-->
+        <div class="four_table" id="table4">
+            <h:panelGroup id="ctList">
+                <ul style="display: #{iphoneHomeTow.pmi.commentShow?'block':'none'}">
+                    <li class="lipadi boline" style="margin-top:15px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                          <tr>
+                              <td width="20%" height="148" align="center" valign="middle" >
+                             <span><font class="hpdno">#{iphoneHomeTow.favorableComment}</font><font class="hpdbf">%</font></span><br /><span class="fontcp">好评度</span>
+                              </td>
+                              
+                              <td width="80%" height="148"  align="left" valign="middle" >
+                                  <table class="pingdl" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                      <td class="pingdt"><font class="fonth">好评</font><font class="fontcp">(#{iphoneHomeTow.favorableComment}%)</font></td>
+                                      <td class="pingdd">
+                                        <span class="pingbg" style="width:#{iphoneHomeTow.favorableComment}%;"></span>
+                                      </td>
+                                    </tr>
+                                 
+                                    <tr>
+                                      <td class="pingdt"><font class="fonth">中评</font><font class="fontcp">(#{iphoneHomeTow.average}%)</font></td>
+                                      <td class="pingdd">
+                                        <span class="pingbg" style="width:#{iphoneHomeTow.average}%;"></span>
+                                      </td>
+                                    </tr>
+                                 
+                                    <tr>
+                                      <td class="pingdt"><font class="fonth">差评</font><font class="fontcp">(#{iphoneHomeTow.poor}%)</font></td>
+                                      <td class="pingdd">
+                                        <span class="pingbg" style="width:#{iphoneHomeTow.poor}%;"></span>
+                                      </td>
+                                    </tr>
+                                  </table>
+                              </td>
+                              
+                         </tr>
+                    </table>
+                   </li>
+                    <a4j:repeat rendered="#{not empty iphoneHomeTow.commentList}" value="#{iphoneHomeTow.commentList}" var="_var" rowKeyVar="_index">
+                    <li class="lipadi boline">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                             <tr>
+                                <td width="35" class="szfont" valign="top">评分:</td>
+                                <td width="140" class="sztd" valign="top">
+                               		<img src="#{request.contextPath}/asset/images/star1_0#{_var[1] ge 1?1:3}.png" width="23" height="22" />
+                               		<img src="#{request.contextPath}/asset/images/star1_0#{_var[1] ge 2?1:3}.png" width="23" height="22" />
+                               		<img src="#{request.contextPath}/asset/images/star1_0#{_var[1] ge 3?1:3}.png" width="23" height="22" />
+                               		<img src="#{request.contextPath}/asset/images/star1_0#{_var[1] ge 4?1:3}.png" width="23" height="22" />
+                               		<img src="#{request.contextPath}/asset/images/star1_0#{_var[1] ge 5?1:3}.png" width="23" height="22" />
+                                </td>
+                                <td align="right" valign="top"><span class="szfocc"> 
+                                	<h:outputText value="#{_var[3]}">
+										<s:convertDateTime type="both" dateStyle="short" pattern="yyyy/MM/dd"/>
+									</h:outputText>
+                                </span><span class="time"></span></td>
+                            </tr>
+                            <tr>
+                            	<td class="szfont" valign="top">心得:</td>
+                                <td class="sztd szfdc" valign="top" colspan="2">
+                                    	 #{_var[2]}
+                                </td>
+                            </tr>
+                         </table>   
+                   </li>
+                   </a4j:repeat>
+                </ul> 
+                <div style="width:100%;display: #{iphoneHomeTow.pmi.commentShow?'block':'none'}">
+                    <table cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="zwtitle">评分:</td>
+                            <td>
+                                <a style="float:left; margin-right:5px;" href="Javascript: void(0)" onclick="changeImg(1)"><img id="imgId1" src="#{request.contextPath}/asset/images/star1_01.png" onclick="changeImg(1)" width="23" height="22" /></a>
+                                <a style="float:left; margin-right:5px;" href="Javascript: void(0)" onclick="changeImg(2)"><img id="imgId2" src="#{request.contextPath}/asset/images/star1_01.png" onclick="changeImg(2)" width="23" height="22" /></a>
+                                <a style="float:left; margin-right:5px;" href="Javascript: void(0)" onclick="changeImg(3)"><img id="imgId3" src="#{request.contextPath}/asset/images/star1_01.png" onclick="changeImg(3)" width="23" height="22" /></a>
+                                <a style="float:left; margin-right:5px;" href="Javascript: void(0)" onclick="changeImg(4)"><img id="imgId4" src="#{request.contextPath}/asset/images/star1_01.png" onclick="changeImg(4)" width="23" height="22" /></a>
+                                <a style="float:left; margin-right:5px;" href="Javascript: void(0)" onclick="changeImg(5)"><img id="imgId5" src="#{request.contextPath}/asset/images/star1_01.png" onclick="changeImg(5)" width="23" height="22" /></a>
+								<input type="hidden" id="scoreId" vlaueid="5"/>
+                             </td>
+                        </tr>
+                    </table>
+                    <table cellpadding="0" cellspacing="0"  style="margin-top:10px;">
+                        <tr>
+                            <td width="9" height="9" ><img src="#{request.contextPath}/asset/images/tablebg_38.jpg" width="9" height="9" /></td>
+                            <td height="9" style="background:url(#{request.contextPath}/asset/images/tablebg_40.jpg) repeat-x"></td>
+                            <td width="9" height="9" ><img src="#{request.contextPath}/asset/images/tablebg_43.jpg" width="9" height="9" /></td>
+                        </tr>
+                        <tr>
+                            <td width="9" style="background:url(#{request.contextPath}/asset/images/tablebg_48.jpg) repeat-y"></td>
+                            <td width="100%">
+                                <textarea id="experience" style="width:100%; height:100px; border:none;"></textarea>
+                            </td>
+                            <td width="9" style="background:url(#{request.contextPath}/asset/images/tablebg_50.jpg) repeat-y"></td>  
+                        </tr>
+                        <tr>
+                            <td width="9" height="9" ><img src="#{request.contextPath}/asset/images/tablebg_52.jpg" width="9" height="9" /></td>
+                            <td height="9" style="background:url(#{request.contextPath}/asset/images/tablebg_54.jpg) repeat-x"></td>
+                            <td width="9" height="9" ><img src="#{request.contextPath}/asset/images/tablebg_55.jpg" width="9" height="9" /></td>
+                        </tr>
+                    </table>	
+                    <div style="width:100%; height:25px; margin-top:10px; text-align:right;"><a href="Javascript: void(0)" onclick="insertc();"><img src="#{request.contextPath}/asset/images/fas_03.jpg" width="50" height="25" /></a></div>
+                    <div class="clear"></div>
+                </div>
+               </h:panelGroup>   
+    		<div class="clear"></div>
+        </div>
+        <!--评论结束-->
+        <div class="clear"></div>
+    </div><!--contern-->    
+
+           <!-- 二维码 开始-->
+    <ui:fragment rendered="#{iphoneHomeTow.pmi.publicNumberShow &amp;&amp; iphoneHomeTow.pmi.publicImageUrl!=null  &amp;&amp; iphoneHomeTow.pmi.publicImageUrl!=''}">
+	    <div class="code_wap">
+	    	<img class="codeImg" src="#{iphoneHomeTow.pmi.publicImageUrl}@152h_152w.src" />
+	        <p class="txt">长按扫码关注企业公众号</p>
+	    </div>
+    </ui:fragment>
+    <!-- 二维码 结束 -->  
+    
+   <div style=" margin-top:15px;  ">
+	   	<ui:fragment rendered="#{not empty iphoneHomeTow.pmi.pageEndImageUrl}">
+			<img src="#{iphoneHomeTow.pmi.pageEndImageUrl}" style="width: 100%; height: 66px;" />
+		</ui:fragment>
+		<ui:fragment rendered="#{iphoneHomeTow.pmi.pageEndImageUrl==null}">
+			<img src="#{request.contextPath}/asset/images/foot_02.jpg" style="width:100%;height:66px;"/>
+		</ui:fragment>
+    </div> 
+</div>
+<div class="tck2" id="tck2">
+		<div style="width:95%; margin:0 auto;">
+      		<table width="100%" style="height:50px; line-height:50px;" cellpadding="0" cellspacing="0">
+            	<tr>
+                	<td class="tckti" align="left" style=" border-bottom:1px solid #555555;">什么是农作物自然成熟度？</td>
+                   
+                    <td align="right" style=" border-bottom:1px solid #555555;"><img src="#{request.contextPath}/asset/images/colose_03.png" width="20" height="20" style="cursor:pointer;" onclick="document.getElementById('tck2').className='tck2';document.getElementById('tck2').className='tck2';return !2;"  /></td>
+                </tr>
+                <tr>
+                	<td colspan="2" class="tckhn">
+                    	农作物采收自然成熟度是指农作物在不使用任何生长促进剂、催熟剂等化学试剂情况下，自然达到的成熟度，自然成熟度将很大程度上决定其口感和营养价值。
+                    </td>
+                </tr>
+            </table>
+		</div>    
+	<div class="clear"></div>
+</div>
+<div class="tck2" id="tck3" style="z-index: 10000;">
+		<div style="width:95%; margin:0 auto;">
+      		<table width="100%" style="height:50px; line-height:50px;" cellpadding="0" cellspacing="0">
+            	<tr>
+                	<td class="tckti" align="left" style=" border-bottom:1px solid #555555;">农场主:#{iphoneHomeTow.fInfo.name}</td>
+                   
+                    <td align="right" style=" border-bottom:1px solid #555555;"><img src="#{request.contextPath}/asset/images/colose_03.png" width="20" height="20" style="cursor:pointer;" onclick="document.getElementById('tck3').className='tck2';document.getElementById('tck3').className='tck2';return !2;"  /></td>
+                </tr>
+                <tr>
+                	<td colspan="2" class="tckhn">
+                    	#{iphoneHomeTow.fInfo.wards}
+                    </td>
+                </tr>
+            </table>
+		</div>    
+	<div class="clear"></div>
+</div>
+<div class="tck2" id="tck4">
+		<div style="width:95%; margin:0 auto;">
+      		<table width="100%" style="height:50px; line-height:50px;" cellpadding="0" cellspacing="0">
+            	<tr>
+                	<td class="tckti" align="left" style=" border-bottom:1px solid #555555;">#{iphoneHomeTow.pri.tunnelInfo.tunnelName}:#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.name}</td>
+                   
+                    <td align="right" style=" border-bottom:1px solid #555555;"><img src="#{request.contextPath}/asset/images/colose_03.png" width="20" height="20" style="cursor:pointer;" onclick="document.getElementById('tck4').className='tck2';document.getElementById('tck4').className='tck2';return !2;"  /></td>
+                </tr>
+                <tr>
+                	<td colspan="2" class="tckhn">
+                    	#{iphoneHomeTow.pri.tunnelInfo.keeperInfo.wards}
+                    </td>
+                </tr>
+            </table>
+		</div>    
+	<div class="clear"></div>
+</div>
+<div class="tck" id="city_link">
+		<div style="width:95%; margin:0 auto;">
+      		<div class="fenxtitle">分享</div>
+                <div style="padding:15px 0;">
+                    	<dl class="fenxdl" style="display: #{iphoneHomeTow.pmi.wechatShow?'':'none'}">
+                        	<dt class="fenxdt"  onclick="addOne(#{iphoneHomeTow.pri.productInfoId})"><a href="Javascript: void(0)" class="jiathis_button_tqq"><img src="#{request.contextPath}/asset/images/fenx2.png" width="60" height="60" /></a></dt>
+                            <dd class="fenxdd">腾讯微博</dd>
+                        </dl>
+                    	<dl class="fenxdl" style="display: #{iphoneHomeTow.pmi.weiboShow?'':'none'}">
+                        	<dt class="fenxdt" onclick="addOne(#{iphoneHomeTow.pri.productInfoId})"><a href="Javascript: void(0)"  class="jiathis_button_tsina"><img src="#{request.contextPath}/asset/images/fenx1.png" width="60" height="60" /></a></dt>
+                            <dd class="fenxdd">新浪微博</dd>
+                        </dl>
+                        <div class="clear"></div>
+                </div>
+                 <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1399520046797258" charset="utf-8"></script>
+                <div class="fenxbut">
+                	<img src="#{request.contextPath}/asset/images/fenxbut.png" width="270" height="38" style="cursor:pointer;" onclick="document.getElementById('city_nav').className='city_nav';document.getElementById('city_link').className='tck';return !1;" />
+                </div>
+                
+		</div>    
+	<div class="clear"></div>
+</div>
+
+
+<!-- 会员加入弹窗 开始 -->
+    <div class="tck3 tck_modal" id="tck_modal1">
+        <div class="modal_wap">
+        	<div class="modal_block">
+            	<img class="redEnvelope_logo" src="#{request.contextPath}/asset/images/redEnvelope_img1.png" />
+                <em class="tck_close"><img src="#{request.contextPath}/asset/images/redEnvelope_ico1.png" /></em>
+                <p class="p_tip">成为农场会员，可享受更多优惠服务哦！</p>
+                <input class="input_txt" id="hyjr" type="text" value="请输入手机号" />
+                <button class="input_btn" type="button" onclick="hySave('#{iphoneHomeTow.pmi.membershipAddress}','#{iphoneHomeTow.pri.productInfoId}')">
+                #{!iphoneHomeTow.pmi.microMartShow &amp;&amp; iphoneHomeTow.pmi.membershipAddress ne '' &amp;&amp; iphoneHomeTow.pmi.membershipAddress ne 0?'加入并领取红包':'会员加入'}
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- 会员加入弹窗 结束 -->
+    <!-- 我要购买弹窗 开始 -->
+    <div class="tck3 tck_modal" id="tck_modal3">
+        <div class="modal_wap">
+        	<div class="modal_block">
+            	<img class="redEnvelope_logo" src="#{request.contextPath}/asset/images/redEnvelope_img2.png" />
+                <em class="tck_close"><img src="#{request.contextPath}/asset/images/redEnvelope_ico1.png" /></em>
+                <p class="p_tip">如果您想购买，请留下您的联系方式，我们的客服人员会与您联系！</p>
+                <input class="input_txt" type="text" id="zcgm" value="请输入手机号" />
+                <button class="input_btn" type="button" onclick="gmSave('#{iphoneHomeTow.pmi.twiceBuyAddress}','#{iphoneHomeTow.pri.productInfoId}')">
+               	#{!iphoneHomeTow.pmi.microMartShow &amp;&amp; iphoneHomeTow.pmi.twiceBuyAddress ne ''  &amp;&amp; iphoneHomeTow.pmi.twiceBuyAddress ne 0?'提交并领取红包':'会员加入'}
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- 我要购买弹窗 结束 -->
+    <!-- 分享提示 开始 -->
+    <!-- <div class="tck3 tck_modal" id="tck_modal_share">
+        <div class="share_block">
+        	<a class="tck_close know_btn" href="#">我知道了</a>
+        </div>
+    </div>-->
+    <!-- 分享提示 结束 -->
+
+
+<div class="tck" id="city_link2">
+		<div style="width:95%; margin:0 auto;">
+	      		<table width="100%">
+	        		<tr>
+	        			<td class="tckti" align="left" style=" border-bottom:1px solid #555555;height:50px; line-height:50px;">防伪验证</td>
+	                    <td align="right" style=" border-bottom:1px solid #555555;"><img src="#{request.contextPath}/asset/images/colose_03.png" width="20" height="20" style="cursor:pointer;" onclick="document.getElementById('city_link2').className='tck';document.getElementById('city_link2').className='tck';return !2;"  /></td>
+	                </tr>
+	            </table>
+                <div style="padding:30px 0;height: 50px;">
+                	<input id="verification" type="text" value="" class="form_yz" style="width:243px;margin-left:7px;" />
+                	<h:inputHidden id="bnInfoId" value="#{iphoneHomeTow.bnInfoId}" />
+                	<h:inputHidden id="verificationCode" value="#{iphoneHomeTow.verificationCode}" />
+                	<h:inputHidden id="verificationIndex" value="#{iphoneHomeTow.verificationIndex}" />
+                	<div id="yz08" class="yz_08" style="word-break:break-all;width:265px;text-align:left;margin-top:30px;">#{iphoneHomeTow.pmi.errorTips eq null or iphoneHomeTow.pmi.errorTips eq '' ?'该产品未获品牌授权，请谨慎购买':iphoneHomeTow.pmi.errorTips}</div>
+                	<div id="yz09" class="yz_08" style="word-break:break-all;width:265px;text-align:left;margin-top:30px;">验证码错误，请重新输入！</div>
+                </div>
+                <div class="fenxbut">
+                	<img src="#{request.contextPath}/asset/images/qd.png" width="270" height="38" style="cursor:pointer;" onclick="verificationClick();" />
+                </div>
+		</div>    
+	<div class="clear"></div>
+</div>
+<div class="tck" id="city_link3">
+		<div style="width:95%; margin:0 auto;">
+			<table width="100%">
+        		<tr>
+        			<td class="tckti" align="left" style=" border-bottom:1px solid #555555;height:50px; line-height:50px;">防伪验证</td>
+                    <td align="right" style=" border-bottom:1px solid #555555;"><img src="#{request.contextPath}/asset/images/colose_03.png" width="20" height="20" style="cursor:pointer;" onclick="document.getElementById('city_link3').className='tck';document.getElementById('city_link3').className='tck';return !2;"  /></td>
+                </tr>
+            </table>
+            <div style="padding:30px 8px;height: 50px;">
+               	<img src="#{request.contextPath}/asset/images/zhiwen.png" width="270" height="38"/>
+               	<div class="yz_07" style="word-break:break-all;width:265px;text-align:left;"><font style="margin-left: 5px;">验证码：#{iphoneHomeTow.verificationCode}</font></div> 
+            	<font class="yzf_07" style="word-break:break-all;width:265px;text-align:left;">#{iphoneHomeTow.pmi.correctTips eq null or iphoneHomeTow.pmi.correctTips eq '' ?'该产品获得品牌授权，请放心购买':iphoneHomeTow.pmi.correctTips}</font>
+            </div>
+            <div class="fenxbut">
+            	<img src="#{request.contextPath}/asset/images/qd.png" width="270" height="38" style="cursor:pointer;" onclick="document.getElementById('city_nav').className='city_nav';document.getElementById('city_link3').className='tck';return !1;" />
+            </div>
+		</div>    
+	<div class="clear"></div>
+</div>
+<div class="clear"></div>
+
+<!-- 红包悬浮 开始 -->
+<ui:fragment rendered="#{iphoneHomeTow.pmi.discountShow}">
+	<div style="bottom: 50px;position:fixed;width: 80px;z-index:9999;left: 50%;margin-left: 83px;">
+   	<a onclick="jQuery('#tckLink_btn2').click();">
+		<img src="/asset/images/red_pack.gif" style="float: right;width: 80px;"></img>
+    </a>
+</div>
+</ui:fragment>
+<!-- 红包悬浮 结束 -->
+</div>
+
+<!-- 农事记录图片弹出框-->
+<a4j:repeat value="#{iphoneHomeTow.aaiImagesIds.split(',')}" var="_var" rowKeyVar="_index">
+	<div id="tck_#{_var}" style="display:none;visibility:hidden;height:0;overflow:hidden;">
+	  <!--scroll-->
+	  <div class="scroll relative">
+	    <div class="scroll_box" id="scroll_img_#{_var}">
+	        <ul class="scroll_wrap">
+		    <a4j:repeat value="#{iphoneHomeTow.aaiImagesObj.get(_var)}" var="var_">
+		     	<li >
+		     		<a href="javascript:void(0);">
+		     			<span class="scroll-closebtn"  onclick="closeClick();" ></span>
+				     	<ui:fragment rendered="#{var_.firstImage==''}">
+	                   		<img src="#{request.contextPath}/asset/images/record/small_trp_big.png" width="100%" />
+	                    </ui:fragment>
+	                    <ui:fragment rendered="#{var_.firstImage!=''}">
+	                    	<img src="#{var_.firstImage}" width="100%" />
+	                    </ui:fragment>
+			     	</a>
+		     	</li>
+		    </a4j:repeat>
+		    </ul>
+	    </div>
+      	<span class="scroll_position_bg opacity6"></span>
+	      <ul class="scroll_position farming_pic" id='scroll_position_#{_var}' >
+		      <h:panelGroup rendered="#{_var.split('_')[1]==1}">
+		      <a4j:repeat value="#{iphoneHomeTow.aaiImagesObj.get(_var)}" var="var_" rowKeyVar="_inde">
+				      <li class="#{_inde==0?'on':''}">
+			          	<div class="lvli_carouselBt">
+			            	<span class="lvli_title">#{var_.headline}</span>
+			                <span class="lvli_date">#{var_.realDate}</span>
+			                <span class="lvli_time">#{var_.realTime}</span>
+			                <strong class="lvli_picNum"><i class="lvli_picNum1">#{_inde+1}</i>/<span class="lvli_picNum2">#{var_.allLength}</span></strong>
+			            </div>
+			          	<a href="javascript:void(0);">#{var_.dateString}</a>
+			          </li>
+			   </a4j:repeat>
+			   </h:panelGroup>
+			   <h:panelGroup rendered="#{_var.split('_')[1]==2}">
+			  <a4j:repeat value="#{iphoneHomeTow.aaiImagesObj.get(_var)}" var="var_" rowKeyVar="_inde">
+				      <li class="#{_inde==0?'on':''}">
+			          	<p class="new_lltxt">#{var_.dateString}</p>
+			          	<p class="new_lltxt">#{var_.realDate}</p>
+			          	<p class="new_lltxt">#{var_.realTime}</p>
+			          	<p class="new_lltxt">#{var_.headline}</p>
+			          	<p class="new_lltxt">#{var_.iiTpye}</p>
+			          	<p class="new_lltxt">#{var_.iiManufacturers}</p>
+			          	<p class="new_lltxt">#{var_.iiDescription}</p>
+			          	<div style="overflow:hidden;color:#fff;">
+			          		<strong class="lvli_picNum"><i class="lvli_picNum1">#{_inde+1}</i>/<span class="lvli_picNum2">#{var_.alltlpLength}</span></strong>
+			          	</div>
+			          </li>
+			   </a4j:repeat>
+			   </h:panelGroup>
+	      </ul>
+	  </div>
+	  <!--scroll-->
+</div>
+</a4j:repeat>
+
+<!-- 农事记录图片弹出框结束 -->
+<!-- 检测图片弹出框 -->						
+   
+<ui:fragment rendered="#{not empty iphoneHomeTow.detectionInfo.imagesGroupUrl}">
+<div id="tck80" >
+    <!--scroll-->
+	  <div class="scroll relative">
+	    <div class="scroll_box" id="scroll_img80">
+        <ul class="scroll_wrap">
+        <a4j:repeat value="#{iphoneHomeTow.detectionInfo.imagesGroupUrl.split(',')}" var="_var" rendered="#{not empty iphoneHomeTow.detectionInfo.imagesGroupUrl}" rowKeyVar="_index">
+          <li><a href="javascript:void(0);"><span class="scroll-closebtn" onclick="closeClick();"></span><img src="#{_var}" width="100%" /></a></li>
+        </a4j:repeat>
+        </ul>
+	    </div>
+      <span class="scroll_position_bg opacity6"></span>
+      <ul class="scroll_position" id='scroll_position80'>
+      	<a4j:repeat value="#{iphoneHomeTow.detectionInfo.imagesGroupUrl.split(',')}" var="_var" rendered="#{not empty iphoneHomeTow.detectionInfo.imagesGroupUrl}" rowKeyVar="_index">
+          <li class="#{_index == 0?'on':''}" style="display: none;"><a href="javascript:void(0);">#{_index}</a></li>
+        </a4j:repeat>
+      </ul>
+	  </div>
+	  <!--scroll-->
+</div>
+</ui:fragment>	
+<!-- 检测图片弹出框结束 -->
+
+<!-- 农场主档案图片弹层 开始 -->
+<ui:fragment rendered="#{not empty iphoneHomeTow.fInfo.farmerDetailsImg}">
+<div id="tck70" >
+    <!--scroll-->
+	  <div class="scroll relative">
+	    <div class="scroll_box" id="scroll_img70">
+        <ul class="scroll_wrap">
+        <a4j:repeat value="#{iphoneHomeTow.fInfo.farmerDetailsImg.split(',')}" var="_var" rendered="#{not empty iphoneHomeTow.fInfo.farmerDetailsImg}" rowKeyVar="_index">
+          <li><a href="javascript:void(0);"><span class="scroll-closebtn" onclick="closeClick();"></span><img src="#{_var}" width="100%" /></a></li>
+        </a4j:repeat>
+        </ul>
+	    </div>
+      <span class="scroll_position_bg opacity6"></span>
+      <ul class="scroll_position" id='scroll_position70'>
+      	<a4j:repeat value="#{iphoneHomeTow.fInfo.farmerDetailsImg.split(',')}" var="_var" rendered="#{not empty iphoneHomeTow.fInfo.farmerDetailsImg}" rowKeyVar="_index">
+          <li class="#{_inde==0?'on':''}">
+		          	<div class="lvli_carouselBt">
+		            	<span class="lvli_title">#{var_.headline}</span>
+		                <span class="lvli_date">#{var_.realDate}</span>
+		                <span class="lvli_time">#{var_.realTime}</span>
+		                <strong class="lvli_picNum"><i class="lvli_picNum1">#{_inde+1}</i>/<span class="lvli_picNum2">#{var_.allLength}</span></strong>
+		            </div>
+		          	<a href="javascript:void(0);">#{var_.dateString}</a>
+		          </li>
+        </a4j:repeat>
+         
+      </ul>
+	  </div>
+	  <!--scroll-->
+</div>
+</ui:fragment>	
+
+<!-- 包装图片弹出框 -->						
+<ui:fragment rendered="#{iphoneHomeTow.eThree!=null &amp;&amp; iphoneHomeTow.eThree.packimgs !=null}">
+<div id="tck100" >
+    <!--scroll-->
+	  <div class="scroll relative">
+	    <div class="scroll_box" id="scroll_img100">
+        <ul class="scroll_wrap">
+        <a4j:repeat value="#{iphoneHomeTow.eThree.packimgs.split(',')}" var="_var"  rowKeyVar="_index">
+          <li><a href="javascript:void(0);"><span class="scroll-closebtn" onclick="closeClick();"></span><img src="#{_var}" width="100%" /></a></li>
+        </a4j:repeat>
+        </ul>
+	    </div>
+      <span class="scroll_position_bg opacity6"></span>
+	  </div>
+	  <!--scroll-->
+</div>
+</ui:fragment>	
+<!-- 包装图片弹出框结束 -->
+
+
+
+<div class="iframe-block">
+	<em class="return_iframB" style="display:none;cursor: pointer;">
+    	<img src="/asset/images/map/page8-return.gif" />返回
+    </em>
+	<iframe src="" class="krpano_iframe"  id="krpano_iframe" frameborder="no" border="0" style="width:100%;height:100%;" ></iframe>
+</div>
+<!-- 农场主档案图片弹层 结束 -->
+
+
+
+<script src='#{request.contextPath}/asset/js/hhSwipe.js'></script>
+
+
+
+<a4j:form>
+ 	<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+ 	<a4j:jsFunction name="insertComent" action="#{iphoneHomeTow.insertComment}" reRender="ctList" oncomplete="changeImg(5)">
+		<a4j:actionparam name="score" assignTo="#{iphoneHomeTow.score}"/>
+		<a4j:actionparam name="experience" assignTo="#{iphoneHomeTow.experience}"/>
+		<a4j:actionparam name="prId" assignTo="#{iphoneHomeTow.prId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="updateBnInfo" action="#{iphoneHomeTow.updateBnInfo}" data="#{iphoneHomeTow.verificationIndex}" oncomplete="verificationIndex(data);">
+		<a4j:actionparam name="bnInfoId" assignTo="#{iphoneHomeTow.bnInfoId}"/>
+		<a4j:actionparam name="verificationIndex" assignTo="#{iphoneHomeTow.verificationIndex}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="addForwarding" action="#{iphoneHomeTow.addForwarding}">
+	<a4j:actionparam name="prId" assignTo="#{iphoneHomeTow.prId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="customer" action="#{redPacketHome.customer}" data="#{redPacketHome.returnCustomer}" oncomplete="returnPack(data)">
+		<a4j:actionparam name="phone" assignTo="#{redPacketHome.phone}"/>
+		<a4j:actionparam name="couId" assignTo="#{redPacketHome.couId}"/>
+		<a4j:actionparam name="prId" assignTo="#{redPacketHome.prId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="saveForward" action="#{aerviceDataAnalysisHome.saveForward}">
+		<a4j:actionparam name="id" assignTo="#{aerviceDataAnalysisHome.aid}"/>
+		<a4j:actionparam name="type" assignTo="#{aerviceDataAnalysisHome.type}"/>
+		<a4j:actionparam name="enterpriseInfoId" assignTo="#{aerviceDataAnalysisHome.enterpriseInfoId}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="saveThumbsUp" action="#{aerviceDataAnalysisHome.saveThumbsUp}">
+		<a4j:actionparam name="id" assignTo="#{aerviceDataAnalysisHome.aid}"/>
+		<a4j:actionparam name="type" assignTo="#{aerviceDataAnalysisHome.type}"/>
+		<a4j:actionparam name="enterpriseInfoId" assignTo="#{aerviceDataAnalysisHome.enterpriseInfoId}"/>
+	</a4j:jsFunction>
+</a4j:form>
+
+
+<script>
+//<![CDATA[
+    //zz新版
+	var oWindowHei = jQuery(window).height();
+	
+	//分享记录
+	function saveforward(id,type,enid){
+		saveForward(id,type,enid)
+	}
+	
+	/* 初始化页面加载 */
+	jQuery(function() {
+		eFingerprint();//环境指纹
+		
+		/* 成熟度插件  开始 */
+		try{
+			jQuery(".knob").knob();
+			var val,up=0,down=0,i=0
+		    ,$idir = jQuery("div.idir")
+		    ,$ival = jQuery("div.ival")
+		    ,incr = function() { i++; $idir.show().html("+").fadeOut(); $ival.html(i); }
+		    ,decr = function() { i--; $idir.show().html("-").fadeOut(); $ival.html(i); };
+		    jQuery("input.infinite").knob({
+				'min':0,'max':20,'stopper':false,'change':function(v){
+	             	if(val>v){
+	                	if(up){
+	                    	decr();
+	                        up=0;
+	                	}else{
+	                    	up=1;down=0;
+	                    }
+					}else{
+	                	if(down){
+	                    	incr();
+	                        down=0;
+	                    }else{down=1;up=0;}
+					}
+	                 val=v;
+				}
+			});
+		}catch(e){}
+		/* 成熟度插件  结束 */
+		
+		
+		/* 履历无权限弹出框样式  开始 */
+		function getTipCenter(){
+			var oMaturityW = jQuery('.maturity_block').width();
+			var oMaturityH = jQuery(window).height();
+			jQuery('.maturity_block').css({  //计算到期提示框垂直居中
+				'margin-left' : -(jQuery('.maturity_block').outerWidth()/2),
+				'margin-top'  : -(jQuery('.maturity_block').outerHeight()/2)
+			});	
+		}	
+		/* 履历无权限弹出框样式  结束 */
+		
+		/* 判断履历是否有权限 开始 */
+		var resumeService="#{iphoneHomeTow.valueAdded.resumeService}";
+	 	if(resumeService==-1 || resumeService==0 || resumeService==2){
+	 		jQuery('.maturity_block').show();
+	 		jQuery('.black_op50').show();
+	 		jQuery('body').css('overflow','hidden');
+	     }else{
+	    	 jQuery('body').css({
+	   	  		'position':'',
+	   	  		'left':'',
+	   	  		'margin-left':'auto',
+	   	  		'width':''
+	   	  	 });
+	     }
+	 	/* 判断履历是否有权限 结束 */
+	 	
+	 	/* 履历树包装左右位子判断 开始 */
+	 	jQuery(".width").each(function(index){
+			if(index % 2 == 0){
+				jQuery(this).addClass("width50");
+			}else{
+				jQuery(this).addClass("width51");
+			}
+		});
+	 	/* 履历树包装左右位子判断 结束 */
+	 	
+	 	
+	 	/* 品质.品牌.菜谱.评论切换 开始 */
+	 	var nums=0;
+		jQuery(".pingt_rk span").each(function(index){
+			jQuery(this).click(function(){
+				var temp = index + 1;
+				if(jQuery(this).attr("a")=="a"){
+					switchLabel();//重置
+					jQuery(this).attr("a","b");
+					jQuery(this).find("img").attr("src","#{request.contextPath}/asset/images/tabicon"+temp+""+temp+".png");
+					jQuery(".four_table").hide();
+					jQuery("#table"+temp).show();
+				}
+				if(temp==2){
+					var x = jQuery("input[name='coordinateX']").val();
+					var y = jQuery("input[name='coordinateY']").val();
+					var map = new BMap.Map("map-canvas");    
+					var point = new BMap.Point(y,x);    
+					map.centerAndZoom(point, 13);    
+					var marker = new BMap.Marker(point);        // 创建标注    
+					map.addOverlay(marker); 
+				}
+				nums++;
+				if(nums>4){
+					window.scrollTo(0,jQuery('#qualityShow').height()+jQuery('.content2').height())
+				}
+			})
+		})
+		jQuery(".pingt_rk ").pin({containerSelector: ".yyyy"});
+		/* 品质.品牌.菜谱.评论切换 结束 */
+		
+		/* 视频追溯滑块控制图片 开始 */
+		jQuery('#myCarousel').carousel({
+			pause: true,   //停止播放，其中jQuery('#myCarousel')必须加这个属性data-ride="carousel"
+			interval: false
+		});
+		jQuery('#slider-range-max').slider({  //滑块控制控件
+			range: "max",
+			min: 0,
+			max: jQuery(".carousel-inner .item").length-1,
+			step: 1,
+			slide: function( event, ui ) {
+				jQuery(".carousel-inner .item").removeClass('active');
+				jQuery(".carousel-inner .item").eq( ui.value ).addClass('active');	
+				jQuery( "#amount" ).val( ui.value );
+				jQuery("carousel-inner img").lazyload({  //  lazyload（）图片预加载 
+					effect: "fadeIn",
+					delay:  1000
+				});
+			}
+		});
+		/* 视频追溯滑块控制图片  开始 */
+
+		/* 履历树上农事操作内容大于7个字，显示...  开始 */
+		jQuery('.farmingtext').each(function(){
+			if(jQuery(this).find('font').text().length>7){
+				jQuery(this).find('font').text(jQuery(this).text().substring(0,6)+"...");
+			}
+		})
+		/* 履历树上农事操作内容大于7个字，显示...  结束 */
+
+
+		/* 会员加入，我要购买文本框获取焦点和失去焦点状态变化 开始 */
+	    jQuery('input[type=text]').focus(function(){
+	        var txt_val = this.defaultValue;
+	        if( jQuery(this).val() == txt_val ){
+	        	jQuery(this).val('');
+	        }
+	        jQuery(this).css('color','#333')
+	    });
+		jQuery('input[type=text]').blur(function(){
+	        var txt_val = this.defaultValue;
+	        if( jQuery(this).val() == '' ){
+	        	jQuery(this).val( this.defaultValue );
+	        	jQuery(this).css('color','#aaa')
+	        }else{
+	        	jQuery(this).css('color','#333')
+	        }
+	    });
+	    /* 会员加入，我要购买文本框获取焦点和失去焦点状态变化 结束 */
+
+
+		/*  品牌下的--农场主档案   开始*/
+		var fInfo = "#{iphoneHomeTow.fInfo}";
+		var fInfoImgs = "#{iphoneHomeTow.fInfo.farmerDetailsImg}";
+		if(fInfo !="" && fInfoImgs !="" && fInfo !="null" && fInfoImgs !="null"){
+			jQuery('#tck70').css({ visibility : 'hidden',height : 0 ,overflow :'hidden'});
+			jQuery('#farmer_archives').click(function(){
+				jQuery('#tck70').css({ visibility : 'visible',height :oWindowHei,overflow :'hidden'});
+				jQuery('.scroll_box').css({ height :oWindowHei-50});
+				jQuery('.scroll_wrap li').css({ height :oWindowHei-50});
+				jQuery('body').attr({'scroll' : 'no-'});
+				jQuery('.appbox').css({ height : oWindowHei ,overflow:'hidden'});
+				jQuery('.appbox').attr({'scroll' : 'no-'});
+			});
+			var bullets2 = jQuery('#scroll_position70 li');//变量需要改的
+			var slider2 = Swipe(document.getElementById('scroll_img70'), {//变量需要改的
+				auto: 4000,
+				continuous: true,
+				callback: function(pos) {
+					var i = bullets2.length;
+					while (i--) {
+						jQuery(bullets2[i]).className = ' ';
+					}
+					jQuery(bullets2[pos]).className = 'on';
+				}
+			});
+			jQuery(function(){
+				jQuery('.scroll_position_bg').css({
+					width:jQuery('#scroll_position70').width()
+				});
+			});
+		}
+		/*  品牌下的--农场主档案   结束*/	
+
+
+		/* 农残检查图片开始 */
+		var fInfo2 = "#{iphoneHomeTow.detectionInfo}";
+		var fInfoImgs2 = "#{iphoneHomeTow.detectionInfo.imagesGroupUrl}";
+		if(fInfo2 !="" && fInfoImgs2 !="" && fInfo2 !="null" && fInfoImgs2 !="null"){
+			jQuery('#tck80').css({ visibility : 'hidden',height : 0 ,overflow :'hidden'});
+			jQuery('.openView').click(function(){
+				jQuery('#tck80').css({ visibility : 'visible',height :oWindowHei,overflow :'hidden'});
+				jQuery('.scroll_box').css({ height :oWindowHei-50});
+				jQuery('.scroll_wrap li').css({ height :oWindowHei-50});
+				jQuery('body').attr({'scroll' : 'no-'});
+				jQuery('.appbox').css({ height : oWindowHei ,overflow:'hidden'});
+				jQuery('.appbox').attr({'scroll' : 'no-'});
+			});
+			var bullets = jQuery('#scroll_position80 li');//变量需要改的
+			var slider = Swipe(document.getElementById('scroll_img80'), {//变量需要改的
+				auto: 2000,
+				continuous: true,
+				callback: function(pos) {
+					var i = bullets.length;
+					while (i--) {
+						jQuery(bullets[i]).className = ' ';
+					}
+					jQuery(bullets[pos]).className = 'on';
+				}
+			});
+			jQuery(function(){
+				jQuery('.scroll_position_bg').css({
+					width:jQuery('#scroll_position80').width()
+				});
+			});
+		}
+		/* 农残检查图片 结束 */
+		
+		
+		
+		/* 包装图片开始 */
+		var pacimg = "#{iphoneHomeTow.eThree.packimgs}";
+		if(pacimg !="" && pacimg !="null"){
+			jQuery('#tck100').css({ visibility : 'hidden',height : 0 ,overflow :'hidden'});
+			jQuery('.openPack').click(function(){
+				jQuery('#tck100').css({ visibility : 'visible',height :oWindowHei,overflow :'hidden'});
+				jQuery('.scroll_box').css({ height :oWindowHei-50});
+				jQuery('.scroll_wrap li').css({ height :oWindowHei-50});
+				jQuery('body').attr({'scroll' : 'no-'});
+				jQuery('.appbox').css({ height : oWindowHei ,overflow:'hidden'});
+				jQuery('.appbox').attr({'scroll' : 'no-'});
+			});
+			var bullets = jQuery('#scroll_position80 li');//变量需要改的
+			var slider = Swipe(document.getElementById('scroll_img100'), {//变量需要改的
+				auto: 4000,
+				continuous: true,
+				callback: function(pos) {
+					var i = bullets.length;
+					while (i--) {
+						jQuery(bullets[i]).className = ' ';
+					}
+					jQuery(bullets[pos]).className = 'on';
+				}
+			});
+			jQuery(function(){
+				jQuery('.scroll_position_bg').css({
+					width:jQuery('#scroll_position100').width()
+				});
+			});
+		}
+		/* 包装图片 结束 */
+
+		changeImg(5);//评论默认5星
+		/* 品质.品牌.菜谱.评论初始化 开始 */
+		clockinfoTow("qualityShow");
+		clockinfoTow("brandShow");
+		clockinfoTow("recipesShow");
+		clockinfoTow("commentShow");
+		/* 品质.品牌.菜谱.评论初始化 结束 */
+		
+		//树模板
+		jQuery('.tree2').find("[class='action ']").each(function(){
+			var cl=jQuery(this).find('.swiper-container').attr('class');
+			var clNum=cl.substring(33,cl.length);
+			new Swiper('.swiper-container'+clNum,{
+			    paginationClickable: true,
+			    slidesPerView: 'auto',
+			    loop: false
+			  })
+			  
+		})
+	    
+	});
+
+	/* 环境指纹弹出框  开始 */
+	jQuery('#fingerprint').click(function(){
+		jQuery('.pin-wrapper').attr('style','height:auto');
+		if(jQuery('.fingerprint_ttl').attr('style').indexOf('none')==-1){
+			jQuery('#divid').slideDown();
+		}
+	});
+	jQuery('#fingerprint1').click(function(){
+		jQuery('.pin-wrapper').attr('style','height:auto');
+		if(jQuery('.fingerprint_ttl').attr('style').indexOf('none')==-1){
+			jQuery('#divid').slideDown();
+		}
+	});
+	/* 环境指纹弹出框  结束*/
+	
+	/* 环境指纹弹出框关闭  开始 */
+	jQuery('#divid .closeBtn').click(function(){
+		jQuery('#divid').slideUp();
+	});
+	/* 环境指纹弹出框关闭  结束 */
+	
+	
+	/* 环境实况  视频追溯 实况直播选项卡切换  开始*/
+   	jQuery('.tab-mask-list li').click(function(){
+   		jQuery(this).siblings().removeClass('active');
+   		jQuery(this).addClass('active');   
+   		jQuery('.tab-content-items').css("display","none");
+   		jQuery('.tab-content-items').eq(jQuery(this).index()).css("display","block");
+	});
+   	/* 环境实况  视频追溯 实况直播选项卡切换   结束 */
+   	
+	/* 视频追溯 滑动控制图片 开始 */
+   	jQuery("#myCarousel .left").click(function(){
+		//获取当前图片显示
+		var activeIndex = jQuery( ".carousel-inner .active" ).index();
+		var changeValue=activeIndex-1;
+		//获取图片个数
+		var itemLength = jQuery(".carousel-inner .item").length;
+		if( activeIndex == 0){
+			jQuery( "#slider-range-max" ).slider( "value",  itemLength);
+		}else{
+			jQuery( "#slider-range-max" ).slider( "value", changeValue );
+				
+		}
+		jQuery("carousel-inner img").lazyload({  //  lazyload（）图片预加载 
+			effect: "fadeIn",
+			delay:  1000
+		});
+	});
+	
+	jQuery("#myCarousel .right").click(function(){
+		//获取当前图片显示
+		var activeIndex = jQuery( ".carousel-inner .active" ).index();
+		var changeValue=activeIndex+1;
+		//获取图片个数
+		var itemLength = jQuery(".carousel-inner .item").length;
+		if( changeValue == itemLength){
+			jQuery( "#slider-range-max" ).slider( "value",  0);
+			
+		}else{
+			jQuery( "#slider-range-max" ).slider( "value", changeValue );
+				
+		}
+		jQuery("carousel-inner img").lazyload({  //  lazyload（）图片预加载 
+			effect: "fadeIn",
+			delay:  1000
+		});
+	});
+	/* 视频追溯 滑动控制图片   结束 */
+	
+	/* 履历树上面农事图片点击轮播  开始 */
+	function nongshiClick(i){
+		jQuery('#tck_'+i).show();
+		jQuery('#tck_'+i).css({ visibility : 'visible',height :oWindowHei,overflow :'hidden'});
+		jQuery('.scroll_box').css({ height :oWindowHei-50});
+		jQuery('.scroll_wrap li').css({ height :oWindowHei-50});
+		jQuery('body').attr({'scroll' : 'no'});
+		jQuery('body').css({ overflow:'hidden'});
+		jQuery('.main').css({ overflow:'hidden'});
+		jQuery('.main').attr({'scroll' : 'no'});
+		jQuery('#scroll_position_'+i+" li").removeClass("on").eq(0).addClass("on");
+		jQuery('#scroll_position_'+i).attr('style','display:block;');
+		var count = jQuery('#scroll_position_'+i+" li").length;
+		Swipe(document.getElementById('scroll_img_' + i), {//变量需要改的
+			continuous: true,
+			callback: function(pos) {
+				if(count==2&&pos>1){
+					if(pos==2){
+						jQuery('#scroll_position_'+i + ' li')[0].className = 'on';
+						jQuery('#scroll_position_'+i + ' li')[1].className = '';
+					}else if(pos==3){
+						jQuery('#scroll_position_'+i + ' li')[0].className = '';
+						jQuery('#scroll_position_'+i + ' li')[1].className = 'on';
+					}
+				}else{
+					var j =jQuery('#scroll_position_'+i + ' li').length;
+					if(pos >= j )
+						return false;
+					while (j--) {
+						jQuery('#scroll_position_'+i + ' li')[j].className = ' ';
+					}
+					jQuery('#scroll_position_'+i + ' li')[pos].className = 'on';
+				}
+			}
+		});
+		var _h=jQuery('#tck_'+i).find('.relative').height();
+		var _w=jQuery('#tck_'+i).find('.relative').width();
+		jQuery('#tck_'+i).find('img').each(function(){
+			if(jQuery(this).attr('src').indexOf('@')==-1){
+				var _src=jQuery(this).attr('src');
+				if(_src!="/asset/images/record/small_trp2.png" && _src!="/asset/images/record/small_trp_big.png"){
+					jQuery(this).attr('src',_src+'@'+_h+'h_'+_w+'w.src');
+				}
+			}
+		})
+	}
+	/* 履历树上面农事图片点击轮播  开始 */
+ 	
+ 	/*点击图片，关闭轮播图 开始 */
+	jQuery('.scroll_wrap').delegate("li",'click',function(){
+		jQuery('.city_hovers66').attr({'class' : 'tck66'});
+		jQuery('.main').css({ height : '100%'});
+		jQuery('body').css({ overflow:'auto'});
+		jQuery(".pingt_rk ").pin({containerSelector: ".yyyy", minWidth: 310});
+	});
+	/* 点击图片，关闭轮播图  结束 */
+	
+	
+	
+	/* 会员加入和我要购买 关闭弹出框 开始 */
+	jQuery('.tck_close').click(function(){
+		jQuery(this).parents('.tck_modal').hide();	
+		jQuery('body').css({
+			'overflow':'auto'
+		});
+	});
+	/* 会员加入和我要购买 关闭弹出框 结束 */
+	//addModal('#tck_modal1','#tckLink_btn1');//打开会员加入
+	addModal('#tck_modal3','#tckLink_btn3');//打开我要购买
+	addModal('#tck_modal_share','#tckLink_btn2');//打开分享红包
+	
+	
+	/* 会员加入和我要购买事件函数 ，点击后分享红包 开始 */
+	function addModal(obj,clickBtn){
+		jQuery(clickBtn).click(function(){
+			jQuery(obj).addClass('city_hovers');
+			if(obj!="#tck_modal_share"){
+				jQuery(obj).show();
+			}
+			jQuery('body').css({
+				'overflow':'hidden'
+			});
+			jQuery(obj).find('.input_txt').val('请输入手机号');
+			var hb='';
+			var mms=#{iphoneHomeTow.pmi.microMartShow};
+			if(mms==true){
+				hb='#{iphoneHomeTow.pmi.discountRedPacket}';
+			}else{
+				hb='#{iphoneHomeTow.pmi.discountAddress}';
+				if(hb==''){
+					hb='#{iphoneHomeTow.pmi.discountRedPacket}';
+				}
+			}
+			var pr='#{iphoneHomeTow.pri.productInfoId}';
+			//myname='#{iphoneHomeTow.pmi.packShareName}';
+			//enName='#{iphoneHomeTow.pmi.packShareDescribe}';
+			var useBatch_='#{iphoneHomeTow.useBatch}';
+			if(obj=="#tck_modal_share" && hb!='' && hb!=null){
+				window.location.href="#{dataDicConstant.getDomainNameUrl()}/RedPacket.seam?num=5&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP=1"
+			//	if(myname!=''){
+			//		enName=enName.replace(/<\/br\>/g,"\n");
+			//	}else{
+			//		myname="Hi 朋友，送您一个红包，农产品就要买好的！";
+			//		enName="我只购买有绿色履历的农产品，生长环境、生产过程，想看啥就看啥，同为吃货的你懂的~";
+			//	}
+			//	myurl = "#{dataDicConstant.getDomainNameUrl()}/RedPacket.seam?couId="+hb+"&prId="+pr+"&typeAorP=1";
+			//	imgUrl="#{dataDicConstant.getDomainNameUrl()}/asset/images/redEnvelope_img14.jpg";
+			//	fenxiang(myname,enName,imgUrl,myurl);
+			}
+		});	
+	}
+	/* 会员加入和我要购买事件函数 ，点击后分享红包 结束 */
+	
+	/* 会员加入hySave和我要购买gmSave手机验证 开始 */
+	function hySave(couId,prId){
+		var reg =/^(13|15|17|18)[0-9]{9}$/;
+		if(jQuery('#hyjr').val()=='' || !reg.test(jQuery('#hyjr').val())){
+			alert("请输入正确的手机号！")
+		}else{
+			customer(jQuery('#hyjr').val(),couId,prId);
+		}
+	}
+	
+	function gmSave(couId,prId){
+		var reg =/^(13|15|17|18)[0-9]{9}$/;
+		if(jQuery('#zcgm').val()=='' || !reg.test(jQuery('#zcgm').val())){
+			alert("请输入正确的手机号！")
+		}else{
+			customer(jQuery('#zcgm').val(),couId,prId);
+		}
+	}
+	/* 会员加入hySave和我要购买gmSave手机验证 结束 */
+	
+	/* 会员加入和我要购买手机验证成功后走ajax保存后台回调跳转页面 开始*/
+	function returnPack(obj){
+		var hb='';
+		var mms=#{iphoneHomeTow.pmi.microMartShow};
+		if(mms==true){
+			hb='#{iphoneHomeTow.pmi.discountRedPacket}';
+		}else{
+			hb='#{iphoneHomeTow.pmi.discountAddress}';
+			if(hb==''){
+				hb='#{iphoneHomeTow.pmi.discountRedPacket}';
+			}
+		}
+		var pr='#{iphoneHomeTow.pri.productInfoId}';
+		var useBatch_='#{iphoneHomeTow.useBatch}';
+
+		var url="RedPacket.seam"
+		if(obj.split('_')[0]==2){
+			window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP=1";
+		}else if(obj.split('_')[0]==3){
+			window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP=1";
+		}else if(obj.split('_')[0]==4){
+			window.location.href=url+"?num="+obj+"&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP=1";               
+		}else if(obj==5){
+			jQuery('.tck_close').click();
+		}else{
+			window.location.href=url+"?num="+obj.split('_')[0]+"&phone="+obj.split('_')[1]+"&couId2="+obj.split('_')[2]+"&couId="+hb+"&prId="+pr+"&useBatch="+useBatch_+"&typeAorP=1";
+		}
+	}
+	/* 会员加入和我要购买手机验证成功后走ajax保存后台回调跳转页面 结束*/
+	
+	/* 打开，关闭全景图 开始*/
+	function openJj(id){
+		jQuery("#krpano_iframe").attr("src", "#{dataDicConstant.getDomainNameUrl()}#{request.contextPath}/Panorama.seam?gid="+id);
+
+		var height = jQuery(window).height();
+	    var width =  jQuery(window).width();
+	    jQuery(".krpano_iframe").show();
+	    jQuery(".krpano_iframe").css({"width":width,"height":height});
+	    jQuery('body').css('overflow','hidden');
+	    jQuery(".return_iframB").css("border-radius",0);
+	    jQuery(".iframe-block").show();
+	    jQuery(".iframe-block .return_iframB").css('display','block');
+	}
+
+	//全景 履历关闭
+	jQuery(".return_iframB").click(function(){
+		jQuery(".return_iframB").hide();
+		jQuery(".iframe-block").hide();
+		jQuery("#krpano_iframe").attr("src","");
+		jQuery('#krpano_iframe').contents().find('.tab-content-wap').css('display','none');
+		jQuery('body').css('overflow','');
+	});
+	/* 打开，关闭全景图 关闭*/
+	
+	/* 品质.品牌.菜谱.评论点击切换重置 开始 */
+	function switchLabel(){
+		jQuery(".pingt_rk span").attr("a","a");
+		jQuery(".pingt_rk span").each(function(index){
+			var temp = index +1;
+			jQuery(this).find("img").attr("src","#{request.contextPath}/asset/images/tabicon"+temp+".png");
+		});
+	}
+	/* 品质.品牌.菜谱.评论点击切换重置 结束 */
+	
+	/* 品质.品牌.菜谱.评论初始化方法 开始 */
+	function clockinfoTow(objname){
+		if(jQuery("#"+objname).attr("checkbox")=="checkbox"){
+			var indexSum = 0;
+			jQuery("#"+objname).show();
+			jQuery("#"+objname).attr("a","a");
+				jQuery(".pingt_rk li").each(function(index, element) {
+					var objidinfo = jQuery(this).attr("id");
+					if(jQuery("#"+objidinfo).attr("a")=="a"){
+						if(indexSum == 0){
+		  				jQuery("#"+objidinfo+" span").click();
+		      		}
+						indexSum++;
+				}
+		    });
+				if(indexSum > 1){
+					jQuery(".pingt_rk").show();
+		  	}
+		  	var avg = 100 /indexSum;
+				jQuery(".pingt_rk li").css("width",avg+"%");
+		}else{
+			var indexSum = 0;
+			jQuery("#"+objname).hide();
+			jQuery(".table"+objname).hide();
+			jQuery("#"+objname).attr("a","b");
+				jQuery(".pingt_rk li").each(function(index, element) {
+					var objidinfo = jQuery(this).attr("id");
+					if(jQuery("#"+objidinfo).attr("a")=="a"){
+		  			if(indexSum == 0){
+		  				jQuery("#"+objidinfo+" span").click();
+		      		}
+						indexSum++;
+				}
+		    });
+				if(indexSum == 1){
+					jQuery(".pingt_rk").hide();
+		  	}
+				if(indexSum == 0){
+					jQuery(".pingt_rk").hide();
+		  	}
+		  	var avg = 100 / indexSum;
+				jQuery(".pingt_rk li").css("width",avg+"%");
+		}
+	
+	}
+	/* 品质.品牌.菜谱.评论初始化方法 结束 */
+	
+	/* 评论星星判断 开始 */
+	function changeImg(indexParam){
+		jQuery("#scoreId").val(indexParam);
+		 for ( var i = 1; i < 6; i++) {
+			if(parseInt(i)<=parseInt(indexParam)){
+				jQuery("#imgId" + i).attr("src","#{request.contextPath}/asset/images/star1_01.png");
+			}else{
+				jQuery("#imgId" + i).attr("src","#{request.contextPath}/asset/images/star1_03.png");
+			}
+		}
+	}
+	/* 评论星星判断 结束*/
+	
+	/* 评论星星提交 开始*/
+	function insertc(){
+		var score = jQuery("#scoreId").val();
+		if(jQuery("#experience").val().length>100){
+			alert("最多只能100字！");
+		}else{
+			var experience = jQuery("#experience").val();
+			insertComent(score,experience,'#{iphoneHomeTow.pri.productInfoId}');
+		}
+	}
+	/* 评论星星提交 结束*/
+	
+	/* 真伪验证 开始*/
+	var index = #{iphoneHomeTow.verificationIndex};
+	function clickShow(){
+		jQuery("#yz08").hide();
+		jQuery("#yz09").hide();
+		this.className='city_nav city_hover';document.getElementById('city_link2').className='tck city_hovers';
+		document.getElementById('verification').value = "";
+	}
+	function verificationClick(){
+		var bnInfoId = document.getElementById('bnInfoId').value;
+		var index = document.getElementById('verificationIndex').value;
+		var verification = document.getElementById('verification').value;
+		var verificationCode = document.getElementById('verificationCode').value;
+		if(verification == verificationCode){
+			if(index > 0){
+				jQuery("#yz09").hide();
+				jQuery("#yz08").show();
+				return false;
+			}
+			this.className='city_nav city_hover';document.getElementById('city_link2').className='tck';
+			this.className='city_nav city_hover';document.getElementById('city_link3').className='tck city_hovers';
+			updateBnInfo(bnInfoId,index);
+		}else{
+			jQuery("#yz08").hide();
+			jQuery("#yz09").show();
+			return false;
+		}
+	}
+	//回调
+	function verificationIndex(obj){
+		document.getElementById('verificationIndex').value = obj;
+	}
+	/* 真伪验证 结束*/
+	
+	/* 微博新浪分享次数 开始*/
+	function addOne(prId){
+		if(prId != 0){
+			addForwarding(prId);
+		}
+	}
+	/* 微博新浪分享次数 结束*/
+	
+	/* i图标描述tckLink，农事操作内容描述tckLink2，关闭描述tckClose  开始*/
+	function tckLink(id){
+		jQuery('.tck2').removeClass('city_hovers');
+		jQuery('.tck3').removeClass('city_hovers');
+		jQuery('#tck'+id).addClass('city_hovers');
+	}
+	function tckLink2(id,obj){
+		jQuery('.tck2').removeClass('city_hovers');
+		jQuery('.tck3').removeClass('city_hovers');
+		jQuery('#tck'+id).addClass('city_hovers');
+		if(id==30){
+			jQuery('#tck'+id).find('p').text(obj.substring(obj.indexOf('>')+1,obj.lastIndexOf('<')));
+		}
+	}
+	function tckClose(id){
+		jQuery('#tck'+id).removeClass('city_hovers');
+	}
+	/* i图标描述tckLink，农事操作内容描述tckLink2，关闭描述tckClose  结束*/
+	
+	/* 加载完成指纹判断 窗口改变 开始*/
+	var showText = function(){
+		jQuery(".scroll_position li").removeAttr("style"); 
+		if(jQuery("#divid").outerHeight()<20){
+			jQuery(".zhiwen").attr('style','display: none;');
+		}
+	}
+
+	//好吃点赞
+	function thumbsUp(){
+		jQuery('.purchase_again li').eq(3).find('a').attr('onclick','');
+		if(jQuery('.purchase_again li').eq(3).find('i').text()!="99+"){
+			var num_Up=parseInt(jQuery('.purchase_again li').eq(3).find('i').text())+1;
+			jQuery('.purchase_again li').eq(3).find('i').text(num_Up);
+		}
+		saveThumbsUp(prduId,1,enId);
+	}
+
+	
+	window.onload = showText;
+
+	jQuery(window).resize(function() {
+		oWindowHei = jQuery(window).height();
+	});
+	/* 加载完成指纹判断 窗口改变结束*/
+	
+	
+	
+	/* 环境指纹 开始 */
+	var aveTemp =#{iphoneHomeTow.aveTemp};
+	var weatherTemp =#{iphoneHomeTow.weatherTemp};
+	var suitableTemp =#{iphoneHomeTow.suitableTemp};
+	var actualRain =#{iphoneHomeTow.actualRain}; 
+	var weatherRain =#{iphoneHomeTow.weatherRain};
+	var suitableRain=#{iphoneHomeTow.suitableRain}; 
+	var actualLight=#{iphoneHomeTow.actualLight}; 
+	var weatherLight =#{iphoneHomeTow.weatherLight};
+	var suitablelLight=#{iphoneHomeTow.suitablelLight}; 
+	var oneOrMany =#{iphoneHomeTow.oneOrMany};
+	var minTempY =#{iphoneHomeTow.minTempY};
+	var datebegintime=#{iphoneHomeTow.datebegintime};
+	var mwd=#{iphoneHomeTow.mwd};
+	var aveTempArr=#{iphoneHomeTow.aveTempArr};
+	function eFingerprint(){
+
+
+		if(oneOrMany==1){
+			jQuery('.zhiwen').attr('style','display: none;');
+		}
+		var phname=jQuery('.nowPhName').attr('aa');
+		if(phname==""){
+			jQuery('.soilka-valueTt').attr('style','display: none;');
+		}else if(phname>9){
+			jQuery('.soilka-valueTt').attr('style','width: 556px;');
+		}else if(phname>8.5){
+			jQuery('.soilka-valueTt').attr('style','width: 510px;');
+		}else if(phname>7.8){
+			jQuery('.soilka-valueTt').attr('style','width: 447px;');
+		}else if(phname>7.4){
+			jQuery('.soilka-valueTt').attr('style','width: 386px;');
+		}else if(phname>7.0){
+			jQuery('.soilka-valueTt').attr('style','width: 327px;');
+		}else if(phname>6.6){
+			jQuery('.soilka-valueTt').attr('style','width: 206px;');
+		}else if(phname>6){
+			jQuery('.soilka-valueTt').attr('style','width: 150px;');
+		}else if(phname>5){
+			jQuery('.soilka-valueTt').attr('style','width: 90px;');
+		}
+
+		if(jQuery('.tablePhName').text()!=""){
+			var sVa=parseInt(jQuery('.tablePhName').text().substring(5,jQuery('.tablePhName').text().indexOf('~')));
+			var bVa=parseInt(jQuery('.tablePhName').text().substring(jQuery('.tablePhName').text().indexOf('~')+1,jQuery('.tablePhName').text().length));
+			if(sVa<4 || sVa>10 || bVa<4 || bVa>10 || sVa>bVa){
+				jQuery('.soilka-valueBt').attr('style','display: none;');
+				sVa=0;
+				bVa=0;
+			}else if(bVa>10){
+				bVa=563;
+			}else if(bVa>9){
+				bVa=512;
+			}else if(bVa>8.5){
+				bVa=450;
+			}else if(bVa>7.8){
+				bVa=392;
+			}else if(bVa>7.4){
+				bVa=332;
+			}else if(bVa>7){
+				bVa=272;
+			}else if(bVa>6.6){
+				bVa=212;
+			}else if(bVa>6){
+				bVa=152;
+			}else if(bVa>5){
+				bVa=90;
+			}else if(bVa>4){
+				bVa=36;
+			}
+			if(sVa<4 || sVa>10 ){
+				sVa=0;
+				bVa=0;
+				jQuery('.soilka-valueBt').attr('style','display: none;');
+			}else if(sVa>10){
+				sVa=563;
+			}else if(sVa>9){
+				sVa=512;
+			}else if(sVa>8.5){
+				sVa=450;
+			}else if(sVa>7.8){
+				sVa=392;
+			}else if(sVa>7.4){
+				sVa=332;
+			}else if(sVa>7){
+				sVa=272;
+			}else if(sVa>6.6){
+				sVa=212;
+			}else if(sVa>6){
+				sVa=152;
+			}else if(sVa>5){
+				sVa=90;
+			}else if(sVa>4){
+				sVa=36;
+			}
+
+			if(bVa!=0){
+				if(sVa+(bVa-sVa)/2<87){
+					jQuery('.soilka-valueBt').attr('style','width: 87px;');
+				}else if((bVa-sVa)/2>512){
+					jQuery('.soilka-valueBt').attr('style','width: 512px;');
+				}else{
+					jQuery('.soilka-valueBt').css('width',(sVa+(bVa-sVa)/2)+'px');
+					}
+			}
+		}else{
+			jQuery('.soilka-valueBt').attr('style','display: none;');
+		}
+		
+
+
+	
+		//土壤营养状况点击更多全显示
+		jQuery('#tryyzk-more').click(function(){
+			if(jQuery('.kwztable-wap').height()<=122){
+				jQuery('.kwztable-wap').addClass('auto');	
+			}else{
+				jQuery('.kwztable-wap').removeClass('auto');		
+			}
+			
+		});
+		
+		chartFun1();   //highcharts方法
+		chartFun2();
+		chartFun3();
+		chartFun4();
+	    chartFun5();
+	    chartFun6();
+	}
+
+	Highcharts.setOptions({ global: { useUTC: false } });   
+	function chartFun1(){
+		var chart1name = [];
+		if(aveTemp.length>0){
+			chart1name.push({
+				name: '实际温度',
+				data: aveTemp,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#9cbfdb"
+				}
+			})
+		}
+		if(suitableTemp.length>0){
+			chart1name.push({
+				name: '适宜温度',
+				data: suitableTemp,
+				type: 'arearange',
+				lineWidth: 0,
+				color: Highcharts.getOptions().colors[0],
+				fillOpacity: 0.3,
+				zIndex: 0
+				
+			})
+		}
+		jQuery('#container').highcharts({
+			chart:{
+				backgroundColor : "transparent"
+			},
+			title: {
+				text: ''
+			},
+			
+			xAxis: {
+				type: 'datetime',
+				tickPositions:aveTempArr,
+				labels: {
+					rotation: -45,
+				    formatter: function() {
+				    	var vDate=new Date(this.value);  
+					    if(mwd==3){
+				        	return (vDate.getMonth()+1);  
+						}else{
+							return (vDate.getMonth()+1)+"-"+vDate.getDate();  
+						}
+				    } 
+	        	 }
+			},
+			
+			yAxis: {
+				title: {
+					text: null
+				},
+				min:minTempY,
+				allowDecimals:false,
+	            tickPixelInterval: 10
+			},
+			plotOptions: {
+	            series: {
+	                connectNulls: true
+	            }
+	        },
+			
+			tooltip: {
+				shared: true,
+	               valueSuffix: '°C',
+	               dateTimeLabelFormats : {
+	            	   day: '%m月%d',
+	   				month:'%m月%d',
+					week:'%m月%d'
+	                
+	            }
+			},
+			
+			legend: {
+			},
+			
+			series: chart1name
+		
+		});		
+	};
+	function chartFun2(){
+		var chart2name = [];
+		if(actualRain.length>0){
+			chart2name.push({
+				name: '实际降水量',
+				data: actualRain,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#9cbfdb"
+				}
+			})
+		}
+		if(suitableRain.length>0){
+			chart2name.push({
+				name: '适宜降水量',
+				data: suitableRain,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#ebd169"
+				}
+			} )
+		}
+		jQuery('#container2').highcharts({
+			chart:{
+				backgroundColor : "transparent"
+			},
+			title: {
+				text: ''
+			},
+			
+			xAxis: {
+				type: 'datetime',
+				tickPositions:aveTempArr,
+				labels: {
+					rotation: -45,
+				    formatter: function() {  
+				    	var vDate=new Date(this.value);  
+					    if(mwd==3){
+				        	return (vDate.getMonth()+1);  
+						}else{
+							return (vDate.getMonth()+1)+"-"+vDate.getDate();  
+						}
+				    } 
+	        	 }
+			},
+			
+			yAxis: {
+				title: {
+					text: ''
+				},
+				min: 0,
+				allowDecimals:false,
+	            tickPixelInterval: 10
+			},
+			plotOptions: {
+	            series: {
+	                connectNulls: true
+	            }
+	        },
+			
+			tooltip: {
+				shared: true,
+	               valueSuffix: 'mm',
+	               dateTimeLabelFormats : {
+	            	   day: '%m月%d',
+	   				month:'%m月%d',
+					week:'%m月%d'
+	                
+	            }
+			},
+			
+			legend: {
+			},
+			
+			series: chart2name
+		
+		});	
+	};
+	function chartFun3(){
+		var chart3name = [];
+		if(actualLight.length>0){
+			chart3name.push({
+				name: '实际光照',
+				data: actualLight,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#9cbfdb"
+				}
+			})
+		}
+		if(suitablelLight.length>0){
+			chart3name.push({
+				name: '适宜光照',
+				data: suitablelLight,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#ebd169"
+				}
+			})
+		}
+		jQuery('#container3').highcharts({
+			chart:{
+				backgroundColor : "transparent"
+			},
+			title: {
+				text: ''
+			},
+			
+			xAxis: {
+				type: 'datetime',
+				tickPositions:aveTempArr,
+				labels: {
+					rotation: -45,
+				    formatter: function() {  
+				    	 var vDate=new Date(this.value);  
+				         if(mwd==3){
+					        	return (vDate.getMonth()+1);  
+							}else{
+								return (vDate.getMonth()+1)+"-"+vDate.getDate();  
+							} 
+				    } 
+	        	 }
+			},
+			
+			yAxis: {
+				title: {
+					text: null
+				},
+				min:0,
+				allowDecimals:false,
+	            tickPixelInterval: 10,
+	           
+				labels: {
+	               formatter: function() {
+					return this.value;
+	          		}
+	           }
+			},
+			plotOptions: {
+	            series: {
+	                connectNulls: true
+	            }
+	        },
+			
+			tooltip: {
+				shared: true,
+	               valueSuffix: 'lux',
+	               dateTimeLabelFormats : {
+	            	   day: '%m月%d',
+	   				month:'%m月%d',
+					week:'%m月%d'
+	                
+	            }
+			},
+			
+			legend: {
+			},
+			
+			series:chart3name
+		
+		});	
+	};
+	function chartFun4(){
+		var chart4name = [];
+		if(actualRain.length>0){
+			chart4name.push({
+				name: '实际湿度',
+				data: actualRain,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#9cbfdb"
+				}
+			})
+		}
+		if(weatherRain.length>0){
+			chart4name.push({
+				name: '气象湿度',
+				data: weatherRain,
+				zIndex: 1,
+				color:'#008844',
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#bce5ae"
+				}
+			})
+		}
+		if(suitableRain.length>0){
+			chart4name.push({
+				name: '适宜湿度',
+				data: suitableRain,
+				type: 'arearange',
+				lineWidth: 0,
+				
+				color: Highcharts.getOptions().colors[0],
+				fillOpacity: 0.3,
+				zIndex: 0
+			})
+		}
+		jQuery('#container4').highcharts({
+			chart:{
+				backgroundColor : "#f8f8f8"
+			},
+			title: {
+				text: ''
+			},
+			
+			xAxis: {
+				type: 'datetime',
+				tickPositions:aveTempArr,
+				labels: {
+					rotation: -45,
+				    formatter: function() {  
+				    	 var vDate=new Date(this.value);  
+				    	 if(mwd==3){
+					        	return (vDate.getMonth()+1);  
+							}else{
+								return (vDate.getMonth()+1)+"-"+vDate.getDate();  
+							}
+				    } 
+	        	 }
+			},
+			
+			yAxis: {
+				title: {
+					text: ''
+				},
+				min: 0,
+				max:100,
+				allowDecimals:false,
+	            tickPixelInterval: 10
+			},
+			plotOptions: {
+	            series: {
+	                connectNulls: true
+	            }
+	        },
+			
+			tooltip: {
+				shared: true,
+	   			valueSuffix: '%',
+	   			dateTimeLabelFormats : {
+	   			  day: '%m月%d',
+					month:'%m月%d',
+					week:'%m月%d'
+					
+				}
+			},
+			
+			legend: {
+			},
+			
+			series: chart4name
+		
+		});
+	};
+	function chartFun5(){
+		var chart5name = [];
+		if(aveTemp.length>0){
+			chart5name.push({
+				name: '实际温度',
+				data: aveTemp,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#9cbfdb"
+				}
+			})}
+		if(weatherTemp.length>0){
+			chart5name.push({
+				name: '气象温度',
+				data: weatherTemp,
+				zIndex: 1,
+				color:'#008844',
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#bce5ae"
+				}
+			})
+		}
+		if(suitableTemp.length>0){
+			chart5name.push({
+				name: '适宜温度',
+				data: suitableTemp,
+				type: 'arearange',
+				lineWidth: 0,
+				
+				color: Highcharts.getOptions().colors[0],
+				fillOpacity: 0.3,
+				zIndex: 0
+			})
+		}
+	    jQuery('#container5').highcharts({
+	        chart:{
+	            backgroundColor : "#f8f8f8"
+	        },
+	        title: {
+	            text: ''
+	        },
+	        
+	        xAxis: {
+				 type: 'datetime',
+				 tickPositions:aveTempArr,
+				  labels: {
+					  rotation: -45,
+				      formatter: function() {  
+				           var vDate=new Date(this.value);  
+				           if(mwd==3){
+					        	return (vDate.getMonth()+1);  
+							}else{
+								return (vDate.getMonth()+1)+"-"+vDate.getDate();  
+							} 
+				       } 
+	           }
+			},
+	        
+	        yAxis: {
+	            title: {
+	                text: null
+	            },
+	            min:minTempY,
+	            allowDecimals:false,
+	            tickPixelInterval: 10
+	        },
+	        plotOptions: {
+	            series: {
+	                connectNulls: true
+	            }
+	        },
+	        tooltip: {
+	               shared: true,
+	               valueSuffix: '°C',
+	               dateTimeLabelFormats : {
+	            	   day: '%m月%d',
+	   				month:'%m月%d',
+					week:'%m月%d'
+	                
+	            }
+	        },
+	        
+	        legend: {
+	        },
+	        
+	        series: chart5name
+	    
+	    });        
+	};
+
+	function chartFun6(){
+		var chart6name = [];
+		if(actualLight.length>0){
+			chart6name.push({
+				name: '实际光照',
+				data: actualLight,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#9cbfdb"
+				}
+			})}
+		if(weatherLight.length>0){
+			chart6name.push({
+				name: '气象光照',
+				data: weatherLight,
+				zIndex: 1,
+				color:'#008844',
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#bce5ae"
+				}
+			})
+		}
+		if(suitablelLight.length>0){
+			chart6name.push({
+				name: '适宜光照',
+				data: suitablelLight,
+				zIndex: 1,
+				marker: {
+					fillColor: 'white',
+					lineWidth: 2,
+					lineColor: "#ebd169"
+				}
+			})
+		}
+	    jQuery('#container6').highcharts({
+	        chart:{
+	            backgroundColor : "#f8f8f8"
+	        },
+	        title: {
+	            text: ''
+	        },
+	        
+	        xAxis: {
+				type: 'datetime',
+				tickPositions:aveTempArr,
+			  	labels: {
+				  rotation: -45,
+			      formatter: function() {  
+			           var vDate=new Date(this.value);  
+			          
+			           if(mwd==3){
+				        	return (vDate.getMonth()+1);  
+						}else{
+							return (vDate.getMonth()+1)+"-"+vDate.getDate();  
+						}
+			       } 
+	           }
+			},
+	        
+	        yAxis: {
+	            title: {
+	                text: null
+	            },
+	            min:0,
+	            allowDecimals:false,
+	            tickPixelInterval: 10,
+	           
+	            labels: {
+	               formatter: function() {
+	                return this.value;
+	                  }
+	           }
+	        },
+	        plotOptions: {
+	            series: {
+	                connectNulls: true
+	            }
+	        },
+	        tooltip: {
+	             formatter: function() {
+	                 return  Highcharts.dateFormat('%m月%d', this.x) +" "+ this.y +' lux';
+	         }
+	        },
+	        
+	        legend: {
+	        },
+	        
+	        series:chart6name
+	    
+	    });    
+	};
+	/* 环境指纹 结束 */
+	
+//]]>	
+</script>
+</body>
+</f:view>

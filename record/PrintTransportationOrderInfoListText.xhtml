@@ -1,0 +1,141 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	template="/layout/template_print.xhtml">
+
+	<ui:define name="body">
+
+	
+	<script src="#{request.contextPath}/asset/js/jquery.PrintArea.js"/>
+		<!-- #{transportationOrderInfoHome.selectList()} -->
+		<div class="right_c" id="rightPanel">
+			<!--startprint-->
+			<a4j:repeat value="#{transportationOrderInfoHome.selectList}" var="_orderInfo" rowKeyVar="_index">
+			<div class="wlorder" style="height: 670px;">
+			<div class="wl_title">
+				<span style="float: left">A单&#160;&#160;&#160;&#160;物流配送单 </span>
+				<span style="float: right;"><p:barCode type="code128" barHeight="40" code="#{_orderInfo.orderCode}" altText="#{_orderInfo.orderCode}" /></span>
+			</div>
+			<div class="h80"></div>
+ 			<div class="wl_tit">
+				<span class="span_t1">订单编号：#{_orderInfo.orderCode}</span>
+				<span class="span_t2">订购日期：<h:outputText value="#{_orderInfo.insertTime}" /></span>   
+			</div>
+			<div class="h80"></div>
+			<table width="100%" border="0" class="wl_table" cellspacing="0" cellpadding="0">
+			  <tr>
+			    <td width="11%">客户姓名</td>
+			    <td width="15%">#{_orderInfo.receiveName}</td>
+			    <td width="11%">电话</td>
+			    <td width="15%">#{_orderInfo.receivePhone}</td>
+			    <td width="11%">付款状态</td>
+			    <td width="11%">#{_orderInfo.paymentStatus== false?'未付款':'未付款'}</td>
+			    <td width="11%">支付方式</td>
+			    <td width="15%">#{_orderInfo.paymentMode==1?'货到付款':'货到付款'}</td>
+			  </tr>
+			  <tr>
+			    <td >配送日期</td>
+			    <td><h:outputText value="#{_orderInfo.deliverTime}" /></td>
+			    <td >配送地址</td>
+			    <td colspan="5" style="text-align:left; padding-left:17px;"><h:outputText>#{_orderInfo.receiveAddress}</h:outputText></td>
+			  </tr>
+			  <tr>
+			    <td >序号</td>
+			    <td>产品名称</td>
+			    <td >类型</td>
+			    <td>数量</td>
+			    <td >规格</td>
+			    <td>单价(元)</td>
+			    <td >折扣</td>
+			    <td>商品总价(元)</td>
+			  </tr>
+			  <ui:repeat value="#{transportationOrderInfoHome.selectOrderProductListInfo(_orderInfo.orderInfoId)}" var="_transportationOrderInfo"  rowKeyVar="_index">
+			  <tr>
+			    
+			    <td>#{_transportationOrderInfo.orderProductId}</td>
+			    <td>#{_transportationOrderInfo.productName}</td>
+			    <td>包</td>
+			    <td>#{_transportationOrderInfo.productNum}</td>
+			    <td>#{_transportationOrderInfo.productUnit}</td>
+			    <td>#{_transportationOrderInfo.price}</td>
+			    <td>0</td>
+			    <td>#{_transportationOrderInfo.productNum*_transportationOrderInfo.price}</td>
+			  </tr>
+			  </ui:repeat>
+			  <tr>
+			    <td >优惠券</td>
+			    <td colspan="3" align="left"></td>
+			    <td >配送费</td>
+			    <td colspan="3">#{_orderInfo.deliverAccount}(元)</td>
+			  </tr>
+			  <tr>
+			    <td >备注</td>
+			    <td colspan="5" style="text-align:left; padding-left:17px;">#{_orderInfo.orderRemark}</td>
+			    <td >总计</td>
+			    <td>#{transportationOrderInfoHome.totalAccount + _orderInfo.deliverAccount}(元)</td>
+			  </tr>
+			</table>
+		<div class="h80"></div>
+			<table width="100%" class="wl_table"  border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+			    <td width="25%">配送员</td>
+			    <td width="25%">&#160;</td>
+			    <td width="25%">联系电话</td>
+			    <td width="25%">&#160;</td>
+			  </tr>
+			  <tr>
+			    <td>配送路线</td>
+			    <td colspan="3" style="text-align:left; padding-left:17px;">&#160;</td>
+			    </tr>
+			  <tr>
+			    <td>配送车辆</td>
+			    <td>&#160;</td>
+			    <td>备注</td>
+			    <td>&#160;</td>
+			  </tr>
+			</table>
+			<div class="h80"></div>
+			<table width="200"  class="wl_table" border="0" align="right" cellspacing="0" cellpadding="0">
+			  <tr>
+			    <td  width="50%">客户签字</td>
+			    <td width="50%">&#160;</td>
+			  </tr>
+			</table>
+		</div>
+		
+		</a4j:repeat>
+		<!--endprint-->
+<!---印刷管理下开始-->
+            	<div id="printButton" class="ckd_div" align="center">
+            		 <input type="button" id="btnPrint" onclick="printButtonClick();" style="background-image: url('#{request.contextPath}/asset/images/print03.jpg');width: 77px;height: 32px;cursor: pointer;" />
+		    		 <input type="button" id="btnPrint" onclick="window.close();" style="background-image: url('#{request.contextPath}/asset/images/re_43.jpg');width: 77px;height: 32px;cursor: pointer;" />
+               </div>     
+
+<!--印刷管理下结束-->
+
+<div class="clear"></div>
+                </div><!--right_c结束-->
+	<script type="text/javascript">
+	var obj;
+	function printButtonClick(){
+		obj = jQuery("#printButton").clone();
+		
+		jQuery("#printButton").empty();
+		jQuery("#rightPanel").printArea();
+		
+		
+		if(confirm("是否关闭打印页面!")){
+			window.close();
+		}else{
+			jQuery("#printButton").html(obj);
+		}
+	}
+	</script>	</ui:define>
+</ui:composition>

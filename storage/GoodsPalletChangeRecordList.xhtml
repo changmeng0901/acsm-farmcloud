@@ -1,0 +1,158 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+
+
+    <rich:panel>
+        <f:facet name="header">出库单明细 (#{empty storageChangeFormList.resultList ? 0 : (storageChangeFormList.paginated ? storageChangeFormList.resultCount : storageChangeFormList.resultList.size)})</f:facet>
+    <div class="results" id="storageChangeFormList">
+
+    <h:outputText value="没有数据"
+               rendered="#{empty storageChangeFormList.resultList}"/>
+
+    <rich:dataTable id="storageChangeFormList"
+                var="_storageChangeForm"
+              value="#{storageChangeFormList.resultList}"
+           rendered="#{not empty storageChangeFormList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeFormList}"/>
+                    <ui:param name="propertyLabel" value="ID"/>
+                    <ui:param name="propertyPath" value="storageChangeForm.storageChangeFormId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeForm.storageChangeFormId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeFormList}"/>
+                    <ui:param name="propertyLabel" value="名字"/>
+                    <ui:param name="propertyPath" value="storageChangeForm.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeForm.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeFormList}"/>
+                    <ui:param name="propertyLabel" value="创建时间"/>
+                    <ui:param name="propertyPath" value="storageChangeForm.createTime"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeForm.createTime}"/>
+        </h:column>
+       
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeFormList}"/>
+                    <ui:param name="propertyLabel" value="仓储类型"/>
+                    <ui:param name="propertyPath" value="storageChangeForm.storageChangeTypeId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeForm.storageChangeTypeId.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{storageChangeFormList}"/>
+                    <ui:param name="propertyLabel" value="明细"/>
+                    <ui:param name="propertyPath" value="storageChangeForm.operater"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_storageChangeForm.operater}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">操作</f:facet>
+            <s:link view="/storage/#{empty from ? 'GoodsPalletChangeRecord' : from}.xhtml"
+                   value="#{empty from ? '查看' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="storageChangeFormViewId">
+                <f:param name="storageChangeFormStorageChangeFormId"
+                        value="#{_storageChangeForm.storageChangeFormId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/storage/GoodsPalletChangeRecordEdit.xhtml"
+                   value="编辑"
+             propagation="none"
+                      id="storageChangeFormEdit"
+                rendered="#{empty from}">
+                <f:param name="storageChangeFormStorageChangeFormId"
+                        value="#{_storageChangeForm.storageChangeFormId}"/>
+            </s:link>
+            
+           
+            
+            #{' '}
+            <s:link propagation="none"  view="/storage/GoodsPalletChangeRecordEdit.xhtml" 
+		            action="#{storageChangeFormHome.remove}" value="删除"
+		             onclick="return confirm('确定删除');" immediate="true" id="Delete">
+		             <f:param name="storageChangeFormStorageChangeFormId"
+		              value="#{_storageChangeForm.storageChangeFormId}" />
+			</s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+	
+	
+	<div class="tableControl">
+
+        <s:link propagation="none"  view="/storage/GoodsPalletChangeRecordList.xhtml"
+            rendered="#{storageChangeFormList.previousExists}"
+               value="首页"
+                  id="firstPage">
+          <f:param name="pageNum" value="0"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/storage/GoodsPalletChangeRecordList.xhtml"
+            rendered="#{storageChangeFormList.previousExists}"
+               value="上一页"
+                  id="previousPage">
+            <f:param name="pageNum"
+                    value="#{storageChangeFormList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/storage/GoodsPalletChangeRecordList.xhtml"
+            rendered="#{storageChangeFormList.nextExists}"
+               value="下一页 "
+                  id="nextPage">
+            <f:param name="pageNum"
+                    value="#{storageChangeFormList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link propagation="none"  view="/storage/GoodsPalletChangeRecordList.xhtml"
+            rendered="#{storageChangeFormList.nextExists}"
+               value="末页 "
+                  id="lastPage">
+            <f:param name="pageNum" 
+                    value="#{storageChangeFormList.lastFirstResult}"/>
+        </s:link>
+	共#{storageChangeFormList.PAGE_COUNT}页 &#160;共#{storageChangeFormList.RESULT_COUNT}条记录 
+    </div>
+
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/storage/GoodsPalletChangeRecordEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="添加">
+            <f:param name="storageChangeFormStorageChangeFormId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

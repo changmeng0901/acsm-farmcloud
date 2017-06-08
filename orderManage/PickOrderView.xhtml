@@ -1,0 +1,164 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	#{orderOperate.pickOrderViewInit()}
+	<style>
+		.r_title{ font-size: 14px; color:#525252;}
+		.cm_resumeList{}
+		.cm_resumeList li{ float:left;}
+		.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'微软雅黑';}
+		.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+		.cm_resumeList li img{ float:left; margin-top:16px;}
+		.cm_resumeList li span{ float:left; text-indent:10px;}
+		.borderBt{ border-bottom:2px solid #33aedc;}
+		.borderBt02{ border-bottom:1px solid #cbcbcb;}
+		 .customMess_wap .items p.name {overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+		div#menu .helpSeleHd{ float:left; overflow:hidden; width:65px; height:24px; line-height:24px; padding:0 20px 0 5px; background:url(#{request.contextPath}/asset/images/sitIco2.png) no-repeat 50px 12px; color:#cfe3fe;}
+	</style>
+	<td valign="top" >
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%; padding:20px 30px;">
+				<div class="breadNav_wap clear">
+					<div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam?orderStatus=#{orderStatus}"><strong>订单管理</strong></a></div>
+					<div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+						<ul class="resumeList clear">
+							<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+			                <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                            </h:panelGroup>
+						</ul>
+					</div>
+				</div>
+				<div class="singleManage_con">
+					<div class="orderTrack_heade mb20">
+						<p class="mr70">订单编号：<span class="number">#{orderOperate.orderInfo.orderCode}</span></p>
+			            <p class="mr70">订单状态：<span class="statues">#{orderConstant.getOrderStatusLabel(orderOperate.orderInfo.orderStatus)}</span></p>
+		            	<p class="#{orderOperate.orderInfo.paymentStatus == true ? 'payStatues' : 'payStatues2'}">#{orderOperate.orderInfo.paymentStatus == true ? '已支付' : '未支付'}</p>
+					</div>
+					<!-- 客户信息 开始 -->
+			        <h2 class="titleH2">客户信息</h2>
+			        <div class="mb20 mt20">
+			        	<div class="customMess_wap" style="margin-left:0px;">
+			                <div class="items itemsCur" data-dismiss="modal" style="width:370px;cursor:default;padding-top: 24px;">
+			                    <p class="name">客户姓名：&nbsp;&nbsp;<span>#{orderOperate.orderInfo.receiveName}</span></p>
+			                    <p class="addresses" style="width:340px; background-position:0 -89px;">采摘时间：&nbsp;&nbsp;<span>#{orderOperate.orderInfo.pickOrderTimeStr}</span></p>
+			                    <em class="defaultIco"></em>
+			                </div>
+			            </div> 
+			        </div>
+			        <!-- 客户信息 结束 -->
+			        
+			    	<h2 class="titleH2">商品清单</h2>
+			        <div class="listGoods_con">
+			            <table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+			                <thead>
+			                <tr>
+			                	<th width="10%">序号</th>
+			                    <th width="20%">商品名称</th>
+			                    <th width="10%">规格</th>
+			                    <th width="10%">地块</th>
+			                    <th width="10%">采摘数量</th>
+			                    <th width="10%">采摘单价</th>
+			                    <th width="10%">小计</th>
+								<th width="20%">备注</th>
+			                </tr>
+			                </thead>
+			            </table>
+			            <div class="tableFixed_scroll" id="showProductDiv">
+				            <table class="tableModel tbody" width="100%" cellpadding="0" cellspacing="0">
+				                <tbody>
+				                	<a:repeat value="#{orderOperate.orderProductList}" var="_orderProduct" rowKeyVar="_opIndex">
+				                		<tr class="odd">
+						                    <td width="10%">#{_opIndex + 1}</td>
+						                    <td width="20%">#{_orderProduct.productName}</td>
+						                    <td width="10%">#{_orderProduct.productUnit}</td>
+						                    <td width="10%"><span class="num_spyj" title="#{orderOperate.gettunner2(_orderProduct.tunnelIds)}">#{orderOperate.gettunner(_orderProduct.tunnelIds)}</span></td>
+						                    <td width="10%">#{_orderProduct.productNum}</td>
+						                    <td width="10%">¥<span class="num_spdj2"><h:outputText value="#{_orderProduct.price}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="10%">
+						                    	<s:span styleClass="num_dpzj" rendered="#{_orderProduct.sellType == orderConstant.getCartProductGeneral()}">
+						                    		¥<h:outputText value="#{_orderProduct.totalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText>
+						                    	</s:span>
+						                    	<s:span styleClass="num_dpzj" rendered="#{_orderProduct.sellType == orderConstant.getCartProductGift()}">
+						                    		<h:outputText value="赠品" ></h:outputText>
+						                    	</s:span>
+					                    	</td>
+						                    <td width="20%"><a  title="#{_orderProduct.remark}"  href="javascript:void(0);" style="display:inline-block; max-width:80px; overflow:hidden; white-space: nowrap;">#{_orderProduct.remark}</a></td>
+						                </tr>
+				                	</a:repeat>
+				                </tbody>
+				            </table>
+			            </div>
+			            <div class="tfoot mb20">
+			                
+			                <div class="listGoods_li5 clear">
+			                    <div class="fr">
+			                    <span class="fl">价格总计：</span>
+			                    <span class="codeEle fl">¥</span>
+			                    <span class="num fl">#{orderOperate.orderInfo.paymentAccount}</span>
+			                    </div>
+			                </div>
+			            </div>
+			            <div>
+			            	<s:button view="/orderManage/#{empty from ? 'OrderOperateList' : from}.xhtml" styleClass="btn btn-default fr" propagation="end" value="返回" rendered="#{orderOperate.backType == 1}" >
+			            		<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+			            		<f:param name="pages" value="#{orderOperate.page}"></f:param>
+			            		<f:param name="screenType" value="#{orderOperateList.screenType}"/>
+								<f:param name="selectType" value="#{orderOperateList.selectType}"/>
+								<f:param name="orderPayStatus" value="#{orderOperateList.orderPayStatus}"/>
+								<f:param name="orderType" value="#{orderOperateList.orderType}"/>
+								<f:param name="beginTime" value="#{orderOperateList.beginTime}"/>
+								<f:param name="endTime" value="#{orderOperateList.endTime}"/>
+			            	</s:button>
+ 	                        <s:button view="/orderManage/MemberInfoView.xhtml" styleClass="btn btn-default fr" propagation="end" value="返回" rendered="#{orderOperate.backType == 2}">
+ 	                            <f:param name="memberInfoId" value="#{orderOperate.orderInfo.memberInfo.memberInfoId}"></f:param>
+ 	                        </s:button>
+			            	
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</td>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		jQuery(function(){
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+
+			if(#{orderOperate.orderProductList.size()>20}){
+				jQuery('.tableFixed_scroll').attr('style',jQuery('.tableFixed_scroll').attr('style')+'height:760px;');
+			}else{
+				jQuery('.tableFixed_scroll').attr('style',jQuery('.tableFixed_scroll').attr('style')+'height:'+#{orderOperate.orderProductList.size()}*38+'px;')
+			}
+		});
+
+		
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,817 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template_new.xhtml">
+	
+	<ui:define name="body">
+	#{spgsInfoHome.findMess()}
+	<td valign="top">
+		<link href="#{request.contextPath}/asset/css/skinBlue.css" rel="stylesheet" type="text/css"></link>
+		<link href="#{request.contextPath}/asset/css/style.css" rel="stylesheet" type="text/css"></link>
+		<link href="#{request.contextPath}/AerialVideoPhone/style/commons/commons.css" rel="stylesheet" type="text/css"></link>
+		<link href="#{request.contextPath}/asset/css/jquery-picklist-spgs.css" rel="stylesheet" type="text/css"></link>
+		<link href="#{request.contextPath}/asset/css/growth/Monitor.css" rel="stylesheet" type="text/css"></link>
+		<script type="text/javascript" src="/AerialVideoPhone/js/bootstrap/icheck.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.ui.widget.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-picklist.js"></script>
+			<div class="member_monitor_main">
+				<!-- SPGS会员监控 -->
+				<div class="breadNav_wap clear mb30">
+					<div class="breadNav_lt">
+						<a href="#">精准营销</a><span>&gt;</span><strong>SPGS会员监控</strong>
+					</div>
+				</div>
+				<!-- 会员列表 -->
+				<div class="allSetting_wap mb30">
+					<div class="allSetting_hd clear">
+						<h3>
+							<img src="#{request.contextPath}/asset/images/growth/MemberMonitor_icon1.png" />会员列表
+						</h3>
+						<div class="fr">
+							<input type="button" class="btn btn-default sm_btn" value="添加会员监控" onclick="findMemberInfo()" />
+						</div>
+					</div>
+					<s:div id="spgsInfoList">
+					<input type="hidden" id="restriction" name="restriction" value="#{spgsInfoHome.restriction}"/>
+					<input type="hidden" id="memberNum" name="memberNum" value="#{spgsInfoHome.memberNum}"/>
+					<div class="memberPic_bd">
+						<table width="100%" cellpadding="0" cellspacing="0">
+							<a:repeat value="#{spgsInfoHome.spgsInfos}" var="_spgs" rowKeyVar="_index">
+							<tr class="member_tr">
+								<td width="100"><img class="member_img"	src="#{_spgs.memberInfo.icon eq '' or _spgs.memberInfo.icon eq null ? '/asset/images/growth/MemberMonitor_pic1.png':_spgs.memberInfo.icon}" /></td>
+								<td width="18%">
+									<p class="member_des">#{_spgs.memberInfo.realname}</p>
+								</td>
+								<td>
+								<h:outputText value="" rendered="#{_spgs.memberInfo.memberInfoId ne 0}" >
+									联系方式
+									<input name="phone" type="text" class="member_ipt form-control" value="#{_spgs.memberInfo.phone}"/>
+									<input name="spgsMemberId" type="hidden" value="#{_spgs.memberInfo.memberInfoId}"/>
+								</h:outputText>
+								
+								<h:outputText value="" rendered="#{_spgs.memberInfo.memberInfoId eq 0}" >
+									<input name="phone" type="hidden" class="member_ipt form-control" value="#{_spgs.memberInfo.phone}"/>
+									<input name="spgsMemberId" type="hidden" value="#{_spgs.memberInfo.memberInfoId}"/>
+								</h:outputText>
+								
+								</td>
+								<td width="240">
+									<span class="member_btn" onclick="showPlant(#{_spgs.spgsMemberInfoId});">种植信息</span> 
+									<span class="member_btn" onclick="showDevice(#{_spgs.spgsMemberInfoId});">物联网设备</span> 
+									<span class="member_btn" onclick="deletedSpgs(#{_spgs.spgsMemberInfoId})">删除</span>
+								</td>
+							</tr>
+							</a:repeat>
+						</table>
+					</div>
+					</s:div>
+				</div>
+				<!-- SPGS设置 -->
+				<div class="allSetting_wap mb30">
+					<div class="allSetting_hd clear">
+						<h3>
+							<img src="#{request.contextPath}/asset/images/growth/MemberMonitor_icon2.png" />SPGS设置
+						</h3>
+					</div>
+					<div class="spgsSetting_bd">
+						<ul class="spgsSetting_list clear">
+							<li class="spgs_item">
+								<dl data-toggle="tooltip" title="增加显示您的企业LOGO">
+									<dt>
+										<img class="icon_img" src="#{request.contextPath}/asset/images/growth/MemberMonitor_icon4.png" />LOGO：
+									</dt>
+									<dd>
+										<div class="star_using">
+											<input id="logo" class="iCheck" type="checkbox" starusing="unchecked" />启用
+										</div>
+									</dd>
+								</dl>
+							</li>
+							<li class="spgs_item">
+								<dl data-toggle="tooltip" title="用户是否需要输入验证码进行验证登录">
+									<dt>
+										<img class="icon_img" src="#{request.contextPath}/asset/images/growth/MemberMonitor_icon5.png" />验证登录：
+									</dt>
+									<dd>
+										<div class="star_using">
+											<input id="loginCh" class="iCheck" type="checkbox" starusing="unchecked" />启用
+										</div>
+									</dd>
+								</dl>
+							</li>
+							<li class="spgs_item">
+								<dl data-toggle="tooltip" title="选择您想使用的登录页皮肤">
+									<dt>
+										<img class="icon_img" src="#{request.contextPath}/asset/images/growth/MemberMonitor_icon6.png" />登录页皮肤设置：
+										<p id="skinName" class="text_name" style='left:126px;'>大田1</p>
+									</dt>
+									<dd>
+										<div class="star_using">
+											<!-- <input class="iCheck" type="checkbox" starusing="unchecked" />启用 -->
+										</div>
+										<span class="setting_btn" data-target="#SkinsetModal" data-toggle="modal">设置&gt;</span>
+									</dd>
+								</dl>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!-- 分享设置 -->
+				<div class="allSetting_wap">
+					<div class="allSetting_hd clear">
+						<h3>
+							<img src="#{request.contextPath}/asset/images/growth/MemberMonitor_icon3.png" />分享设置
+						</h3>
+					</div>
+					<div class="shareSetting_bd">
+						<table width="100%" cellpadding="0" cellspacing="0">
+							<tr>
+								<td width="50%">
+									<dl class="set_dl">
+										<dt class="set_dt">分享标题</dt>
+										<dd class="set_dd">
+											<input id='shareTitle' type="text" class="form-control" value="#{spgsInfoHome.shareTitle}" maxlength="15" />
+										</dd>
+									</dl>
+								</td>
+								<td width="50%" rowspan="2">
+									<div class="code_block">
+										<img id="codeImage" src="#{request.contextPath}/asset/images/growth/panorama_code.jpg" />
+										<script>
+											//<![CDATA[
+												jQuery('#codeImage').attr("src","#{request.contextPath}/GenerateCodeImage?enterpriseInfoId=#{sessionTake.enterpriseInfoId}&type=5");
+											//]]>
+										</script>
+									</div>
+									<p class="text_share">分享链接</p>
+									<dl class="set_dl" style="width: 80%; padding-left: 0; padding-right: 120px;">
+										<dt class="set_dt" style="left: inherit; right: 0; width: 120px; padding-right: 0;">
+											<button class="btn btn-default copy_link" onclick="copyShareUrl()">复制链接</button>
+										</dt>
+										<dd class="set_dd">
+											<input type="text" class="form-control" id="shareLink" value="#{spgsInfoHome.shareUrl}" style="width: 100%;" readonly="true" /> 
+										</dd>
+									</dl>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									<dl class="set_dl">
+										<dt class="set_dt">分享描述</dt>
+										<dd class="set_dd">
+											<textarea id="remark" type="text" class="form-control textarea">#{spgsInfoHome.shareDescribe}</textarea>
+										</dd>
+									</dl>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="pt30 pb30" style="text-align: center;">
+					<input id="logoHidden" type="hidden" value="#{spgsInfoHome.logo}"/>
+					<input id="loginHidden" type="hidden" value="#{spgsInfoHome.login}"/>
+					<input id="skinIdHidden" type="hidden" value="#{spgsInfoHome.skinId}"/>
+					<input id="enterpriseSettingIdHidden" type="hidden" value="#{spgsInfoHome.enterpriseSettingId}"/>
+					<input id="memberMessHidden" type="hidden" value="#{spgsInfoHome.memberMess}"/>
+					<a class="btn btn-primary" href="javascript:void(0);" onclick="submitAction()">保存</a>
+					
+				</div>
+				
+				<!-- SPGS会员监控 -->
+			</div>
+		</td>
+		
+		<!-- (1)添加会员监控模态框 -->
+<div class="modal fade" id="MemberMonitorModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog member_dialog membermonitor_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">添加会员监控</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+        <div class="msearch_block clear" style="padding-bottom:19px;border-bottom:1px solid #ededed;">
+            <div class="public-search fl mr5"><span class="octicon-search02"></span>
+                <input id="memberName" type="text" value="请输入会员名称" onfocus="if(this.value=='请输入会员名称'){this.value=''}" onblur="if(this.value==''){this.value='请输入会员名称'}" class="form-control nw200 srarchfont"/>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="memberSear();">搜索</button>
+        </div>
+        <s:div id="memberMess">
+        <input type="hidden" id="memberIds" value="" />
+        <ul class="member_list">
+        	<a:repeat value="#{spgsInfoHome.memberInfos}" var="_member" rowKeyVar="_index">
+            <li name="member" onclick="MonitorSelect(this,'m_cur')">
+            	<input type="hidden" value="#{_member[0]}"/>
+                <p class="text_text"><img src="#{request.contextPath}/asset/images/growth/MemberMonitor_icon7.png"/>会员姓名</p>
+                <p class="text_name">#{_member[1]}</p>
+                <p class="text_text"><img src="#{request.contextPath}/asset/images/growth/MemberMonitor_icon8.png"/>联系电话</p>
+                <p class="text_phone">#{_member[2] eq null or _member[2] eq ''?'--':_member[2]}</p>
+            </li>
+            </a:repeat>
+        </ul>
+        </s:div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="saveSpgsInfo();" >确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- (2)添加物联网设备模态框 -->
+<div class="modal fade" id="ApplianceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog member_dialog appliance_dialog">
+<div class="modal-content">
+	<input type="hidden" id="device_spgsId" value=""/>
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">添加物联网设备</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+
+        <div class="msearch_block clear mb20">
+            <div class="public-search fl mr5"><span class="octicon-search02"></span>
+                <input id="deviceName" type="text" value="请输入设备名称" onfocus="if(this.value=='请输入设备名称'){this.value=''}" onblur="if(this.value==''){this.value='请输入设备名称'}" class="form-control nw200 srarchfont"/>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="deviceSear();">搜索</button>
+        </div>
+        <s:div id="deviceMess">
+        <select id="nonnumeric2" name="nonnumeric2" multiple="multiple">
+        	<a:repeat value="#{spgsInfoHome.videos}" var="_video" rowKeyVar="_index">
+            	<option value="#{_video[0]}_1">#{_video[3]}-#{_video[1]}</option>
+            </a:repeat>
+            <a:repeat value="#{spgsInfoHome.devices}" var="_device" rowKeyVar="_index">
+            	<option value="#{_device[0]}_2">#{_device[3]}-#{_device[1]}</option>
+            </a:repeat>
+        </select>
+        </s:div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="saveDevites();">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- (2)添加种植信息模态框 -->
+<div class="modal fade" id="realPlantModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog member_dialog appliance_dialog">
+<div class="modal-content">
+	<input type="hidden" id="plant_spgsId" value=""/>
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">添加种植信息</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+
+        <div class="msearch_block clear mb20">
+            <div class="public-search fl mr5"><span class="octicon-search02"></span>
+                <input id="plantName" type="text" value="请输入作物名称" onfocus="if(this.value=='请输入作物名称'){this.value=''}" onblur="if(this.value==''){this.value='请输入作物名称'}" class="form-control nw200 srarchfont"/>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="plantSear();">搜索</button>
+        </div>
+        <s:div id="realPlantMess">
+        <select id="nonnumeric" name="nonnumeric" multiple="multiple">
+        	<a:repeat value="#{spgsInfoHome.realPlants}" var="_plant" rowKeyVar="_index">
+            	<option value="#{_plant[0]}">#{_plant[3]}-#{_plant[1]}</option>
+            </a:repeat>
+        </select>
+        </s:div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="savePlant();">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- (3)登录页皮肤设置模态框 -->
+<div class="modal fade" id="SkinsetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog member_dialog skinset_dialog">
+<div class="modal-content">
+    <div class="modal-header clear">
+        <h4 class="modal-title fl">登录页皮肤设置</h4>
+        <i class="i_close" data-dismiss="modal"></i>
+    </div>
+    <div class="modal-body modal_body">
+
+        <ul class="slin_list">
+            <li class="#{spgsInfoHome.skinId eq 1?'s_cur':''}" onclick="skinCur(this)">
+            	<input type="hidden" value="1"/>
+                <div class="skin_item">
+                    <img src="#{request.contextPath}/asset/images/growth/MemberMonitor_skin0.jpg"/>
+                </div>
+                <p class="text_name">大田1</p>
+                <i class="skin_icon"></i>
+            </li>
+            <li class="#{spgsInfoHome.skinId eq 2?'s_cur':''}" onclick="skinCur(this)">
+            	<input type="hidden" value="2"/>
+                <div class="skin_item">
+                    <img src="#{request.contextPath}/asset/images/growth/MemberMonitor_skin1.jpg"/>
+                </div>
+                <p class="text_name">大田2</p>
+                <i class="skin_icon"></i>
+            </li>
+            <li class="#{spgsInfoHome.skinId eq 3?'s_cur':''}" onclick="skinCur(this)">
+            	<input type="hidden" value="3"/>
+                <div class="skin_item">
+                    <img src="#{request.contextPath}/asset/images/growth/MemberMonitor_skin2.jpg"/>
+                </div>
+                <p class="text_name">果树1</p>
+                <i class="skin_icon"></i>
+            </li>
+            <li class="#{spgsInfoHome.skinId eq 4?'s_cur':''}" onclick="skinCur(this)">
+            	<input type="hidden" value="4"/>
+                <div class="skin_item">
+                    <img src="#{request.contextPath}/asset/images/growth/MemberMonitor_skin3.jpg"/>
+                </div>
+                <p class="text_name">果树2</p>
+                <i class="skin_icon"></i>
+            </li>
+            <li class="#{spgsInfoHome.skinId eq 5?'s_cur':''}" onclick="skinCur(this)">
+            	<input type="hidden" value="5"/>
+                <div class="skin_item">
+                    <img src="#{request.contextPath}/asset/images/growth/MemberMonitor_skin4.jpg"/>
+                </div>
+                <p class="text_name">温室1</p>
+                <i class="skin_icon"></i>
+            </li>
+            <li class="#{spgsInfoHome.skinId eq 6?'s_cur':''}" onclick="skinCur(this)">
+            	<input type="hidden" value="6"/>
+                <div class="skin_item">
+                    <img src="#{request.contextPath}/asset/images/growth/MemberMonitor_skin5.jpg"/>
+                </div>
+                <p class="text_name">温室2</p>
+                <i class="skin_icon"></i>
+            </li>
+        </ul>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="saveLogin();">保存</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+    </div>
+</div>
+</div>
+</div>
+<a:form>
+	<a:queue requestDelay="10" ignoreDupResponses="true"/>	
+	<a:jsFunction name="flushMember" action="#{spgsInfoHome.findMess()}" reRender="spgsInfoList" >
+	</a:jsFunction>	
+  	<a:jsFunction name="findMember" action="#{spgsInfoHome.findMember()}" reRender="memberMess" oncomplete="findMemberhuidiao();">
+  		<a:actionparam name="searchStr" assignTo="#{spgsInfoHome.searchStr}"/>
+	</a:jsFunction>
+	<a:jsFunction name="savespgs" action="#{spgsInfoHome.saveSpgs()}" reRender="spgsInfoList" oncomplete="saveSpgshuidiao();">
+		<a:actionparam name="memberInfoId" assignTo="#{spgsInfoHome.memberInfoId}"/>
+	</a:jsFunction>
+	
+	<a:jsFunction name="deletedspgs" action="#{spgsInfoHome.deleteSpgs()}" reRender="spgsInfoList" oncomplete="delSpgshuidiao();">
+		<a:actionparam name="spgsInfoId" assignTo="#{spgsInfoHome.spgsInfoId}"/>
+	</a:jsFunction>
+	
+	<a:jsFunction name="findplant" action="#{spgsInfoHome.findRealPlant()}" reRender="realPlantMess" data="#{spgsInfoHome.realPlantIds}" oncomplete="findplanthuidiao(data);">
+		<a:actionparam name="spgsInfoId" assignTo="#{spgsInfoHome.spgsInfoId}"/>
+		<a:actionparam name="searchStr" assignTo="#{spgsInfoHome.searchStr}"/>
+	</a:jsFunction>
+	<a:jsFunction name="findDevice" action="#{spgsInfoHome.findDeviceMess()}" reRender="deviceMess" data="#{spgsInfoHome.deviceAndVideo}" oncomplete="findDevicehuidiao(data);">
+		<a:actionparam name="spgsInfoId" assignTo="#{spgsInfoHome.spgsInfoId}"/>
+		<a:actionparam name="searchStr" assignTo="#{spgsInfoHome.searchStr}"/>
+	</a:jsFunction>
+	
+	<a:jsFunction name="saveDevice" action="#{spgsInfoHome.saveRealPlantAndDevice()}" reRender="deviceMess" oncomplete="saveDevicehuidiao();">
+		<a:actionparam name="spgsInfoId" assignTo="#{spgsInfoHome.spgsInfoId}"/>
+		<a:actionparam name="deviceIds" assignTo="#{spgsInfoHome.deviceIds}"/>
+		<a:actionparam name="videoIds" assignTo="#{spgsInfoHome.videoIds}"/>
+		<a:actionparam name="saveType" assignTo="#{spgsInfoHome.saveType}"/>
+	</a:jsFunction>
+	
+	<a:jsFunction name="saveRealPlant" action="#{spgsInfoHome.saveRealPlantAndDevice()}" reRender="deviceMess" oncomplete="saveRealPlanthuidiao();">
+		<a:actionparam name="spgsInfoId" assignTo="#{spgsInfoHome.spgsInfoId}"/>
+		<a:actionparam name="realPlantIds" assignTo="#{spgsInfoHome.realPlantIds}"/>
+		<a:actionparam name="saveType" assignTo="#{spgsInfoHome.saveType}"/>
+	</a:jsFunction>
+	
+	<a:jsFunction name="saveLoginType" action="#{spgsInfoHome.saveLoginType()}"  oncomplete="aaa();">
+		<a:actionparam name="enterpriseSettingId" assignTo="#{spgsInfoHome.enterpriseSettingId}"/>
+		<a:actionparam name="skinId" assignTo="#{spgsInfoHome.skinId}"/>
+	</a:jsFunction>
+	
+	<a:jsFunction name="deviceSearch" action="#{spgsInfoHome.findDeviceMess()}" reRender="deviceMess" data="#{spgsInfoHome.deviceAndVideo}" oncomplete="findDevicehuidiao1(data);">
+		<a:actionparam name="spgsInfoId" assignTo="#{spgsInfoHome.spgsInfoId}"/>
+		<a:actionparam name="searchStr" assignTo="#{spgsInfoHome.searchStr}"/>
+	</a:jsFunction>
+	
+	<a:jsFunction name="plantSearch" action="#{spgsInfoHome.findRealPlant()}" reRender="realPlantMess" data="#{spgsInfoHome.realPlantIds}" oncomplete="findplanthuidiao1(data);">
+		<a:actionparam name="spgsInfoId" assignTo="#{spgsInfoHome.spgsInfoId}"/>
+		<a:actionparam name="searchStr" assignTo="#{spgsInfoHome.searchStr}"/>
+	</a:jsFunction>
+	<a:jsFunction name="memberSearch" action="#{spgsInfoHome.findMember()}" reRender="memberMess" oncomplete="findMemberhuidiao1();">
+		<a:actionparam name="searchStr" assignTo="#{spgsInfoHome.searchStr}"/>
+	</a:jsFunction>
+	<a:jsFunction name="saveSpgsInfoMess" action="#{spgsInfoHome.saveSpgsAndEnterprise}"  oncomplete="savehuidiao();">
+		<a:actionparam name="logo" assignTo="#{spgsInfoHome.logo}"/>
+		<a:actionparam name="login" assignTo="#{spgsInfoHome.login}"/>
+		<a:actionparam name="skinId" assignTo="#{spgsInfoHome.skinId}"/>
+		<a:actionparam name="shareTitle" assignTo="#{spgsInfoHome.shareTitle}"/>
+		<a:actionparam name="shareLink" assignTo="#{spgsInfoHome.shareUrl}"/>
+		<a:actionparam name="remark" assignTo="#{spgsInfoHome.shareDescribe}"/>
+		<a:actionparam name="memberMess" assignTo="#{spgsInfoHome.memberMess}"/>
+		<a:actionparam name="enterpriseSettingIdHidden" assignTo="#{spgsInfoHome.enterpriseSettingId}"/>
+	</a:jsFunction>
+</a:form>
+<script type="text/javascript">
+//<![CDATA[
+
+           
+jQuery(function(){
+
+	var logo = '#{spgsInfoHome.logo}';
+	var login = '#{spgsInfoHome.login}';
+	var skinId = '#{spgsInfoHome.skinId}';
+
+	if(logo==1||logo=='1'){
+		jQuery("#logo").iCheck("check"); 
+	}else{
+		jQuery("#logo").iCheck("uncheck");
+	}
+
+	if(login==1||login=='1'){
+		jQuery("#loginCh").iCheck("check"); 
+	}else{
+		jQuery("#loginCh").iCheck("uncheck"); 
+	}
+	if(skinId==1||skinId=='1'){
+		jQuery("#skinName").html('大田1');
+	}else if(skinId==2||skinId=='2'){
+		jQuery("#skinName").html('大田2'); 
+	}else if(skinId==3||skinId=='3'){
+		jQuery("#skinName").html('果树1');
+	}else if(skinId==4||skinId=='4'){
+		jQuery("#skinName").html('果树2');
+	}else if(skinId==5||skinId=='5'){
+		jQuery("#skinName").html('温室1');
+	}else if(skinId==6||skinId=='6'){
+		jQuery("#skinName").html('温室2');
+	}
+	
+	// (1)获取焦点和失去焦点状态
+/*     jQuery('input[type=text]:not(#share_link),textarea').focus(function(){
+        var txt_value = jQuery(this).val();
+        if(txt_value==this.defaultValue){
+            jQuery(this).val("");    
+        };  
+    });
+    jQuery('input[type=text]:not(#share_link),textarea').blur(function(){
+        var txt_value = jQuery(this).val();
+        if(txt_value==""){
+            jQuery(this).val(this.defaultValue); 
+        };  
+    });  */
+    //(3)联系人选择
+	//var selectPickList = jQuery("#nonnumeric").pickList();
+	selectPickList = jQuery("#nonnumeric").pickList({  
+		 sourceListLabel: "全部",
+		targetListLabel : "已选择", 
+	}); 
+	selectPickList2 = jQuery("#nonnumeric2").pickList({  
+		 sourceListLabel: "全部",
+		targetListLabel : "已选择", 
+	}); 
+	// (4)tooltip工具提示
+	jQuery("[data-toggle='tooltip']").tooltip(); 
+	// 复选框插件
+	jQuery('input[class="iCheck"]').iCheck({
+		checkboxClass: 'icheckbox_minimal-blue'
+	});
+	//模态框大屏和小屏的切换效果
+	var oWindowH = jQuery(window).height();
+	oWindowH < 500 ? jQuery(".member_dialog").addClass("member_top") : 	jQuery(".member_dialog").removeClass("member_top")
+	jQuery(window).resize(function(e) {
+		var oWindowH = jQuery(window).height();
+		oWindowH < 500 ? jQuery(".member_dialog").addClass("member_top") : 	jQuery(".member_dialog").removeClass("member_top")
+    });
+    
+});
+	//复制链接
+    function copyShareUrl(){
+        var Url2=document.getElementById("shareLink");
+        Url2.focus();
+        Url2.select();
+        try{
+		    if(document.execCommand('copy', false, null)){
+		        alert('已复制该内容');
+		    } else{
+		         alert('此浏览器不支持复制功能，请手动复制一下吧！');
+		    }
+		} catch(err){
+		     alert('此浏览器不支持复制功能，请手动复制一下吧！');
+		}  
+		
+    }
+	// 添加会员监控列表项，选择状态
+	function MonitorSelect(obj,curClass){
+		if( jQuery(obj).hasClass( curClass ) ){
+			jQuery(obj).removeClass( curClass );
+			var memberId = jQuery(obj).find('input').val();
+			var memberIds = jQuery('#memberIds').val();
+			jQuery('#memberIds').val("");
+		}else{
+			jQuery('li[name=member]').removeClass(curClass);
+			jQuery(obj).addClass( curClass );
+			var memberId = jQuery(obj).find('input').val();
+			var memberIds = jQuery('#memberIds').val();
+			jQuery('#memberIds').val(memberId);
+		}
+	}
+	// 会员列表删除
+	function MemberDelete(obj,oParent){
+		jQuery(obj).parents(oParent).remove();
+	}
+	// 皮肤设置
+	function skinCur(obj){
+		jQuery(obj).addClass('s_cur').siblings().removeClass('s_cur');
+
+		jQuery('#skinIdHidden').val(jQuery("li[class=s_cur]").find('input').val());
+		
+	}
+
+	function saveLogin(){
+		var enterpriseSettingId = jQuery('#enterpriseSettingIdHidden').val();
+		var type = jQuery("li[class=s_cur]").find('input').val();
+
+		if(type==1||type=='1'){
+			jQuery("#skinName").html('大田1');
+		}else if(type==2||type=='2'){
+			jQuery("#skinName").html('大田2'); 
+		}else if(type==3||type=='3'){
+			jQuery("#skinName").html('果树1');
+		}else if(type==4||type=='4'){
+			jQuery("#skinName").html('果树2');
+		}else if(type==5||type=='5'){
+			jQuery("#skinName").html('温室1');
+		}else if(type==6||type=='6'){
+			jQuery("#skinName").html('温室2');
+		}
+		saveLoginType(enterpriseSettingId,type);
+	}
+	
+	//会员列表
+	function findMemberInfo(){
+		var restriction = jQuery("#restriction").val();
+		var memberNum = jQuery("#memberNum").val();
+		if(Number(memberNum) < Number(restriction)){
+			findMember("");
+		}else{
+			alert('您可创建的会员数量已达上限，继续添加请联系客服：400-8199-586购买');
+		}
+	}
+	function findMemberhuidiao(){//会员列表回调
+		jQuery('#MemberMonitorModal').modal('show');
+		jQuery('#memberName').val('请输入会员名称');
+	}
+
+	function findMemberhuidiao1(){//会员列表回调
+		jQuery('#MemberMonitorModal').modal('show');
+	}
+
+	function saveSpgsInfo(){//添加会员
+		var memberInfoId = jQuery('#memberIds').val();
+		if(memberInfoId != ''){
+			savespgs(memberInfoId);
+		}
+	}
+
+	function saveSpgshuidiao(){//添加会员回调
+		flushMember();
+		jQuery('#MemberMonitorModal').modal('hide');
+	}
+
+	function showPlant(id){//种植列表
+		jQuery('#plant_spgsId').val(id);
+		findplant(id,"");
+	}
+
+	function findplanthuidiao(data){//种植列表回调
+		jQuery('#realPlantModal').modal('show');
+		jQuery('#plantName').val('请输入作物名称');
+		selectPickList = jQuery("#nonnumeric").pickList({  
+			 sourceListLabel: "全部",
+			targetListLabel : "已选择", 
+		}); 
+
+		var ills = data.split(",");
+		for(var i=0;i<ills.length;i++){
+			jQuery('#realPlantModal').find(".pickList_sourceList li").each(function(){
+				if(ills[i]==jQuery(this).attr('data-value')){
+					jQuery(this).attr("class","pickList_listItem ui-selected ui-state-highlight pickList_selectedListItem");
+					jQuery('#realPlantModal').find(".pickList_add").click();  
+				}
+	    	});  
+		}   
+		
+	}
+
+	function findplanthuidiao1(data){//种植列表回调
+		jQuery('#realPlantModal').modal('show');
+		selectPickList = jQuery("#nonnumeric").pickList({  
+			 sourceListLabel: "全部",
+			targetListLabel : "已选择", 
+		}); 
+		var ills = data.split(",");
+		for(var i=0;i<ills.length;i++){
+			jQuery('#realPlantModal').find(".pickList_sourceList li").each(function(){
+				if(ills[i]==jQuery(this).attr('data-value')){
+					jQuery(this).attr("class","pickList_listItem ui-selected ui-state-highlight pickList_selectedListItem");
+					jQuery('#realPlantModal').find(".pickList_add").click();
+				}
+	    	});
+		}   
+	}
+
+	function savePlant(){
+		var realPlants = "";
+		jQuery('#realPlantMess').find(".pickList_targetList li").each(function(){
+			realPlants += jQuery(this).attr('data-value')+",";
+		});
+		var spgsId = jQuery('#plant_spgsId').val();
+		saveRealPlant(spgsId,realPlants,"2");
+	}
+	
+
+	function showDevice(id){//物联网设备列表
+		jQuery('#device_spgsId').val(id);
+		findDevice(id,"");
+	}
+	
+	function findDevicehuidiao(data){//物联网设备回调
+		jQuery('#ApplianceModal').modal('show');
+		jQuery('#deviceName').val('请输入设备名称');
+		selectPickList2 = jQuery("#nonnumeric2").pickList({  
+			sourceListLabel: "全部",
+			targetListLabel : "已选择", 
+		}); 
+		var devices= data[0];
+		var videos= data[1];
+		if(videos!=null&&videos!=''){
+			var vi = videos.split(",");
+			for(var i=0;i<vi.length;i++){
+				jQuery('#ApplianceModal').find(".pickList_sourceList li").each(function(){
+					if(vi[i]==jQuery(this).attr('data-value')){
+						jQuery(this).attr("class","pickList_listItem ui-selected ui-state-highlight pickList_selectedListItem");
+						jQuery('#ApplianceModal').find(".pickList_add").click();  
+					}
+		    	});  
+			}
+		}
+		if(devices!=null&&devices!=''){
+			var de = devices.split(",");
+			for(var i=0;i<de.length;i++){
+				jQuery('#ApplianceModal').find(".pickList_sourceList li").each(function(){
+					if(de[i]==jQuery(this).attr('data-value')){
+						jQuery(this).attr("class","pickList_listItem ui-selected ui-state-highlight pickList_selectedListItem");
+						jQuery('#ApplianceModal').find(".pickList_add").click();  
+					}
+		    	});  
+			}
+		}
+	}
+
+	function findDevicehuidiao1(data){//物联网设备回调
+		jQuery('#ApplianceModal').modal('show');
+		selectPickList2 = jQuery("#nonnumeric2").pickList({  
+			sourceListLabel: "全部",
+			targetListLabel : "已选择", 
+		}); 
+		var devices= data[0];
+		var videos= data[1];
+		if(videos!=null&&videos!=''){
+			var vi = videos.split(",");
+			for(var i=0;i<vi.length;i++){
+				jQuery('#ApplianceModal').find(".pickList_sourceList li").each(function(){
+					if(vi[i]==jQuery(this).attr('data-value')){
+						jQuery(this).attr("class","pickList_listItem ui-selected ui-state-highlight pickList_selectedListItem");
+						jQuery('#ApplianceModal').find(".pickList_add").click();  
+					}
+		    	});  
+			}
+		}
+		if(devices!=null&&devices!=''){
+			var de = devices.split(",");
+			for(var i=0;i<de.length;i++){
+				jQuery('#ApplianceModal').find(".pickList_sourceList li").each(function(){
+					if(de[i]==jQuery(this).attr('data-value')){
+						jQuery(this).attr("class","pickList_listItem ui-selected ui-state-highlight pickList_selectedListItem");
+						jQuery('#ApplianceModal').find(".pickList_add").click();  
+					}
+		    	});  
+			}
+		}
+	}
+
+	function saveDevites(){
+		var videos = "";
+		var devices = "";
+		jQuery('#deviceMess').find(".pickList_targetList li").each(function(){
+			var mess = jQuery(this).attr('data-value').split("_");
+			if(mess[1] == 1){
+				videos += mess[0]+",";
+			}else{
+				devices += mess[0]+",";
+			}
+		});
+		var spgsId = jQuery('#device_spgsId').val();
+		saveDevice(spgsId,devices,videos,"1");
+	}
+
+	function saveDevicehuidiao(){
+		jQuery('#ApplianceModal').modal('hide');
+	}
+	function saveRealPlanthuidiao(){
+		jQuery('#realPlantModal').modal('hide');
+	}  
+	function deletedSpgs(id){
+		deletedspgs(id);
+	}
+	function delSpgshuidiao(){
+		flushMember();
+	}
+	function submitAction(){
+		var logo = 1;
+		if(jQuery("#logo").is(':checked')){
+			//jQuery("#logoHidden").val(1);  
+			logo = 1;
+		}else{
+			//jQuery("#logoHidden").val(0);  
+			logo = 0;
+		}
+		var login = 1;
+		if(jQuery("#loginCh").is(':checked')){
+			//jQuery("#loginHidden").val(1) 
+			login = 1; 
+		}else{
+			//jQuery("#loginHidden").val(0)
+			login = 0;  
+		}
+		
+		var memberMess='';
+		jQuery('.member_tr').each(function(){
+			var phone = jQuery(this).find('input[name=phone]').val();
+			var id = jQuery(this).find('input[name=spgsMemberId]').val();
+			memberMess += id+'_'+phone+","
+		});
+		jQuery("#memberMessHidden").val(memberMess); 
+		var skinId = jQuery("#skinIdHidden").val();
+		var shareTitle = jQuery("#shareTitle").val();
+		var shareLink = jQuery("#shareLink").val();
+		var remark = jQuery("#remark").val();
+		var enterpriseSettingIdHidden = jQuery("#enterpriseSettingIdHidden").val();
+		
+		saveSpgsInfoMess(logo,login,skinId,shareTitle,shareLink,remark,memberMess,enterpriseSettingIdHidden);
+		
+	}
+	function aaa(){
+		jQuery('#SkinsetModal').modal('hide');
+	}
+	function deviceSear(){
+		var mess = jQuery('#deviceName').val();
+		if(mess!='请输入设备名称'){
+			var spgsId = jQuery('#device_spgsId').val();
+			deviceSearch(spgsId,mess);
+		}else{
+			var spgsId = jQuery('#device_spgsId').val();
+			deviceSearch(spgsId,'');
+		}
+	}
+	function plantSear(){
+		var mess = jQuery('#plantName').val();
+		if(mess!='请输入作物名称'){
+			var spgsId = jQuery('#plant_spgsId').val();
+			plantSearch(spgsId,mess);
+		}else{
+			var spgsId = jQuery('#plant_spgsId').val();
+			plantSearch(spgsId,'');
+		}
+	}
+	function memberSear(){
+		var mess = jQuery('#memberName').val();
+		if(mess!='请输入会员名称'){
+			memberSearch(mess);
+		}else{
+			memberSearch('');
+		}
+	}
+	function savehuidiao(){
+		alert('保存成功');
+	}
+//]]>
+</script>
+</ui:define>
+</ui:composition>

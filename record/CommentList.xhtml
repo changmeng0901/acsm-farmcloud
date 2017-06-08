@@ -1,0 +1,307 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+	<link href="#{request.contextPath}/asset/css/checkBox/skinBlue.css" rel="stylesheet" />
+	<link href="#{request.contextPath}/asset/css/record/commons.css" rel="stylesheet" />
+	<link href="#{request.contextPath}/asset/css/record/reviewManageList.css" rel="stylesheet" />
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+
+<td valign="top">
+	<div class="right_c" style="min-height:30px; padding-bottom:15px; padding-top:15px;">
+    <!-- 面包屑导航 开始 -->
+    <!-- #{commentHome.begins()} -->
+		<div class="breadNav_wap mb15 clear">
+        	<div class="breadNav_lt">精准营销&gt;<a href="#">履历</a><span>&gt;</span><strong>处理记录</strong></div>
+				<div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+                	<ul class="resumeList clear">
+	                	<h:panelGroup rendered="#{param.source==1}">
+	                        <li>
+	                        	<a  href="#{request.contextPath}/record/ProductBaseInfoList.seam?lvliType=1"><img src="#{request.contextPath}/asset/images/cm_lsllIco01.jpg"/><span>履历设计</span></a>
+	                        </li>
+	                        <li>
+	                        	<a  href="#{request.contextPath}/record/ProductBaseInfoList.seam?lvliType=2"  class="borderBt"><img src="#{request.contextPath}/asset/images/lvliyl-ico1.jpg"/><span>履历预览</span></a>
+	                        </li>
+						</h:panelGroup>
+		                <h:panelGroup rendered="#{param.source==2}">
+		                    <li>
+		                    	<a  href="#{request.contextPath}/resume/NewPhoneModelInfoList.seam"><img src="#{request.contextPath}/asset/images/cm_lsllIco01.jpg"/><span>履历设计</span></a>
+		                    </li>
+		                </h:panelGroup>
+				            <li>
+				            	<a href="#{request.contextPath}/record/UsedResume.seam?source=#{param.source}"><img src="../asset/images/lsll/cm_lsllIco02.jpg" /><span style="font-size: 14px;">履历制作</span></a>
+				            </li>
+			            <li>
+	                    	<a href="#{request.contextPath}/record/ResumeTracing.seam?source=#{param.source}" ><img src="#{request.contextPath}/asset/images/cm_lsllIco05.png" /><span>履历追溯</span></a>
+	                    </li>
+					</ul>
+				</div>
+			</div>
+			<div class="search_header clear" style="padding-right:150px;">
+            	<div class="search_header_lt">
+                	<div class="public-search fl mr5">
+                    	<span class="octicon-search02"></span>
+                        <input type="text" style="width:280px;" value="请输入评论内容搜索" class="form-control" />
+                    </div>
+				</div>
+                <div class="search_selected fl">
+					<dl style="width:230px;" class="se_selt180 fl">
+                    	<dt style="width:50px;">评分</dt>
+                       	<dd class="inline_block bootSelt180">
+                        	<select class="selectpicker" style="display: none;" id="pj">
+                            	<option selected="selected" value="0">全部</option>
+                                <option value="1">好评</option>
+                                <option value="2">中评</option>
+                                <option value="3">差评</option>
+                        	</select>
+                        </dd>
+					</dl>
+                    <dl style="width:265px;" class="se_selt180 fl">
+                        <dt style="width:80px;">所属履历</dt>
+                        <dd class="inline_block bootSelt180">
+                            <select style="display: none;" class="selectpicker" id="prId"  data-live-search="true" >
+                            	<option selected="selected" value="0">全部</option>
+                                <a4j:repeat value="#{commentHome.productList}" var="var">
+                                <option value="#{var[1]}">#{var[0]}</option>
+                                </a4j:repeat>
+                            </select>
+                        </dd>
+                    </dl>
+                    <input type="button" onclick="searchAll()" value="搜索" class="btn btn-primary" />
+				</div>
+                <div class="search_header_rt">
+                	<input type="button" value="批量删除" class="btn btn-default" id="batch_delete" onclick="delAll()"/>
+                </div>
+			</div>
+            <!-- 评论管理列表内容 -->
+            <h:panelGroup id="delId">
+            <div class="table_modal comment_table mt15">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th width="5%"><input class="iCheck" type="checkbox" aa="unchecked" /></th>
+                        <th width="19%">所属履历</th>
+                        <th width="16%">评分</th>
+                        <th width="30%">评论内容</th>
+                        <th width="20%">评论日期</th>
+                        <th width="10%">操作</th>
+                    </tr>
+                	<a4j:repeat value="#{commentHome.commentList}" var="var">
+	                    <tr class="trItem odd">
+	                        <td><input class="iCheck" type="checkbox" bb="unchecked" cId='#{var[0]}'/></td>
+	                        <td>#{var[4]}</td>
+	                        <td>#{var[1] &lt;3?'差评':''}#{var[1]==3?'中评':''}#{var[1] &gt; 3?'好评':''}</td>
+	                        <td>#{var[2]}</td>
+	                        <td><h:outputText value="#{var[3]}" ><f:convertDateTime  pattern="yyyy-MM-dd" timeZone="GMT+8" /></h:outputText></td>
+	                        <td><img class="icon_delete" onClick="delOne('#{var[0]}')" src="#{request.contextPath}/asset/images/record/icon_delect.png" /></td>
+	                    </tr>
+	                 </a4j:repeat>
+                </table>
+			</div>
+            <div class="pageModel_wap" style="margin:50px 0;">
+                <table cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td>
+                            <div style="width:auto;">
+                                <table cellspacing="0" cellpadding="0" class="pageModel">
+                                    <tr>
+                                        <td>
+                                            <ui:fragment rendered="#{not empty commentHome.commentList}">
+                                             	<ui:fragment rendered="#{commentHome.previousExists }">
+                                                	<span class="page_num page_first">
+                            							<a href="#" onclick="jump(0);return false;">首页</a>
+                           							</span>
+                          							<span class="page_num ">
+                            							<a href="#" onclick="jump(#{commentHome.previousFirstResult});return false;" class="no_n">
+                            							&lt;
+                            							</a>
+                           							</span>
+                                                </ui:fragment>
+                                                <a4j:repeat var="_page" value="#{commentHome.pageList}" rowKeyVar="_index">
+													<span class="page_num #{!commentHome.previousExists &amp;&amp; _index ==0 ?'page_first ':''} #{commentHome.pageNum==_page?'page_Cur':''}">
+														<a href="#" onclick="jump(#{_page});return false;">
+															#{_page}
+														</a>
+													</span>
+												</a4j:repeat>
+												<ui:fragment rendered="#{commentHome.nextExists}">
+						                            <span class="page_num ">
+							                            <a href="#" class="no_d" onclick="jump(#{commentHome.nextFirstResult});return false;">
+							                            &gt;
+							                            </a>
+						                            </span>
+						                            <span class="page_num ">
+														 <a href="#" onclick="jump(#{commentHome.PAGE_COUNT});return false;">
+														 尾页
+														 </a>
+													</span>
+												</ui:fragment>
+												<span class="page_num page_last"><a>共#{commentHome.PAGE_COUNT}页</a></span>
+                                        	</ui:fragment>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </h:panelGroup>
+            <div style="width:100%; height:32px; text-align:center; margin-top:15px;">
+            	<ui:fragment rendered="#{commentHome.typeAorP==1}">
+            		<s:button view="/record/NewProductRecordTwo.seam?productRecordProductInfoId=#{commentHome.pdId}" styleClass="btn btn-default" value="返回" style="margin-left:10px" />
+            	</ui:fragment>
+            	<ui:fragment rendered="#{commentHome.typeAorP==2}">
+            		<s:button view="/livestock/NewAnimalRecord.seam?livestockHistoryId=#{commentHome.pdId}" styleClass="btn btn-default" value="返回"  style="margin-left:10px" />
+            	</ui:fragment>
+            </div>
+                <!-- 评论管理列表内容 --> 
+                
+                
+            <h:form>
+            <input type="hidden" value="#{commentHome.pageNum}" id="pageNum" name="pageNum"/>
+            <input type="hidden" value="#{commentHome.search}" id="search" name="search"/>
+            <input type="hidden" value="#{commentHome.score}" id="score" name="score"/>
+            <input type="hidden" value="#{commentHome.productId}" id="productId" name="productId"/>
+            <h:commandButton value="" action="/record/CommentList.xhtml" styleClass="but_" style="display:none"/>
+            </h:form>
+            
+             <a4j:form>
+			         <a4j:jsFunction name="del" action="#{commentHome.delComment}" reRender="delId" oncomplete="huidiao()">
+			      		<a4j:actionparam name="commentId" assignTo="#{newProductRecordHome.commentId}"/>
+			        </a4j:jsFunction>
+		 		</a4j:form>
+		</div>
+<script type="text/javascript">
+//<![CDATA[
+jquery(function(){
+	jquery('.selectpicker').selectpicker(); 
+
+	// (1)获取焦点和失去焦点状态
+    jquery('input[type=text]').focus(function(){
+        var txt_value = jquery(this).val();
+        if(txt_value==this.defaultValue){
+        	jquery(this).val("");    
+        };  
+    });
+    jquery('input[type=text]').blur(function(){
+        var txt_value = jquery(this).val();
+        if(txt_value==""){
+        	jquery(this).val(this.defaultValue); 
+        };  
+    }); 
+
+	if(jquery("#search").val()!=""){
+	    jquery('input[type=text]').val(jquery("#search").val());
+	}
+	
+	if(jquery("#score").val()!="" && jquery("#score").val()!=0){
+		jquery('#pj').selectpicker('val',jquery("#score").val());
+	}
+
+	if(jquery('#productId').val()!=""){
+		jquery('#prId').selectpicker('val',jquery("#productId").val())
+	}
+
+	//全选
+	jquery('input[class="iCheck"]').iCheck({
+		checkboxClass: 'icheckbox_minimal-blue'
+	});
+	jquery('.comment_table input[aa]').on('ifClicked', function(){ //全选
+		if (this.checked) {
+			jquery(this).attr("aa","unchecked");
+			jquery(this).parents('tr').siblings().find('input[bb]').iCheck('uncheck');
+			jquery(this).parents('tr').siblings().find('input[bb]').attr("bb","unchecked");
+		} else {
+			jquery(this).attr("aa","checked");
+			jquery(this).parents('tr').siblings().find('input[bb]').iCheck('check');
+			jquery(this).parents('tr').siblings().find('input[bb]').attr("bb","checked");
+		}
+	});
+	jquery('.comment_table input[bb]').on('ifClicked', function(){ //取消全选
+		if (this.checked) {
+			jquery(this).attr("bb","unchecked");
+			jquery(this).parents('tr').siblings().find('input[aa]').iCheck('uncheck');
+		} else {
+			jquery(this).attr("bb","checked");
+			var len = jquery(this).parents('tr').siblings().find('input[bb=checked]').length;
+			if(len == jquery('.comment_table input[bb]').length-1){
+				jquery(this).parents('tr').siblings().find('input[aa]').iCheck('check');	
+			}
+		}
+	});
+});
+
+
+function jump(index){
+	jquery("#pageNum").val(index);
+	if(jquery('input[type=text]').val()!="请输入评论内容搜索"){
+		jquery("#search").val(jquery('input[type=text]').val());
+	}
+	
+	if(jquery("#pj").val()!=""){
+		jquery('#score').val(jquery("#pj").val())
+	}
+
+	if(jquery('#prId').val()!=""){
+		jquery('#productId').val(jquery("#prId").val())
+	}
+	jquery(".but_").trigger("click");
+}
+
+function searchAll(){
+	jquery("#pageNum").val(1);
+	if(jquery('input[type=text]').val()!="请输入评论内容搜索"){
+		jquery("#search").val(jquery('input[type=text]').val());
+	}else{
+		jquery("#search").val('');
+	}
+	if(jquery("#pj").val()!=""){
+		jquery('#score').val(jquery("#pj").val())
+	}
+	if(jquery('#prId').val()!=""){
+		jquery('#productId').val(jquery("#prId").val())
+	}
+	
+	jquery(".but_").trigger("click");
+}
+
+function delAll(){
+	var id="";
+	jquery('.comment_table input[bb]').each(function (){
+		if(jquery(this).attr('bb') == 'checked' ){
+			id+=jquery(this).attr('cId')+",";
+		}
+	})
+	
+	if(id==""){
+		alert("请选择要删除的评价！")
+	}else{
+		id=id.substring(0,id.length-1);
+		delOne(id);
+	}
+}
+
+function delOne(id){
+	if(confirm('删除评论后无法还原，确定删除？')){
+		del(id);
+	}
+}
+
+function huidiao(){
+	jquery('input[class="iCheck"]').iCheck({
+		checkboxClass: 'icheckbox_minimal-blue'
+	});
+}
+//]]>
+</script>
+	</td>  
+</ui:define>
+</ui:composition>

@@ -1,0 +1,400 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+	<style>
+	/*下拉搜索样式09-04*/
+	.input-group .form-control:first-child, .input-group-addon:first-child, .input-group-btn:first-child > .btn, .input-group-btn:first-child > .btn-group > .btn, .input-group-btn:first-child > .dropdown-toggle, .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle), .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
+	    border-bottom-right-radius: 0;
+	    border-top-right-radius: 0;
+	}.input-group .form-control:last-child, .input-group-addon:last-child, .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group > .btn, .input-group-btn:last-child > .dropdown-toggle, .input-group-btn:first-child > .btn:not(:first-child), .input-group-btn:first-child > .btn-group:not(:first-child) > .btn {
+	    border-bottom-left-radius: 0;
+	    border-top-left-radius: 0;
+	}
+	.form-control{  
+	border-bottom-left-radius: 0;
+	    border-top-left-radius: 0;
+	    height:31px;
+	    }
+    .select_input07 .form-control{width:300px;}
+    
+    div#menu .siteSelection{z-index:100;}
+    .daochuFile input.btn{ border:none; border-radius:0;}
+    
+	</style>
+			<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+       <td valign="top" >
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l">生产&#160;&gt;&#160;&#160;<font size="3">种植信息</font></div>
+                    </div>
+					<br/>
+                    <div class="z_r_ser">
+                    <h:form id="storageTypeSearch">
+                    	<table cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+		                      <!--   带下拉搜索框     -->
+							  <div class="select_input07" >
+							    <div class="input-group">
+							      <div class="input-group-btn">
+							        <button type="button" style="width:90px" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="rpType">所有种植</span><span class="caret"></span></button >
+							        <ul class="dropdown-menu" role="menu">
+							          <li><a href="javascript:void(0);" onclick="changeVal(0)">所有种植</a></li>
+							          <li><a href="javascript:void(0);" onclick="changeVal(1)">历史种植</a></li>
+							          <li><a href="javascript:void(0);" onclick="changeVal(2)">实际种植</a></li>
+							          <li><a href="javascript:void(0);" onclick="changeVal(3)">计划种植</a></li>
+							          <li><a href="javascript:void(0);" onclick="changeVal(4)">未种植</a></li>
+							        </ul>
+							      </div>
+							      <div class="public-search">
+							        <span class="octicon-search02"></span>
+							        <h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="searchParam" styleClass="form-control srarchfont" value="#{plantInfoList.searchParam}"/>
+                                	<h:inputHidden value="#{plantInfoList.baseId}" id="baseHidden"/>
+                                	<input type="hidden" value="#{plantInfoList.realPlantType}" id="realPlantType" name="realPlantType"/>
+							      </div>
+							      <h:commandButton id="search" styleClass="btn btn-primary" value="搜索" action="/archive/PlantInfoList.xhtml">                                	
+	                                </h:commandButton>
+	                               <h:commandButton id="export" styleClass="btn btn-primary" action="#{plantInfoList.exportExcel()}" value="导出" style="display:none">                                	
+	                                </h:commandButton>
+	                                	<h:inputHidden value="#{plantInfoList.manyexportId}" id="manyexportId"/>
+		                                 <h:commandButton id="manyexport" styleClass="btn btn-primary" action="#{plantInfoList.manyExportExcel()}" value="批量导出" style="display:none">                                	
+		                                </h:commandButton>
+							    </div>
+							</div>
+                                </td>
+                           </tr>
+                       </table> 
+                    </h:form>                         
+                    </div>
+                     <!--添加按钮开始-->
+                    <div class="tjan_01">
+                    	<div class="btn-group">
+					<button style="display: #{s:hasRole('plant_add')?'hidden':'none'}" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span id="Primary">添加</span><span class="caret"></span></button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+				      		<s:link onclick="return checkSelectNew()" value="添加" view="/archive/PlantInfoEdit.xhtml" propagation="none">
+                    	<f:param name="plantInfoPlantInfoId" />
+                    	<f:param name="baseId" value="#{plantInfoList.baseId}"/>
+                    	<f:param name="pageNum" value="#{plantInfoList.pageNum}"/>
+                    	</s:link>
+                       	</li>
+                        <li>
+                        	<s:link onclick="return checkSelectNew()" value="批量添加" view="/archive/PlantInfoEditBatch.xhtml" propagation="none">
+                    	<f:param name="plantInfoPlantInfoId" />
+                    	<f:param name="baseId" value="#{plantInfoList.baseId}"/>
+                    	<f:param name="pageNum" value="#{plantInfoList.pageNum}"/>
+                    	</s:link>
+                        </li>
+					  </ul>
+				</div>
+                    	
+                    	<div class="btn-group daochuFile">
+	                    	<button  type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span id="Primary">导出</span><span class="caret"></span></button>
+	                    	 <ul class="dropdown-menu" role="menu">
+							<li>
+							
+					      		<input type="button" id="export" class="btn btn-default"  onclick="jquery('#storageTypeSearch\\:export').trigger('click')" value="种植记录导出"/>  
+	                       	</li>
+	                        <li>
+	                        <ui:fragment rendered="#{plantInfoList.realPlantType lt 4 || plantInfoList.realPlantType==null}">
+					      		<input type="button" id="manye" class="btn btn-default" onclick="if(!manyexp())return false;" value="工单号批量导出"/>  
+							</ui:fragment>
+	                        </li>
+						  </ul>
+					</div>    
+					<s:link style="margin-left:5px;" styleClass="btn btn-default" value="模型库" view="/model/ModelInfoOne.xhtml"/>                        	
+                    </div>
+                    <!--添加按钮结束-->
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="10" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                    		 <ui:fragment rendered="#{plantInfoList.realPlantType lt 4 ||  plantInfoList.realPlantType==null}">
+	                    		<th class="ze_bg" width="7%"><input type="checkbox" id="productCheckAll" onclick="selectedAll();"/></th>
+	                    		<th class="ze_bg" width="12%">工单号</th>
+	                    		<th class="ze_bg" width="13%">所在大棚</th>
+	                    		<th class="ze_bg" width="13%">种植作物</th>
+	                    		<th class="ze_bg" width="13%">种植品种</th>
+	                    		<th class="ze_bg" width="7%">种植标准</th>
+	                    		<th class="ze_bg" width="8%">种植面积</th>
+	                    		<th class="ze_bg" width="8%">种植时间</th>
+	                    		<th class="ze_bg" width="8%">结束时间</th>
+	                    		<th class="ze_bg" width="11%">操作</th>
+	                    		
+                    		</ui:fragment>
+                    		<ui:fragment rendered="#{plantInfoList.realPlantType ge 4}">
+                    			<th class="ze_bg" width="17%">所在大棚</th>
+	                    		<th class="ze_bg" width="17%">种植作物</th>
+	                    		<th class="ze_bg" width="17%">种植品种</th>
+	                    		<th class="ze_bg" width="10%">种植标准</th>
+	                    		<th class="ze_bg" width="10%">种植面积</th>
+	                    		<th class="ze_bg" width="10%">种植时间</th>
+	                    		<th class="ze_bg" width="10%">结束时间</th>
+                    			<th class="ze_bg" width="11%">操作</th>
+                    		</ui:fragment>
+                    		
+                    		
+                            
+                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                    	</tr>
+						<ui:repeat value="#{plantInfoList.resultList}" var="_plantInfo" rendered="#{not empty plantInfoList.resultList}" rowKeyVar="_index">
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                            <ui:fragment rendered="#{plantInfoList.realPlantType lt 4 || plantInfoList.realPlantType==null}">
+                            <td class="ze_bg2">
+								<input type="checkbox" onclick="selectedOne();" name="productCheck" id="productCheck" value="#{_plantInfo[0].realPlantId}" />
+                            </td>
+                            <td class="ze_bg2">
+                            <img style="vertical-align:top;margin-right:5px;#{(plantInfoList.realPlantType lt 4 || plantInfoList.realPlantType==null) &amp;&amp; plantInfoList.prompt(_plantInfo[0].plantBeginTime,_plantInfo[0].plantStauts)?'':'display:none;'}" src="#{request.contextPath}/asset/images/ts.png"/>
+                            <h:outputText value="#{_plantInfo[0].code}" style="#{(plantInfoList.realPlantType lt 4 || plantInfoList.realPlantType==null) &amp;&amp; plantInfoList.prompt(_plantInfo[0].plantBeginTime,_plantInfo[0].plantStauts)?'color:red;':''}"/>
+                            </td>
+                            </ui:fragment>
+                            <td class="ze_bg2">
+                            <ui:fragment rendered="#{plantInfoList.realPlantType ge 4 and plantInfoList.realPlantType != null}">
+                            	<img style="#{(plantInfoList.realPlantType lt 4 || plantInfoList.realPlantType==null) &amp;&amp; plantInfoList.prompt(_plantInfo[0].plantBeginTime,_plantInfo[0].plantStauts)?'':'display:none;'}" src="#{request.contextPath}/asset/images/ts.png" />
+                            </ui:fragment>
+                            <ui:fragment rendered="#{plantInfoList.realPlantType lt 4 || plantInfoList.realPlantType == null}">
+                            <h:outputText  value="#{_plantInfo[1].tunnelName}" />
+                            </ui:fragment>
+                            <ui:fragment rendered="#{plantInfoList.realPlantType eq 4}">
+                            <h:outputText  value="#{_plantInfo[2]}" />
+                            </ui:fragment>
+                            </td>
+                             <td class="ze_bg2"><h:outputText  rendered="#{plantInfoList.realPlantType lt 4}" value="#{_plantInfo[0].breedBreedId.plant.name}" /></td>
+                    		<td class="ze_bg2"><h:outputText rendered="#{plantInfoList.realPlantType lt 4}" value="#{_plantInfo[0].breedBreedId.name}" /></td>
+                    		<td class="ze_bg2"> <ui:fragment rendered="#{plantInfoList.realPlantType lt 4 || plantInfoList.realPlantType==null}">
+                    							#{_plantInfo[0].plantStandard==122 &amp;&amp; plantInfoList.realPlantType lt 4?'有机':''}
+                    							#{_plantInfo[0].plantStandard==123 &amp;&amp; plantInfoList.realPlantType lt 4?'绿色':''}
+                    							#{_plantInfo[0].plantStandard==124 &amp;&amp; plantInfoList.realPlantType lt 4?'无公害':''}
+                    							</ui:fragment>
+                    							</td>
+                    		<td class="ze_bg2"><h:outputText rendered="#{plantInfoList.realPlantType lt 4}" value="#{_plantInfo[0].cropArea}亩" /></td>
+                    		<td class="ze_bg2">
+                    		<h:outputText rendered="#{plantInfoList.realPlantType lt 4}" value="#{_plantInfo[0].plantBeginTime}">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+						    </h:outputText></td>
+						    <td class="ze_bg2">
+                    		<h:outputText rendered="#{plantInfoList.realPlantType lt 4}" value="#{_plantInfo[0].plantEndTime}">
+								<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+						    </h:outputText></td>
+						   
+                    		<td class="ze_bg2">
+                    		<s:div rendered="#{plantInfoList.realPlantType lt 4}">
+                            	<s:link propagation="none" style="display: #{s:hasRole('plant_show')?'hidden':'none'}" includePageParams="none" view="/#{empty from ? 'archive/PlantInfo' : from}.xhtml" styleClass="list_view"  id="plantInfoViewId" title="查看">
+								<f:param name="plantInfoPlantInfoId" value="#{_plantInfo[0].realPlantId}" />
+								<f:param name="baseId" value="#{plantInfoList.baseId}"/>
+								<f:param name="pageNum" value="#{plantInfoList.pageNum}"/>
+								</s:link>&#160;
+                                <s:link propagation="none" style="display: #{s:hasRole('plant_edit')?'hidden':'none'}" includePageParams="false" view="/archive/PlantInfoEdit.xhtml"     styleClass="list_edit" id="plantInfoEdit" rendered="#{empty from}" title="编辑">
+                                <f:param name="plantInfoPlantInfoId" value="#{_plantInfo[0].realPlantId}" />
+                                <f:param name="baseId" value="#{plantInfoList.baseId}"/>
+                                <f:param name="pageNum" value="#{plantInfoList.pageNum}"/>
+								</s:link>&#160;
+								 <s:link propagation="none" style="display: #{s:hasRole('plant_edit')?'hidden':'none'}" view="/archive/PlantInfoSure.xhtml" styleClass="list_edit_tow" id="plantInfoEditTow" rendered="#{_plantInfo[0].plantStauts eq 2}" title="确认种植">
+                                <f:param name="plantInfoPlantInfoId" value="#{_plantInfo[0].realPlantId}" />
+                                <f:param name="baseId" value="#{plantInfoList.baseId}"/>
+                                <f:param name="pageNum" value="#{plantInfoList.pageNum}"/>
+								</s:link>
+                                <a href="#" onclick="removeP(#{_plantInfo[0].realPlantId},#{plantInfoList.baseId})" title="删除" class="list_delete" style="display: #{s:hasRole('plant_del')?'hidden':'none'}"/>&#160;
+                                <s:link propagation="none"  style="text-decoration: none;" view="/archive/PlantInfoList.xhtml"  action="#{plantInfoList.aloneExportExcel}" title="导出工单号" >
+                                <img style="vertical-align:top;" src="#{request.contextPath}/asset/images/dc_.png" ></img>
+                                	<f:param name="rpId" value="#{_plantInfo[0].realPlantId}"/>
+								</s:link>
+                                </s:div>
+                                <s:div rendered="#{plantInfoList.realPlantType ge 4}">
+                                <s:link propagation="none" style="display: #{s:hasRole('plant_add')?'hidden':'none'}" includePageParams="none" view="/archive/PlantInfoEdit.xhtml" styleClass="list_add_zhongzhi"  title="添加种植">
+								<f:param name="plantInfoPlantInfoId"  />
+								<f:param name="baseId" value="#{plantInfoList.baseId}"/>
+								<f:param name="pageNum" value="#{plantInfoList.pageNum}"/>
+								<f:param name="tunnelInfoId" value="#{_plantInfo[1]}"/>
+								</s:link>
+                                </s:div>
+								
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</ui:repeat>
+                    </table>
+                    <!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty plantInfoList.resultList}"> 
+			                <s:decorate rendered="#{!plantInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{plantInfoList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{plantInfoList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/archive/PlantInfoList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/archive/PlantInfoList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{plantInfoList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					        <a4j:repeat var="_page" value="#{plantInfoList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{plantInfoList.previousExists or _index >0 ?'td_t_t':''} #{_page eq plantInfoList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/archive/PlantInfoList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{plantInfoList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/archive/PlantInfoList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{plantInfoList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/archive/PlantInfoList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{plantInfoList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{plantInfoList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                    	</s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+		<a4j:form style="display:none">
+ 		<a4j:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+        <a4j:jsFunction name="removePlant" eventsQueue="mainQueue"  action="#{realPlantHome.remove}"  oncomplete="refreshUrl()">
+        <a4j:actionparam name="param1"   assignTo="#{realPlantHome.realPlantRealPlantId}"/>
+        <a4j:actionparam name="param2" assignTo="#{realPlantHome.baseId}"></a4j:actionparam>
+        <a4j:actionparam name="param3" assignTo="#{realPlantHome.removeType}"></a4j:actionparam>
+        </a4j:jsFunction>
+        </a4j:form>
+</td>
+<script type="text/javascript">
+//<![CDATA[
+   function removeP(plantId,baseId){
+	   var type = 1;
+	   if(confirm('确定删除吗？')){
+		   if(confirm('请确认是否删除相应的的农事管理中农事计划与记录')){
+			   type=2;
+			   removePlant(plantId,baseId,type);
+		   }else{
+			   removePlant(plantId,baseId,type);
+		   }
+	   }
+   }        
+           
+   function refreshUrl(){
+	   window.location.href="#{request.contextPath}/archive/PlantInfoList.seam?searchParam=#{plantInfoList.searchParam}&realPlantType=#{plantInfoList.realPlantType}&pageNum=#{plantInfoList.pageNum}";
+   }
+           
+   function selectedAll(){
+		var checked = jquery("#productCheckAll").prop("checked");
+		jquery("input[name='productCheck']").prop("checked", checked);
+	}
+	//单选事件
+   function selectedOne(){
+   	var str = "";
+   	jquery("input[name='productCheck']:checkbox:checked").each(function(){
+         	str += jquery(this).val()+",";
+     	});
+     	if (str == '') {
+     		jquery("#productCheckAll").removeAttr("checked");
+		}
+	}
+	function manyexp(){
+		var str = "";
+		jquery("input[name='productCheck']:checkbox:checked").each(function(){
+         	str += jquery(this).val()+",";
+     	});
+     	if(str==""){
+         	alert("请选择要导出数据！");
+         	return false;
+         }
+     	jquery('#storageTypeSearch\\:manyexportId').val(str);
+     	jquery('#storageTypeSearch\\:manyexport').trigger('click');
+     	
+     	return true;
+	}     
+           
+  window.onload = function () {
+    jquery('.selectpicker').selectpicker();
+  };
+
+
+  jquery(document).ready(function(){
+	  var rpObj = "#{plantInfoList.realPlantType}";
+	  if(rpObj == ""){
+		  document.getElementById("rpType").innerHTML  = "所有种植";
+	  }else if(rpObj == "1"){
+		  document.getElementById("rpType").innerHTML  = "历史种植";
+	  }else if(rpObj == "2"){
+		  document.getElementById("rpType").innerHTML  = "实际种植";
+	  }else if(rpObj == "3"){
+		  document.getElementById("rpType").innerHTML  = "计划种植";
+	  }else if(rpObj == "4"){
+		  document.getElementById("rpType").innerHTML  = "未种植";
+	  }
+		var v = document.getElementById("storageTypeSearch:searchParam").value;
+		if(v == ""){
+			document.getElementById("storageTypeSearch:searchParam").value = "请输入搜索条件";
+			}
+		 });
+
+  window.onload = function () {
+	    jquery('.selectpicker').selectpicker();
+	  };
+	  function changeVal(obj){
+		  document.getElementById("realPlantType").value = obj;
+		  if(obj == 0){
+			  document.getElementById("rpType").innerHTML  = "所有种植";
+		  }else if(obj == 1){
+			  document.getElementById("rpType").innerHTML  = "历史种植";
+		  }else if(obj == 2){
+			  document.getElementById("rpType").innerHTML  = "实际种植";
+		  }else if(obj == 3){
+			  document.getElementById("rpType").innerHTML  = "计划种植";
+		  }else if(obj == 4){
+			  document.getElementById("rpType").innerHTML  = "未种植";
+		  }
+		  }
+	//]]>
+			  
+</script>
+	</ui:define>
+
+</ui:composition>

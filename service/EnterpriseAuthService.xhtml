@@ -1,0 +1,314 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+
+<ui:define name="body">
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/service/commons.css"/>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/skinBlue.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/service/certification.css" />
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+<style></style>
+        	<!-- #{feeServiceHome.searchEnterpriseAuthInfo()} -->
+            <td valign="top">
+            <div class="right_c serviceBuy_body" style="min-height:30px; padding-bottom:15px; padding-top:15px;overflow-x: hidden;">
+            	<!-- 面包屑导航 开始 -->
+                <div class="breadNav_wap mb15 clear">
+                    <div class="breadNav_lt">
+                        <a href="/service/ServiceCenter.seam">增值服务</a><span>&gt;</span>
+                        <strong>
+ 							企业认证
+                        </strong>
+                    </div>
+                </div>
+                <!-- 增值服务购买 -->             
+                <div class="bfeature_header mt30 mb30 clear">
+                	<div class="bfeature_left">
+               			<img src="#{feeServiceHome.appreciationServiceInfo.serviceThemeImg}" />
+                        <span class="vip"><img src="#{request.contextPath}/asset/images/service/c_vip.png" width="108" height="108"/></span>               	
+                    </div>
+                    <div class="bfeature_right">
+                    	<h3 class="h3_title">#{feeServiceHome.appreciationServiceInfo.serviceName}</h3>
+
+                       <s:fragment rendered="#{feeServiceHome.appreciationServiceInfo.buyingOnlineFlag and feeServiceHome.appreciationServiceInfo.appreciationServiceId !=null}">
+                       		<dl class="dl_base">
+	                        <dt>有效期：</dt>
+	                            <dd>
+	                            	<ul class="expiry_date">
+	                            		<a4j:repeat value="#{feeServiceHome.appreciationServiceInfo.validityPeriod.split(',')}" var="_vp" rowKeyVar="_row">
+	                            			<li class="#{_row eq 0 ?'e_cur':''}" aa="#{_vp}">#{_vp}年</li>                               		
+	                                	</a4j:repeat>
+	                                </ul>
+	                            </dd>
+	                        </dl>
+	                        <dl class="dl_base">
+	                        	<dt>价格：</dt>
+	                            <dd>
+	                            	<p class="txt_price"><font id="servicePrice">#{feeServiceHome.appreciationServiceInfo.servicePrice}</font>元</p>
+	                            </dd>
+	                        </dl>
+	                        <p class="buy_rotocol clear"><input type="checkbox" class="iCheck" name="testCheck" checked="checked" id="agreeBtn"/>我已阅读并同意<a href="ServiceAgreement.html" target="_blank">《义田帮手服务购买协议》</a></p>
+	                        <s:fragment rendered="#{feeServiceHome.baseObj[3][0] eq 0}">
+	                        	<button class="buynow_btn" onclick="checkOrder()">立即购买</button>
+	                        </s:fragment>
+	                         <s:fragment rendered="#{feeServiceHome.baseObj[3][0] ne 0}">
+	                         	<p class="buynow_btn" style="cursor: auto;padding-top:10px;font-size:15px;">已支付</p>
+	                         </s:fragment>
+	                        
+			            </s:fragment>
+			            <s:fragment rendered="#{!feeServiceHome.appreciationServiceInfo.buyingOnlineFlag}">
+                        	<p class="txt_phone">如需购买，请咨询<font>#{feeServiceHome.appreciationServiceInfo.offline_contact}</font></p>
+                        </s:fragment>
+                        <p class="txt_notes"><s:fragment rendered="#{not empty feeServiceHome.appreciationServiceInfo.remark}">注：#{feeServiceHome.appreciationServiceInfo.remark}</s:fragment>
+                        	<s:link propagation="none" rendered="#{feeServiceHome.appreciationServiceInfo.preconditionId ne null}" view="/service/AddService.xhtml">去购买&gt;&gt;
+		                          <f:param name="serviceId" value="#{feeServiceHome.appreciationServiceInfo.preconditionId}" />
+							</s:link>
+                        </p>
+                    </div>
+                    <h:form id="basicForm" name="basicForm" >
+		            	<h:inputHidden value="#{feeServiceHome.serviceId}" id="hidServiceId"/>
+		            	<h:inputHidden value="#{feeServiceHome.serviceYear}" id="hidServiceYear" />
+		            	<h:inputHidden value="#{feeServiceHome.serviceType}" id="hidServiceType" />
+		            	<h:commandButton class="buynow_btn" id="saveOrderBtn" style="display:none;" value="立即购买"  action="#{feeServiceHome.addServiceOrder()}"/>
+		            </h:form>
+                </div>	
+                <!-- 免责声明 -->
+                 <div class="border">
+                    <h2 class="c_title">
+                        <span class="strip"></span>
+                         	免责声明
+                    </h2> 
+                 </div>
+                 <div class="c_content">
+                    <p>1、提交认证申请的农场必须保证信息真实性和完整性，以便获得渠道商的全面了解和信任；</p>
+                    <p>2、信息不属实及不完整将不予通过认证；</p>
+                    <p>3、农场必须配合义田帮手客户积极完善相关信息；</p>
+                    <p>4、认证费用一经收取，不予退还；</p>
+                    <p>5、认证以年为单位收取，认证有效期为一年，认证到期需要重新申请和审核。</p>
+                 </div>
+                <!-- 企业认证 -->
+                <!-- 认证介绍 -->
+                 <div class="border">
+                    <h2 class="c_title">
+                        <span class="strip"></span>
+                         	认证介绍
+                    </h2> 
+                 </div>
+                 <div class="c_content pt15">
+                    <p class="c_icon">
+                        <img src="#{request.contextPath}/asset/images/service/c_icon1.png" />
+                       	 企业认证的好处
+                    </p>
+                    <p>1、通过企业认证后，农场在义田帮手上的数字地图、四季田景、种植信息、产品供应、绿色履历、环境信息、联系方式等都会通过义田优品平台向优质渠道商展示出来，轻松获得更多客户；</p>
+                    <p>2、可以享受义田优品组织的“拼货”、“市集”、“渠道对接会”、“品鉴会”等活动和服务；</p>
+                    <p>3、可以搜索和浏览渠道商的采购信息，并对采购信息报价，感兴趣的渠道商会与您联系；</p>
+                    <p>4、合格使用者还可以享受义田优品平台的重点宣传和推广服务。</p>
+                 </div> 
+                <div class="c_content pt15">
+                    <p class="c_icon">
+                        <img src="#{request.contextPath}/asset/images/service/c_icon2.png" />
+                        	认证需完善的信息
+                    </p>
+                    <div class="table">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="20%">
+                                    <img src="#{request.contextPath}/asset/images/service/c_circle1.png" />
+                                    <p>企业信息</p>
+                                </td>
+                                <td>
+                                    <img src="#{request.contextPath}/asset/images/service/c_circle2.png" alt="" />
+                                    <p>基地信息</p>
+                                </td>
+                                <td>
+                                    <img src="#{request.contextPath}/asset/images/service/c_circle3.png" alt="" />
+                                    <p>地图初始化</p>
+                                </td>
+                                <td>
+                                    <img src="#{request.contextPath}/asset/images/service/c_circle4.png" alt="" />
+                                    <p>种植信息</p>
+                                </td>
+                                <td>
+                                    <img src="#{request.contextPath}/asset/images/service/c_circle5.png" alt="" />
+                                    <p>产品供应信息</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div> 
+                <div class="c_content pt15">
+                    <p class="c_icon">
+                        <img src="#{request.contextPath}/asset/images/service/c_icon3.png" />
+                        	认证流程
+                    </p>
+                    <p>1、按照要求完善您的信息；</p>
+                    <p>2、在线提交认证申请并缴纳认证费用；</p>
+                    <p>3、我们将在48小时内（工作日顺延）对您的信息进行审核，如不符合要求，将进行电话沟通指导，直至信息完善符合要求为止；</p>
+                    <p>4、认证通过，您将收到电话或短信通知，您也可以通过服务中心查看您的认证进度。</p>
+                </div>
+                <div class="c_content pt15 clear" style="padding-bottom:0; height:556px;">
+                    <p class="c_icon">
+                        <img src="#{request.contextPath}/asset/images/service/c_icon4.png" />
+                       	 什么是义田优品
+                    </p>
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td width="495">
+                                <div class="gif">
+                                    <img src="#{request.contextPath}/asset/images/service/certi.gif" width="465" height="465" />
+                                </div>
+                            </td>
+                            <td>
+                               <div class="ytyp">
+                                    <p>“义田优品”是奥科美针对“义田帮手”用户和渠道采购商提供的一个农产品销售促进平台。</p>
+                                    <p style="margin-bottom:50px;">意旨于帮助农场拓展销售渠道，实现优质农产品对接，增加农场收益；帮助渠道商精准快捷地找到满足其需求的农产品，提供更多产地货源选择，提升采购效率，提供生鲜采购上游供应链管理工具。</p>
+                                    <div class="yp_btn"><a href="http://yp.farmeasy.cn" target="_blank">点击查看义田优品</a></div>
+                                </div> 
+                            </td>
+                        </tr>
+                    </table>                   
+                </div>                         
+            </div>
+            <a4j:form>
+ 				<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+	            <a4j:jsFunction name="checkOrder" action="#{feeServiceHome.checkAuthOrder()}" data="#{feeServiceHome.warnMsg}" oncomplete="checkOrderBack(data);">
+			    </a4j:jsFunction>
+			 </a4j:form>
+            </td>    
+<script>
+//<![CDATA[
+    var agreeStu="1";//协议选中状态 1选中
+    var validityYear=0;//有效年
+    var price='#{feeServiceHome.appreciationServiceInfo.servicePrice}';
+	jQuery(function(){		
+		//增值服务购买页面--有效期选择
+		jQuery('.expiry_date li').each(function(index, elem) {
+	        jQuery( elem ).click(function(){
+	        	validityYear=jQuery(this).attr("aa");
+	        	jQuery("#servicePrice").html(parseFloat(price)*parseInt(validityYear));
+				jQuery(this).addClass('e_cur').siblings().removeClass('e_cur');		
+			});
+	    });	
+		jQuery('.expiry_date li').eq(0).click();//有效期默认第一个	
+		//增值服务购买页面--购买协议的复选框
+		jQuery('input[class="iCheck"]').iCheck({
+			checkboxClass: 'icheckbox_minimal-blue'
+		});	
+		jQuery("#agreeBtn").on("ifClicked", function(event){
+	    	if (this.checked) {
+	    		agreeStu = "0";
+	    		jQuery(".buynow_btn").attr("disabled","disabled");
+	    	}else{
+	    		agreeStu = "1";
+	    		jQuery(".buynow_btn").removeAttr("disabled");
+	    	}
+	    });
+				
+		//屏幕小于1280时，添加小屏样式
+		getResize();			
+		//增值服务购买页面--焦点图事件
+		getSlider();
+
+	    jQuery(window).resize(function(){			
+			//屏幕小于1280时，添加小屏样式
+			getResize();				
+			//增值服务购买页面--焦点图事件
+			getSlider();			
+			//窗口发生变化时，让焦点图恢复原始状态
+			jQuery('.slider_hd_list').css({ 'left' :  0 });
+			jQuery('.slider_bd_list li').eq(0).addClass('bd_cur').siblings().removeClass('bd_cur');				
+		});		
+	});
+
+	function getResize(){
+		
+		if( jQuery(window).width() < 1280 ){
+			jQuery('.serviceBuy_body').addClass('small_body');	
+		}else{
+			jQuery('.serviceBuy_body').removeClass('small_body');		
+		}			
+	}
+
+	function getSlider(){		
+		var num = 0;			
+		var hd_width = jQuery('.slider_hd_list li').width();
+		var item_length = jQuery('.slider_hd_list li').length;
+		jQuery('.slider_hd_list').css({
+			'width'  : ( hd_width*item_length ) 	
+		});
+		
+		//左侧按钮点击切换
+		jQuery('.slider_left').click(function(){
+			num--;
+			if( num <= 0 ){
+				num = 0;
+				jQuery(this).removeClass('s_cur');
+			}else{
+				jQuery(this).addClass('s_cur');
+			}	
+			jQuery('.slider_right').removeClass('s_cur');
+			jQuery('.slider_hd_list').css({ 'left' :  -(hd_width *num) });
+			jQuery('.slider_bd_list li').eq(num).addClass('bd_cur').siblings().removeClass('bd_cur');	
+		});	
+		
+		//右侧按钮点击切换
+		jQuery('.slider_right').click(function(){
+			num++;
+			if( num >= item_length-1 ){
+				num = item_length-1;
+				jQuery(this).removeClass('s_cur');
+			}else{
+				jQuery(this).addClass('s_cur');
+			}
+			jQuery('.slider_left').removeClass('s_cur');	
+			jQuery('.slider_hd_list').css({ 'left' :  -(hd_width *num) });
+			jQuery('.slider_bd_list li').eq(num).addClass('bd_cur').siblings().removeClass('bd_cur');	
+		});	
+		
+		//点击下方小图进行切换
+		jQuery('.slider_bd_list li').each(function(index, elem) {
+	        jQuery(elem).click(function(){
+				num = jQuery(this).index();
+				//如果小方块是第一或者是最后一个点击，则左右按钮都为默认状态
+				if( num == 0 || num == item_length-1 ){
+					jQuery('.slider_left').removeClass('s_cur');
+					jQuery('.slider_right').removeClass('s_cur');	
+				}
+				//小方块点击的时候计算left值，和给自己添加或者移除选中效果
+				jQuery('.slider_hd_list').css({ 'left' :  -(hd_width * num ) });
+				jQuery(this).addClass('bd_cur').siblings().removeClass('bd_cur');	
+			});
+	    });		
+	}
+	//
+	function orderSubmit(){
+		jQuery("#basicForm\\:hidServiceId").val('#{feeServiceHome.appreciationServiceInfo.appreciationServiceId}');
+		jQuery("#basicForm\\:hidServiceYear").val(validityYear);
+		jQuery("#basicForm\\:hidServiceType").val(3);
+		if(agreeStu !="1"){
+			alert("请同意协议内容！");
+			return false;
+		}else{
+			jQuery("#basicForm\\:saveOrderBtn").click();
+		}
+	}
+	function checkOrderBack(msg){
+		if(""!=msg){
+			alert(msg);
+		}else{
+			orderSubmit();
+		}
+	}
+//]]>
+</script>
+
+</ui:define>
+
+</ui:composition>

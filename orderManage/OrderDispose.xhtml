@@ -1,0 +1,328 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	template="/layout/template_new2.xhtml">
+<ui:define name="body">
+#{orderDispose.logInfo2()} 
+	<!--右边开始-->
+            <td valign="top" width="100%">
+            <div class="right_c">
+                            	<div class="r_title">
+                    	<div class="r_t_l">采销存&#160;&gt;&#160;&#160;<a href="#{request.contextPath}/orderManage/OrderOperateList.seam">订单管理</a>&#160;&gt;&#160;&#160;<font size="3">订单处理</font></div>
+                    </div>
+
+            	<div class="chage">
+                	<div class="chage_title">订单统计 
+                	<s:button id="excelButton1" action="#{orderDispose.exportExcel}" styleClass="btn btn-default mr5" style="float:right" value="导出"   />
+                	</div>
+                    <table class="ckd_table12" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <th class="ckd_thc8">商品编码</th>
+                            <th class="ckd_thc8">商品名称</th>
+                            <th class="ckd_thc8">规格</th>
+                            <th class="ckd_thc8">订单数量</th>
+                            <th class="ckd_thc8">库存数量</th>
+                        </tr>
+                        <a4j:repeat value="#{orderDispose.goodsInfoList}" var="_ginfo" rowKeyVar="_index">
+	                        <tr>
+	                            <td class="bao_td8">#{_ginfo.goodsCode}</td>
+	                            <td class="bao_td8">#{_ginfo.name}</td>
+	                            <td class="bao_td8">#{_ginfo.goodsSpec}</td>
+	                            <td class="bao_td8 bao_tdcolor">#{_ginfo.productSum}</td>
+	                            <td class="bao_td8 bao_tdcolor">#{_ginfo.packageHarvesting}</td>
+	                        </tr>
+                        </a4j:repeat>
+                    </table>
+                    
+                	<div class="chage_title">
+                    	<span>包装单</span>
+                        <span class="chage_sp"><a class="pr_aimg3" href="#" onclick="batchPrintMember();return false;"><strong style="cursor: pointer;">打印包装单</strong></a></span>
+                    </div>
+                    <table class="ckd_table13" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <th class="ckd_thc9">商品编码</th>
+                            <th class="ckd_thc9">商品名称</th>
+                            <th class="ckd_thc9">规格</th>
+                            <th class="ckd_thc9">库存数量</th>
+                            <th class="ckd_thc9">订单数量</th>
+                            <th class="ckd_thc9">应包装数量</th>
+                        </tr>
+                        <a4j:repeat value="#{orderDispose.goodsInfoListTow}" var="_ginfo" rowKeyVar="_index">
+	                        <tr class="baozhuangTr">
+	                            <td class="bao_td9 goodsCode">#{_ginfo.goodsCode}</td>
+	                            <td class="bao_td9 goodsName">#{_ginfo.name}</td>
+	                            <td class="bao_td9 goodsSpec">#{_ginfo.goodsSpec}</td>
+	                            <td class="bao_td9">#{_ginfo.packageHarvesting}</td>
+	                            <td class="bao_td9">#{_ginfo.productSum}</td>
+	                            <td class="bao_td9 bao_tdcolor packingNum">
+	                            <h:outputText value="#{_ginfo.productSum - _ginfo.packageHarvesting}" rendered="#{_ginfo.productSum - _ginfo.packageHarvesting gt 0}"><f:convertNumber pattern="##.##"/></h:outputText>
+	                            <h:outputText value="-" rendered="#{_ginfo.productSum - _ginfo.packageHarvesting le 0}"/>
+	                            </td>
+	                        </tr>
+                        </a4j:repeat>
+                    </table>
+                     <div id="baozhuang" style="display: none">
+	                    <table id="ckd_table13" class="ckd_table14" cellpadding="0" cellspacing="0" syle="border:1px solid #dddddd;border-collapse:collapse;">
+	                        <tr>
+	                        	<th name="ckd_thc8" class="ckd_thc8" style="display: none;border:1px solid #dddddd;font-size:12px;">序号</th>
+	                            <th class="ckd_thc8" style="border:1px solid #dddddd;font-size:12px;">物料编码</th>
+	                            <th class="ckd_thc8" style="border:1px solid #dddddd;font-size:12px;">物料名称</th>
+	                            <th class="ckd_thc8" style="border:1px solid #dddddd;font-size:12px;">规格</th>
+	                            <th class="ckd_thc8" style="border:1px solid #dddddd;font-size:12px;">包装数量</th>
+	                            <ui:fragment rendered="#{orderDispose.orderInfoIds.indexOf(',')==-1}">
+	                           	 	<th class="ckd_thc8" style="display:none;border:1px solid #dddddd;font-size:12px;" width="200">备注</th>
+	                            </ui:fragment>
+	                        </tr>
+	                        <a4j:repeat value="#{orderDispose.goodsInfoOutboundList}" var="_pp" rowKeyVar="_index">
+		                        <tr>
+		                        	<td name="ckd_thc8" class="bao_td8" style="display: none;border:1px solid #dddddd;font-size:12px;">#{_index+1}</td>
+		                            <td class="bao_td8" style="border:1px solid #dddddd;font-size:12px;">#{_pp.goodsCode}</td>
+		                            <td class="bao_td8" style="border:1px solid #dddddd;font-size:12px;">#{_pp.name}</td>
+		                            <td class="bao_td8" style="border:1px solid #dddddd;font-size:12px;">#{_pp.goodsSpec}</td>
+		                            <td class="bao_td8" style="border:1px solid #dddddd;font-size:12px;"><h:outputText class="bao#{_pp.goodsInfoId}  allnums" value="#{_pp.packageQuantity}" /></td>
+		                             <ui:fragment rendered="#{orderDispose.orderInfoIds.indexOf(',')==-1}">
+		                            <td class="bao_td8"  style="display:none;border:1px solid #dddddd;font-size:12px;">#{_pp.orderProductId.remark}</td>
+		                            </ui:fragment>
+		                        </tr>
+		                    </a4j:repeat>
+	                    </table>
+                    </div>
+                    <div class="ckd_button">
+                    	<ui:fragment rendered="#{empty from}"> 
+                    		<a id="submit" style="display:none;" href="#" onclick="updateStatus();return false;" class="btn btn-primary">完成</a>
+                    		<input type="button" class="btn btn-primary" onclick="checkGoodBatch();" value="完成" />
+                    	</ui:fragment>
+                    	<input type="hidden" id="hiddenid" value=""/>
+                   		<a href="#{request.contextPath}/orderManage/OrderRoute.seam?orderInfoIds=#{orderDispose.orderInfoIds}" class="btn btn-default" onclick="return printStatus();">上一步</a>&#160;&#160;
+                    </div>
+					<div class="clear"></div>
+                </div>
+                
+				<div class="clear"></div>
+          </div>
+            </td>    
+            <a4j:form id="pr">
+            	<input id="ps2" type="hidden" name="ps" readonly="true" value="#{orderDispose.instance.psPrintStatus}"/>
+            	<input id="hs2" type="hidden" name="hs" readonly="true" value="#{orderDispose.instance.msPrintStatus}"/>
+            	<input id="ms2" type="hidden" name="ms" readonly="true" value="#{orderDispose.instance.hsPrintStatus}"/>
+		   		<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+				<a4j:jsFunction name="updateHarv" action="#{orderDispose.updateHarv}" reRender="deliverAddressTable">
+					<a4j:actionparam name="orderInfoIds" assignTo="#{orderDispose.orderInfoIds}"/>
+					<a4j:actionparam name="chaId" assignTo="#{orderDispose.chaId}"/>
+					<a4j:actionparam name="ppId" assignTo="#{orderDispose.ppId}"/>
+					<a4j:actionparam name="sum" assignTo="#{orderDispose.sum}"/>
+				</a4j:jsFunction>
+				<a4j:jsFunction name="updateOrder" action="#{orderDispose.updateOrder}" oncomplete="gologin();">
+					<a4j:actionparam name="orderInfoIds" assignTo="#{orderDispose.orderInfoIds}"/>
+					<a4j:actionparam name="psPrintStatus" assignTo="#{orderDispose.instance.psPrintStatus}"/>
+					<a4j:actionparam name="msPrintStatus" assignTo="#{orderDispose.instance.msPrintStatus}"/>
+					<a4j:actionparam name="hsPrintStatus" assignTo="#{orderDispose.instance.hsPrintStatus}"/>
+					<a4j:actionparam name="jsonStr" assignTo="#{orderDispose.jsonStr}"/>
+				</a4j:jsFunction>
+				<a4j:jsFunction name="checkGoodBatchs" action="#{orderDispose.checkProduct()}" data="#{orderDispose.showMessage}" oncomplete="checkGoodBatchHuidiao(data);">
+				</a4j:jsFunction>
+			</a4j:form>
+    <!--右边结束-->
+    <script type="text/javascript">
+    var jsonStr;
+    function datajson(){
+        var str="[";
+		jquery(".baozhuangTr").each(function(){
+			if (this.id != null ) {
+				var productCode = jquery(this).children(".goodsCode").text();
+				var productName = jquery(this).children(".goodsName").text();
+				var productSpec = jquery(this).children(".goodsSpec").text();
+				var packingNum = jquery(this).children(".packingNum").text();
+				str += "{";
+				str += "productCode:'"+ productCode;
+				str += "',productName:'" + productName;
+				str += "',productSpec:'" + productSpec;
+				str += "',packingNum:" + packingNum;
+				str += "},";
+			}
+		});
+		if (str != "[") {
+			str = str.substring(0, str.length - 1);
+			str += "]";
+		}else{
+			str="";
+		}
+		jsonStr = str;
+    }
+    function printStatus(){
+		var val=jquery("#hiddenid").val();
+		if(val==1){
+			var flag =window.confirm("如果您打印了包装单，放弃本次处理会造成该订单的包装单号不统一，确定返回上一步？");
+			if(flag){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return true;
+		}
+    }
+    //修改折扣信息
+    var zhlflag = true;
+	function updateDiscount(goId,changeId,ppId, discount){
+		var orderInfoIds = "#{orderDispose.orderInfoIds}";
+		if(!isNaN(discount)){
+			if (discount == 0) {
+				zhlflag = false;
+				alert("请输入正确转换率...");
+			}else {
+				var bao = jquery(".bao"+goId).html();
+				zhlflag = true;
+				
+				jquery(".yuan"+changeId).html(Math.round(discount * bao*100)/100);
+				jquery(".cai"+changeId).html(Math.round(discount * bao*100)/100);
+				var cun = jquery(".cun"+changeId).html();
+				var count = discount * bao - cun;
+				var sum = discount * bao;
+				if (count &lt;= 0) {
+					jquery(".yincai"+changeId).html("-");
+				}else{
+					jquery(".yincai"+changeId).html(Math.round(count * 100)/100);
+				}
+				updateHarv(orderInfoIds,changeId,ppId,sum);
+			}
+		}else {
+			zhlflag = false;
+			alert("请输入正确转换率...");
+		}
+	}
+	function updateStatus(){
+		if(zhlflag){
+			datajson();
+			updateOrder("#{orderDispose.orderInfoIds}",jquery("#ps2").val(),jquery("#ms2").val(),jquery("#hs2").val(),jsonStr);
+		}else{
+			alert("请输入正确转换率...");
+		}
+	}
+	function gologin(){
+		window.location.href = "#{request.contextPath}/orderManage/OrderDisposeList.seam?orderStatus=2";
+	}
+	//打印包装单 
+	var t;
+	function batchPrintMember(){
+		var baozhuang = document.getElementById("baozhuang").innerHTML;
+		baozhuang=baozhuang.replace("display:none","");
+		baozhuang=baozhuang.replace(/12px/g,"15px");
+		if ((navigator.userAgent.indexOf('MSIE') &gt;= 0) &amp;&amp; (navigator.userAgent.indexOf('Opera') &lt; 0)){
+			baozhuang=baozhuang.replace(new RegExp('none', "g"),"block");
+			baozhuang=baozhuang.replace(new RegExp('12px', "g"),"15px");
+		}
+		var newwindow = null;
+		var a=0;
+		jquery('.ckd_table14').find('.allnums').each(function(){
+		  a+=Number(jquery(this).text())
+		})
+		if (confirm("确定批量打印包装单!")){
+			jquery("#hiddenid").val(1);
+			newwindow = window.open('#{request.contextPath}/record/PackageInfoList.seam?snInfo=#{orderDispose.snInfo}&amp;orderInfoIds=#{orderDispose.orderInfoIds}&amp;allNums='+a.toFixed(2),'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			ss(newwindow,baozhuang);
+		} else {
+			return false;
+		}
+	}
+	//打印出库单 
+	function batchPrint(){
+		var processRecordId = "#{orderDispose.instance.id}";
+		var baozhuang = document.getElementById("chuku").innerHTML;
+		var newwindow = null;
+		if (confirm("确定批量打印包装单!")){
+			newwindow = window.open('#{request.contextPath}/record/OutboundInfoList.seam?processRecordId='+processRecordId,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			ss(newwindow,baozhuang);
+		} else {
+			return false;
+		}
+	}
+	//打印 采收单
+	function harvesting(){
+		var processRecordId = "#{orderDispose.instance.id}";
+		var baozhuang = document.getElementById("harvesting").innerHTML;
+		var newwindow = null;
+		if (confirm("确定批量打印采收单!")){
+			newwindow = window.open('#{request.contextPath}/record/HarvestingInfoList.seam?processRecordId='+processRecordId,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			hh(newwindow,baozhuang);
+		} else {
+			return false;
+		}
+	}
+	function ss (obj,str){
+		if(obj.document.getElementById("baozhuang")==null){
+			t = setTimeout(function(){ss(obj,str);},100);
+		}else{
+			obj.document.getElementById("baozhuang").innerHTML = str;
+			obj.document.getElementById("ckd_table13").className="ckd_table13"; 
+			var th = obj.document.getElementsByTagName("th")[0];
+			th.style.display="";
+			var td = obj.document.getElementsByTagName("td");
+			for ( var i = 0; i &lt; td.length; i++) {
+				td[i].style.display="";
+			}
+		}
+	}
+	function hh (obj,str){
+		if(obj.document.getElementById("baozhuang")==null){
+			t = setTimeout(function(){hh(obj,str);},500);
+		}else{
+			obj.document.getElementById("baozhuang").innerHTML = str;
+			var th = obj.document.getElementsByTagName("th")[0];
+			th.style.display="";
+			var td = obj.document.getElementsByTagName("td");
+			for ( var i = 0; i &lt; td.length; i++) {
+				td[i].style.display="";
+			}
+		}
+	}
+	//批量打印客户配送单 
+	function batchPrintOutStoreroom(typeinfo,obj){
+		if (typeinfo == 1) {
+			if (confirm("确定批量打印装箱拣货单!")){
+				var orderInformationIds = "";
+				jquery("input[name='td']:checked").each(function(){
+					orderInformationIds+=this.value+",";		
+				});
+				if (orderInformationIds == ""){
+					alert("请选择需要处理的配送单!");
+					return false;
+				}
+				window.open('#{request.contextPath}/record/PackingPrintInfoList.seam?orderInfoId=' + orderInformationIds,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			} else {
+				return false;
+			}
+		}else{
+			if (confirm("确定打印装箱拣货单!")){
+				window.open('#{request.contextPath}/record/PackingPrintInfoList.seam?orderInfoId=' + obj+",",'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=900,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+			} else {
+				return false;
+			}
+		}
+	}
+
+	function checkGoodBatch(){
+		checkGoodBatchs();
+	}
+
+	function checkGoodBatchHuidiao(date){
+		if(date == ''){
+			jQuery('#submit').click();
+		}else{
+			if (confirm(date+'不存在库存批次，无法自动出库，是否继续？')) {  
+				jQuery('#submit').click();
+			}
+		}
+	}
+	
+	</script>
+	
+</ui:define>
+</ui:composition>

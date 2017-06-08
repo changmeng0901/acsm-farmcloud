@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="contractProduct" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{contractProductHome.managed ? 'Edit' : 'Add'} Contract product</f:facet>
+
+
+
+
+            <s:decorate id="productInfoIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Product info id</ui:define>
+                <h:inputText id="productInfoId"
+                       required="true"
+                          value="#{contractProductHome.instance.productInfoId}">
+                    <a:support event="onblur" reRender="productInfoIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="purchasesField" template="layout/edit.xhtml">
+                <ui:define name="label">Purchases</ui:define>
+                <h:inputText id="purchases"
+                       required="true"
+                          value="#{contractProductHome.instance.purchases}">
+                    <a:support event="onblur" reRender="purchasesField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="unitPriceField" template="layout/edit.xhtml">
+                <ui:define name="label">Unit price</ui:define>
+                <h:inputText id="unitPrice"
+                          value="#{contractProductHome.instance.unitPrice}">
+                    <a:support event="onblur" reRender="unitPriceField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="subtotalField" template="layout/edit.xhtml">
+                <ui:define name="label">Subtotal</ui:define>
+                <h:inputText id="subtotal"
+                          value="#{contractProductHome.instance.subtotal}">
+                    <a:support event="onblur" reRender="subtotalField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="contractDateField" template="layout/edit.xhtml">
+                <ui:define name="label">Contract date</ui:define>
+                <rich:calendar id="contractDate"
+                       required="true"
+                          value="#{contractProductHome.instance.contractDate}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{contractProductHome.persist}"
+                       disabled="#{!contractProductHome.wired}"
+                       rendered="#{!contractProductHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{contractProductHome.update}"
+                       rendered="#{contractProductHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{contractProductHome.remove}"
+                      immediate="true"
+                       rendered="#{contractProductHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/ContractProduct.xhtml"
+                rendered="#{contractProductHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty contractProductFrom ? 'ContractProductList' : contractProductFrom}.xhtml"
+                rendered="#{!contractProductHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Contract *" labelClass="required">
+    <div class="association" id="contractParent">
+
+        <h:outputText value="There is no contract associated with this contractProduct."
+                   rendered="#{contractProductHome.instance.contract == null}"/>
+
+        <rich:dataTable var="_contract"
+                   value="#{contractProductHome.instance.contract}"
+                rendered="#{contractProductHome.instance.contract != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="contractTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_contract.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Enterprise info id</f:facet>
+                <h:outputText value="#{_contract.enterpriseInfoId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Member info id</f:facet>
+                <h:outputText value="#{_contract.memberInfoId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Contract code</f:facet>
+                <h:outputText value="#{_contract.contractCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Contract status</f:facet>
+                <h:outputText value="#{_contract.contractStatus}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Begin time</f:facet>
+                <h:outputText value="#{_contract.beginTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End time</f:facet>
+                <h:outputText value="#{_contract.endTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Contract money</f:facet>
+                <h:outputText value="#{_contract.contractMoney}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Contract remark</f:facet>
+                <h:outputText value="#{_contract.contractRemark}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Deleted</f:facet>
+                <h:outputText value="#{_contract.deleted}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Insert user</f:facet>
+                <h:outputText value="#{_contract.insertUser}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Insert time</f:facet>
+                <h:outputText value="#{_contract.insertTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Update user</f:facet>
+                <h:outputText value="#{_contract.updateUser}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Update time</f:facet>
+                <h:outputText value="#{_contract.updateTime}">
+                    <s:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{contractProductHome.instance.contract != null ? 'changeParent' : 'selectParent'}" value="#{contractProductHome.instance.contract != null ? 'Change' : 'Select'} contract"
+                       view="/ContractList.xhtml">
+                <f:param name="from" value="ContractProductEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

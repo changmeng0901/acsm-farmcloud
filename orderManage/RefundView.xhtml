@@ -1,0 +1,233 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	<style>
+		div#menu .helpSeleHd{ float:left; overflow:hidden; width:65px; height:24px; line-height:24px; padding:0 20px 0 5px; background:url(#{request.contextPath}/asset/images/sitIco2.png) no-repeat 50px 12px; color:#cfe3fe;}
+	</style>
+	#{orderOperate.refundViewInit()}
+	<td valign="top" >
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%; padding:20px 30px;">
+				<div class="breadNav_wap clear">
+					<div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/RefundOperateList.seam?orderStatus=#{orderStatus}"><strong>订单管理</strong></a></div>
+					<div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+						<ul class="resumeList clear">
+							<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/RefundOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                            </h:panelGroup>
+						</ul>
+					</div>
+				</div>
+				<div class="singleManage_con">
+					<div class="orderTrack_heade mb20">
+						<p class="mr70">订单编号：<span class="number">#{orderOperate.refundInfo.orderInfo.orderCode}</span></p>
+			            <p class="mr70">订单状态：<span class="statues">#{orderConstant.getOrderStatusLabel(orderOperate.refundInfo.orderInfo.orderStatus)}</span></p>
+		            	<p class="#{orderOperate.orderInfo.paymentStatus == true ? 'payStatues' : 'payStatues2'}">#{orderOperate.refundInfo.orderInfo.paymentStatus == true ? '已支付' : '未支付'}</p>
+					</div>
+					<div class="orderTrack_body">
+						<table class="tableGz" width="100%" cellpadding="0" cellspacing="0">
+							<thead>
+								<tr>
+									<th colspan="3">订单跟踪</th>
+								</tr>
+							</thead>
+			                <tbody>
+								<tr>
+									<th width="25%" height="50" align="left" style="padding-left:70px; font-weight:bold;">处理时间</th>
+			                        <th width="60%" align="left" style="font-weight:bold;">处理信息</th>
+			                        <th width="15%" align="center" style="font-weight:bold; text-align: center;">操作人</th>
+			                    </tr> 
+			                    <a:repeat value="#{orderOperate.refundRecordList}" var="_refundRecord" rowKeyVar="_index">
+		                    		<tr>
+				                    	<td class="dateTd #{_index + 1 != orderOperate.refundRecordList.size() ? 'bg' : ''}" height="50">
+				                    		<i class="ico_bg"></i>
+				                    		<h:outputText value="#{_refundRecord.insertTime}">
+						        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss" />
+						        			</h:outputText>
+			                    		</td>
+				                        <td>
+				                            <div style="overflow:hidden;">
+				                            <span style="float:left;">#{orderConstant.getRefundStatusLabel(_refundRecord.refundStatus)}</span>
+				                            <div class="InOrdePass_tip">
+				                            	<p>#{_refundRecord.description}</p>
+				                            </div>
+				                            </div>
+				                        </td>
+				                        <td align="center" style="text-align: center;">#{_refundRecord.operator}</td>
+				                    </tr>
+			                    </a:repeat>
+			                </tbody>
+			            </table>
+			        </div>
+			        <h2 class="titleH2">客户信息</h2>
+			        <div class="mb20 mt20">
+			        	<div class="customMess_wap" style="margin-left:40px;">
+			                <div class="items itemsCur" style="cursor:default;">
+			                    <p class="name">客户姓名：<span>#{orderOperate.refundInfo.orderInfo.memberInfo.realname}</span></p>
+			                    <p class="phone">联系方式：<span>#{orderOperate.refundInfo.orderInfo.memberInfo.phone}</span></p>
+			                    <p class="come">客户来源：<span>#{orderOperate.refundInfo.orderInfo.memberInfo.mSource.name}</span></p>
+			                    <p class="type">客户类型：<span>#{orderOperate.refundInfo.orderInfo.memberInfo.mType.name}</span></p>
+			                    <p class="addresses">工作地址：<span>#{orderOperate.refundInfo.orderInfo.memberInfo.workAddress}</span></p>
+			                    <em class="defaultIco"></em>
+			                </div>
+			            </div> 
+			        </div>
+			        <h2 class="titleH2">收货人信息</h2>
+			        <div class="mb20">
+				        <table class="W_addresses" cellpadding="0" cellspacing="0" style="margin-left:40px;">
+					        <tr>
+					            <td>
+					                <div class="W_addresses_list">
+					                	<div class="addrItems" style=" cursor: default;">
+					                    	<div class="inner innerCur">
+					                        	<div class="addr_hd">
+													<span class="name" style=" font-weight:bold;">#{orderOperate.refundInfo.orderInfo.receiveName}&#160;&#160;</span><span class="phone">#{orderOperate.refundInfo.orderInfo.receivePhone}</span>
+					                            </div>
+					                            <div class="addr_bd">
+					                            	<span class="street">#{orderOperate.refundInfo.orderInfo.receiveAddress}</span>
+					                            </div>
+					                            <i class="curmarker"></i>
+					                        </div>
+					                    </div>
+					                </div>
+					            </td>
+					        </tr>
+				        </table>
+			        </div>
+			        <h2 class="titleH2">配送时间</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">配送时间：
+			        		<span class="date">
+			        			<h:outputText value="#{orderOperate.refundInfo.orderInfo.deliverTime}">
+			        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+			        			</h:outputText>
+			        		</span>&#160;|&#160;
+			        		<span class="sendStatues">
+			        			<s:fragment rendered="#{orderOperate.refundInfo.orderInfo.timeSlot == 0}">全天</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.refundInfo.orderInfo.timeSlot == 1}">上午</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.refundInfo.orderInfo.timeSlot == 2}">下午</s:fragment>
+			        			<s:fragment rendered="#{orderOperate.refundInfo.orderInfo.timeSlot == 3}">晚上</s:fragment>
+			        		</span></p>
+			        </div>
+			         <!-- 使用红包 开始 -->
+			        <h:outputText value="" rendered="#{orderOperate.coupons.size() gt 0}">
+                    <h2 class="titleH2">使用红包</h2>
+                    <div class="mb20">
+                    	<input type="hidden" value="#{orderOperate.coupons.get(0)[0]}" id="couponId"/>
+                        <div class="a_voucher cur">
+                        	<span class="v_bg"></span>
+                            <span class="v_hook"></span>
+                            <div class="a_voucher_lt">
+                            	<h:outputText rendered="#{orderOperate.coupons.get(0)[2] ne '' and orderOperate.coupons.get(0)[2] ne null}" >
+                            	<p class="p_txt1">消费满#{orderOperate.coupons.get(0)[2]}元可以使用！</p>
+                            	</h:outputText>
+                                <p class="p_txt2">有效期：#{orderOperate.coupons.get(0)[4]}</p>
+                            </div>
+                            <div class="a_voucher_rt">
+                            	<span class="v_line"></span>
+                                <p class="p_txt3">#{orderOperate.coupons.get(0)[1]}<span>元</span></p>
+                            </div>
+                        </div>
+                    </div>
+			        </h:outputText>
+			        <h2 class="titleH2">付款方式</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">#{orderConstant.getPayTypeLabel(orderOperate.refundInfo.orderInfo.paymentMode)}</p>
+			        </div>
+			        <h2 class="titleH2"><span style="display:inline-block; width:28px;"></span>备注</h2>
+			        <div class="mb20 mt20">
+			        	<p class="orderTextP">#{orderOperate.refundInfo.orderInfo.orderRemark}</p>
+			        </div>
+			    	<h2 class="titleH2">商品清单</h2>
+			        <div class="listGoods_con">
+			            <table class="tableModel thead" width="100%" cellpadding="0" cellspacing="0">
+			                <thead>
+			                <tr>
+			                    <th width="16%">编号</th>
+			                    <th width="15%">商品</th>
+			                    <th width="12%">数量</th>
+			                    <th width="12%">单位</th>
+			                    <th width="15%">商品原价</th>
+			                    <th width="15%">商品单价</th>
+			                    <th width="15%">商品总价</th>
+			                </tr>
+			                </thead>
+			            </table>
+			            <div class="tableFixed_scroll" id="showProductDiv">
+				            <table class="tableModel tbody" width="100%" cellpadding="0" cellspacing="0">
+				                <tbody>
+				                	<a:repeat value="#{orderOperate.refundProductList}" var="_refundProduct">
+				                		<tr class="odd">
+						                    <td width="16%">#{_refundProduct.productCode}</td>
+						                    <td width="15%">#{_refundProduct.productName}</td>
+						                    <td width="12%"><h:outputText value="#{_refundProduct.productNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+						                    <td width="12%">#{_refundProduct.productUnit}</td>
+						                    <td width="15%">¥<span class="num_spyj"><h:outputText value="#{_refundProduct.originalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="15%">¥<span class="num_spdj2"><h:outputText value="#{_refundProduct.price}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                    <td width="15%">¥<span class="num_dpzj"><h:outputText value="#{_refundProduct.totalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></td>
+						                </tr>
+				                	</a:repeat>
+				                </tbody>
+				            </table>
+			            </div>
+			            <div class="tfoot mb20">
+			                <div class="listGoods_total">
+			                    <ul>
+			                        <li class="listGoods_li1">共<span class="num"><h:outputText value="#{orderOperate.sumProductNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></span>件商品</li>
+			                    </ul>
+			                </div>
+			                <div class="listGoods_li5 clear">
+			                    <div class="fr">
+			                    <span class="fl">退货总额：</span>
+			                    <span class="codeEle fl">¥</span>
+			                    <span class="num fl"><h:outputText value="#{orderOperate.refundInfo.totalAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText></span>
+			                    </div>
+			                </div>
+			            </div>
+			            <div>
+			            	<s:button view="/orderManage/RefundOperateList.xhtml" styleClass="btn btn-default fr" propagation="end" value="返回">
+			            		<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+			            	</s:button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</td>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		jQuery(function(){
+			jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+		});
+
+		
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

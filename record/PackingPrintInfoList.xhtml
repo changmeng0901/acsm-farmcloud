@@ -1,0 +1,98 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	template="/layout/template_print.xhtml">
+
+	<ui:define name="body">
+
+	<script src="#{request.contextPath}/asset/js/jquery.PrintArea.js"/>
+		<div class="right_c" id="rightPanel">
+			<!--startprint-->
+			 <div class="right_c">
+
+            	<div class="ckd_div">
+                
+                    <div class="ckd_d">装箱拣货单</div>
+					<div class="bao_d">
+						<table width="100%">
+							<tr>
+								<td width="10%" >
+									订单：
+								</td>
+								<td width="25%">
+									#{transportationOrderInfoHome.snInfo}
+								</td>
+								<td width="10%" >
+									日期：
+								</td>
+								<td width="35%" >
+									<h:outputText value="#{transportationOrderInfoHome.dateInfo}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" /></h:outputText>&#160;&#160;
+								</td>
+								<td width="10%" >
+									人员：
+								</td>
+								<td width="10%" >
+									#{transportationOrderInfoHome.userInfo}
+								</td>
+							</tr>
+						</table>
+                    </div>	                    
+                    <table class="ckd_table" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <th class="ckd_thc">序号</th>
+                            <th class="ckd_thc">货物编码</th>
+                            <th class="ckd_thc">名称</th>
+                            <th class="ckd_thc">规格</th>
+                            <th class="ckd_thc">数量</th>
+                            <th class="ckd_thc">备注</th>
+                        </tr>
+                        <ui:repeat value="#{transportationOrderInfoHome.getProductInfo()}" var="_pi"  rowKeyVar="_index">
+						 <tr>
+                            <td class="bao_td">#{_pi.productInfoId}</td>
+                            <td class="bao_td">#{_pi.productCode}</td>
+                            <td class="bao_td">#{_pi.productName}</td>
+                            <td class="bao_td">#{_pi.productUnit}</td>
+                            <td class="bao_td">#{_pi.productSum}</td>
+                            <td class="bao_td">#{_pi.description}</td>
+                        </tr>
+					  	</ui:repeat>
+                    </table>
+					<div class="clear"></div>
+                </div>
+					<div class="clear"></div>
+                </div>
+		<!--endprint-->
+<!---印刷管理下开始-->
+            	<div id="printButton" class="ckd_div" align="center">
+            		 <input type="button" id="btnPrint" onclick="printButtonClick();" style="background-image: url('#{request.contextPath}/asset/images/print03.jpg');width: 77px;height: 32px;cursor: pointer;" />
+		    		 <input type="button" id="btnPrint" onclick="window.close();" style="background-image: url('#{request.contextPath}/asset/images/re_43.jpg');width: 77px;height: 32px;cursor: pointer;" />
+               </div>     
+
+<!--印刷管理下结束-->
+
+<div class="clear"></div>
+                </div><!--right_c结束-->
+	<script type="text/javascript">
+	var obj;
+	function printButtonClick(){
+		obj = jQuery("#printButton").clone();
+		
+		jQuery("#printButton").empty();
+		jQuery("#rightPanel").printArea();
+		
+		
+		if(confirm("是否关闭打印页面!")){
+			window.close();
+		}else{
+			jQuery("#printButton").html(obj);
+		}
+	}
+	</script>	</ui:define>
+</ui:composition>

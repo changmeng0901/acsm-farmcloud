@@ -1,0 +1,2423 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_growth.xhtml">
+
+	<ui:define name="body">
+	<style>
+	.wryh_font16{ font-family: '微软雅黑'; font-size:16px; padding-right:5px; color:#fff;}
+	.contentShuju{ position: absolute; bottom:2px;}
+	.left_c {
+    background: url("#{request.contextPath}/asset/images/lefbg.jpg") repeat-y scroll 0 0 rgba(0, 0, 0, 0);
+}
+.jk_k_l{float: left; line-height:24px;line-height:24px; font-size:14px; color:#FFFFFF;}
+.ziliang2 {padding:10px 5px;}
+.ziliang4 {padding:10px 5px;}
+	</style>
+	<!-- #{cropGrowthHome.loginTunnel()} -->
+			<td valign="top" width="100%">
+				<!---作物生长情况开始-->
+				<div class="zuowbg">
+					<table cellpadding="0" cellspacing="0" width="100%"
+						style="table-layout: fixed;">
+						<tr>
+							<td valign="top" class="zwleftmenu">
+								<!--menu 开始-->
+								<div class="menutree"
+									style="height: #{cropGrowthHome.videoId ne 0 ?(cropGrowthHome.imgFlag?1968:1590):(cropGrowthHome.imgFlag?2003:1090)}px;">
+									<table width="100%" cellpadding="0" cellspacing="0">
+										<tr>
+											<td class="nav_span" style="padding-top: 8px;">
+												<div >
+													<h:panelGroup rendered="#{sessionTake.baseList.size eq 1}"> 
+														<div style="height:31px;margin-top: 10px;"><font style="font-family:'宋体';color:#fff;font-size: 16px;margin-left:10px; display:block; height:18px; overflow:hidden; font-weight: bold;"> #{sessionTake.baseModel.baseList.get(0).name}</font></div>
+													</h:panelGroup>
+												</div>
+												<div class="slist_2" style="#{cropGrowthHome.tunnelInfo.partition.base eq _base or cropGrowthHome.deviceInfo.baseId.id eq _base or cropGrowthHome.videoInfo.baseId.id eq _base?'display: block;':'display:none;'}">
+													<a:repeat value="#{sessionTake.parList}" var="_par">
+														<h2
+															class="ltow #{cropGrowthHome.tunnelInfo.partition.id eq _par.id or cropGrowthHome.deviceInfo.pid eq _par.id or cropGrowthHome.videoInfo.partitionId.id eq _par.id?'currentltow':''}">
+															<h:outputText value="#{_par.name}" />
+														</h2>
+														<ul class="sslist" style="#{cropGrowthHome.tunnelInfo.partition.id eq _par.id or cropGrowthHome.deviceInfo.pid eq _par.id or cropGrowthHome.videoInfo.partitionId.id eq _par.id?'display: block;':'display:none;'}">
+															<a:repeat value="#{sessionTake.tiMap.get(_par.id)}"
+																var="_tinfo">
+																<li
+																	class="lthree #{cropGrowthHome.keyString eq _tinfo[0]?'currentlthree':''}">
+																	<h:outputText escape="false" value="#{_tinfo[1][0]}" />
+																</li>
+															</a:repeat>
+														</ul>
+													</a:repeat>
+												</div>
+											</td>
+										</tr>
+									</table>
+								</div> <!--menu 结束-->
+							</td>
+							<td valign="top" class="charttd">
+								<!--中间头部开始-->
+								<table width="100%" cellpadding="0" cellspacing="0" style="#{cropGrowthHome.videoId ne 0?'display:none':''};">
+									<tr>
+										<td valign="top" style="padding-right: 5px;">
+											<!--中间第一块头开始-->
+											<div class="centopd">
+												<div class="cen_top">
+													<table class="centopdiv" cellpadding="0" cellspacing="0">
+														<tr>
+															<td class="centopimg" valign="top" rowspan="2"><img
+																class="ctimgbg"
+																src="#{request.contextPath}/asset/images/growth/namebg.png"
+																width="120" height="122" /> <img class="ctimgpic"
+																src="#{cropGrowthHome.realPlantInfo.breedBreedId.plant.plantImgRound eq null or cropGrowthHome.realPlantInfo.breedBreedId.plant.plantImgRound eq ''?'../asset/images/growth/wuz.png':cropGrowthHome.realPlantInfo.breedBreedId.plant.plantImgRound}"
+																width="120" height="122" /></td>
+															<!--球生菜开始-->
+															<td class="centoprit" valign="top" height="50">
+																<div class="centopmain">
+																	<div class="cainame">
+																		<h:outputText
+																			rendered="#{empty cropGrowthHome.realPlantInfo}"
+																			value="未种植" />
+																		<h:outputText
+																			rendered="#{not empty cropGrowthHome.realPlantInfo}"
+																			value="#{cropGrowthHome.realPlantInfo.breedBreedId.plant.name}-#{cropGrowthHome.realPlantInfo.breedBreedId.name}" />
+																	</div>
+																	<div class="quyuname">#{cropGrowthHome.tunnelInfo.tunnelName}</div>
+																</div>
+															</td>
+														</tr>
+														<tr>
+															<td valign="top" class="shengzqi">
+																总共#{cropGrowthHome.dayAll}天，当前第#{cropGrowthHome.daySum}天，剩余#{cropGrowthHome.dayAll
+																- cropGrowthHome.daySum lt 0?0:(cropGrowthHome.dayAll -
+																cropGrowthHome.daySum)}天
+																<div class="bjszbut" style="margin-left: 30px;">
+																	<s:link view="/growth/HighTunnelEnvEdit.xhtml"
+																		styleClass="bjszbutspa">
+																		<f:param name="tunnelInfoId"
+																			value="#{cropGrowthHome.tunnelInfoId}" />
+																		<f:param name="realPlantId"
+																			value="#{cropGrowthHome.realPlantId}" />
+																		<f:param name="videoId"
+																			value="#{cropGrowthHome.videoId}" />
+																		<f:param name="dateType"
+																			value="#{cropGrowthHome.dateType}" />
+																		<strong class="bjszbutstr">报警设置</strong>
+																	</s:link>
+																</div>
+															</td>
+														</tr>
+													</table>
+													<!--球生菜开始-->
+													<!--成熟度图开始-->
+													<div class="chensd">
+														<table class="chetable" cellpadding="0" cellspacing="0"
+															width="100%">
+															<tr>
+																<td
+																	style="background:url(#{request.contextPath}/asset/images/growth/chebg.png) bottom left repeat-x; height:10px;"
+																	valign="top">
+																	<div class="on_day"
+																		style="left:#{cropGrowthHome.dayAll eq 0 ? 0:((cropGrowthHome.daySum * (100/cropGrowthHome.dayAll)) gt 100 ?100:(cropGrowthHome.daySum * (100/cropGrowthHome.dayAll)))}%;">#{cropGrowthHome.daySum
+																		ge cropGrowthHome.dayAll ?cropGrowthHome.dayAll
+																		:cropGrowthHome.daySum}天</div> <h:panelGroup
+																		rendered="#{empty cropGrowthHome.ppiList}">
+																		<div class="color_1" style="width: 100%;">
+																			<div class="color_title">暂无数据</div>
+																		</div>
+																	</h:panelGroup> <a:repeat value="#{cropGrowthHome.ppiList}" var="_ppi"
+																		rendered="#{not empty cropGrowthHome.ppiList}"
+																		rowKeyVar="_pindex">
+																		<div class="color_#{_pindex+1}"
+																			style="width:#{_ppi.days * (100/cropGrowthHome.dayAll)}%;">
+																			<div class="color_title">#{_ppi.name}</div>
+																		</div>
+																	</a:repeat>
+																</td>
+															</tr>
+															<tr>
+																<td>
+																	<table width="100%" cellpadding="0" cellspacing="0"
+																		style="float: left; position: relative;">
+																		<tr>
+																			<a:repeat value="#{cropGrowthHome.ppiList}"
+																				var="_ppi" rowKeyVar="_pindex">
+																				<td align="center"
+																					style="width:#{_ppi.days * (100/cropGrowthHome.dayAll)}%;"
+																					class="chen_td">#{_ppi.days}天</td>
+																			</a:repeat>
+																		</tr>
+																	</table>
+																</td>
+															</tr>
+														</table>
+													</div>
+													<!--成熟度图结束-->
+												</div>
+											</div> <!--中间第一块头开始-->
+
+										</td>
+										<td valign="top" width="45%">
+											<!--中间第一块头下开始-->
+											<div class="cen_bot">
+												<div class="zi01" style="position:relative;">
+													<table cellpadding="0" cellspacing="0" width="100%"
+														height="100%" style="#{cropGrowthHome.airTemp eq null  and cropGrowthHome.airHumidity eq null and cropGrowthHome.ludian eq null ?'':'display:none;'}">
+														<tr>
+															<td align="center" style="font-size: 16px; color: #fff;">无采集数据</td>
+														</tr>
+													</table>
+													<table cellpadding="0" cellspacing="0" width="100%"
+														style="#{cropGrowthHome.airTemp ne null or cropGrowthHome.airHumidity ne null or cropGrowthHome.ludian ne null ?'':'display:none;'}">
+														<tr>
+															<td height="5" colspan="3"></td>
+														</tr>
+														<tr>
+															<td class="tdwidth11" colspan="3" height="30"
+																align="left" style="padding-left:10px;"><img
+																src="#{request.contextPath}/asset/images/growth/air1.png" /></td>
+														</tr>
+
+													</table>
+													<table class="contentShuju" cellpadding="0" cellspacing="0" width="100%" style="#{cropGrowthHome.airTemp ne null or cropGrowthHome.airHumidity ne null or cropGrowthHome.ludian ne null ?'':'display:none;'}">
+														<tr>
+															<td width="80"></td>
+																		<td class="alignr" width="130" style="text-align: left;"><font class="wryh_font16">温度</font><font class="zifont22">&#160;#{cropGrowthHome.airTemp}℃</font></td>
+																		<td width="20"><img
+																			src="#{request.contextPath}/asset/images/growth/gou.png"
+																			width="15" height="15" /></td>
+														</tr>
+														<tr>
+															<td width="80"></td>
+																		<td class="alignr" width="130" style="text-align: left;"><font class="wryh_font16">湿度</font><font class="zifont22">&#160;#{cropGrowthHome.airHumidity}%</font></td>
+																		<td width="20"><img
+																			src="#{request.contextPath}/asset/images/growth/gou.png"
+																			width="15" height="15" /></td>
+														</tr>
+														<tr>
+															<td width="80"></td>
+																		<td class="alignr" width="130" style="text-align: left;"><font class="wryh_font16">露点</font><font class="zifont22">&#160;#{cropGrowthHome.ludian}℃</font></td>
+																		<td width="20"><img
+																			src="#{request.contextPath}/asset/images/growth/gou.png"
+																			width="15" height="15" /></td>
+														</tr>
+
+													</table>
+												</div>
+
+												<div class="zi02" style="position:relative;">
+													<table cellpadding="0" cellspacing="0" width="100%"
+														height="100%" style="#{cropGrowthHome.soilTemp eq null  and cropGrowthHome.soilHumidity eq null and cropGrowthHome.soilPh eq null and cropGrowthHome.soilEc eq null ?'':'display:none;'}">
+														<tr>
+															<td align="center" style="font-size: 16px; color: #fff;">无采集数据</td>
+														</tr>
+													</table>
+													<table cellpadding="0" cellspacing="0" width="100%"
+														style="#{cropGrowthHome.soilTemp ne null or  cropGrowthHome.soilHumidity ne null or  cropGrowthHome.soilPh ne null  or cropGrowthHome.soilEc ne null?'':'display:none;'}">
+														<tr>
+															<td height="5" colspan="3"></td>
+														</tr>
+														<tr>
+															<td class="tdwidth11" colspan="3" height="30"
+																align="left" style="padding-left:10px;"><img
+																src="#{request.contextPath}/asset/images/growth/air2.png" /></td>
+														</tr>
+														</table>
+														<table class="contentShuju" cellpadding="0" cellspacing="0" width="100%" style="#{cropGrowthHome.soilTemp ne null or  cropGrowthHome.soilHumidity ne null or  cropGrowthHome.soilPh ne null  or cropGrowthHome.soilEc ne null?'':'display:none;'}">
+														<tr>
+															<td width="80"></td>
+																		<td class="alignr" width="130" style="text-align: left;"><font class="wryh_font16">地温</font>
+																		<font class="zifont22">&#160;#{cropGrowthHome.soilTemp}℃</font></td>
+																		<td width="20"><img
+																			src="#{request.contextPath}/asset/images/growth/gou.png"
+																			width="15" height="15" /></td>
+														</tr>
+														<tr style="#{cropGrowthHome.soilHumidity eq null ?'display:none;':''}">
+														<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;"><font class="wryh_font16">水份</font>
+														<font class="zifont22">&#160;#{cropGrowthHome.soilHumidity}%</font></td>
+														<td width="20"><img
+															src="#{request.contextPath}/asset/images/growth/gou.png"
+															width="15" height="15" /></td>
+															
+														</tr>
+														<tr style="#{cropGrowthHome.soilPh ne null and cropGrowthHome.soilPh  ne '-100'?'':'display:none;'}">
+															<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;"><font class="wryh_font16">pH</font>
+														<font class="zifont22">&#160;#{cropGrowthHome.soilPh}</font></td>
+														<td width="20"><img
+															src="#{request.contextPath}/asset/images/growth/gou.png"
+															width="15" height="15" /></td>
+															
+														</tr>
+														
+														<tr style="#{cropGrowthHome.soilEc ne null and cropGrowthHome.soilEc ne '-100'?'':'display:none;'}">
+															<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;"><font class="wryh_font16">EC</font>
+														<font class="zifont22">&#160;#{cropGrowthHome.soilEc}mS/cm</font></td>
+														<td width="20"><img
+															src="#{request.contextPath}/asset/images/growth/gou.png"
+															width="15" height="15" /></td>
+															
+														</tr>
+													</table>
+												</div>
+
+												<div class="zi03" style="position:relative;">
+													<table cellpadding="0" cellspacing="0" width="100%"
+														height="100%" style="#{cropGrowthHome.illumination eq null?'':'display:none;'}">
+														<tr>
+															<td align="center" style="font-size: 16px; color: #fff;">无采集数据</td>
+														</tr>
+													</table>
+													<table cellpadding="0" cellspacing="0" width="100%"
+														style="#{cropGrowthHome.illumination eq null?'display:none;':''}">
+														<tr>
+															<td height="5" colspan="3"></td>
+														</tr>
+														<tr>
+															<td class="tdwidth11" colspan="3" height="30"
+																align="left" style="padding-left:10px;"><img
+																src="#{request.contextPath}/asset/images/growth/air3.png" /></td>
+														</tr>
+													</table>
+													<table class="contentShuju" cellpadding="0" cellspacing="0" width="100%" style="#{cropGrowthHome.illumination eq null?'display:none;':''}">
+														<tr>
+															<td width="80"></td>
+																		<td class="alignr" width="130" style="text-align: left;">
+																		</td>
+																		<td width="20"></td>
+														</tr>
+														<tr>
+														<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;"></td>
+														<td width="20"></td>
+															
+														</tr>
+														<tr>
+															<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;"></td>
+														<td width="20"></td>
+															
+														</tr>
+														
+														<tr>
+															<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;">
+														<font class="zifont22">&#160;#{cropGrowthHome.illumination
+														 eq '-100' or cropGrowthHome.illumination eq null?'无设备':cropGrowthHome.illumination}#{cropGrowthHome.illumination
+														 eq '-100' or cropGrowthHome.illumination eq null?'':'LUX'}</font></td>
+														<td width="20"><img
+																			src="#{cropGrowthHome.illumination eq '-100' or cropGrowthHome.illumination eq null?'../asset/images/growth/cuo.png':'../asset/images/growth/gou.png'}"
+																			width="15" height="15" /></td>
+															
+														</tr>
+													</table>
+												</div>
+
+
+												<div class="zi04" style="position:relative;">
+													<table cellpadding="0" cellspacing="0" width="100%"
+														height="100%" style="#{cropGrowthHome.co2 eq null?'':'display:none;'}">
+														<tr>
+															<td align="center" style="font-size: 16px; color: #fff;">无采集数据</td>
+														</tr>
+													</table>
+													<table cellpadding="0" cellspacing="0" width="100%"
+														style="#{cropGrowthHome.co2 eq null?'display:none;':''}">
+														<tr>
+															<td height="5" colspan="3"></td>
+														</tr>
+														<tr>
+															<td class="tdwidth11" colspan="3" height="30"
+																align="left" style="padding-left:10px;"><img
+																src="#{request.contextPath}/asset/images/growth/air4.png" /></td>
+														</tr>
+													</table>
+													<table class="contentShuju" cellpadding="0" cellspacing="0" width="100%" style="#{cropGrowthHome.co2 eq null?'display:none;':''}">
+														<tr>
+															<td width="80"></td>
+																		<td class="alignr" width="130" style="text-align: left;">
+																		</td>
+																		<td width="20"></td>
+														</tr>
+														<tr>
+														<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;"></td>
+														<td width="20"></td>
+															
+														</tr>
+														<tr>
+															<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;"></td>
+														<td width="20"></td>
+															
+														</tr>
+														
+														<tr>
+															<td width="80"></td>
+														<td class="alignr" width="130" style="text-align: left;">
+														<font class="zifont22">&#160; #{cropGrowthHome.co2 eq '-100' or cropGrowthHome.co2 eq null?'无设备':cropGrowthHome.co2}
+																	  #{cropGrowthHome.co2 eq '-100' or cropGrowthHome.co2 eq null?'':'PPM'}</font></td>
+														<td width="20"><img
+																	src="#{cropGrowthHome.co2 eq '-100' or cropGrowthHome.co2 eq null?'../asset/images/growth/cuo.png':'../asset/images/growth/gou.png'}"
+																	width="15" height="15" /></td>
+															
+														</tr>
+													</table>
+												</div>
+
+											</div> <!--中间第一块头下结束-->
+										</td>
+									</tr>
+								</table> <!--中间头部开始--> <!--中间头部开始-->
+								<table width="100%" cellpadding="0" cellspacing="0" style="#{cropGrowthHome.videoId ne 0?'':'display:none'};">
+									<tr>
+										<td valign="top" style="padding-right: 5px;">
+											<!--中间第一块头开始-->
+											<div class="centopd">
+												<div class="cen_top">
+													<table class="centopdiv" cellpadding="0" cellspacing="0">
+														<tr>
+															<td class="centopimg" valign="top" rowspan="2"
+																width="120"><img class="ctimgbg"
+																src="#{request.contextPath}/asset/images/growth/namebg.png"
+																width="120" height="122" /> <img class="ctimgpic"
+																src="#{cropGrowthHome.realPlantInfo.breedBreedId.plant.plantImgRound eq null or cropGrowthHome.realPlantInfo.breedBreedId.plant.plantImgRound eq ''?'../asset/images/growth/wuz.png':cropGrowthHome.realPlantInfo.breedBreedId.plant.plantImgRound}"
+																width="120" height="122" /></td>
+															<!--开始-->
+															<td class="centoprit" valign="top" height="50">
+																<div class="centopmain">
+																	<div class="cainame">
+																		<h:outputText
+																			rendered="#{empty cropGrowthHome.realPlantInfo}"
+																			value="未种植" />
+																		<h:outputText
+																			rendered="#{not empty cropGrowthHome.realPlantInfo}"
+																			value="#{cropGrowthHome.realPlantInfo.breedBreedId.plant.name}-#{cropGrowthHome.realPlantInfo.breedBreedId.name}" />
+																	</div>
+																	<div class="quyuname">#{cropGrowthHome.tunnelInfo.tunnelName}</div>
+																</div>
+															</td>
+														</tr>
+														<tr>
+															<td valign="top" class="shengzqi">
+																总共#{cropGrowthHome.dayAll}天，当前第#{cropGrowthHome.daySum}天，剩余#{(cropGrowthHome.dayAll
+																- cropGrowthHome.daySum) lt 0?0:(cropGrowthHome.dayAll -
+																cropGrowthHome.daySum)}天
+																<div class="bjszbut" style="margin-left: 30px;">
+																	<s:link view="/growth/HighTunnelEnvEdit.xhtml"
+																		styleClass="bjszbutspa">
+																		<f:param name="tunnelInfoId"
+																			value="#{cropGrowthHome.tunnelInfoId}" />
+																		<f:param name="realPlantId"
+																			value="#{cropGrowthHome.realPlantId}" />
+																		<f:param name="videoId"
+																			value="#{cropGrowthHome.videoId}" />
+																		<f:param name="dateType"
+																			value="#{cropGrowthHome.dateType}" />
+																		<strong class="bjszbutstr">报警设置</strong>
+																	</s:link>
+																</div>
+															</td>
+
+														</tr>
+													</table>
+													<!--球生菜开始-->
+													<!--成熟度图开始-->
+													<div class="chensd">
+														<table class="chetable" cellpadding="0" cellspacing="0"
+															width="100%">
+															<tr>
+																<td
+																	style="background:url(#{request.contextPath}/asset/images/growth/chebg.png) bottom left repeat-x; height:10px;"
+																	valign="top">
+																	<div class="on_day"
+																		style="left:#{cropGrowthHome.dayAll eq 0 ? 0:((cropGrowthHome.daySum * (100/cropGrowthHome.dayAll)) gt 100 ?100:(cropGrowthHome.daySum * (100/cropGrowthHome.dayAll)))}%;">#{cropGrowthHome.daySum
+																		ge cropGrowthHome.dayAll ?cropGrowthHome.dayAll
+																		:cropGrowthHome.daySum}天</div> <h:panelGroup
+																		rendered="#{empty cropGrowthHome.ppiList}">
+																		<div class="color_1" style="width: 100%;">
+																			<div class="color_title">暂无数据</div>
+																		</div>
+																	</h:panelGroup> <a:repeat value="#{cropGrowthHome.ppiList}" var="_ppi"
+																		rendered="#{not empty cropGrowthHome.ppiList}"
+																		rowKeyVar="_pindex">
+																		<div class="color_#{_pindex+1}"
+																			style="width:#{_ppi.days * (100/cropGrowthHome.dayAll)}%;">
+																			<div class="color_title">#{_ppi.name}</div>
+																		</div>
+																	</a:repeat>
+																</td>
+															</tr>
+															<tr>
+																<td>
+																	<table width="100%" cellpadding="0" cellspacing="0"
+																		style="float: left; position: relative;">
+																		<tr>
+																			<a:repeat value="#{cropGrowthHome.ppiList}"
+																				var="_ppi" rowKeyVar="_pindex">
+																				<td align="center"
+																					style="width:#{_ppi.days * (100/cropGrowthHome.dayAll)}%;"
+																					class="chen_td">#{_ppi.days}天</td>
+																			</a:repeat>
+																		</tr>
+																	</table>
+																</td>
+															</tr>
+														</table>
+													</div>
+													<!--成熟度图结束-->
+												</div>
+											</div> <!--中间第一块头开始--> <!--中间第一块头下开始-->
+											<div class="cen_bot">
+												<div class="zi01">
+													<div class="ziliang1">
+														<table cellpadding="0" cellspacing="0" width="100%"
+															height="100%" style="#{cropGrowthHome.airTemp ne null or cropGrowthHome.airTemp ne '-100' or cropGrowthHome.airHumidity ne null or cropGrowthHome.airHumidity ne '-100' or cropGrowthHome.ludian ne null or cropGrowthHome.ludian ne '-100'?'display:none;':''}">
+															<tr>
+																<td align="center" style="font-size: 16px; color: #fff;">无采集数据</td>
+															</tr>
+														</table>
+														<table width="100%" cellpadding="0" cellspacing="0" height="92px" style="#{cropGrowthHome.airTemp ne null or cropGrowthHome.airTemp ne '-100' or cropGrowthHome.airHumidity ne null or cropGrowthHome.airHumidity ne '-100' or cropGrowthHome.ludian ne null or cropGrowthHome.ludian ne '-100'?'':'display:none;'}">
+														    <tr>
+														        <td valign="top"><img src="#{request.contextPath}/asset/images/growth/air1.png" /></td>
+														        <td valign="bottom">
+														            <table width="100%" cellpadding="0" cellspacing="0">
+														            <tr style="#{cropGrowthHome.airTemp eq null or cropGrowthHome.airTemp eq '-100'?'display:none;':''}">
+														            <td class="jk_k_l">温度
+														            &#160;#{cropGrowthHome.airTemp}℃</td>
+														            <td width="20"> 
+														            <img style="#{cropGrowthHome.airTemp eq null?'display:none;':''}"
+																	src="#{request.contextPath}/asset/images/growth/gou.png"
+																	width="15" height="15" /></td>
+														            </tr>
+														            <tr style="#{cropGrowthHome.airHumidity eq null or cropGrowthHome.airHumidity eq '-100'?'display:none;':''}">
+														            <td  class="jk_k_l">湿度
+														            &#160;#{cropGrowthHome.airHumidity}%</td>
+														            <td> <img style="#{cropGrowthHome.airHumidity eq null?'display:none;':''}"
+																	src="#{request.contextPath}/asset/images/growth/gou.png"
+																	width="15" height="15" /></td>
+														            </tr>
+														             <tr style="#{cropGrowthHome.ludian eq null or cropGrowthHome.ludian eq '-100'?'display:none;':''}">
+														             <td  class="jk_k_l">露点
+														             &#160;&#160;#{cropGrowthHome.ludian}℃</td>
+														            <td> <img style="#{cropGrowthHome.ludian eq null or cropGrowthHome.ludian eq '-100'?'display:none;':''}"
+																	src="#{request.contextPath}/asset/images/growth/gou.png"
+																	width="15" height="15" /></td>
+														            </tr>
+														            </table>
+														        </td>
+														    </tr>
+														</table>
+													</div>
+												</div>
+												<div class="zi02">
+													<div class="ziliang2">
+														<table cellpadding="0" cellspacing="0" width="100%"
+															height="100%" style="#{cropGrowthHome.soilTemp ne null or cropGrowthHome.soilTemp ne '-100' or cropGrowthHome.soilHumidity ne null or cropGrowthHome.soilHumidity ne '-100' or cropGrowthHome.soilPh ne null or cropGrowthHome.soilPh ne '-100' or cropGrowthHome.soilEc ne null or cropGrowthHome.soilEc ne '-100'?'display:none;':''}">
+															<tr>
+																<td align="center" style="font-size: 16px; color: #fff;">无采集数据</td>
+															</tr>
+														</table>
+														<table width="100%" cellpadding="0" cellspacing="0" height="92px" style="#{cropGrowthHome.soilTemp ne null or cropGrowthHome.soilTemp ne '-100' or cropGrowthHome.soilHumidity ne null or cropGrowthHome.soilHumidity ne '-100' or cropGrowthHome.soilPh ne null or cropGrowthHome.soilPh ne '-100' or cropGrowthHome.soilEc ne null or cropGrowthHome.soilEc ne '-100'?'':'display:none;'}">
+														    <tr>
+														        <td valign="top"><img src="#{request.contextPath}/asset/images/growth/air2.png" /></td>
+														        <td valign="bottom">
+														            <table width="100%" cellpadding="0" cellspacing="0">
+														            <tr style="#{cropGrowthHome.soilTemp eq null or cropGrowthHome.soilTemp eq '-100'?'display:none;':''}">
+														            <td class="jk_k_l">地温
+														            &#160;#{cropGrowthHome.soilTemp}℃</td>
+														            <td width="20"> 
+														            <img style="#{cropGrowthHome.soilTemp eq null?'display:none;':''}"
+																	src="#{request.contextPath}/asset/images/growth/gou.png"
+																	width="15" height="15" /></td>
+														            </tr>
+														            
+														            <tr style="#{cropGrowthHome.soilHumidity eq null or cropGrowthHome.soilHumidity eq '-100'?'display:none;':''}">
+														            <td  class="jk_k_l">水份
+														            &#160;#{cropGrowthHome.soilHumidity}%</td>
+														            <td> <img style="#{cropGrowthHome.soilHumidity eq null?'display:none;':''}"
+																	src="#{request.contextPath}/asset/images/growth/gou.png"
+																	width="15" height="15" /></td>
+														            </tr>
+														             <tr style="#{cropGrowthHome.soilPh eq null or cropGrowthHome.soilPh eq '-100'?'display:none;':''}">
+														             <td  class="jk_k_l">pH
+														             &#160;&#160;#{cropGrowthHome.soilPh}</td>
+														            <td> <img style="#{cropGrowthHome.soilPh eq null or cropGrowthHome.soilPh eq '-100'?'display:none;':''}"
+																	src="#{request.contextPath}/asset/images/growth/gou.png"
+																	width="15" height="15" /></td>
+														            </tr>
+														              <tr style="#{cropGrowthHome.soilEc eq null or cropGrowthHome.soilEc eq '-100'?'display:none;':''}">
+														              <td  class="jk_k_l">EC
+														             &#160;#{cropGrowthHome.soilEc}mS/cm
+																		</td>
+														            <td> <img style="#{cropGrowthHome.soilPh eq null or cropGrowthHome.soilPh eq '-100'?'display:none;':''}"
+																	src="#{request.contextPath}/asset/images/growth/gou.png"
+																	width="15" height="15" /></td>
+														            </tr> 
+														            </table>
+														        </td>
+														    </tr>
+														</table>
+													</div>
+												</div>
+												
+												<div class="zi03">
+													<div class="ziliang3">
+														<table cellpadding="0" cellspacing="0" width="100%"
+															height="100%" style="#{cropGrowthHome.illumination eq null?'':'display:none;'}">
+															<tr>
+																<td align="center" style="font-size: 16px; color: #fff;">无采集数据</td>
+															</tr>
+														</table>
+														<table width="100%" cellpadding="0" cellspacing="0" height="92px" style="#{cropGrowthHome.illumination eq null?'display:none;':''}">
+														    <tr>
+														        <td valign="top"><img src="#{request.contextPath}/asset/images/growth/air3.png" /></td>
+														        <td valign="bottom">
+														            <table width="100%" cellpadding="0" cellspacing="0">
+														            <tr>
+														            <td class="jk_k_l"></td>
+														            <td width="20"></td>
+														            </tr>
+														            
+														            <tr>
+														            <td  class="jk_k_l"></td>
+														            <td></td>
+														            </tr>
+														             <tr>
+														             <td  class="jk_k_l"></td>
+														            <td></td>
+														            </tr>
+														              <tr>
+														              <td  class="jk_k_l">#{cropGrowthHome.illumination
+														eq '-100' or cropGrowthHome.illumination eq null?'无设备':cropGrowthHome.illumination}#{cropGrowthHome.illumination
+														eq '-100' or cropGrowthHome.illumination eq null?'':'LUX'}
+																		</td>
+														            <td> <img
+																	src="#{cropGrowthHome.illumination eq '-100' or cropGrowthHome.illumination eq null?'../asset/images/growth/cuo.png':'../asset/images/growth/gou.png'}"
+																	width="15" height="15" /></td>
+														            </tr> 
+														            </table>
+														        </td>
+														    </tr>
+														</table>
+													</div>
+												</div>
+												<div class="zi04" style="position:relative;">
+													<div class="ziliang4">
+														<table cellpadding="0" cellspacing="0" width="100%"
+															height="100%" style="#{cropGrowthHome.co2 eq null?'':'display:none;'}">
+															<tr>
+																<td align="center" style="font-size: 16px; color: #fff;">无采集数据</td>
+															</tr>
+														</table>
+														<table width="100%" cellpadding="0" cellspacing="0" height="92px" style="#{cropGrowthHome.co2 eq null?'display:none;':''}">
+														    <tr>
+														        <td valign="top"><img src="#{request.contextPath}/asset/images/growth/air4.png" /></td>
+														        <td valign="bottom">
+														            <table width="100%" cellpadding="0" cellspacing="0">
+														            <tr>
+														            <td class="jk_k_l"></td>
+														            <td width="20"></td>
+														            </tr>
+														            
+														            <tr>
+														            <td  class="jk_k_l"></td>
+														            <td></td>
+														            </tr>
+														             <tr>
+														             <td  class="jk_k_l"></td>
+														            <td></td>
+														            </tr>
+														              <tr>
+														              <td  class="jk_k_l">
+														              #{cropGrowthHome.co2 eq '-100' or cropGrowthHome.co2 eq null?'无设备':cropGrowthHome.co2}
+																	  #{cropGrowthHome.co2 eq '-100' or cropGrowthHome.co2 eq null?'':'PPM'}
+																		</td>
+														            <td> <img
+																	src="#{cropGrowthHome.co2 eq '-100' or cropGrowthHome.co2 eq null?'../asset/images/growth/cuo.png':'../asset/images/growth/gou.png'}"
+																	width="15" height="15" /></td>
+														            </tr> 
+														            </table>
+														        </td>
+														    </tr>
+														</table>
+													</div>
+												</div>
+
+											</div> <!--中间第一块头下结束-->
+										</td>
+										<td id="videoOne" valign="top" height="380" class="videobox" style="#{cropGrowthHome.videoInfo.accessWay eq 2 ?'':'display: none;'}">
+											<div id="videofalse"
+												style="width: 100%; height: 297px; position: relative; display: none;">
+												<div class="videoimg">
+													<img
+														src="#{request.contextPath}/asset/images/growth/video.jpg"
+														height="297" class="videowidh" />
+												</div>
+												<div
+													style="color: #a1a1a1; position: relative; z-index: 3; top: 15px; left: 15px;">如果视频长时间播放黑屏，请刷新页面。</div>
+												<div class="vidoicon">
+													<img
+														src="#{request.contextPath}/asset/images/growth/vidoimg.png"
+														width="91" height="91" />
+												</div>
+
+											</div>
+											<div id="videotrue"
+												style="width: 100%; height: 297px; position: relative;">
+												<div id="outDiv" class="videoimg">
+													<object
+														classid="clsid:EE4EA829-B8DA-4229-AC72-585AF45AD778"
+														standby="Waiting..." id="ppvs" width="495px;"
+														height="297px;" name="ocx1" title="&#35270;&#39057;">
+														<img src="#{request.contextPath}/asset/images/growth/shp01.png" width="505" height="297" />	
+													</object>
+												</div>
+											</div>
+											<div class="videobut" style="margin: 40px auto 0;">
+												<table width="107" height="77" cellpadding="0"
+													cellspacing="0" style="float: left;">
+													<tr>
+														<td width="41" valign="middle" align="right" id="vbtn">
+															<a href="Javascript: void(0)"
+															onmousedown="PTZControlOn(#{cropGrowthHome.videoInfo.channelNo},12)"
+															onmouseup="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},12)"
+															onmouseout="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},12)"><img
+																id="v1"
+																src="#{request.contextPath}/asset/images/growth/but_jian.png"
+																width="14" height="14" /></a>
+														</td>
+														<td width="16"></td>
+														<td width="50" valign="middle" align="right" id="vbut2">
+															<a href="Javascript: void(0)"
+															onmousedown="PTZControlOn(#{cropGrowthHome.videoInfo.channelNo},11)"
+															onmouseup="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},11)"
+															onmouseout="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},11)"><img
+																id="v2"
+																src="#{request.contextPath}/asset/images/growth/but_jia.png"
+																width="14" height="14" /></a>
+														</td>
+													</tr>
+												</table>
+												<table width="66" height="77" cellpadding="0"
+													cellspacing="0" style="float: left; margin-left: 28px;">
+													<tr>
+														<td width="22"></td>
+														<td width="23" valign="bottom" id="vbut3"><a
+															href="Javascript: void(0)"
+															onmousedown="PTZControlOn(#{cropGrowthHome.videoInfo.channelNo},21)"
+															onmouseup="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},21)"
+															onmouseout="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},21)"><img
+																id="v3"
+																src="#{request.contextPath}/asset/images/growth/but_up.png"
+																width="12" height="9" /></a></td>
+														<td width="21"></td>
+													</tr>
+													<tr>
+														<td valign="middle" id="vbut4"><a
+															href="Javascript: void(0)"
+															onmousedown="PTZControlOn(#{cropGrowthHome.videoInfo.channelNo},23)"
+															onmouseup="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},23)"
+															onmouseout="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},23)"><img
+																id="v4"
+																src="#{request.contextPath}/asset/images/growth/but_left.png"
+																width="9" height="13" /></a></td>
+														<td></td>
+														<td valign="middle" id="vbut5"><a
+															href="Javascript: void(0)"
+															onmousedown="PTZControlOn(#{cropGrowthHome.videoInfo.channelNo},24)"
+															onmouseup="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},24)"
+															onmouseout="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},24)"><img
+																id="v5"
+																src="#{request.contextPath}/asset/images/growth/but_right.png"
+																width="9" height="13" /></a></td>
+													</tr>
+													<tr>
+														<td></td>
+														<td valign="top" id="vbut6"><a
+															href="Javascript: void(0)"
+															onmousedown="PTZControlOn(#{cropGrowthHome.videoInfo.channelNo},22)"
+															onmouseup="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},22)"
+															onmouseout="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},22)"><img
+																id="v6"
+																src="#{request.contextPath}/asset/images/growth/but_down.png"
+																width="12" height="9" /></a></td>
+														<td></td>
+													</tr>
+												</table>
+												<table width="105" height="77" cellpadding="0"
+													cellspacing="0" style="float: right;">
+													<tr>
+														<td width="41" valign="middle" align="left" id="vbut7">
+															<a id="v13" href="Javascript: void(0)"
+															onmousedown="PTZControlOn(#{cropGrowthHome.videoInfo.channelNo},14)"
+															onmouseup="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},14)"
+															onmouseout="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},14)"><img
+																id="v7"
+																src="#{request.contextPath}/asset/images/growth/but_jian.png"
+																width="14" height="14" /></a>
+														</td>
+														<td width="24"></td>
+														<td width="40" valign="middle" align="left" id="vbut8">
+															<a href="Javascript: void(0)"
+															onmousedown="PTZControlOn(#{cropGrowthHome.videoInfo.channelNo},15)"
+															onmouseup="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},15)"
+															onmouseout="PTZControlOff(#{cropGrowthHome.videoInfo.channelNo},15)"><img
+																id="v8"
+																src="#{request.contextPath}/asset/images/growth/but_jia.png"
+																width="14" height="14" /></a>
+														</td>
+													</tr>
+												</table>
+											</div>
+											<div class="videocj"
+												style="float: right; margin-top: -110px;">
+												<a
+													style="color: #ff0000; font-size: 14px; text-decoration: underline;"
+													href="http://img1.farmeasy.cn/plugin/EHomeActiveX.exe">
+													<img src="#{request.contextPath}/asset/images/xiazai.png" />
+												</a>
+											</div>
+										</td>
+										<td id="videoTwo" valign="top" height="380" class="videobox" style="#{cropGrowthHome.videoInfo.accessWay eq 1 ?'':'display: none;'}">
+											<div id="videofalse"
+												style="width: 100%; height: 297px; position: relative; display: none;">
+												<div class="videoimg">
+													<img
+														src="#{request.contextPath}/asset/images/growth/video.jpg"
+														height="297" class="videowidh" />
+												</div>
+												<div
+													style="color: #a1a1a1; position: relative; z-index: 3; top: 15px; left: 15px;">如果视频长时间播放黑屏，请刷新页面。</div>
+												<div class="vidoicon">
+													<img
+														src="#{request.contextPath}/asset/images/growth/vidoimg.png"
+														width="91" height="91" />
+												</div>
+
+											</div>
+											<div id="videotrue"
+												style="width: 100%; height: 320px; position: relative; overflow: hidden; background: none; z-index: 1; position: relative;">
+												<div id="outDiv" class="videoimg"
+													style="overflow: hidden; height: 390px; width: 495px; right: 0px; margin-top: -25px; margin-right: auto; margin-bottom: 0px; margin-left: auto;">
+													<object
+														classid="clsid:D5E14042-7BF6-4E24-8B01-2F453E8154D7"
+														id="PlayViewOCX" width="505" height="390" name="ocx"
+														style="margin-left: -5px;">
+														<img src="#{request.contextPath}/asset/images/growth/shp01.png" width="505" height="390" style="margin-top:25px;"/>
+													</object>
+												</div>
+											</div>
+											<div class="videobut" style="margin: 40px auto 0;">
+												<table width="107" height="77" cellpadding="0"
+													cellspacing="0" style="float: left;">
+													<tr>
+														<td width="41" valign="middle" align="right" id="vbtn">
+															<a id="v1" href="Javascript: void(0)"
+															onmousedown="PTZMinusTimes()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/but_jian.png"
+																width="14" height="14" /></a> <a style="display: none"
+															id="v2" href="Javascript: void(0)"
+															onmousedown="PTZMinusTimes()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/onbut_jian.png"
+																width="14" height="14" /></a>
+														</td>
+														<td width="16"></td>
+														<td width="50" valign="middle" align="right" id="vbut2">
+															<a id="v3" href="Javascript: void(0)"
+															onmousedown="PTZAddTimes()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/but_jia.png"
+																width="14" height="14" /></a> <a style="display: none"
+															id="v4" href="Javascript: void(0)"
+															onmousedown="PTZAddTimes()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/onbut_jia.png"
+																width="14" height="14" /></a>
+														</td>
+													</tr>
+												</table>
+												<table width="66" height="77" cellpadding="0"
+													cellspacing="0" style="float: left; margin-left: 28px;">
+													<tr>
+														<td width="22"></td>
+														<td width="23" valign="bottom" id="vbut3"><a id="v5"
+															href="Javascript: void(0)" onmousedown="PTZUp()"
+															onmouseup="PTZStop()" onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/but_up.png"
+																width="12" height="9" /></a> <a style="display: none"
+															id="v6" href="Javascript: void(0)" onmousedown="PTZUp()"
+															onmouseup="PTZStop()" onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/onbut_up.png"
+																width="12" height="9" /></a></td>
+														<td width="21"></td>
+													</tr>
+													<tr>
+														<td valign="middle" id="vbut4"><a id="v7"
+															href="Javascript: void(0)" onmousedown="PTZLeft()"
+															onmouseup="PTZStop()" onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/but_left.png"
+																width="9" height="13" /></a> <a style="display: none"
+															id="v8" href="Javascript: void(0)"
+															onmousedown="PTZLeft()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/onbut_left.png"
+																width="9" height="13" /></a></td>
+														<td></td>
+														<td valign="middle" id="vbut5"><a id="v9"
+															href="Javascript: void(0)" onmousedown="PTZRight()"
+															onmouseup="PTZStop()" onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/but_right.png"
+																width="9" height="13" /></a> <a style="display: none"
+															id="v10" href="Javascript: void(0)"
+															onmousedown="PTZRight()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/onbut_right.png"
+																width="9" height="13" /></a></td>
+													</tr>
+													<tr>
+														<td></td>
+														<td valign="top" id="vbut6"><a id="v11"
+															href="Javascript: void(0)" onmousedown="PTZDown()"
+															onmouseup="PTZStop()" onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/but_down.png"
+																width="12" height="9" /></a> <a style="display: none"
+															id="v12" href="Javascript: void(0)"
+															onmousedown="PTZDown()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/onbut_down.png"
+																width="12" height="9" /></a></td>
+														<td></td>
+													</tr>
+												</table>
+												<table width="105" height="77" cellpadding="0"
+													cellspacing="0" style="float: right;">
+													<tr>
+														<td width="41" valign="middle" align="left" id="vbut7">
+															<a id="v13" href="Javascript: void(0)"
+															onmousedown="PTZFarFocus()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/but_jian.png"
+																width="14" height="14" /></a> <a style="display: none"
+															id="v14" href="Javascript: void(0)"
+															onmousedown="PTZFarFocus()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/onbut_jian.png"
+																width="14" height="14" /></a>
+														</td>
+														<td width="24"></td>
+														<td width="40" valign="middle" align="left" id="vbut8">
+															<a id="v15" href="Javascript: void(0)"
+															onmousedown="PTZNearFocus()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/but_jia.png"
+																width="14" height="14" /></a> <a style="display: none"
+															id="v16" href="Javascript: void(0)"
+															onmousedown="PTZNearFocus()" onmouseup="PTZStop()"
+															onmouseout="PTZStop()"><img
+																src="#{request.contextPath}/asset/images/growth/onbut_jia.png"
+																width="14" height="14" /></a>
+														</td>
+													</tr>
+												</table>
+											</div>
+											<div class="videocj"
+												style="float: right; margin-top: -110px;">
+												<a
+													style="color: #ff0000; font-size: 14px; text-decoration: underline;"
+													href="http://img1.farmeasy.cn/plugin/cmsocx.exe"> <img
+													src="#{request.contextPath}/asset/images/xiazai.png" />
+												</a>
+											</div>
+										</td>
+										<td id="videoThree" valign="top" height="445" class="videobox" style="display: none;">
+											<div id="videofalse"
+												style="width: 100%; height: 445px; position: relative; display: none;">
+												<div class="videoimg">
+													<img
+														src="#{request.contextPath}/asset/images/growth/video.jpg"
+														height="297" class="videowidh" />
+												</div>
+												<div
+													style="color: #a1a1a1; position: relative; z-index: 3; top: 15px; left: 15px;">如果视频长时间播放黑屏，请刷新页面。</div>
+												<div class="vidoicon">
+													<img
+														src="#{request.contextPath}/asset/images/growth/vidoimg.png"
+														width="91" height="91" />
+												</div>
+
+											</div>
+											<div id="videotrue"
+												style="width: 100%; height: 445px; position: relative; overflow: hidden; background: none; z-index: 1; position: relative;">
+												<div id="outDiv" class="videoimg"
+													style="overflow: hidden; height: 445px; width: 495px; right: 0px; margin-top: 0; margin-right: auto; margin-bottom: 0px; margin-left: auto;">
+													<object
+														classid="clsid:D5E14042-7BF6-4E24-8B01-2F453E8154D7"
+														id="PlayViewThree" width="505" height="390" name="ocx"
+														style="margin-left: -5px;">
+														<img src="#{request.contextPath}/asset/images/growth/shp01.png" width="505" height="390" style="margin-top:25px;"/>
+													</object>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</table> <!--中间头部开始--> <!--自然成熟度开始-->
+								<div class="bchaidiv"
+									style="margin-top: #{cropGrowthHome.videoId ne 0 ?4:0}px; display: #{cropGrowthHome.imgFlag?'':'none'}">
+									<div class="bchai">
+										<div class="wendu_chart" style="margin-top: 0;">
+											<div class="chart_title1">成熟度走势图</div>
+											<div class="wendu_chart1">
+												<div class="wendu01">
+													<div class="box-body">
+														<div id="flot-placeholder"
+															style="min-width: 360px; height: 190px;"></div>
+													</div>
+												</div>
+
+
+											</div>
+										</div>
+
+
+									</div>
+									<!--病虫害开始-->
+									<div class="bchai2">
+										<div class="bingh_chart" style="margin-top: 0;">
+											<div class="chart_title1">病害环境危险度趋势图</div>
+											<div id="chart-points" style="height: 180px;"></div>
+										</div>
+
+									</div>
+									<!--病虫害结束-->
+									<div class="clear"></div>
+								</div>
+								<div
+									style="width:100%; margin-top:5px;display: #{cropGrowthHome.imgFlag?'':'none'}">
+									<div class="ziran_chart">
+										<div class="chart_title2">温湿度分布图</div>
+										<!-- lines -->
+										<div class="row-fluid">
+											<div class="span12">
+												<div class="box corner-all">
+													<div class="box-body">
+														<div id="chart-lines"
+															style="min-width: 520px; height: 300px;"></div>
+														<div id="xxx"
+															style="min-width: 520px; text-align: center; font-size: 14px"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /lines -->
+									</div>
+
+								</div> <!--病虫害和自然成熟度结束-->
+								<div class="wens_title">
+									<div class="wensfont">温室实况</div>
+									<div class="chratul">
+										<ul>
+											<li class="wstit_rit"><a href="Javascript: void(0)"
+												onclick="loginTunnelC(#{cropGrowthHome.tunnelInfoId},'6');">当天</a></li>
+											<li class="wstit_rit"><a href="Javascript: void(0)"
+												onclick="loginTunnelC(#{cropGrowthHome.tunnelInfoId},'5');">一周</a></li>
+											<li class="wstit_rit"><a href="Javascript: void(0)"
+												onclick="loginTunnelC(#{cropGrowthHome.tunnelInfoId},'4');">一月</a></li>
+											<li class="wstit_rit"><a href="Javascript: void(0)"
+												onclick="loginTunnelC(#{cropGrowthHome.tunnelInfoId},'3');">一季</a></li>
+											<li class="wstit_rit"><a href="Javascript: void(0)"
+												onclick="loginTunnelC(#{cropGrowthHome.tunnelInfoId},'2');">半年</a></li>
+											<li class="wstit_rit"><a href="Javascript: void(0)"
+												onclick="loginTunnelC(#{cropGrowthHome.tunnelInfoId},'1');">一年</a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="chratdiv">
+									<!--一年图表开始-->
+									<div class="_chrat">
+										<div class="ws_chart_l">
+											<div class="chart_title3">
+												<font color="#7fd3ed">空气温度</font><font color="#ffffff">走势图</font>
+											</div>
+											<div id="airTempFolt" class="chart244"></div>
+										</div>
+										<div class="ws_chart_r">
+											<div class="chart_title3">
+												<font color="#7fd3ed">空气湿度</font><font color="#ffffff">走势图</font>
+											</div>
+											<div id="airHumidityFolt" class="chart244"></div>
+										</div>
+										<div class="ws_chart_l">
+											<div class="chart_title3">
+												<font color="#7fd3ed">土壤温度</font><font color="#ffffff">走势图</font>
+											</div>
+											<div id="soilTempFolt" class="chart244"></div>
+										</div>
+										<div class="ws_chart_r">
+											<div class="chart_title3">
+												<font color="#7fd3ed">土壤湿度</font><font color="#ffffff">走势图</font>
+											</div>
+											<div id="soilHumidityFolt" class="chart244"></div>
+										</div>
+										<div class="ws_chart_l" >
+											<div class="chart_title3">
+												<font color="#7fd3ed">光照</font><font color="#ffffff">走势图</font>
+											</div>
+											<div id="illuminationFolt" class="chart244"></div>
+										</div>
+										<div class="ws_chart_r" >
+											<div class="chart_title3">
+												<font color="#7fd3ed">二氧化碳</font><font color="#ffffff">走势图</font>
+											</div>
+											<div id="co2Folt" class="chart244"></div>
+										</div>
+										<div class="ws_chart_l" style="margin-bottom: 0px;">
+											<div class="chart_title3">
+												<font color="#7fd3ed">pH值</font><font color="#ffffff">走势图</font>
+											</div>
+											<div id="soilPhFolt" class="chart244"></div>
+										</div>
+										<div class="ws_chart_r" style="margin-bottom: 0px;">
+											<div class="chart_title3">
+												<font color="#7fd3ed">EC值</font><font color="#ffffff">走势图</font>
+											</div>
+											<div id="soilEcFolt" class="chart244"></div>
+										</div>
+
+										<div class="clear"></div>
+									</div>
+									<!--一年图表结束-->
+									<div class="clear"></div>
+								</div> <script type="text/javascript"> 
+		jq(".ws_chart_l").css("width",(document.body.clientWidth- 302) / 2 +"px ");
+		jq(".ws_chart_r").css("width",(document.body.clientWidth- 302) / 2 +"px ");
+		jq(window).resize(function(){
+			 var onLoadWidth = document.body.clientWidth;
+				jq(".ws_chart_l").css("width",(document.body.clientWidth- 302) / 2 +"px ");
+				jq(".ws_chart_r").css("width",(document.body.clientWidth- 302) / 2 +"px ");
+
+		})
+	</script> <script type="text/javascript">
+		jq(function(){
+		    jq(".chratul").jTab({
+		        menutag: ".chratul li",
+		        boxtag: ".chratdiv > ._chrat",
+		        cur: 0
+				
+		    });
+		});
+	</script> <!--病虫害防治第二个js开始--> <script type="text/javascript"
+									src="#{request.contextPath}/asset/js/jshashtable-2.1.js"></script>
+								<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/jquery.numberformatter-1.2.3.min.js"></script>
+								<!--<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.content.js"></script>-->
+								<!--病虫害防治第二个js结束--> <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="#{request.contextPath}/asset/js/excanvas.js"></script><![endif]-->
+								<!--自然成熟度开始--> <script
+									src="#{request.contextPath}/asset/js/growth/jquery.flot.js"></script>
+								<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/jquery.flot.time.js"></script>
+								<!--自然成熟度结束--> <script type="text/javascript">
+	<!--
+	//<![DATA[
+		var data=1;
+		var lines = jq("#chart-lines");
+		var imgflag=#{cropGrowthHome.imgFlag};
+		jq(function(){
+			jq("select").selectmenu({style:'dropdown'});
+			jq(".rich-calendar-input").addClass("r_c_text_date");
+		    jq(".rich-calendar-input").removeClass("rich-calendar-input");
+		    jq(".ui-selectmenu-dropdown").addClass("small2");
+		    jq(".ui-selectmenu-dropdown").removeClass("ui-selectmenu-dropdown");
+		    jq(".ui-selectmenu-menu").addClass("ui-selectmenu-menusmall2");
+		    jq(".ui-selectmenu-menu").removeClass("ui-selectmenu-menu");
+			dateimg(1);
+			binghai();
+		});
+		
+		function loginTunnelC(tunnelId,typeId){
+			jq('#login').show();
+			loginTunnel(tunnelId,typeId);
+		}
+		jq(window).resize(function(){
+			dateimg(1);
+			binghai();
+		});
+		function binghai(){
+			if(imgflag){
+				var a0=	#{cropGrowthHome.dataStringImg};
+				var a1=	#{cropGrowthHome.dataStringImg2};
+				var plot = jq.plot("#flot-placeholder", [
+				     {data:a0,color: "#9FF24D"},{label: "成熟",data:a1,color: "#F21045",points:{ show: false }}
+	   			], {
+	   				xaxis: { 
+	   					mode: "time",
+	   					minTickSize:[#{cropGrowthHome.dataType}, "day"]
+	   				},
+	   				series: {
+	   					lines: {
+	   						show: true,
+	   					},
+	   					points: {
+	   						radius: 2,
+	   	                    fill: true,
+	   	                 	fillColor:"#9FF24D",
+	   						show: true
+	   					},
+	   					color:"#9FF24D",
+	   					hoverable: true
+	   				},
+	   				grid: {
+	   				 	backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+	   		            borderWidth: 1,
+	   		            borderColor: null,
+	   					hoverable: true,
+	   					clickable: true
+	   				},
+	   				yaxis: {
+	   					min: 0
+	   				}
+	   			});
+	
+	   			function showTooltip(x, y, contents) {
+	   				jq("<div id='tooltip'>" + contents + "</div>").css({
+	   					position: "absolute",
+	   					display: "none",
+	   					top: y + 5,
+	   					left: x - 50,
+	   					border: "1px solid #fdd",
+	   					padding: "2px",
+	   					"background-color": "#fee",
+	   					opacity: 0.80
+	   				}).appendTo("body").fadeIn(200);
+	   			}
+	
+	   			var previousPoint = null;
+	   			jq("#flot-placeholder").bind("plothover", function (event, pos, item) {
+	   				if (true) {
+	   					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+	   					jq("#hoverdata").text(str);
+	   				}
+	   				if (true) {
+	   					if (item) {
+	   						if (previousPoint != item.dataIndex) {
+	   							previousPoint = item.dataIndex;
+	   							jq("#tooltip").remove();
+	   							var x = item.datapoint[0].toFixed(2),
+	   							y = item.datapoint[1].toFixed(2);
+	   							var z = item.series.data[item.dataIndex][2];
+	   							var str1 = (x+"").split(".")[0];
+	   							var dat = new Date(parseInt(str1));
+	   							var str =dat.getFullYear()+"-"+(dat.getMonth()+1)+"-"+dat.getDate()+" ";
+	   								y = (y+"").split(".")[0]; 
+	   							showTooltip(item.pageX, item.pageY,str + " " + y+"℃");
+	   						}
+	   					} else {
+	   						jq("#tooltip").remove();
+	   						previousPoint = null;            
+	   					}
+	   				}
+	   			});
+	
+	
+	   		lines.unbind();
+	   	   	#{cropGrowthHome.data1Img}
+	   	    // variable lines
+	   	   	var data_lines = [#{cropGrowthHome.label1Img}],
+	   	    options_lines = {
+	   		    xaxis:{
+	   		    	ticks:[[0,'0%'],[10,'10%'],[20,'20%'],[30,'30%'],[40,'40%'],[50,'50%'],[60,'60%'],[70,'70%'],[80,'80%'],[90,'90%'],[100,'100%']],
+	   	    		tickformat:'%y-%m-%d',
+	   	    		max:100,
+	   	    		min:0,
+	   	    		color: '#ffffff'
+	   	   		},
+	   	   		yaxis: {
+	   	   		 ticks:[[-20,'-20℃'],[0,'0℃'],[20,'20℃'],[40,'40℃'],[60,'60℃'],[80,'80℃'],[100,'100℃']],
+	   	   		 max:100,
+	   	   		 min:#{cropGrowthHome.shiduImg},
+	   	   		color: '#ffffff'
+	   	   		},
+	   	       	series: {
+	   	           points: {
+	   	               show: true
+	   	           },
+	   	           hoverable: true
+	   	        },
+	   	        legend: {
+	   	    		show:true,
+	   	            noColumns: 0,
+	   	            labelBoxBorderColor: "#ffffff",
+	   	    		position:"nw",
+	   	    		container:jq("#xxx")
+	   	        },
+	   	        grid: {
+	   	            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+	   	            borderWidth: 1,
+	   	            borderColor: null,
+	   	            hoverable: true, 
+	   	            clickable: true
+	   	        }
+	   	                        
+	   	    };
+	   	    // rendering plot lines
+	   	    var chart_lines = jq.plot(lines, data_lines, options_lines);
+	   	    
+	   	    function showTooltip(x, y, contents) {
+	   			jq("<div id='tooltip'>" + contents + "</div>").css({
+	   				position: "absolute",
+	   				display: "none",
+	   				top: y + 5,
+	   				left: x - 50,
+	   				border: "1px solid #fdd",
+	   				padding: "2px",
+	   				"background-color": "#fee",
+	   				opacity: 0.80
+	   			}).appendTo("body").fadeIn(200);
+	   		}
+	
+	   		var previousPoint = null;
+	   		lines.bind("plothover", function (event, pos, item) {
+	   			if (true) {
+	   				var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+	   				jq("#hoverdata").text(str);
+	   			}
+	   			if (true) {
+	   				if (item) {
+	   					if (previousPoint != item.dataIndex) {
+	   						previousPoint = item.dataIndex;
+	   						jq("#tooltip").remove();
+	   						var x = item.datapoint[0].toFixed(2),
+	   						y = item.datapoint[1].toFixed(2);
+	   						var z = item.series.data[item.dataIndex][2];
+	   						y = (y+"").split(".")[0];
+	   						
+	   						showTooltip(item.pageX, item.pageY,
+	   								z);
+	   					}
+	   				} else {
+	   					jq("#tooltip").remove();
+	   					previousPoint = null;            
+	   				}
+	   			}
+	   		});
+			}
+		}
+		function dateimg(temp){
+			data= temp;
+			var airTempFolt = "";//温度
+		    var airHumidityFolt = "";//湿度
+		    var soilTempFolt = "";//地温
+		    var soilHumidityFolt = "";//水份
+		    var illuminationFolt = "";//日光
+		    var co2Folt = "";//co2
+		    var soilPhFolt = "";//soilPhFolt
+		    var soilEcFolt = "";//soilEcFolt
+		    var tickSizeInfo = "";
+		    var airTFlag = 0;
+		    var dataAll = "";
+			if(data == 1){
+			 	airTempFolt = #{cropGrowthHome.airTempFolt};//温度
+			    airHumidityFolt = #{cropGrowthHome.airHumidityFolt};//湿度
+			    soilTempFolt = #{cropGrowthHome.soilTempFolt};//地温
+			    soilHumidityFolt = #{cropGrowthHome.soilHumidityFolt};//水份
+			    illuminationFolt = #{cropGrowthHome.illuminationFolt};//日光
+			    co2Folt = #{cropGrowthHome.co2Folt};//co2
+			    soilPhFolt = #{cropGrowthHome.soilPhFolt};//soilPhFolt
+			    soilEcFolt = #{cropGrowthHome.soilEcFolt};//soilEcFolt
+			    tickSizeInfo = #{cropGrowthHome.tickSize};
+			    airTFlag = #{cropGrowthHome.airTFlag};
+			}else{
+				if(data !="" && data != "undefined"){
+					dataAll = data.split("_");
+					eval("airTempFolt = "+dataAll[0]);
+					eval("airHumidityFolt = "+dataAll[1]);
+					eval("soilTempFolt = "+dataAll[2]);
+					eval("soilHumidityFolt = "+dataAll[3]);
+					eval("illuminationFolt = "+dataAll[4]);
+					eval("co2Folt = "+dataAll[5]);
+					eval("tickSizeInfo = "+dataAll[6]);
+					eval("airTFlag = "+dataAll[7]);
+					eval("soilPhFolt = "+dataAll[9]);
+					eval("soilEcFolt = "+dataAll[10]);
+				}else{
+					jq("#login").hide();
+				}
+			}
+		    // data array
+			var lines2 = jq("#airTempFolt"),
+		    data_lines2 = [
+				{
+			        
+			        data: airTempFolt,
+			        color: '#fc7548'
+		    	}
+			],
+		    options_lines2 = {
+				yaxis:{
+					min:airTFlag
+				},
+				xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines2 = jq.plot(lines2, data_lines2, options_lines2);
+		                
+			//var chart_lines = jq.plot(lines, data_lines, options_lines);
+			//湿度
+			var lines3 = jq("#airHumidityFolt"),
+		  	
+		    data_lines3 = [
+				{
+		        
+		        data: airHumidityFolt,
+		        color: '#c8eb8f'
+		    }
+
+			],
+		    options_lines3 = {
+				yaxis:{
+					min:0,
+					max:100
+				},
+				xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines3 = jq.plot(lines3, data_lines3, options_lines3);		
+		    //土壤温度趋势图
+		 	var lines4 = jq("#soilTempFolt"),
+		 	
+		    data_lines4 = [
+				{
+		        
+		        data: soilTempFolt,
+		        color: '#cfb9ea'
+		    }
+
+			],
+		    options_lines4 = {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines4 = jq.plot(lines4, data_lines4, options_lines4);
+		    //土壤温度趋势图
+		 	var lines5 = jq("#soilHumidityFolt"),
+
+		    data_lines5 = [
+				{
+		        
+		        data: soilHumidityFolt,
+		        color: '#a4e3f4'
+		    }
+
+			],
+		    options_lines5 = {
+		 		yaxis:{
+					min:0,
+					max:100
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+
+
+			        
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines5 = jq.plot(lines5, data_lines5, options_lines5);
+		    //光照趋势图
+		 	var lines6 = jq("#illuminationFolt"),
+		 	
+		    data_lines6 = [
+				{
+		        
+		        data: illuminationFolt,
+		        color: '#fff886'
+		    }
+
+			],
+		    options_lines6 = {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines6 = jq.plot(lines6, data_lines6, options_lines6);
+		    //二氧化碳趋势图
+		 	var lines7 = jq("#co2Folt"),
+		    data_lines7 = [
+				{
+		        
+		        data: co2Folt,
+		        color: '#aec2fd'
+		    }
+
+			],
+		    options_lines7 = {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines7 = jq.plot(lines7, data_lines7, options_lines7);
+
+		    //pH趋势图
+		 	var lines8 = jq("#soilPhFolt"),
+		    data_lines8 = [
+				{
+		        data: soilPhFolt,
+		        color: '#83b5ff'
+		    	}
+			],
+		    options_lines8 = {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines8 = jq.plot(lines8, data_lines8, options_lines8);
+
+		    //Ec趋势图
+		 	var lines9 = jq("#soilEcFolt"),
+		    data_lines9 = [
+				{
+		        
+		        data: soilEcFolt,
+		        color: '#ff71f7'
+		    }
+
+			],
+		    options_lines9 = {
+		 		yaxis:{
+					min:0
+				},
+		 		xaxis: { 
+				mode: "time",
+				tickformat:'%y/%m/%d',
+				tickSize:tickSizeInfo },
+		        series: {
+		            lines: {
+		                show: true
+		            },
+		            points: {
+		                show: true
+		            },
+		            hoverable: true
+		        },
+		        grid: {
+		            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+					
+		            borderWidth: 1,
+		            borderColor: null,
+		            hoverable: true, 
+		            clickable: true
+		        }
+		                        
+		    };
+		    // rendering plot lines
+		    var chart_lines9 = jq.plot(lines9, data_lines9, options_lines9);
+		    
+		    var previousPoint = null;
+		    jq("#airTempFolt").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[8]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"℃");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#airHumidityFolt").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[8]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"%");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#soilTempFolt").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0] ;
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[8]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"℃");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#soilHumidityFolt").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[8]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"%");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+		    jq("#illuminationFolt").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[8]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"LUX");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#co2Folt").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[8]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"PPM");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#soilPhFolt").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[8]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y);
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+
+		    jq("#soilEcFolt").bind("plothover", function (event, pos, item) {
+				if (true) {
+					var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+					jq("#hoverdata").text(str);
+				}
+				if (true) {
+					if (item) {
+						if (previousPoint != item.dataIndex) {
+							previousPoint = item.dataIndex;
+							jq("#tooltip").remove();
+							var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+							var str1 = (x+"").split(".")[0];
+							var dat = new Date(parseInt(str1)-(8*60*60*1000));
+							var str = null;
+							if(data == 1){
+							    str = dat.getFullYear()+"年"+(dat.getMonth()+1)+'月'+dat.getDate()+'日 '+dat.getHours()+'点';
+							}else{
+								eval("str = "+dataAll[8]);
+							}
+							y =  Math.round(y*10)/10;
+							showTooltip(item.pageX, item.pageY,str + " " + y+"mS/cm");
+						}
+					} else {
+						jq("#tooltip").remove();
+						previousPoint = null;            
+					}
+				}
+			});
+			function showTooltip(x, y, contents) {
+				jq("<div id='tooltip'>" + contents + "</div>").css({
+					position: "absolute",
+					display: "none",
+					top: y + 5,
+					left: x - 50,
+					border: "1px solid #fdd",
+					padding: "2px",
+					"background-color": "#fee",
+					opacity: 0.80
+				}).appendTo("body").fadeIn(200);
+			}
+
+		    jq("#login").hide();
+		}
+		//]]>
+		-->
+	</script> <script
+									src="#{request.contextPath}/asset/js/growth/jquery-1.8.3.min.js"
+									type='text/javascript'></script> <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../appasset/js/excanvas.min.js"></script><![endif]-->
+								<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/growth/jquery.flot.min.js"></script>
+								<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/growth/jquery.flot.axislabels.js"></script>
+								<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/growth/jshashtable-2.1.js"></script>
+								<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/growth/jquery.numberformatter-1.2.3.min.js"></script>
+								<script type="text/javascript">
+	//<![CDATA[
+		$= jQuery.noConflict();
+		var imgflag = #{cropGrowthHome.imgFlag}
+
+		jq(function(){
+			binghai2();
+		});
+		
+		jq(window).resize(function(){
+			binghai2();
+		});
+
+		function binghai2(){
+			if(imgflag){
+		        var rawData = #{cropGrowthHome.rawDataImg};
+		        var rawData2 = #{cropGrowthHome.rawData2Img};
+		        var dataSet = [{ data: rawData, color: "#2fd3ca" },{ data: rawData2, color: "#6fac24" }];
+		        var ticks = #{cropGrowthHome.ticksImg};
+		 
+		        var options = {
+		            series: {
+		                bars: {
+		                    show: true
+		                }
+		            },
+		            bars: {
+		                align: "center",
+		                barWidth: 0.5,
+		                horizontal: true,
+		                fillColor: { colors: [{ opacity: 0.5 }, { opacity: 1}] },
+		                lineWidth: 1
+		            },
+		            xaxis: {
+		                axisLabelUseCanvas: true,
+		                axisLabelFontSizePixels: 12,
+		                axisLabelFontFamily: 'Verdana, Arial',
+		                axisLabelPadding: 10,
+		                min:0,max:100,
+		                tickColor: "#5E5E5E",
+		                tickFormatter: function (v, axis) {
+		                    return $.formatNumber(v, { format: "#,###", locale: "us" });
+		                },
+		               	color: '#ffffff'
+		            },
+		            yaxis: {
+		                axisLabelUseCanvas: true,
+		                axisLabelFontSizePixels: 12,
+		                axisLabelFontFamily: 'Verdana, Arial',
+		                axisLabelPadding: 3,
+		                tickColor: "#5E5E5E",
+		                ticks: ticks,
+		            	color: '#ffffff'
+		            },
+		            legend: {
+		                noColumns: 0,
+		                labelBoxBorderColor: "#858585",
+		                position: "ne"
+		            },
+		            grid: {
+			            backgroundColor: null, // you can use gradiend like this { colors: [ "#FFFFFF", "#F1F1F1" ] }
+			            borderWidth: 1,
+			            borderColor: null,
+			            hoverable: true, 
+			            clickable: true
+		            }
+		        };
+		 
+		 
+		        var previousPoint = null, previousLabel = null;
+		 
+		        $.fn.UseTooltip = function () {
+		            $(this).bind("plothover", function (event, pos, item) {
+		                if (item) {
+		                    if ((previousLabel != item.series.label) ||
+		                 (previousPoint != item.dataIndex)) {
+		                        previousPoint = item.dataIndex;
+		                        previousLabel = item.series.label;
+		                        $("#tooltip").remove();
+		 
+		                        var x = item.datapoint[0];
+		                        var y = item.datapoint[1];
+		 
+		                        var color = item.series.color;
+		                        //alert(color)
+		                        //console.log(item.series.xaxis.ticks[x].label);               
+		 
+		                        showTooltip(item.pageX,item.pageY,color,item.series.yaxis.ticks[y].label +" : <strong>" + x+ "</strong> %");
+		                    }
+		                } else {
+		                    $("#tooltip").remove();
+		                    previousPoint = null;
+		                }
+		            });
+		        };
+		 
+		        function showTooltip(x, y, color, contents) {
+		            $('<div id="tooltip">' + contents + '</div>').css({
+		                position: 'absolute',
+		                display: 'none',
+		                top: y - 10,
+		                left: x + 10,
+		                border: '2px solid ' + color,
+		                padding: '3px',
+		                'font-size': '9px',
+		                'border-radius': '5px',
+		                'background-color': '#fff',
+		                'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+		                opacity: 0.9
+		            }).appendTo("body").fadeIn(200);
+		        }
+			}
+		}
+		$(document).ready(function () {
+            $.plot($("#chart-points"), dataSet, options);
+            $("#chart-points").UseTooltip();
+            $("#CuPlayerVideo_video_object").remove();
+            
+        });
+        window.onload = function removeObj(){
+			 $("#CuPlayerVideo_video_object").remove();
+			 }
+    	//]]>
+    </script> <!--中间头部开始--> <script>
+	//<![CDATA[
+		var strIP = "#{cropGrowthHome.videoInfo.appIp}";
+		var strPort = "#{cropGrowthHome.videoInfo.appPort}";
+		var  strName1 = "#{cropGrowthHome.videoInfo.appUsername}";
+		var strPwd1 = "#{cropGrowthHome.videoInfo.appPassword}";
+		var ChanNum1 = "#{cropGrowthHome.videoInfo.appDeviceVideoChannelNo}";
+		var cameraID1 = "#{cropGrowthHome.videoInfo.appDeviceVideoChannelNo}";
+		var web_url = "#{cropGrowthHome.videoInfo.webcamUrl}";
+		if(/msie/.test(navigator.userAgent.toLowerCase())){
+			//IE浏览器
+			if("#{cropGrowthHome.videoInfo.accessWay}" == "1"){
+				
+			window.onload = function StartPlayView(){
+				var OCXobj = document.getElementById("PlayViewOCX");
+				OCXobj.SetOcxMode(0);
+				OCXobj.SetWndNum(1);
+				strXML = "<?xml version='1.0'?><Parament><CameraID>" + cameraID1 + "</CameraID><DeviceIP>" + strIP + "</DeviceIP><DevicePort>" + strPort + "</DevicePort><User>"+ strName1 +"</User><Password>" + strPwd1 + "</Password><ChannelNum>"+ ChanNum1 +"</ChannelNum><ProtocolType>0</ProtocolType><StreamType>0</StreamType><Transmits></Transmits></Parament>";
+		        	OCXobj.StartTask_Preview_InWnd(strXML,0);
+		   	 }
+			}
+		}else{
+			if(web_url != ""){
+				jQuery("#videoOne").hide();
+                jQuery("#videoTwo").hide();
+                jQuery("#videoThree").show();
+				 var vID        = "PlayViewThree"; 
+                 var vWidth     = 505;                //播放器宽度设置
+                 var vHeight    = 445;
+                 var vPlayer    = "#{request.contextPath}/document/player.swf"; //播放器文件
+                 var vHLSset    = "#{request.contextPath}/document/HLS.swf";             //HLS配置
+                 var vPic       = "#{request.contextPath}/asset/images/iphone/videosImg.jpg";    //视频缩略图
+                 var vCssurl    = "#{request.contextPath}/asset/css/mini.css";     //移动端CSS应用文件
+                 var  vHLSurl    = web_url;
+			}
+		}
+			
+		function StopPlayView(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StopAllPreview();
+	    }
+	    /*****设置抓图格式为JPG******/
+	    function CatchPicJPG(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.SetCapturParam("C:\\pic",0);
+	    }
+	    /*****设置抓图格式为BMP******/
+	    function CatchPicBMP(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.SetCapturParam("C:\\pic",1);
+	    }
+	    /*****云台：左上******/
+	    function PTZLeftUp(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(25,3);
+	    }
+	    /*****云台：上******/
+	    function PTZUp(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(21,3);
+	    }
+	    /*****云台：右上******/
+	    function PTZRightUp(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(26,3);
+	    }
+	    /*****云台：左******/
+	    function PTZLeft(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(23,3);
+	    }
+	    /*****云台：自转******/
+	    function PTZAuto(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(29,3);
+	    }
+	    /*****云台：右******/
+	    function PTZRight(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(24,3);
+	    }
+	    /*****云台：左下******/
+	    function PTZLeftDown(){
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(27,3);
+	    }
+	    /*****云台：下******/
+	    function PTZDown()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(22,3);
+	    }
+	    /*****云台：右下******/
+	    function PTZRightDown()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(28,3);
+	    }
+	    /*****云台：停止******/
+	    function PTZStop()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(-21,3);
+	    }
+	    /*****云台：焦距+******/
+	    function PTZAddTimes()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(11,3);
+	    }
+	    /*****云台：焦距-******/
+	    function PTZMinusTimes()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(12,3);
+	    }
+	    /*****云台：焦点+******/
+	    function PTZFarFocus()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(13,3);
+	    }
+	    /*****云台：焦点-******/
+	    function PTZNearFocus()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(14,3);
+	    }
+	    /*****云台：光圈+******/
+	    function PTZLargeAperture()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(15,3);
+	    }
+	    /*****云台：光圈-******/
+	    function PTZSmallAperture()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        OCXobj.StartTask_PTZ(16,3);
+	    }
+	    /*****云台：调用预置点******/
+	    function GetPt()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        ptNum = document.getElementById("SelectGetpt").value;
+	        var ret = OCXobj.PTZCtrlGotoPreset(ptNum); 
+	             
+	    }
+	    /*****云台：设置预置点******/
+	    function SetPt()
+	    {
+	        var OCXobj = document.getElementById("PlayViewOCX");
+	        ptNum = document.getElementById("SelectSetpt").value;
+	        var ret = OCXobj.PTZCtrlSetPreset(parseInt(ptNum));
+	    }
+	//]]>
+  	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireWindowsNumber(iSel)">   
+		szMsg = "窗口分割消息,窗口数" + iSel;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireSelectWindow(iSel)"> 
+		szMsg = "窗口选择消息,窗口" + iSel;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireStartRealPlay(iSel)">
+		szMsg = "开始预览消息" + iSel;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireStopRealPlay(iSel)">   
+		szMsg = "停止预览消息" + iSel ;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireStopPreviewAll()">   
+		szMsg = "停止所有预览消息" ;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireOpenSound(iSel)">   
+		szMsg = "打开声音消息" ;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireCloseSound(iSel)">   
+		szMsg = "关闭声音消息" ;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireChangeWindow(iFrom,iTo)">   
+		szMsg = "互换窗口消息"+ "从" +iFrom+"到"+iTo;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FirePTZCtrl(iWindowID,iCtrlID,iSpeed)">   
+		szMsg = "云台控制消息:"+ "窗口:" +iWindowID+"控制:"+iCtrlID+"速度:"+ iSpeed;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireStartRecord(iWindowID)">   
+		szMsg = "开始录像"+ iWindowID;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireStopRecord(iWindowID)">   
+		szMsg = "停止录像"+ iWindowID;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireCatchPic(szPath,iWindowID)">   
+		szMsg = "抓图"+ "路径" +szPath+"窗口"+iWindowID;  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireStartPlayBack(lWindowID)">  
+	</script> <script language="javascript" for="PlayViewOCX"
+									event="FireStopPlayBack(lWindowID)">  
+	</script> <script type="text/javascript" language="JavaScript">	
+			//连接设备
+			if(/msie/.test(navigator.userAgent.toLowerCase())){
+				//IE浏览器
+				if("#{cropGrowthHome.videoInfo.accessWay}" == "2"){
+					window.onload = function ConnDevice(){
+						//alert(noTemp);alert(passWord);alert(userName);alert(ip);
+						var iConnHandle = -1;		//连接设备返回句柄
+						var iPlayHandle = -1;		//播放视频返回句柄
+						//var iChannel = 1;			//设备视频通道
+						var iStreamType = 1;		//取设备流类型	0：主码流	1：子码流
+						var szAccount= "#{cropGrowthHome.videoInfo.sn}";
+						var szRegIP = "#{cropGrowthHome.videoInfo.ip}";
+						var iRegPort = 7660;
+						//7660
+						//流媒体服务IP、端口
+						var iStreamServerPort = 7554;//7554
+						var iPlayConnMode = 0;		//取流方式	0：与设备直连取流	1：通过流媒体转发取流
+						var PlayOCX = document.getElementById("ppvs");
+						iConnHandle = PlayOCX.ConnectDeviceByACS(szAccount, szRegIP, iRegPort,"#{cropGrowthHome.videoInfo.username}", "#{cropGrowthHome.videoInfo.password}");
+						if (  0 > iConnHandle)
+						{
+							alert("连接设备失败！");
+						}else{
+							if ( 0 > iConnHandle)	{
+								alert("请先连接设备，并确保连接成功！");
+								return;
+							}
+							var PlayOCX = document.getElementById("ppvs");
+							PlayOCX.StreamPlayStartByTCP(szRegIP, iStreamServerPort, szAccount, "1", iStreamType, 1);
+						}
+					}
+				}
+			}else{
+				if(web_url != ""){
+					jQuery("#videoOne").hide();
+	                jQuery("#videoTwo").hide();
+	                jQuery("#videoThree").show();
+					 var vID        = "PlayViewThree"; 
+	                 var vWidth     = 505;                //播放器宽度设置
+	                 var vHeight    = 445;                   //播放器宽度设置
+	                 var vPlayer    = "#{request.contextPath}/document/player.swf"; //播放器文件
+	                 var vHLSset    = "#{request.contextPath}/document/HLS.swf";             //HLS配置
+	                 var vPic       = "#{request.contextPath}/asset/images/iphone/videosImg.jpg";    //视频缩略图
+	                 var vCssurl    = "#{request.contextPath}/asset/css/mini.css";     //移动端CSS应用文件
+	                 var  vHLSurl    = web_url;
+				}
+			}
+			function PTZControlOn(channelNo,temp)
+			{
+				if(temp == 12){
+				   jq("#v1").attr("src","#{request.contextPath}/asset/images/growth/onbut_jian.png");
+				}
+				if(temp == 11){
+				   jq("#v2").attr("src","#{request.contextPath}/asset/images/growth/onbut_jia.png");
+				}
+				if(temp == 21){
+				   jq("#v3").attr("src","#{request.contextPath}/asset/images/growth/onbut_up.png");
+				}
+				if(temp == 23){
+				   jq("#v4").attr("src","#{request.contextPath}/asset/images/growth/onbut_left.png");
+				}
+				if(temp == 24){
+				   jq("#v5").attr("src","#{request.contextPath}/asset/images/growth/onbut_right.png");
+				}
+				if(temp == 22){
+				   jq("#v6").attr("src","#{request.contextPath}/asset/images/growth/onbut_down.png");
+				}
+				if(temp == 14){
+				   jq("#v7").attr("src","#{request.contextPath}/asset/images/growth/onbut_jian.png");
+				}
+				if(temp == 13){
+				   jq("#v8").attr("src","#{request.contextPath}/asset/images/growth/onbut_jia.png");
+				}
+				//channelNo:函数设备通道号
+				//temp：命令控制号（11 - 焦距变大，12 - 焦距变小 ，13 - 焦点变大  ，14 - 焦点变小 ， 15 - 光圈变大，16 - 光圈变小 ，21 - 云台向上， 22 - 云台向下， 23 - 云台左转， 24 - 云台右转）
+				//alert(channelNo+'  '+temp);	
+				var PlayOCX = document.getElementById("ppvs");
+				PlayOCX.PTZControl(channelNo,temp,0,1);
+			}
+
+			function PTZControlOff(channelNo,temp)
+			{
+				if(temp == 12){
+					   jq("#v1").attr("src","#{request.contextPath}/asset/images/growth/but_jian.png");
+					}
+					if(temp == 11){
+					   jq("#v2").attr("src","#{request.contextPath}/asset/images/growth/but_jia.png");
+					}
+					if(temp == 21){
+					   jq("#v3").attr("src","#{request.contextPath}/asset/images/growth/but_up.png");
+					}
+					if(temp == 23){
+					   jq("#v4").attr("src","#{request.contextPath}/asset/images/growth/but_left.png");
+					}
+					if(temp == 24){
+					   jq("#v5").attr("src","#{request.contextPath}/asset/images/growth/but_right.png");
+					}
+					if(temp == 22){
+					   jq("#v6").attr("src","#{request.contextPath}/asset/images/growth/but_down.png");
+					}
+					if(temp == 14){
+					   jq("#v7").attr("src","#{request.contextPath}/asset/images/growth/but_jian.png");
+					}
+					if(temp == 13){
+					   jq("#v8").attr("src","#{request.contextPath}/asset/images/growth/but_jia.png");
+					}
+				//channelNo:函数设备通道号
+				//temp：命令控制号（11 - 焦距变大，12 - 焦距变小 ，13 - 焦点变大  ，14 - 焦点变小 ， 15 - 光圈变大，16 - 光圈变小 ，21 - 云台向上， 22 - 云台向下， 23 - 云台左转， 24 - 云台右转）
+				//alert('    ');
+				var PlayOCX = document.getElementById("ppvs");
+				PlayOCX.PTZControl(channelNo,temp,1,1);
+			}
+		</script> <script type="text/javascript"
+									src="#{request.contextPath}/asset/js/growth/jquery-ui.js"></script>
+								<script type="text/javascript"
+									src="#{request.contextPath}/asset/js/growth/jquery-ui-select.js"> </script>
+								 <script type="text/javascript">
+				function getTreeList(baseId){
+					if(baseId > 0){
+						getTreeListMe(baseId);
+					}
+				}
+				function linkagebinfoid (data){
+					location.href = "#{request.contextPath}"+data;
+				}
+			</script>
+			
+			<script type="text/javascript" src="#{request.contextPath}/asset/js/hls.min.js"></script>
+			
+			
+							</td>
+						</tr>
+					</table>
+					<div class="clear"></div>
+				</div> <!---作物生长情况结束-->
+			</td>
+			<a:form>
+									<a:queue requestDelay="10" ignoreDupResponses="true" />
+									<a:jsFunction name="getTreeListMe"
+										action="#{cropGrowthHome.getTreeList}"
+										data="#{cropGrowthHome.urlString}"
+										oncomplete="linkagebinfoid(data);">
+										<a:actionparam name="baseId" assignTo="#{cropGrowthHome.baseId}" />
+									</a:jsFunction>
+									<a:jsFunction name="loginTunnel"
+										action="#{cropGrowthHome.loginTunnel}"
+										
+										data="#{cropGrowthHome.airTempFolt}_#{cropGrowthHome.airHumidityFolt}_#{cropGrowthHome.soilTempFolt}_#{cropGrowthHome.soilHumidityFolt}_#{cropGrowthHome.illuminationFolt}_#{cropGrowthHome.co2Folt}_#{cropGrowthHome.tickSize}_#{cropGrowthHome.airTFlag}_#{cropGrowthHome.str}_#{cropGrowthHome.soilPhFolt}_#{cropGrowthHome.soilEcFolt}"
+										oncomplete="dateimg(data);">
+										<a:actionparam name="tunnelInfoId"
+											assignTo="#{cropGrowthHome.tunnelInfoId}" />
+										<a:actionparam name="dateType"
+											assignTo="#{cropGrowthHome.dateType}" />
+									</a:jsFunction>
+								</a:form>
+		<!--右边结束-->
+	</ui:define>
+</ui:composition>

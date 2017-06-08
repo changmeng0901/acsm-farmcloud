@@ -1,0 +1,1137 @@
+﻿<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+    <title>一键购买</title>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/bootstrap/skinBlue.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/bootstrap/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/commons/style.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/commons/commons.css"/>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/weChart.css" />
+    
+#{weChatHome.init()}
+<td valign="top">
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade in w600na" style="display: none;">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+	      </div>
+	      <div class="modal-body">
+	       <span id="productMsg">*号部分为必填项！</span>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+	      </div>
+	    </div>
+	  </div>
+	</div> 
+  <div class="weChart">
+    <div class="breadNav_wap clear">
+        <div class="breadNav_lt"><a href="#">增值服务</a><span>&gt;</span><strong>一键购买</strong></div>
+        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+            <ul class="resumeList clear">
+                <li >
+                    <a href="/purchase/purchase.seam"><img src="#{request.contextPath}/asset/images/purchase/purchase_icon1.png"/><span>一键购买</span></a>
+                </li>
+                <li>
+                    <a href="/purchase/OrderOperateList.seam"><img src="#{request.contextPath}/asset/images/purchase/purchase_icon2.png" /><span>订单管理</span></a>
+                </li>
+                <li class="cur">
+                    <a href="/purchase/weChat.seam"><img src="#{request.contextPath}/asset/images/purchase/wechart_icon_set.jpg" /><span >一键购配置</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <ul class="nav nav-tabs wechat-navtab" role="tablist" id="myTab">
+		<li class="active"><a href="#home" role="tab" data-toggle="tab" id="homeTab" ><i class="icon-inset"></i>首页设置</a></li>
+		<li><a href="#settings" role="tab" data-toggle="tab" id="weChatTab" ><i class="icon-weset"></i>微信设置</a></li>
+	</ul>
+	<div class="tab-content">
+		<div class="tab-pane active" id="home">
+			<!-- 首页、微信设置主体 -->
+			<div class="setting-main-wrap">
+				<div class="setting-content">
+					<!--首页设置-->
+					<div class="index-setting">
+						<div class="set-title">首页设置</div>
+						<div class="set-body">
+							<ul class="set-list">
+								<li class="set-item">
+									<div class="item-box">
+										<img src="#{request.contextPath}/asset/images/purchase/wechart_icon_set1.png"/>头部图片：
+										<div class="fr">
+											<h:inputHidden value="#{weChatHome.topImg}" id="topSetHide"/>
+											<div class="used-select">
+												<div class="check_mask" onclick="inputCheck('topPicCheck')"></div>
+												<input class="iCheck" type="checkbox" starusing="unchecked"   id="topPicCheck"/>启用
+											</div>
+											<div class="to-set" onclick="showSettingModal(1)">设置&gt;</div>
+										</div>
+									</div>
+								</li>
+								<li class="set-item">
+									<div class="item-box">
+										<img src="#{request.contextPath}/asset/images/purchase/wechart_icon_set2.png"/>LOGO：
+										<div class="fr">
+											<div class="used-select">
+												<h:inputHidden value="#{weChatHome.logoImg}" id="logoSetHide"/>
+												<div class="check_mask" onclick="inputCheck('logoCheck')"></div>
+												<input class="iCheck" type="checkbox" starusing="unchecked"   id="logoCheck"/>启用
+											</div>
+											<div class="to-set" onclick="showSettingModal(2)">设置&gt;</div>
+										</div>
+									</div>
+								</li>
+								<li class="set-item">
+									<div class="item-box">
+										<img src="#{request.contextPath}/asset/images/purchase/wechart_icon_set3.png"/>商城名称：<span class="txt-name" id="mallNameSpan">#{weChatHome.mallName}</span>
+										<div class="fr">
+											<div class="used-select">
+												<div class="check_mask" onclick="inputCheck('nameCheck')"></div>
+												<input class="iCheck" type="checkbox" starusing="unchecked"   id="nameCheck"/>启用
+											</div>
+											<div class="to-set" onclick="showSettingModal(3)">设置&gt;</div>
+										</div>
+									</div>
+								</li>
+								<li class="set-item">
+									<div class="item-box">
+										<img src="#{request.contextPath}/asset/images/purchase/wechart_icon_set1.png"/>焦点图：
+										<div class="fr">
+											<div class="used-select">
+												<h:inputHidden value="#{weChatHome.bannerImg}" id="bannerSetHide"/>
+												<div class="check_mask" onclick="inputCheck('bannerCheck')"></div>
+												<input class="iCheck" type="checkbox" starusing="unchecked"   id="bannerCheck"/>启用
+											</div>
+											<div class="to-set" onclick="showSettingModal(4)">设置&gt;</div>
+										</div>
+									</div>
+								</li>
+								<li class="set-item">
+									<div class="item-box">
+										<img src="#{request.contextPath}/asset/images/purchase/wechart_icon_set1.png"/>个人中心背景图：
+										<div class="fr">
+											<div class="used-select">
+												<h:inputHidden value="#{weChatHome.backgroundImg}" id="bgSetHide"/>
+												<div class="check_mask" onclick="inputCheck('bgPicCheck')"></div>
+												<input class="iCheck" type="checkbox" starusing="unchecked"   id="bgPicCheck"/>启用
+											</div>
+											<div class="to-set" onclick="showSettingModal(5)">设置&gt;</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<!--分享设置-->
+					<div class="wechart-setting">
+						<div class="we-title">分享设置</div>
+						<div class="we-body">
+							<dl class="share-dl clearfix">
+								<dt>分享标题：</dt>
+								<dd>
+									<input class="form-control w290" type="text" value="#{weChatHome.shareTitle}"  maxlength="20" id="homeShareTile"/>
+								</dd>
+							</dl>
+							<dl class="share-dl clearfix">
+								<dt>分享内容：</dt>
+								<dd>
+									<textarea class="form-control share-area"  id="homeShareDesc">#{weChatHome.shareDescrip}</textarea>
+									<img class="code-pic" src="#{request.contextPath}/GenerateCodeImage?enterpriseId=#{sessionTake.enterpriseInfoId}&amp;type=9" />
+								</dd>
+							</dl>
+							<dl class="share-dl clearfix">
+								<dt>分享链接：</dt>
+								<dd>
+									<input class="form-control w290 fl" id="share-indexlink" type="text" readonly="true" value="#{weChatHome.QRurl}" />
+									<div class="btn btn-default copy-btn" id="copy-indexlink"><img src="#{request.contextPath}/asset/images/panorama/panorama_copylinL.png" />复制链接</div>
+								</dd>
+							</dl>
+						</div>
+					</div>
+				</div>
+				<div class="preview-content">
+					<div class="preview-setting">
+						<div class="pre-title">实时预览</div>
+						<div class="pre-body">
+							<iframe class="preview-iframe" id="previewIframe" src="#{request.contextPath}/purchase/HomePreview.seam"></iframe>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h:form id="homeForm">
+				<h:inputHidden value="#{weChatHome.topFlag}"  id="topFlg"/>
+				<h:inputHidden value="#{weChatHome.topImg}"  id="topImg"/>
+				<h:inputHidden value="#{weChatHome.logoFlag}"  id="logoFlg"/>
+				<h:inputHidden value="#{weChatHome.logoImg}"  id="logoImg"/>
+				<h:inputHidden value="#{weChatHome.mallNameFlag}"  id="mallNameFlag"/>
+				<h:inputHidden value="#{weChatHome.mallName}"  id="mallName"/>
+				<h:inputHidden value="#{weChatHome.bannerFlag}"  id="bannerFlag"/>
+				<h:inputHidden value="#{weChatHome.bannerImg}"  id="bannerImg"/>
+				<h:inputHidden value="#{weChatHome.bgFlag}"  id="backgroundFlag"/>
+				<h:inputHidden value="#{weChatHome.backgroundImg}"  id="backgroundImg"/>
+				<h:inputHidden value="#{weChatHome.shareTitle}"  id="shareTitle"/>
+				<h:inputHidden value="#{weChatHome.shareDescrip}"  id="shareDescrip"/>
+				<h:inputHidden value="#{weChatHome.tabType}" id="tabType"/>
+				<h:commandButton id="commit" styleClass="btn btn-primary fl"  style="display:none"  value="提交"  action="#{weChatHome.purchaseHomeSave()}">
+    			</h:commandButton> 
+			</h:form>
+			<!-- 首页、微信设置主体 end -->
+			<div class="align-center pt40 pb40">
+				<button class="btn btn-primary mr10" onclick="homeSaveCheck()">保存</button>
+				<button class="btn btn-default">取消</button>
+			</div>
+			<!--btn end-->
+		</div>
+		<div class="tab-pane" id="settings">
+			<!-- 微信设置 -->
+			<h:form id="weixin"  enctype="multipart/form-data">
+			   <div class="chartBox">
+			     <div class="chartLogo">
+			       <img src="#{request.contextPath}/asset/images/purchase/weChat/wechart.png" />
+			     </div>
+			     <div class="inner clear">
+			       <div class="leftBox fl">
+			         <div class="leftChart">
+			           <div class="line clear">
+			             <span class="fl item">商户号</span>
+			             <h:inputHidden value="#{weChatHome.weinxinSettinId}"  id="weinxinSettinId"/>
+			             <h:inputText  id="customerNum" styleClass="form-control fl" value="#{weChatHome.mchId}"/>
+			             <span class="fr question"><img src="#{request.contextPath}/asset/images/purchase/weChat/question.png" /></span>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl item">AppID(应用ID)</span>
+			               <h:inputText  id="appID" styleClass="form-control fl" value="#{weChatHome.appID}"/>
+			             <span class="fr question"><img src="#{request.contextPath}/asset/images/purchase/weChat/question.png" /></span>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl item">AppSecret(应用密钥)</span>
+			             <div class="fl blueBtn"  onclick="check()" id="appDiv">显示密钥</div>
+			              <h:inputText id="appSeciet" styleClass="form-control fl" value="#{weChatHome.appSeciet}" style="display:none"/>
+			             <span class="fr question"><img src="#{request.contextPath}/asset/images/purchase/weChat/question.png" /></span>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl item">API密钥</span>
+			             <div class="fl blueBtn"   onclick="check()" id="apiDiv">显示密钥</div>
+			               <h:inputText  id="mchSecret" class="form-control fl" value="#{weChatHome.mchSecret}" style="display:none"/>
+			             <span class="fr question"><img src="#{request.contextPath}/asset/images/purchase/weChat/question.png" /></span>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl item">授权文件</span> 
+			             <s:fileUpload id="authorizationFile" size="40"
+							accept="text/plain"
+							contentType="text/plain"
+							fileName="#{weChatHome.fileName}"
+							data="#{weChatHome.fileData}"
+							onchange="previewImage('fileUrlInput',this);">
+						</s:fileUpload>
+			             <span class="fr question"><img src="#{request.contextPath}/asset/images/purchase/weChat/question.png" /></span>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl item">授权文件</span> 
+			             <input type="txt" value="#{weChatHome.dominUrl}/purchase/#{weChatHome.txtName}" class="form-control fl web" readOnly="true" id="fileUrlInput"/>
+			             <div class="fl blueBtn ml5" id="copy" >复制</div>
+			           </div>
+			         </div>
+			       </div>
+			   
+			       <div class="rightBox fl">
+			         <div class="rightChart">
+			           <h4>操作说明看这里，全部配置好才可以正常使用微信支付</h4>
+			           <div class="line clear">
+			             <span class="fl pic">
+			               <img src="#{request.contextPath}/asset/images/purchase/weChat/nub1.png" />
+			             </span>
+			             <div class="fl txt">
+			               <p class="clear">
+			                 <span class="fl c66">注册微信公众平台服务号</span>
+			                 <span class="fr cbb" style="cursor:pointer" onclick="openWindow('http://kf.qq.com/faq/120911VrYVrA151013MfYvYV.html')">怎样注册？</span>
+			               </p>
+			               <p class="c9f">微信支付需要将钱支付至您的微信公众服务号内。</p>
+			             </div>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl pic">
+			               <img src="#{request.contextPath}/asset/images/purchase/weChat/nub2.png" />
+			             </span>
+			             <div class="fl txt">
+			               <p class="clear">
+			                 <span class="fl c66">申请微信认证</span>
+			                 <span class="fr cbb" style="cursor:pointer" onclick="openWindow('http://kf.qq.com/faq/120911VrYVrA150929Fjqeei.html')">怎样申请？</span>
+			               </p>
+			               <p class="c9f">使用微信支付必须进行微信认证，微信认证微信官方会收取费用，目前为300元/年。</p>
+			             </div>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl pic">
+			               <img src="#{request.contextPath}/asset/images/purchase/weChat/nub3.png" />
+			             </span>
+			             <div class="fl txt">
+			               <p class="clear">
+			                 <span class="fl c66">申请微信支付</span>
+			                 <span class="fr cbb" style="cursor:pointer" onclick="openWindow('http://kf.qq.com/faq/120911VrYVrA150910QzeqEz.html')">怎样申请？</span>
+			               </p>
+			               <p class="c9f">使用微信支付需要先进行申请，只有通过微信认证的用户才可以申请微信支付。</p>
+			             </div>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl pic">
+			               <img src="#{request.contextPath}/asset/images/purchase/weChat/nub4.png" />
+			             </span>
+			             <div class="fl txt">
+			               <p class="clear">
+			                 <span class="fl c66">设置微信支付授权目录</span>
+			                 <span class="fr cbb" style="cursor:pointer" data-toggle="modal" data-target="#setPay">怎样设置？</span>
+			               </p>
+			               <p class="c9f">配置支付授权目录。</p>
+			             </div>
+			           </div>
+			           <div class="line clear">
+			             <span class="fl pic">
+			               <img src="#{request.contextPath}/asset/images/purchase/weChat/nub5.png" />
+			             </span>
+			             <div class="fl txt">
+			               <p class="clear">
+			                 <span class="fl c66">设置网页授权域名</span>
+			                 <span class="fr cbb" style="cursor:pointer" data-toggle="modal" data-target="#empower">怎样设置？</span>
+			               </p>
+			               <p class="c9f">配置网页授权域名。</p>
+			             </div>
+			           </div>
+			         </div>
+			       </div>
+			     </div>
+			   </div>
+			   <div class="btns" style=" text-align:center;">
+			   <h:inputHidden value="#{weChatHome.tabType}" id="tabType"/>
+			   	<h:commandButton id="savebutton" action="#{weChatHome.save()}"  value="确认" styleClass="btn btn-primary mr10" style="display:none"/> 
+			   </div>
+			</h:form>
+			<div style="text-align:center;padding:40px 0;">
+				<button  class="btn btn-primary" onclick="checkInput()" >确认</button> 
+				<button type="button" class="btn btn-default">返回</button>
+			</div>
+			<!-- 微信设置 end -->
+		</div>
+	</div>
+    <!-- tab-content  end -->
+    <!-- 显示密钥弹窗 -->
+    <div class="modal fade" id="show" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog showBox">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" style="margin-top: 0;"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">密钥</h4>
+          </div>
+          <div class="modal-body">
+            <p class="tip"><img src="#{request.contextPath}/asset/images/purchase/weChat/redTip.png" />AppSecret与API密钥为重要信息，请不要外泄！</p>
+            <p class="txt">短信验证码将发送至企业管理员的手机(#{weChatHome.phoneNumber})</p>
+            <p class="yzCode" style="cursor:pointer" onclick="time(this)">发送验证码</p>
+            <div class="message"><span>*</span>短信验证码<input id="code" type="text" class="form-control" value=""/></div>
+          </div>
+          <div class="modal-footer" style="text-align:center;">
+            <button type="button" class="btn btn-primary" onclick="confirmCode()">确认</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   <!-- 显示密钥弹窗 -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog showBox">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" style="margin-top: 0;"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">确认信息</h4>
+          </div>
+          <div class="modal-body">
+          <table>
+          	<tr>
+          		<td>商户号：</td>
+          		<td id="shh"></td>
+          	</tr>
+          	<tr>
+          		<td>AppID(应用ID)：</td>
+          		<td id="yyid"></td>
+          	</tr>
+          	<tr>
+          		<td>AppSecret(应用密钥)：</td>
+          		<td id="yymy"></td>
+          	</tr>
+          	<tr>
+          		<td>API密钥：</td>
+          		<td id="apimy"></td>
+          	</tr>
+          </table>
+          </div>
+          <div class="modal-footer" style="text-align:center;">
+            <button type="button" class="btn btn-primary" onclick="save()">确认</button>
+            <button type="button" class="btn btn-default" onclick="$('#confirmModal').modal('hide');">返回</button>
+          </div>
+        </div>
+      </div>
+    </div>
+     <!-- 授权弹窗 -->
+      <div class="modal fade" id="empower" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog payBox">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" style="margin-top: 0;"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">如何设置微信支付网页授权域名</h4>
+            </div>
+            <div class="modal-body">
+              <div class="carsouel" id="carsouel1">
+                <ul class="imageList">
+                  <li class="sliders">
+                    <div class="fl payLeft">
+                      <div class="pageNub">1<span>/5</span></div>
+                      <p>
+                        打开微信公众平台官网：<a href="https://mp.weixin.qq.com/">https://mp.weixin.qq.com/</a>
+                      </p>
+                      <p>输入您的账号密码，点击登录。</p>
+                    </div>
+                    <div class="payRight fl">
+                      <img src="#{request.contextPath}/asset/images/purchase/weChat/pay1.jpg" />
+                    </div>
+                  </li>
+                  <li class="sliders">
+                    <div class="fl payLeft">
+                      <div class="pageNub">
+                        2<span>/5</span>
+                      </div>
+                      <p>
+                        点击公“众号设置”，<br/>
+                        选择“功能设置”，<br/>
+                        点击“网页授权域名”后面的“设置”。
+                      </p>
+                    </div>
+                    <div class="payRight fl">
+                      <img src="#{request.contextPath}/asset/images/purchase/weChat/pay2.jpg" />
+                    </div>
+                  </li>
+                  <li class="sliders">
+                    <div class="fl payLeft">
+                      <div class="pageNub">
+                        3<span>/5</span>
+                      </div>
+                      <p>
+                        点击弹出页面的蓝色字体文件名，<br/>
+                        点击后浏览器会自动下载该文件<br/>
+                      </p>
+                    </div>
+                    <div class="payRight fl">
+                      <img src="#{request.contextPath}/asset/images/purchase/weChat/pay3.jpg" />
+                    </div>
+                  </li>
+                  <li class="sliders">
+                    <div class="fl payLeft">
+                      <div class="pageNub">
+                        4<span>/5</span>
+                      </div>
+                      <p>
+                        在微信配置页面，将刚刚下载的文件上传至“授权文件”位置。
+                      </p>
+                      <p style="margin-top:20px;">成功上传后，点击下面生成的路径地址后面的“复制”按键，将路径复制。</p>
+                    </div>
+                    <div class="payRight fl">
+                      <img src="#{request.contextPath}/asset/images/purchase/weChat/pay4.jpg" />
+                    </div>
+                  </li>
+                  <li class="sliders">
+                    <div class="fl payLeft">
+                      <div class="pageNub">
+                        5<span>/5</span>
+                      </div>
+                      <p>
+                        将上一步复制的路径地址，粘贴至第三步页面的输入框内点击确认进行保存。
+                      </p>
+                    </div>
+                    <div class="payRight fl">
+                      <img src="#{request.contextPath}/asset/images/purchase/weChat/pay5.jpg" />
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="newbtns">
+                <span class="leftBtn"><img src="#{request.contextPath}/asset/images/purchase/weChat/leftBtn.jpg" /></span>
+                <span class="rightBtn"><img src="#{request.contextPath}/asset/images/purchase/weChat/rightBtn.jpg" /></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 授权弹窗 -->
+    <!-- 支付设置弹窗 -->
+    <div class="modal fade" id="setPay" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog payBox">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" style="margin-top: 0;"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">如何设置微信支付网页授权域名</h4>
+          </div>
+          <div class="modal-body">
+            <div class="carsouel" id="carsouel2">
+              <ul class="imageList">
+                <li class="sliders">
+                  <div class="fl payLeft">
+                    <div class="pageNub">1<span>/4</span></div>
+                    <p>
+                      打开微信公众平台官网：<a href="https://mp.weixin.qq.com/">https://mp.weixin.qq.com/</a>
+                    </p>
+                    <p>输入您的账号密码，点击登录。</p>
+                  </div>
+                  <div class="payRight fl">
+                    <img src="#{request.contextPath}/asset/images/purchase/weChat/pay1.jpg" />
+                  </div>
+                </li>
+                <li class="sliders">
+                  <div class="fl payLeft">
+                    <div class="pageNub">
+                      2<span>/4</span>
+                    </div>
+                    <p>
+                      点击微信支付
+                    </p>
+                  </div>
+                  <div class="payRight fl">
+                    <img src="#{request.contextPath}/asset/images/purchase/weChat/empower2.jpg" />
+                  </div>
+                </li>
+                <li class="sliders">
+                  <div class="fl payLeft">
+                    <div class="pageNub">
+                      3<span>/4</span>
+                    </div>
+                    <p>
+                      点击“开发配置”<br/>点击“支付授权目录”后面的修改
+                    </p>
+                  </div>
+                  <div class="payRight fl">
+                    <img src="#{request.contextPath}/asset/images/purchase/weChat/empower3.jpg" />
+                  </div>
+                </li>
+                <li class="sliders">
+                  <div class="fl payLeft">
+                    <div class="pageNub">
+                      4<span>/4</span>
+                    </div>
+                    <p>
+                      在输入框内输入
+                    </p>
+                    <div class="copyBox clear">
+                      <input type="txt" value="#{weChatHome.dominUrl}/wxpay/#{weChatHome.txtName}" class="form-control fl web2"/>
+                      <div class="fl smallBlue" id="copy2">复制</div>
+                    </div>
+                    <p>建议直接复制，避免手写防止填写错误。</p>
+                    <p>填写完成点击确定进行保存。</p>
+                  </div>
+                  <div class="payRight fl">
+                    <img src="#{request.contextPath}/asset/images/purchase/weChat/empower4.jpg" />
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="newbtns">
+              <span class="leftBtn"><img src="#{request.contextPath}/asset/images/purchase/weChat/leftBtn.jpg" /></span>
+              <span class="rightBtn"><img src="#{request.contextPath}/asset/images/purchase/weChat/rightBtn.jpg" /></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!--头部图片 modal-->
+    <div class="modal fade" id="headerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog header-dialog" role="document">
+	<div class="modal-content">
+	    <div class="modal-header">
+			<h4 class="modal-title fl">头部图片</h4>
+			<i class="modal-close" data-dismiss="modal" aria-label="Close"></i>
+	    </div>
+	    <div class="modal-body">
+	    	<div class="header-file-block " id="header-file-block">
+	    		<h:inputHidden value="" id="headImgsHide"/>
+	    		<iframe class="icon100" id="header-iframe" src="#{request.contextPath}/asset/js/ossfileimg/iframefiles.html" name="header-file-block" frameborder="0"></iframe>
+	    	</div>
+	    </div>
+	    <div class="modal-footer">
+			<button type="button" class="btn btn-primary mr5" onclick="saveTop()">保存</button>
+			<button type="button" class="btn btn-default" onclick="cancleTop()">取消</button>
+	    </div>
+	</div>
+    </div>
+    </div>
+    <!--logo modal-->
+    <div class="modal fade" id="logoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog logo-dialog" role="document">
+	<div class="modal-content">
+	    <div class="modal-header">
+			<h4 class="modal-title fl">LOGO</h4>
+			<i class="modal-close" data-dismiss="modal" aria-label="Close"></i>
+	    </div>
+	    <div class="modal-body">
+	    	<div class="header-file-block " id="logo-file-block">
+	    		<div id="upPicLi" class="fileimg_btn" >
+		            <div id="container1">
+						<div id="selectfiles1" class="">
+							<img src="#{request.contextPath}/asset/js/ossfileimg/oss_fileimg/file_btn100_2.jpg"  style="cursor:pointer" width="128" height="128" />
+						</div>
+						<a style="display: none" id="postfiles1" href="javascript:void(0);" class='btn' onclick="apply(1,6);"></a> 
+						<a style="display: none" id="callback1" href="javascript:void(0);" class='btn' onclick="callback(1);"></a>
+					</div>
+				</div>
+				<div id="ossfile1"></div>
+	    	</div>
+	    </div>
+	    <div class="modal-footer">
+			<button type="button" class="btn btn-primary mr5" onclick="saveLogo()">保存</button>
+			<button type="button" class="btn btn-default" onclick="cancleLogo()">取消</button>
+	    </div>
+	</div>
+    </div>
+    </div>
+    <!--banner modal-->
+	<div class="modal fade" id="bannerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog banner-dialog" role="document">
+	<div class="modal-content">
+	    <div class="modal-header">
+			<h4 class="modal-title fl">焦点图设置</h4>
+			<i class="modal-close" data-dismiss="modal" aria-label="Close"></i>
+	    </div>
+	    <div class="modal-body">
+	    	<ul class="banner-set-list">
+	    		<li class="bannerLi">
+	    			<p class="banner-name">焦点图1</p>
+	    			<div class="banner-file" id="banner-file-block0" aa="iframe">
+			    		<img class="scimg" src="" />
+			    		<iframe class="icon100" id="banner-iframe0" src="#{request.contextPath}/asset/js/ossfileimg/iframefiles.html" name="banner-file-block0" frameborder="0"></iframe>
+			    	</div>
+			    	<div class="item-rt">
+			    		<p>跳转链接</p><input type="text" class="form-control bannerInput" maxlength="100" value="http://"/><i class="add-banner">添加</i><i class="delete-banner">删除</i>
+			    	</div>
+	    		</li>
+	    	</ul>
+	    </div>
+	    <div class="modal-footer">
+			<button type="button" class="btn btn-primary mr5" onclick="saveBanner()">保存</button>
+			<button type="button" class="btn btn-default" onclick="cancleBanner()">取消</button>
+	    </div>
+	</div>
+    </div>
+    </div>
+    <!--banner modal end-->
+    <!--背景图 modal-->
+    <div class="modal fade" id="backGroundModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog logo-dialog" role="document">
+	<div class="modal-content">
+	    <div class="modal-header">
+			<h4 class="modal-title fl">背景图</h4>
+			<i class="modal-close" data-dismiss="modal" aria-label="Close"></i>
+	    </div>
+	    <div class="modal-body">
+	    	<div class="header-file-block " id="bg-file-block">
+	    		<div id="upPicLi2" class="fileimg_btn" >
+		            <div id="container2">
+						<div id="selectfiles2" class="">
+							<img src="#{request.contextPath}/asset/js/ossfileimg/oss_fileimg/file_btn100_2.jpg"  style="cursor:pointer" width="128" height="128" />
+						</div>
+						<a style="display: none" id="postfiles2" href="javascript:void(0);" class='btn' onclick="apply(2,6);"></a> 
+						<a style="display: none" id="callback2" href="javascript:void(0);" class='btn' onclick="callback(2);"></a>
+					</div>
+				</div>
+				<div id="ossfile2"></div>
+	    	</div>
+	    </div>
+	    <div class="modal-footer">
+			<button type="button" class="btn btn-primary mr5" onclick="saveBG()">保存</button>
+			<button type="button" class="btn btn-default" onclick="cancleBG()">取消</button>
+	    </div>
+	</div>
+    </div>
+    </div>
+     <!--背景图 modal end-->
+     
+      <!--商品名称 modal-->
+    <div class="modal fade" id="mallNameModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog logo-dialog" role="document">
+	<div class="modal-content">
+	    <div class="modal-header">
+			<h4 class="modal-title fl">商城名称</h4>
+			<i class="modal-close" data-dismiss="modal" aria-label="Close"></i>
+	    </div>
+	    <div class="modal-body">
+	    	<div class="header-file-block " id="bg-file-block">
+	    		<input type="text" class="form-control" maxlength="20" id="mallNameChang"/>
+	    	</div>
+	    </div>
+	    <div class="modal-footer">
+			<button type="button" class="btn btn-primary mr5" onclick="saveMallName()">保存</button>
+			<button type="button" class="btn btn-default" onclick="cancleMallName()">取消</button>
+	    </div>
+	</div>
+    </div>
+    </div>
+     <!--商品名称 modal end-->
+</td>    
+<a:form>
+	<a:jsFunction name="messageSend" action="#{weChatHome.messageSend()}" oncomplete="">
+	</a:jsFunction>
+	<a:jsFunction name="verifyCode" action="#{weChatHome.verifyCode()}" data="#{weChatHome.mesg}"  oncomplete="confirmCodeComplete(data)">
+		<a:actionparam name="verifCode" assignTo="#{weChatHome.verifCode}"/>
+	</a:jsFunction>
+	<a:jsFunction name="queryWeixininfoSetting" action="#{weChatHome.queryWeixininfoSetting()}" data="#{weChatHome.weixinInfoPaySetting}"  oncomplete="weixinInfoComplete(data)">
+		<a:actionparam name="weinxinSettinId" assignTo="#{weChatHome.weinxinSettinId}"/>
+	</a:jsFunction>
+	<a:jsFunction name="queryWeixininfo" action="#{weChatHome.queryWeixininfoSetting()}" data="#{weChatHome.weixinInfoPaySetting}"  oncomplete="checkComplete(data)">
+		<a:actionparam name="weinxinSettinId" assignTo="#{weChatHome.weinxinSettinId}"/>
+	</a:jsFunction>
+	<a:jsFunction name="checkPhone" action="#{weChatHome.checkPhone()}" data="#{weChatHome.mesg}"  oncomplete="checkComple(data)">
+	</a:jsFunction>
+</a:form>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/purchase/bootstrap/icheck.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/purchase/weChat.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/purchase/purchasePicUpload.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	  var showFlag = false;
+		var $ =  jQuery.noConflict();   
+		var wait  = 60;
+	var oss_url = "#{dataDicConstant.getOssUrl()}";
+	var entId='#{sessionTake.getEnterpriseInfoId()}';
+	var tabType = "#{weChatHome.tabType}";
+	if(tabType === "0"){
+		$("#homeTab").click();
+	}else{
+		$("#weChatTab").click();
+	}
+	  
+		$(document).ready(function() {
+			var mesg = "#{weChatHome.mesg}";
+			  if(mesg != ""){
+				  document.getElementById("productMsg").innerHTML = mesg;
+					jquery("#myModal").modal('show');
+				}
+		    $('#copy').on('click',function(){
+		      $('.web').select();
+		      
+		      if(document.execCommand("Copy",false,null)){
+		        document.execCommand("Copy",false,null);
+		        alert('已复制此内容');
+		      }else{
+		        document.execCommand("selectAll");
+		       alert('现在可以复制内容了');
+		      }
+		
+		    });
+		    $('#copy2').on('click',function(){
+			      $('.web2').select();
+			      
+			      if(document.execCommand("Copy",false,null)){
+			        document.execCommand("Copy",false,null);
+			        alert('已复制此内容');
+			      }else{
+			        document.execCommand("selectAll");
+			       alert('现在可以复制内容了');
+			      }
+			
+			    });
+		    $('#copy2').on('click',function(){
+		        $('.web2').select();
+		        
+		        if(document.execCommand("Copy",false,null)){
+		          document.execCommand("Copy",false,null);
+		          // alert('已复制此内容');
+		        }else{
+		          document.execCommand("selectAll");
+		          // alert('现在可以复制内容了');
+		        }
+		      });
+		       slider("#carsouel1");
+		       slider("#carsouel2");
+		       slider("#carsouel3");
+	
+		       $('.merPop').css({
+		        'width' : $(window).width(),
+		        'height' : $(window).height()
+		       });
+	
+		       $('.newpop').click(function() {
+		         $('.merPop').fadeIn(500);
+		         $(this).siblings('.merContent').show(800);
+		       });
+		       $('.merPop').click(function() {
+		         $(this).fadeOut();
+		         $('.merContent').hide();
+		       });
+		       
+	        //首页设置分享链接
+			$('#copy-indexlink').click(function(){
+				$('#share-indexlink').select();
+			    if(document.execCommand("Copy",false,null)){
+			        document.execCommand("Copy",false,null);
+			        alert('已复制此内容');
+			    }else{
+			        document.execCommand("selectAll");
+			        alert('现在可以复制内容了');
+			    }
+			})
+			//banner设置 --添加
+			$("body").on("click",".add-banner",function(){
+				var _index = $('.banner-set-list li').length;
+				if((_index+1) >= 2){
+					$('.banner-set-list li').find("i.delete-banner").show();
+				}
+				//alert(_index+'_index')
+				var bannerStr = 
+					'<li class="bannerLi">'+
+		    			'<p class="banner-name">焦点图'+_index+'</p>'+
+		    			'<div class="banner-file" id="banner-file-block'+_index+'" aa="iframe">'+
+				    		'<img class="scimg" src="" />'+
+				    		'<iframe class="icon100" id="banner-iframe'+_index+'" src="#{request.contextPath}/asset/js/ossfileimg/iframefiles.html" name="banner-file-block'+_index+'" frameborder="0"></iframe>'+
+				    	'</div>'+
+				    	'<div class="item-rt">'+
+				    		'<p>跳转链接</p><input type="text" class="form-control bannerInput" value="http://"/><i class="add-banner">添加</i><i class="delete-banner">删除</i>'+
+				    	'</div>'+
+		    		'</li>';
+		    	//在被选元素之后插入内容
+				$(this).parents('li').after(bannerStr);
+				$('.banner-set-list li').each(function(index,elem){
+					//删除后banner序号重新排序
+					$(elem).find('.banner-name').html('焦点图'+(index+1));
+				});
+			});
+			//banner设置-- 删除
+			$("body").on("click",".delete-banner",function(){
+			 	var _index = $(this).parents('li').index();
+				$('.banner-set-list li').eq(_index).remove();
+				$('.banner-set-list li').each(function(index,elem){
+					//删除后banner序号重新排序
+					$(elem).find('.banner-name').html('焦点图'+index);
+				});
+				var lisize = $('ul.banner-set-list').find("li.bannerLi").length;
+				if(lisize == 1){
+					$('.banner-set-list li').find("i.delete-banner").hide();
+				}
+			});
+			jQuery('input[class="iCheck"]').iCheck({
+				checkboxClass: 'icheckbox_minimal-blue'
+			});
+
+			initHome();
+		});
+		//------------------------------------------------------document end
+		//上传图片-- iframe页面需要调用的函数
+		function updateFatherPic(_obj,_url){
+			if(_obj == 'header-file-block'){
+				//如果是头部图片，则为多张上传
+				jQuery('#'+_obj).addClass('opc0');
+				jQuery('#'+_obj +' iframe').before('<div class="imgdiv"><img class="scimg" src="'+_url+'" /><span class="closed" onclick="delHeadImg(this)"></span></div>');
+				if(jQuery("#header-file-block").find("img.scimg").length == 5){
+					jQuery("#header-iframe").hide();
+				}
+				var imgs = "";
+				jQuery("#header-file-block").find("img.scimg").each(function(){
+					var imgUrl = jQuery(this).attr("src");
+					imgs += imgUrl;
+				});
+				jQuery("#headImgsHide").val(imgs);
+			}else if(_obj == 'logo-file-block'){
+				//如果是logo，则为单张上传
+				jQuery('#'+_obj).addClass('opc0');
+				jQuery('#'+_obj +' iframe').before('<div class="imgdiv"><img class="scimg" src="'+_url+'" /><span class="closed" onclick="delHeadImg(this)"></span></div>');
+				
+			}else if(jQuery('#'+_obj).attr('aa') == 'iframe'){
+				//如果是banner
+				jQuery('#'+_obj).addClass('opc0');
+				jQuery('#'+_obj +' iframe').before('<img class="scimg bannerPic" src="'+_url+'" />');
+			}
+		}
+			  function slider(name){
+				    var $id = $(name);
+				    var $imageList = $id.find('.imageList');
+				    var $imageLis = $id.find(".imageList li");
+				    var $leftBtn = $id.siblings('.newbtns').children('.leftBtn');
+				    var $rightBtn = $id.siblings('.newbtns').children(".rightBtn");
+				    var num = $imageLis.length;
+				    var w = $imageLis.width();
+				    $imageList.width(num*w);
+				    console.log(num*w);
+				    var nowimg = 0;
+				    $leftBtn.click(function(){
+				        nowimg--;
+				        // alert(nowimg);
+				        if(nowimg < 0){
+				        nowimg = 0;
+				        return;
+				      }
+				        $imageList.css( 'left' , -(w*nowimg));
+				      });
+				    $rightBtn.click(function(){
+				        nowimg++;
+				        // alert(nowimg);
+				        if(nowimg >= num){
+				        nowimg = num-1;
+				        return;
+				      }
+				        $imageList.css( 'left' , -(w*nowimg) );
+				      }); 
+				  }
+	
+				  $(window).resize(function(event) {
+				    $('.merPop').click(function() {
+				       $(this).fadeOut();
+				       $('.merContent').hide();
+				     });
+				  });
+			  //在新页面打开链接
+			  function openWindow(src){
+				window.open(src);
+			  }
+			
+			  //倒计时
+			  function time(obj){
+				if(wait == 0 ){
+					$(obj).html('发送验证码');
+					$(obj).click(function(){
+						time(this);
+					});
+					wait = 60;
+				}else{
+					if(wait == 60){
+						messageSend();
+					}
+					$(obj).removeAttr("onclick");
+					$(obj).html(wait+"s后可重新获取");
+					wait--;
+					setTimeout(function(){
+						time(obj)
+					},1000); 
+				}
+			  }
+	
+			  //确认验证码
+			function confirmCode(){
+				var code = $("#code").val();
+				if(code == ""){
+					alert("请输入验证码！");
+				}else{
+					verifyCode(code);
+				}
+			}
+			  //确认验证码回调
+			function confirmCodeComplete(data){
+				var weinxinSettinId = $("#weixin\\:weinxinSettinId").val();
+				if(data != ""){
+					alert(data);
+				}else{
+					if(weinxinSettinId == "0" || weinxinSettinId == 0){
+						$("#apiDiv").hide();
+						$("#appDiv").hide();
+						$("#weixin\\:appSeciet").show();
+						$("#weixin\\:mchSecret").show();
+						$("#show").modal('hide');
+						showFlag = true;
+					}else{
+						queryWeixininfoSetting(weinxinSettinId);
+					}
+				}
+			}
+	
+			//查询密钥信息回调
+			function weixinInfoComplete(data){
+				$("#apiDiv").hide();
+				$("#appDiv").hide();
+				$("#weixin\\:appSeciet").val(data.appSecret);
+				$("#weixin\\:mchSecret").val(data.mchSecret);
+				$("#weixin\\:appSeciet").show();
+				$("#weixin\\:mchSecret").show();
+				$("#show").modal('hide');
+			}
+	
+			//弹出确认框
+			function showModal(){
+				var appSecret = $("#weixin\\:appSeciet").val();
+				var mchSecret = $("#weixin\\:mchSecret").val();
+				var customerNum = $("#weixin\\:customerNum").val();
+				var appID = $("#weixin\\:appID").val();
+				$("#shh").html(customerNum);
+				$("#yyid").html(appID);
+				if(showFlag){
+					$("#yymy").html(appSecret);
+					$("#apimy").html(mchSecret);
+				}
+				$("#weixin\\:tabType").val(1);
+				$("#confirmModal").modal('show');
+			}
+			//检验属性值
+			function checkInput(){
+				var weinxinSettinId = $("#weixin\\:weinxinSettinId").val();
+				var appSecret = $("#weixin\\:appSeciet").val();
+				var mchSecret = $("#weixin\\:mchSecret").val();
+				if(appSecret == "" || mchSecret == ""){
+					queryWeixininfo(weinxinSettinId);
+				}else{
+					$("#confirmModal").modal('show');
+				}
+			}
+	
+			//检验属性值回调
+			function checkComplete(data){
+				var appSecret = $("#weixin\\:appSeciet").val();
+				var mchSecret = $("#weixin\\:mchSecret").val();
+				if(appSecret == ""){
+					$("#weixin\\:appSeciet").val(data.appSecret);
+				}
+				if(mchSecret == ""){
+					$("#weixin\\:mchSecret").val(data.mchSecret);
+				}
+				showModal();
+			}	
+	
+			//保存
+			function save(){
+				$("#weixin\\:savebutton").click();
+			}		
+	
+			//赋值按钮
+			function jsCopy(){
+				var url = document.getElementById("copy");
+				url.select();
+				document.execCommand("Copy");
+				alert("已复制链接！");
+			}
+	
+			//检测电话
+			function check(){
+				checkPhone();
+			}
+			
+			//检测电话是否存在回调
+			function checkComple(data){
+				if(data != ""){
+					 document.getElementById("productMsg").innerHTML = data;
+						jquery("#myModal").modal('show');
+				}else{
+					jquery("#show").modal('show');
+				}
+			}
+
+			function topCheck(obj){
+				if($(obj).is(':checked')){
+					alert(false);
+				}else{
+					alert(true);
+				}
+			}
+			//一键购首页编辑初始化
+			function initHome(){
+				var topFlag = "#{weChatHome.topFlag}";
+				var logoFlag = "#{weChatHome.logoFlag}";
+				var mallNameFlag = "#{weChatHome.mallNameFlag}";
+				var bannerFlag = "#{weChatHome.bannerFlag}";
+				var bgFlag = "#{weChatHome.bgFlag}";
+				
+				var topImg = $("#topSetHide").val();
+				var logoImg = $("#logoSetHide").val();
+				var bannerJson = $("#bannerSetHide").val();
+				var bgImg = $("#bgSetHide").val();
+
+				if(topFlag == "1"){
+					jQuery("#topPicCheck").iCheck('check');
+				}
+				if(logoFlag == "1"){
+					jQuery("#logoCheck").iCheck('check');
+				}
+				if(mallNameFlag == "1"){
+					jQuery("#nameCheck").iCheck('check');
+				}
+				if(bannerFlag == "1"){
+					jQuery("#bannerCheck").iCheck('check');
+				}
+				if(bgFlag == "1"){
+					jQuery("#bgPicCheck").iCheck('check');
+				}
+
+				$("#header-file-block").find("div.imgdiv").remove();
+				if(topImg != ""){
+					var urlArr = topImg.split(",");
+					for(var i=0;i<urlArr.length;i++){
+						var url = urlArr[i];
+						jQuery('#header-file-block iframe').before('<div class="imgdiv"><img class="scimg" src="'+url+'" /><span class="closed" onclick="delHeadImg(this)"></span></div>');
+					}
+					if(urlArr.length >= 5){
+						$("#header-iframe").hide();
+					}
+				}
+
+				$("#logo-file-block").find("div.imgdiv").remove();
+				if(logoImg != ""){
+					jQuery("#upPicLi").before('<div class="imgdiv"><img class="scimg" src="'+logoImg+'" /><span class="closed" onclick="delLogoImg(this)"></span></div>');
+					jQuery("#upPicLi").hide();
+				}
+
+				if(bannerJson != ""){
+					var json = eval("(" + bannerJson + ")");
+					var arr = json.banner;
+					for(var i=0;i<arr.length;i++){
+						var banner = arr[i];
+						var img = banner.banner_img;
+						var url = banner.banner_url;
+						if(i == 0){
+							$('#banner-file-block0').addClass('opc0');
+							$('#banner-file-block0 iframe').before('<img class="scimg bannerPic" src="'+img+'" />');
+							$('#banner-file-block0').next().find("input").val(url);
+						}else{
+							var _index = $('.banner-set-list li').length;
+							//alert(_index+'_index')
+							var bannerStr = 
+								'<li class="bannerLi">'+
+					    			'<p class="banner-name">焦点图'+_index+'</p>'+
+					    			'<div class="banner-file opc0" id="banner-file-block'+_index+'" aa="iframe">'+
+							    		'<img class="scimg" src="" />'+
+							    		'<img class="scimg bannerPic" src="'+img+'" />' +
+							    		'<iframe class="icon100" id="banner-iframe'+_index+'" src="/asset/js/ossfileimg/iframefiles.html" name="banner-file-block'+_index+'" frameborder="0"></iframe>'+
+							    	'</div>'+
+							    	'<div class="item-rt">'+
+							    		'<p>跳转链接</p><input type="text" class="form-control bannerInput" value="' +url + '"/><i class="add-banner">添加</i><i class="delete-banner">删除</i>'+
+							    	'</div>'+
+					    		'</li>';
+							//在被选元素之后插入内容
+							$('#banner-file-block' + (_index -1)).parent().after(bannerStr);
+							$('.banner-set-list li').each(function(index,elem){
+								//删除后banner序号重新排序
+								$(elem).find('.banner-name').html('焦点'+(index + 1));
+							});
+						}
+					}
+					if(arr.length == 1){
+						$('.banner-set-list li').find("i.delete-banner").hide();
+					}
+				}else{
+					$('.banner-set-list li').find("i.delete-banner").hide();
+				}
+
+				if(bgImg != ""){
+					jQuery("#upPicLi2").before('<div class="imgdiv"><img class="scimg" src="'+bgImg+'" /><span class="closed" onclick="delBGImg(this)"></span></div>');
+					jQuery("#upPicLi2").hide();
+				}
+			}
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>
+
+

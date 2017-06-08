@@ -1,0 +1,483 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+<ui:define name="foot">
+	<!-- 选择基地 开始 -->
+	<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+	<!-- 选择基地 结束 -->  
+	</ui:define>
+<ui:define name="body">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<link href="#{request.contextPath}/asset/css/off.css" rel="stylesheet" type="text/css"></link>
+<link href="#{request.contextPath}/asset/css/supply/BuyingLeads.css" rel="stylesheet" type="text/css" />
+<style>
+  .aa{
+ 	text-align:center;
+  	width:150px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	}
+  .ze_bg21{
+    border-bottom: 1px solid #dddddd;
+    color: #6c6a6b;
+    font-size: 13px;
+    height: 38px;
+    }
+
+</style>
+		<!-- Modal -->
+		<!-- #{saleProductInfoHome.getSaleProductList()} -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <td valign="top">
+       <div class="right_c" style="min-height:30px;">
+            <div class="r_title">
+         		<div class="r_t_l cm_r_t_l"><span>销售工具</span><em>&nbsp;&gt;&nbsp;</em><font	size="3">供货管理</font></div>
+            </div>
+ 			<!-- 主体内容 开始 -->
+            <div class="qgxx_content">
+            	<div class="search_header clear">
+                    <div class="search_blt">
+                        <div class="public-search fl mr5">
+                            <span class="octicon-search02"></span>
+	            			<h:inputText value="#{saleProductInfoHome.searchParam}" id="searchParam" class="form-control nw300 srarchfont fl mr5" style="width:200px;color:#000"/>
+                        <h:commandButton id="search" styleClass="btn btn-primary" onclick="submitSele();" value="搜索" action="/supply/SaleProductInfoList.xhtml"></h:commandButton>
+                        </div> 
+                        <div class="search_selected fl" style="padding:0;">
+                            <dl class="se_selt180 fl">
+                                <dt>产品状态</dt>
+                                <dd class="boot_selected_100">
+                                <h:selectOneMenu class="selectpicker" id="cpzt" value="#{saleProductInfoHome.cpzt}" onchange="cpztxz();">
+                                	<f:selectItem itemValue="全部" itemLabel="全部"/>
+                                	<f:selectItem itemValue="现货" itemLabel="现货"/>
+                                	<f:selectItem itemValue="预售" itemLabel="预售"/>
+                                </h:selectOneMenu>
+                                </dd>
+                            </dl>
+                            <dl class="se_selt180 fl">
+                                <dt>供应类型</dt>
+                                <dd class="boot_selected_100">
+                                <h:selectOneMenu class="selectpicker" id="gylx" value="#{saleProductInfoHome.cpzt}" onchange="gylxxz();">
+                                	<f:selectItem itemValue="全部" itemLabel="全部"/>
+                                	<f:selectItem itemValue="已上架" itemLabel="已上架"/>
+                                	<f:selectItem itemValue="未上架" itemLabel="未上架"/>
+                                </h:selectOneMenu>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="search_brt">
+                            <s:link styleClass="btn btn-success" view="/supply/SaleProductInfoEdit.xhtml" includePageParams="none" propagation="none" style="display: #{s:hasRole('supplyAdd')?'hidden':'none'};float:right" onclick="return checkBase(this)">添加
+								<f:param name="saleProductInfoId"/>
+								<f:param name="chartOrDetails" value="#{saleProductInfoHome.chartOrDetails}"></f:param>
+								<f:param name="pageNum" value="#{saleProductInfoHome.pageNum}"></f:param>
+							</s:link>
+	                    </div>
+                    </div>
+                </div>
+                <div class="sort_way fl">
+                	<p class="btn_tb"><a href="#{request.contextPath}/supply/SaleProductChart.seam">图表</a></p>
+                	<p class="btn_xq dq_cur"><a href="javascript:void(0);"><font style="color: white">详情</font></a></p>
+                </div>
+                <div class="qgxx_lt_content">
+                <!-- 主体左侧 -->
+				<h:panelGroup id="purchaseList">
+                    <!-- 我的供应作物供应详情列表 -->
+                    <ol class="provider_list">
+		             <h:outputText value="" rendered="#{empty saleProductInfoHome.saleProductInfoList}">
+			            <div style="text-align: center;" >
+			        		<img src="#{request.contextPath}/asset/images/warn.png" alt="" style="margin-top:80px;"/>
+			        		<p style="margin-top:15px; margin-bottom:5px; font-size:16px; color:#909090;">暂无供应信息 </p>
+			    		</div>
+		    		</h:outputText>
+		         	 <!-- 有内容时 -->
+		         	 <a4j:repeat value="#{saleProductInfoHome.saleProductInfoList}" var="_supply" rendered="#{not empty saleProductInfoHome.saleProductInfoList}" rowKeyVar="index_">
+                        <li class="pr_items">
+                        <div class="pr_items_block">
+                            <div class="common_list_btns">
+                                <span>
+                                    <s:link propagation="none" includePageParams="none" view="/#{empty from ? 'supply/SaleProductInfo' : from}.xhtml" styleClass="view_btn" id="saleProductInfoViewId" rendered="#{empty from}" title="查看">
+										<f:param name="saleProductInfoId" value="#{_supply.saleProductInfoId}" />
+			                            <f:param name="pageNum" value="#{saleProductInfoHome.pageNum}"/>
+			                            <f:param name="cpzt" value="#{saleProductInfoHome.cpzt}"/>
+			                            <f:param name="gylx" value="#{saleProductInfoHome.gylx}"/>
+			                            <f:param name="searchParam" value="#{saleProductInfoHome.searchParam}"/>
+									</s:link>
+                                </span>
+                                <span>
+                                    <s:link includePageParams="none" propagation="none"  view="/supply/SaleProductInfoEdit.xhtml" onclick="return simple()" styleClass="edit_btn" id="saleProductInfoEdit" rendered="#{empty from}" title="编辑">
+			                           	<f:param name="saleProductInfoId" value="#{_supply.saleProductInfoId}" />
+			                           	<f:param name="pageNum" value="#{saleProductInfoHome.pageNum}"/>
+			                           	<f:param name="cpzt" value="#{saleProductInfoHome.cpzt}"/>
+			                            <f:param name="gylx" value="#{saleProductInfoHome.gylx}"/>
+			                            <f:param name="searchParam" value="#{saleProductInfoHome.searchParam}"/>
+									</s:link>
+                                </span>
+                                <span>
+                                    <s:link propagation="none"  view="/supply/SaleProductInfoEdit.xhtml"   title="删除"  styleClass="delect_btn" action="#{saleProductInfoHome.remove}" onclick="return confirm('确定删除吗？');" id="saleProductInfoDelete">
+			                             <f:param name="saleProductInfoId" value="#{_supply.saleProductInfoId}" />
+			                             <f:param name="pageNum" value="#{saleProductInfoHome.pageNum}"/>
+			                             <f:param name="cpzt" value="#{saleProductInfoHome.cpzt}"/>
+			                             <f:param name="gylx" value="#{saleProductInfoHome.gylx}"/>
+			                             <f:param name="searchParam" value="#{saleProductInfoHome.searchParam}"/>
+									</s:link>
+                                </span>
+                                <span>
+                                	<s:link propagation="none"  view="/supply/SaleProductInfoEdit.xhtml" rendered="#{!_supply.publish}"  title="上架"  styleClass="upload_btn" action="#{saleProductInfoHome.editSaleProductInfo}" onclick="return chickTime('#{_supply.endTime}');" id="saleProductInfoUp">
+			                        	<f:param name="saleProductInfoId" value="#{_supply.saleProductInfoId}" />
+			                            <f:param name="pageNum" value="#{saleProductInfoHome.pageNum}"/>
+			                            <f:param name="operType" value="1"/>
+			                            <f:param name="cpzt" value="#{saleProductInfoHome.cpzt}"/>
+			                            <f:param name="gylx" value="#{saleProductInfoHome.gylx}"/>
+			                            <f:param name="searchParam" value="#{saleProductInfoHome.searchParam}"/>
+									</s:link>
+									<s:link propagation="none"  view="/supply/SaleProductInfoEdit.xhtml" rendered="#{_supply.publish}"  title="下架"  styleClass="updown_btn" action="#{saleProductInfoHome.editSaleProductInfo}" onclick="return confirm('确定下架吗？');"  id="saleProductInfoDown">
+			                            <f:param name="saleProductInfoId" value="#{_supply.saleProductInfoId}" />
+			                            <f:param name="pageNum" value="#{saleProductInfoHome.pageNum}"/>
+			                            <f:param name="operType" value="0"/>
+			                            <f:param name="cpzt" value="#{saleProductInfoHome.cpzt}"/>
+			                            <f:param name="gylx" value="#{saleProductInfoHome.gylx}"/>
+			                            <f:param name="searchParam" value="#{saleProductInfoHome.searchParam}"/>
+									</s:link>
+                                </span>
+                                <span>
+                                	<s:link propagation="none"  view="/supply/SaleProductInfoEdit.xhtml" title="刷新"  styleClass="refresh_btn" action="#{saleProductInfoHome.editSaleProductInfo}"   id="saleProductInfoRefresh">
+			                        	<f:param name="saleProductInfoId" value="#{_supply.saleProductInfoId}" />
+			                            <f:param name="pageNum" value="#{saleProductInfoHome.pageNum}"/>
+			                            <f:param name="operType" value="2"/>
+			                            <f:param name="cpzt" value="#{saleProductInfoHome.cpzt}"/>
+			                            <f:param name="gylx" value="#{saleProductInfoHome.gylx}"/>
+			                            <f:param name="searchParam" value="#{saleProductInfoHome.searchParam}"/>
+									</s:link>
+                                </span>
+                            </div>
+                            <dl class="pr_dl">
+                                <dt class="pr_dt">
+                                     <img src="#{_supply.productImage eq null or _supply.productImage eq 'null' or _supply.productImage eq '' ? '/asset/images/supply/productImage.png' : _supply.productImage}" />
+                                </dt>
+                                <dd class="pr_dd">
+                                    <div class="pt5 clear">
+                                        <p class="txt_name" title="#{_supply.name}">#{_supply.name}</p>
+                                        <p class="txt_ghl">
+                                            <span class="ghl_txt1">供货量</span>
+                                            <span class="ghl_txt2">#{_supply.supplyNum}kg</span>
+                                        </p>
+                                    </div>
+                                    <div class="pt5 clear">
+                                        <p class="txt_price"><font>#{_supply.minPrice}~#{_supply.maxPrice}</font>&nbsp;元/<s:fragment rendered="#{_supply.unitType.name ne null}">#{_supply.unitType.name}</s:fragment> <s:fragment rendered="#{_supply.unitType.name eq null}">公斤</s:fragment></p>
+                                        <p class="txt_weight">#{_supply.surplusNum}kg</p>
+                                    </div>
+                                    <div class="pt5 clear">
+                                        <p class="txt_name2" title="#{_supply.plantId.name}">#{_supply.plantId.name}</p>
+                                        <p class="txt_bzh">#{_supply.standard.name}</p>
+                                    </div>
+                                </dd>
+                            </dl>
+                            <div class="pr_state clear">
+                                <p class="p_txt1 fl"><span>#{_supply.beginTime} <h:outputText value="" rendered="#{(_supply.beginTime ne '' and _supply.beginTime ne null) or (_supply.endTime ne '' and _supply.endTime ne null ) }" >---</h:outputText> #{_supply.endTime}</span></p>
+                                <p class="p_txt2 fr">
+                                    <s:fragment rendered="#{_supply.hasSpot eq 0}"><span class="span_ys">预售</span></s:fragment>
+                                    <s:fragment rendered="#{_supply.hasSpot eq 1}"><span class="span_xh">现货</span></s:fragment>
+                                    <s:fragment rendered="#{!_supply.publish}"><span class="span_xj">未上架</span></s:fragment>
+                                    <s:fragment rendered="#{_supply.publish}"><span class="span_sj">已上架</span></s:fragment>
+                                </p>
+                            </div>
+                        </div>
+                        </li>
+                        </a4j:repeat>
+                    </ol>
+                     <h:outputText rendered="#{saleProductInfoHome.saleProductInfoList ne null and saleProductInfoHome.saleProductInfoList.size() > 0}">
+					<table class="fenye">
+						<tr>
+							<td>
+								<table class="pageModel">
+									<tbody>
+										<tr>
+											<td>
+												<h:outputText rendered="#{saleProductInfoHome.firstEnable}">
+													<span> <a href="javascript:void(0);" onclick="findInfoByPageNum(1);" class="page_prev">首页</a></span> 
+												</h:outputText>
+												<h:outputText rendered="#{saleProductInfoHome.previousEnable}">
+													<span class="pagePrve"> 
+														<a href="javascript:void(0);" onclick="findInfoByPageNum(#{saleProductInfoHome.pageInt-1});">&lt;&lt;</a>
+													</span> 
+												</h:outputText>
+												<h:outputText rendered="#{saleProductInfoHome.numPageList ne null}">
+													<a4j:repeat value="#{saleProductInfoHome.numPageList}" var="_page" rowKeyVar="_index">
+														<h:outputText rendered="#{saleProductInfoHome.page eq _page}">
+															<span class="page_num page_Cur"> 
+																<a href="javascript:void(0);">#{_page}</a>
+															</span>
+														</h:outputText>
+														<h:outputText rendered="#{saleProductInfoHome.page ne _page}">
+															<span class="page_num "> 
+																<a href="javascript:void(0);" onclick="findInfoByPageNum(#{_page});">#{_page}</a>
+															</span>
+														</h:outputText>
+													</a4j:repeat>
+												</h:outputText>
+												<h:outputText rendered="#{saleProductInfoHome.nextEnable}">
+													<span class="page_next"> 
+														<a href="javascript:void(0);" onclick="findInfoByPageNum(#{saleProductInfoHome.pageInt+1});">&gt;&gt;</a>
+													</span>
+												</h:outputText>
+												<h:outputText rendered="#{saleProductInfoHome.lastEnable}">
+													<span id="j_id56"> 
+														<a href="javascript:void(0);" onclick="findInfoByPageNum(#{saleProductInfoHome.totalPages});">尾页</a>
+													</span> 
+												</h:outputText>
+												<span> 
+													<span class="pageCount" style="border-right: 0">
+														<a>共#{saleProductInfoHome.totalPages}页</a>
+													</span>
+												</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</table>
+					</h:outputText>
+                    </h:panelGroup>
+                <!-- 主体左侧 -->
+                </div>
+                <div class="qgxx_rt_content">
+                <!-- 主体右侧 -->
+                    <div class="offer_rt_hd">
+                        <h4 class="gz_h4">我的关注</h4>
+                    </div>
+                    <div class="offer_rt_bd">
+                    	<h:outputText value="" rendered="#{not empty saleProductInfoHome.attentionList}">
+                    	
+                    	<a4j:repeat value="#{saleProductInfoHome.attentionList}" var="_atten" rendered="#{not empty saleProductInfoHome.attentionList}" rowKeyVar="_index">
+                       <h:outputText value="" rendered="#{_index lt 7}">
+                        <dl class="pank_items" style="cursor: default;">
+                            <dt>
+                            	<h:outputText value="" rendered="#{_atten[2] eq '' or _atten[2] eq 'null'}">
+                                <img src="../../images/logo.moren.png" />
+                                </h:outputText>
+                                <h:outputText value="" rendered="#{_atten[2] ne '' and _atten[2] ne 'null'}">
+                                <img src="#{_atten[2]}" />
+                                </h:outputText>
+                            </dt>
+                            <dd>
+                                <p class="txt_company">#{_atten[1]}</p>
+                                <p class="txt_time">#{_atten[3]}<font class="color_b">&nbsp;关注了您</font><span class="concern_ico"></span></p>
+                            </dd>
+                        </dl>
+                        </h:outputText>
+                        </a4j:repeat> 
+                        </h:outputText>
+                        <h:outputText value="" rendered="#{saleProductInfoHome.attentionList.size() eq 0}">
+	                        <p class="pank_nodata">
+	                            <img src="../../images/BuyingLeads_icos_nodata2.jpg" />
+	                            <font>暂无关注！</font>
+	                        </p>
+                        </h:outputText>
+                    </div>
+                    <div class="offer_rt_ft">
+                    <h:outputText value="" rendered="#{saleProductInfoHome.attentionList.size() eq 0}">
+                    	<a href="javascript:void(0);" style="color:#cccccc;cursor: default;">查看更多&gt;&gt;</a>
+                    </h:outputText>
+                    <h:outputText value="" rendered="#{saleProductInfoHome.attentionList.size() ne 0}">
+	                    <s:link view="#{request.contextPath}/supply/AttentionList.seam">
+	                    	<f:param name="pageNum" value="#{saleProductInfoHome.pageNum}"/>
+                            <f:param name="cpzt" value="#{saleProductInfoHome.cpzt}"/>
+                            <f:param name="gylx" value="#{saleProductInfoHome.gylx}"/>
+                            <f:param name="searchParam" value="#{saleProductInfoHome.searchParam}"/>
+							查看更多&gt;&gt;
+	                    </s:link>
+                    </h:outputText>
+                    </div>
+                <!-- 主体右侧 -->
+                </div>
+            </div>
+            <!-- 主体内容 结束 -->
+        </div>
+        <!--右侧结束-->
+ </td>
+ <a4j:form>
+ <a4j:jsFunction name="queryPurchaseList" action="#{saleProductInfoHome.getSaleProductList()}" reRender="purchaseList" oncomplete="">
+	<a4j:actionparam name="page" assignTo="#{saleProductInfoHome.page}"/>
+	<a4j:actionparam name="cpzt" assignTo="#{saleProductInfoHome.cpzt}"/>
+	<a4j:actionparam name="gylx" assignTo="#{saleProductInfoHome.gylx}"/>
+	<a4j:actionparam name="searchParam" assignTo="#{saleProductInfoHome.searchParam}"/>
+</a4j:jsFunction>
+ 
+ </a4j:form>
+<script type="text/javascript">
+//<![CDATA[
+           
+//下拉菜单
+jquery = jQuery.noConflict();
+jquery('.selectpicker').selectpicker(); 
+    
+function submitSele(){
+	findInfoByPageNum(1);
+}
+
+function cpztxz(){
+	jquery('#search').click();
+}
+
+function gylxxz(){
+	jquery('#search').click();
+}
+
+jquery('li[pd=zt]').click(function(){
+	jquery(".bca").eq(0).attr("class","");
+	jquery('#cpzt').val(jquery(this).html());
+	jquery(this).attr('class','bca');
+	jquery('#search').click();
+});
+jquery('li[pd=lx]').click(function(){
+	jquery(".bca").eq(1).attr("class","");
+	jquery('#gylx').val(jquery(this).html());
+	jquery(this).attr('class','bca');
+	jquery('#search').click();
+});
+function simple(){
+	var obj=checkSelectNew();
+	if(obj){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+function findInfoByPageNum(page){
+	var cpzt = jquery('#cpzt').val();
+	var gylx = jquery('#gylx').val();
+	var searchParam = jquery('#searchParam').val();
+	queryPurchaseList(page,cpzt,gylx,searchParam);
+}
+	
+	function chickTime(time){
+		if(null!=time && ''!=time){
+			var date = new Date();
+			date = formatDate(date,'yyyy-MM-dd');
+			var arr=date.split("-");    
+			var starttime=new Date(arr[0],arr[1],arr[2]);    
+			var starttimes=starttime.getTime(); 
+	
+			var arr2=time.split("/");    
+			var starttime2=new Date(arr2[0],arr2[1],arr2[2]);    
+			var starttimes2=starttime2.getTime();
+	
+			if(starttimes <= starttimes2){
+				return confirm('确定上架吗？');
+			}else{
+				alert('该商品供货日期已过，如上架，请修改供货日期后重新操作！');
+				return false;
+			}
+		}else{
+			return confirm('确定上架吗？');
+		}
+	}
+
+	// 固定右侧我的关注
+	function fixedPrice(){
+		var oScrollTop = jquery(document).scrollTop();
+		var fixedBlock = jquery(".qgxx_rt_content").offset().top;
+		if(oScrollTop>fixedBlock){
+			jquery(".qgxx_rt_content").stop().animate({
+				paddingTop: oScrollTop-fixedBlock
+			},500);
+		}else{
+			jquery(".qgxx_rt_content").stop().css({paddingTop: 0});
+		}	
+	}
+	jquery(window).scroll(function() {
+		fixedPrice()
+	}); 
+	jquery("body").scroll(function() {
+		fixedPrice()
+	}); 
+
+    // 计算：我要报价列表数随屏幕大小而显示不同
+    offerFn();
+    function offerFn(){
+        var oBodyW = jquery('body').width();
+       if( oBodyW<1280 ){
+    	   jquery('.qgxx_content').addClass('small_qgxx');
+        }else{
+        	jquery('.qgxx_content').removeClass('small_qgxx');
+        }
+    }
+	
+	
+	// 窗口改变时，要执行的事件
+	jquery(window).resize(function(){
+		offerFn()
+	});
+	//格式化时间
+	Date.prototype.format = function(format){ 
+	var o = { 
+	"M+" : this.getMonth()+1, //month 
+	"d+" : this.getDate(), //day 
+	"h+" : this.getHours(), //hour 
+	"m+" : this.getMinutes(), //minute 
+	"s+" : this.getSeconds(), //second 
+	"q+" : Math.floor((this.getMonth()+3)/3), //quarter 
+	"S" : this.getMilliseconds() //millisecond 
+	} 
+	if(/(y+)/.test(format)) { 
+	format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+	} 
+	for(var k in o) { 
+	if(new RegExp("("+ k +")").test(format)) { 
+	format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length)); 
+	} 
+	} 
+	return format; 
+	} 
+	function formatDate(date,format){ 
+	        var paddNum = function(num){ 
+	          num += ""; 
+	          return num.replace(/^(\d)$/,"0$1"); 
+	        } 
+	        //指定格式字符 
+	        var cfg = { 
+	           yyyy : date.getFullYear() //年 : 4位 
+	          ,yy : date.getFullYear().toString().substring(2)//年 : 2位 
+	          ,M  : date.getMonth() + 1  //月 : 如果1位的时候不补0 
+	          ,MM : paddNum(date.getMonth() + 1) //月 : 如果1位的时候补0 
+	          ,d  : date.getDate()   //日 : 如果1位的时候不补0 
+	          ,dd : paddNum(date.getDate())//日 : 如果1位的时候补0 
+	          ,hh : date.getHours()  //时 
+	          ,mm : date.getMinutes() //分 
+	          ,ss : date.getSeconds() //秒 
+	        } 
+	        format || (format = "yyyy-MM-dd hh:mm:ss"); 
+	        return format.replace(/([a-z])(\1)*/ig,function(m){return cfg[m];}); 
+	} 
+//格式化时间结束	
+//]]>	
+</script>
+</ui:define>
+
+</ui:composition>

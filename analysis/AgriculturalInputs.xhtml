@@ -1,0 +1,639 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template_analysisnew.xhtml">
+
+<ui:define name="body">
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/bootstrap_radio.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/bootstrap_radio2.js"></script>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/checkBox/skinBlue.css"/>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+<style>
+.fakeContainer{
+	margin: 20px;
+    padding: 0px;
+    border: none;
+	height:500px;
+}
+.fx_tckli .icheckbox_minimal-blue{ margin:5px 5px 0 0;} 
+.lookAll .icheckbox_minimal-blue{ float:right; margin-top:12px;}
+.lapc_div label{ float:left; padding-top:10px; font-size:11px; font-family:'微软雅黑';}
+.iradio_minimal-blue, .iradio_minimal-blue.checked {margin-top: 7px;}
+</style>
+<link href="#{request.contextPath}/asset/css/examples.css" rel="stylesheet" type="text/css" />
+<style>
+.lapc_div .s_pan {
+    float: left;
+    font-size: 11px;
+    line-height: 40px;
+    margin-left: 5px;
+    margin-top: -2px;
+}
+.fxy_div{
+	margin: 15px 0 0;
+    position: relative;
+    width: 100%;
+    }
+    .div200 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+width: 200px;
+}
+.div200 .btn-group .btn{ font-size:12px;}
+.input-append.date .add-on i, .input-prepend.date .add-on i {
+    cursor: pointer;
+    height: 14px;
+    margin-left: -21px;
+    margin-top:1px;
+    width: 14px;
+}
+body { color: #000;
+    font-family: "微软雅黑";
+    font-size: 12px;
+    line-height: 160%;
+}
+.fxy_title {
+    border-bottom: 1px solid #cfe3f3;
+    padding: 6px 30px;
+}
+.tab-pane .rich-panel{border:0;}
+.tab-pane .cm_xqbCon{ overflow:inherit;}
+</style>
+	<!-- #{agriculturalInputsHome.selectInputsRecord()} -->
+	
+	<td valign="top">
+		<div class="right_c" style="min-height:30px;">
+                	<div class="r_title">
+                    	<div class="r_t_l"><font size="3">农资投入统计分析</font></div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <ui:fragment rendered="#{s:hasRole('agricultural_inputs_analyse_search')}">
+                  
+				<h:form id="search">
+				<!-- 区域日期种植环境 开始 -->
+					<div class="fxy_title clear" >
+					<div style="position:relative;">
+						<ul class="fxy_ul" id="male" style="height: 15px; border-top-width: 10px; margin-top: 5px;">
+							<li class="fxy_li" style="line-height:30px;">日期选择：</li>
+                            <li class="fxy_lidate" style="line-height:30px;" >
+								<h:inputHidden value="#{agriculturalInputsHome.btype}" id="btype"/>
+								<input type="radio" value="3" name="dateType" id="type3"  style="display: none;" checked="checked" /><label style="font-weight: 100; margin-left: 5px;">按日</label>
+							</li>
+                            <li class="fxy_lidate" style="line-height:30px;">
+                           		<input type="radio" value="2" name="dateType" id="type2"  style="display: none;"/><label style="font-weight: 100; margin-left: 5px;">按月</label>
+                           	</li>
+                           	<li class="fxy_lidate" style="line-height:30px;">
+                           		<input type="radio" value="1" name="dateType" id="type1"  style="display: none;"/><label style="font-weight: 100; margin-left: 5px;">按年</label>
+                           	</li>
+                           <li class="fxy_lidate02 type_male1" style="#{agriculturalInputsHome.btype eq 1 or agriculturalInputsHome.btype eq 2?'':'display:none'};">
+                           <font style="position:relative;[;top:0;]">日期：</font>
+                            <h:selectOneMenu value="#{agriculturalInputsHome.year}" styleClass="selectpicker" onchange="dateChange()" id="dateYear">
+	                           		<f:selectItems value="#{agriculturalInputsHome.years}"></f:selectItems>
+	                           </h:selectOneMenu>
+                           <font style="position:relative;[;top:0;]"> &#160;年&#160;</font>
+                           </li>
+                           <li class="fxy_lidate02 type_female1" style="#{agriculturalInputsHome.btype eq 2?'':'display:none'}">
+							 <h:selectOneMenu value="#{agriculturalInputsHome.month}" styleClass="selectpicker" onchange="dateChange()" id="dateMonth">
+	                           		<f:selectItems value="#{agriculturalInputsHome.months}"></f:selectItems>
+	                           </h:selectOneMenu>
+							<font style="position:relative; [;top:0;]">&#160;月</font>
+                           </li>
+                            <li class="fxy_lidate02 type_nomale1" style="#{agriculturalInputsHome.btype==3 ?'':'display:none'}"><span style="float: left;">开始时间：</span>
+                           <div class="input-append date form_datetime " style="float: left; ">
+						    <h:inputText  id="startTime"  styleClass="new_time nw100" value="#{agriculturalInputsHome.beginTime}" readonly="#{facesContext.renderResponse}" onchange="dateChange()"/>								   			    
+						    <h:inputHidden value="#{agriculturalInputsHome.beginTime}" id="strartTimeHidden"/>
+						    <span class="add-on"><i class="icon-th" style="margin-top:6px;"></i></span>
+						    </div>
+                            </li>
+                            <li class="fxy_lidate02 type_nomale1" style="#{agriculturalInputsHome.btype==3 ?'':'display:none'}"><span style="float: left;">结束时间：</span>
+                            <div class="input-append date form_datetime " style="float: left;">
+						    <h:inputText  id="endTime"  styleClass="new_time nw100" value="#{agriculturalInputsHome.endTime}" readonly="#{facesContext.renderResponse}" onchange="dateChange()"/>
+						    <h:inputHidden value="#{agriculturalInputsHome.endTime}" id="endTimeHidden"/>
+						    <span class="add-on"><i class="icon-th" style="margin-top:6px;"></i></span>
+						    </div>
+                            </li>
+                       </ul>
+                       <a style="position:absolute; right:0; top: 8px;" href="#" onclick="excelClick();"><img src="#{request.contextPath}/asset/images/stock/commons/icon_exportExcel.jpg" /></a>
+                       </div>
+                       <br></br>
+                    	<ul class="fxy_ul" >
+                            <li class="reili" >
+                                <table cellpadding="0" cellspacing="0" style="float:left;" >
+                                   <tr>
+                                   	<td align="right" class="tpcc_font">农资选择：</td>
+										<td align="left" style="padding-left: 4px;" id="male"
+											class="six3">
+											<div class="div200">
+												<h:inputHidden id="nzxz" value="#{agriculturalInputsHome.inputsType}"  />
+												<h:selectOneMenu styleClass="selectpicker" id="record_type" style="width: 180px;" value="#{agriculturalInputsHome.inputsType}" onchange="trplx();">
+	                                    		<f:selectItem itemLabel="全部" itemValue="0"/>
+	                                    		<f:selectItem itemLabel="农药" itemValue="2"/>
+				                   				<f:selectItem itemLabel="肥料" itemValue="3"/>
+				                   				<f:selectItem itemLabel="其他" itemValue="4"/>
+				                   				</h:selectOneMenu>
+											</div>
+										</td>
+										<td width="20" />
+										<td align="right" style="padding-left: 19px;" class="tpcc_font">地块选择：</td>
+										<td align="left" style="padding-left: 4px;" id="male" class="six3">
+											<div class="div200">
+											<h:inputHidden value="#{agriculturalInputsHome.tunnelInfoId}" id="dkxz" />
+											
+												<h:selectOneMenu styleClass="selectpicker"  id="tunnelInfoId" value="#{agriculturalInputsHome.tunnelInfoId}" onchange="dateChange()">
+													<f:selectItem itemLabel="全部" itemValue="0"/>
+													<s:selectItems value="#{agriculturalInputsHome.tunnelInfoList}" var="var" label="#{var.tunnelName}" itemValue="#{var.tunnelInfoId}" />
+												</h:selectOneMenu>
+												
+											</div>
+										</td>
+									</tr>
+									</table>
+								</li>
+							<li class="reili">
+		                        <table cellspacing="0" cellpadding="0" style="float:left;">
+		                        <h:inputHidden id="selectTypeId" value="#{agriculturalInputsHome.plantId}" />
+		                            <tr>
+		                            <td align="right" class="tpcc_font">作物选择：</td>
+										<td align="left" style="padding-left: 4px;" id="male"
+											class="six3">
+											<div class="div200">
+											<h:panelGroup id="selectPlantItem">
+												<h:inputHidden id="plantId" value="#{agriculturalInputsHome.plantId}"  />
+												<h:selectOneMenu styleClass="selectpicker" id="plantIdSelect" style="width: 180px;" value="#{agriculturalInputsHome.plantId}" onchange="plantValue()">
+		                                    		<f:selectItem itemLabel="全部" itemValue="-1"/>
+		                                    		<s:selectItems value="#{agriculturalInputsHome.plantInfoList}" var="var" label="#{var[1]}" itemValue="#{var[0]}" />
+				                   				</h:selectOneMenu>
+				                   			</h:panelGroup>
+											</div>
+										</td>
+										<td width="40" />
+		                                <td align="right" class="tpcc_font">使用人：</td>
+		                                <td align="left" id="male" style="padding-left: 4px;">
+		                                    <div class="div200">
+		                                    <h:inputHidden value="#{agriculturalInputsHome.personListId}"  id="syr"/>
+		                                    	<h:selectOneMenu styleClass="selectpicker"  id="personId" value="#{agriculturalInputsHome.personListId}">
+													<f:selectItem itemLabel="全部" itemValue="0"/>
+													<s:selectItems value="#{agriculturalInputsHome.personLists}" var="var" label="#{var[1]}" itemValue="#{var[0]}" />
+												</h:selectOneMenu>
+		                                    </div>
+		                                </td>
+		                                <td width="10" align="right"/>
+		                                <td width="80" align="right">     
+		                                <h:commandButton id="search" styleClass="btn btn-primary mr7" value="搜索" action="/analysis/AgriculturalInputs.xhtml" onclick="selectai()" style="margin-left:30px;"/> 
+		                                </td>
+									    <td width="80" align="right">
+									    <h:commandButton action="#{agriculturalInputsHome.reset}" id="reset" styleClass="btn btn-default" value="重置" onclick="allReset()" /> 
+									    <h:inputHidden value="" id="myLeveId" /></td>
+		                            </tr>
+		                        </table>
+		                     </li>	  
+						</ul>	
+                    </div>
+                </h:form>
+                
+                <div style="display: none">
+                    	<h:form id="excelForm">
+                    		<h:inputHidden id="excelBtype" value="#{agriculturalInputsHome.btype}" />
+                    		<h:inputHidden id="excelYear" value="#{agriculturalInputsHome.year}" />
+                    		<h:inputHidden id="excelMonth" value="#{agriculturalInputsHome.month}" />
+                    		<h:inputHidden id="excelBeginTime" value="#{agriculturalInputsHome.beginTime}" />
+                    		<h:inputHidden id="excelEndTime" value="#{agriculturalInputsHome.endTime}" />
+                    		<h:inputHidden id="excelInputsType" value="#{agriculturalInputsHome.inputsType}" />
+                    		<h:inputHidden id="excelTunnelInfoId" value="#{agriculturalInputsHome.tunnelInfoId}" />
+                    		<h:inputHidden id="excelPersonListId" value="#{agriculturalInputsHome.personListId}" />
+                    		<h:inputHidden id="excelPlantId" value="#{agriculturalInputsHome.plantId}" />
+                    		<h:commandButton action="#{agriculturalInputsHome.expExcel()}" id="expCxcel" />
+                    	</h:form>
+                </div>
+				<!-- 区域日期种植环境 结束 -->
+                <div class="borderBt1" style="border-bottom:0;"></div>
+				</ui:fragment>
+                <!-- 排名图 详情表 开始 -->
+                <div class="cm_tjfxBd pt20">
+                	<div class="tjfxTabTp">
+                     <ul class="nav nav-tabs" role="tablist" id="myTab">
+                      <li class="active ml30"><a href="#home" role="tab" data-toggle="tab">排名图</a></li>
+                      <li class=""><a id="xiangqing" href="#profile" role="tab" data-toggle="tab">详情表</a></li>
+                    </ul>
+                    </div>
+                    <div class="tjfxTabBt pt10 ml30 mr30">
+                        <div class="tab-content">
+                            <div class="tab-pane active clear" id="home">
+                                <div class="cm_pmtCon pb20">
+                                    <table class="cm_userHd">
+                                        <tbody>
+                                            <tr>
+                                                <td><span>农资种类</span><em class="farmsNum">#{agriculturalInputsHome.irIndex}</em></td>
+                                                <td style="display:none;"><span>农资投入总量</span><em class="facNum">#{agriculturalInputsHome.irSum}(kg或ml)</em></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="cm_pmtZhu">
+                                	<div id="container" style="width:100%;height:400px;overflow:hidden;" ></div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane" id="profile">
+                            <a:commandLink id="refreshToral" reRender="totalPenal"></a:commandLink>
+                       <rich:panel id="totalPenal"  >
+                       <h:panelGroup id="groupId">
+                            <h:outputText rendered="#{not empty agriculturalInputsHome.aiList2}" >
+                            	<div >
+                            		<!-- 删除注释，增加返回按钮 -->
+                            		<ul style="float: right;margin-right: -3px;"><a href="javascript:void(0);" class="btn btn-default" style="border-bottom-width: 1px; margin-bottom: 6px;" type="button" data-dismiss="modal" onclick="outInputs()">返回</a></ul> 
+									<ul style="text-align: center; height:30px;">
+										<li style="display: inline-block;margin-right: 35px;"><span style="color:#65666a; font-size:12px;"><img class="pli_img" src="../asset/images/trp_icon.png" width="20" height="20" />投入品名称:#{agriculturalInputsHome.inputsName}</span></li>
+										<li style="display: inline-block;margin-right: 15px;"><span style="color:#65666a; font-size:12px;"><img class="pli_img" src="../asset/images/trl_icon.png" width="20" height="20" />投入总量:#{agriculturalInputsHome.inputsnum}(#{agriculturalInputsHome.inputsUnitString})</span></li>
+									</ul>
+								</div>
+							</h:outputText>
+                                <div class="cm_xqbCon" style="color:#65666a;font-size: 12px;">
+                                <h:outputText   rendered="#{not empty agriculturalInputsHome.aiList2}" >
+                                <table class="tableXqb" cellpadding="0" cellspacing="0" >
+                                	<thead>
+                                    	<tr>
+                                        	<td width="5%">序号</td>
+                                        	<td width="10%">投入地块</td>
+                                            <td width="10%">种植作物</td>
+                                            <td width="10%">种植面积</td>
+                                            <td width="10%">使用人</td>
+                                            <td width="10%">投入时间</td>
+                                            <td width="10%">投入量</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    	<a:repeat value="#{agriculturalInputsHome.aiList2}" var="_ai" rowKeyVar="_index">
+	                                    	<tr>
+	                                        	<td>#{_index+1}</td>
+	                                            <td>#{_ai.tunnelName}</td>
+	                                            <td>#{_ai.plantName}</td>
+	                                            <td>#{_ai.area}</td>
+	                                            <td>#{_ai.farmerName}</td>
+	                                            <td>#{_ai.useTime}</td>
+	                                            <td>#{_ai.amount}(#{_ai.unitName})</td>
+	                                        </tr>
+                                        </a:repeat>
+                                    </tbody>
+                                </table> 
+                                
+                                
+                                </h:outputText>
+                                <h:outputText   rendered="#{not empty agriculturalInputsHome.aiList}" >
+                                <table class="tableXqb" cellpadding="0" cellspacing="0" >
+                                	<thead>
+                                    	<tr>
+                                        	<td width="5%">序号</td>
+                                        	<td width="20%">投入品名称</td>
+                                            <td width="10%">规格</td>
+                                            <td width="20%">生产厂家</td>
+                                            <td width="20%">投入总量</td>
+                                            <td width="10%">操作</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    	<a:repeat value="#{agriculturalInputsHome.aiList}" var="_ai" rowKeyVar="_index">
+	                                    	<tr>
+	                                        	<td>#{_index+1}</td>
+	                                            <td>#{_ai.name}</td>
+	                                            <td>#{_ai.spec}</td>
+	                                            <td>#{_ai.manufacturers}</td>
+	                                            <td>#{_ai.amount}(#{_ai.unitName})</td>
+	                                            <td><a  href="javascript:void(0);"  onclick="fundInputs('#{_ai.inputsId}')"><f:param name="inputsRecordId" value="#{_ai.inputsId}"/>查看详情</a>  </td>
+	                                        </tr>
+                                        </a:repeat>
+                                    </tbody>
+                                </table> 
+                                </h:outputText>
+                            	</div>
+                            	
+                            </h:panelGroup>
+                            	</rich:panel>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+                <!-- 排名图 详情表 结束 -->
+                
+                
+                <a:form>
+					<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+					<a:jsFunction name="inputsMess" action="#{agriculturalInputsHome.selectinputsmess}" reRender="groupId" oncomplete="refreshCartAction();"  >
+						<a:actionparam name="inputsRecordId" assignTo="#{agriculturalInputsHome.inputsRecordId}"/>
+					</a:jsFunction>
+					<a:jsFunction name="outInputsMess" action="#{agriculturalInputsHome.outinputsmess}" reRender="groupId" oncomplete="refreshCartAction();"  >
+					</a:jsFunction>
+					<a:jsFunction name="plantListInit" action="#{agriculturalInputsHome.plantListInit}" reRender="selectPlantItem"   oncomplete="fresh()">
+						<a:actionparam name="type" assignTo="#{agriculturalInputsHome.btype}"/>
+						<a:actionparam name="year" assignTo="#{agriculturalInputsHome.year}"/>
+						<a:actionparam name="month" assignTo="#{agriculturalInputsHome.month}"/>
+						<a:actionparam name="beginTime" assignTo="#{agriculturalInputsHome.beginTime}"/>
+						<a:actionparam name="endTime" assignTo="#{agriculturalInputsHome.endTime}"/>
+						<a:actionparam name="tunnelInfoId" assignTo="#{agriculturalInputsHome.tunnelInfoId}"/>
+					</a:jsFunction>
+				</a:form>
+                <div style="height:30px; width:100%;"></div>
+                <div class="clear"></div>
+                <!--right_c结束-->
+                <script type="text/javascript"> 
+                jquery(".cm_xqbCon").css("width",(document.body.clientWidth- 369) +"px ");
+                jquery(".tableXqb").css("width",(document.body.clientWidth- 395) +"px ");
+                jquery(window).resize(function(){
+						 var onLoadWidth = document.body.clientWidth;
+						 jquery(".cm_xqbCon").css("width",(document.body.clientWidth- 369)+"px ");
+						 jquery(".tableXqb").css("width",(document.body.clientWidth- 395)+"px ");
+			
+					})
+					
+					 jquery(document).ready(function(){
+                	jquery('input').iCheck({
+                	    checkboxClass: 'icheckbox_minimal-blue',
+                	    radioClass: 'iradio_minimal-blue',
+                	    increaseArea: '20%' // optional
+                	  });
+                	jquery("#cheAll").on("ifClicked", function(event){
+                		if (this.checked) {
+                			jquery("input[name='sex']").iCheck("uncheck"); 
+                			jquery("input[name='sex']").attr("aa","unchecked");
+                		} else {
+                			jquery("input[name='sex']").iCheck("check"); 
+                			jquery("input[name='sex']").attr("aa","checked");
+                		}
+                	});
+                	jquery("input[name='sex']").on("ifChanged", function(event){
+                		if(!this.checked) {
+                			jquery("#cheAll").iCheck("uncheck"); 
+                			jquery(this).attr("aa","unchecked");
+                		}else{
+                			jquery(this).attr("aa","checked");
+                    	}
+                	});
+
+                	jquery("input[name='sexNew']:radio").on("ifChecked", function(event){
+                		var type = this.value;
+                		//alert("type:"+type)
+                		jquery("#search\\:inputsType").val(type);
+                	});
+                	
+                	});
+
+                window.onload = function() 
+                {
+                    var inputsType = "#{agriculturalInputsHome.inputsType}";
+                    //alert(inputsType);
+                    if(inputsType == 2){
+						jquery("#sex_female").iCheck("check");
+                    }else if(inputsType == 3){
+						jquery("#sex_sunlignt").iCheck("check");
+                    }else{
+                       // alert("123");
+                        
+                    	jquery("#sex_female").iCheck("unchecked");
+                    	jquery("#sex_sunlignt").iCheck("unchecked");
+                        }
+					var obj = jquery("#cheAll").attr("class");
+					if(obj == "a"){
+						jquery("#cheAll").iCheck("check");
+						}
+                	var idStr = "";
+                	var obj = false;
+                	jquery("input[name='sex']").each(function(){
+                		var cbBoolean = jquery(this).attr("aa");
+                		
+                		//alert(jquery(this).attr("id"));
+                		if(cbBoolean == "checked"){
+                			jquery(this).iCheck("check");
+                			jquery(this).attr("aa","checked"); 
+                		}else{
+                			obj = true;
+                			jquery(this).iCheck("uncheck");
+                			jquery(this).attr("aa","unchecked"); 
+                		}
+                		if(obj){
+                			jquery("#envAll").iCheck("uncheck"); 
+                		}
+                	});
+                }
+				</script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/jquery-1.8.3.min.js"></script>				
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script>
+				<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/exporting.js"></script>
+
+                <script type="text/javascript">
+                jquery('#search\\:tunnelInfoId').attr("data-live-search","true");
+				 jquery('#search\\:personId').attr("data-live-search","true");
+				 jquery('.selectpicker').selectpicker();
+                jquery(".form_datetime").datetimepicker({
+    				format: "yyyy-mm-dd",
+    			    autoclose: true,
+    				weekStart: 1,
+    				//startDate: "2014-08-14 10:00",
+    				language:  'zh-CN',
+    				minView:2,
+    			    pickerPosition: "bottom-left"
+    			});
+				</script> 
+				
+				<script type="text/javascript">
+				//<![CDATA[
+					function selectai(){
+						jquery("#search\\:beginTimes").val(jquery("#beginTime").val());
+						jquery("#search\\:endTimes").val(jquery("#endTime").val());
+						
+					}
+					$(function () { 
+						var colors = Highcharts.getOptions().colors, 
+							categories = #{agriculturalInputsHome.irNameString}, 
+							name = '农资投入', 
+							data = #{agriculturalInputsHome.irProportionString};
+						function setChart(name, categories, data, color) { 
+							chart.xAxis[0].setCategories(categories, false); 
+							chart.series[0].remove(false); 
+							chart.addSeries({ 
+								name: name, 
+								data: data, 
+								color: color || 'white' 
+							}, false); 
+							chart.redraw(); 
+						} 
+						var chart = $('#container').highcharts({ 
+							chart: { type: 'column' }, 
+							title: { text: '' }, 
+							scrollbar: {
+					               enabled: true
+					          },
+							xAxis: {categories: categories,#{agriculturalInputsHome.maxString}}, 
+							yAxis: {
+								title: { text: '使用量' },
+					            tickInterval:1,
+					    		type: 'logarithmic',
+					    		labels: {
+					    		formatter:function(){
+					    			return Number(this.value).toFixed(0);
+					    		}}
+					    							    		
+					        },
+							plotOptions: { 
+								column: { 
+									cursor: 'pointer', 
+									dataLabels: { 
+										enabled: true, 
+										color: colors[0], 
+										style: { fontWeight: 'bold' }, 
+										formatter: function() { 
+											return this.y +"("+this.point.unitName+")"; 
+											} 
+									} 
+								} 
+							}, 
+							tooltip: { 
+								formatter: function() {
+									 var point = this.point, 
+									 	 s = this.x +'：<b>'+ this.y +"("+point.unitName+')</b><br>'; 
+									 return s; 
+								} 
+							}, 
+							series: [{ 
+								name: name, 
+								data: data, 
+								color: 'white' 
+							}], 
+							exporting: { 
+								enabled: false 
+							} }) 
+							.highcharts(); // return chart 
+						});
+
+					jquery(function(){
+						 jquery('#search\\:tunnelInfoId').attr("data-live-search","true");
+						 jquery('#search\\:personId').attr("data-live-search","true");
+						 jquery('.selectpicker').selectpicker();
+						var type = '#{agriculturalInputsHome.btype}';
+						jquery("input[name='dateType']:radio").each(function(){
+							if(jquery(this).val()==type){
+								jquery(this).iCheck("check");
+							}
+						});
+						
+					});
+					
+					jquery("input[name='dateType']:radio").on("ifChecked", function(event){
+						var type = this.value;
+						jquery("#search\\:btype").val(type);
+						jquery("input[name='dateType']").removeAttr("checked");
+						jquery("#type" + type).prop('checked',true);
+						var beginTime;
+						var endTime;
+						var tunnelInfoId = jquery("#search\\:tunnelInfoId").val();
+						if(type=="1"){
+							jquery(".type_male1").show();
+							jquery(".type_female1").hide();
+							jquery(".type_nomale1").hide();
+						}else if(type=="2"){
+							jquery(".type_male1").show();
+							jquery(".type_female1").show();
+							jquery(".type_nomale1").hide();
+						}else if(type=="3"){
+							jquery(".type_male1").hide();
+							jquery(".type_female1").hide();
+							jquery(".type_nomale1").show();
+						}
+						var year = jquery(".type_male1").find(".selectpicker").val();
+						var month = jquery(".type_female1").find(".selectpicker").val();
+						beginTime = jquery("#search\\:startTime").val();
+						endTime = jquery("#search\\:endTime").val();
+						if(type=='1'){
+							month = "";
+							beginTime = "";
+							endTime = "";
+						}else if(type=='2'){
+							beginTime = "";
+							endTime = "";
+						}else if(type == "3"){
+							year = "";
+							month = "";
+						}
+						plantListInit(type,year,month,beginTime,endTime,tunnelInfoId);
+					});	
+
+					function dateChange(){
+						var type = jquery("input[type='radio']:checked").val();
+						var year = jquery(".type_male1").find(".selectpicker").val();
+						var month = jquery(".type_female1").find(".selectpicker").val();
+						beginTime = jquery("#search\\:startTime").val();
+						endTime = jquery("#search\\:endTime").val();
+						var tunnelInfoId = jquery("#search\\:tunnelInfoId").val();
+						if(type=='1'){
+							month = "";
+							beginTime = "";
+							endTime = "";
+						}else if(type=='2'){
+							beginTime = "";
+							endTime = "";
+						}else if(type == "3"){
+							year = "";
+							month = "";
+						}
+						plantListInit(type,year,month,beginTime,endTime,tunnelInfoId);
+					}
+
+					function fundInputs(inputsRecordId){
+						inputsMess(inputsRecordId);
+					}
+
+					function outInputs(){
+						outInputsMess();
+					}
+					//刷新
+					function refreshCartAction(){		
+						var onLoadWidth = document.body.clientWidth;
+						 jquery(".cm_xqbCon").css("width",(document.body.clientWidth- 369)+"px ");
+						 jquery(".tableXqb").css("width",(document.body.clientWidth- 395)+"px ");
+						document.getElementById("refreshToral").onclick();
+						jquery('.selectpicker').selectpicker(); 
+					}
+					function fresh(){
+						jquery('.selectpicker').selectpicker(); 
+					}
+					function plantValue(){
+						jquery("#search\\:selectTypeId").val(jquery("#search\\:plantIdSelect").val());;
+					}
+
+					//导出表格
+					function excelClick(){
+						jquery("#excelForm\\:excelBtype").val(jquery("#search\\:btype").val());
+						jquery("#excelForm\\:excelYear").val(jquery("#search\\:dateYear").val());
+						jquery("#excelForm\\:excelMonth").val(jquery("#search\\:dateMonth").val());
+						jquery("#excelForm\\:excelBeginTime").val(jquery("#search\\:strartTimeHidden").val());
+						jquery("#excelForm\\:excelEndTime").val(jquery("#search\\:endTimeHidden").val());
+						jquery("#excelForm\\:excelInputsType").val(jquery("#search\\:nzxz").val());
+						jquery("#excelForm\\:excelTunnelInfoId").val(jquery("#search\\:dkxz").val());
+						jquery("#excelForm\\:excelPersonListId").val(jquery("#search\\:syr").val());
+						jquery("#excelForm\\:excelPlantId").val(jquery("#search\\:selectTypeId").val());
+						if(jquery("#excelForm\\:excelBtype").val() == "3"){
+								var start = jquery("#search\\:startTime").val();
+								var end = jquery("#search\\:endTime").val();
+								var beginDate = new Date(start);
+								var endDate = new Date(end);
+								var year = beginDate.getFullYear();
+								var month = beginDate.getMonth();
+								var oneYearLaterTime = new Date(start);
+								oneYearLaterTime.setFullYear((year+1), month);
+								if(endDate >= oneYearLaterTime){
+									alert("最多可以导出一年的数据，如想导出多年的数据，请分步导出！");
+								}
+						}
+						jquery("#excelForm\\:expCxcel").click();
+					}
+					//]]>
+				</script>
+	</td>
+	
+</ui:define>
+</ui:composition>

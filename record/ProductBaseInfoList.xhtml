@@ -1,0 +1,1553 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="/layout/template_new.xhtml">
+	<ui:define name="foot">
+		<!-- 选择基地 开始 -->
+		<ui:include src="/layout/BaseIframe.xhtml"></ui:include>
+		<!-- 选择基地 结束 -->  
+	</ui:define>
+<ui:define name="body">
+<link type="text/css" href="#{request.contextPath}/asset/css/jquery-picklist.css" rel="stylesheet" />
+	<!--[if IE 7]><link href="#{request.contextPath}/asset/css/jquery-picklist-ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/lsll.css"/>
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/record/resumePreview.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/FarmingManage.css"/>
+
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/skinBlue.css"/>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/checkBox/icheck.js"></script>
+
+<style>
+.zoom_in{
+    -moz-transform:scale(0.49,0.49-);  
+    -moz-transform-origin:0% 0% ;
+   	-webkit-transform:scale(0.49,0.49-);  
+   	-webkit-transform-origin:0% 0% ;
+   	-o-transform:scale(0.49,0.49-);  
+   	-o-transform-origin:0% 0% ;
+}
+.li_bg{   padding-top: 19px;height: 249px; width:190px; }
+.edit {padding: 25px 37px;}
+.div_img{  margin-left: 14px;}
+#lvliShade_wap{ margin: 0 -80px 8px;}
+
+.designUl1 > li:hover .designEdit1{ right:14px; display:block;}
+.customClass .z_llul{position:absolute;right:42px;}
+.customClass .edit{right:-28px;}
+.div_img .zoom_in{background: blue; position:absolute; left:2px; top:2px;}
+.customClass:hover{background:url(..../../../asset/images/li_bg_03.png) no-repeat -14px -12px;}
+.backversion{color:#71c971;display:inline-block;margin-top:5px;margin-left:10px;cursor:pointer;}
+</style>
+<script>
+jquery(document).ready(function(){
+	jquery('.selectpicker').selectpicker();
+	document.onkeydown = function(e){
+	    var ev = document.all ? window.event : e;
+	    if(ev.keyCode==13) {
+	    	searchName();//点击回车时,走搜索方法
+	     }
+	}
+});
+
+
+jquery(function(){
+	var x = "#{tab}";
+	var type = "#{newProductRecordHome.tabParam}";
+	if(type == 1){
+		x = "1";
+	}
+	if(x!=""){
+		jquery(".cm_designHdLt li a:eq(0)").trigger("click");
+	}else{
+		jquery(".cm_designHdLt li a:eq(1)").trigger("click");
+		}
+	jquery('.li_bg').hover(function(){
+		jquery(this).find('.edit').show();
+	},function(){
+		jquery(this).find('.edit').hide();
+	})
+	/**
+ 	if(jquery.browser.msie &amp;&amp; jquery.browser.version &lt; 10){
+		jquery(".zoom_in").each(
+			function(){
+				jquery(this).css("zoom",0.49);;
+			}
+		);
+	}
+	*/
+})
+
+</script>
+<td valign="top">
+		<!-- Modal -->
+<div aria-hidden="false" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal2" class="modal fade in w600na" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示框</h4>
+      </div>
+      <div class="modal-body">
+       <span id="productMsg">*号部分为必填项！</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- Modal 编辑履历显示内容 开始 -->
+<!-- Modal 编辑履历显示内容 结束 -->
+	<div style="width:100%;">
+	    <div class="right_c" style="min-width:630px;">
+	    	<!-- 公用头部 开始 -->
+	    	<div class="r_title clear">
+	        	<div class="r_t_l fl">精准营销&#160;&gt;&#160;&#160;履历&#160;&gt;&#160;&#160;<font size="3">履历管理   </font></div>
+	            <div class="fr" style="margin-bottom:-1px;">
+	            	<ul class="cm_resumeList clear" style="margin-bottom:0;">
+	                	<li>
+	                    	<!-- <a href="javascript:void(0)" disabled="true" class="borderBt" style="cursor:default;"><img src="../asset/images/lsll/cm_lsllIco01.jpg"/><span>履历设计</span></a> -->
+	                    	<li onclick="changeTabMe(1)"><a href="#home" class=" butt1" role="tab" data-toggle="tab" style="border-radius:4px 0 0 4px;"><img src="#{request.contextPath}/asset/images/cm_lsllIco01.jpg"/><span>履历设计</span></a></li>
+	                    </li>
+	                    <li>
+	                    	<!--lvliyl-ico1.jpg<a href="javascript:void(0)" disabled="true" class="borderBt" style="cursor:default;"><img src="../asset/images/lsll/cm_lsllIco01.jpg"/><span>履历预览</span></a> -->
+	                    	<li  onclick="changeTabMe(2)"><a href="#profile"  class=" butt2" role="tab" data-toggle="tab" style="border-radius:0 4px 4px 0;"><img src="#{request.contextPath}/asset/images/lvliyl-ico1.jpg"/><span>履历预览</span></a></li>
+	                    </li>
+	                	<li>
+	                    	<a href="#{request.contextPath}/record/UsedResume.seam?source=1"><img src="../asset/images/lsll/cm_lsllIco02.jpg" /><span>履历制作</span></a>
+	                    </li>
+	                    <li>
+	                    	<a href="#{request.contextPath}/record/ResumeTracing.seam?source=1" ><img src="#{request.contextPath}/asset/images/cm_lsllIco05.png" /><span>履历追溯</span></a>
+	                    </li>
+	            	</ul>
+	            </div>
+	            
+	        </div>
+	        
+	<!-- 公用头部 结束 -->
+	<!-- 履历设计内容 开始 -->
+	<div class="cm_resumeCon pt40 pb40">    
+	    <!-- 模板 履历 自定义履历 的选项卡头部 开始  -->                   
+        <div class="cm_designHd clear">
+         <h:panelGroup rendered="#{sessionTake.correspond eq 1 or sessionTake.print eq 1}">
+        	<!-- <div class="cm_designHdLt">
+                <ul class="nav nav-tabs" role="tablist" id="myTab">
+                	   <li onclick="changeTabMe(1)"><a href="#home" role="tab" data-toggle="tab" style="border-radius:4px 0 0 4px;">履历设计</a></li>
+                       <li class="active" onclick="changeTabMe(2)"><a href="#profile" role="tab" data-toggle="tab" style="border-radius:0 4px 4px 0;">履历预览</a></li>
+                </ul>
+            </div> -->
+            <div class="search-header-lt">
+                    <div class="public-search" style="margin-left: 55px;">
+                    	<span class="octicon-search02" onclick="searchName();"></span>
+		               	<input id="searchName" onfocus="objFocus(this)" onblur="objBlur(this)" class="form-control nw250 srarchfont" value="搜索履历" style="width:270px;"/>
+		               	<input type="hidden" name="tabParam"  id="tabParam"/>
+                    </div>
+                </div>
+                <span class="backversion"><img class="mr5" src="../asset/images/resume2/backto.png"/><a href="/resume/NewPhoneModelInfoList.seam">返回新版</a></span>
+	            <!-- <div style="position:absolute; left:50%; top:62px; margin-left:-130px;">
+		            <div class="public-search">   
+		               	<span class="octicon-search02" onclick="searchName();"></span>
+		               	<input id="searchName" class="form-control nw250 srarchfont" value="#{newProductRecordHome.searchName}" style="width:196px;"/>
+		               	<input type="hidden" name="tabParam"  id="tabParam"/>
+		           </div>
+	           </div> -->
+			</h:panelGroup>
+           <!--  <h:panelGroup rendered="#{sessionTake.correspond eq 0 and sessionTake.print eq 0 and sessionTake.custom eq 1}">
+            <div class="cm_designHdLt" style="margin-left:-65px;">
+                <a class="btn btn-primary"  style="font-size: 14px;cursor: default; background:#3884b6; padding:5px 20px; border-color:#2f719e;">履历设计</a>
+            </div>
+            </h:panelGroup>
+              -->
+              <div class="search-header-rt" id="folderButt" style="display: none;">
+                    <a class="btn btn-success" href="javascript:;" data-toggle="modal" data-target="#myModal-xj" onclick="saBegin()">
+                    	<img src="#{request.contextPath}/asset/images/newfolder.png" width="15" height="12" style="margin-right:5px;" />新建文件夹
+                    </a>
+               </div>
+              
+            <div class="cm_designHdRt addLl_selt"  id="createButt">
+               <h:panelGroup rendered="#{sessionTake.correspond eq 1 or sessionTake.print eq 1 or sessionTake.custom eq 1}">
+                <div class="btn-group">
+					<button style="display: #{s:hasRole('resume_add')?'hidden':'none'}" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span id="Primary">创建模版</span><span class="caret"></span></button>
+					<ul class="dropdown-menu" role="menu">
+					 	<h:panelGroup rendered="#{sessionTake.correspond eq 1 or sessionTake.print eq 1}">
+						<li>
+				      		<s:link id="addtwo" propagation="none" view="/record/NewRecordModel.xhtml" onclick="return checkBase(this)">
+				      			<f:param name="phoneModelInfoId" value="" />
+				      			<f:param name="baseId" value="#{newProductRecordHome.baseId}" />
+                    	     	创建种植模版 	
+                        	</s:link>
+                       	</li>
+                       	<li>
+				      		<s:link id="addthree" propagation="none" view="/livestock/AnimalRecordModel.xhtml" onclick="return checkBase(this)">
+				      			<f:param name="livestockHistoryTemplateId" value="" />
+				      			<f:param name="baseId" value="#{newProductRecordHome.baseId}" />
+                    	     	创建养殖模版 	
+                        	</s:link>
+                       	</li>
+                       	</h:panelGroup>
+                       	<h:panelGroup rendered="#{sessionTake.custom eq 1}">
+                        <li>
+                        	<s:link id="addone" propagation="none" view="/record/CustomBackWardEdit.xhtml" onclick="return checkBase(this)">
+                        	<f:param name="baseId" value="#{newProductRecordHome.baseId}" />
+	                    	   	创建自定义履历
+	                       	</s:link>
+                        </li>
+                        </h:panelGroup>
+					  </ul>
+				</div>
+			   </h:panelGroup>
+			   <!--
+			   <h:panelGroup rendered="#{sessionTake.correspond eq 0 and sessionTake.print eq 0 and sessionTake.custom eq 1}">
+                <div class="btn-group">
+                        	<s:link id="addone2" styleClass="btn btn-success" propagation="none" view="/record/CustomBackWardEdit.xhtml">
+                        	<f:param name="baseId" value="#{newProductRecordHome.baseId}" />
+	                    	   	创建自定义履历
+	                       	</s:link>
+				</div>
+			   </h:panelGroup>
+			   <h:panelGroup rendered="#{(sessionTake.correspond eq 1 or sessionTake.print eq 1) and sessionTake.custom eq 0}">
+                <div class="btn-group" style="display: #{s:hasRole('resume_add')?'hidden':'none'}">
+				      		<s:link id="addtwo2" styleClass="btn btn-success" propagation="none" view="/livestock/AnimalRecordModel.xhtml" onclick="return checkSelectNew()">
+				      			<f:param name="phoneModelInfoId" value="" />
+				      			<f:param name="baseId" value="#{newProductRecordHome.baseId}" />
+                    	     	创建种植模版
+                        	</s:link>
+				</div>
+				 <div class="btn-group" style="display: #{s:hasRole('resume_add')?'hidden':'none'}">
+				      		<s:link id="addthree2" styleClass="btn btn-success" propagation="none" view="/livestock/AnimalRecordModel.xhtml" onclick="return checkSelectNew()">
+				      			<f:param name="livestockHistoryTemplateId" value="" />
+				      			<f:param name="baseId" value="#{newProductRecordHome.baseId}" />
+                    	     	创建养殖模版
+                        	</s:link>
+				</div>
+			   </h:panelGroup>
+			     -->
+            </div>
+        </div>
+        <!-- 模板 履历 自定义履历 的选项卡头部 结束  -->     
+        <!-- 模板 履历 自定义履历 的选项卡内容 开始  -->     
+        <div class="tab-content pl40">
+        	<!-- 模板内容 开始 -->
+            <div class="tab-pane cm_designCon1  clear"  style="padding-top:10px;" id="home">
+             <h:panelGroup id="lvlisj">
+            	<ul class="designUl1 clear">
+            		<!-- #{newProductRecordHome.findEntityList()} -->
+            		<h:panelGroup rendered="#{sessionTake.correspond eq 1 or sessionTake.print eq 1}">
+            		<a4j:repeat  value="#{newProductRecordHome.pmodelList}"  var="_phone"  rendered="#{not empty newProductRecordHome.pmodelList}" rowKeyVar="_index">
+                	<li id="deleted2#{_phone.id}" class="modelClass">
+                    	<div class="designDiv1">
+                        	<div class="designConWap1">
+                            	<div class="designCon1" style="background-color:#{_phone.backgroundColor};">
+                                    <div class="designHd1">
+                                        <span class="designLogo1"> 
+                                        	<ui:fragment rendered="#{_phone.logoImageUrl!=null and _phone.logoImageUrl!=''}">
+								            	<img style="margin-left:5px;" src="#{_phone.logoImageUrl}" width="50" height="18" />
+								        	</ui:fragment>
+									        <ui:fragment rendered="#{_phone.logoImageUrl==null or _phone.logoImageUrl ==''}">
+										        <ui:fragment rendered="#{_phone.skinInfoId.id==4}">
+										        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/my-logo.png" width="50" height="18" />
+										        </ui:fragment>
+										        <ui:fragment rendered="#{_phone.skinInfoId.id!=4}">
+										        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+										        </ui:fragment>
+									        </ui:fragment>
+                                        </span>
+                                        <span class="designReturn1"><img src="../asset/images/lsll/return.png" width="16" height="13" /></span>
+                                    </div>
+                                    <div class="designCt1">
+                                    	<img src="../asset/images/lsll/chart.png" width="154" height="95" />
+                                    	<img class="designImg1" src="#{request.contextPath}/asset/images/pic_04.png" width="68" height="68" />
+                                    </div>
+                                    <h4>蔬菜</h4>
+                                    <h5>Vegetables</h5>
+                                    <table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+                                    	<tr>
+                                        	<td><p>企业：#{phoneModelInfoHome.eInfo.name}</p></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="designEdit1" style="display: #{s:hasRole('resume_del') or s:hasRole('resume_edit')?'hidden':'none'}">
+                                <a href="javascript:;" style="display: #{s:hasRole('resume_del')?'hidden':'none'}" onclick="del2(#{_phone.id})" class="designDlt"><img src="#{request.contextPath}/asset/images/dele_15.jpg" /></a>
+                                <a href="#{request.contextPath}/record/NewRecordModel.seam?phoneModelInfoId=#{_phone.id}" style="display: #{s:hasRole('resume_edit')?'hidden':'none'}" class="designBj"><img src="#{request.contextPath}/asset/images/bj_12.jpg" /></a>
+                            </div>
+                        </div>
+                        <h3>#{_phone.name}</h3>
+                    </li>
+                    </a4j:repeat>
+                    <!-- 养殖设计开始 -->
+                    <a4j:repeat  value="#{newProductRecordHome.lhtList}"  var="_animal"  rendered="#{not empty newProductRecordHome.lhtList}" rowKeyVar="_index">
+                	<li id="deletedAnimal2#{_animal.templateId}" class="modelClass">
+                    	<div class="designDiv1">
+                        	<div class="designConWap1">
+                            	<div class="designCon1" style="background-color:#{_animal.bgcolor};">
+                                    <div class="designHd1">
+                                        <span class="designLogo1"> 
+                                        	<ui:fragment rendered="#{_animal.topPicUrl!=null and _animal.topPicUrl!=''}">
+								            	<img style="margin-left:5px;" src="#{_animal.topPicUrl}" width="50" height="18" />
+								        	</ui:fragment>
+									        <ui:fragment rendered="#{_animal.topPicUrl==null or _animal.topPicUrl ==''}">
+										    	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+									        </ui:fragment>
+                                        </span>
+                                        <span class="designReturn1"><img src="../asset/images/lsll/return.png" width="16" height="13" /></span>
+                                    </div>
+                                    <div class="designCt1" style="background:url() no-repeat">
+                                    	<img class="designImg1" src="#{request.contextPath}/asset/images/livestock/yangzhi.png" width="68" height="68" />
+                                    </div>
+                                    <h4>养殖</h4>
+                                    <h5>Animal</h5>
+                                    <table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+                                    	<tr>
+                                        	<td><p>企业：#{phoneModelInfoHome.eInfo.name}</p></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="designEdit1" style="display: #{s:hasRole('resume_del') or s:hasRole('resume_edit')?'hidden':'none'}">
+                                <a href="javascript:;" style="display: #{s:hasRole('resume_del')?'hidden':'none'}" onclick="delAnimal2(#{_animal.templateId})" class="designDlt"><img src="#{request.contextPath}/asset/images/dele_15.jpg" /></a>
+                                <a href="#{request.contextPath}/livestock/AnimalRecordModel.seam?livestockHistoryTemplateId=#{_animal.templateId}" style="display: #{s:hasRole('resume_edit')?'hidden':'none'}" class="designBj"><img src="#{request.contextPath}/asset/images/bj_12.jpg" /></a>
+                            </div>
+                        </div>
+                        <h3>#{_animal.templateName}</h3>
+                    </li>
+                    </a4j:repeat>
+                    <!-- 养殖设计结束-->
+                    </h:panelGroup>
+                    <!-- 自定义履历开始 -->
+                    <h:panelGroup rendered="#{sessionTake.custom eq 1}">
+                     <a4j:repeat value="#{newProductRecordHome.customList}"  var="_pro"  rendered="#{not empty newProductRecordHome.customList}" rowKeyVar="_index">
+                	<li class="li_bg customClass" id="deleted#{_pro.productInfoId}">
+                                		<div class="customClass-bg" style=" height: 219px;  position: relative; width: 188px;margin:1px;">
+                                		<ui:fragment rendered="#{s:hasRole('resume_show')}">
+	                                    	<div style="width:154px; height:204px; margin-left:16px; position:absolute; z-index:20; background:#fff; display:block; border: 1px solid #d6d6d6;" onclick="metiao('#{request.contextPath}/record/CustomBackWard.seam?productRecordProductInfoId=#{_pro.productInfoId}')"></div>
+							                <div class="content2 zoom_in" style="position:relative;z-index:22;height:202px;width:148px; margin-left:17px;padding:3px;overflow:hidden;background:none repeat scroll 0 0 #{_pro.pmi.backgroundColor}">
+	          									<div>
+	          									<iframe src="#{request.contextPath}/record/ProductBaseInfoShow.seam?prId=#{_pro.productInfoId}"
+												 scrolling="no" width="100%" height="195" frameborder="0"></iframe>
+	          									</div>
+	    									</div>
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{!s:hasRole('resume_show')}">
+                                    	<a class="div_img" style="text-decoration: none;" href="#">
+                                    	<div style="width:154px; height:201px; position:absolute; z-index:20; background:none; display:block;" ></div>
+						                <div class="content2 zoom_in" style="height:411px;width:154px;overflow:hidden;background:none repeat scroll 0 0 #{_pro.pmi.backgroundColor}">
+          									<div style="padding:3px;">
+          									<iframe src="#{request.contextPath}/record/ProductBaseInfoShow.seam?prId=#{_pro.productInfoId}"
+											 scrolling="no" width="100%" height="200" frameborder="0"></iframe>
+          									</div>
+    									</div>
+                                        </a>
+                                        </ui:fragment>
+                                        <a href="#{request.contextPath}/record/CustomBackWard.seam?productRecordProductInfoId=#{_pro.productInfoId}" >
+                                        <div class="edit" style="padding:0;background:none;right:0; top:0;height:30px;cursor:hand;">
+                                            <ul class="z_llul" style=" right: 16px;z-index:24; margin:0;display: #{s:hasRole('resume_del') or (sessionTake.getLevelId() ne 1 and (!_pro.enterpriseInfoId.auditState or _pro.submitState ne 2 ) and s:hasRole('resume_edit'))?'hidden':'none'}">
+                                            	<li class="z_lli" style="#{sessionTake.getLevelId() ne 1 and (!_pro.enterpriseInfoId.auditState or _pro.submitState ne 2 ) and s:hasRole('resume_edit')?'':'display: none;'}"><a style="width:14px; height:19px; padding:4px 10px; display:block; cursor:pointer" href="#{request.contextPath}/record/CustomBackWardEdit.seam?productRecordProductInfoId=#{_pro.productInfoId}&amp;baseId=#{newProductRecordHome.baseId}"><img src="#{request.contextPath}/asset/images/bj_12.jpg" width="17" height="14" /></a></li>
+                                                <li class="z_lli" onclick="del(#{_pro.productInfoId})" style="background-image:none; cursor:pointer;display: #{s:hasRole('resume_del')?'hidden':'none'}"><a style="width:14px; height:19px; padding:4px 10px; display:block; cursor:pointer;"><img src="#{request.contextPath}/asset/images/dele_15.jpg" width="17" height="14" /></a></li>
+                                            </ul>
+                                        </div>
+                                        </a>
+                                        </div>
+                                        <div class="customDivClass" style="width:154; height:20px; line-height:20px; text-align:center; display:block;font-size:16px;">#{_pro.plantName}</div>
+                                    </li>
+                    </a4j:repeat>
+                    </h:panelGroup>
+                    <!-- 自定义履历结束 -->
+                </ul> 
+           </h:panelGroup>
+            </div>
+            <!-- 模板内容 结束 -->
+            <!-- 履历内容 开始 -->
+            <div class="tab-pane  cm_designCon2 clear" id="profile">
+            <h:panelGroup id="lvliId">
+            	<!-- 遮罩层 开始 -->
+				<div class="lvliShade_wap" id="lvliShade_wap" aa="-" bb="">
+				    <i class="closeBtn"></i>
+				    <div class="shade_div" id="shade_div">
+				    <ul class="designUl1 gallery ui-helper-reset2">
+				    </ul>
+				    <div class="clear"></div>
+				    </div>
+				</div>
+			<!-- 遮罩层 结束 -->
+             <div class="lvli-droppable-wap">
+            	<ol id="trash">
+            	<!-- 文件夹  开始 -->
+            	<a4j:repeat value="#{newProductRecordHome.frList}"  var="_fr"  rendered="#{not empty newProductRecordHome.frList}" rowKeyVar="_index">
+            		<li class="droppable-items">
+                    	<div class="designEdit1">
+                      		<a href="javascript:;" class="designDlt" onclick="deBegin(#{_fr.id});return false;"><img src="#{request.contextPath}/asset/images/dele_15.jpg" /></a>
+                      		<a class="designBj" href="javascript:;" data-toggle="modal" data-target="#myModal-xg" onclick="upBegin(#{_fr.id},'#{_fr.name}')"><img src="#{request.contextPath}/asset/images/bj_12.jpg" /></a>
+                   		</div>
+                   		<h:inputHidden value="#{_fr.id}"/>
+                    	<div class="droppable-items-con" onclick="oneBlock(#{_index},#{_fr.id})" >
+                      		<div class="droppable-div">
+                        		<i class="curIco bb#{_index}"></i>
+                            	<div class="droppable-con ui-droppable">
+                            		<ul class="designUl1 gallery ui-helper-reset">
+                            			<!-- 种植  开始 -->
+	                            		<a4j:repeat  value="#{_fr.prList}"  var="_pro1"  rendered="#{not empty _fr.prList}" rowKeyVar="_index1">
+						                	<li id="deleted#{_pro1.productInfoId}" class="resumeClass ui-draggable ui-draggable-handle">
+						                	<div class="designEdit1" style="display: #{s:hasRole('resume_del') or s:hasRole('resume_edit')?'hidden':'none'}">
+						                                <a href="javascript:void(0);" style="display: #{s:hasRole('resume_del')?'hidden':'none'}" onclick="del(#{_pro1.productInfoId})" class="designDlt"><img src="#{request.contextPath}/asset/images/dele_15.jpg" /></a>
+						                            	<a href="/record/ResumePreviewEdit.seam?editId=#{_pro1.productInfoId}" style="display: #{s:hasRole('resume_edit')?'hidden':'none'}" class="designBj"><img src="#{request.contextPath}/asset/images/bj_12.jpg" /></a>
+						                            
+						                            </div>
+						                            <div class="designLicon">
+						                    	<div class="designDiv1">
+						                          <ui:fragment rendered="#{s:hasRole('resume_show')}">
+						                    		<a style="text-decoration: none;color:#333333;" href="#" kea="#{request.contextPath}/record/NewProductRecordTwo.seam?productRecordProductInfoId=#{_pro1.productInfoId}">
+						                        	<div class="designConWap1">
+						                            	<div class="designCon1" style="background-color:#{_pro1.pmi.backgroundColor};">
+						                                    <div class="designHd1">
+						                                        <span class="designLogo1"> 
+						                                        	<ui:fragment rendered="#{_pro1.pmi.logoImageUrl!=null and _pro1.pmi.logoImageUrl!=''}">
+															        	<img style="margin-left:5px;max-height: 18px;max-width: 18px;" src="#{_pro1.pmi.logoImageUrl}"  />
+															        </ui:fragment>
+															        <ui:fragment rendered="#{_pro1.pmi.logoImageUrl==null or  _pro1.pmi.logoImageUrl ==''}">
+															        	 <ui:fragment rendered="#{_pro1.pmi.skinInfoId.id==4}">
+																        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/my-logo.png" width="50" height="18" />
+																        </ui:fragment>
+																        <ui:fragment rendered="#{_pro1.pmi.skinInfoId.id!=4}">
+																        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+																        </ui:fragment>
+															        </ui:fragment>
+						                                        </span>
+						                                        <span class="designReturn1"><img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" /></span>
+						                                    </div>
+						                                    <div class="designCt1">
+							                                    <span class="chartBg"></span>
+							                                     <ui:fragment rendered="#{_pro1.plantImage!=null}">
+														        	<img src="#{_pro1.plantImage}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+														        </ui:fragment>
+														        <ui:fragment rendered="#{_pro1.plantImage==null}">
+								                                    <ui:fragment rendered="#{_pro1.breed.plant.plantImgRound!=null}">
+															        	<img src="#{_pro1.breed.plant.plantImgRound}@68h_68w.src" class="designImg1" width="68" height="68" /> 
+															        </ui:fragment>
+															        <ui:fragment rendered="#{_pro1.breed.plant.plantImgRound==null}">
+															        	<img src="#{request.contextPath}/asset/images/pic_04.png" class="designImg1" width="68" height="68" />
+															        </ui:fragment>  
+														        </ui:fragment>
+						                                    </div>
+						              						<h4 id="#{_pro1.productInfoId}_pName" style="#{_pro1.productName eq null or _pro1.productName eq ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_pro1.breed.plant.name}">#{_pro1.breed.plant.name}</h4>
+						              						<h4 id="#{_pro1.productInfoId}_pName2" style="#{_pro1.productName ne null and _pro1.productName ne ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_pro1.productName}">#{_pro1.productName}</h4>
+						                                    <h5>#{_pro1.breed.plant.englishName}</h5>
+						                                    <table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+						                                    	<tr>
+						                                        	<td><p>基地：#{iphoneHomeTow.getBaseInfoByEi(_pro1.tunnelInfo.baseId).name}(#{_pro1.tunnelInfo.tunnelName})</p></td>
+						                                        </tr>
+						                                        
+						                                    </table>
+						                                </div>
+						                            </div>
+						                            </a>
+						                            </ui:fragment>
+						                             <ui:fragment rendered="#{!s:hasRole('resume_show')}">
+						                    		<a style="text-decoration: none;color:#333333;" href="#">
+						                        	<div class="designConWap1">
+						                            	<div class="designCon1" style="background-color:#{_pro1.pmi.backgroundColor};">
+						                                    <div class="designHd1">
+						                                        <span class="designLogo1"> 
+						                                        	<ui:fragment rendered="#{_pro1.pmi.logoImageUrl!=null and _pro1.pmi.logoImageUrl!=''}">
+															        	<img style="margin-left:5px;" src="#{_pro1.pmi.logoImageUrl}" width="50" height="18" />
+															        </ui:fragment>
+															        <ui:fragment rendered="#{_pro1.pmi.logoImageUrl==null or  _pro1.pmi.logoImageUrl ==''}">
+															        	<ui:fragment rendered="#{_pro1.pmi.skinInfoId.id==4}">
+																        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/my-logo.png" width="50" height="18" />
+																        </ui:fragment>
+																        <ui:fragment rendered="#{_pro1.pmi.skinInfoId.id!=4}">
+																        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+																        </ui:fragment>
+															        </ui:fragment>
+						                                        </span>
+						                                        <span class="designReturn1"><img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" /></span>
+						                                    </div>
+						                                    <div class="designCt1">
+						                                    <span class="chartBg"></span>
+						                                    	        <ui:fragment rendered="#{_pro1.breed.plant.plantImgRound!=null}">
+																        <img src="#{_pro1.breed.plant.plantImgRound}@68h_68w.src" class="designImg1" width="68" height="68" /> 
+																        </ui:fragment>
+																        <ui:fragment rendered="#{_pro1.breed.plant.plantImgRound==null}">
+																        <img src="#{request.contextPath}/asset/images/pic_04.png" class="designImg1" width="68" height="68" />
+																        </ui:fragment>  
+						                                    </div>
+						              						<h4 id="#{_pro1.productInfoId}_pName" style="#{_pro1.productName eq null or _pro1.productName eq ''?'':'display:none'}">#{_pro1.breed.plant.name}</h4>
+						              						<h4 id="#{_pro1.productInfoId}_pName2" style="#{_pro1.productName ne null and _pro1.productName ne ''?'':'display:none'}">#{_pro1.productName}</h4>
+						                                    <h5>#{_pro1.breed.plant.englishName}</h5>
+						                                    <table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+						                                    	<tr>
+						                                        	<td><p>基地：#{iphoneHomeTow.getBaseInfoByEi(_pro1.tunnelInfo.baseId).name}(#{_pro1.tunnelInfo.tunnelName})</p></td>
+						                                        </tr>
+						                                        
+						                                    </table>
+						                                </div>
+						                            </div>
+						                            </a>
+						                            </ui:fragment>
+						                            
+						                        </div>
+						                        </div>
+						                        <h3>#{_pro1.plantName}</h3>
+						                        <h3 style="font-size: 10px">周期：<h:outputText value="#{_pro1.cycleBeginTime}"><f:convertDateTime pattern="yyyy/M/d" timeZone="GMT+8"/></h:outputText>-<h:outputText value="#{_pro1.cycleEndTime}"><f:convertDateTime pattern="yyyy/M/d" timeZone="GMT+8"/></h:outputText></h3>
+						                    </li>
+					                    </a4j:repeat>
+					                    <!-- 种植  结束 -->
+					                    
+					                    <!-- 养殖 开始 -->
+					                    <a4j:repeat  value="#{_fr.prAnimalList}"  var="_ani1"  rendered="#{not empty _fr.prAnimalList}" rowKeyVar="_index1">
+						                	<li id="deletedAnimal#{_ani1.historyId}" class="resumeClass ui-draggable ui-draggable-handle">
+						                	<div class="designEdit1" style="display: #{s:hasRole('resume_del') or s:hasRole('resume_edit')?'hidden':'none'}">
+						                                <a href="javascript:void(0);" style="display: #{s:hasRole('resume_del')?'hidden':'none'}" onclick="delAnimal(#{_ani.historyId})" class="designDlt"><img src="#{request.contextPath}/asset/images/dele_15.jpg" /></a>
+						                            	<a href="/livestock/AniamlPreviewEdit.seam?editId=#{_ani1.historyId}" style="display: #{s:hasRole('resume_edit')?'hidden':'none'}" class="designBj"><img src="#{request.contextPath}/asset/images/bj_12.jpg" /></a>
+						                            </div>
+						                            <div class="designLicon">
+						                    	<div class="designDiv1">
+						                          <ui:fragment rendered="#{s:hasRole('resume_show')}">
+						                    		<a style="text-decoration: none;color:#333333;" href="#" kea="#{request.contextPath}/livestock/NewAnimalRecord.seam?livestockHistoryId=#{_ani1.historyId}">
+						                        	<div class="designConWap1">
+						                            	<div class="designCon1" style="background-color:#{_ani1.livestockHistoryTemplateId.bgcolor};">
+						                                    <div class="designHd1">
+						                                        <span class="designLogo1"> 
+															        <ui:fragment rendered="#{_ani1.livestockHistoryTemplateId.topPicUrl!=null and _ani1.livestockHistoryTemplateId.topPicUrl!=''}">
+															        	<img style="margin-left:5px;max-height: 18px;max-width: 18px;" src="#{_ani1.livestockHistoryTemplateId.topPicUrl}"  />
+															        </ui:fragment>
+												        			<ui:fragment rendered="#{_ani1.livestockHistoryTemplateId.topPicUrl==null or _ani1.livestockHistoryTemplateId.topPicUrl ==''}">
+																    	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+															        </ui:fragment>
+						                                        </span>
+						                                        <span class="designReturn1"><img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" /></span>
+						                                    </div>
+						                                    <div class="designCt1" style="background:url() no-repeat">
+							                                    <span class="chartBg" style="background:url() no-repeat"></span>
+							                                    <ui:fragment rendered="#{_ani1.animalImage!=null}">
+														        	<img src="#{_ani1.animalImage}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+														        </ui:fragment>
+														        <ui:fragment rendered="#{_ani.animalImage==null}">
+															        <ui:fragment rendered="#{_ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=null &amp;&amp; _ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=''}">
+																    	<img src="#{_ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+															        </ui:fragment>
+															        <ui:fragment rendered="#{_ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl==null || _ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl==''}">
+															        	<img src="#{request.contextPath}/asset/images/livestock/yangzhi.png" class="designImg1" width="68" height="68" />
+															        </ui:fragment> 
+														        </ui:fragment>
+						                                    </div>
+						                                    <h4 id="#{_ani1.historyId}_pName" style="#{_ani1.historyName eq null or _ani1.historyName eq ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_ani1.animalsArchivesInfoId.animalBreedId.name}">#{_ani1.animalsArchivesInfoId.animalBreedId.name}</h4>
+						              						<h4 id="#{_ani1.historyId}_pName2" style="#{_ani1.historyName ne null and _ani1.historyName ne ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_ani1.historyName}">#{_ani1.historyName}</h4>
+						                                    <h5>#{_ani1.animalsArchivesInfoId.animalBreedId.englishName}</h5>
+			                                    			<table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+						                                    	<tr>
+						                                        	<td><p>基地：#{iphoneHomeTow.getBaseInfoByEi(_ani1.baseId).name}(#{_ani1.animalsArchivesInfoId.tunnelInfoId.tunnelName})</p></td>
+						                                        </tr>
+						                                    </table>
+						                                </div>
+						                            </div>
+						                            </a>
+						                            </ui:fragment>
+						                             <ui:fragment rendered="#{!s:hasRole('resume_show')}">
+						                    		<a style="text-decoration: none;color:#333333;" href="#">
+						                        	<div class="designConWap1">
+						                            	<div class="designCon1" style="background-color:#{_ani1.livestockHistoryTemplateId.bgcolor};">
+						                                    <div class="designHd1">
+						                                        <span class="designLogo1"> 
+						                                        	<ui:fragment rendered="#{_ani1.livestockHistoryTemplateId.topPicUrl!=null and _ani1.livestockHistoryTemplateId.topPicUrl!=''}">
+															        	<img style="margin-left:5px;max-height: 18px;max-width: 18px;" src="#{_ani1.livestockHistoryTemplateId.topPicUrl}"  />
+															        </ui:fragment>
+												        			<ui:fragment rendered="#{_ani1.livestockHistoryTemplateId.topPicUrl==null or _ani1.livestockHistoryTemplateId.topPicUrl ==''}">
+																    	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+															        </ui:fragment>
+						                                        </span>
+						                                        <span class="designReturn1"><img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" /></span>
+						                                    </div>
+						                                    <div class="designCt1" style="background:url() no-repeat">
+						                                    <span class="chartBg" style="background:url() no-repeat"></span>
+							                                    <ui:fragment rendered="#{_ani1.animalImage!=null}">
+														        	<img src="#{_ani1.animalImage}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+														        </ui:fragment>
+														        <ui:fragment rendered="#{_ani1.animalImage==null}">
+							                                    	<ui:fragment rendered="#{_ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=null &amp;&amp; _ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=''}">
+																    	<img src="#{_ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+															        </ui:fragment>
+															        <ui:fragment rendered="#{_ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl==null || _ani1.animalsArchivesInfoId.animalBreedId.imgRoundUrl==''}">
+															        	<img src="#{request.contextPath}/asset/images/livestock/yangzhi.png" class="designImg1" width="68" height="68" />
+															        </ui:fragment>
+														        </ui:fragment>
+						                                    </div>
+						                                    <h4 id="#{_ani1.historyId}_pName" style="#{_ani1.historyName eq null or _ani1.historyName eq ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_ani1.animalsArchivesInfoId.animalBreedId.name}">#{_ani1.animalsArchivesInfoId.animalBreedId.name}</h4>
+						              						<h4 id="#{_ani1.historyId}_pName2" style="#{_ani1.historyName ne null and _ani1.historyName ne ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_ani1.historyName}">#{_ani1.historyName}</h4>
+						                                    <h5>#{_ani1.animalsArchivesInfoId.animalBreedId.englishName}</h5>
+			                                    			<table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+						                                    	<tr>
+						                                        	<td><p>基地：#{iphoneHomeTow.getBaseInfoByEi(_ani1.baseId).name}(#{_ani1.animalsArchivesInfoId.tunnelInfoId.tunnelName})</p></td>
+						                                        </tr>
+						                                    </table>
+						                                </div>
+						                            </div>
+						                            </a>
+						                            </ui:fragment>
+						                            
+						                        </div>
+						                        </div>
+							                    <h3>#{_ani.productName}</h3>
+	                        					<h3 style="font-size: 10px"></h3>
+						                    </li>
+					                    </a4j:repeat>
+					                    <!-- 养殖  结束 -->
+                            		</ul>
+                            	</div>
+                        	</div>
+                        	<div class="crop-name">
+                           		<p><span class="name">#{_fr.name}</span><span class="num">#{_fr.productLength}项</span></p>
+                        	</div>
+                    	</div>
+                    </li>
+            	</a4j:repeat>
+                </ol>
+            </div>
+            
+            
+            
+            <!-- 预览list 开始 -->
+			<ul id="gallery" class="designUl1 designUl2 clear">
+				<!-- 种植履历 开始 -->
+            	<a4j:repeat  value="#{newProductRecordHome.recordList}"  var="_pro"  rendered="#{not empty newProductRecordHome.recordList}" rowKeyVar="_index">
+                	<li id="deleted#{_pro.productInfoId}" class="resumeClass">
+                		<div class="designEdit1" style="right:35px;display: #{s:hasRole('resume_del') or s:hasRole('resume_edit')?'hidden':'none'}">
+                        	<a href="javascript:void(0);" style="display: #{s:hasRole('resume_del')?'hidden':'none'}" onclick="del(#{_pro.productInfoId})" class="designDlt"><img src="#{request.contextPath}/asset/images/dele_15.jpg" /></a>
+                            <a href="/record/ResumePreviewEdit.seam?editId=#{_pro.productInfoId}" style="display: #{s:hasRole('resume_edit')?'hidden':'none'}" class="designBj"><img src="#{request.contextPath}/asset/images/bj_12.jpg" /></a>
+                        </div>
+                        <div class="designLicon">
+                    		<div class="designDiv1">
+                          		<ui:fragment rendered="#{s:hasRole('resume_show')}">
+                    				<a style="text-decoration: none;color:#333333;" href="#" kea="#{request.contextPath}/record/NewProductRecordTwo.seam?productRecordProductInfoId=#{_pro.productInfoId}">
+                        				<div class="designConWap1" style="cursor:pointer;" onclick="goUrl('#{request.contextPath}/record/NewProductRecordTwo.seam?productRecordProductInfoId=#{_pro.productInfoId}')">
+                            				<div class="designCon1" style="background-color:#{_pro.pmi.backgroundColor};">
+                                    			<div class="designHd1">
+                                        			<span class="designLogo1"> 
+			                                        	<ui:fragment rendered="#{_pro.pmi.logoImageUrl!=null and _pro.pmi.logoImageUrl!=''}">
+												        	<img style="margin-left:5px;max-height: 18px;max-width: 18px;" src="#{_pro.pmi.logoImageUrl}"  />
+												        </ui:fragment>
+									        			<ui:fragment rendered="#{_pro.pmi.logoImageUrl==null or  _pro.pmi.logoImageUrl ==''}">
+												        	<ui:fragment rendered="#{_pro.pmi.skinInfoId.id==4}">
+													        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/my-logo.png" width="50" height="18" />
+													        </ui:fragment>
+													        <ui:fragment rendered="#{_pro.pmi.skinInfoId.id!=4}">
+													        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+													        </ui:fragment>
+												        </ui:fragment>
+                                        			</span>
+                                        			<span class="designReturn1"><img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" /></span>
+                                    			</div>
+                                    			<div class="designCt1">
+	                                    			<span class="chartBg"></span>
+				                                    <ui:fragment rendered="#{_pro.plantImage!=null}">
+											        	<img src="#{_pro.plantImage}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+											        </ui:fragment>
+											        <ui:fragment rendered="#{_pro.plantImage==null}">
+					                                    <ui:fragment rendered="#{_pro.breed.plant.plantImgRound!=null}">
+												       		<img src="#{_pro.breed.plant.plantImgRound}@68h_68w.src" class="designImg1" width="68" height="68" /> 
+												        </ui:fragment>
+												        <ui:fragment rendered="#{_pro.breed.plant.plantImgRound==null}">
+												        	<img src="#{request.contextPath}/asset/images/pic_04.png" class="designImg1" width="68" height="68" />
+												        </ui:fragment> 
+											        </ui:fragment> 
+                                    			</div>
+			              						<h4 id="#{_pro.productInfoId}_pName" style="#{_pro.productName eq null or _pro.productName eq ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_pro.breed.plant.name}">#{_pro.breed.plant.name}</h4>
+			              						<h4 id="#{_pro.productInfoId}_pName2" style="#{_pro.productName ne null and _pro.productName ne ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_pro.productName}">#{_pro.productName}</h4>
+			                                    <h5>#{_pro.breed.plant.englishName}</h5>
+                                    			<table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+			                                    	<tr>
+			                                        	<td><p>基地：#{iphoneHomeTow.getBaseInfoByEi(_pro.tunnelInfo.baseId).name}(#{_pro.tunnelInfo.tunnelName})</p></td>
+			                                        </tr>
+			                                    </table>
+                                			</div>
+                            			</div>
+                            		</a>
+                            	</ui:fragment>
+                             	<ui:fragment rendered="#{!s:hasRole('resume_show')}">
+                    				<a style="text-decoration: none;color:#333333;" href="#">
+                        				<div class="designConWap1">
+                            				<div class="designCon1" style="background-color:#{_pro.pmi.backgroundColor};">
+                                    			<div class="designHd1">
+                                        			<span class="designLogo1"> 
+			                                        	<ui:fragment rendered="#{_pro.pmi.logoImageUrl!=null and _pro.pmi.logoImageUrl!=''}">
+												        	<img style="margin-left:5px;" src="#{_pro.pmi.logoImageUrl}" width="50" height="18" />
+												        </ui:fragment>
+												        <ui:fragment rendered="#{_pro.pmi.logoImageUrl==null or  _pro.pmi.logoImageUrl ==''}">
+												        	<ui:fragment rendered="#{_pro.pmi.skinInfoId.id==4}">
+													        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/my-logo.png" width="50" height="18" />
+													        </ui:fragment>
+													        <ui:fragment rendered="#{_pro.pmi.skinInfoId.id!=4}">
+													        	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+													        </ui:fragment>
+												        </ui:fragment>
+			                                        </span>
+                                        			<span class="designReturn1">
+                                        				<img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" />
+                                        			</span>
+                                    			</div>
+                                    			<div class="designCt1">
+                                    				<span class="chartBg"></span>
+                                    	        	<ui:fragment rendered="#{_pro.plantImage!=null}">
+											        	<img src="#{_pro.plantImage}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+											        </ui:fragment>
+											        <ui:fragment rendered="#{_pro.plantImage==null}">
+					                                    <ui:fragment rendered="#{_pro.breed.plant.plantImgRound!=null}">
+												       		<img src="#{_pro.breed.plant.plantImgRound}@68h_68w.src" class="designImg1" width="68" height="68" /> 
+												        </ui:fragment>
+												        <ui:fragment rendered="#{_pro.breed.plant.plantImgRound==null}">
+												        	<img src="#{request.contextPath}/asset/images/pic_04.png" class="designImg1" width="68" height="68" />
+												        </ui:fragment> 
+											        </ui:fragment> 
+                                    			</div>
+			              						<h4 id="#{_pro.productInfoId}_pName" style="#{_pro.productName eq null or _pro.productName eq ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_pro.breed.plant.name}">#{_pro.breed.plant.name}>#{_pro.breed.plant.name}</h4>
+			              						<h4 id="#{_pro.productInfoId}_pName2" style="#{_pro.productName ne null and _pro.productName ne ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_pro.breed.plant.name}">#{_pro.breed.plant.name}>#{_pro.productName}</h4>
+			                                    <h5>#{_pro.breed.plant.englishName}</h5>
+			                                    <table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+			                                    	<tr>
+			                                        	<td><p>基地：#{iphoneHomeTow.getBaseInfoByEi(_pro.tunnelInfo.baseId).name}(#{_pro.tunnelInfo.tunnelName})</p></td>
+			                                        </tr>
+			                                    </table>
+                                			</div>
+                            			</div>
+                            		</a>
+                            	</ui:fragment>
+                        	</div>
+                        </div>
+                        <h3>#{_pro.plantName}</h3>
+                        <h3 style="font-size: 10px">周期：<h:outputText value="#{_pro.cycleBeginTime}"><f:convertDateTime pattern="yyyy/M/d" timeZone="GMT+8"/></h:outputText>-<h:outputText value="#{_pro.cycleEndTime}"><f:convertDateTime pattern="yyyy/M/d" timeZone="GMT+8"/></h:outputText></h3>
+                    </li>
+				</a4j:repeat>
+                <!-- 种植履历 结束 -->
+                
+                
+                
+                <!-- 养殖履历 开始 -->
+                <a4j:repeat  value="#{newProductRecordHome.lhList}"  var="_ani"  rendered="#{not empty newProductRecordHome.lhList}" rowKeyVar="_index">
+                	<li id="deletedAnimal#{_ani.historyId}" class="resumeClass">
+                		<div class="designEdit1" style="right:35px;display: #{s:hasRole('resume_del') or s:hasRole('resume_edit')?'hidden':'none'}">
+                        	<a href="javascript:void(0);" style="display: #{s:hasRole('resume_del')?'hidden':'none'}" onclick="delAnimal(#{_ani.historyId})" class="designDlt"><img src="#{request.contextPath}/asset/images/dele_15.jpg" /></a>
+                            <a href="/livestock/AniamlPreviewEdit.seam?editId=#{_ani.historyId}" style="display: #{s:hasRole('resume_edit')?'hidden':'none'}" class="designBj"><img src="#{request.contextPath}/asset/images/bj_12.jpg" /></a>
+                        </div>
+                        <div class="designLicon">
+                    		<div class="designDiv1">
+                          		<ui:fragment rendered="#{s:hasRole('resume_show')}">
+                    				<a style="text-decoration: none;color:#333333;" href="#" kea="#{request.contextPath}/livestock/NewAnimalRecord.seam?livestockHistoryId=#{_ani.historyId}">
+                        				<div class="designConWap1" style="cursor:pointer;" onclick="goUrl('#{request.contextPath}/livestock/NewAnimalRecord.seam?livestockHistoryId=#{_ani.historyId}')">
+                            				<div class="designCon1" style="background-color:#{_ani.livestockHistoryTemplateId.bgcolor};">
+                                    			<div class="designHd1">
+                                        			<span class="designLogo1"> 
+			                                        	<ui:fragment rendered="#{_ani.livestockHistoryTemplateId.topPicUrl!=null and _ani.livestockHistoryTemplateId.topPicUrl!=''}">
+												        	<img style="margin-left:5px;max-height: 18px;max-width: 18px;" src="#{_ani.livestockHistoryTemplateId.topPicUrl}"  />
+												        </ui:fragment>
+									        			<ui:fragment rendered="#{_ani.livestockHistoryTemplateId.topPicUrl==null or _ani.livestockHistoryTemplateId.topPicUrl ==''}">
+													    	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+												        </ui:fragment>
+                                        			</span>
+                                        			<span class="designReturn1"><img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" /></span>
+                                    			</div>
+                                    			<div class="designCt1" style="background:url() no-repeat">
+	                                    			<span class="chartBg" style="background:url() no-repeat"></span>
+	                                    			<ui:fragment rendered="#{_ani.animalImage!=null}">
+											        	<img src="#{_ani.animalImage}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+											        </ui:fragment>
+											        <ui:fragment rendered="#{_ani.animalImage==null}">
+					                                    <ui:fragment rendered="#{_ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=null &amp;&amp; _ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=''}">
+												       		<img src="#{_ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+												        </ui:fragment>
+												        <ui:fragment rendered="#{_ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl==null || _ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl==''}">
+												        	<img src="#{request.contextPath}/asset/images/livestock/yangzhi.png" class="designImg1" width="68" height="68" />
+												        </ui:fragment> 
+													</ui:fragment>
+                                    			</div>
+			              						<h4 id="#{_ani.historyId}_pName" style="#{_ani.historyName eq null or _ani.historyName eq ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_ani.animalsArchivesInfoId.animalBreedId.name}">#{_ani.animalsArchivesInfoId.animalBreedId.name}</h4>
+			              						<h4 id="#{_ani.historyId}_pName2" style="#{_ani.historyName ne null and _ani.historyName ne ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_ani.historyName}">#{_ani.historyName}</h4>
+			                                    <h5>#{_ani.animalsArchivesInfoId.animalBreedId.englishName}</h5>
+                                    			<table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+			                                    	<tr>
+			                                        	<td><p>基地：#{iphoneHomeTow.getBaseInfoByEi(_ani.baseId).name}(#{_ani.animalsArchivesInfoId.tunnelInfoId.tunnelName})</p></td>
+			                                        </tr>
+			                                    </table>
+                                			</div>
+                            			</div>
+                            		</a>
+                            	</ui:fragment>
+                             	<ui:fragment rendered="#{!s:hasRole('resume_show')}">
+                    				<a style="text-decoration: none;color:#333333;" href="#">
+                        				<div class="designConWap1">
+                            				<div class="designCon1" style="background-color:#{_ani.livestockHistoryTemplateId.bgcolor};">
+                                    			<div class="designHd1">
+                                        			<span class="designLogo1"> 
+			                                        	<ui:fragment rendered="#{_ani.livestockHistoryTemplateId.topPicUrl!=null and _ani.livestockHistoryTemplateId.topPicUrl!=''}">
+												        	<img style="margin-left:5px;max-height: 18px;max-width: 18px;" src="#{_ani.livestockHistoryTemplateId.topPicUrl}"  />
+												        </ui:fragment>
+									        			<ui:fragment rendered="#{_ani.livestockHistoryTemplateId.topPicUrl==null or _ani.livestockHistoryTemplateId.topPicUrl ==''}">
+													    	<img style="margin-left:5px;" src="#{request.contextPath}/asset/images/logo_yt.png" width="50" height="18" />
+												        </ui:fragment>
+			                                        </span>
+                                        			<span class="designReturn1">
+                                        				<img src="#{request.contextPath}/asset/images/lsll/return.png" width="16" height="13" />
+                                        			</span>
+                                    			</div>
+                                    			<div class="designCt1" style="background:url() no-repeat">
+                                    				<span class="chartBg" style="background:url() no-repeat"></span>
+                                    				<ui:fragment rendered="#{_ani.animalImage!=null}">
+											        	<img src="#{_ani.animalImage}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+											        </ui:fragment>
+											        <ui:fragment rendered="#{_ani.animalImage==null}">
+	                                    	        	<ui:fragment rendered="#{_ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=null &amp;&amp; _ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl!=''}">
+													       		<img src="#{_ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl}@1000-1ci.png" class="designImg1" width="68" height="68" /> 
+												        </ui:fragment>
+												        <ui:fragment rendered="#{_ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl==null || _ani.animalsArchivesInfoId.animalBreedId.imgRoundUrl==''}">
+												        	<img src="#{request.contextPath}/asset/images/livestock/yangzhi.png" class="designImg1" width="68" height="68" />
+												        </ui:fragment> 
+											        </ui:fragment>
+                                    			</div>
+			              						<h4 id="#{_ani.historyId}_pName" style="#{_ani.historyName eq null or _ani.historyName eq ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_ani.animalsArchivesInfoId.animalBreedId.name}">#{_ani.animalsArchivesInfoId.animalBreedId.name}</h4>
+			              						<h4 id="#{_ani.historyId}_pName2" style="#{_ani.historyName ne null and _ani.historyName ne ''?'':'display:none'};overflow:hidden;white-space:nowrap;" title="#{_ani.historyName}">#{_ani.historyName}</h4>
+			                                    <h5>#{_ani.animalsArchivesInfoId.animalBreedId.englishName}</h5>
+			                                    <table style=" margin:0 auto;" cellpadding="0" cellspacing="0">
+			                                    	<tr>
+			                                        	<td><p>基地：#{iphoneHomeTow.getBaseInfoByEi(_ani.baseId).name}(#{_ani.animalsArchivesInfoId.tunnelInfoId.tunnelName})</p></td>
+			                                        </tr>
+			                                    </table>
+                                			</div>
+                            			</div>
+                            		</a>
+                            	</ui:fragment>
+                        	</div>
+                        </div>
+                        <h3>#{_ani.productName}</h3>
+                        <h3 style="font-size: 10px"></h3>
+                    </li>
+				</a4j:repeat>
+                <!-- 养殖履历 结束 -->
+			</ul> 
+                <!-- 预览list 结束 -->
+		</h:panelGroup>
+	</div>
+            <!-- 履历内容 结束 -->
+        </div>
+	    <!-- 模板 履历 自定义履历 的选项卡内容 结束  -->  
+	</div>
+	<!-- 履历设计内容 结束 -->
+	</div><!--right_c结束-->
+	</div>
+	
+
+	
+	
+	<!-- 新建文件夹模态框 开始 -->
+	 <a4j:form id="tian">
+<div class="modal fade" id="myModal-xj" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="position:absolute; left:50%; top:50%; width:570px; height:390px; margin-left:-285px; margin-top:-180px;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" style="margin-top:5px;"></button>
+        <h4 class="modal-title" id="myModalLabel" style="font-size:16px;">新建文件夹</h4>
+    </div>
+    <div class="modal-body" style="height:240px; overflow:auto; padding:30px 20px; box-sizing:border-box;">
+    	<span class="newFolder-ico"></span>
+        <p class="newFolder-con">
+        	<span class="bootTxt wid115 fl">文件夹名</span>
+    		<span class="bootIpt240">
+    			<h:inputText value="#{newProductRecordHome.foName}" id="foNameId" class="form-control" type="text" style="width:165px;"/>
+    		</span>  
+        </p> 
+    </div>
+    <div class="modal-footer">
+        <a4j:commandButton styleClass="btn btn-success sFolder" action="#{newProductRecordHome.saveFolder}" onclick="if(!saFolder())return false;jquery('.sFolder').prop('disabled','true');" value="保存" oncomplete="saHuidiao();jquery('.sFolder').removeAttr('disabled');" reRender="lvliId"></a4j:commandButton>
+        <a class="btn btn-default" data-dismiss="modal" href="javascript:;">返回</a>
+    </div>
+</div>
+</div>
+</div>
+</a4j:form>
+<!-- 新建文件夹模态框 结束 -->
+
+<!-- 修改文件夹模态框 开始 -->
+<a4j:form id="xiu">
+<div class="modal fade" id="myModal-xg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="position:absolute; left:50%; top:50%; width:570px; margin-left:-285px; margin-top:-180px;">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" style="margin-top:5px;"></button>
+        <h4 class="modal-title" id="myModalLabel" style="font-size:16px;">修改文件夹</h4>
+    </div>
+    <div class="modal-body" style="height:240px; overflow:auto; padding:30px 20px; box-sizing:border-box;">
+    	<span class="modifyFolder-ico"></span>
+        <p class="newFolder-con">
+        	<span class="bootTxt wid115 fl">新文件夹名</span>
+    		<span class="bootIpt240">
+    			<h:inputText value="#{newProductRecordHome.foName}" id="foNameId" class="form-control" type="text" style="width:165px;"/>
+    		</span>  
+    		<h:inputHidden value="#{newProductRecordHome.folderId}" id="folderId"/>
+    		
+        </p> 
+    </div>
+    <div class="modal-footer">
+        <a4j:commandButton styleClass="btn btn-success uFolder" action="#{newProductRecordHome.updateFolder}" onclick="if(!upFolder())return false;jquery('.uFolder').prop('disabled','true');" value="保存" oncomplete="saHuidiao();jquery('.uFolder').removeAttr('disabled');" reRender="lvliId"></a4j:commandButton>
+        
+        <a class="btn btn-default" data-dismiss="modal" href="javascript:;">返回</a>
+    </div>
+</div>
+</div>
+</div>
+</a4j:form>
+<!-- 修改文件夹模态框 结束 -->
+	
+	
+</td>
+<a4j:form>
+	<a4j:queue requestDelay="10" ignoreDupResponses="true"/>
+	<a4j:jsFunction name="deleteObj" action="#{newProductRecordHome.delete()}" oncomplete="saHuidiao()" reRender="lvliId,lvlisj">
+		<a4j:actionparam name="deid" assignTo="#{newProductRecordHome.deid}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="deleteObj2" action="#{phoneModelInfoHome.delete()}" data="#{phoneModelInfoHome.deleteStr}" oncomplete="remo2(data)">
+		<a4j:actionparam name="deid" assignTo="#{phoneModelInfoHome.deid}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="deleteAnimal" action="#{newProductRecordHome.deleteAnimal()}" ncomplete="saHuidiao()" reRender="lvliId,lvlisj">
+		<a4j:actionparam name="deid" assignTo="#{newProductRecordHome.deid}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="deleteAnimal2" action="#{phoneModelInfoHome.deleteAnimal()}" data="#{phoneModelInfoHome.deleteStr}" oncomplete="remoAniaml2(data)">
+		<a4j:actionparam name="deid" assignTo="#{phoneModelInfoHome.deid}"/>
+	</a4j:jsFunction>
+	<a4j:jsFunction name="cFolder" action="#{newProductRecordHome.createFolder()}">
+		<a4j:actionparam name="cvId" assignTo="#{newProductRecordHome.cvId}" />
+		<a4j:actionparam name="folderId" assignTo="#{newProductRecordHome.folderId}" />
+		<a4j:actionparam name="typeAorP" assignTo="#{newProductRecordHome.typeAorP}" />
+	</a4j:jsFunction>
+	<a4j:jsFunction name="removeFolder" action="#{newProductRecordHome.removeLlFolder()}">
+		<a4j:actionparam name="cvId" assignTo="#{newProductRecordHome.cvId}" />
+		<a4j:actionparam name="typeAorP" assignTo="#{newProductRecordHome.typeAorP}" />
+	</a4j:jsFunction>
+	<a4j:jsFunction name="deletedfield" action="#{newProductRecordHome.deletedField()}" reRender="lvliId" oncomplete="saHuidiao()">
+		<a4j:actionparam name="folderId" assignTo="#{newProductRecordHome.folderId}" />
+	</a4j:jsFunction>
+</a4j:form>   
+
+<script type="text/javascript">
+//<![CDATA[
+	var id = 0;
+	var id2= 0;
+	var animalid=0;
+	del = function(xx){
+		if(confirm('确定删除该履历？')){
+			id = xx;
+			deleteObj(xx);
+		}
+	}
+	remo = function(){
+		jquery("#deleted"+id).hide(1000);
+		jquery('.ui-helper-reset2').find("#deleted"+id).hide(1000);
+	}
+	del2 = function(xx){
+		if(confirm('确定删除该履历？')){
+			id2 = xx;
+			deleteObj2(xx);
+		}
+	}
+	remo2 = function(str){
+		if(str!=''){
+			alert(str);
+			return;
+		}
+		jquery("#deleted2"+id2).hide(1000);
+	}
+	
+	delAnimal = function(xx){
+		if(confirm('确定删除该履历？')){
+			deleteAnimal(xx);
+		}
+	}
+	
+	delAnimal2= function(xx){
+		if(confirm('确定删除该履历？')){
+			animalid2 = xx;
+			deleteAnimal2(animalid2);
+		}
+	}
+
+	remoAniaml2 = function(str){
+		if(str!=''){
+			alert(str);
+			return;
+		}
+		jquery("#deletedAnimal2"+animalid2).hide(1000);
+	}
+	
+
+	var editIdNew;
+	var publicName;
+	
+	function  objFocus(obj){
+		if(obj.value== "搜索履历"){
+				obj.value="";
+				jQuery("#searchName").css("color","#000");
+		}
+    } 
+    
+   function objBlur(obj){
+	   if(obj.value==""){
+			obj.value="搜索履历";
+			jQuery("#searchName").css("color","#a8a8a8");
+		}
+   }
+  function changeTabMe(type){
+	  if(type==1){
+		  jquery('#createButt').attr('style','display:block');
+		  jquery('#folderButt').attr('style','display:none');
+		  jquery(".butt1").attr('class','borderBt butt1');
+		  jquery(".butt2").attr('class','butt2');
+	  }else{
+		  jquery('#createButt').attr('style','display:none');
+		  jquery('#folderButt').attr('style','display:block');
+		  jquery(".butt2").attr('class','borderBt butt2');
+		  jquery(".butt1").attr('class','butt1');
+		  
+		  }
+		jquery("#tabParam").val(type);
+		
+		 jquery(".modelClass").each(function(i){
+				var obj = jquery(this).find("h3:eq(0)").text() + "";
+					jquery(this).show();
+			 });
+		 jquery(".customClass").each(function(i){
+				var obj = jquery(this).find(".customDivClass").text() + "";
+					jquery(this).show();
+			 });
+		 jquery(".resumeClass").each(function(i){
+			 var obj = jquery(this).find("h3:eq(0)").text() + "";
+				jquery(this).show();
+			 });
+	 }
+
+	 function searchName(){
+		 var type = jquery("#tabParam").val();
+		 var name = jquery("#searchName").val();
+		 if(name != ""){
+			 if(type == 1){
+					//查询模版
+					 jquery(".modelClass").each(function(i){
+							var obj = jquery(this).find("h3:eq(0)").text() + "";
+							if(obj.indexOf(name) > -1){
+								jquery(this).show();
+							}else{
+								jquery(this).hide();
+							}
+						 });
+
+					 jquery(".customClass").each(function(i){
+						 var obj = jquery(this).children(".customDivClass").text() + "";
+							if(obj.indexOf(name) > -1){
+								jquery(this).show();
+							}else{
+								jquery(this).hide();
+							}
+						 });
+					 
+				 }else{
+					//查询履历
+					jquery(".droppable-items").each(function(i){
+							 var obj = jquery(this).find(".name").text() + "";
+							 if(obj.indexOf(name) > -1){
+									jquery(this).show();
+								}else{
+									jquery(this).hide();
+								}
+					});
+					
+					 jquery(".resumeClass").each(function(i){
+						 var obj = jquery(this).find("h3:eq(0)").text() + "";
+							if(obj.indexOf(name) > -1){
+								jquery(this).show();
+								if("designUl1 gallery ui-helper-reset"==jquery(this).parent().attr('class')){
+									jquery(this).parents('.droppable-items').show(); 
+								}
+							}else{
+								jquery(this).hide();
+							}
+						 
+						 });
+
+				 }
+		 }else{
+					 jquery(".modelClass").each(function(i){
+							var obj = jquery(this).find("h3:eq(0)").text() + "";
+								jquery(this).show();
+						 });
+					 jquery(".customClass").each(function(i){
+							var obj = jquery(this).find(".customDivClass").text() + "";
+								jquery(this).show();
+						 });
+					 
+					 jquery(".resumeClass").each(function(i){
+						 var obj = jquery(this).find("h3:eq(0)").text() + "";
+							jquery(this).show();
+						 });
+					 jquery(".droppable-items").each(function(i){
+								jquery(this).show();
+						});
+		 }
+		 
+	}
+
+
+
+	function saBegin(){
+		jquery('#tian\\:foNameId').val('');
+	}
+
+	function saFolder(){
+		if(jquery.trim(jquery('#tian\\:foNameId').val())==""){
+			alert('文件名不能为空！');
+			return false;
+		}
+		if(jquery.trim(jquery('#tian\\:foNameId').val()).length>6){
+			alert('文件名最多只能填写6个字！');
+			return false;
+		}
+		return true;
+	}
+	function upBegin(id,name){
+		jquery('.closeBtn').click();
+		jquery('#xiu\\:foNameId').val(name);
+		jquery('#xiu\\:folderId').val(id);
+		
+	}
+	
+	function upFolder(){
+		if(jquery('#xiu\\:foNameId').val().trim()==""){
+			alert('文件名不能为空！');
+			return false;
+		}
+		if(jquery('#xiu\\:foNameId').val().trim().length>6){
+			alert('文件名最多只能填写6个字！');
+			return false;
+		}
+		return true;
+	}	
+
+	function deBegin(id){
+		if(confirm('确定删除?')){
+			deletedfield(id);
+	 		return true;
+	 	}
+	 	return false;
+	}	
+	
+
+
+	function oneBlock(index,id){
+		if($('#lvliShade_wap').attr('aa')!=index){
+			var nplanting2=4;
+			var oBodyWid2 = $(window).width();
+			if(oBodyWid2<1206){  //根据浏览器窗口决定plantItems的个数
+				nplanting2=4; 			
+			}else if(oBodyWid2<1418){ 
+				nplanting2=5; 		
+			}else if(oBodyWid2<1626){
+				nplanting2=6; 	 	 	
+			}else if(oBodyWid2<1836){
+				nplanting2=7; 	 	 	
+			}else{
+				nplanting2=8; 	 	 	
+			}
+		
+
+			$('#lvliShade_wap').attr('aa',index);
+			$('#lvliShade_wap').attr('bb',id);
+			
+			var b='bb'+index;
+				
+			$('.curIco').fadeOut();	
+			$('.'+b).fadeIn();
+				
+			if($('.shade_div').length==2){
+				$('#lvliShade_wap').slideUp(600);
+				$('#lvliShade_wap').remove();
+			}
+			var returnPlantItems=index;
+			var lastPlantItems=((parseInt(returnPlantItems/nplanting2)+1))*nplanting2;
+			if( lastPlantItems > $('.droppable-items').length ){
+				lastPlantItems = $('.droppable-items').length;
+			};
+			$('.droppable-items').eq(lastPlantItems-1).after($('#lvliShade_wap')/*.clone(true)*/);
+			$('#lvliShade_wap').css({
+				'width' : oBodyWid2-77
+				});		
+			$('#lvliShade_wap').slideUp(600).slideDown(600);
+			
+		$('.ui-helper-reset2').children().remove();
+		$('.items'+index).find('.ui-helper-reset').children().clone(true).appendTo($('.ui-helper-reset2'));
+		$('.ui-helper-reset2').find('li').each(function(){
+			$(this).find('.designDiv1 a .designConWap1').attr('onclick','goUrl(\''+$(this).find('.designDiv1 a').attr('kea')+'\')');
+			$(this).find('.designEdit1').attr('style',$(this).find('.designEdit1').attr('style')+';right:36px;');
+		} );
+		$( "li", $('.ui-helper-reset2') ).draggable({
+			cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+			revert: "invalid", // when not dropped, the item will revert back to its initial position
+			containment: "document",
+			helper: "clone",
+			cursor: "move"
+		});
+		}
+	}
+	//]]>
+</script> 
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.min.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery-picklist.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/record/jquery-ui.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	function saHuidiao(){
+		jquery('#myModal-xj').modal('hide');
+		jquery('#myModal-xg').modal('hide');
+		$('.lvliShade_wap .closeBtn').click(function(){
+			$('#lvliShade_wap').attr('aa','-');
+			$(this).parents('.lvliShade_wap').slideUp(600);
+			$('#trash .droppable-items').find('.curIco').fadeOut();	
+		});
+		//拖拽控件开始
+		$('#trash .droppable-items').each(function(index, element) {
+	        $(this).addClass('items'+index)
+			
+			var $gallery = $( "#gallery" )//,
+			//$trash = $( "#trash li .droppable-con" );
+			 $shade_div = $( "#shade_div" );
+			
+			// let the gallery items be draggable
+			$( "li", $gallery ).draggable({
+				cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+				revert: "invalid", // when not dropped, the item will revert back to its initial position
+				containment: "document",
+				helper: "clone",
+				cursor: "move"
+			});
+			
+			// let the trash be droppable, accepting the gallery items
+			$('.items'+index).find('.droppable-con').droppable({  //当$gallery里的每一项拖拽时给$trash添加一个class,即一个显示状态的背景色
+				accept: "#gallery > li",  //接受来自#gallery下的每一项li
+				activeClass: "ui-state-highlight",
+				drop: function( event, ui ) {
+					deleteImage( ui.draggable );
+				}
+			});
+			// let the trash be droppable, accepting the gallery items
+			$shade_div.droppable({
+			  accept: "#gallery > li",
+			  activeClass: "ui-state-highlight",
+			  drop: function( event, ui ) {
+				deleteImage2( ui.draggable );
+			  }
+			});
+
+			// let the gallery be droppable as well, accepting items from the trash
+			$gallery.droppable({  //当$trash里的每一项拖拽时给$gallery添加一个class,即一个显示状态的背景色
+				accept: "#trash .droppable-con li,#shade_div li",
+				activeClass: "custom-state-active",
+				drop: function( event, ui ) {
+					recycleImage( ui.draggable );
+				}
+			});
+			
+			// image deletion function
+			function deleteImage( $item ) {  //$item为li,即每一项
+				$item.fadeOut(function() {
+					var $list = $( "ul", $('.items'+index).find('.droppable-con') ).length ?
+						$( "ul", $('.items'+index).find('.droppable-con') ) :
+						$( "<ul class='designUl1 gallery ui-helper-reset'/>" ).appendTo( $('.items'+index).find('.droppable-con') );  //将克隆的列表项复制到拖拽的盒子里
+						$item.clone().appendTo( $list ).fadeIn();
+
+						$('.ui-draggable').attr('style','display: list-item;');
+						
+					if(index==$('.lvliShade_wap').attr('aa')){
+					$('.ui-draggable').attr('style','display: list-item;');
+						var $list2 = $( "ul", $shade_div ).length ?
+							$( "ul", $shade_div ) :
+							$( "<ul class='designUl1 gallery ui-helper-reset2'/>" ).appendTo( $shade_div );  //将克隆的列表项复制到拖拽的盒子里
+							$item.appendTo( $list2 ).fadeIn();
+					}else{
+						$('#gallery').find($item).remove();
+					}
+					var ss=$item.attr('id');
+					$('.ui-helper-reset').children('#'+ss).find('.designDiv1  .designConWap1').removeAttr('onclick');
+				});
+				if($item.attr('id').indexOf('Animal')==-1){
+					cFolder($item.attr('id').substring(7,$item.attr('id').length), $('.items'+index).find('input[type=hidden]').val(),1);
+				}else{
+					cFolder($item.attr('id').substring(13,$item.attr('id').length), $('.items'+index).find('input[type=hidden]').val(),2);
+				}
+				$('.items'+index).find('.num').text((parseInt($('.items'+index).find('.num').text().substring(0,$('.items'+index).find('.num').text().length-1))+1)+'项');
+				
+			}
+			function deleteImage2( $item ) {  //$item为li,即每一项
+				$item.fadeOut(function() {
+					var $list2 = $( "ul", $shade_div ).length ?
+						$( "ul", $shade_div ) :
+						$( "<ul class='designUl1 gallery ui-helper-reset2'/>" ).appendTo( $shade_div );  //将克隆的列表项复制到拖拽的盒子里
+						$item.appendTo( $list2 ).fadeIn();
+
+					var num =$( ".ui-helper-reset2" ).parents('.lvliShade_wap').attr('aa');
+					$('.ui-draggable').attr('style','display: list-item;');
+
+					var $list = $( "ul", $('.items'+num).find('.droppable-con') ).length ?
+						$( "ul", $('.items'+num).find('.droppable-con') ) :
+						$( "<ul class='designUl1 gallery ui-helper-reset'/>" ).appendTo( $('.items'+num).find('.droppable-con') );  //将克隆的列表项复制到拖拽的盒子里
+						$item.clone().appendTo( $list ).fadeIn();
+					$('.items'+num).find('.num').text((parseInt($('.items'+num).find('.num').text().substring(0,$('.items'+num).find('.num').text().length-1))+1)+'项');
+					var ss=$item.attr('id');
+					$('.ui-helper-reset').children('#'+ss).find('.designDiv1 a .designConWap1').removeAttr('onclick');
+				});
+				if($item.attr('id').indexOf('Animal')==-1){
+					cFolder($item.attr('id').substring(7,$item.attr('id').length),$('.lvliShade_wap').attr('bb'),1);
+				}else{
+					cFolder($item.attr('id').substring(13,$item.attr('id').length),$('.lvliShade_wap').attr('bb'),2);
+				}
+			}
+			
+			// image recycle function
+			function recycleImage( $item ) {
+				$item.fadeOut(function() {
+					$item.appendTo( $gallery ).fadeIn();
+				});
+				$item.find('.designDiv1 a').attr('href',$item.find('.designDiv1 a').attr('kea'));
+				$('.lvli-droppable-wap').find('#'+$item.attr('id')).remove();
+				if($item.attr('id').indexOf('Animal')==-1){
+					removeFolder($item.attr('id').substring(7,$item.attr('id').length),1);
+				}else{
+					removeFolder($item.attr('id').substring(13,$item.attr('id').length),2);
+				}
+				$('.items'+$item.parents('.lvliShade_wap').attr('aa')).find('.num').text((parseInt($('.items'+$item.parents('.lvliShade_wap').attr('aa')).find('.num').text().substring(0,$('.items'+$item.parents('.lvliShade_wap').attr('aa')).find('.num').text().length-1))-1)+'项');
+				
+			}
+	    });
+		jquery('.li_bg').hover(function(){
+			jquery(this).find('.edit').show();
+		},function(){
+			jquery(this).find('.edit').hide();
+		})
+	}
+	$(function(){
+	
+		$('#searchName').focus(function(){  //文本域控制
+			var txt_value = $(this).val();
+			if( txt_value == this.defaultValue ){
+				$(this).val("");	
+			}	
+		});	
+		$('#searchName').blur(function(){
+			var txt_value = $(this).val();
+			if( txt_value == '' ){
+				$(this).val( this.defaultValue );	
+			}	
+		});
+
+		
+		var a=#{newProductRecordHome.lvliType};
+		if(a==1){
+			$("#home").attr('class','tab-pane active cm_designCon1 clear');
+		}else{
+			$("#profile").attr('class','tab-pane active cm_designCon2 clear');
+		}
+		changeTabMe(a);
+		$(".butt"+a).attr('class','borderBt butt'+a)
+		$("#nonnumeric").pickList();
+
+
+		$('.lvliShade_wap .closeBtn').click(function(){
+			$('#lvliShade_wap').attr('aa','-');
+			$(this).parents('.lvliShade_wap').slideUp(600);
+			$('#trash .droppable-items').find('.curIco').fadeOut();	
+		});
+
+
+		var nplanting=4;
+		var oBodyWid = $(window).width();
+		  //根据浏览器窗口决定plantItems的个数
+		if(oBodyWid<1206){
+			nplanting=4; 			
+		}else if(oBodyWid<1418){ 
+			nplanting=5; 		
+		}else if(oBodyWid<1626){
+			nplanting=6; 	 	 	
+		}else if(oBodyWid<1836){
+			nplanting=7; 	 	 	
+		}else{
+			nplanting=8; 	 	 	
+		}
+		
+		$('.lvliShade_wap .closeBtn').click(function(){
+			$('#lvliShade_wap').attr('aa','-');
+			$(this).parents('.lvliShade_wap').slideUp(600);
+			$('#trash .droppable-items').find('.curIco').fadeOut();	
+		});
+		$(window).resize(function(){
+			var oBodyWid = $(window).width();
+			if(oBodyWid<1206){  //根据浏览器窗口决定plantItems的个数
+				nplanting=4; 			
+			}else if(oBodyWid<1418){ 
+				nplanting=5; 		
+			}else if(oBodyWid<1626){
+				nplanting=6; 	 	 	
+			}else if(oBodyWid<1836){
+				nplanting=7; 	 	 	
+			}else{
+				nplanting=8; 	 	 	
+			}
+			$('#lvliShade_wap').css({
+				'width' : oBodyWid-77
+				});	
+		});
+		
+		
+		//拖拽控件开始
+		$('#trash .droppable-items').each(function(index, element) {
+	        $(this).addClass('items'+index)
+			
+			var $gallery = $( "#gallery" )//,
+			//$trash = $( "#trash li .droppable-con" );
+			 $shade_div = $( "#shade_div" );
+			
+			// let the gallery items be draggable
+			$( "li", $gallery ).draggable({
+				cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+				revert: "invalid", // when not dropped, the item will revert back to its initial position
+				containment: "document",
+				helper: "clone",
+				cursor: "move"
+			});
+			
+			// let the trash be droppable, accepting the gallery items
+			$('.items'+index).find('.droppable-con').droppable({  //当$gallery里的每一项拖拽时给$trash添加一个class,即一个显示状态的背景色
+				accept: "#gallery > li",  //接受来自#gallery下的每一项li
+				activeClass: "ui-state-highlight",
+				drop: function( event, ui ) {
+					deleteImage( ui.draggable );
+				}
+			});
+			// let the trash be droppable, accepting the gallery items
+			$shade_div.droppable({
+			  accept: "#gallery > li",
+			  activeClass: "ui-state-highlight",
+			  drop: function( event, ui ) {
+				deleteImage2( ui.draggable );
+			  }
+			});
+
+			// let the gallery be droppable as well, accepting items from the trash
+			$gallery.droppable({  //当$trash里的每一项拖拽时给$gallery添加一个class,即一个显示状态的背景色
+				accept: "#trash .droppable-con li,#shade_div li",
+				activeClass: "custom-state-active",
+				drop: function( event, ui ) {
+					recycleImage( ui.draggable );
+				}
+			});
+			
+			// image deletion function
+			function deleteImage( $item ) {  //$item为li,即每一项
+				$item.fadeOut(function() {
+					var $list = $( "ul", $('.items'+index).find('.droppable-con') ).length ?
+						$( "ul", $('.items'+index).find('.droppable-con') ) :
+						$( "<ul class='designUl1 gallery ui-helper-reset'/>" ).appendTo( $('.items'+index).find('.droppable-con') );  //将克隆的列表项复制到拖拽的盒子里
+						$item.clone().appendTo( $list ).fadeIn();
+
+						$('.ui-draggable').attr('style','display: list-item;');
+						
+					if(index==$('.lvliShade_wap').attr('aa')){
+					$('.ui-draggable').attr('style','display: list-item;');
+						var $list2 = $( "ul", $shade_div ).length ?
+							$( "ul", $shade_div ) :
+							$( "<ul class='designUl1 gallery ui-helper-reset2'/>" ).appendTo( $shade_div );  //将克隆的列表项复制到拖拽的盒子里
+							$item.appendTo( $list2 ).fadeIn();
+					}else{
+						$('#gallery').find($item).remove();
+					}
+					var ss=$item.attr('id');
+					$('.ui-helper-reset').children('#'+ss).find('.designDiv1 a .designConWap1').removeAttr('onclick');
+				});
+				//养殖 种植
+				if($item.attr('id').indexOf('Animal')==-1){
+					cFolder($item.attr('id').substring(7,$item.attr('id').length), $('.items'+index).find('input[type=hidden]').val(),1);
+				}else{
+					cFolder($item.attr('id').substring(13,$item.attr('id').length), $('.items'+index).find('input[type=hidden]').val(),2);
+				}
+				$('.items'+index).find('.num').text((parseInt($('.items'+index).find('.num').text().substring(0,$('.items'+index).find('.num').text().length-1))+1)+'项');
+			}
+			function deleteImage2( $item ) {  //$item为li,即每一项
+				$item.fadeOut(function() {
+					var $list2 = $( "ul", $shade_div ).length ?
+						$( "ul", $shade_div ) :
+						$( "<ul class='designUl1 gallery ui-helper-reset2'/>" ).appendTo( $shade_div );  //将克隆的列表项复制到拖拽的盒子里
+						$item.appendTo( $list2 ).fadeIn();
+
+					var num =$( ".ui-helper-reset2" ).parents('.lvliShade_wap').attr('aa');
+					$('.ui-draggable').attr('style','display: list-item;');
+
+					var $list = $( "ul", $('.items'+num).find('.droppable-con') ).length ?
+						$( "ul", $('.items'+num).find('.droppable-con') ) :
+						$( "<ul class='designUl1 gallery ui-helper-reset'/>" ).appendTo( $('.items'+num).find('.droppable-con') );  //将克隆的列表项复制到拖拽的盒子里
+						$item.clone().appendTo( $list ).fadeIn();
+					$('.items'+num).find('.num').text((parseInt($('.items'+num).find('.num').text().substring(0,$('.items'+num).find('.num').text().length-1))+1)+'项');
+					var ss=$item.attr('id');
+					$('.ui-helper-reset').children('#'+ss).find('.designDiv1 a .designConWap1').removeAttr('onclick');
+				});
+				if($item.attr('id').indexOf('Animal')==-1){
+					cFolder($item.attr('id').substring(7,$item.attr('id').length),$('.lvliShade_wap').attr('bb'),1);
+				}else{
+					cFolder($item.attr('id').substring(13,$item.attr('id').length),$('.lvliShade_wap').attr('bb'),2);
+				}
+			}
+			
+			// image recycle function
+			function recycleImage( $item ) {
+				$item.fadeOut(function() {
+					$item.appendTo( $gallery ).fadeIn();
+				});
+				$item.find('.designDiv1 a').attr('href',$item.find('.designDiv1 a').attr('kea'));
+				$('.lvli-droppable-wap').find('#'+$item.attr('id')).remove();
+				if($item.attr('id').indexOf('Animal')==-1){
+					removeFolder($item.attr('id').substring(7,$item.attr('id').length),1);
+				}else{
+					removeFolder($item.attr('id').substring(13,$item.attr('id').length),2);
+				}
+				$('.items'+$item.parents('.lvliShade_wap').attr('aa')).find('.num').text((parseInt($('.items'+$item.parents('.lvliShade_wap').attr('aa')).find('.num').text().substring(0,$('.items'+$item.parents('.lvliShade_wap').attr('aa')).find('.num').text().length-1))-1)+'项');
+			}
+	    });
+		// there's the gallery and the trash
+		//拖拽控件结束
+		
+		
+			});
+
+	function goUrl(url){
+		window.location.href=url;
+
+		}
+	function metiao(url){
+		window.location.href=url;
+		}
+function YandMandD(){
+	jquery('.pickList_sourceList  li').each(function(){
+		jquery(this).attr('style','overflow:hidden;text-overflow:ellipsis;');
+		jquery(this).attr('title',jquery(this).text());
+	  
+	})
+
+	jquery('.pickList_targetList li').each(function(){
+		jquery(this).attr('style','overflow:hidden;text-overflow:ellipsis;');
+		jquery(this).attr('title',jquery(this).text());
+	})
+}
+	//]]>
+	</script>
+</ui:define>
+</ui:composition>

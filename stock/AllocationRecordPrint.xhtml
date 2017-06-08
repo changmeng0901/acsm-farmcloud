@@ -1,0 +1,195 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"	
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j" 
+    template="/layout/template_pack.xhtml">
+    
+<ui:define name="body">
+<script type="text/javascript">
+	var totalNum=0.0;
+</script>
+<style>
+.table_product th,
+.table_product td{border-bottom:1px solid #000;color:#000; word-break: break-all;padding:0 5px;}
+.table_product .ze_bg2{border-bottom:1px solid #000;color:#000;}
+.table_product .ze_bg{ color:#000;}
+</style>
+	#{allocationRecordList.detailInit()}
+	<td valign="top" width="100%">
+	<div id="rightPanel" class="right_c" style="width: 700px;margin:auto;">
+		<div class="ckd_d" style="font-size:22px;">
+			调拨信息单
+		</div>
+		<table width="700" cellpadding="0" cellspacing="0" style="margin:0 auto ;">
+		    <tr>
+		    	<td width="350" height="30px;">
+		    		<table width="100%" cellpadding="0" cellspacing="0" >
+		        		<tr>
+		                	<td width="80" height="28" align="center" style="font-size:14px;">
+		                	调拨批次：
+		                	</td>
+		                    <td style=" font-size:14px;" >
+		                    <h:outputText value="#{allocationRecordList.transfer.transferCode}"></h:outputText>
+		                    </td>
+		                </tr>
+		            </table>
+		    	</td>
+		        <td width="350">
+		        	<!-- 年月日 开始 -->
+		            <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 auto;" align="center">
+		            	<tr>
+		                	<td width="80" height="28" align="center" style="font-size:14px;" >
+								调拨日期：
+							</td>
+							<td style=" font-size:14px;" >
+		                    <h:outputText value="#{allocationRecordList.transferEditTime}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd  HH:mm" /></h:outputText>
+		                    </td>
+		                </tr>
+		            </table>
+		        	<!-- 年月日 结束 -->
+		        </td>
+		    </tr>
+		    <tr>
+		        <td width="350">
+		        	<!-- 调出仓库 -->
+		        	<table width="100%" cellpadding="0" cellspacing="0" >
+		        		<tr>
+		                	<td width="84" height="28" align="center" style="font-size:14px;">
+		                	调出仓库：
+		                	</td>
+		                    <td style=" font-size:14px;" >
+							<h:outputText value="#{allocationRecordList.transfer.outStorageRoomId.name}" />
+							</td>
+		                </tr>
+		            </table>
+		            <!-- 调出仓库 结束 -->
+		        </td>
+		         <td width="350">
+		        	<!-- 调入仓库开始 -->
+		        	<table width="100%" cellpadding="0" cellspacing="0" >
+		        		<tr>
+		                	<td width="84" height="28" align="center" style="font-size:14px;">
+		                	调入仓库：
+		                	</td>
+		                    <td style=" font-size:14px;" >
+							<h:outputText value="#{allocationRecordList.transfer.inStorageRoomId.name}" />
+							</td>
+		                </tr>
+		            </table>
+		            <!-- 调入仓库 结束 -->
+		        </td>
+		    </tr>
+		</table>
+		<div style="height:5px;width:700px;margin:auto;margin-top:5px;border-bottom:1px solid #000;"></div>
+			
+		<table class="table_product" width="700"  cellpadding="0" cellspacing="0"  style="margin:0 auto ;border:1px solid #000;border-collapse:collapse;">
+			<tr>
+				<th  class="ze_bg" width="120">调拨编号</th>
+				<th  class="ze_bg" width="100">物料编号</th>
+				<th class="ze_bg" width="100">物料名称</th>
+				<th class="ze_bg" width="120">批次编号</th>
+				<th  class="ze_bg" width="50">规格</th>
+				<th  class="ze_bg" width="80">来源</th>
+				<th  class="ze_bg" width="50">数量</th>
+				<th  class="ze_bg" width="50">价格</th>
+				<th  class="ze_bg" width="80">备注</th>
+			</tr>
+			<a:repeat value="#{allocationRecordList.transferRocordList}" var="_batch" rowKeyVar="_index">
+				<tr>
+					<td class="ze_bg2"><span style="display:inline-block;width:110px;word-break: break-all;">#{_batch[15]}</span></td>
+					<td class="ze_bg2"><span style="display:inline-block;width:90px;word-break: break-all;">#{_batch[12]}</span></td>
+					<td class="ze_bg2"><span style="display:inline-block;width:90px;word-break: break-all;">#{_batch[1]}</span></td>
+					<td class="ze_bg2">
+					#{_batch[0]}
+					</td>
+					<td class="ze_bg2">
+						<s:fragment rendered="#{_batch[11] eq 1}">
+										<s:fragment rendered="#{_batch[5] ge 7 and _batch[5] le 11}">
+											#{sessionTake.harvestUnit eq 1? '斤':'公斤（kg）'}
+										</s:fragment>
+										<s:fragment rendered="#{_batch[5] lt 7 or _batch[5] gt 11}">
+											#{ _batch[6]}
+										</s:fragment>
+									</s:fragment>
+									<s:fragment rendered="#{_batch[11] ne 1}">
+											#{_batch[4]}#{_batch[6]}
+										<s:fragment rendered="#{_batch[7] ne null and _batch[7] ne ''}">
+											/#{_batch[7]}
+										</s:fragment>
+									</s:fragment>
+					</td>
+					<td class="ze_bg2">#{_batch[2]}</td>
+					<td class="ze_bg2">
+						<s:fragment rendered="#{_batch[11] eq 1}">
+										<h:outputText rendered="#{_batch[5] ge 7 and _batch[5] le 11}" >
+				                        	<h:outputText value="#{stringUtil.changeFloatMe(_batch[10],3)}" rendered="#{sessionTake.harvestUnit eq 1}">
+				                            	<f:convertNumber pattern="#####.###"/>
+				                            </h:outputText>
+				                            <h:outputText value="#{_batch[10]}" rendered="#{sessionTake.harvestUnit ne 1}">
+				                            	<f:convertNumber pattern="#####.###"/>
+				                            </h:outputText>
+						                </h:outputText>
+							            <h:outputText value="#{unitStranfer.outStranfer(_batch[5],_batch[10])}" rendered="#{_batch[5] lt 7 or _batch[5] gt 11}" >
+							                   	<f:convertNumber pattern="#####.###"/>
+							            </h:outputText>
+							        </s:fragment>
+							        <s:fragment rendered="#{_batch[11] ne 1}">
+							               #{_batch[10]}
+							        </s:fragment>	
+					</td>
+					<td class="ze_bg2">
+						<!-- <s:fragment rendered="#{_batch[11] eq 1}">
+							<h:outputText rendered="#{_batch[5] ge 7 and _batch[5] le 11}" >
+	                        	<h:outputText value="#{unitStranfer.outStranferPrice(9,_batch[16])}" rendered="#{sessionTake.harvestUnit eq 1}">
+	                            	<f:convertNumber pattern="#####.###"/>
+	                            </h:outputText>
+	                            <h:outputText value="#{_batch[16]}" rendered="#{sessionTake.harvestUnit ne 1}">
+	                            	<f:convertNumber pattern="#####.###"/>
+	                            </h:outputText>
+			                </h:outputText>
+				            <h:outputText value="#{unitStranfer.outStranferPrice(_batch[5],_batch[16])}" rendered="#{_batch[5] lt 7 or _batch[5] gt 11}" >
+				                   	<f:convertNumber pattern="#####.###"/>
+				            </h:outputText>
+				        </s:fragment>
+				        <s:fragment rendered="#{_batch[11] ne 1}">
+				               #{_batch[16]}
+				        </s:fragment> -->
+			       		<h:outputText value="#{_batch[16]}" >
+                       		<f:convertNumber pattern="#####.##"/>
+                      	</h:outputText>
+					</td>
+					<td class="ze_bg2"></td>
+				</tr>
+			</a:repeat>
+		</table>
+		<div id="printButton" class="car_button" style="text-align: center;margin-top:30px;">
+			<s:button view="/inOut/InOutRecord.xhtml" styleClass="edit_back" id="bn_left6" style="margin-left:10px" onclick="window.close();return false;"/>&#160;
+			<input type="button" id="btnPrint" onclick="printButtonClick();" style="background-image: url('#{request.contextPath}/asset/images/print03.jpg');width: 77px;height: 32px;cursor: pointer;" />
+		</div>
+	</div>
+	</td>
+	<script type="text/javascript">
+		//总计赋值
+	   jQuery("#totalNumer").html(totalNum.toFixed(2));
+		var obj;
+		function printButtonClick(){
+			obj = jQuery("#printButton").clone();
+			jQuery("#printButton").empty();
+			jQuery("#rightPanel").printArea();
+		}
+		
+		function closeAll(){
+			if(confirm("是否关闭打印页面!")){
+				window.close();
+			}else{
+				jQuery("#printButton").html(obj);
+			}
+		}
+	</script>
+</ui:define>
+</ui:composition>

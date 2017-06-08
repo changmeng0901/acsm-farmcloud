@@ -1,0 +1,2040 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/singleManage.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/sort.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/orderManage.css"/>
+	<!-- #{orderOperate.orderModifyInit()} -->
+	<style>
+		html{height:auto;}
+		.r_title{ font-size: 14px; color:#525252;}
+		.cm_resumeList{}
+		.cm_resumeList li{ float:left;}
+		.cm_resumeList li a{display:block; height:44px; line-height:44px; padding:0 10px; color:#3f3f3f; overflow:hidden; font-family:'微软雅黑';}
+		.cm_resumeList li a:active{border-bottom:2px solid #33aedc;}
+		.cm_resumeList li img{ float:left; margin-top:16px;}
+		.cm_resumeList li span{ float:left; text-indent:10px;}
+		.borderBt{ border-bottom:2px solid #33aedc;}
+		.borderBt02{ border-bottom:1px solid #cbcbcb;}
+		.choineUl{list-style: none; border-bottom: 1px solid #ddd;  padding-left: 0; margin-bottom: 0; list-style: none;height: 28px;}
+		.choineUl li{float: left;  margin-bottom:-1px;}
+		.choineUl li a{text-decoration: none; color: #555;padding: 5px 10px; display:inline-block;cursor: default;}
+		.choineUl li a.cur{background-color: #fff;border: 1px solid #ddd;border-bottom-color: transparent; border-radius: 5px 5px 0 0;}
+		.tableModel thead th{min-width: 60px;}
+	    .tableModel tbody td{min-width: 60px;}
+		.qingdan-selt .bootstrap-select.btn-group .dropdown-menu{max-width:900px;}
+		.customMess_wap .items p.name {overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+		.sp_px{width:630px; height:300px;overflow-y:hidden;}
+		.sp_px .row{height:300px;}
+		.listUpdate_height {border-left: 1px solid #e1e1e1;border-right: 1px solid #e1e1e1;margin-bottom: 20px;}
+	</style>
+	<td valign="top" >
+		<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na" style="display: none;">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="messageTitle">提示</h4>
+					</div>
+					<div class="modal-body">
+						<span id="messageValue"></span>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="right_c">
+			<div class="farmMain_wap clear" style="width:100%; padding:20px 30px;">
+			    <div class="breadNav_wap clear">
+			        <div class="breadNav_lt">采销存<span>&gt;</span><a href="#{request.contextPath}/orderManage/OrderOperateList.seam?orderStatus=#{orderStatus}"><strong>订单管理</strong></a></div>
+			        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+			            <ul class="resumeList clear">
+			            	<li>
+	                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+	                        </li>
+			                <li>
+	                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+	                        </li>
+	                        <li>
+	                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+	                        </li>
+	                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+		                        <li >
+	                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+	                            </li>
+                            </h:panelGroup>
+			            </ul>
+			        </div>
+			    </div>
+			    <div class="singleManage_con">
+			        <div class="orderTrack_heade mb20">
+			        	<p class="mr70">订单编号：<span class="number">#{orderOperate.orderInfo.orderCode}</span></p>
+			            <p class="mr70">订单状态：<span class="statues">#{orderConstant.getOrderStatusLabel(orderOperate.orderInfo.orderStatus)}</span></p>
+		            	<p class="#{orderOperate.orderInfo.paymentStatus == true ? 'payStatues' : 'payStatues2'}">#{orderOperate.orderInfo.paymentStatus == true ? '已支付' : '未支付'}</p>
+			        </div>
+			        <div class="orderTrack_body">
+						<table class="tableGz" width="100%" cellpadding="0" cellspacing="0">
+							<thead>
+								<tr>
+									<th colspan="3">订单跟踪</th>
+								</tr>
+							</thead>
+			                <tbody>
+								<tr>
+									<th width="25%" height="50" align="left" style="padding-left:70px; font-weight:bold;">处理时间</th>
+			                        <th width="60%" align="left" style="font-weight:bold;">处理信息</th>
+			                        <th width="15%" align="center" style="font-weight:bold; text-align: center;">操作人</th>
+			                    </tr> 
+			                    <a:repeat value="#{orderOperate.orderRecordList}" var="_orderRecord" rowKeyVar="_index">
+		                    		<tr>
+				                    	<td class="dateTd #{_index + 1 != orderOperate.orderRecordList.size() ? 'bg' : ''}" height="50">
+				                    		<i class="ico_bg"></i>
+				                    		<h:outputText value="#{_orderRecord.insertTime}">
+						        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss" />
+						        			</h:outputText>
+			                    		</td>
+				                        <td>
+				                            <div style="overflow:hidden;">
+				                            <span style="float:left;">#{orderConstant.getOrderStatusLabel(_orderRecord.orderStatus)}</span>
+				                            <div class="InOrdePass_tip">
+				                            	<p>#{_orderRecord.description}</p>
+				                            </div>
+				                            </div>
+				                        </td>
+				                        <td align="center" style="text-align: center;">#{_orderRecord.operater}</td>
+				                    </tr>
+			                    </a:repeat>
+			                </tbody>
+			            </table>
+			        </div>
+			        <h2 class="titleH2">客户信息</h2>
+			        <s:div styleClass="mb20 mt20" id="memberInfoDiv">
+			        	<div class="customMess_wap" style="margin-left:40px;">
+			                <div class="items itemsCur" style="position:relative;cursor:default;">
+			                    <p class="name" title="#{orderOperate.memberInfo.realname}">客户姓名：<span>#{orderOperate.memberInfo.realname}</span></p>
+			                    <p class="phone">联系方式：<span>#{orderOperate.memberInfo.phone}</span></p>
+			                    <p class="come">客户来源：<span>#{orderOperate.memberInfo.mSource.name}</span></p>
+			                    <p class="type">客户类型：<span>#{orderOperate.memberInfo.mType.name}</span></p>
+			                    <p class="addresses">工作地址：<span>#{orderOperate.memberInfo.workAddress}</span></p>
+			                    <em class="defaultIco"></em>
+			                    <p title="#{orderOperate.memberInfo.remark}">备注：<span>#{orderOperate.memberInfo.remark2}</span></p>
+			                    <a href="javascript:void(0);" style="position:absolute; right:34px; bottom:4px; z-index:1; color:#fe4885;" onclick="modifyMemberInit('#{orderOperate.memberInfo.mType.memberTypeId}', '#{orderOperate.memberInfo.mSource.memberSourceId}', '#{orderOperate.memberInfo.realname}', '#{orderOperate.memberInfo.phone}', '#{orderOperate.memberInfo.workAddress}');">修改</a>
+			                </div>
+			            </div> 
+			        </s:div>
+			    		
+			    		<h2 class="titleH2 fl mr10">收货人信息 </h2>
+			    		<div class="search-header" style="margin:0 0 15px;">
+			            <div class="search-header-lt" style="margin-left: 10px;">
+			                <div class="public-search"><span class="octicon-search02"></span>
+			                	<input id="addressSearch" type="text" value="请输入收货人姓名/联系方式/收货地址" onfocus="if(this.value=='请输入收货人姓名/联系方式/收货地址'){this.value=''}" onblur="if(this.value==''){this.value='请输入收货人姓名/联系方式/收货地址'}" class="form-control srarchfont" style="width:300px;"></input>
+			                </div>
+			                <button id="memberButton" class="btn btn-primary" type="button" onclick="addressFindAction();">搜索</button>
+			            </div>
+			        	</div>
+			    		<s:div id="deliverAddressDiv">
+			    		
+				        <table class="W_addresses mb20" cellpadding="0" cellspacing="0" style="margin-left:40px;">
+					        <tr>
+					            <td>
+					            	<div id="addressDiv">
+					            	<div class="W_addresses_list">
+					            		<a:repeat value="#{orderOperate.deliverAddressesList}" var="_deliverAddress">
+						                	<div class="addrItems">
+						                    	<div class="inner #{_deliverAddress.deliverAddressId == orderOperate.deliverAddressId ? 'innerCur' : ''}" onclick="defaultAddressAction(#{_deliverAddress.deliverAddressId});">
+						                        	<div class="addr_hd">
+														<span class="name" title="#{_deliverAddress.consignee}" style=" font-weight:bold;">#{_deliverAddress.consignee}&#160;&#160;</span><span title="#{_deliverAddress.phone}" class="phone">#{_deliverAddress.phone}</span>
+						                            </div>
+						                            <div class="addr_bd">
+						                            	<span class="street">#{_deliverAddress.address}</span>
+						                            </div>
+						                            <i class="curmarker"></i>
+						                        </div>
+						                        <div class="addr_toolbar">
+						                            <a class="revise" href="javascript:void(0);" onclick="addressAction(2, #{_deliverAddress.deliverAddressId}, '#{_deliverAddress.consignee}', '#{_deliverAddress.phone}', '#{_deliverAddress.address}');">修改</a>
+						                        </div>
+						                    </div>
+					                    </a:repeat>
+					                </div>
+					                <a class="add_newAddresses" href="javascript:void(0);" onclick="addressAction(1, 0, '', '', '');"><span></span></a>
+					                </div>
+					            </td>
+					        </tr>
+					        <tr>
+						        <td>
+							        <table class="pageModel" >
+								   		<tbody>
+											<tr>
+												<td>
+													<s:span rendered="#{orderOperate.address_max_page > 1}">
+														<a href="javascript:void(0);" class="page_prev" onclick="operatePageAction(1);">首页</a>
+													</s:span>
+													<s:span styleClass="pagePrve" rendered="#{orderOperate.address_page - 1 gt 0 and orderOperate.address_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(#{orderOperate.address_page - 1});">&lt;&lt;</a>
+													</s:span>
+													<a:repeat value="#{orderOperate.address_show_page_list}" var="_da_page" rowKeyVar="_da_index">
+														<span class="page_num #{_da_page == orderOperate.address_page ? 'page_Cur' : ''}">
+															<a href="javascript:void(0);" onclick="operatePageAction(#{_da_page});">#{_da_page}</a>
+														</span>
+													</a:repeat>
+													<s:span styleClass="page_next" rendered="#{orderOperate.address_page lt orderOperate.address_max_page and orderOperate.address_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(#{orderOperate.address_page + 1});">&gt;&gt;</a>
+													</s:span>
+													<s:span rendered="#{orderOperate.address_max_page gt 1}">
+														<a href="javascript:void(0);" onclick="operatePageAction(#{orderOperate.address_max_page});">尾页</a>
+													</s:span>
+													<span >
+														<span class="pageCount" style="border-right:0"><a>共#{orderOperate.address_max_page}页</a></span>
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+						        </td>
+					        </tr>
+				        </table>
+			    	</s:div>
+			    	<h2 class="titleH2">配送时间</h2>
+			        <div class="delivery_time mb20">
+			        	<span class="text">配送时间：</span>
+			            <span class="search-datetime">
+			                <div class="input-append date form_datetime" >
+			                	<input size="26" type="text" value="" style="color:#aaa;" readonly="readonly" id="deliverTime" onchange="dateChange()"/>
+			                	<span class="add-on"><i class="icon-th"></i></span>
+			                </div>
+			            </span>
+			            <ul class="timeRadio_list">
+			                <li class="fl">
+			                    <input type="radio" class="iRadio" name="dataAllot" value="0" checked="checked" id="dataAllot0" /><label class="iRadioLable" style="width:auto; max-width:auto;">全天</label>
+			                </li>
+			                <li class="fl">
+			                    <input type="radio" class="iRadio" name="dataAllot" value="1" id="dataAllot1" /><label class="iRadioLable" style="width:auto; max-width:auto;">上午</label>
+			                </li>
+			                <li class="fl">
+			                    <input type="radio" class="iRadio" name="dataAllot" value="2" id="dataAllot2" /><label class="iRadioLable" style="width:auto; max-width:auto;">下午</label>
+			                </li>
+			                <li class="fl">
+			                    <input type="radio" class="iRadio" name="dataAllot" value="3" id="dataAllot3" /><label class="iRadioLable" style="width:auto; max-width:auto;">晚上</label>
+			                </li>
+			            </ul>  
+			        </div>
+			         <!-- 使用红包 开始 -->
+			        <h:outputText value="" rendered="#{orderOperate.coupons.size() gt 0}">
+                    <h2 class="titleH2">使用红包</h2>
+                    <div class="mb20">
+                    	<input type="hidden" value="#{orderOperate.coupons.get(0)[0]}" id="couponId"/>
+                        <div class="a_voucher cur">
+                        	<span class="v_bg"></span>
+                            <span class="v_hook"></span>
+                            <div class="a_voucher_lt">
+                            	<h:outputText rendered="#{orderOperate.coupons.get(0)[2] ne '' and orderOperate.coupons.get(0)[2] ne null}" >
+                            	<p class="p_txt1">消费满#{orderOperate.coupons.get(0)[2]}元可以使用！</p>
+                            	</h:outputText>
+                                <p class="p_txt2">有效期：#{orderOperate.coupons.get(0)[4]}</p>
+                            </div>
+                            <div class="a_voucher_rt">
+                            	<span class="v_line"></span>
+                            	<input type="hidden" value="#{orderOperate.coupons.get(0)[1]}" id="couponPrice"/>
+                                <p class="p_txt3">#{orderOperate.coupons.get(0)[1]}<span>元</span></p>
+                            </div>
+                        </div>
+                    </div>
+			        </h:outputText>
+			        
+			    	<h2 class="titleH2">付款方式</h2>
+			        <div class="payMethod">
+			            <p class="timeRadio_list">
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModel" id="payRadio0" onclick="payControl(0);" value="0" checked="checked"/><label class="iRadioLable" style="width:auto; max-width:auto;">货到付款</label><i style="float:left; width:90px;"></i>
+			                </span>
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModelDetail" value="2" id="payRadio2"/><label class="iRadioLable" style="width:auto; max-width:auto;">现金支付</label>
+			                </span>
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModelDetail" value="3" id="payRadio3"/><label class="iRadioLable" style="width:auto; max-width:auto;">POS支付</label>
+			                </span>
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModelDetail" value="4" id="payRadio4"/><label class="iRadioLable" style="width:auto; max-width:auto;">支票支付</label>
+			                </span>
+		                </p>
+		                <p class="timeRadio_list">
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModel" value="9" id="payRadio9" onclick="payControl(9);"/><label class="iRadioLable" style="width:auto; max-width:auto;">转账</label>
+			                </span>
+		                </p>
+		                <p class="timeRadio_list">
+			                <span class="items">
+			                    <input type="radio" class="iRadio" name="payModel" value="10" id="payRadio10" onclick="payControl(10);"/><label class="iRadioLable" style="width:auto; max-width:auto;">礼品支付</label>
+			                </span>
+			            </p>
+			            <p class="timeRadio_list">
+						    <span class="items">
+						        <input type="radio" class="iRadio" name="payModel" value="11" id="payRadio11" onclick="payControl(11);"/><label class="iRadioLable" style="width:auto; max-width:auto;">预付款</label>
+						    </span>
+						</p>
+						<p class="timeRadio_list">
+						    <span class="items">
+						        <input type="radio" class="iRadio" name="payModel" value="12" id="payRadio12" onclick="payControl(12);"/><label class="iRadioLable" style="width:auto; max-width:auto;">周期付款</label>
+						    </span>
+						</p>
+			        </div>
+			    	<h2 class="titleH2">填写备注</h2>
+			        <div class="fillIn_notes">
+			             <textarea class="form-control" id="orderRemark" onchange="commentChange()"></textarea>
+			             <p class="tip">提示客户：我们会努力按照您指示的时间配送，但因天气、交通等各类因素影响，您的订单有可能会有延误的现象！</p>
+			        </div>
+			        
+			        <s:div style="width:100%; height:auto;" id="memberCardDiv">
+			        	<h:inputHidden value="#{orderOperate.ues}" id="useType" />
+			        	<input type="hidden" id="cardMessage" value="#{orderOperate.cardMessage}"/>
+			        	<s:fragment rendered="#{orderOperate.memberCardList.size() > 0}">
+			        		<h2 class="titleH2" style="font-weight:normal; margin-left:16px;">会员卡信息 </h2>
+							<div class="W_addresses_list" style="margin-left:16px; display:inline-block;" >
+								<a:repeat value="#{orderOperate.memberCardList}" var="_mc">
+								<h:outputText value="" rendered="#{_mc.cardsInfo.cardCategory.giftType eq 1}">
+								<div class="fl" style="margin-bottom:10px;">
+									<div class="cardBh" style="height:266px;margin-bottom:5px;">
+										<div class="cardTop">
+											<div class="cardTopL fl">会员卡编号：<span>#{_mc.cardsInfo.cardCode}</span></div>
+											<div class="cardTopC fr"><img src="../asset/images/orderManage/syu.png" alt="" style="margin-right:3px; margin-bottom:2px;"></img><span>剩余<i class="se">#{_mc.deliverNum+_mc.cardsInfo.deliverChangeNum}</i>次配送</span></div>
+										</div> 
+										<div class="bgTiao">
+											<table>
+												<tr>
+													<td style="width:95px">商品名称</td>
+													<td style="width:130px">单价*剩余数量</td>
+													<td style="width:85px">使用数量</td>
+												</tr>
+											</table>
+										</div> 
+										<div class="cardContent" id="carousel#{_mc.cardsInfo.cardCode}" style="height: 100px;">
+											<ul class="tabList">
+												<a:repeat value="#{orderOperate.cardProductMap.get(_mc.cardsInfo.cardCode)}" var="_result" rowKeyVar="_index">
+													<li class="#{_index == 0 ? 'cur' : ''}">
+														<table>
+															<a:repeat value="#{_result}" var="_sp">
+																<tr id="sp_#{_mc.cardsInfo.cardCode}_#{_sp.surplusProductId}_#{_sp.productInfo.productInfoId}">
+																	<td style="width:95px"><a href="javascript:void(0);" title="#{_sp.productName}" class='w84'>#{_sp.productName}</a></td>
+																	<td style="width:130px"><span id="spPrice_#{_mc.cardsInfo.cardCode}_#{_sp.surplusProductId}_#{_sp.productInfo.productInfoId}">#{_sp.price}元</span>*<span>#{_sp.productNum}</span></td>
+																	<td style="width:85px"><input id="spNum_#{_mc.cardsInfo.cardCode}_#{_sp.surplusProductId}_#{_sp.productInfo.productInfoId}" type="text" class="form-control number" value="#{_sp.useNumber}" onkeyup="numMax(this.id, this.value, #{_sp.productNum});"></input></td>
+																</tr>
+															</a:repeat>
+														</table>                                   
+													</li>
+												</a:repeat>
+											</ul>
+											<div class="jiantou">
+												<span class="leftJt"></span>
+												<span class="rightJt"></span>
+											</div>
+										</div>
+										
+										<dl class="remark_dl">
+											<dt class="remark_dt">备注：</dt>
+											<dd class="remark_dd" title="#{_mc.cardsInfo.remark}">#{_mc.cardsInfo.remark2}</dd>
+										</dl>
+										<div class="useBtn" style="width:90%;margin:10px auto 0;position:initial; text-align:right;">
+											<a class="btn btn-success" id="useCardA#{_mc.cardsInfo.cardCode}"  href="javascript:void(0);" style="height:25px; line-height:13px; display: #{orderOperate.useCardProductMap.containsKey(_mc.cardsInfo.cardCode) ? 'none' : ''}" onclick="cardUseAction('#{_mc.cardsInfo.cardCode}');">使用</a>
+											<a class="btn btn-default" id="cancelCardA#{_mc.cardsInfo.cardCode}" href="javascript:void(0);" style="height:25px; line-height:13px; display: #{orderOperate.useCardProductMap.containsKey(_mc.cardsInfo.cardCode) ? '' : 'none'}" onclick="cancelCardAction('#{_mc.cardsInfo.cardCode}');">取消</a>
+										</div>
+									</div>
+									<s:div rendered="#{_mc.expiryMsg != ''}" styleClass="expired_alarms">
+										<img src="../asset/images/orderManage/tiX.png" alt=""></img>#{_mc.expiryMsg}
+									</s:div>
+								</div>
+								</h:outputText>
+								<h:outputText rendered="#{_mc.cardsInfo.cardCategory.giftType eq 0}"> 
+								<div class="fl" style="margin-bottom:10px;">
+									<div class="cardBh" style="height:266px;margin-bottom:5px;">
+										<div class="cardTop">
+											<div class="cardTopL fl">会员卡编号：<span>#{_mc.cardsInfo.cardCode}</span></div>
+											<div class="cardTopC fr"><img src="../asset/images/orderManage/syu.png" alt="" style="margin-right:3px; margin-bottom:2px;"></img><span>剩余<i id="delNum#{_mc.cardsInfo.cardInfoId}" class="se">#{_mc.deliverNum+_mc.cardsInfo.deliverChangeNum}</i>次配送</span></div>
+										</div>  
+										<div class="bgTiao"></div> 
+										<div style="height: 86px;">
+											<p class="text_weight1">#{_mc.cardsInfo.cardCategory.name}（#{_mc.cardsInfo.cardCategory.weight}g）</p>
+											<p class="text_weight2"><img src="../asset/images/orderManage/icon_weight1.png" />单次可用重量：<font>#{_mc.cardsInfo.cardCategory.weight}+#{_mc.cardsInfo.cardCategory.fluctuations}（g）</font>
+											<h:outputText value=""  rendered="#{_mc.cardsInfo.cardUsedNum gt 1}">
+											<font id="red#{_mc.cardsInfo.cardInfoId}" style="color:red;">X#{_mc.cardsInfo.cardUsedNum}</font>
+											</h:outputText>
+											<h:outputText value=""  rendered="#{_mc.cardsInfo.cardUsedNum le 1}">
+											<font id="red#{_mc.cardsInfo.cardInfoId}" style="color:red;"></font>
+											</h:outputText>
+											</p>
+										</div>
+										<dl class="remark_dl">
+											<dt class="remark_dt">备注：</dt>
+											<dd class="remark_dd" title="#{_mc.cardsInfo.remark}">#{_mc.cardsInfo.remark2}</dd>
+										</dl>
+										
+										<div class="useBtn" style="width:90%;margin:10px auto 0;position:initial; text-align:right;">
+											<div class="delivery_times">
+		                                	<span class="text_delivery">配送次数：</span>
+		                                    <div class="count_delivery">
+		                                    	<h:outputText value=""  rendered="#{_mc.cardsInfo.useState eq 0 or _mc.cardsInfo.useState eq null}">
+		                                        <i class="btn_sub" onclick="jian('UsedNum#{_mc.cardsInfo.cardInfoId}','red#{_mc.cardsInfo.cardInfoId}');">-</i>
+		                                        <input class="text_input" value="#{_mc.cardsInfo.cardUsedNum}" id="UsedNum#{_mc.cardsInfo.cardInfoId}" />
+		                                        <i class="btn_sup" onclick="jia('UsedNum#{_mc.cardsInfo.cardInfoId}','delNum#{_mc.cardsInfo.cardInfoId}','red#{_mc.cardsInfo.cardInfoId}');">+</i>
+		                                        </h:outputText>
+		                                        <h:outputText value=""  rendered="#{_mc.cardsInfo.useState eq 1}">
+		                                        	<input class="text_input" readonly="readonly" value="#{_mc.cardsInfo.cardUsedNum}" id="UsedNum#{_mc.cardsInfo.cardInfoId}" />
+		                                        </h:outputText>
+		                                    </div>
+		                                	</div>
+											<h:outputText value=""  rendered="#{_mc.cardsInfo.useState eq 1}">
+											<a class="btn btn-default disabled" id="cancelCardA#{_mc.cardsInfo.cardCode}" href="javascript:void(0);" style="height:25px; line-height:13px;" >取消</a>
+											<input type="hidden" name="useWeight" value="#{(_mc.cardsInfo.cardCategory.weight + _mc.cardsInfo.cardCategory.fluctuations) * _mc.cardsInfo.cardUsedNum}"/>
+											</h:outputText>
+											<h:outputText value=""  rendered="#{_mc.cardsInfo.useState eq 0 or _mc.cardsInfo.useState eq null}">
+												<a class="btn btn-success disabled" id="useCardA#{_mc.cardsInfo.cardCode}"  href="javascript:void(0);" style="height:25px; line-height:13px; ">使用</a>
+											</h:outputText>
+										</div>
+									</div>
+									<s:div rendered="#{_mc.expiryMsg != ''}" styleClass="expired_alarms">
+										<img src="../asset/images/orderManage/tiX.png" alt=""></img>#{_mc.expiryMsg}
+									</s:div>
+								</div>
+								</h:outputText>
+								</a:repeat>
+			                </div>
+		                </s:fragment>
+		                <script>
+		              		//<![CDATA[
+			                jQuery('.rightJt').click(function(e){
+			    	            var id=jQuery(e.target).parent().parent().attr('id');
+			    	            lunbo('right','#'+id);
+			    		    });
+			    		    jQuery('.leftJt').click(function(e){
+			    				var id=jQuery(e.target).parent().parent().attr('id'); 
+			    				lunbo('left','#'+id);
+			    		    });
+
+			    		  //验证数量
+			    			function numMax(id ,nowNum, maxNum){
+			    				nowNum = nowNum.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+				    			nowNum = nowNum.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+				    			nowNum = nowNum.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+				    			nowNum = nowNum.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+			    				if (nowNum > maxNum) {
+			    					jQuery("#" + id).val(maxNum);
+			    				}else {
+			    					jQuery("#" + id).val(nowNum);
+								}
+			    			}
+
+			    		    function lunbo(action, mingzi) {
+			    			    //得到所有元素，目的就是后面的代码，不要老重复执行$函数。
+			    			    var carousel = jQuery(mingzi);
+			    			    var imageListLis = jQuery(mingzi).find(".tabList li");
+			    			    var btn_left = jQuery(mingzi).find(".leftJt");
+			    			    var btn_right = jQuery(mingzi).find(".rightJt");
+			    			    //图片总数
+			    			    var imageAmount = imageListLis.length;
+			    			    //信号量
+			    			    var nowimg = jQuery(mingzi + ' .cur').index();
+			    			    //右按钮事件监听
+			    			    if (action == 'left') {
+			    			        leftBtnFunc();
+			    			    } else {
+			    			        rightBtnFunc();
+			    			    }
+			    			    function rightBtnFunc() {
+			    			        //信号量的增加
+			    			        nowimg++;
+			    			        //验收。如果信号量增加，超过了图片总数减1，那么就让信号量重新置为0。
+			    			        //合法的信号量，最大最大就是图片总数减1。不能超过。
+			    			        if (nowimg > imageAmount - 1) {
+			    			            nowimg = 0;
+			    			        }
+			    			        //调用函数
+			    			        changePictureAndChangeCircles();
+			    			    }
+			    			    //左按钮事件监听
+			    			    function leftBtnFunc() {
+			    			        //信号量的增加
+			    			        nowimg--;
+			    			        //验收。如果信号量增加，超过了图片总数减1，那么就让信号量重新置为0。
+			    			        //合法的信号量，最大最大就是图片总数减1。不能超过。
+			    			        if (nowimg < 0) {
+			    			            nowimg = imageAmount - 1;
+			    			        }
+			    			        //调用函数
+			    			        changePictureAndChangeCircles();
+			    			    }
+
+			    			    function changePictureAndChangeCircles() {
+			    			        //让我们的图片和小圆点，都跟随信号量变化。信号量那个有cur，其余没cur。
+			    			        imageListLis.eq(nowimg).addClass("cur").siblings().removeClass("cur");
+			    			    }
+			    			}
+			    		  //]]>
+		                </script>
+			        </s:div>
+			        
+			        <div class="clear">
+			    		<h2 class="titleH2 fl">商品清单</h2>
+			    		<div class="fl qingdan-selt ml10">
+							<select class="selectpicker" id="productInfoId" data-live-search="true">
+								<a:repeat value="#{orderOperate.showProductList}" var="_p">
+									<option value="#{_p.productInfoId}">#{_p.productName}-#{_p.goodsInfo.goodsSpec}</option>
+								</a:repeat>
+							</select>
+						</div>
+			    		<a class="btn btn-success fl mr15 ml15" href="javascript:void(0);" onclick="addProductCartAction();" style="display:inline;">添加商品</a>
+			    		<a class="btn btn-primary sortBtn" href="javascript:void(0);" onclick="sortControl(1);"  style="float:left; display:inline;"><img src="../asset/images/orderManage/singleManage_ico2.jpg" /> 排序</a>
+			        </div>
+			        <s:div styleClass="listGoods_con" id="productCartDiv">
+			            <table class="tableModel ablt" width="100%" cellpadding="0" cellspacing="0">
+			                <thead>
+				                <tr>
+				                	<th width="5%"><span style="display:inline-block; line-height:40px;">序号</span></th>
+				                    <th width="14%">商品</th>
+				                    <th width="10%">规格</th>
+				                    <th width="8%">原价</th>
+				                    <th width="8%">单价</th>
+				                    <th width="8%">数量</th>
+				                    <th width="7%">折扣</th>
+				                    <th width="10%">小计</th>
+									<th width="15%">备注</th>
+				                    <th width="15%">操作</th>
+				                </tr>
+			                </thead>
+		                </table>
+		                <div class="listGoods_height" id="showProductDiv">
+		                	<table id="orderProductTable" class="tableModel aclr" width="100%" cellpadding="0" cellspacing="0" style="border-radius:0;">
+				                <tbody>
+				                	<a:repeat value="#{orderOperate.orderProductList}" var="_orderProduct" rowKeyVar="_opIndex">
+				                		<tr class="odd" id="orderProductTr#{_orderProduct.cartCode}_#{_opIndex}">
+						                    <td width="5%">#{_opIndex + 1}
+						                    	<input type="hidden" value="#{_orderProduct.goodsInfo.goodsUnit}" id="unit#{_orderProduct.cartCode}_#{_opIndex}" />
+							                    <input type="hidden" value="#{_orderProduct.goodsInfo.netContent}" id="content#{_orderProduct.cartCode}_#{_opIndex}" />
+							                </td>
+						                    <td width="14%"><a href="javascript:void(0);" title="#{_orderProduct.productCode}" >#{_orderProduct.productName}</a></td>
+						                    <td width="10%">#{_orderProduct.productUnit}</td>
+						                    <td width="8%">¥<span class="num_spyj">#{_orderProduct.productInfoId.productPrice}</span></td>
+						                    <td width="8%"><span class="num_spdj">¥<input id="productPrice#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.price}" onkeyup="clearNoNum(2, this, event); accountAction();"/></span></td>
+						                    <td width="8%">
+						                        <div class="numCount_block">
+						                            <span class="minusOne" onclick="modifyNum('#{_orderProduct.cartCode}_#{_opIndex}', 1);"></span>
+						                            <span class="inputText"><input id="productNum#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.productNum}" onkeyup="clearNoNum(2, this, event); accountAction();"/></span>
+						                            <span class="addOne" onclick="modifyNum('#{_orderProduct.cartCode}_#{_opIndex}', 2);"></span>
+						                        </div>
+						                    </td>
+						                    <td width="7%"><span class="num_spdj"><input id="discount#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.discount}" onkeyup="clearNoNum2(2, this, event); accountAction();"/></span></td>
+						                    <td width="10%">
+						                    	<s:fragment rendered="#{_orderProduct.sellType == orderConstant.getCartProductGeneral()}">
+						                    		¥<span class="num_dpzj" id="productTotalPrice#{_orderProduct.cartCode}_#{_opIndex}">#{_orderProduct.totalPrice}</span>
+						                    	</s:fragment>
+						                    	<s:fragment rendered="#{_orderProduct.sellType != orderConstant.getCartProductGeneral()}">
+						                    		<span class="num_dpzj" id="productTotalPrice#{_orderProduct.cartCode}_#{_opIndex}">赠品</span>
+						                    	</s:fragment>
+					                    	</td>
+						                    <td width="15%"><span class="num_spbz" ><input id="remark#{_orderProduct.cartCode}_#{_opIndex}" type="text" class="form-control" value="#{_orderProduct.remark}" onkeyup="words_deal(this);"/></span></td>
+						                    <td width="15%">
+						                    	<a href="javascript:void(0);" onclick="removeProductAction('#{_opIndex}');">删除&#160;</a>
+					                    		<s:fragment rendered="#{_orderProduct.showGiftFlag == true}">
+					                    			<a href="javascript:void(0);" onclick="cartProductSettingAction('#{_orderProduct.cartCode}',#{_opIndex});">设为赠品&#160;</a>
+					                    		</s:fragment>
+					                    	</td>
+						                </tr>
+				                	</a:repeat>
+				                </tbody>
+			                </table>
+		                </div>
+			            <div class="tfoot mb20">
+			                <div class="listGoods_total">
+			                    <ul>
+			                        <li class="listGoods_li1">共<span class="num" id="sumProductNum"><h:outputText value="#{orderOperate.sumProductNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></span>件商品</li>
+			                        <li class="listGoods_li2">商品总额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">¥</span><span class="num" id="productTotal">0</span></p></li>
+			                        <li class="listGoods_li2">礼品卡金额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">-¥</span><span class="num" id="cardPrice"><h:outputText value="#{orderOperate.cardTotalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+   									<li class="listGoods_li2">应付金额（不含运费）：<span class="codeEle" style="color: #d40001;">¥</span><span class="num" id="orderPrice" style="color: #d40001;">0.00</span></li>
+   									<li class="listGoods_li4">
+	                                    <div class="fr">
+	                                        <span class="fl">折扣幅度：</span>
+	                                        <span class="ml5 fr"><input id="aaa" type="text" onkeyup="clearNoNum2(2, this, event);accountAction();" value="#{orderOperate.discount}" class="form-control"/></span>
+	                                        <span class="ml5 fl">折</span>
+	                                    </div>
+	                                </li>
+   									<li class="listGoods_li4">
+	                                    <div class="fr">
+	                                        <span class="fl">减免金额：</span>
+	                                        <span class="ml5 fr"><input id="bbb" type="text" onkeyup="clearNoNum(2, this, event);accountAction(); " value="#{orderOperate.subtractPrice}" class="form-control"/>元</span>
+	                                        <span class="ml5 fl">元</span>
+	                                    </div>
+	                                </li>
+			                        <h:outputText value="" rendered="#{orderOperate.coupons.size() gt 0}">
+			                        <li class="listGoods_li2" id="coupon">红包金额：<p style="display:inline-block; width:83px; text-align:right;"><span class="codeEle">-¥</span><span class="num"><h:outputText value="#{orderOperate.coupons.get(0)[1]}" ><f:convertNumber pattern="#0.00"/></h:outputText></span></p></li>
+			                        </h:outputText>
+			                        <li class="listGoods_li4">
+	                                    <div class="fr">
+	                                        <span class="fl">运费：</span>
+	                                        <span class="codeEle fl">+¥</span>
+	                                        <span class="ml5 fr"><input type="text" class="form-control" id="freightAccount" value="#{orderOperate.deliverAccount}" onkeyup="modifyFreight(this.value);"/></span>
+	                                    </div>
+	                                </li>
+			                        <li class="listGoods_li3">
+			                            <div class="fr">
+			                                <span class="fl">当前余额为：</span>
+			                                <span class="fl codeEle" style="line-height:36px;">¥</span>
+			                                <span class="fl num" style="line-height:36px;">#{orderOperate.memberBalance}</span>
+			                                <span class="itemsCheckbox">
+			                                    <input type="checkbox" class="iCheckbox" name="useBalance" id="useBalance"/>
+			                                </span>
+			                                <span class="fl">使用余额：</span>
+			                                <span class="fl" style="width:83px;"><span class="codeEle">-&nbsp;¥</span><label class="fr ml5" id="balanceAccount">0</label></span>
+			                            </div>
+			                        </li>
+			                    </ul>
+			                </div>
+			                <div class="listGoods_li5 clear">
+			                	<input type="hidden" id="disPric" name="disPric" value="" />
+			                    <div class="fr">
+			                    <span class="fl">应付总额：</span>
+			                    <span class="codeEle fl">¥</span>
+			                    <span class="num fl" id="totalAccount">0</span>
+			                    </div>
+			                </div>
+			            </div>
+			        
+				            <div class="clear">
+				            <button id="next"  class="btn btn-primary fr ml5" onclick="saveAction();">保存</button>
+				            <h:form id="submitOrder" enctype="multipart/form-data">
+				            	<h:inputHidden id="deliverTimeHidden" value="#{orderOperate.deliverTime}" />
+				            	<h:inputHidden id="dataAllotHidden" value="#{orderOperate.dataAllot}" />
+				            	<h:inputHidden id="payModelHidden" value="#{orderOperate.payModel}" />
+				            	<h:inputHidden id="orderRemarkHidden" value="#{orderOperate.orderRemark}" />
+				            	<h:inputHidden id="deliverAccountHidden" value="#{orderOperate.deliverAccount}" />
+				            	<h:inputHidden id="productAccountHidden" value="#{orderOperate.productAccount}" />
+				            	<h:inputHidden id="totalAccountHidden" value="#{orderOperate.totalAccount}" />
+				            	<h:inputHidden id="payAccountHidden" value="#{orderOperate.payAccount}" />
+				            	<h:inputHidden id="balanceFlagHidden" value="#{orderOperate.balanceFlag}" />
+				            	<h:inputHidden id="orderProductJsonHidden" value="#{orderOperate.orderProductJson}" />
+				            	<h:inputHidden value="#{orderOperate.cardTotalPrice}" id="cardTotalPriceId"/>
+				            	<h:inputHidden id="discountPrice" value="#{orderOperate.discountPrice}" />
+			                	<h:inputHidden id="discount" value="#{orderOperate.discount}" />
+			                	<h:inputHidden id="subtractPrice" value="#{orderOperate.subtractPrice}" />
+			                	<h:inputHidden id="orderUpdateMess" value="#{orderOperate.orderUpdateMess}" />
+				            	<s:button view="/orderManage/#{empty from ? 'OrderOperateList' : from}.xhtml" styleClass="btn btn-default fr" propagation="end" value="返回">
+				            		<f:param name="orderStatus" value="#{orderOperate.orderStatus}"></f:param>
+				            		<f:param name="pages" value="#{orderOperate.page}"></f:param>
+				            		<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+				            		<f:param name="screenType" value="#{orderOperateList.screenType}"/>
+									<f:param name="selectType" value="#{orderOperateList.selectType}"/>
+									<f:param name="orderPayStatus" value="#{orderOperateList.orderPayStatus}"/>
+									<f:param name="orderType" value="#{orderOperateList.orderType}"/>
+									<f:param name="beginTime" value="#{orderOperateList.beginTime}"/>
+									<f:param name="endTime" value="#{orderOperateList.endTime}"/>
+				            	</s:button>
+				            	</h:form>
+				            </div>
+			            
+			        </s:div>
+			    </div>
+			</div>
+			
+			<div class="modal fade" id="modifyMemberDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog" style="width:670px; position:absolute; left:50%; margin-left:-335px; top:50%; margin-top:-230px; margin-bottom:0;">
+				<div class="modal-content">
+				    <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal"></button>
+				        <h4 class="modal-title revisionGrxx" id="myModalLabel">修改客户信息</h4>
+				    </div>
+				    <div class="modal-body" style="padding:30px 20px;">
+				        <table class="modelTable" width="100%" cellpadding="0" cellspacing="0">
+				            <tr>
+				                <td class="pr10" width="100" align="right"><i class="starColor">*</i>客户类型</td>
+				                <td width="190">
+				                    <span class="bootSelt190">
+				                    	<select id="mType" class="selectpicker" immediate="true" value="#{orderOperate.memberType}">
+				                    		<a4j:repeat value="#{orderOperate.memberTypeList}" var="_mt">
+				                    		<option value="#{_mt.memberTypeId}">#{_mt.name}</option>
+				                    		</a4j:repeat>
+				                    	</select>
+				                    </span>
+				                </td>
+				                <td class="pr10" width="100" align="right"><i class="starColor">*</i>客户来源</td>
+				                <td>
+				                    <span class="bootSelt190">
+				                    	<select id="mSource" class="selectpicker" immediate="true" value="#{orderOperate.memberSource}">
+				                    		<a4j:repeat value="#{orderOperate.memberSourceList}" var="_ms">
+				                    		<option value="#{_ms.memberSourceId}">#{_ms.name}</option>
+				                    		</a4j:repeat>
+				                    	</select>
+				                    </span>
+				                </td>
+				            </tr>
+				            <tr>
+				                <td class="pr10" width="100" align="right"><i class="starColor">*</i>客户姓名</td>
+				                <td width="190">
+				                    <span class="bootText190" >
+				                    <input type="text" class="form-control" id="mName"/>
+				                    </span> 
+				                </td>
+				                <td class="pr10" width="100" align="right"><i class="starColor">*</i>联系方式</td>
+				                <td>
+				                    <span class="bootText190" >
+				                    <input type="text" class="form-control" id="mPhone"/>
+				                    </span> 
+				                </td>
+				            </tr>
+				            <tr>
+				                <td class="pr10" width="100" align="right">工作地址</td>
+				                <td colspan="3">
+				                    <textarea class="form-control" style="width:482px; height:70px;" id="mWorkAddress"></textarea>
+				                </td>
+				            </tr>
+				        </table>    
+				    </div>
+				    <div class="modal-footer">
+				        <a class="btn btn-success" href="javascript:void(0);" onclick="modifyMemberAction();">提交</a>
+				        <a class="btn btn-default" data-dismiss="modal" href="javascript:void(0);">返回</a>
+				    </div>
+				</div>
+				</div>
+			</div>
+			
+			<div class="modal fade" id="addressControlDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width:560px; position:absolute; left:50%; margin-left:-280px; top:50%; margin-top:-197px; margin-bottom:0;">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"></button>
+			        <h4 class="modal-title revisionGrxx" id="addressTitle"></h4>
+			    </div>
+			    <div class="modal-body" style="padding:30px 0 20px;">
+			        <table class="modelTable" width="100%" cellpadding="0" cellspacing="0">
+			            <tr>
+			                <td class="pr10" width="110" align="right"><i class="starColor">*</i>收货人</td>
+			                <td width="466">
+			                    <span class="bootText220" >
+			                    <input type="text" class="form-control" id="consignee"/>
+			                    </span> 
+			                </td>
+			            </tr>
+			            <tr>
+			                <td class="pr10" width="110" align="right"><i class="starColor">*</i>联系方式</td>
+			                <td>
+			                	<span class="bootText220" >
+			                    <input type="text" class="form-control" id="phone"/>
+			                    </span> 
+			                     <span style="color: red">&#160;&#160;(添加多个联系方式请用","隔开)</span>
+			                </td>
+			            </tr>
+			            <tr>
+			                <td class="pr10" align="right"><i class="starColor">*</i>工作地址</td>
+			                <td>
+			                    <span class="bootTextarea290" >
+			                    <textarea class="form-control area_textarea" id="address"></textarea>
+			                    </span> 
+			                </td>
+			            </tr>
+			        </table>    
+			    </div>
+			    <div class="modal-footer">
+			        <a id="saveAddress" class="btn btn-success" href="javascript:void(0);" onclick="saveAddress();">添加并使用</a>
+			        <a id="modifyAddress" class="btn btn-success" href="javascript:void(0);" onclick="updateAddress();">修改</a>
+			        <a class="btn btn-default" href="javascript:void(0);" onclick="addressControl(2);">取消</a>
+			    </div>
+			</div>
+			</div>
+			</div>
+			
+			<div class="modal fade" id="sortDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width:670px; position:absolute; left:50%; margin-left:-335px; top:50%; margin-top:-234px; margin-bottom:0;">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"></button>
+			        <h4 class="modal-title revisionGrxx" id="myModalLabel">商品排序</h4>
+			    </div>
+			    <div class="modal-body" style="position:relative; padding:20px; max-height:350px; overflow:auto;">
+			    	<s:div styleClass="sp_px" id="sortProductDiv">
+			    		<div class="row">
+							<div class="col col-lg-6">
+								<div class="ordering-list select-list" tabindex="-1">
+									<div class="content with-handle">
+										<div class="scroll-box">
+											<ol id="list_dragselect" class="list ui-sortable ui-selectable">
+												<a4j:repeat value="#{orderOperate.orderProductList}" var="_sortPorduct" rowKeyVar="_index">
+													<li data-key="#{_index+1}" class="ui-selectee">#{_sortPorduct.productName}#{_sortPorduct.sellType == orderConstant.getCartProductGift() ? '-赠品' : ''}<input type="hidden" class="testClass" id="parIdObj_#{_index+1}" value="#{_sortPorduct.cartCode}_#{_index}" /></li>
+												</a4j:repeat>
+											</ol>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+			    	</s:div>
+			    </div>
+			    <div class="modal-footer">
+			        <a class="btn btn-success" href="javascript:void(0);" onclick="sortAction();">保存</a>
+			        <a class="btn btn-default" href="javascript:void(0);" onclick="sortControl(2);">取消</a>
+			    </div>
+			</div>
+			</div>
+			</div>
+			
+			<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na" style="display: none;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="messageTitle">提示</h4>
+						</div>
+						<div class="modal-body">
+							<span id="messageValue"></span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</td>
+	
+	<a:form>
+  		<a:queue requestDelay="10" ignoreDupResponses="true"/>
+  		<a:jsFunction name="modifyOrder" action="#{orderOperate.modifyOrder}" >
+			<a:actionparam name="deliverTime" assignTo="#{orderOperate.deliverTime}"/>
+			<a:actionparam name="dataAllot" assignTo="#{orderOperate.dataAllot}"/>
+			<a:actionparam name="payModel" assignTo="#{orderOperate.payModel}"/>
+			<a:actionparam name="orderRemark" assignTo="#{orderOperate.orderRemark}"/>
+			<a:actionparam name="deliverAccount" assignTo="#{orderOperate.deliverAccount}"/>
+			<a:actionparam name="productAccount" assignTo="#{orderOperate.productAccount}"/>
+			<a:actionparam name="totalAccount" assignTo="#{orderOperate.totalAccount}"/>
+			<a:actionparam name="payAccount" assignTo="#{orderOperate.payAccount}"/>
+			<a:actionparam name="balanceFlag" assignTo="#{orderOperate.balanceFlag}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="cardTotalPrice" assignTo="#{orderOperate.cardTotalPrice}"/>
+			<a:actionparam name="discountPrice" assignTo="#{orderOperate.discountPrice}"/>
+			<a:actionparam name="discount" assignTo="#{orderOperate.discount}"/>
+			<a:actionparam name="subtractPrice" assignTo="#{orderOperate.subtractPrice}"/>
+			<a:actionparam name="orderUpdateMess" assignTo="#{orderOperate.orderUpdateMess}"/>
+		</a:jsFunction>
+		<a:jsFunction name="modifyMemberFind" action="#{orderOperate.modifyMemberFind}" reRender="memberInfoDiv,productCartDiv" oncomplete="memberComplete();">
+			<a:actionparam name="memberType" assignTo="#{orderOperate.memberType}"/>
+			<a:actionparam name="memberSource" assignTo="#{orderOperate.memberSource}"/>
+			<a:actionparam name="memberName" assignTo="#{orderOperate.memberName}"/>
+			<a:actionparam name="memberPhone" assignTo="#{orderOperate.memberPhone}"/>
+			<a:actionparam name="workAddress" assignTo="#{orderOperate.workAddress}"/>
+		</a:jsFunction>
+		<a:jsFunction name="choiceAddress" action="#{orderOperate.choiceAddress}" reRender="deliverAddressDiv" data="#{orderOperate.deliverAddressId}" oncomplete="addressComplete(data);">
+			<a:actionparam name="operateDeliverAddressId" assignTo="#{orderOperate.operateDeliverAddressId}"/>
+		</a:jsFunction>
+		<a:jsFunction name="addDeliverAddress" action="#{orderOperate.addDeliverAddress}" reRender="deliverAddressDiv" data="#{orderOperate.deliverAddressId}" oncomplete="addressComplete(data);">
+			<a:actionparam name="consignee" assignTo="#{orderOperate.consignee}"/>
+			<a:actionparam name="phone" assignTo="#{orderOperate.phone}"/>
+			<a:actionparam name="address" assignTo="#{orderOperate.address}"/>
+		</a:jsFunction>
+		<a:jsFunction name="modifyAddress" action="#{orderOperate.modifyAddress}" reRender="deliverAddressDiv" data="#{orderOperate.deliverAddressId}" oncomplete="addressComplete(data);">
+			<a:actionparam name="operateDeliverAddressId" assignTo="#{orderOperate.operateDeliverAddressId}"/>
+			<a:actionparam name="consignee" assignTo="#{orderOperate.consignee}"/>
+			<a:actionparam name="phone" assignTo="#{orderOperate.phone}"/>
+			<a:actionparam name="address" assignTo="#{orderOperate.address}"/>
+		</a:jsFunction>
+		<a:jsFunction name="addProductCart" action="#{orderOperate.addProductCart}" reRender="productCartDiv,sortProductDiv" oncomplete="addProductComplate();">
+			<a:actionparam name="productId" assignTo="#{orderOperate.productId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="orderJson" assignTo="#{orderOperate.orderJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="removeOrderProduct" action="#{orderOperate.removeOrderProduct}" reRender="productCartDiv,sortProductDiv" oncomplete="removeComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="orderJson" assignTo="#{orderOperate.orderJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="sortPorduct" action="#{orderOperate.sortPorduct}" reRender="productCartDiv,sortProductDiv" oncomplete="calculateComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="userCardProduct" action="#{orderOperate.userCardProduct}" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.cardTotalPrice}" oncomplete="cardUseComplate(data);">
+			<a:actionparam name="cardProductJson" assignTo="#{orderOperate.cardProductJson}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="cancelCardProduct" action="#{orderOperate.editCancelCardProduct}" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.cardTotalPrice}" oncomplete="cardUseComplate(data);">
+			<a:actionparam name="cardProductJson" assignTo="#{orderOperate.cardProductJson}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="cartProductSettings" action="#{orderOperate.cartProductSettings}" reRender="productCartDiv,sortProductDiv" oncomplete="removeComplate();">
+			<a:actionparam name="choicePorductIds" assignTo="#{orderOperate.choicePorductIds}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="cartIndex" assignTo="#{orderOperate.cartIndex}"/>
+		</a:jsFunction>
+		
+		<!-- 使用宅配卡 -->
+		<a:jsFunction name="userDistributionProduct" action="#{orderOperate.userDistributionProduct}" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.showMessage}" oncomplete="userDistribution(data);">
+			<a:actionparam name="cardCode" assignTo="#{orderOperate.cardId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+			<a:actionparam name="cardUsedNum" assignTo="#{orderOperate.cardUsedNum}"/>
+		</a:jsFunction>
+		<!-- 取消宅配卡 -->
+		<a:jsFunction name="cancelDistributionProduct" action="#{orderOperate.cancelDistributionProduct}" reRender="productCartDiv,sortProductDiv,memberCardDiv" data="#{orderOperate.showMessage}" oncomplete="userDistribution(data);">
+			<a:actionparam name="cardCode" assignTo="#{orderOperate.cardId}"/>
+			<a:actionparam name="orderProductJson" assignTo="#{orderOperate.orderProductJson}"/>
+		</a:jsFunction>
+		<a:jsFunction name="refreshPageCard" action="#{orderOperate.refreshPageCard}"  reRender="memberCardDiv">
+			<a:actionparam name="cardProductJson" assignTo="#{orderOperate.cardProductJson}"/>
+			<a:actionparam name="userCardFlag" assignTo="#{orderOperate.userCardFlag}"/>
+			<a:actionparam name="cardCodeToRefre" assignTo="#{orderOperate.cardCodeToRefre}"/>
+		</a:jsFunction>
+		
+		<a:jsFunction name="addressPageAction" action="#{orderOperate.gainDeliverAddressFind}" reRender="deliverAddressDiv" oncomplete="addressPageHuidiao();"   >
+			<a:actionparam name="addressPage" assignTo="#{orderOperate.address_page}"/>
+			<a:actionparam name="addressSearch" assignTo="#{orderOperate.addressSearch}"/>
+		</a:jsFunction>
+		<a:jsFunction name="addressFind" action="#{orderOperate.gainDeliverAddressFind}" reRender="deliverAddressDiv" oncomplete="addressPageHuidiao();"   >
+			<a:actionparam name="addressPage" assignTo="#{orderOperate.address_page}"/>
+			<a:actionparam name="addressSearch" assignTo="#{orderOperate.addressSearch}"/>
+		</a:jsFunction>
+	</a:form>
+	
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/richwidgets-demo.min.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/jquery.nicescroll.js"></script>
+	<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+	<script type="text/javascript">
+		//<![CDATA[
+		
+			var addressId;
+			var operateId;
+
+			var productAllTotal = 0;
+			var deliverAccount = 0;
+			var totalAccount = 0;
+			var payAccount = 0;
+
+			var orderProductJson;
+			var orderJson;
+
+			function words_deal(opRemark){ 
+				var curLength = opRemark.value.length;
+				if(curLength > 20){ 
+					var textVlaue = opRemark.value.substr(0,20); 
+					opRemark.value = textVlaue; 
+					alert("超过字数限制，最多输入20字！" ); 
+				}
+			}
+
+			//设置商品销售类型默认
+			function cartProductSettingAction(cartCode,cartIndex){
+				joinResultJson();
+				cartProductSettings(cartCode, orderProductJson,cartIndex);
+			}
+
+			//卡使用按钮获取选中卡商品数据
+			function cardUseAction(cardCode){
+				var jsonStr = "[";
+				jQuery("#carousel" + cardCode).find(".tabList li").find("table tr").each(function(tabList_table_tr_index){
+					var resultId = this.id;
+					resultId = resultId.replace("sp_", "spNum_");
+					var idArr = resultId.split("_");// 0功能标识 1cardCode 2surplusPorductId
+					var number = jQuery("#" + resultId).val();
+					if (Number(number) > 0) {
+						jsonStr += "{";
+						jsonStr += "cardCode:'" + idArr[1];
+						jsonStr += "',productId:" + idArr[3];
+						jsonStr += ",surplusProductId:" + idArr[2];
+						jsonStr += ",number:" + number;
+
+						resultId = resultId.replace("spNum_", "spPrice_");
+						var price = jQuery("#" + resultId).text();
+						price = price.replace("元", "");
+						
+						jsonStr += ",price:" + price;
+						jsonStr += "},";
+					}
+				});
+	            if (jsonStr != "[") {
+					jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+				}
+				jsonStr += "]";
+				joinResultJson();
+				userCardProduct(jsonStr, orderProductJson);
+				//本地存储用于回显
+				sessionStorage.setItem("orderReview_useCardFlag", "1");
+				sessionStorage.setItem("orderReview_cardJsonStr",jsonStr);
+			}
+
+			//卡取消按钮取消选中卡商品数据
+			function cancelCardAction(cardCode){
+				joinResultJson();
+				cancelCardProduct(cardCode, orderProductJson);
+				//购物车内容存储在本地
+				joinResultJson();
+				sessionStorage.setItem("orderReview_useCardFlag", "0");
+				sessionStorage.setItem("orderReview_cardCode", cardCode);
+			}
+
+			//取消卡回调
+			function cancelUseComplate(data){
+				var temp = data.toFixed(2);
+				jQuery("#cardPrice").html(temp);
+				calculateComplate();
+				
+			}
+			//商品添加回调
+			function addProductComplate(){
+				tidyJs();
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+				if (useBalanceFlag) {
+					var balance = '#{orderOperate.memberBalance}';
+				}
+				var cou=0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery("#couponPrice").val();
+				}
+				calculateAccount(freightAccount, balance,cou);
+				mouseFocue();
+				//购物车内容存储在本地
+				joinResultJson();
+				sessionStorage.setItem("orderReview_productJson", orderProductJson);
+			}
+			//使用卡回调
+			function cardUseComplate(data){
+				var temp = data.toFixed(2);
+				jQuery("#cardPrice").html(temp);
+				calculateComplate();
+				mouseFocue();
+				var mess=jQuery("#cardMessage").val();
+				if(mess!=''&& mess!=null){
+					jQuery("#messageValue").html(mess);
+					jQuery("#messageDiv").modal('show');
+				}
+				//购物车内容存储在本地
+				joinResultJson();
+				sessionStorage.setItem("orderReview_productJson", orderProductJson);
+			}
+
+			//验证 1数量 2金额
+			function clearNoNum(type, obj, event){
+				if (type == 1) {
+					var keyCode = event.keyCode;
+					if (keyCode < 37 || keyCode > 40) {
+						obj.value = obj.value.replace(/[^\d]/,"");  //清除“数字”和“.”以外的字符  
+					}
+				} else {
+					obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+					obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+					obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+					obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+				}
+				//购物车内容存储在本地
+				joinResultJson();
+				sessionStorage.setItem("orderReview_productJson", orderProductJson);
+			}
+			//验证 1数量 2金额
+			function clearNoNum2(type, obj, event){
+				var keyCode = event.keyCode;
+				var val=obj.value;
+				var temp;
+				if (type == 1) {
+					if (keyCode < 37 || keyCode > 40) {
+						if(!(keyCode >=48 && keyCode <=57)){
+							obj.value = obj.value.replace(/[^\d]/,"");  //清除“数字”和“.”以外的字符  
+						}
+						
+					}
+				} else {
+					if (keyCode < 37 || keyCode > 40) {
+						if(!(keyCode >=48 && keyCode <=57)){
+							obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+							obj.value = obj.value.replace(/^\./g,"");  //验证第一个字符是数字而不是. 
+							obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的.   
+							obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+						}
+					}
+				}
+				if(obj.value > 10){
+					obj.value=9.9;
+				}
+				if(obj.value < 0){
+					obj.value= 0;
+				}
+				joinResultJson();
+				sessionStorage.setItem("addOrder_orderProductJson", orderProductJson);
+			}
+			//订单提交验证
+			function saveAction(){
+				if(!weight()){
+					jQuery("#messageValue").html("选择商品超过宅配卡重量上限，请修改后重新操作！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+				var deliverTime = jQuery("#deliverTime").val();
+				if (deliverTime == null || deliverTime == '') {
+					jQuery("#messageValue").html("请选择配送日期");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+				var dataAllot = jQuery('input[name="dataAllot"]:checked').val();
+				var payModel = jQuery('input[name="payModel"]:checked').val();
+				if (payModel == 0) {
+					payModel = jQuery('input[name="payModelDetail"]:checked').val();
+				}
+				var orderRemark = jQuery("#orderRemark").val();
+				if (orderRemark.length > 200) {
+					jQuery("#messageValue").html("订单备注需少于200字！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+				var totalPrice = jQuery("#totalAccount").html();
+				if(Number(totalPrice) > 100000000){
+					jQuery("#messageValue").html("单笔订单金额最多不可超过100，000，000元，请修改后重新提交订单！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+
+				jQuery("#submitOrder\\:deliverTimeHidden").val(deliverTime);
+				jQuery("#submitOrder\\:dataAllotHidden").val(dataAllot);
+				jQuery("#submitOrder\\:payModelHidden").val(payModel);
+				jQuery("#submitOrder\\:orderRemarkHidden").val(orderRemark);
+				jQuery("#submitOrder\\:deliverAccountHidden").val(deliverAccount);
+				jQuery("#submitOrder\\:productAccountHidden").val(productAllTotal);
+				jQuery("#submitOrder\\:totalAccountHidden").val(totalAccount);
+				jQuery("#submitOrder\\:payAccountHidden").val(payAccount);
+				jQuery("#submitOrder\\:balanceFlagHidden").val(useBalanceFlag);
+				var orderUpdateMess = sessionStorage.getItem("orderUpdateMess");
+
+				jQuery("#submitOrder\\:orderUpdateMess").val(orderUpdateMess);
+				
+				var bbb = jQuery("#bbb").val();
+				var disPric = jQuery("#disPric").val();
+
+				if(Number(bbb) > Number(disPric)){
+					jQuery("#messageValue").html("减免金额过大，减免后商品实付金额小于0，请重新输入！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+				var jsonStr = "[";
+				jQuery("#orderProductTable tr").each(function(){
+					if (this.id != null && this.id != '') {
+						var orderProductTr = this.id;
+						var productId = orderProductTr.replace("orderProductTr", "");
+						var productNum = jQuery("#productNum" + productId).val();
+						var productIdArr = productId.split("_");
+						var discount = jQuery("#discount" + productId).val();
+						
+						var productPrice = 0;
+						if (productIdArr[1] == 1) {
+							productPrice = jQuery("#productPrice" + productId).val();
+						}
+						var remark = jQuery("#remark" + productId).val();
+						jsonStr += "{";
+						jsonStr += "cartCode:" + productId;
+						jsonStr += ",productNum:" + productNum;
+						jsonStr += ",productPrice:" + productPrice;
+						jsonStr += ",discount:'" + discount;
+						jsonStr += "',remark:'" + remark;
+						jsonStr += "'},";
+					}
+				});
+				if (jsonStr != "[") {
+					jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+				}
+				jsonStr += "]";
+				if(jsonStr=='[]'){
+					jQuery("#messageValue").html("商品清单不可为空！");
+					jQuery("#messageDiv").modal('show');
+					return false;
+				}
+				jQuery("#submitOrder\\:orderProductJsonHidden").val(jsonStr);
+				//return true;
+				
+				var deliverTimeHidden = jQuery("#submitOrder\\:deliverTimeHidden").val();
+               	var dataAllotHidden = jQuery("#submitOrder\\:dataAllotHidden").val();
+               	var payModelHidden = jQuery("#submitOrder\\:payModelHidden").val();
+               	var orderRemarkHidden = jQuery("#submitOrder\\:orderRemarkHidden").val();
+               	var deliverAccountHidden = jQuery("#submitOrder\\:deliverAccountHidden").val();
+               	var productAccountHidden = jQuery("#submitOrder\\:productAccountHidden").val();
+               	var totalAccountHidden = jQuery("#submitOrder\\:totalAccountHidden").val();
+               	var payAccountHidden = jQuery("#submitOrder\\:payAccountHidden").val();
+               	var balanceFlagHidden = jQuery("#submitOrder\\:balanceFlagHidden").val();
+               	var orderProductJsonHidden = jQuery("#submitOrder\\:orderProductJsonHidden").val();
+               	var cardTotalPriceId = jQuery("#submitOrder\\:cardTotalPriceId").val();
+               	var discountPrice = jQuery("#submitOrder\\:discountPrice").val();
+               	var discount = jQuery("#submitOrder\\:discount").val();
+               	var subtractPrice = jQuery("#submitOrder\\:subtractPrice").val();
+
+               	sessionStorage.removeItem("orderUpdateMess");
+               	
+				modifyOrder(deliverTimeHidden,dataAllotHidden,payModelHidden,orderRemarkHidden,deliverAccountHidden,productAccountHidden,totalAccountHidden,payAccountHidden,balanceFlagHidden,orderProductJsonHidden,cardTotalPriceId,discountPrice,discount,subtractPrice,orderUpdateMess);
+			}
+
+			//排序模块 控制
+			function sortControl(type){
+				if (type == 1) {
+					jQuery("#sortDiv").modal('show');
+				} else {
+					jQuery("#sortDiv").modal('hide');
+				}
+			}
+
+			//排序保存
+			function sortAction(){
+				var productId = "";
+				jQuery(".ui-selectee").each(function(index){
+					var dk = jQuery(this).attr("data-key");
+					var obj = jQuery("#parIdObj_"+dk).val();
+					productId += obj+",";
+				});
+				if (productId != null && productId != '') {
+					productId = productId.substring(0, productId.length - 1);
+				}
+				joinResultJson();
+				sortPorduct(productId, orderProductJson);
+			}
+
+			//排序商品回调
+			function calculateComplate(){
+				tidyJs();
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+				if (useBalanceFlag) {
+					var balance = '#{orderOperate.memberBalance}';
+				}
+				var cou=0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery("#couponPrice").val();
+				}
+				calculateAccount(freightAccount, balance,cou);
+				sortControl(2);
+			}
+		
+			jQuery(function(){
+
+				var dwidth = document.body.clientWidth;
+				if( dwidth >1050 ){
+					jQuery('#addressDiv').css('width','1050px')
+				}else{
+					jQuery('#addressDiv').css('width','800px')
+				}
+				
+				//时间控件
+				jQuery(".form_datetime").datetimepicker({
+					format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+					autoclose: true,
+					weekStart: 1,
+					language:  'zh-CN',	
+					minView:2,
+					pickerPosition: "bottom-left"
+				});
+				tidyJs();
+
+				var deliverTime = '#{orderOperate.deliverTime}';
+				var dataAllot = '#{orderOperate.dataAllot}';
+				var payModel = '#{orderOperate.payModel}';
+				var orderRemark = '#{orderOperate.orderRemark}';
+				var deliverAccount = '#{orderOperate.deliverAccount}';
+				var balanceFlag = '#{orderOperate.balanceFlag}';
+
+				jQuery("#deliverTime").val(deliverTime);
+				jQuery("#dataAllot" + dataAllot).iCheck("check");
+
+				if (payModel == 2 || payModel == 3 || payModel == 4 || payModel == 11 || payModel == 12) {
+					jQuery("#payRadio2").iCheck("enable");
+					jQuery("#payRadio3").iCheck("enable");
+					jQuery("#payRadio4").iCheck("enable");
+					jQuery("#payRadio0").iCheck("check");
+					jQuery("#payRadio" + payModel).iCheck("check");
+				} else {
+					jQuery("#payRadio2").iCheck("disable");
+					jQuery("#payRadio3").iCheck("disable");
+					jQuery("#payRadio4").iCheck("disable");
+					jQuery("#payRadio" + payModel).iCheck("check");
+				}
+
+				jQuery("#orderRemark").val(orderRemark);
+				jQuery("#freightAccount").val(deliverAccount);
+				if (balanceFlag == 'true') {
+					jQuery("#useBalance").iCheck("check");
+				} else {
+					jQuery("#useBalance").iCheck("uncheck");
+				}
+
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+				if (useBalanceFlag) {
+					var balance = '#{orderOperate.memberBalance}';
+				}
+				var cou=0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery("#couponPrice").val();
+				}
+				calculateAccount(freightAccount, balance,cou);
+				refreshPage();
+				jQuery("input:radio[name='dataAllot']").on('ifChecked',function(event){
+					var dataAllotVal = jQuery(this).val();
+					sessionStorage.setItem("orderReview_dataAllotVal", dataAllotVal);
+				});
+				/* jQuery("input:radio[name='payModel']").on('ifChecked',function(event){
+					var payMethod = jQuery(this).val();
+					sessionStorage.setItem("orderReview_payMethod", payMethod);
+				});*/
+				jQuery("input:radio[name='payModelDetail']").on('ifChecked',function(event){
+					var payMethodDetail = jQuery(this).val();
+					sessionStorage.setItem("orderReview_payMethodDetail", payMethodDetail);
+				}); 
+				jQuery('.selectpicker').selectpicker();
+
+			});
+
+			jQuery(document).ready(function() { 
+				jQuery("#productInfoId").attr("data-live-search","true");
+				jQuery('.selectpicker').selectpicker();  // 下拉框控件
+
+				jQuery(window).resize(function(){
+					var addressWidth = document.body.clientWidth;
+					if( addressWidth >1050 ){
+						jQuery('#addressDiv').css('width','1050px')
+					}else{
+						jQuery('#addressDiv').css('width','800px')
+					}
+				});
+				
+			}); 
+
+			//修改用户信息初始化
+			function modifyMemberInit(mType, mSource, mName, mPhone, mWorkAddress){
+				jQuery("#mType").val(mType);
+				jQuery("#mSource").val(mSource);
+				jQuery("#mType").selectpicker("refresh");
+				jQuery("#mSource").selectpicker("refresh");
+				jQuery("#mName").val(mName);
+				jQuery("#mPhone").val(mPhone);
+				jQuery("#mWorkAddress").val(mWorkAddress);
+				jQuery("#modifyMemberDiv").modal('show');
+			}
+
+			//修改用户信息
+			function modifyMemberAction(){
+				var memberType = jQuery("#mType").val();
+				var memberSource = jQuery("#mSource").val();
+				var memberName = jQuery("#mName").val();
+				var memberPhone = jQuery("#mPhone").val();
+				var workAddress = jQuery("#mWorkAddress").val();
+				var flag = true;
+				var flag = true;
+				if (memberName == '') {
+					jQuery("#messageValue").html("请填写客户名称！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+				if (memberPhone == '') {
+					jQuery("#messageValue").html("请填写客户联系方式！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}else{
+					var reg = /^.{0,20}$/;
+		             if (reg.test(memberPhone) == false) {
+		                   jQuery("#messageValue").html("联系方式最长输入20位！");
+		                       jQuery("#messageDiv").modal('show');
+		                       flag = false;
+		             }
+				}
+				if (workAddress == '') {
+					jQuery("#messageValue").html("请填写工作地址！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+				if (flag == true) {
+					modifyMemberFind(Number(memberType), Number(memberSource), memberName, memberPhone, workAddress);
+				}
+			}
+
+			//修改用户信息回调
+			function memberComplete(){
+				jQuery("#modifyMemberDiv").modal('hide');
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+				if (useBalanceFlag) {
+					var balance = '#{orderOperate.memberBalance}';
+				}
+				var cou=0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery("#couponPrice").val();
+				}
+				calculateAccount(freightAccount, balance,cou);
+
+				//回显
+				var memberType = jQuery("#mType").val();
+				var memberSource = jQuery("#mSource").val();
+				var memberName = jQuery("#mName").val();
+				var memberPhone = jQuery("#mPhone").val();
+				var workAddress = jQuery("#mWorkAddress").val();
+			}
+
+			//设为默认配送地址
+			function defaultAddressAction(deliverAddressId){
+				choiceAddress(Number(deliverAddressId));
+			}
+
+			//配送地址面板操作 1打开 2关闭 
+			function addressControl(type){
+				if (type == 1) {
+					jQuery("#addressControlDiv").modal('show');
+				} else {
+					jQuery("#addressControlDiv").modal('hide');
+				}
+			}
+
+			//配送地址操作类型
+			function addressAction(type, deliverAddressId, consignee, phone, address){
+				operateId = deliverAddressId;
+				jQuery("#consignee").val(consignee);
+				jQuery("#phone").val(phone);
+				jQuery("#address").val(address);
+				if (type == 1) {
+					jQuery("#addressTitle").html("添加配送地址");
+					jQuery("#saveAddress").css("display", "");
+					jQuery("#modifyAddress").css("display", "none");
+				} else {
+					jQuery("#addressTitle").html("修改配送地址");
+					jQuery("#saveAddress").css("display", "none");
+					jQuery("#modifyAddress").css("display", "");
+				}
+				addressControl(1);
+			}
+
+			//添加配送地址
+			function saveAddress(){
+				var consignee = jQuery("#consignee").val();
+				var phone = jQuery("#phone").val();
+				var address = jQuery("#address").val();
+				var flag = true;
+				if (jQuery.trim(consignee) == '') {
+					jQuery("#messageValue").html("请填写收货人姓名！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+				if (jQuery.trim(phone) == '') {
+					jQuery("#messageValue").html("请填写收货人联系方式！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}else{
+		             var reg = /^[\d-+,，]{0,50}$/;
+		             if (reg.test(phone) == false && phone.length<=50) {
+		                   jQuery("#messageValue").html("联系方式只支持数字,逗号,加号,中划线！");
+		                       jQuery("#messageDiv").modal('show');
+		                       flag = false;
+		             }else if(reg.test(phone) == false && phone.length>50){
+		            	 jQuery("#messageValue").html("联系方式最长输入50位！");
+	                     jQuery("#messageDiv").modal('show');
+	                     flag = false;
+			         }
+				}
+				if (jQuery.trim(address) == '') {
+					jQuery("#messageValue").html("请填写工作地址！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+				if (flag == true) {
+					addDeliverAddress(consignee, phone, address);
+				}
+			}
+
+			//修改配送地址
+			function updateAddress(){
+				var consignee = jQuery("#consignee").val();
+				var phone = jQuery("#phone").val();
+				var address = jQuery("#address").val();
+				var flag = true;
+				if (jQuery.trim(consignee) == '') {
+					jQuery("#messageValue").html("请填写收货人姓名！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+				if (jQuery.trim(phone) == '') {
+					jQuery("#messageValue").html("请填写收货人联系方式！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}else{
+					var reg = /^[\d-+,，]{0,50}$/;
+		             if (reg.test(phone) == false && phone.length<=50) {
+		                   jQuery("#messageValue").html("联系方式只支持数字,逗号,加号,中划线！");
+		                       jQuery("#messageDiv").modal('show');
+		                       flag = false;
+		             }else if(reg.test(phone) == false && phone.length>50){
+		            	 jQuery("#messageValue").html("联系方式最长输入50位！");
+	                     jQuery("#messageDiv").modal('show');
+	                     flag = false;
+			         }
+				}
+				if (jQuery.trim(address) == '') {
+					jQuery("#messageValue").html("请填写工作地址！");
+					jQuery("#messageDiv").modal('show');
+					flag = false;
+				}
+				if (flag == true) {
+					modifyAddress(Number(operateId), consignee, phone, address);
+				}
+			}
+			
+			//地址操作回调
+			function addressComplete(data){
+				addressId = data;
+				addressControl(2);
+
+				addressPageHuidiao()
+			}
+
+			//计算金额 商品金额-运费-用户余额
+			function calculateAccount(freightAccount, balance,cou){
+				tidyJs();
+				var sumProductNum = 0;
+				productAllTotal = 0;
+				jQuery("#orderProductTable tr").each(function(){
+					if (this.id != null && this.id != '') {
+						var orderProductTr = this.id;
+						var productId = orderProductTr.replace("orderProductTr", "");
+						var productNum = jQuery("#productNum" + productId).val();
+						var productIdArr = productId.split("_");
+						var productPrice = 0;
+						var discount = jQuery("#discount" + productId).val();
+						if (productIdArr[1] == 1) {
+							productPrice = jQuery("#productPrice" + productId).val();
+							
+						}
+						if (productNum == null || productNum == '') {
+							productNum = 1;
+						}
+						if (productPrice == null || productPrice == '') {
+							productPrice = 0;
+						}
+						jQuery("#productNum" + productId).val(productNum);
+						jQuery("#productPrice" + productId).val(productPrice);
+
+						if(discount == 0 || discount == ''){
+							discount = 10;
+						}
+						
+						sumProductNum += Number(productNum);
+						productAllTotal += Number(productNum * productPrice*(discount/10));
+						var totalPrice = Number(productNum * productPrice*(discount/10)).toFixed(2);
+						if (productIdArr[1] == 1) {
+							jQuery("#productTotalPrice" + productId).html(totalPrice);
+						}else {
+							jQuery("#productTotalPrice" + productId).html("赠品");
+						}
+					}
+				});
+
+				jQuery("#sumProductNum").html(sumProductNum.toFixed(2));
+				jQuery("#productTotal").html(productAllTotal.toFixed(2));
+				
+				deliverAccount = Number(freightAccount).toFixed(2);
+
+				
+				var maxWeight=0;
+				var cardPrice = 0;
+				jQuery('input[name=useWeight]').each(function(){
+					maxWeight+=Number(jQuery(this).val());
+				});
+				if(maxWeight==0){
+					cardPrice = jQuery("#cardPrice").text();
+				}else{
+					cardPrice = productAllTotal;
+					jQuery("#cardPrice").html(productAllTotal.toFixed(2));
+					jQuery("#submitOrder\\:cardTotalPriceId").val(productAllTotal);
+				}
+				
+				var temp = Number(productAllTotal) - Number(cardPrice);
+
+				if (temp < 0) {
+					temp = 0;
+				}
+				jQuery("#orderPrice").html(temp.toFixed(2));
+
+				var aaa = jQuery("#aaa").val();//折扣幅度
+				var bbb = jQuery("#bbb").val();//减免金额
+
+				jQuery("#submitOrder\\:discount").val(aaa);
+				jQuery("#submitOrder\\:subtractPrice").val(bbb);
+				
+				if(aaa == 0 || aaa == ''){
+					aaa = 10;
+				}
+				if(bbb == ''){
+					bbb = 0;
+				}
+
+				var discountPrice = temp-temp*(aaa/10)+Number(bbb);
+
+				jQuery("#disPric").val(temp*(aaa/10));
+				
+				jQuery("#submitOrder\\:discountPrice").val(discountPrice.toFixed(2));
+				
+				if (temp*(aaa/10) + Number(freightAccount) > Number(balance)+Number(cou)+Number(bbb)) {
+					var payableAccount = temp*(aaa/10) + Number(freightAccount) - Number(balance) - Number(cou) - Number(bbb);
+					jQuery("#balanceAccount").html(Number(balance).toFixed(2));
+					jQuery("#totalAccount").html(payableAccount.toFixed(2));
+					payAccount = Number(balance);
+					totalAccount = payableAccount.toFixed(2);
+				} else {
+					var balanceAccount = temp*(aaa/10) + Number(freightAccount) - Number(cou)-Number(bbb);
+					if(balanceAccount<0){
+						balanceAccount=0;
+					}
+					jQuery("#balanceAccount").html(balanceAccount.toFixed(2)); 
+					jQuery("#totalAccount").html("0.00");
+					payAccount = balanceAccount;
+					totalAccount = 0;
+				}
+			}
+
+			//商品数量 +-变化
+			function modifyNum(productId, modifyType){
+				var productNum = jQuery("#productNum" + productId).val();
+				if (modifyType == 1) {
+					if (productNum > 1) {
+						productNum = Number(productNum) - 1;
+						jQuery("#productNum" + productId).val(productNum);
+					}
+				} else {
+					productNum = Number(productNum) + 1;
+					jQuery("#productNum" + productId).val(productNum);
+				}
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+				if (useBalanceFlag) {
+					var balance = '#{orderOperate.memberBalance}';
+				}
+				var cou=0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery("#couponPrice").val();
+				}
+				calculateAccount(freightAccount, balance,cou);
+			}
+
+			//加个变动调用
+			function accountAction(){
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+				if (useBalanceFlag) {
+					var balance = '#{orderOperate.memberBalance}';
+				}
+				var cou=0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery("#couponPrice").val();
+				}
+				calculateAccount(freightAccount, balance,cou);
+			}
+
+			//购物车删除单个商品
+			function removeProductAction(productId){
+				var flag=window.confirm("确定删除?");
+				if(flag){
+					joinResultJson();
+					removeOrderProduct(productId, orderProductJson, orderJson);
+				}
+				
+			}
+
+			//拼接 保存购物车 json
+			function joinResultJson(){
+				var jsonStr = "[";
+				jQuery("#orderProductTable tr").each(function(){
+					if (this.id != null && this.id != '') {
+						var orderProductTr = this.id;
+						var productId = orderProductTr.replace("orderProductTr", "");
+						var productNum = jQuery("#productNum" + productId).val();
+						var productIdArr = productId.split("_");
+						var discount = jQuery("#discount" + productId).val();
+						var productPrice = 0;
+						if (productIdArr[1] == 1) {
+							productPrice = jQuery("#productPrice" + productId).val();
+						}
+						var remark = jQuery("#remark" + productId).val();
+						jsonStr += "{";
+						jsonStr += "cartCode:" + productIdArr[0]+"_"+productIdArr[1];
+						jsonStr += ",productNum:" + productNum;
+						jsonStr += ",discount:'" + discount;
+						jsonStr += "',productPrice:" + productPrice;
+						jsonStr += ",remark:'" + remark;
+						jsonStr += "'},";
+					}
+				});
+				if (jsonStr != "[") {
+					jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+				}
+				jsonStr += "]";
+				orderJson = "{deliverAccount:" + jQuery("#freightAccount").val() + "}";
+				orderProductJson = jsonStr;
+			}
+
+			//加入购物车
+			function addProductCartAction(){
+				var productId = jQuery("#productInfoId").val();
+				joinResultJson();
+				addProductCart(Number(productId), orderProductJson, orderJson);
+			}
+
+			//删除商品回调
+			function removeComplate(){
+				tidyJs();
+				var freightAccount = jQuery("#freightAccount").val();
+				var balance = 0;
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+				if (useBalanceFlag) {
+					var balance = '#{orderOperate.memberBalance}';
+				}
+				var cou=0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery("#couponPrice").val();
+				}
+				calculateAccount(freightAccount, balance,cou);
+			}
+
+			//修改运费
+			function modifyFreight(freightAccount){
+				var balance = 0;
+				var useBalanceFlag = document.getElementById("useBalance").checked;
+				if (useBalanceFlag) {
+					var balance = '#{orderOperate.memberBalance}';
+				}
+				var cou=0;
+				if(jQuery('.a_voucher').hasClass('cur')){
+					cou = jQuery("#couponPrice").val();
+				}
+				calculateAccount(freightAccount, balance,cou);
+			}
+			//商品添加光标定位
+			function mouseFocue(){
+				var a=0;
+				jQuery("#orderProductTable tr").each(function(){
+					a++;
+				});
+				jQuery("#orderProductTable tr").each(function(){
+					if (this.id != null && this.id != '') {
+						var orderProductTr = this.id;
+						var productId = orderProductTr.replace("orderProductTr", "");
+						var productNum = jQuery("#productNum" + productId).val();
+						var productIdArr = productId.split("_");
+						if(productIdArr[2]==a-1){
+							document.getElementById("productNum"+productId).focus(); 
+						}
+					}
+				});
+
+			}
+			//封装公共初始化js 
+			function tidyJs(){
+				//单选和复选控件
+				jQuery('input[class=iCheckbox]').iCheck({
+					checkboxClass: 'icheckbox_minimal-blue',
+				});
+				jQuery('input[class=iRadio]').iCheck({
+					radioClass: 'iradio_minimal-blue',
+				});
+
+				//支付单选按钮
+				jQuery("input[name='payModel']").on('ifClicked', function(){
+					var payRadioId = this.id.replace("payRadio", "");
+					if (payRadioId == 0) {//货到付款
+						jQuery("#payRadio2").iCheck("enable");
+						jQuery("#payRadio3").iCheck("enable");
+						jQuery("#payRadio4").iCheck("enable");
+						jQuery("#useBalance").iCheck("enable");
+						jQuery("#payRadio2").iCheck("check");
+						sessionStorage.setItem("orderReview_payMethodDetail", '2');
+					} else if (payRadioId == 10) {//礼品赠送
+						jQuery("#payRadio2").iCheck("disable");
+						jQuery("#payRadio3").iCheck("disable");
+						jQuery("#payRadio4").iCheck("disable");
+						jQuery("#useBalance").iCheck("uncheck");
+						jQuery("#useBalance").iCheck("disable");
+					}else {//非货到付款 礼品赠送 
+						jQuery("#payRadio2").iCheck("disable");
+						jQuery("#payRadio3").iCheck("disable");
+						jQuery("#payRadio4").iCheck("disable");
+						jQuery("#useBalance").iCheck("enable");
+					}
+					var freightAccount = jQuery("#freightAccount").val();
+					var balance = 0;
+					var cou=0;
+					if(jQuery('.a_voucher').hasClass('cur')){
+						cou = jQuery("#couponPrice").val();
+					}
+					calculateAccount(freightAccount, balance,cou);
+					//本地存储用于回显
+					sessionStorage.setItem("orderReview_payMethod", payRadioId);
+				});
+
+				jQuery("input[name='useBalance']:checkbox").on('ifChanged', function(){
+					var freightAccount = jQuery("#freightAccount").val();
+					var balance = 0;
+					if (this.checked) {
+						var balance = '#{orderOperate.memberInfo.balance}';
+					}
+					var cou=0;
+					if(jQuery('.a_voucher').hasClass('cur')){
+						cou = jQuery("#couponPrice").val();
+					}
+					calculateAccount(freightAccount, balance,cou);
+				});
+
+				jQuery("#showProductDiv").niceScroll({cursorcolor:"#919191",cursorwidth:10,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false}); 
+
+				jQuery('.W_addresses_list .inner').mouseover(function(){  //收货人地址点击和滑过的状态
+					jQuery(this).addClass('addrHv').siblings().removeClass('addrHv');	
+				});	
+				jQuery('.W_addresses_list .inner').mouseout(function(){
+					jQuery(this).removeClass('addrHv');	
+				});	
+
+				jQuery('#list_dragselect').orderingList({
+					dragSelect: true
+				});
+
+				jQuery(".btn-first").text("置顶");
+				jQuery(".btn-up").text("向上");
+				jQuery(".btn-down").text("向下");
+				jQuery(".btn-last").text("置底");        
+			}
+
+			//计算重量
+			function weight(){
+				var shopWeight=0;//商品重量
+				var maxWeight=0;//宅配卡最大重量
+				
+				jQuery("#orderProductTable tr").each(function(){
+					if (this.id != null && this.id != '') {
+						var orderProductTr = this.id;
+						var productId = orderProductTr.replace("orderProductTr", "");
+						var productNum = jQuery("#productNum" + productId).val();//数量
+						var unit = jQuery("#unit" + productId).val();//规格
+						var content = jQuery("#content" + productId).val();//净含量
+						var productIdArr = productId.split("_");
+						if(content==""||content=="0"||content==0){
+							content=1;
+						}
+						//判断是否赠品
+						if (productIdArr[1] == 1) {
+							if(unit == 7){
+								shopWeight+= Number(productNum)*Number(content);
+							}else if(unit == 8){
+								shopWeight+= Number(productNum)*Number(content)*50;
+							}else if(unit == 9){
+								shopWeight+= Number(productNum)*Number(content)*500;
+							}else if(unit == 10){
+								shopWeight+= Number(productNum)*Number(content)*1000;
+							}else if(unit == 11){
+								shopWeight+= Number(productNum)*Number(content)*1000*1000;
+							}
+						}
+					}
+				});
+				jQuery('input[name=useWeight]').each(function(){
+					maxWeight+=Number(jQuery(this).val());
+				});
+				if(shopWeight <= maxWeight || maxWeight==0){
+					return true;
+				}else{
+					return false;
+				}
+			}
+
+			//宅配卡使用
+			function cardUseAction2(cardId,id){
+				joinResultJson();
+				var num = jQuery('#'+id).val(); 
+				var reg = /^[0-9]*[1-9][0-9]*$/; 
+				if(!reg.test(num)){
+		        	alert("配送次数请填写大于零的正整数");
+	     		    return false;
+			    }
+				userDistributionProduct(cardId, orderProductJson, num);
+			}
+
+			//宅配卡取消
+			function cancelUseAction(cardId){
+				if(window.confirm("取消使用会员卡将清空商品清单，确定取消？")){
+					joinResultJson();
+					cancelDistributionProduct(cardId, orderProductJson);
+				}
+			}
+			function userDistribution(mess){
+				if(mess!='' && mess!=null){
+					jQuery("#messageValue").html(mess);
+					jQuery("#messageDiv").modal('show');
+				}else{
+					var mess=jQuery("#cardMessage").val();
+					if(mess!=''&& mess!=null){
+						jQuery("#messageValue").html(mess);
+						jQuery("#messageDiv").modal('show');
+					}
+				}
+			}
+			function updateRem(){
+				jQuery("#text_note").hide();	
+				jQuery("#text_save").show();	
+			}
+			function saveRem(){
+				jQuery("#text_note").show();	
+				jQuery("#text_save").hide();
+				var remark = jQuery("#text_save .form-control").val();
+				remarkUpdate(remark);
+				jQuery("#text_note span").html(remark);	
+			}
+			function jian(id,id2){
+				var num = jQuery('#'+id).val();
+				if((Number(num)-1) >=1 ){
+					jQuery('#'+id).val(Number(num)-1);
+				}
+				if((Number(num)-1) >1 ){
+					jQuery('#'+id2).html('X'+(Number(num)-1));
+				}else{
+					jQuery('#'+id2).html("");
+				}
+			}
+			function jia(id1,id2,id3){
+				var num = jQuery('#'+id1).val();
+				var maxNum = jQuery('#'+id2).html();
+				if((Number(num)+1) <= maxNum){
+					jQuery('#'+id1).val(Number(num)+1);
+
+					if((Number(num)+1) >1 ){
+						jQuery('#'+id3).html('X'+(Number(num)+1));
+					}else{
+						jQuery('#'+id3).html("");
+					}
+				}
+				
+			}
+			//红包券的点击效果
+			/* jQuery('.a_voucher').click(function(){
+				jQuery(this).hasClass('cur') ? jQuery(this).removeClass('cur') : jQuery(this).addClass('cur');
+				if(jQuery(this).hasClass('cur')){
+					var cou = jQuery("#couponPrice").val();
+					var freightAccount = jQuery("#freightAccount").val();
+					var balance = 0;
+					if (document.getElementById("useBalance").checked) {
+						balance = '#{orderOperate.memberInfo.balance}';
+					}
+					jQuery("#couPrice").html(Number(cou).toFixed(2));
+					jQuery("#coupon").show();
+					calculateAccount(freightAccount, balance,cou);
+				}else{
+					jQuery("#couPrice").html(0);
+					jQuery("#coupon").hide();
+					var cou = 0;
+					var freightAccount = jQuery("#freightAccount").val();
+					var balance = 0;
+					if (document.getElementById("useBalance").checked) {
+						balance = '#{orderOperate.memberInfo.balance}';
+					}
+					calculateAccount(freightAccount, balance,cou);
+				}
+			}); */
+
+			 //修改配送时间时存储到本地，用于回显
+			 function dateChange(){
+				var deliverTime = jQuery("#deliverTime").val();
+				sessionStorage.setItem("orderReview_deliverTime", deliverTime);
+			}
+			//修改配送时间（上下午）存储本地，用于回显
+			function dataAllotChange(obj){
+				var dataAllotVal = jQuery(obj).val();
+				sessionStorage.setItem("orderReview_dataAllotVal", dataAllotVal);
+			}
+			//修改备注存储本地，用于回显
+			function commentChange(){
+				var comment = jQuery("#orderRemark").val();
+				sessionStorage.setItem("orderReview_comment", comment);
+			}
+			//页面刷新时回显页面
+			function refreshPage(){
+				var deliverTime = sessionStorage.getItem("orderReview_deliverTime");
+				var dataAllotVal = sessionStorage.getItem("orderReview_dataAllotVal");
+				var payMethod = sessionStorage.getItem("orderReview_payMethod");
+				var payMethodDetail = sessionStorage.getItem("orderReview_payMethodDetail");
+				var comment = sessionStorage.getItem("orderReview_comment");
+				var productJson = sessionStorage.getItem("orderReview_productJson");
+				var useCardFlag = sessionStorage.getItem("orderReview_useCardFlag");//0未使用，1使用
+				var jsonStr = sessionStorage.getItem("orderReview_cardJsonStr",jsonStr);
+				var cardCode = sessionStorage.getItem("orderReview_cardCode");
+				if(deliverTime != null){
+					jQuery("#deliverTime").val(deliverTime);
+				}
+				if(dataAllotVal != null){
+					jQuery("#dataAllot"+dataAllotVal).iCheck("check");
+				}
+				if(payMethod != null){
+					jQuery("#payRadio"+payMethod).iCheck("check");
+					if(payMethodDetail!=null && payMethod=='0'){
+						jQuery("#payRadio2").iCheck("enable");
+						jQuery("#payRadio3").iCheck("enable");
+						jQuery("#payRadio4").iCheck("enable");
+						jQuery("#useBalance").iCheck("enable");
+						jQuery("#payRadio"+payMethodDetail).iCheck("check");
+					}else {
+						jQuery("#payRadio2").iCheck("disable");
+						jQuery("#payRadio3").iCheck("disable");
+						jQuery("#payRadio4").iCheck("disable");
+						jQuery("#useBalance").iCheck("disable");
+					}
+				}
+				if(comment != null){
+					jQuery("#orderRemark").val(commnet);
+				}
+				if(productJson != null){
+					addProductCart(0, productJson, "");
+				}
+				if(useCardFlag != null){
+					if(jsonStr == null){
+						jsonStr = "";
+					}
+					if(cardCode == null){
+						cardCode = "";
+					}
+					refreshPageCard(jsonStr,useCardFlag,cardCode);
+				}
+			}
+
+			//订单配送地址切换分页
+			function operatePageAction(page){
+				var mess = jQuery("#addressSearch").val();
+				if(mess == '请输入收货人姓名/联系方式/收货地址'){
+					mess="";
+				}
+				addressPageAction(page,mess);
+			}
+			function addressFindAction(){
+				var mess = jQuery("#addressSearch").val();
+				if(mess == '请输入收货人姓名/联系方式/收货地址'){
+					mess="";
+				}
+				addressFind(1,mess)
+			}
+			//配送地址切换分页回调
+			function addressPageHuidiao(){
+				var dwidth = document.body.clientWidth;
+				if( dwidth >1050 ){
+					jQuery('#addressDiv').css('width','1050px')
+				}else{
+					jQuery('#addressDiv').css('width','800px')
+				}
+			}
+		//]]>
+	</script>
+</ui:define>
+</ui:composition>

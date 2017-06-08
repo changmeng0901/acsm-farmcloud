@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+	<style>
+		.fr{float:right;}
+		  .r_ulli1{float:right;}
+	</style>
+       <td valign="top"  width="100%">
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="工作 ">
+                    </s:link>&#160;&gt;&#160;&#160;<font size="3">运输手工操作</font></div>
+                    
+                    <div class="r_t_r">
+							<ul>
+								<li >
+								
+									<a href="#{request.contextPath}/record/TransportationList.seam" style="text-decoration:none;color:black;" >
+				                 		<img src="#{request.contextPath}/asset/images/transport.png" width="11" height="9" />
+				              			运输列表
+				              		</a>
+			        			</li>
+			     			</ul>
+						</div>
+                    
+                    </div>
+                    <!-- #{freeLoadingHome.getTopInfo2()} -->
+                    <div class="z_r_ser" style="*margin-top:30px; *margin-bottom:30px;">
+                    <h:form  id="freeLoadingSearch">
+                    	<table cellpadding="0" cellspacing="0" style=" width:510px; margin:30px auto; *margin:0px auto;">
+                        	<tr>
+                        		<td style="font-size:14px;">请扫描条码：</td>
+                                <td><h:inputText styleClass="z_r_ser_i" id="objsubmit" value="#{freeLoadingHome.searchSn}"/></td>
+                                <td>
+                                <a4j:commandButton styleClass="edit_save submitclass"   eventsQueue="default"
+                                action="#{freeLoadingHome.addPackIngTwo()}"  oncomplete="okkk()"
+		                	reRender="list"
+		                	/></td>
+                           </tr>
+                       </table>          
+                    </h:form>   
+                    </div>
+                     <div class="pr_ad" style="margin-bottom:0px;">
+                     <a4j:form>
+                     <span style="margin-right:30px;">车次：<h:outputText id="carCode" value="#{freeLoadingHome.transportInfo.transportCode}" /></span>
+                     
+                     <span style="margin-right:30px;">选择路线： #{freeLoadingHome.routeInfo.name}</span>
+                     
+                     <span style="margin-right:30px;">创建时间：<h:outputText value="#{freeLoadingHome.transportInfo.insertTime}"> 
+				            <s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm:ss "/>
+				        </h:outputText>
+                     </span>
+                     <span style="margin-right:30px;">操作人：#{freeLoadingHome.transportInfo.insertUser.nickname}</span>
+                    
+                     </a4j:form>
+                    </div>
+                    <h:panelGroup id="list">
+					<table width="100%" class="pr_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<th class="pr_th" width="15%">订单编码</th>
+                    		<th class="pr_th" width="10%">收货人</th>
+                    		<th class="pr_th" width="13%">收货人电话</th>
+                    		<th class="pr_th" width="12%">订购时间</th>
+                    		<th class="pr_th" width="10%">总金额(元)</th>
+                    		<th class="pr_th" width="10%">装箱数量</th>
+                    		<th class="pr_th" width="10%">配送时间</th>
+                    		<th class="pr_th" width="10%">运输状态</th>
+                    		<th class="pr_th" width="10%" style="border-right:1px solid #ddd;">操作</th>
+                    	</tr>
+                    	<a4j:repeat value="#{freeLoadingHome.orderList}" var="obj" rendered="#{not empty freeLoadingHome.orderList}" rowKeyVar="_index">
+                    	<tr>
+                            <td class="pr_td"><h:outputText value="#{obj.orderCode}" /></td>
+                            <td class="pr_td"><h:outputText value="#{obj.receiveName}" /></td>
+                            <td class="pr_td"><h:outputText value="#{obj.receivePhone}" /></td>
+                            <td class="pr_td"><h:outputText value="#{obj.insertTime}" /></td>
+                    		<td class="pr_td"><h:outputText value="#{obj.totalAccount}"/></td>
+                    		<td class="pr_td"><h:outputText value="#{obj.packingInfo.size}"/></td>
+                    		<td class="pr_td">
+                    		<s:div rendered="#{obj.timeSlot eq 0}" >
+	                    		<h:outputText value="#{obj.deliverTime}  全天"/>
+	                    		</s:div>
+	                    	<s:div rendered="#{obj.timeSlot eq 1}" >
+	                    		<h:outputText value="#{obj.deliverTime}  上午"/>
+	                    		</s:div>
+	                    	<s:div rendered="#{obj.timeSlot eq 2}" >
+	                    		<h:outputText value="#{obj.deliverTime}  下午"/>
+	                    		</s:div>
+                    		</td>
+                    		<td class="pr_td">
+                    		<s:span style="color:red" rendered="#{obj.btype==1||obj.transportInfo!=null}">
+                    		已装车
+                    		</s:span>
+                    		<s:span rendered="#{obj.btype==null&amp;&amp;obj.transportInfo==null}">
+                    		未装车
+                    		</s:span>
+                    		</td>
+                            <td class="pr_td">
+                                	<a style="color:#2a2a2a;" href="javascript:void(0)" onclick="del('#{obj.orderCode}');return false;">删除</a>
+                            </td>
+                    	</tr>
+                    	</a4j:repeat>
+                    </table>
+                    
+                    </h:panelGroup>
+                    <table width="180" style="margin:35px auto 0 auto;">
+						<tr>
+							<td>
+		            	<a href="#" id="update"  class="edit_save" onclick="saveMethod()"/>
+		    			&#160;<s:link view="/record/TransportationOrderInfoList.xhtml" styleClass="edit_back" id="bn_left6" style="margin-left:10px" propagation="none"/>
+           				</td>
+           				</tr>
+           				</table>
+           				
+            <!--印刷管理下结束-->
+
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+</td>
+<script>
+function checkAll (name,obj){
+	jquery("input[name='"+name+"']").attr("checked",jquery(obj).attr("checked"));
+}
+
+okkk = function(){
+	document.getElementById("freeLoadingSearch:objsubmit").focus();
+	document.getElementById("freeLoadingSearch:objsubmit").value="";
+}
+
+document.onkeydown=function(event){ 
+    e = event ? event :(window.event ? window.event : null); 
+    if(e.keyCode==13){ 
+		jquery(".submitclass").trigger("onclick");
+		okkk();
+		e.keyCode=0;
+		 if (window.navigator.userAgent.indexOf("MSIE")==-1)
+            {
+			 e.preventDefault();
+			 return false;
+            }
+    	e.returnValue=false;				
+    } 
+} 
+
+del = function(b){
+	if(confirm('确定删除?')){
+ 		deleted(b);
+ 		return true;
+ 	}
+ 	return false;
+}
+saveMethod = function(){
+	savePacking();
+ 	 	return false;
+}
+goUrl1 = function(){
+ 	window.location.href="#{request.contextPath}/record/TransportationOrderInfoList.seam";
+ }
+jquery(document).ready(function(){
+	document.getElementById("freeLoadingSearch:objsubmit").focus();
+});
+</script>
+<a4j:form>
+<a4j:jsFunction name="savePacking"  action="#{freeLoadingHome.updatePacking()}"  oncomplete="goUrl1();">
+</a4j:jsFunction>
+</a4j:form>
+<a4j:form >
+<a4j:jsFunction name="deleted"  action="#{freeLoadingHome.deleteObj()}" reRender="list">
+<a4j:actionparam name="deletedId" assignTo="#{freeLoadingHome.deleteId}"/>
+</a4j:jsFunction>
+</a4j:form>
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/superfish.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/supersubs.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/hoverIntent.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.flot.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui.js"></script>
+
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui-select.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/customInput.jquery.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.dataTables.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.fancybox-1.3.4.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.filestyle.mini.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.treeview.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.tipsy.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/jquery.wysiwyg.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/form/inline.js"></script>
+	</ui:define>
+
+</ui:composition>

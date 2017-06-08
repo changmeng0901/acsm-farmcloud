@@ -1,0 +1,819 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/empty_template.xhtml"
+	xmlns:a="http://richfaces.org/a4j">
+
+	<ui:define name="body">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/skinBlue.css"/>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/orderManage/AllOrder.css"/>
+		<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/purchase.css" />
+		<link type="text/css" rel="stylesheet" href="#{request.contextPath}/asset/css/purchase/commons/commons.css"/>
+		<style>
+			.baseFile_onload{ display:block; float:left; width:130px; height:130px; margin:25px 50px 25px 0;border:none;background: url("../asset/images/upload_file.png") no-repeat scroll 0 0; cursor:pointer;}
+			.baseFile_onload:hover{ background: url("../asset/images/upload_file.png") no-repeat scroll 0 0; border:none;}
+			.baseFile_onload input{ position:absolute; right:0; top:0; width:130px; height:130px; opacity:0; filter:alpha(opacity=0); cursor:pointer; font-size: 100px;}
+			.baseFile_pic194 img{ width:194px; height:94px;}
+			.modal-header h4{font-family: 微软雅黑;}
+			.excelName,.msgSource{ margin:0 50px; line-height:20px;}
+			
+			.kuandu{width: 340px; left:50%; margin-left: -170px; top:50%; margin-top:-234px; margin-bottom:0; position: absolute;}
+			.bus{width:70px; height: 70px; background: url(../asset/images/orderManage/bus.jpg) no-repeat; float: left; margin-left: 59px;}
+			.fahuo{float: left; line-height: 70px; font-size: 22px; color: #646464; font-weight: bold; margin-left: 10px;}
+			 .kuanDu{width: 510px; left:50%; margin-left: -255px; top: 50%; margin-top: -234px; margin-bottom: 0; position: absolute;}
+  .kuanDu .modal-body td{padding: 5px 0;}
+    .shaiXuan{border-top: 1px solid #cfe3f3; margin-top: 15px;}
+  div.shaiSelect .bootstrap-select:not([class*=span]):not([class*=col-]):not([class*=form-control]):not(.input-group-btn){width: 170px;}
+#lxfs{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;width: 190px;}
+
+			.logistics_dialog{ position:fixed;left:50%;top:50%;margin:-110px 0 0 -210px; width:420px;}
+			.logistics_select li{ float:left; width:82px; text-align:center;}
+			.logistics_select .mlmr_7090{ margin:0 90px 0 70px;}
+			.logistics_select .icon_log{ width:48px;height:48px;margin-bottom:5px;}
+			.logistics_select .text_con{height:22px;line-height:22px;}
+			.logistics_select .text_con .iradio_minimal-blue{float:left;margin:2px 5px 0 0;}
+		</style>
+		#{orderOperateList.orderOperateListInit()}
+		<td valign="top" >
+				<div class="content">
+				<div class="breadNav_wap clear">
+                        <div class="breadNav_lt"><a href="#">增值服务</a><span>&gt;</span><strong>一键购买</strong></div>
+                        <div class="breadNav_rt" style="margin-bottom:-1px; margin-top:1px;">
+                            <ul class="resumeList clear">
+                                <li >
+                                    <a href="/purchase/purchase.seam"><img src="#{request.contextPath}/asset/images/purchase/purchase_icon1.png"/><span>一键购买</span></a>
+                                </li>
+                                <li class="cur">
+                                    <a href="/purchase/OrderOperateList.seam"><img src="#{request.contextPath}/asset/images/purchase/purchase_icon2.png" /><span>订单管理</span></a>
+                                </li>
+                                <li>
+                                	<a href="/purchase/weChat.seam"><img src="#{request.contextPath}/asset/images/purchase/wechatTitle.png" /><span>微信配置</span></a>
+                            	</li>
+                            </ul>
+                        </div>
+                    </div>		
+				    <table width="100%" height="100%" cellpadding="0" cellspacing="0">
+				    	<tr>
+				        <td valign="top" width="210" style=" border-right:1px solid #e1e4eb;">
+				        <div class="levelMenu_list3" style="min-height:500px;">
+				        	<ul class="levelMenu_ul3">
+				            	<li><a class="link #{orderOperateList.orderStatus == 0 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderOperateList.seam?orderStatus=0&amp;pages=1"><img src="../asset/images/orderManage/levelMenu50.png" />全部订单<em class="num">#{orderOperateList.orderNumberArr[0]}</em></a></li>
+				        		<h:outputText rendered="#{sessionTake.orderAudit}">
+				        		<li><a class="link #{orderOperateList.orderStatus == 11 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderReturnList.seam?orderStatus=11&amp;pages=1"><img src="../asset/images/orderManage/levelMenu006.png" />订单已驳回<em class="num">#{orderOperateList.orderNumberArr[11]}</em></a></li>
+				            	</h:outputText>
+<!-- 				            	<h:outputText rendered="#{sessionTake.orderReceive}"> -->
+				            	<li><a class="link #{orderOperateList.orderStatus == 13 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderAcceptList.seam?orderStatus=13&amp;pages=1"><img src="../asset/images/orderManage/levelMenu51.png" />订单待接受<em class="num">#{orderOperateList.orderNumberArr[13]}</em></a></li>
+<!-- 				        		</h:outputText> -->
+				        		<h:outputText rendered="#{sessionTake.orderAudit}">
+				        		<li><a class="link #{orderOperateList.orderStatus == 1 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderAuditList.seam?orderStatus=1&amp;pages=1"><img src="../asset/images/orderManage/levelMenu51.png" />订单待审核<em class="num">#{orderOperateList.orderNumberArr[1]}</em></a></li>
+				                </h:outputText>
+				                <h:outputText rendered="#{sessionTake.orderHandle}">
+				                <li><a class="link #{orderOperateList.orderStatus == 2 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderDisposeList.seam?orderStatus=2&amp;pages=1"><img src="../asset/images/orderManage/levelMenu52.png" />订单待处理<em class="num">#{orderOperateList.orderNumberArr[2]}</em></a></li>
+				               	</h:outputText>
+				               	<h:outputText rendered="#{sessionTake.orderTally}">
+				                <li><a class="link #{orderOperateList.orderStatus == 14 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderTallyList.seam?orderStatus=14&amp;pages=1"><img src="../asset/images/orderManage/lihuo-icon.png" />订单理货中<em class="num">#{orderOperateList.orderNumberArr[14]}</em></a></li>
+				                </h:outputText>
+				                <h:outputText rendered="#{sessionTake.orderShipments}">
+				                <li><a class="link #{orderOperateList.orderStatus == 3 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderDeliveryList.seam?orderStatus=3&amp;pages=1"><img src="../asset/images/orderManage/levelMenu53.png" />订单待发货<em class="num">#{orderOperateList.orderNumberArr[3]}</em></a></li>
+				                </h:outputText>
+				                <h:outputText rendered="#{sessionTake.orderDispatching}">
+				                <li><a class="link #{orderOperateList.orderStatus == 4 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderTransportList.seam?orderStatus=4&amp;pages=1"><img src="../asset/images/orderManage/levelMenu54.png" />订单配送中<em class="num">#{orderOperateList.orderNumberArr[4]}</em></a></li>
+				                </h:outputText>
+				                <li><a class="link #{orderOperateList.orderStatus == 5 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderFinishList.seam?orderStatus=5&amp;pages=1"><img src="../asset/images/orderManage/levelMenu55.png" />订单已完成<em class="num">#{orderOperateList.orderNumberArr[5]}</em></a></li>
+				                <li><a class="link #{orderOperateList.orderStatus == 6 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/OrderDeleteList.seam?orderStatus=6&amp;pages=1"><img src="../asset/images/orderManage/levelMenu56.png" />订单已删除<em class="num">#{orderOperateList.orderNumberArr[6]}</em></a></li>
+				                <li class="line"></li>
+				                <s:fragment rendered="#{sessionTake.refundAudit == true}">
+				            	<li><a class="link #{refundOperateList.orderStatus == 12 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/RefundOperateList.seam?orderStatus=12&amp;pages=1"><img src="../asset/images/orderManage/levelMenu57.png" />退货单已驳回<em class="num">#{orderOperateList.orderNumberArr[12]}</em></a></li>
+				            	<li><a class="link #{orderOperateList.orderStatus == 9 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/RefundOperateList.seam?orderStatus=9&amp;pages=1"><img src="../asset/images/orderManage/levelMenu57.png" />订单待退货<em class="num">#{orderOperateList.orderNumberArr[9]}</em></a></li>
+				                </s:fragment>
+				                <li><a class="link #{orderOperateList.orderStatus == 10 ? 'curLink' : ''}" href="#{request.contextPath}/purchase/RefundOperateList.seam?orderStatus=10&amp;pages=1"><img src="../asset/images/orderManage/levelMenu58.png" />订单已退货<em class="num">#{orderOperateList.orderNumberArr[10]}</em></a></li>
+				            </ul>
+				        </div>
+				        </td>
+				        <td valign="top">
+				        <div class="right_c clear" style="padding-top:20px; padding-bottom:20px;">
+				            <div class="r_title clear" style="margin-top:0;">
+				                <div class="r_t_l fl">订单<span style="padding:0 5px;">&gt;</span><font size="3">#{orderOperateList.orderLabelArr[orderOperateList.orderStatus]}<span class="num">(<i>#{orderOperateList.orderNumberArr[orderOperateList.orderStatus]}</i>)</span></font></div>
+				                <div class="fr" style="margin-bottom:-1px;">
+				                    <ul class="cm_resumeList clear">
+				                        <li>
+				                            <a class="borderBt" href="#{request.contextPath}/orderManage/OrderOperateList.seam"><img src="../asset/images/orderManage/resumeIco50.jpg"/><span>订单管理</span></a>
+				                        </li>
+				                        <li>
+				                            <a href="#{request.contextPath}/order/MemberInfoListOne.seam"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>客户管理</span></a>
+				                        </li>
+				                        <li>
+				                            <a href="#{request.contextPath}/card/CardInfoList.seam?cardType=0"><img src="../asset/images/orderManage/resumeIco51.jpg" /><span>会员卡管理</span></a>
+				                        </li>
+				                        <h:panelGroup rendered="#{s:hasRole('coupon')}">
+					                        <li >
+				                                <a href="#{request.contextPath}/order/CouponList.seam"><img src="../asset/images/order/resumeIco150.jpg" /><span>红包管理</span></a>
+				                            </li>
+			                            </h:panelGroup>
+				                    </ul>
+				                </div>
+				            </div>
+				            <div class="allOrder_wap">
+				            	<div class="allOrder_header mb20">
+				            		<s:fragment rendered="#{orderOperateList.orderStatus != 3}">
+				            			<p class="reseverText">
+					                    	<em>排 序</em>
+				                    		<span id="sortType1" class="tabtxt #{orderOperateList.sortType == 1 ? 'cur' : ''}" onclick="sortAction(1);">下单时间</span>
+					                    	<span id="sortType2" class="tabtxt #{orderOperateList.sortType == 2 ? 'cur' : ''}" onclick="sortAction(2);">配送时间</span>
+					                    	<span id="sortType3" class="tabtxt #{orderOperateList.sortType == 3 ? 'cur' : ''}" onclick="sortAction(3);">支付状态</span>
+					                    	<span id="sortType4" class="tabtxt #{orderOperateList.sortType == 4 ? 'cur' : ''}" onclick="sortAction(4);">订单状态</span>
+					                    </p>
+				            		</s:fragment>
+				                    <s:div styleClass="reseverDatetime" rendered="#{orderOperateList.orderStatus == 3}">
+				                    	<em class="fl">按日期查看</em>
+				                        <div class="input-append date form_datetime fl" style="width:170px;" >
+				                        	<h:inputText size="26" readonly="#{facesContext.renderResponse}" onchange="searchTimeChange();" value="#{orderOperateList.searchTime}" id="searchTime" style="width:170px;" />
+				                            <span class="add-on"><i class="icon-th"></i></span>
+				                        </div>
+				                    </s:div>
+				                    <h:form id="orderSearch">
+				                    <div class="search-header" style="margin-top:10px; margin-bottom:-5px;">
+				                    	 
+											<input type="hidden" value="1" name="pages" />
+											<s:fragment rendered="#{orderOperateList.orderStatus == 2 or orderOperateList.orderStatus == 3}">
+												<p class="check_lt mt3 clear" style="width:78px;">
+													<input id="orderCheckAll" type="checkbox" class="iCheckbox" name="orderCheckAll"/>
+													<label>全选</label>
+												</p>
+												
+											</s:fragment>
+					                        <div class="search-header-lt">
+					                            <div class="public-search">
+					                            	<h:inputText class="form-control mt5" id="orderSearch" autocomplete="off" value="#{orderOperateList.orderSearch}" style="width:240px;height:24px; line-height:22px; padding:0 5px; color:#b3b5b5; font-size:12px;" onfocus="if(this.value=='请输入订单编号/收货人/销售人/手机'){this.value=''}" onblur="if(this.value==''){this.value='请输入订单编号/收货人/销售人/手机'}"/>
+					                            </div>
+				                            	<h:commandButton id="orderCommand" styleClass="btn btn-primary mt5" style="height:24px; padding:0 10px; float:left;" action="/orderManage/OrderDeliveryList.xhtml" value="搜索" ></h:commandButton>
+					                        </div>
+					                        <div class="search-header-rt">
+												<h:outputText >
+													<s:button id="excelButton" action="#{orderOperateList.exportExcelFind}" styleClass="btn btn-default mr5" value="导出"   />
+												</h:outputText>
+					                        	<s:fragment rendered="#{(s:hasRole('order_delivery') or (sessionTake.levelId == 3 and sessionTake.admin == true))}">
+					                        		<a href="javascript:void(0);" class="btn btn-primary mr5" onclick="batchShipmentsAction(1);">批量发货</a>
+					                        		<a href="#{request.contextPath}/orderManage/ScanCodeShipments.seam?orderStatus=#{orderOperateList.orderStatus}" class="btn btn-primary mr5">扫码发货</a>
+				                        		</s:fragment>
+					                        	<s:fragment rendered="#{(s:hasRole('order_printing') or (sessionTake.levelId == 3 and sessionTake.admin == true))}">
+						                        	<a href="javascript:void(0);" class="btn btn-primary" onclick="batchFourCombinedPrint();">批量打印四联单</a>
+					                        	</s:fragment>
+					                        </div>
+				                    </div>
+					                </h:form>
+				                </div>
+				                <div class="allOrder_body">
+				                	<a:repeat value="#{orderOperateList.resultList}" var="_order" rowKeyVar="_index">
+				                		<div class="allOrder_items #{_order.orderStatusCss}">
+						                    <div class="itemsCon">
+						                        <div class="itemsHd">
+						                        	<s:fragment >
+						                        		<p class="check_lt clear"><input id="orderCheck#{_order.orderInfoId}" type="checkbox" class="iCheckbox" name="orderCheck"/></p>
+						                        	</s:fragment>
+						                            <p class="orderNum fl">订单编号：<span>#{_order.orderCode}</span></p>
+						                            <s:fragment rendered="#{_order.deliverTimeFlag == true and _order.deleted == false and _order.orderStatus != orderConstant.getDeliverDoneOrderStatus()}">
+						                            	<p class="stay fl">配送时间已过期</p>
+						                            </s:fragment>
+						                            <p class="fr">下单时间：
+						                            	<span>
+						                            		<h:outputText value="#{_order.insertTime}">
+										        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd HH:mm" />
+										        			</h:outputText>
+						                            	</span>
+					                            	</p>
+					                            	<h:outputText rendered="#{_order.orderType eq 6}" >
+				                                    	<p class="orderNum fl" style="margin-top:5px;margin-left: 30px;" title="微商城"><img src="../../asset/images/orderManage/wsc.png" alt=""/></p>
+				                                    </h:outputText>
+						                        </div>
+						                        <div class="itemsBd">
+						                            <table width="100%" cellpadding="0" cellspacing="0">
+						                                <tr>
+						                                    <td class="tdLine" width="20%" style="padding-left:0;"><span class="explain">收货人：</span>#{_order.receiveName}</td>
+						                                    <td class="tdLine" width="18%"><span class="explain">销售人：</span>#{_order.memberInfo.farmerInfoId != null ? _order.memberInfo.farmerInfoId.name : ""}</td>
+						                                    <td class="tdLine" width="20%" rowspan="2">
+						                                    	<span class="explain">配送时间：</span>
+						                                    	<h:outputText value="#{_order.deliverTime}">
+											        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+											        			</h:outputText>
+											        			<s:fragment rendered="#{_order.timeSlot == 0}">全天</s:fragment>
+											        			<s:fragment rendered="#{_order.timeSlot == 1}">上午</s:fragment>
+											        			<s:fragment rendered="#{_order.timeSlot == 2}">下午</s:fragment>
+											        			<s:fragment rendered="#{_order.timeSlot == 3}">晚上</s:fragment>
+					                                    	</td>
+						                                    <td class="tdLine" width="16%" rowspan="2">
+					                                    		<span class="explain">支付状态：</span>#{_order.paymentStatus == true ? '已支付' : '未支付'}
+					                                    	</td>
+						                                    <td width="26%" align="center">
+					                                        	<s:span styleClass="auditBtn" >
+					                                        		<s:fragment rendered="#{(s:hasRole('order_delivery') or (sessionTake.levelId == 3 and sessionTake.admin == true))}">
+					                                        			<a class="btn btn-success mr5" href="javascript:void(0);" onclick="shipmentsAction(#{_order.orderInfoId});">发货</a>
+					                                        		</s:fragment>
+					                                        		<s:fragment rendered="#{_order.deliverTimeFlag == true  and (s:hasRole('modify_delivery_time') or (sessionTake.levelId == 3 and sessionTake.admin == true))}">
+					                                        			<a class="btn btn-primary" href="javascript:void(0);" onclick="modifyDeliverTimeControl(1, #{_order.orderInfoId}, '#{_order.orderCode}', '#{_order.nextDeliverDate}');">改日配送</a>
+					                                        		</s:fragment>
+					                                        		<s:fragment rendered="#{ (sessionTake.levelId ==4) or (sessionTake.levelId == 3) or (sessionTake.levelId == 5 and sessionTake.communityId==14)}">
+					                                        			<a class="btn btn-primary mr5" href="javascript:void(0);" onclick="cancleOrderControl(#{_order.orderInfoId},#{_order.balanceAccount},#{_order.hasWaitRefundOrder},#{_order.cardAccount});">取消订单</a>
+					                                        		</s:fragment>
+					                                        	</s:span>
+						                                    </td>
+						                                </tr>
+						                                <tr>
+						                                    <td class="tdLine" style="padding-left:0;">
+						                                    <div id="lxfs" title="#{_order.deliverAddress.phone}" style="cursor: pointer;">
+						                                    	<span class="explain">联系方式：</span>#{_order.deliverAddress.phone}
+						                                    </div>
+						                                    </td>
+						                                    <td class="tdLine"><span class="explain">金额：</span>¥<h:outputText value="#{_order.paymentAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+						                                    <td align="center">
+						                                    	<span class="btnsSet">
+						                                    		<s:link view="/orderManage/OrderView.xhtml" title="查看" style="text-decoration:none;" propagation="#{empty from ? 'none' : 'default'}" id="orderViewId" >
+						                                    			<img src="../asset/images/orderManage/table_ico100.png" width="18" height="18" />
+														                <f:param name="orderInfoId" value="#{_order.orderInfoId}"/>
+														                <f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+														                <f:param name="backType" value="1"/>
+														                <f:param name="page" value="#{orderOperateList.pages}"/>
+														                <f:param name="from" value="OrderDeliveryList" />
+														            </s:link>&#160;
+														            <s:link view="/orderManage/OrderModify.xhtml" title="编辑" style="text-decoration:none;" name="orderEdit" id="orderModifyId" rendered="#{_order.deleted == false and s:hasRole('order_edit') and (_order.tallyStatus!=1) and ( sessionTake.farmerInfoId ==null or (sessionTake.farmerInfoId !=null and orderOperateList.orderStatus==1))}">
+														            	<img src="../asset/images/orderManage/table_ico101.png" width="18" height="18" />
+														                <f:param name="orderInfoId" value="#{_order.orderInfoId}"/>
+														                <f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+														                <f:param name="page" value="#{orderOperateList.pages}"/>
+														                <f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+														                <f:param name="from" value="OrderDeliveryList" />
+														            </s:link>&#160;
+														            <s:fragment rendered="#{(s:hasRole('order_delivery') or (sessionTake.levelId == 3 and sessionTake.admin == true))}">
+														            	<a title="配送清单" style="text-decoration:none;" href="#{request.contextPath}/orderManage/PrintFourOrderInfo.seam?orderInfoId=#{_order.orderInfoId}" target="_blank"><img src="#{request.contextPath}/asset/images/orderManage/prin_2.png" width="16" height="15"></img></a>
+														            </s:fragment>&#160;
+														            <s:link view="/orderManage/OrderDeliveryList.xhtml" title="修改支付状态" style="text-decoration:none;" id="modifyPayStatusId" action="#{orderOperate.modifyPayStatus}" rendered="#{_order.paymentStatus == false  and (s:hasRole('change_payment_status') or (sessionTake.levelId == 3 and sessionTake.admin == true))}">
+														            	<img width="17" height="14" src="#{request.contextPath}/asset/images/orderManage/pay.png" />
+														                <f:param name="oId" value="#{_order.orderInfoId}"/>
+														                <f:param name="oStatus" value="#{orderOperateList.orderStatus}"/>
+														            </s:link>&#160;
+														            <s:link view="/orderManage/OrderDeliveryList.xhtml" title="修改支付状态" style="text-decoration:none;" id="modifyPayAntiStatusId" action="#{orderOperate.modifyPayAntiStatus}" rendered="#{_order.paymentStatus == true and (s:hasRole('change_payment_status') or (sessionTake.levelId == 3 and sessionTake.admin == true)) and _order.paymentMode != orderConstant.getBalancePaymentMode() and _order.paymentMode != orderConstant.getGiftPaymentMode()}">
+														            	<img width="17" height="14" src="#{request.contextPath}/asset/images/orderManage/pay.png" />
+														                <f:param name="oId" value="#{_order.orderInfoId}"/>
+														                <f:param name="oStatus" value="#{orderOperateList.orderStatus}"/>
+														            </s:link>&#160;
+														             <s:fragment >
+														            	<!-- <a title="打印物流单" style="text-decoration:none;" href="#{request.contextPath}/orderManage/LogisticsOrderInfo.seam?orderInfoId=#{_order.orderInfoId}" target="_blank"><img src="#{request.contextPath}/asset/images/orderManage/wuliu.png" width="16" height="15"></img></a> -->
+														            	<a  title="打印物流单" style="text-decoration:none;" href="javascript:void(0);"  onclick="printClick(#{_order.orderInfoId})"  ><img src="#{request.contextPath}/asset/images/orderManage/wuliu.png" width="16" height="15" ></img></a>
+														            </s:fragment>&#160;
+						                                        </span>
+						                                    </td>
+						                                </tr>
+						                            </table>
+						                        </div>
+						                    </div>
+					                    </div>
+				                	</a:repeat>
+				                </div>
+				                <a:form id="subFrom">
+					            <table cellspacing="0" cellpadding="0" style="height:30px; margin:40px auto 20px auto;">
+					            <h:inputHidden value="#{orderOperateList.orderIds}" id="orderIds" />
+					                <tr>
+					                	<td><img width="4" height="32" src="../asset/images/orderManage/page_67.jpg"></img></td>
+					                	<td class="td_t_b">
+					                		<h:commandLink  view="/orderManage/OrderDeliveryList.xhtml" value="首页" id="firstPage">
+												<f:param name="pages" value="1"/>
+												<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+												<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+												<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+											</h:commandLink >
+					                	</td>
+					                	<s:fragment rendered="#{orderOperateList.previousExists}">
+						                    <td class="td_t_b td_t_t">
+					                    		<h:commandLink  view="/orderManage/OrderDeliveryList.xhtml" value="&lt;&lt;" id="previousPage" styleClass="no_n">
+													<f:param name="pages" value="#{orderOperateList.previousFirstResult}"/>
+													<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+													<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+													<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+												</h:commandLink>
+						                    </td>
+					                    </s:fragment>
+					                    <s:fragment rendered="#{orderOperateList.pageNoList.size() > 0}">
+					                    	<a:repeat value="#{orderOperateList.pageNoList}" var="_pageNo" >
+						                    	<td class="td_t_b td_t_t #{orderOperateList.pages == _pageNo ? 'onp' : ''}">
+						                    		<h:commandLink view="/orderManage/OrderDeliveryList.xhtml" value="#{_pageNo}" >
+														<f:param name="pages" value="#{_pageNo}"/>
+														<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+														<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+														<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+													</h:commandLink>
+						                    	</td>
+											</a:repeat>
+					                    </s:fragment>
+										<s:fragment rendered="#{orderOperateList.nextExists}">
+											<td class="td_t_b td_t_t">
+						                    	<h:commandLink view="/orderManage/OrderDeliveryList.xhtml" value="&gt;&gt;" id="nextPage" styleClass="no_d">
+													<f:param name="pages" value="#{orderOperateList.nextFirstResult}"/>
+													<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+													<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+													<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+												</h:commandLink>
+						                    </td>
+						                    <td class="td_t_b td_t_t">
+						                    	<h:commandLink view="/orderManage/OrderDeliveryList.xhtml"  value="尾页" id="lastPage" >
+													<f:param name="pages" value="#{orderOperateList.lastFirstResult}"/>
+													<f:param name="orderStatus" value="#{orderOperateList.orderStatus}"/>
+													<f:param name="orderSearch" value="#{orderOperateList.orderSearch}"/>
+													<f:param name="sortType" value="#{orderOperateList.sortType}"/>
+												</h:commandLink>
+											</td>
+										</s:fragment>
+					                    <td class="td_t_b td_t_t"><span style="color:#9a9a9a;">共#{orderOperateList.pageCount}页</span></td>
+					                    <td><img width="4" height="32" src="../asset/images/orderManage/page_70.jpg"></img></td>
+					                </tr>
+					            </table>
+					            </a:form>
+				        	</div>
+			        	</div>
+			        </td>
+					</tr>
+			   </table>
+			</div>
+			
+			<div class="modal" id="batchGood_modal" >
+				<div class="modal-dialog kuandu" >
+					<div class="modal-content">
+					    <div class="modal-header" style="border: none;">
+					    	<button type="button" class="close" onclick="searchTimeChange();"><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel"></h4>
+					    </div>
+					    <div class="modal-body" style="padding-bottom: 30px; width: 100%; height: 90px;">
+							<div class="bus"></div>
+							<div class="fahuo">发货成功!</div>
+					    </div>
+					</div>
+				</div>
+			</div>
+			<div class="modal" id="sendGood_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog kuandu" style="width:380px;">
+					<div class="modal-content">
+					    <div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">发货</h4>
+					    </div>
+					    <div class="modal-body" style=" width: 100%; height: 90px;">
+							<div class="bus" style="margin-top:13px;"></div>
+							<div class="fahuo" style="margin-top:13px;">是否确认发货?</div>
+					    </div>
+					     <div class="modal-footer">
+				            <button type="button" class="btn btn-success" onclick="ifSendProduct(1);">是</button>
+				            <button type="button" class="btn btn-default" onclick="ifSendProduct(2);">否</button>
+				          </div>
+				          <input type="hidden" id="tempOrderId" value=""/>
+					</div>
+				</div>
+			</div>
+			<div class="modal" id="batchsendGood_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog kuandu" style="width:380px;">
+					<div class="modal-content">
+					    <div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">发货</h4>
+					    </div>
+					    <div class="modal-body" style=" width: 100%; height: 90px;">
+							<div class="bus" style="margin-top:13px;"></div>
+							<div class="fahuo" style="margin-top:13px;">是否确认发货?</div>
+					    </div>
+					     <div class="modal-footer">
+				            <button type="button" class="btn btn-success" onclick="batchShipmentsAction(2);">是</button>
+				            <button type="button" class="btn btn-default" onclick="ifSendProduct(2);">否</button>
+				          </div>
+				          <input type="hidden" id="tempOrderId" value=""/>
+					</div>
+				</div>
+			</div>
+			<div class="modal" id="cancle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog kuandu" style="width:380px;">
+					<div class="modal-content">
+					    <div class="modal-body" style=" height: 190px;">
+							<div  style="margin-top:13px; text-align:center;">确认取消订单?</div>
+							<div  id="cancleText" style="margin-top:20px; padding:0 15px;"></div>
+							<div style="margin-top:50px; text-align:center;" >
+				            <button type="button" class="btn btn-default" onclick="cancle(1);" style="margin-right:20px;">确认</button>
+				            <button type="button" class="btn btn-default" onclick="cancle(2);">返回</button>
+				          </div>
+					    </div>
+					</div>
+				</div>
+			</div>
+			
+			<div aria-hidden="false" id="messageDiv" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade in w600na" style="display: none;z-index:11;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="messageTitle">提示</h4>
+						</div>
+						<div class="modal-body">
+							<span id="messageValue"></span>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="modal fade" id="modifyDeliverTimeDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="position:absolute; left:50%; top:50%; width:570px; height:390px; margin-left:-285px; margin-top:-234px;">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" style="margin-top:5px;"></button>
+			        <h4 class="modal-title" id="myModalLabel" style="font-size:16px;">修改配送时间</h4>
+			    </div>
+			    <div class="modal-body" style="height:306px; overflow:auto; padding:20px;">
+			    	<table class="modalTable_minni" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px; font-size:12px;">
+			        	<tr>
+			            	<td class="pr10" width="150" align="right">订单编号</td>
+			                <td id="orderCode"></td>
+			            </tr>
+			        	<tr>
+			            	<td class="pr10" width="150" align="right">配送时间</td>
+			                <td>
+			                	<span class="fl">
+			                	<div class="input-append date form_datetime fl mr5" style="width:190px;" >
+			                        <input id="modifyDeliverTime" size="26" type="text" value="" readonly="readonly" style="width:190px; border-radius:5px;"></input>
+			                        <span class="add-on"><i class="icon-th"></i></span>
+			                    </div>
+			                    </span>
+			                	<span class="bootSelt70">
+				                    <select id="timeSlot" class="selectpicker">
+					                    <option value="0">全天</option>
+					                    <option value="1">上午</option>
+					                    <option value="2">下午</option>
+					                    <option value="3">晚上</option>
+				                    </select>
+			                    </span>
+			                </td>
+			            </tr>
+			        </table>     
+			    </div>
+			    <div class="modal-footer">
+			        <a class="btn btn-success" href="javascript:void(0);" onclick="modifyDeliverTimeAction();">提交</a>
+			        <a class="btn btn-default" href="javascript:void(0);" onclick="modifyDeliverTimeControl(2, 0, '', '');">返回</a>
+			    </div>
+			</div>
+			</div>
+			</div>
+			
+<div class="modal fade" id="printSelect" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<div class="modal-dialog logistics_dialog">
+    <div class="modal-content modal_content modal_stockType"  id="addInStockTypeDiv">
+    	<div class="modal-header clear">
+            <h4 class="modal-title fl">物流选择</h4>
+            <i class="i_close"></i>
+        </div>
+    	<div class="modal-body clear">
+	    	<ul class="logistics_select">
+	    		<li class="mlmr_7090">
+	    			<img class="icon_log" src="#{request.contextPath}/asset/images/sflogo.png" />
+	    			<div class="text_con"><input class="iRadiobox" type="radio" name="testRadio" checked="checked" value="1"/>顺丰速运</div>
+	    		</li>
+	    		<li>
+	    			<img class="icon_log" src="#{request.contextPath}/asset/images/stlogo.png" />
+	    			<div class="text_con"><input class="iRadiobox" type="radio" name="testRadio" value="2"/>申通快递</div>
+	    		</li>
+	    	</ul>
+	    	<h:inputHidden value="" id="printOrderInfoId"/>
+    	</div>
+    	<div class="modal-footer" style="text-align:center;">
+            <!-- <input type="text" style="display:none" id="noneId" value=""/> -->
+    		<input type="button" class="btn btn-success" id="confirmSelect" value="确定" onclick="printList()"/>
+    		<input type="button" class="btn btn-default"    data-dismiss="modal" id="buttonCancel" value="返回" />
+        </div>
+    </div>
+  </div>
+  </div>     
+		</td>
+		<a:form>
+	  		<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+			<a:jsFunction name="shipmentsFind" action="#{orderOperateList.shipmentsFind}" oncomplete="shipmentsComplete();">
+				<a:actionparam name="orderInfoIds" assignTo="#{orderOperateList.orderInfoIds}"/>
+			</a:jsFunction>
+			<a:jsFunction name="modifyDeliverTimeFind" action="#{orderOperate.modifyDeliverTimeFind}" oncomplete="signOrderComplete();">
+				<a:actionparam name="orderInfoId" assignTo="#{orderOperate.orderInfoId}"/>
+				<a:actionparam name="deliverTime" assignTo="#{orderOperate.deliverTime}"/>
+				<a:actionparam name="dataAllot" assignTo="#{orderOperate.dataAllot}"/>
+				<a:actionparam name="orderStatus" assignTo="#{orderOperate.orderStatus}"/>
+			</a:jsFunction>
+			<a:jsFunction name="cancleOrder" action="#{orderOperate.cancleOrder}" oncomplete="signOrderComplete();">
+				<a:actionparam name="orderInfoId" assignTo="#{orderOperate.orderInfoId}"/>
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/asset/js/icheck.js"></script>
+		<script type="text/javascript">
+		//<![CDATA[
+		
+		//物流选择
+		jQuery('input[class="iRadiobox"]').iCheck({
+			radioClass: 'iradio_minimal-blue'
+		});
+		
+			var operateOrderId;//操作订单id
+			function cancle(num){
+				if(num==1){
+					cancleOrder(Number(operateOrderId));
+				}else{
+					jQuery("#cancle_modal").modal('hide');
+				}
+				
+			}
+			//取消订单   您使用了会员卡，您的商品将全部退回到会员卡，配送次数还原。(您的余额将会退回。)
+			function cancleOrderControl(orderId,accountPrice,hasRefund,cardAccount){
+				operateOrderId=orderId;
+				if(hasRefund==0){
+					if(accountPrice!=0 && cardAccount!=0){
+						jQuery("#cancleText").text("您使用了会员卡，您的商品将全部退回到会员卡，配送次数还原,您的余额将会退回。");
+						jQuery("#cancle_modal").modal('show');
+					}else if(accountPrice!=0){
+						jQuery("#cancleText").text("您的余额将会退回。");
+						jQuery("#cancle_modal").modal('show');
+					}else if(cardAccount!=0){
+						jQuery("#cancleText").text("您使用了会员卡，您的商品将全部退回到会员卡，配送次数还原。");
+						jQuery("#cancle_modal").modal('show');
+					}else{
+						var flag= window.confirm("确认取消订单?");
+						if(flag){
+							cancleOrder(Number(operateOrderId));
+						}
+					}
+				}else{
+					jQuery("#messageValue").html("非常抱歉！您的订单正在退货处理中，请等待退货处理结束后取消订单！");
+					jQuery("#messageDiv").modal('show');
+				}
+				
+			}
+			//单一发货
+			function ifSendProduct(num){
+				if(num==1){
+					var oId=jQuery("#tempOrderId").val();
+					jQuery("#sendGood_modal").modal('hide');
+					shipmentsFind(oId);
+				}else{
+					jQuery("#sendGood_modal").modal('hide');
+					jQuery("#batchsendGood_modal").modal('hide');
+				}
+			}
+			jQuery(function($){
+				var searchVal="#{orderOperateList.orderSearch}";
+				if(searchVal==null || searchVal==""){
+					jQuery("#orderSearch\\:orderSearch").val("请输入订单编号/收货人/销售人/手机");
+				}
+			});
+
+			//改日配送div控制
+			function modifyDeliverTimeControl(type, oId, orderCode, nextDate){
+				if (type == 1) {
+					operateOrderId = oId;
+					jQuery("#orderCode").text(orderCode);
+					jQuery("#modifyDeliverTime").val(nextDate);
+					jQuery("#modifyDeliverTimeDiv").modal('show');
+				} else {
+					jQuery("#modifyDeliverTimeDiv").modal('hide');
+				}
+			}
+
+			//修改配送日期保存
+			function modifyDeliverTimeAction(){
+				var deliverTime = jQuery("#modifyDeliverTime").val();
+				var dataAllot = jQuery("#timeSlot").val();
+				if (deliverTime != null && deliverTime != '') {
+					var orderStatus = '#{orderOperateList.orderStatus}';
+					modifyDeliverTimeFind(Number(operateOrderId), deliverTime, Number(dataAllot), Number(orderStatus));
+				} else {
+					jQuery("#messageValue").html("请选择配送日期！");
+					jQuery("#messageDiv").modal('show');
+				}
+			}
+
+			//订单签收div控制
+			function signOrderControl(type, oId, nextDay){
+				if (type == 1) {
+					operateOrderId = oId;
+					jQuery("#deliverTime").val(nextDay);
+					jQuery("#signOrderDiv").modal('show');
+				} else {
+					jQuery("#signOrderDiv").modal('hide');
+				}
+			}
+
+			//订单签收保存
+			function signOrderAction(){
+				var signOrderRadio = jQuery('input[name="signOrderRadio"]:checked').val();
+				if (signOrderRadio == 1) {
+					var supplementRemark = jQuery("#supplementRemark").val();
+					signOrderFind(Number(operateOrderId), Number(signOrderRadio), "", supplementRemark);
+				} else {
+					var deliverTime = jQuery("#deliverTime").val();
+					if (deliverTime != null && deliverTime != '') {
+						signOrderFind(Number(operateOrderId), Number(signOrderRadio), deliverTime, "");
+					} else {
+						jQuery("#messageValue").html("请选择配送日期！");
+						jQuery("#messageDiv").modal('show');
+					}
+				}
+			}
+
+			//订单签收回调
+			function signOrderComplete(){
+				var orderSearch = jQuery("#orderSearch\\:orderSearch").val();
+				var orderStatus = '#{orderOperateList.orderStatus}';
+				window.location.href = "#{request.contextPath}/orderManage/OrderDeliveryList.seam?orderStatus=" + orderStatus + "&pages=1";
+			}	
+			
+			//批量打印四联单
+			function batchFourCombinedPrint(){
+				var oIds=jQuery("#subFrom\\:orderIds").val();
+				if (oIds != null && oIds != '') {
+					window.open('#{request.contextPath}/orderManage/PrintFourOrderInfo.seam?orderInfoId=' + oIds);
+				} else {
+					jQuery("#messageValue").html("请选择一个订单进行操作！");
+					jQuery("#messageDiv").modal('show');
+				}
+			}
+			//发货
+			function shipmentsAction(oId){
+				jQuery("#tempOrderId").val(oId);
+				jQuery('#sendGood_modal').modal('show');
+
+			}
+
+			//批量发货
+			function batchShipmentsAction(num){
+				var oIds=jQuery("#subFrom\\:orderIds").val();
+				if (oIds != null && oIds != '') {
+					if(num==1){
+						jQuery('#batchsendGood_modal').modal('show');
+					}else{
+						jQuery("#batchsendGood_modal").modal('hide');
+						shipmentsFind(oIds);
+					}
+					
+				} else {
+					jQuery("#messageValue").html("请选择一个订单进行操作！");
+					jQuery("#messageDiv").modal('show');
+				}			
+			}
+
+			//发货回调
+			function shipmentsComplete(){
+				jQuery('body').append('<div style="position:fixed;left:0;top:0;z-index:9;width:100%; height:100%; background:rgba(0,0,0,0.5);overflow:hiden;"></div>');
+				jQuery('#batchGood_modal').show();
+
+				setTimeout(function () {
+					searchTimeChange();
+			    }, 500);
+			}
+
+			//待发货 搜索日期变化
+			function searchTimeChange(){
+				var searchTime = jQuery("#searchTime").val();
+				var orderSearch = jQuery("#orderSearch\\:orderSearch").val();
+				var orderStatus = '#{orderOperateList.orderStatus}';
+				window.location.href = "#{request.contextPath}/orderManage/OrderDeliveryList.seam?orderStatus=" + orderStatus + "&pages=1&orderSearch=" + orderSearch + "&searchTime=" + searchTime;
+			}
+
+
+			//切换 排序字段 
+			function sortAction(type){
+				jQuery(".reseverText span").removeClass("cur");
+				jQuery("#sortType" + type).addClass("cur");
+				var orderSearch = jQuery("#orderSearch\\:orderSearch").val();
+				var orderStatus = '#{orderOperateList.orderStatus}';
+				window.location.href = "#{request.contextPath}/orderManage/OrderDeliveryList.seam?orderStatus=" + orderStatus + "&pages=1&orderSearch=" + orderSearch + "&sortType=" + type;
+			}
+
+			jQuery(function(){
+				//页面初始化控制复选框选择状态
+				var allOrderCheckNum =0;
+				jQuery("input[name='orderCheck']").each(function(){
+					var checkId = this.id;
+					
+					var orderId= checkId.replace("orderCheck", "");
+					var ids=jQuery("#subFrom\\:orderIds").val();
+					if(ids!=""){
+						var arr=ids.split(",");
+						var flag=false;
+						for(var i=0;i<arr.length;i++){
+							if(arr[i]==orderId){
+								flag=true;
+								allOrderCheckNum++;
+							}
+						}
+						if(flag){
+							jQuery(this).iCheck("check"); 
+						}
+					}
+					var orderNum = jQuery("input[name='orderCheck']").length;
+					if (orderNum == allOrderCheckNum) {
+						jQuery("input[name='orderCheckAll']").iCheck("check"); 
+					}else {
+						jQuery("input[name='orderCheckAll']").iCheck("uncheck"); 
+					}
+					
+				});
+				jQuery('.selectpicker').selectpicker();  // 下拉框控件
+
+				
+				jQuery('input[class=iCheckbox]').iCheck({
+					checkboxClass: 'icheckbox_minimal-blue',
+				});
+
+				//时间控件
+				jQuery(".form_datetime").datetimepicker({
+					format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+					autoclose: true,
+					weekStart: 1,
+					language:  'zh-CN',	
+					minView:2,
+					pickerPosition: "bottom-left"
+				});
+
+				//订单全选按钮
+				jQuery("#orderCheckAll").on('ifClicked', function(){
+					if (this.checked) {
+						jQuery("input[name='orderCheck']").iCheck("uncheck"); 
+					} else {
+						jQuery("input[name='orderCheck']").iCheck("check"); 
+					}
+				});
+
+				//订单单选按钮
+				jQuery("input[name='orderCheck']:checkbox").on('ifChanged', function(){
+					var orderId=this.id;
+					var orderInfoId=orderId.replace("orderCheck", "")
+					var temp = "";
+					jQuery("input[name='orderCheck']:checkbox:checked").each(function(){
+						temp += jQuery(this).val() + ",";
+					});
+					var orderCheckNum = temp.split(",");
+					var orderNum = jQuery("input[name='orderCheck']").length;
+					if (orderNum == orderCheckNum.length - 1) {
+						jQuery("input[name='orderCheckAll']").iCheck("check"); 
+					}else {
+						jQuery("input[name='orderCheckAll']").iCheck("uncheck"); 
+					}
+
+					if(this.checked){
+						var ids=jQuery("#subFrom\\:orderIds").val();
+						if(ids==""){
+							jQuery("#subFrom\\:orderIds").val(orderInfoId);
+						}else{
+							jQuery("#subFrom\\:orderIds").val(ids+","+orderInfoId); 
+						}
+						
+					}else{
+						var ids=jQuery("#subFrom\\:orderIds").val();
+						var arr=ids.split(",");
+						var str="";
+						for(var i=0;i<arr.length;i++){
+							if(arr[i]!=orderInfoId){
+									str+=arr[i]+",";
+							}
+						}
+						var str2="";
+						if (str.charAt(str.length - 1) == ",") {
+							str2=str.substring(0,str.length-1);
+						} else{
+							str2=str;
+						}
+						jQuery("#subFrom\\:orderIds").val(str2);
+					}
+				});
+				//回车搜索事件
+				jQuery("#orderSearch\\:orderSearch").keydown(function(e){
+					if(e.keyCode==13){
+						jquery('#orderSearch\\:orderCommand').trigger("click");
+					}
+				}); 
+				sessionStorage.clear();
+			});
+
+			function printClick(orderInfoId){
+				jQuery("#printSelect").modal('show');
+				jQuery("#printOrderInfoId").val(orderInfoId);
+			}
+	function printList(){
+		var orderInfoId = jQuery("#printOrderInfoId").val();
+		var type = jQuery('input:radio[name="testRadio"]:checked').val();
+		if(type == "1"){//顺丰
+			window.open("#{request.contextPath}/orderManage/LogisticsOrderInfo.seam?orderInfoId="+orderInfoId);
+		}else if(type == "2"){//申通
+			window.open("#{request.contextPath}/orderManage/LogidsicsOrderInfoST.seam?orderInfoId="+orderInfoId);
+		}
+	}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

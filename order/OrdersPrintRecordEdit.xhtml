@@ -1,0 +1,182 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="ordersPrintRecord" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{ordersPrintRecordHome.managed ? 'Edit' : 'Add'} Orders print record</f:facet>
+
+
+
+            <s:decorate id="printTimeField" template="layout/edit.xhtml">
+                <ui:define name="label">Print time</ui:define>
+                <rich:calendar id="printTime"
+                          value="#{ordersPrintRecordHome.instance.printTime}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="printUserField" template="layout/edit.xhtml">
+                <ui:define name="label">Print user</ui:define>
+                <h:inputText id="printUser"
+                          value="#{ordersPrintRecordHome.instance.printUser}">
+                    <a:support event="onblur" reRender="printUserField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="enterpriseInfoIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Enterprise info id</ui:define>
+                <h:inputText id="enterpriseInfoId"
+                       required="true"
+                          value="#{ordersPrintRecordHome.instance.enterpriseInfoId}">
+                    <a:support event="onblur" reRender="enterpriseInfoIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="deletedField" template="layout/edit.xhtml">
+                <ui:define name="label">Deleted</ui:define>
+                <h:inputText id="deleted"
+                          value="#{ordersPrintRecordHome.instance.deleted}">
+                    <a:support event="onblur" reRender="deletedField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="orderInfoIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Order info id</ui:define>
+                <h:inputText id="orderInfoId"
+                       required="true"
+                          value="#{ordersPrintRecordHome.instance.orderInfoId}">
+                    <a:support event="onblur" reRender="orderInfoIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{ordersPrintRecordHome.persist}"
+                       disabled="#{!ordersPrintRecordHome.wired}"
+                       rendered="#{!ordersPrintRecordHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{ordersPrintRecordHome.update}"
+                       rendered="#{ordersPrintRecordHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{ordersPrintRecordHome.remove}"
+                      immediate="true"
+                       rendered="#{ordersPrintRecordHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/OrdersPrintRecord.xhtml"
+                rendered="#{ordersPrintRecordHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty ordersPrintRecordFrom ? 'OrdersPrintRecordList' : ordersPrintRecordFrom}.xhtml"
+                rendered="#{!ordersPrintRecordHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Order product records">
+        <h:form styleClass="association" id="orderProductRecordsChildren">
+
+            <h:outputText value="There are no orderProductRecords associated with this ordersPrintRecord."
+                       rendered="#{empty ordersPrintRecordHome.orderProductRecords}"/>
+
+            <rich:dataTable value="#{ordersPrintRecordHome.orderProductRecords}"
+                           var="_orderProductRecord"
+                      rendered="#{not empty ordersPrintRecordHome.orderProductRecords}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="orderProductRecordsTable">
+                <rich:column sortBy="#{_orderProductRecord.orderProductId}">
+                    <f:facet name="header">Order product id</f:facet>
+                    <h:outputText value="#{_orderProductRecord.orderProductId}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.productCode}">
+                    <f:facet name="header">Product code</f:facet>
+                    <h:outputText value="#{_orderProductRecord.productCode}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.productInfoId}">
+                    <f:facet name="header">Product info id</f:facet>
+                    <h:outputText value="#{_orderProductRecord.productInfoId}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.productName}">
+                    <f:facet name="header">Product name</f:facet>
+                    <h:outputText value="#{_orderProductRecord.productName}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.productImage}">
+                    <f:facet name="header">Product image</f:facet>
+                    <h:outputText value="#{_orderProductRecord.productImage}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.price}">
+                    <f:facet name="header">Price</f:facet>
+                    <h:outputText value="#{_orderProductRecord.price}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.productNum}">
+                    <f:facet name="header">Product num</f:facet>
+                    <h:outputText value="#{_orderProductRecord.productNum}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.productUnit}">
+                    <f:facet name="header">Product unit</f:facet>
+                    <h:outputText value="#{_orderProductRecord.productUnit}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.totalPrice}">
+                    <f:facet name="header">Total price</f:facet>
+                    <h:outputText value="#{_orderProductRecord.totalPrice}"/>
+                </rich:column>
+                <rich:column sortBy="#{_orderProductRecord.insertTime}">
+                    <f:facet name="header">Insert time</f:facet>
+                    <h:outputText value="#{_orderProductRecord.insertTime}">
+                        <s:convertDateTime type="both" dateStyle="short"/>
+                    </h:outputText>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{ordersPrintRecordHome.managed}" id="orderProductRecords">
+        <div class="actionButtons">
+            <s:button id="addorderProductRecord"
+                   value="Add orderProductRecord"
+                    view="/OrderProductRecordEdit.xhtml"
+             propagation="none">
+                 <f:param name="ordersPrintRecordId"
+                         value="#{ordersPrintRecordHome.instance.id}"/>
+                 <f:param name="orderProductRecordFrom" value="OrdersPrintRecord"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

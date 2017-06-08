@@ -1,0 +1,137 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	template="/layout/template_tally.xhtml">
+	
+	<style>
+	*{ maring:0; padding:0;}
+	#baozhuang .ckd_table13{ margin-top:0;}
+	</style>
+	<ui:define name="body">
+	
+	#{orderOperate.printTallyInit()}
+			 
+           <div style="padding-top:30px"  id="rightPanel">
+				<table width="1000" cellpadding="0" cellspacing="0" style="font-family:'宋体';font-size:20px; text-align:center;border-collapse:collapse; margin:0 auto;">
+					<thead>
+				        <tr>
+				            <th height="65" colspan="8" style="font-size:24px; background-color: #f3f3f3; border:1px solid #000;">理货单
+				            </th>
+				        </tr>	
+				    </thead>
+					<tbody>
+				        <tr>
+				            <td colspan="8" height="37" valign="top" style="border-left:1px solid #000; border-right:1px solid #000;">
+				                <div style="height:2px; border-bottom:2px solid #646464;"></div>
+				                <div style="height:35px; text-align:right; line-height:35px;">
+				                   <div style="float:left; margin-right:20px"><span>订单编号:</span><span>#{orderOperate.orderInfo.orderCode}</span> </div>
+				                   <div style="float:left;"><span>收货人:</span><span>#{orderOperate.orderInfo.receiveName}</span></div> 
+				                   <div style="float:right"><span class="single-time">配送时间：
+                                	<span>#{orderOperate.orderInfo.deliverTime}</span>
+                                	<span class="sendStatues">
+					        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 0}">全天</s:fragment>
+					        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 1}">上午</s:fragment>
+					        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 2}">下午</s:fragment>
+					        			<s:fragment rendered="#{orderOperate.orderInfo.timeSlot == 3}">晚上</s:fragment>
+					        		</span>
+                                	</span></div>
+				                </div>
+				                
+				            </td>
+				        </tr>
+				        <tr >
+				            	<th height="60" width="50" style="border-top:1px solid #000; border-bottom:1px solid #525252; border-left:1px solid #000;">序号</th>
+				                <th height="60" width="132" style="border-top:1px solid #000; border-bottom:1px solid #525252;">商品名称</th>
+				                <th height="60" width="72" style="border-top:1px solid #000; border-bottom:1px solid #525252;">规格</th>
+				                <th height="60" width="66" style="border-top:1px solid #000; border-bottom:1px solid #525252;">数量</th>
+				                <th height="60" width="146" style="border-top:1px solid #000; border-bottom:1px solid #525252;">商品备注</th>
+				                <th height="60" width="155" style="border-top:1px solid #000; border-bottom:1px solid #525252;">入库批次编号</th>
+				                <th height="60" width="180" style="border-top:1px solid #000; border-bottom:1px solid #525252;">二维码编号</th>
+				                <th height="60" style="border-top:1px solid #000; border-bottom:1px solid #525252; border-right:1px solid #000;">有机追溯码</th>
+				            </tr>
+				            <a4j:repeat value="#{orderOperate.orderProductList}" var="pro" rowKeyVar="_index">
+				            <tr class="trNum">
+				            	<td height="74" width="50" style="border-bottom:1px solid #525252; border-left:1px solid #000;">#{_index+1}</td>
+				                <td height="74" width="132" style="border-bottom:1px solid #525252;">#{pro.productName}</td>
+				                <td height="74" width="72" style="border-bottom:1px solid #525252;">#{pro.productUnit}</td>
+				                <td height="74" width="66" class="num" style="border-bottom:1px solid #525252;">#{pro.productNum}</td>
+				                <td height="74" width="146" style="border-bottom:1px solid #525252;">#{pro.remark}</td>
+				                <td height="74" width="155" style="border-bottom:1px solid #525252;"></td>
+				                <td height="74" width="180" style="border-bottom:1px solid #525252;"></td>
+				                <td height="74" style="border-bottom:1px solid #525252; border-right:1px solid #000;"></td>
+				            </tr>
+				 			</a4j:repeat>
+				 			<tr>
+					            <td colspan="8" height="37" valign="top" style="border-left:0px solid #000; border-right:0px solid #000;">
+					                <div style="height:28px; text-align:left; line-height:28px;">
+					                   <div style="width:700px;float:left;"><span style="font-weight:bold;">订单备注:</span><span>#{orderOperate.orderInfo.orderRemark}</span> </div>
+					                   <div style="float:right;"><span style="font-weight:bold;">订单商品数量合计:</span><span id="sumNum"></span></div> 
+					                </div>
+					            </td>
+					        </tr>
+				    </tbody>
+				</table>
+					
+		</div>                
+<!---印刷管理下开始-->
+    	<div id="printButton" class="ckd_div Noprint" align="center">
+    		 <input type="button" id="btnPrint" onclick="printButtonClick();" style="background-image: url('#{request.contextPath}/asset/images/print03.jpg');width: 77px;height: 32px;cursor: pointer;" />
+			 <input type="button" id="btnPrint" onclick="window.close();" style="background-image: url('#{request.contextPath}/asset/images/re_43.jpg');width: 77px;height: 32px;cursor: pointer;" />
+       </div>     
+<!--印刷管理下结束-->
+
+	<script type="text/javascript">
+	//<![CDATA[
+	var obj;
+	function printButtonClick(){
+		jQuery('#printButton').attr('style','display:none;');
+		obj = jQuery("#printButton").clone();
+		jQuery("#printButton").empty();
+		var oldVal=jQuery("#rightPanel").html();
+		var num=0;
+		jQuery(".trNum").each(function(){
+			num+=1;
+		});
+		if(Number(num)>17){
+			
+			var str="";
+			var title="";
+			jQuery("tr").each(function(index){
+				if(index==2){
+					title=jQuery(this).html();
+				}
+			});
+			str+="<tr style='page-break-after:always'/>";
+			str+="<tr width='1000px;'>"
+			str+=title;
+			str+="</tr>";
+			jQuery(".trNum").each(function(index){
+				if(Number(index+1)%17==0){
+					jQuery(this).after(str);
+				}
+			});
+			jQuery("#rightPanel").printArea();
+			jQuery("#rightPanel").html(oldVal);
+		}else{
+			jQuery("#rightPanel").printArea();
+		}
+		
+	}
+	jQuery(function(){
+		var sum=0;
+		jQuery(".num").each(function(){
+			var n=jQuery(this).text();
+			sum +=Number(n);
+		});
+		jQuery("#sumNum").text(sum.toFixed(2)+"份");
+	});
+	//]]>
+	</script>	</ui:define>
+</ui:composition>

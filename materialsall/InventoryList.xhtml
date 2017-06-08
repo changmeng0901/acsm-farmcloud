@@ -1,0 +1,174 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/layout/template_new.xhtml">
+
+	<ui:define name="body">
+       <td valign="top" >
+		<div class="right_c">
+                	<div class="r_title">
+                    	<div class="r_t_l"><s:link propagation="none"  view="#{sessionTake.urlTemp}" style="text-decoration:none;color:black;" value="工作 ">
+                    </s:link>&#160;&gt;&#160;&#160;<font size="3">盘点管理</font></div>
+                    <div class="r_t_r">
+							<ul>
+								<li >
+									<a href="#{request.contextPath}/product/GoodsStorageTypeList.seam" style="text-decoration:none;color:black;" >
+				                 		<img src="#{request.contextPath}/asset/images/wuliao.png" width="12" height="10" />
+				                 		
+				              			物料管理
+				              		</a>
+			        			</li>
+								<li style="border-right:1px solid #ccc;">
+									 <a href="#{request.contextPath}/storage/StorageTypeList.seam" style="text-decoration:none;color:black;" >
+									<img src="#{request.contextPath}/asset/images/cangku.png" width="13" height="10" />
+			                      	 库房管理
+			                      	</a>
+			                    </li>
+			     			</ul>
+						</div>
+                    </div>
+					<div class="yuleng">
+						<a href="#{request.contextPath}/inOut/StockRecord.seam"><img src="#{request.contextPath}/asset/images/jx_03.jpg" width="106" height="74" /></a>
+ 						<a href="#{request.contextPath}/materialsall/GoodsBatchList.seam"><img src="#{request.contextPath}/asset/images/jx_05.jpg" width="106" height="74" /></a>
+ 						<a href="#{request.contextPath}/materialsall/StorageChangeFormList.seam"><img src="#{request.contextPath}/asset/images/jx_07.jpg" width="106" height="74" /></a>
+ 						<a href="#{request.contextPath}/storage/EnterOf.seam"><img src="#{request.contextPath}/asset/images/jx_09.jpg" width="106" height="74" /></a>
+ 						<a href="#{request.contextPath}/materialsall/InventoryList.seam"><img src="#{request.contextPath}/asset/images/jx_11.jpg" width="106" height="74" /></a>
+						<a href="#{request.contextPath}/storage/OutOf.seam"><img src="#{request.contextPath}/asset/images/jx_13.jpg" width="106" height="74" /></a>
+					</div>
+                    <div class="z_r_ser">
+                    	<h:form id="inventorySearch">
+                     	<table cellpadding="0" cellspacing="0" width="476" style="margin:0 auto;">
+                           <tr>
+                                <td>
+                                <div class="public-search">   
+                                	<span class="octicon-search02"></span>
+                                	<h:inputText onfocus="objFocus(this)" onblur="objBlur(this)" id="orderCode" styleClass="form-control nw300 srarchfont" value="#{inventoryList.objString}"/>
+                                </div>
+                                	<h:commandButton id="search" styleClass="btn btn-primary" value="搜索" action="/materialsall/InventoryList.xhtml">                                	
+	                                </h:commandButton>
+                                </td>
+                           </tr>
+                       </table>  
+                    	</h:form>                       
+                    </div>
+                    <div class="tjan_01" style="margin-top:0px; [;margin-bottom:20px;]">
+                    	<s:link propagation="none"  view="/materialsall/InventoryEdit.xhtml" styleClass="btn btn-success" style="float:right;margin-right:0px;"><f:param name="inventoryId"/>开始盘点</s:link>
+                    </div>
+                    <table width="100%" class="ze_table" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    		<td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_40.jpg" width="5" height="4" /></td>
+                    		<td colspan="6" style="border-top:1px solid #e1e1e1; background:#f0f5fb;"></td>
+                            <td width="5" height="4"><img src="#{request.contextPath}/asset/images/table_d_43.jpg" width="5" height="4" /></td>
+                    	</tr>
+                    	<tr>
+                    		<th class="ze_bg ze_bt_le" width="5" height="4"></th>
+                    		<th class="ze_bg" width="20%">盘点批次</th>
+                    		<th class="ze_bg" width="20%">盘点日期</th>
+                    		<th class="ze_bg" width="20%">库房名称</th>
+                    		<th class="ze_bg" width="10%">经办人</th>
+                    		<th class="ze_bg" width="10%">状态</th>
+                    		<th class="ze_bg" width="20%">操作</th>
+                            <th class="ze_bg ze_bt_ri" width="5" height="4"></th>
+                    	</tr>
+						<ui:repeat value="#{inventoryList.resultList}" var="_inventory" rendered="#{not empty inventoryList.resultList}" rowKeyVar="_index">
+                    	<tr>
+                    		<td class="ze_bg2 ze_bt_le" width="5" height="4"></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_inventory.inventoryBatch}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_inventory.inventoryTime}"><s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" /></h:outputText></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_inventory.storageRoomId.name}" /></td>
+                    		<td class="ze_bg2"><h:outputText value="#{_inventory.inventoryPeople}"/></td>
+                    		<td class="ze_bg2">
+                    			<h:outputText value="未盘点" rendered="#{_inventory.inventoryStatus eq 0}"/>
+                    			<h:outputText value="已盘点" rendered="#{_inventory.inventoryStatus eq 1}"/>
+                    		</td>
+                    		<td class="ze_bg2">
+                            	<s:link propagation="none"  view="/materialsall/Inventory.xhtml" styleClass="list_view" title="查看"  id="InventoryViewId">
+									<f:param name="inventoryId" value="#{_inventory.id}" />
+								</s:link>&#160;
+								<s:link propagation="none"  view="/materialsall/InventoryRecordList.xhtml" styleClass="list_lu" title="录入"  id="InventoryLuId">
+									<f:param name="inventoryId" value="#{_inventory.id}" />
+								</s:link>&#160;
+								<s:link propagation="none"  view="/materialsall/InventoryList.xhtml" styleClass="list_da" title="打印"  id="InventoryDaId" onclick="batchPrintMember(#{_inventory.id});return false;">
+								</s:link>&#160;
+								<s:link propagation="none"  view="/materialsall/InventoryEdit.xhtml" styleClass="list_delete" action="#{inventoryHome.remove}" title="删除" onclick="return confirm('确定删除吗？');" id="inventoryDelete" rendered="#{empty from}">
+                               		<f:param name="inventoryId" value="#{_inventory.id}" />
+                                </s:link>
+                            </td>
+                            <td class="ze_bg2 ze_bt_ri" width="5" height="4"></td>
+                    	</tr>
+                    	</ui:repeat>
+                    </table>
+                    <!--翻页开始-->
+                    <table style="height:30px; margin:40px auto 0 auto;" cellpadding="0" cellspacing="0">
+                    	<tr>
+                    	<s:div rendered="#{not empty inventoryList.resultList}">
+			                <s:decorate rendered="#{!inventoryList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_68.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                 <s:decorate rendered="#{inventoryList.previousExists }">
+			                <td><img src="#{request.contextPath}/asset/images/page_67.jpg" width="4" height="30" /></td>
+			                </s:decorate>
+			                <s:decorate rendered="#{inventoryList.previousExists }">
+	                            <td class="td_t_b">
+		                            <s:link propagation="none"  view="/materialsall/InventoryList.xhtml" >首页
+		                            	<f:param name="pageNum" value="0" />
+		                            </s:link>
+	                            </td>
+	                            <td class="td_t_b td_t_t" style="padding:0; width:30px;">
+		                            <s:link propagation="none"  view="/materialsall/InventoryList.xhtml"  styleClass="no_n" >
+		                            	<f:param name="pageNum" value="#{inventoryList.previousFirstResult}"/>&lt;
+		                            </s:link>
+	                            </td>
+	                        </s:decorate>
+					       <a4j:repeat var="_page" value="#{inventoryList.pageList}" rowKeyVar="_index">
+								<td class="td_t_b #{inventoryList.previousExists or _index >0 ?'td_t_t':''} #{_page eq inventoryList.pageNum?'onp':''}">
+									<s:link propagation="none"  view="/materialsall/InventoryList.xhtml" value="#{_page}" id="previousPage">
+										<f:param name="pageNum" value="#{_page}" />
+									</s:link>
+								</td>
+							</a4j:repeat>
+							<s:decorate rendered="#{inventoryList.nextExists}">
+                            <td class="td_t_b td_t_t">
+	                            <s:link propagation="none"  view="/materialsall/InventoryList.xhtml"   styleClass="no_d" >
+	                            	<f:param name="pageNum" value="#{inventoryList.nextFirstResult}" />&gt;
+	                            </s:link>
+                            </td>
+                            <td class="td_t_b td_t_t">
+								 <s:link propagation="none"  view="/materialsall/InventoryList.xhtml" >尾页
+								 	<f:param name="pageNum" value="#{inventoryList.PAGE_COUNT}" />
+								 </s:link>
+							</td>
+							</s:decorate>
+							<td class="td_t_b td_t_t" style=" color:#9a9a9c;">共#{inventoryList.PAGE_COUNT}页</td>
+                            <td ><img src="#{request.contextPath}/asset/images/page_70.jpg" width="4" height="30" /></td>
+                            </s:div>
+                    	</tr>
+                    </table>
+                    <!--翻页结束-->
+                    <div class="clear"></div>
+                </div><!--right_c结束-->
+<script type="text/javascript">
+	function batchPrintMember(inventoryId){
+		if (confirm("确定打印盘点信息!")){
+			window.open('#{request.contextPath}/materialsall/PrintInventory.seam?inventoryId='+inventoryId,'newwindow','left=' + (jquery(document).width()-900)/2 + ',top=' + (jquery(document).height()-600)/2 + ',height=600,width=1000,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no');
+		} else {
+			return false;
+		}
+	}
+	 jquery(document).ready(function(){
+			var v = document.getElementById("inventorySearch:orderCode").value;
+			if(v == ""){
+				document.getElementById("inventorySearch:orderCode").value = "请输入搜索条件";
+				}
+			});
+</script>
+</td>
+	</ui:define>
+
+</ui:composition>

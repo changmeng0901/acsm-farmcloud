@@ -1,0 +1,185 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	template="/layout/template_print.xhtml"
+                xmlns:a="http://richfaces.org/a4j">
+
+	<ui:define name="body">
+	#{orderOperate.printFourOrderFind()}
+	<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery("#zoom_id img").css({"width":"290px","height":"70"});
+	});
+	</script>
+	<div id="rightPanel">
+		<a:repeat value="#{orderOperate.printOrderInfoList}" var="_orderInfo" rowKeyVar="_orderIndex">
+			<div style="#{_orderIndex + 1 != orderOperate.printOrderInfoList.size() ? 'page-break-after:always;' : ''}">
+				<table style="width:800px; margin:0 auto 10px; font-size:15px;font-family:'微软雅黑'" cellpadding="0" cellspacing="0">
+					<tr>
+						<td height="40" align="center" style="font-size:22px; font-weight:bold;">
+							<input type="text" class="ss"  style="width:270px;height:30px;line-height:30px;margin-right:20px;padding:0 5px;border:1px solid #000;border-radius:4px;font-size:22px; font-weight:bold;color:#525252;"  value="#{orderOperate.enterprise.name}" />配送清单
+						</td>
+					</tr>
+					<tr>
+						<td style="margin-bottom:10px; padding-top:13px;">
+							<table width="100%" cellspacing="0" cellpadding="0">
+								<tr>
+									<td width="80" height="22" style="font-size:15px;">订单编号：</td>
+									<td width="190" class="pl10" style="font-size:15px;">#{_orderInfo.orderCode}</td>
+									<td width="80" height="22" style="font-size:15px;text-align: right;">收货人：</td>
+									<td width="130" class="pl10" style="font-size:15px;">#{_orderInfo.receiveName}</td>
+									<td width="" rowspan="5" id="zoom_id" style="text-align:right;"><p:barCode type="code128" barHeight="40" code="#{_orderInfo.orderCode}" altText="#{_orderInfo.orderCode}" /></td>
+								</tr>
+								<tr>
+									<td width="80" style="font-size:15px;">联系方式：</td>
+									<td width="190" class="pl10" style="font-size:15px;">#{_orderInfo.receivePhone}</td>
+									<td width="80" style="font-size:15px;text-align: right;">销售人：</td>
+									<td width="130" class="pl10" colspan="2" style="font-size:15px;">#{_orderInfo.memberInfo.farmerInfoId.name}</td>
+								</tr>
+								<tr>
+									<td width="80" height="22" style="font-size:15px;">支付方式：</td>
+									<td width="190" class="pl10" style="font-size:15px;">#{orderConstant.getPayTypeLabel(_orderInfo.paymentMode)}</td>
+									<td width="80" style="font-size:15px;text-align: right;">配送日期：</td>
+									<td width="130" class="pl10" colspan="2" style="font-size:15px;">
+										<h:outputText value="#{_orderInfo.deliverTime}">
+					        				<s:convertDateTime type="both" dateStyle="short" pattern="yyyy-MM-dd" />
+					        			</h:outputText>
+					        			<s:fragment rendered="#{_orderInfo.timeSlot == 0}">全天</s:fragment>
+					        			<s:fragment rendered="#{_orderInfo.timeSlot == 1}">上午</s:fragment>
+					        			<s:fragment rendered="#{_orderInfo.timeSlot == 2}">下午</s:fragment>
+					        			<s:fragment rendered="#{_orderInfo.timeSlot == 3}">晚上</s:fragment>
+									</td>
+								</tr>
+								<tr>
+									<td width="80" height="22" style="vertical-align: top ;font-size:15px;">配送地址：</td>
+									<td colspan="3" class="pl10" style="font-size:15px;">#{_orderInfo.receiveAddress}</td>
+								</tr>
+								<tr>
+									<td width="80" height="22" style="vertical-align: top ;font-size:15px;">账户余额：</td>
+									<td class="pl10" style="font-size:15px;">#{_orderInfo.balance}</td>
+									<h:outputText value="" rendered="#{orderOperate.orderType eq 1}">
+										<td width="105" style="font-size:15px;">剩余配送次数：</td>
+										<td width="130" class="pl10" style="font-size:15px;">
+											#{_orderInfo.dispatchingNum}
+										</td>
+									</h:outputText>
+								</tr>
+							</table>
+							<table width="100%" cellspacing="0" cellpadding="0">
+								<tr>
+									<td width="124" height="22" style="vertical-align: top ;font-size:15px;">使用会员卡名称：</td>
+									<td colspan="3" class="pl10" style="font-size:15px;">#{_orderInfo.cardCodes}</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+				<table style="width:800px; margin:0 auto; border:1px solid #000; text-align:center; font-size:15px;" cellspacing="0" cellpadding="0">
+					<tr>
+						<th width="10%" height="26" style="border-bottom:1px solid #000;">序号</th>
+						<th width="20%" style="border-bottom:1px solid #000;">产品名称</th>
+						<th width="14%" style="border-bottom:1px solid #000;">规格</th>
+						<th width="14%" style="border-bottom:1px solid #000;">数量</th>
+						<th width="13%" style="border-bottom:1px solid #000;">单价（元）</th>
+						<th width="13%" style="border-bottom:1px solid #000;">合计（元）</th>
+						<th width="16%" style="border-bottom:1px solid #000;">备注</th>
+					</tr>
+					<a:repeat value="#{orderOperate.gainOrderProductSet(_orderInfo.orderProducts)}" var="_op" rowKeyVar="_opIndex">
+						<s:fragment rendered="#{_opIndex + 1 != orderOperate.gainOrderProductSet(_orderInfo.orderProducts).size()}">
+							<tr>
+								<td height="22" style="border-bottom: 1px dashed #000;">#{_opIndex + 1}</td>
+								<td style="border-bottom: 1px dashed #000;">#{_op.productName}</td>
+								<td style="border-bottom: 1px dashed #000;">#{_op.goodsInfo.distributionUnit eq null or _op.goodsInfo.distributionUnit eq ''? _op.goodsInfo.goodsSpec : _op.goodsInfo.distributionUnit }</td>
+								<td style="border-bottom: 1px dashed #000;"><h:outputText value="#{_op.productNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+								<td style="border-bottom: 1px dashed #000;"><h:outputText value="#{_op.price}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+								<td style="border-bottom: 1px dashed #000;"><h:outputText value="#{_op.totalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+								<td style="border-bottom: 1px dashed #000;"><h:outputText value="#{_op.remark}" ></h:outputText></td>
+							</tr>
+						</s:fragment>
+						<s:fragment rendered="#{_opIndex + 1 == orderOperate.gainOrderProductSet(_orderInfo.orderProducts).size()}">
+							<tr>
+								<td height="22">#{_opIndex + 1}</td>
+								<td>#{_op.productName}</td>
+								<td >#{_op.goodsInfo.distributionUnit eq null or _op.goodsInfo.distributionUnit eq ''? _op.goodsInfo.goodsSpec : _op.goodsInfo.distributionUnit }</td>
+								<td ><h:outputText value="#{_op.productNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+								<td ><h:outputText value="#{_op.price}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+								<td ><h:outputText value="#{_op.totalPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText></td>
+								<td ><h:outputText value="#{_op.remark}" ></h:outputText></td>
+							</tr>
+						</s:fragment>
+					</a:repeat>
+				</table>
+				<table style="width:800px; margin:5px auto 0; font-size:15px;" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="525" height="30">商品总额:<span style="padding-left:3px;"><h:outputText value="#{_orderInfo.productAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText>元</span><span style="padding:0 3px;">-</span>礼品卡金额:<span style="padding-left:3px;"><h:outputText value="#{_orderInfo.cardAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText>元</span>
+						 <h:outputText value="" rendered="#{_orderInfo.couponPrice ne null and _orderInfo.couponPrice ne 0}">
+						 <span style="padding:0 3px;">-</span>红包金额:<span style="padding-left:3px;"><h:outputText value="#{_orderInfo.couponPrice}" ><f:convertNumber pattern="#0.00"/></h:outputText>元</span> 
+						 </h:outputText>
+						 <span style="padding:0 3px;">+</span>运费:<span style="padding-left:3px;"><h:outputText value="#{_orderInfo.deliverAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText>元</span><span style="padding:0 3px;">-</span>使用余额:<span style="padding-left:3px;"><h:outputText value="#{_orderInfo.balanceAccount}" ><f:convertNumber pattern="#0.00"/></h:outputText>元</span></td>
+						<td width="230" align="right" style="font-size:18px;">应付金额：<strong>#{_orderInfo.paymentAccount}元</strong></td>
+					</tr>
+					<tr>
+						<td height="30">备&nbsp;&nbsp;&nbsp;&nbsp;注：#{_orderInfo.orderRemark}</td>
+						<td align="right" style="font-size:15px;">共<span style="font-weight:bold;"><h:outputText value="#{_orderInfo.printProductNum}" ><f:convertNumber pattern="#0.00"/></h:outputText></span>件商品</td>
+					</tr>
+					<tr>
+						<td height="70">
+							<table cellspacing="0" cellpadding="0">
+								<tr>
+									<td>评价：</td>
+									<td><input type="checkbox" style="float:left; margin:2px 5px 0 5px;" />很满意</td>
+									<td><input type="checkbox" style="float:left; margin:2px 5px 0 5px;" />满意</td>
+									<td><input type="checkbox" style="float:left; margin:2px 5px 0 5px;" />不满意</td>
+								</tr>
+							</table>
+						</td>
+						<td align="right">
+							<table cellspacing="0" cellpadding="0">
+								<tr>
+									<td width="98" height="48" align="center" style="border:1px solid #000; font-size:15px; font-weight:bold;">客户签字</td>
+									<td width="98" style="border:1px solid #000; border-left:0;"></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</a:repeat>
+	</div>
+	
+	<div id="printButton" class="ckd_div" style="text-align:center">
+		<input id="btnPrint" onclick="printButtonClick();" style="background-image: url('#{request.contextPath}/asset/images/print03.jpg'); background-repeat:no-repeat; width: 77px; height: 32px; padding:0; margin:0; cursor: pointer; border:0 none;" />
+		<input id="btnPrint" onclick="window.close();" style="background-image: url('#{request.contextPath}/asset/images/re_43.jpg'); background-repeat:no-repeat; width: 77px; height: 32px; padding:0; margin:0; cursor: pointer; border:0 none;" />
+	</div>
+	<script type="text/javascript">
+			var obj;
+			function printButtonClick(){
+				obj = jQuery("#printButton").clone();
+				jQuery(".ss").each(function(){
+					var val=jQuery(this).val();
+					jQuery(this).parent().empty().append(val+" 配送清单");
+	
+				});
+				//jQuery("#printButton").empty();
+				//jQuery("#rightPanel").printArea();
+				window.print();
+				var orderInfoId = jQuery("#orderInfoId").val();
+			}
+			function closeAll(){
+				if(confirm("是否关闭打印页面!")){
+					window.opener.location=window.opener.location;
+					window.close(); 
+				}else{
+					jQuery("#printButton").html(obj);
+				}
+			}
+		</script>	
+	</ui:define>
+</ui:composition>

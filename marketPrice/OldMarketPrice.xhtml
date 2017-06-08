@@ -1,0 +1,703 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template_new.xhtml">
+<ui:define name="head_next">
+<link rel="stylesheet" type="text/css" href="#{request.contextPath}/asset/css/price.css"/>
+</ui:define>
+<ui:define name="body">
+<!-- #{oldMarketPriceHome.init()} #{oldMarketPriceHome.areaList()} #{oldMarketPriceHome.initMarketList()}#{oldMarketPriceHome.initBigPlant()} #{oldMarketPriceHome.initPlantList()}
+#{oldMarketPriceHome.initPriceList()} #{oldMarketPriceHome.initAllAvg()} #{oldMarketPriceHome.initPagersList()}
+
+ -->
+<td valign="top" width="100%">
+<style>
+.itemsLi h4,h3{
+margin-bottom :0px;
+margin-top : 0px;
+}
+</style>
+<div class="priceBg_tt">
+            <div class="priceBg_bt">
+            <div class="priceBg_lt">
+            <div class="priceBg_rt">
+            	<div class="price_wap">
+                	<!-- 选择市场 开始 -->
+                	<div class="priceSelt mt20 mb20">
+                    	<span class="selt_area bootSelt">
+                    		<select class="selectpicker" data-live-search="true" id="area_id" name="area_id" onchange="changeArea_before(this)">
+                            <a:repeat value="#{oldMarketPriceHome.areaList}" var="var" >
+                            <ui:fragment rendered="#{oldMarketPriceHome.area_name==var}">
+                            	<option value="#{var}" selected="selected">#{var}</option>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{oldMarketPriceHome.area_name!=var}">
+                            	<option value="#{var}">#{var}</option>
+                            </ui:fragment>	
+                            </a:repeat>
+                            </select>
+                    	</span>
+                    	<span class="bootSelt selt_xzsc">
+                            <select class="selectpicker" data-live-search="true" id="market_id" name="market_id" onchange="changeMarket_before(this)">
+                            <a:repeat value="#{oldMarketPriceHome.marketList}" var="var">
+                            	<ui:fragment rendered="#{oldMarketPriceHome.market_id==var}">
+                            		<option value="#{var[0]}" selected="selected">#{var[1]}</option>
+                           		</ui:fragment>
+                           		<ui:fragment rendered="#{oldMarketPriceHome.market_id!=var}">
+                            		<option value="#{var[0]}">#{var[1]}</option>
+                           		</ui:fragment>
+                            </a:repeat>
+                            </select>
+                        </span>
+                         <span class="bootSelt selt_xzzw" style="background-position: 4px -196px;">
+                            <select class="selectpicker" data-live-search="true" id="big_plant_id" name="big_plant_id"  onchange="changeBigPlant_before(this)">
+                            <option value="-1">全部</option>
+                            <a:repeat value="#{oldMarketPriceHome.bigPlantList}" var="var">
+                            	<option value="#{var[0]}">#{var[1]}</option>
+                            </a:repeat>
+                            </select>
+                        </span>
+                        <span class="bootSelt selt_xzzw">
+                            <select class="selectpicker" data-live-search="true" id="plant_id" name="plant_id"  multiple="multiple" onchange="changePlant_before(this)">
+                            <a:repeat value="#{oldMarketPriceHome.plantList}" var="var">
+                            	<option value="#{var[0]}">#{var[1]}</option>
+                            </a:repeat>
+                            </select>
+                        </span>
+                        <span class="bootSelt selt_xzrq">
+                            <div class="input-append date form_datetime today" style="position:relative;" >
+                            <input size="26" type="text" value="#{oldMarketPriceHome.today}" readonly="readonly" id="today"/>
+                            <span class="add-on"><i class="icon-th"></i></span>
+                            </div>
+                        </span>
+                    </div>
+                    <!-- 选择的列表 开始 -->
+                     <div class="priceList-wap">
+                    	<div class="bg-tt">
+                        <div class="bg-lt">
+                        <div class="bg-rt">
+                        <div class="bg-bt">
+                    <s:span id="priceList" >
+                    <div class="priceList">
+                    	<ul class="priceList_ul">
+                    	<a:repeat value="#{oldMarketPriceHome.priceList}" var="var" >
+                        	<li class="items" onclick="openModal(#{var[0]},'#{var[3]}','#{var[4]}','#{var[5]}','#{var[6]}','#{var[7]}','#{var[1]}')" title="#{var[1]}">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                            	<td width="42">
+                                	<span class="zhezhaoWp">
+                                    <img class="zhezhao" src="#{request.contextPath}/asset/images/zhezhao20.png" width="26" height="26" />
+                                    <img class="zhezhaoImg" src="#{request.contextPath}/asset/images/zhezhao20.png" data-src="#{var[2]}@40h_40w|40-1ci.png"/>
+                                    </span>
+                                </td>
+                                <td>
+                                	<span class="zhezhaoTxt">#{var[1]}</span>
+                                </td>
+                                <td>
+                                	<p class="money"><em>#{var[3]}</em>元/斤</p>
+                                	<p class="floatPoint">
+                                	<ui:fragment rendered="#{var[9] lt 0 || var[9] gt 0}">
+                                        <img class="floatUp" src="#{request.contextPath}/asset/images/floatUp.png" style="#{var[9] gt 0 ? 'display:inline' : 'display:none'}"/>
+                                        <img class="floatDown" src="#{request.contextPath}/asset/images/floatDown.png" style="#{var[9] lt 0 ? 'display:inline' : 'display:none'}"/>
+                                        #{var[9]}<span class="percent">%</span>
+                                        </ui:fragment>
+                                        </p>
+                                </td>
+                            </tr>
+                            </table>
+                            </li>
+                         </a:repeat>
+                        </ul>
+                    </div>
+                    </s:span>
+                     </div>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                    <!-- 全国价格行情 开始 -->
+                    <div class="price_body clear">
+                    	<div class="priceBd_lt">
+                        	<div class="priceBd_ttl mr5">
+                            	<h2 class="ttl">全国价格行情</h2>
+                                <a class="link" href="#{request.contextPath}/marketPrice/NationalPrice.seam">查看详情</a>
+                            </div>
+                        	<div class="priceBg_lttt" style="margin-right:6px;">
+                            	<div class=" priceBg_rtbt">
+                                	<ul>
+                                	<ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('全国均价')!=null}">
+                                    	<li class="itemsLi">
+                                        	<h4 class="market_ttl">全国均价</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get("全国均价")}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('上海')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">上海</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('上海')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('广东')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">广东</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('广东')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('山东')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">山东</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('山东')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('山西')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">山西</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('山西')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('河北')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">河北</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('河北')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('吉林')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">吉林</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('吉林')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('内蒙')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">内蒙</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('内蒙')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('河南')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">河南</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('河南')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('浙江')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">浙江</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('浙江')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('湖北')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">湖北</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('湖北')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                        <ui:fragment rendered="#{oldMarketPriceHome.avgMap.get('湖南')!=null}"><li class="itemsLi">
+                                        	<h4 class="market_ttl">湖南</h4>
+                                            <em class="marker_num">#{oldMarketPriceHome.avgMap.get('湖南')}</em>
+                                            <sub class="market_spec">元/斤</sub>
+                                        </li></ui:fragment>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="priceBd_rt">
+                        	<div class="priceBd_ttl ml5">
+                            	<h2 class="ttl">市场分析预测</h2>
+                                <a class="link" href="#{request.contextPath}/marketPrice/MarketFxyc.seam">查看详情</a>
+                            </div>
+                        	<div class="priceBg_lttt" style="margin-left:6px;">
+                            	<div class=" priceBg_rtbt">
+                            	<a:repeat value="#{oldMarketPriceHome.fourPaper}" var="var">
+                            		<p class="forecast_items"><span class="txt">#{var.title}</span><span class="data">#{stringUtil.showTime(var.insertTime)}</span></p>
+                            	</a:repeat>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 全国价格行情 结束 -->
+                </div>
+            </div>   
+            </div>
+            </div>
+            </div>   
+            <!-- 价格内容 结束 -->
+            <!-- 用户签收确认模态框 开始 -->
+<div class="modal fade" id="price_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="position:absolute; left:50%; top:50%; width:707px; height:479px; margin-left:-354px; margin-top:-240px;">
+<div class="modal-content" style="background:url(#{request.contextPath}/asset/images/price_modbg.jpg) no-repeat;">
+	<em class="closePr" data-dismiss="modal"></em>
+    <div class="modal-body" style="height:448px; padding:20px 25px; overflow:auto; color:#e5e6e5;">
+    	<div class="todayTrend_hd">
+        	<h3 class="cropName">大白菜</h3>
+            <table class="fr" cellpadding="0" cellspacing="0">
+            	<tr>
+                	<td align="right"><span class="txt">今日最高价</span></td>
+                    <td align="left"><span class="num max_">--</span><span class="spec pr10">元/斤</span></td>
+                    <td align="right"><span class="txt">今日最低价</span></td>
+                    <td align="left" style="padding-right:0;"><span class="num min_">--</span><span class="spec">元/斤</span></td>
+                </tr>
+                <tr>
+                	<td align="right"><span class="txt">今日中间价</span></td>
+                    <td align="left"><span class="num middle_">--</span><span class="spec pr10">元/斤</span></td>
+                    <td align="left" colspan="2" style="padding-right:0;"><span class="up_"><img src="#{request.contextPath}/asset/images/price_qsB.png" width="8" height="10" style="margin:-2px 5px 0 0;" /><span class="spec">0.19%</span></span></td>
+                </tr>
+                <tr>
+                	<td align="right"><span class="txt">本地上市量</span></td>
+                    <td align="left"><span class="num local_">--</span><span class="spec pr10">公斤</span></td>
+                    <td align="right"><span class="txt">外地上市量</span></td>
+                    <td align="left" style="padding-right:0;"><span class="num field_">--</span><span class="spec">公斤</span></td>
+                </tr>
+            </table>
+        </div>  
+        <div class="contrastSelt">
+        	<span class="ttlTxt">品种对比</span>
+        	<span class="bootSelt">
+                <select class="selectpicker notselect" id="plant_id_" onchange="initHighChart(infoid,this.value,jquery('#market_id_').val(),highType,jquery('#today').val());">
+                			<option value="-1">请选择</option>
+                			<a:repeat value="#{oldMarketPriceHome.plantList}" var="var">
+                            	<option value="#{var[0]}">#{var[1]}</option>
+                            </a:repeat>
+                </select>
+            </span>
+            <span class="ttlTxt">市场对比</span>
+        	<span class="bootSelt">
+                <select class="selectpicker notselect" id="market_id_" onchange="initHighChart(infoid,jquery('#plant_id_').val(),this.value,highType,jquery('#today').val());">
+                <option value="-1">请选择</option>
+                <a:repeat value="#{oldMarketPriceHome.marketList}" var="var">
+                            		<option value="#{var[0]}">#{var[1]}</option>
+                            </a:repeat>
+                </select>
+            </span>
+            <ul class="switchDate fr">
+            	<li class="items first cur" aa="1"><span class="cur">一月</span></li>
+                <li class="items last" aa="2"><span>一年</span></li>
+            </ul>
+        </div>
+        <div class="clear">
+        <div id="contrastChart" style="width:650px;height:290px; margin:0 auto;"></div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<style>
+.priceSelt .input-append .add-on{ right:0;}
+.priceList .zhezhaoTxt {width:80px}
+p {margin:0px}
+</style>
+<script src="#{request.contextPath}/asset/js/jquery.lazyloadxt.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/analysis/highstock.js"></script>
+<script type="text/javascript" src="#{request.contextPath}/asset/js/nicescroll.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+           function resize(){
+        	    var prHei = jquery(window).height()-423;
+	       		var minPrHei = 744-423 ;
+	       		jquery('.priceList').css({
+	       			'height' : prHei,
+	       			'min-height' : minPrHei
+	       		});	
+	       		var oBodyWid = jquery(window).width();
+	    		if(oBodyWid<1024){
+	    			jquery('.priceList .items').width(188);	
+	    			jquery('.priceList .zhezhaoTxt').width(58);
+	    		}else if(oBodyWid<1280){
+	    			jquery('.priceList .items').width(200);	
+	    			jquery('.priceList .zhezhaoTxt').width(62);	
+	    		}else if(oBodyWid<1360){
+	    			jquery('.priceList .items').width(212);	
+	    			jquery('.priceList .zhezhaoTxt').width(74);	
+	    		}else if(oBodyWid<1600){
+	    			jquery('.priceList .items').width(212);	
+	    			jquery('.priceList .zhezhaoTxt').width(74);	
+	    		}else{
+	    			jquery('.priceList .items').width(194);	
+	    			jquery('.priceList .zhezhaoTxt').width(70);	
+	    		}
+           }
+           
+           function relazyload(){
+        	   jquery(".zhezhaoImg").lazyLoadXT({
+        		   scrollContainer:".priceList"
+        	   });
+        	   jquery(".zhezhaoImg:eq(0)").attr("src",jquery(".zhezhaoImg:eq(0)").attr("data-src"))
+           }
+           function nice_scroll(){
+        	   jquery("[id^='ascrail']").remove();
+        	   jquery(".priceList").niceScroll({cursorcolor:"#919191",cursorwidth:4,cursoropacitymax:0.7,touchbehavior:false,autohidemode:false});  //滚动条控件
+           }
+jquery(function(){
+	
+	jquery('.selectpicker').not(".notselect").selectpicker({noneSelectedText:"全部"});  // 下拉菜单控件
+	jquery(".notselect").selectpicker({size:8,dropupAuto:false});
+	jquery(".today").datetimepicker({  // 时间控件 
+		format: "yyyy-mm-dd",  /* 控制显示格式，默认为空，显示小时分钟 */
+		autoclose: true,
+		weekStart: 1,
+		language:  'zh-CN',
+		startView: 3,
+		minView: 2,
+		maxView: 2,		
+		pickerPosition: "bottom-left"
+	}).on('changeDate', function(ev){
+   	 var time = new Date(ev.date);
+	 if(time==null)
+		 time = new Date();
+	 time = time.format("yyyy-MM-dd");
+	 changeDate(jquery('#area_id').val(),jquery('#market_id').val(),getObjectValue('#big_plant_id'),getObjectValue('#plant_id'),time);
+});
+	
+	var prHei = jquery(window).height()-423;  //-423=-60-51-40-74-20-178
+	var minPrHei = 744-423 ;
+	jquery('.priceList').css({
+		'height' : prHei,
+		'min-height' : minPrHei
+	});
+	jquery('.switchDate .items').on('click',function(){  //切换日期，周月年
+		highType = jquery(this).attr("aa");
+		jquery(this).addClass('cur').siblings().removeClass('cur');	
+		initHighChart(infoid,jquery("#plant_id_").val(),jquery("#market_id_").val(),highType,jquery("#today").val());
+	});
+	var oBodyWid = jquery(window).width();
+	if(oBodyWid<1024){
+		jquery('.priceList .items').width(188);	
+		jquery('.priceList .zhezhaoTxt').width(58);
+	}else if(oBodyWid<1280){
+		jquery('.priceList .items').width(200);	
+		jquery('.priceList .zhezhaoTxt').width(62);	
+	}else if(oBodyWid<1360){
+		jquery('.priceList .items').width(212);	
+		jquery('.priceList .zhezhaoTxt').width(74);	
+	}else if(oBodyWid<1600){
+		jquery('.priceList .items').width(212);	
+		jquery('.priceList .zhezhaoTxt').width(74);	
+	}else{
+		jquery('.priceList .items').width(194);	
+		jquery('.priceList .zhezhaoTxt').width(70);	
+	}
+	relazyload();
+	chart1();  //chart图标函数执行
+	nice_scroll();
+	jquery(window).resize(function(){  // 改变浏览器窗口 
+		resize();
+	});	
+	
+});	
+
+function changeArea_before(obj){
+	changeArea(jquery(obj).val(),jquery('#market_id').val(),getObjectValue('#big_plant_id'),getObjectValue('#plant_id'),jquery('#today').val());
+}
+
+
+function chart1(){
+	return;
+}
+
+function changeBigPlant_before(obj){
+	changeBigPlant(jquery('#area_id').val(),jquery('#market_id').val(),getObjectValue('#big_plant_id'),getObjectValue('#plant_id'),jquery('#today').val());
+}
+
+function getObjectValue(obj){
+	var str = "-1";
+	if(jquery(obj).val()!=null){
+		str = jquery(obj).val().toString();
+	}
+	return str;
+}
+
+function changePlant_before(obj){
+	changePlant(jquery('#area_id').val(),jquery('#market_id').val(),getObjectValue('#big_plant_id'),getObjectValue('#plant_id'),jquery('#today').val());
+}
+
+function changeArea_next(data){
+	var datas = data.split("-!_-");
+	jquery("#market_id").empty();
+	jquery("#market_id").append(datas[0]);
+	jquery("#market_id").selectpicker("refresh")
+	
+	jquery("#big_plant_id").empty();
+	jquery("#big_plant_id").append("<option value='-1'>全部</option>");
+	jquery("#big_plant_id").append(datas[1]);
+	jquery("#big_plant_id").selectpicker("refresh")
+	
+	jquery("#plant_id").empty();
+	jquery("#plant_id").append(datas[2]);
+	jquery("#plant_id").selectpicker("refresh")
+	
+	
+	jquery("#market_id_").empty();
+	jquery("#market_id_").append("<option value='-1'>请选择</option>");
+	jquery("#market_id_").append(datas[0]);
+	jquery("#market_id_").selectpicker("refresh")
+	jquery("#plant_id_").empty();
+	jquery("#plant_id_").append("<option value='-1'>请选择</option>");
+	jquery("#plant_id_").append(datas[2]);
+	jquery("#plant_id_").selectpicker("refresh")
+}
+
+function changeMarket_before(obj){
+	changeMarket(jquery("#area_id").val(),jquery(obj).val(),getObjectValue('#big_plant_id'),getObjectValue('#plant_id'),jquery('#today').val());
+}
+
+function changeMarket_next(data){
+	var datas = data.split("-!_-");
+	jquery("#big_plant_id").empty();
+	jquery("#big_plant_id").append("<option value='-1'>全部</option>");
+	jquery("#big_plant_id").append(datas[0]);
+	jquery("#big_plant_id").selectpicker("refresh")
+	
+	jquery("#plant_id").empty();
+	jquery("#plant_id").append(datas[1]);
+	jquery("#plant_id").selectpicker("refresh")
+	jquery("#plant_id_").empty();
+	jquery("#plant_id_").append("<option value='-1'>请选择</option>");
+	jquery("#plant_id_").append(datas[1]);
+	jquery("#plant_id_").selectpicker("refresh")
+}
+
+function changeBigPlant_next(data){
+	jquery("#plant_id").empty();
+	jquery("#plant_id").append(data);
+	jquery("#plant_id").selectpicker("refresh")
+	jquery("#plant_id_").empty();
+	jquery("#plant_id_").append("<option value='-1'>请选择</option>");
+	jquery("#plant_id_").append(data);
+	jquery("#plant_id_").selectpicker("refresh")
+}
+
+Date.prototype.format = function(format)
+{
+	var o = {
+	"M+" : this.getMonth()+1, //month
+	"d+" : this.getDate(),    //day
+	"h+" : this.getHours(),   //hour
+ 	"m+" : this.getMinutes(), //minute
+	"s+" : this.getSeconds(), //second
+ 	"q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+ 	"S" : this.getMilliseconds() //millisecond
+	}
+
+	if(/(y+)/.test(format)) 
+	{
+		format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+	}
+	
+ 	for(var k in o)
+	{
+		if(new RegExp("("+ k +")").test(format))
+		{
+ 			format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+		}
+	}
+	return format;
+}
+
+var infoid;
+var highType;
+function openModal(id,middle,max,min,local,field,name){
+	jquery(".max_").html(max);
+	jquery(".min_").html(min);
+	jquery(".middle_").html(middle);
+	local = parseFloat(local);
+	field = parseFloat(field);
+	//console.log(local);
+	//console.log(field);
+	try{
+		if(local>0)
+			jquery(".local_").html(local);
+		else
+			jquery(".local_").html("--");
+		if(field>0)
+			jquery(".field_").html(field);
+		else
+			jquery(".field_").html("--");
+	}catch(e){
+		jquery(".local_").html("--");
+		jquery(".field_").html("--");
+	}
+	jquery(".up_").hide();
+	jquery(".cropName").html(name);
+	jquery("#price_modal").modal("show");
+	infoid = id;
+	highType = 1; 
+	jquery('#contrastChart').empty();
+	initHighChart(infoid,"-1","-1",highType,jquery("#today").val());
+}
+
+var data1;
+function initHighChart_next(data){
+	var datas = data.split("_!+_");
+	if(datas[0]!="--"){
+		var price = parseFloat(datas[0]);
+		if(price>0){
+			jquery(".up_ span").html(price+"%");
+			jquery(".up_ img").attr("src","#{request.contextPath}/asset/images/price_qsR.png");
+			jquery(".up_").show();
+		}else if(price<0){
+			jquery(".up_ span").html(price+"%");
+			jquery(".up_ img").attr("src","#{request.contextPath}/asset/images/price_qsB.png");
+			jquery(".up_").show();
+		}else{
+			jquery(".up_").hide();
+		}
+	}else{
+		
+	}
+	if(datas[2]=="false"){
+		return;
+	}
+	eval("data1=["+datas[1]+"]");
+	Highcharts.setOptions({ global: { useUTC: false } });
+    jquery('#contrastChart').highcharts('StockChart',{
+    	chart: {
+    		backgroundColor: 'rgba(0,0,0,0)'
+        },
+        exporting: {
+	        enabled: false
+	    },
+    	rangeSelector:{
+	        enabled:false   
+	       },
+        xAxis:{
+            type:"datetime",
+            labels: {  
+		        formatter: function() {  
+		            var vDate=new Date(this.value);  
+		            return Highcharts.dateFormat('%m-%d', this.value);  
+		        },  
+		        align: 'center' ,
+		        style:{
+		        	color:"white"
+		        }
+		    }
+        },
+        yAxis: [{
+            height: 100,
+            lineWidth: 2,
+            offset:0,
+            opposite: false,
+            labels: {  
+		        formatter: function() {  
+		        	return Highcharts.numberFormat(this.value,2);
+		        }
+            }
+        }, {
+            height: 50,
+            top: 120,
+            lineWidth: 2,
+            opposite: false,
+            offset:0
+        }],
+        tooltip: {
+            formatter: function () {
+                var s = '<b>' + Highcharts.dateFormat('%Y-%m-%d', this.x) + '</b>';
+
+                jquery.each(this.points, function () {
+                    s += '<br/>' + this.series.name + ': ';
+                    if(this.series.type=="line"){
+                    	s += Highcharts.numberFormat(this.y,2) +  '元';
+                    }else{
+                    	s += Highcharts.numberFormat(this.y,0) +  'kg';
+                    }
+                });
+
+                return s;
+            },
+            shared: true
+        },
+        series: data1,
+        navigator: {
+            xAxis: {
+			tickWidth: 0,
+			lineWidth: 0,
+			gridLineWidth: 1,
+			tickPixelInterval: 200,
+			labels: {
+			    align: 'left',
+			    style: {
+			        color: 'white'
+			    },
+	   		    formatter: function() {  
+	               return  Highcharts.dateFormat('%Y-%m-%d', this.value);  
+	            }
+			},
+		 	outlineColor: 'blue',
+            outlineWidth: 2,
+	     	maskInside: false,
+	     	maskFill: 'rgba(180, 198, 220, 0.75)',
+			series: {
+				
+				type: 'areaspline',
+				color: 'red',
+				fillOpacity: 0.05,
+				dataGrouping: {
+					smoothed: true
+				},
+				lineWidth: 1,
+				marker: {
+					enabled: false
+				}
+            }
+		}
+    }
+                
+    });
+}
+
+//]]>
+</script>
+<a:form style="display:none">
+ 		<a:queue requestDelay="10" ignoreDupResponses="true" id="mainQueue"/>
+        <a:jsFunction name="changeArea" eventsQueue="mainQueue" status="ajaxStatus" action="#{oldMarketPriceHome.changeArea()}" reRender="priceList" data="#{oldMarketPriceHome.firstStr}" oncomplete="changeArea_next(data);resize();relazyload();nice_scroll();" >
+	        <a:actionparam name="param1" assignTo="#{oldMarketPriceHome.area_name}"></a:actionparam>
+	        <a:actionparam name="param2" assignTo="#{oldMarketPriceHome.market_id}"></a:actionparam>
+	        <a:actionparam name="param3" assignTo="#{oldMarketPriceHome.big_plant_id}"></a:actionparam>
+	        <a:actionparam name="param4" assignTo="#{oldMarketPriceHome.plant_id}"></a:actionparam>
+	        <a:actionparam name="param5" assignTo="#{oldMarketPriceHome.today}"></a:actionparam>
+        </a:jsFunction>
+        <a:jsFunction name="changeMarket" eventsQueue="mainQueue"  status="ajaxStatus" action="#{oldMarketPriceHome.changeMarket()}"  reRender="priceList" data="#{oldMarketPriceHome.firstStr}" oncomplete="changeMarket_next(data);resize();relazyload();nice_scroll();" >
+	        <a:actionparam name="param1" assignTo="#{oldMarketPriceHome.area_name}"></a:actionparam>
+	        <a:actionparam name="param2" assignTo="#{oldMarketPriceHome.market_id}"></a:actionparam>
+	        <a:actionparam name="param3" assignTo="#{oldMarketPriceHome.big_plant_id}"></a:actionparam>
+	        <a:actionparam name="param4" assignTo="#{oldMarketPriceHome.plant_id}"></a:actionparam>
+	        <a:actionparam name="param5" assignTo="#{oldMarketPriceHome.today}"></a:actionparam>
+        </a:jsFunction>
+        <a:jsFunction name="changeBigPlant" eventsQueue="mainQueue"  status="ajaxStatus" action="#{oldMarketPriceHome.changeBigPlant()}"  reRender="priceList"  data="#{oldMarketPriceHome.firstStr}" oncomplete="changeBigPlant_next(data);resize();relazyload();nice_scroll();">
+	        <a:actionparam name="param1" assignTo="#{oldMarketPriceHome.area_name}"></a:actionparam>
+	        <a:actionparam name="param2" assignTo="#{oldMarketPriceHome.market_id}"></a:actionparam>
+	        <a:actionparam name="param3" assignTo="#{oldMarketPriceHome.big_plant_id}"></a:actionparam>
+	        <a:actionparam name="param4" assignTo="#{oldMarketPriceHome.plant_id}"></a:actionparam>
+	        <a:actionparam name="param5" assignTo="#{oldMarketPriceHome.today}"></a:actionparam>
+        </a:jsFunction>
+        <a:jsFunction name="changePlant" eventsQueue="mainQueue"  status="ajaxStatus" action="#{oldMarketPriceHome.changePlant()}"  reRender="priceList" oncomplete="resize();relazyload();nice_scroll();">
+	        <a:actionparam name="param1" assignTo="#{oldMarketPriceHome.area_name}"></a:actionparam>
+	        <a:actionparam name="param2" assignTo="#{oldMarketPriceHome.market_id}"></a:actionparam>
+	        <a:actionparam name="param3" assignTo="#{oldMarketPriceHome.big_plant_id}"></a:actionparam>
+	        <a:actionparam name="param4" assignTo="#{oldMarketPriceHome.plant_id}"></a:actionparam>
+	        <a:actionparam name="param5" assignTo="#{oldMarketPriceHome.today}"></a:actionparam>
+        </a:jsFunction>
+        <a:jsFunction name="changeDate" eventsQueue="mainQueue"  status="ajaxStatus" action="#{oldMarketPriceHome.changeDate()}" reRender="priceList" oncomplete="resize();relazyload();nice_scroll();">
+	        <a:actionparam name="param1" assignTo="#{oldMarketPriceHome.area_name}"></a:actionparam>
+	        <a:actionparam name="param2" assignTo="#{oldMarketPriceHome.market_id}"></a:actionparam>
+	        <a:actionparam name="param3" assignTo="#{oldMarketPriceHome.big_plant_id}"></a:actionparam>
+	        <a:actionparam name="param4" assignTo="#{oldMarketPriceHome.plant_id}"></a:actionparam>
+	        <a:actionparam name="param5" assignTo="#{oldMarketPriceHome.today}"></a:actionparam>
+        </a:jsFunction>
+        <a:jsFunction name="initHighChart" eventsQueue="mainQueue"  action="#{oldMarketPriceHome.initHighChart()}" data="#{oldMarketPriceHome.firstStr}"  oncomplete="initHighChart_next(data)">
+        <a:actionparam name="param1" assignTo="#{oldMarketPriceHome.ccpId}"></a:actionparam>
+        <a:actionparam name="param2" assignTo="#{oldMarketPriceHome.param1}"></a:actionparam>
+        <a:actionparam name="param3" assignTo="#{oldMarketPriceHome.param2}"></a:actionparam>
+        <a:actionparam name="param4" assignTo="#{oldMarketPriceHome.param3}"></a:actionparam>
+        <a:actionparam name="param10" assignTo="#{oldMarketPriceHome.today}"></a:actionparam>
+        </a:jsFunction>
+</a:form>
+<style>
+.box_back{background:url(../asset/images/bg_png3.png) repeat; width:100%; height:100%; position:fixed; z-index:98; display:none;}
+</style>
+ <a:status id="ajaxStatus" forceId="true" onstart="jquery('#login').show()" onstop="jquery('#login').hide()" />
+ <div class="box_back" id="login" style="display:none;z-index:1000">
+    <div id="login2" style="width:60px; height:60px; margin:220px auto 0 auto;"><img src="../asset/images/loginda.gif" />
+  	</div>
+</div>
+</td>
+</ui:define>
+
+</ui:composition>
